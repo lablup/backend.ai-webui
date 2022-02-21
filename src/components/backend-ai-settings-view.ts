@@ -407,7 +407,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <backend-ai-dialog id="scheduler-env-dialog" class="env-dialog" fixed backdrop persistent closeWithConfirmation>
+        <backend-ai-dialog id="scheduler-env-dialog" class="env-dialog" scrimClickAction="" closeWithConfirmation>
           <span slot="title" class="horizontal layout center">${_tr('settings.ConfigPerJobSchduler')}</span>
           <span slot="action">
             <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'default')}" style="pointer-events:auto;"></mwc-icon-button>
@@ -458,7 +458,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
               label="${_t('button.Save')}"></mwc-button>
           </div>
         </backend-ai-dialog>
-        <backend-ai-dialog id="overlay-network-env-dialog" class="env-dialog" fixed backdrop persistent closeWithConfirmation>
+        <backend-ai-dialog id="overlay-network-env-dialog" class="env-dialog" scrimClickAction="" closeWithConfirmation>
           <span slot="title" class="horizontal layout center">${_tr('settings.OverlayNetworkSettings')}</span>
           <span slot="action">
             <mwc-icon-button icon="info" @click="${(e) => this._showConfigDescription(e, 'overlayNetwork')}" style="pointer-events:auto;"></mwc-icon-button>
@@ -500,11 +500,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
               label="${_t('button.Save')}"></mwc-button>
           </div>
         </backend-ai-dialog>
-        <backend-ai-dialog id="help-description" fixed backdrop>
+        <backend-ai-dialog id="help-description">
           <span slot="title">${this._helpDescriptionTitle}</span>
           <div slot="content" class="horizontal layout">${this._helpDescription}</div>
         </backend-ai-dialog>
-        <backend-ai-dialog id="env-config-confirmation" warning fixed>
+        <backend-ai-dialog id="env-config-confirmation" warning>
           <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
           <div slot="content">
             <p>${_t('settings.EnvConfigWillDisappear')}</p>

@@ -619,7 +619,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="add-registry-dialog">
       ${this.editMode ? html`
         <span slot="title">${_t('registry.ModifyRegistry')}</span>
       ` : html`
@@ -700,7 +700,7 @@ class BackendAIRegistryList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="delete-registry-dialog">
         <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
           <wl-textfield

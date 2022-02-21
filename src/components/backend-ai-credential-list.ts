@@ -738,7 +738,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
+      <backend-ai-dialog id="keypair-info-dialog" container="${document.body}">
         <span slot="title">Keypair Detail</span>
         <div slot="action" class="horizontal end-justified flex layout">
         ${this.keypairInfo.is_admin ? html`
@@ -799,7 +799,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="keypair-modify-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="keypair-modify-dialog" >
         <span slot="title">${_t('credential.ModifyKeypairResourcePolicy')}</span>
 
         <div slot="content" class="vertical layout">

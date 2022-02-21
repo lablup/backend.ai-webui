@@ -1533,7 +1533,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
+      <backend-ai-dialog id="user-preference-dialog">
         <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
         <div slot="content" class="layout vertical" style="width:300px;">
           <mwc-textfield id="pref-original-name" type="text"

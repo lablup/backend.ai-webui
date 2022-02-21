@@ -463,7 +463,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="create-scaling-group-dialog">
         <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>
 
         <div slot="content" class="login-panel intro centered">
@@ -512,7 +512,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               @click="${this._createScalingGroup}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="modify-scaling-group-dialog">
         <span slot="title">${_t('resourceGroup.ModifyResourceGroup')}</span>
         <div slot="content" class="vertical layout wrap">
           <div class="horizontal layout flex wrap center justified">
@@ -554,7 +554,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-scaling-group-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="delete-scaling-group-dialog">
         <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
           <mwc-textfield

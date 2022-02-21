@@ -1021,7 +1021,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </div>
         </div>
       </div>` : html``}
-      <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <backend-ai-dialog id="bootstrap-dialog" scrimClickAction="">
         <span slot="title">${_t('usersettings.BootstrapScript')}</span>
         <div slot="content">
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
@@ -1032,7 +1032,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t('button.SaveAndClose')}" @click="${() => this._saveBootstrapScriptAndCloseDialog()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
+      <backend-ai-dialog id="userconfig-dialog" scrimClickAction="" closeWithConfirmation>
         <span slot="title">${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile} ${_t('usersettings.Edit_ShellScriptTitle_2')}</span>
         <div slot="content" class="vertical layout" style="height:calc(100vh - 261px);">
           <mwc-select id="select-rcfile-type"
@@ -1059,7 +1059,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button unelevated id="save-code-and-close" label="${_t('button.SaveAndClose')}" @click="${() => this._saveUserConfigScriptAndCloseDialog()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="change-current-editor-dialog" noclosebutton fixed backdrop scrollable blockScrolling persistent style="border-bottom:none;">
+      <backend-ai-dialog id="change-current-editor-dialog" noclosebutton scrimClickAction="" style="border-bottom:none;">
         <div slot="title">
           ${_t('usersettings.DialogDiscardOrSave', {File: () => this.prevRcfile})}
         </div>
@@ -1078,7 +1078,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               @click="${() => this._saveCurrentEditorChange()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-keypair-management-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="ssh-keypair-management-dialog" scrimClickAction="">
         <span slot="title">${_t('usersettings.SSHKeypairManagement')}</span>
         <div slot="content" style="max-width:500px">
           <span slot="title"> ${_t('usersettings.CurrentSSHPublicKey')}</span>
@@ -1104,7 +1104,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               @click="${this._refreshSSHKeypair}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
+      <backend-ai-dialog id="generate-ssh-keypair-dialog" scrimClickAction="" noclosebutton>
         <span slot="title">${_t('usersettings.SSHKeypairGeneration')}</span>
         <div slot="content" style="max-width:500px;">
           <div class="vertical layout" style="display:inline-block;">
@@ -1132,7 +1132,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
              @click="${this._openSSHKeypairClearDialog}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="clear-ssh-keypair-dialog" fixed persistent>
+      <backend-ai-dialog id="clear-ssh-keypair-dialog" scrimClickAction="">
         <span slot="title">${_t('usersettings.ClearSSHKeypairInput')}</span>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button

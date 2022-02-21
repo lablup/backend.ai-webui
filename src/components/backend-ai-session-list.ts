@@ -2045,7 +2045,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           ?disabled="${this.total_session_count <= this.session_page_limit * this.current_page}"
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
       </div>
-      <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
+      <backend-ai-dialog id="work-dialog" narrowLayout scrollable>
         <span slot="title" id="work-title"></span>
         <div slot="action">
           <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
@@ -2055,7 +2055,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
                 style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
-      <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
+      <backend-ai-dialog id="terminate-session-dialog">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
@@ -2071,7 +2071,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
+      <backend-ai-dialog id="terminate-selected-sessions-dialog">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
@@ -2088,7 +2088,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </wl-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>
+      <backend-ai-dialog id="status-detail-dialog" narrowLayout>
         <span slot="title">${_t('session.StatusInfo')}</span>
         <div slot="content" id="status-detail"></div>
       </backend-ai-dialog>

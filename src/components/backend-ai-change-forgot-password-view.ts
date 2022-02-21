@@ -147,7 +147,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="update-password-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <backend-ai-dialog id="update-password-dialog" scrimClickAction="" style="padding:0;">
         <span slot="title">${_t('webui.menu.ChangePassword')}</span>
 
         <div slot="content" class="login-panel intro centered">
@@ -180,7 +180,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <backend-ai-dialog id="verification-fail-dialog" scrimClickAction="" style="padding:0;">
         <span slot="title">${_t('login.InvalidChangePasswordToken')}</span>
 
         <div slot="content" class="login-panel intro centered">

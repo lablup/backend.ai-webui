@@ -431,7 +431,7 @@ export default class BackendAiSignup extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="signup-panel" scrimClickAction="">
         <span slot="title">${this.allowSignupWithoutConfirmation ? html`
           ${_t('signup.Signup')}` :
     html`${_t('signup.SignupBETA')}
@@ -501,13 +501,13 @@ export default class BackendAiSignup extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="block-panel" fixed type="error" backdrop blockscrolling persistent>
+      <backend-ai-dialog id="block-panel" type="error" scrimClickAction="">
         <span slot="title">${_t('dialog.error.Error')}</span>
         <div slot="content" style="text-align:center;">
           ${this.errorMsg}
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="email-sent-dialog" noclosebutton fixed backdrop blockscrolling persistent>
+      <backend-ai-dialog id="email-sent-dialog" noclosebutton scrimClickAction="">
         <span slot="title">${_t('signup.ThankYou')}</span>
         <div slot="content">
           <p style="max-width:350px">${_t('signup.VerificationMessage')}</p>

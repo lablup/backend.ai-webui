@@ -1068,7 +1068,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog id="new-keypair-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="new-keypair-dialog">
         <span slot="title">${_t('credential.AddCredential')}</span>
         <div slot="content">
           <div class="vertical center-justified layout center">
@@ -1119,7 +1119,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           @click="${this._addKeyPair}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="new-policy-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="new-policy-dialog" narrowLayout>
         <span slot="title">${_t('credential.CreateResourcePolicy')}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}"
@@ -1238,7 +1238,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       </backend-ai-dialog>
-      <backend-ai-dialog id="new-user-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="new-user-dialog">
         <span slot="title">${_t('credential.CreateUser')}</span>
         <div slot="content">
           <mwc-textfield
@@ -1300,7 +1300,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           @click="${this._addUser}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="export-to-csv">
         <span slot="title">${_t('credential.ExportCSVFile')} (${this._activeTab})</span>
 
         <div slot="content" class="intro centered login-panel">

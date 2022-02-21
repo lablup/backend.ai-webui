@@ -482,7 +482,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
         </lablup-activity-panel>
       </div>
 
-      <backend-ai-dialog id="codemirror-dialog" fixed backdrop scrollable blockScrolling persistent>
+      <backend-ai-dialog id="codemirror-dialog" scrimClickAction="">
         <span slot="title"></span>
         <div slot="content" class="layout vertical">
           <lablup-codemirror id="codemirror-editor" mode="python"></lablup-codemirror>

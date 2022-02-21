@@ -198,7 +198,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </vaadin-grid-column>
 
       </vaadin-grid>
-      <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="modify-policy-dialog" narrowLayout>
         <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
         <div slot="content">
           <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}" disabled></mwc-textfield>
@@ -312,7 +312,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               @click="${() => this._modifyResourcePolicy()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-policy-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="delete-policy-dialog">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('resourcePolicy.AboutToDeleteResourcePolicy')}</p>

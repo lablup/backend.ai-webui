@@ -520,7 +520,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       <div class="card" elevation="0">
       </div>
 
-      <backend-ai-dialog id="pipeline-create-dialog" fixed backdrop>
+      <backend-ai-dialog id="pipeline-create-dialog">
         <span slot="title">
           ${this.pipelineCreateMode === 'create' ? _t('pipeline.PipelineDialog.CreateTitle') : _t('pipeline.PipelineDialog.UpdateTitle')}
         </span>
@@ -575,7 +575,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="pipeline-delete-dialog" fixed backdrop>
+      <backend-ai-dialog id="pipeline-delete-dialog">
         <span slot="title">${_t('pipeline.PipelineDialog.DeleteTitle')}</span>
         <div slot="content" style="width:100%;">
           <p class="warning">${_t('dialog.warning.CannotBeUndone')}</p>

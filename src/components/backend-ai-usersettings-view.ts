@@ -216,7 +216,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog id="clearlogs-dialog" fixed backdrop scrollable blockScrolling>
+      <backend-ai-dialog id="clearlogs-dialog">
         <span slot="title">${_t('dialog.warning.LogDeletion')}</span>
         <div slot="content">${_t('dialog.warning.CannotBeUndone')}</div>
         <div slot="footer" class="horizontal end-justified flex layout">

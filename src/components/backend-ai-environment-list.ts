@@ -897,7 +897,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="modify-image-dialog">
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
           <div class="vertical layout flex">
@@ -976,7 +976,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               @click="${() => this.modifyImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
+      <backend-ai-dialog id="modify-app-dialog">
         <span slot="title">${_t('environment.ManageApps')}</span>
         <div slot="content" id="modify-app-container">
           <div class="row header">
@@ -1031,7 +1031,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               @click="${this.modifyServicePort}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="install-image-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="install-image-dialog" scrimClickAction="">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('environment.DescDownloadImage')}</p>
@@ -1058,7 +1058,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               @click="${() => this._installImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-image-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="delete-image-dialog" scrimClickAction="">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('environment.DescDeleteImage')}</p>
@@ -1085,7 +1085,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               @click="${() => this._deleteImage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-app-info-dialog" fixed backdrop persistent>
+      <backend-ai-dialog id="delete-app-info-dialog" scrimClickAction="">
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
           <p>${_t('environment.DescDeleteAppInfo')}</p>

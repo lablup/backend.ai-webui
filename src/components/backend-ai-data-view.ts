@@ -350,7 +350,7 @@ export default class BackendAIData extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
+      <backend-ai-dialog id="add-folder-dialog">
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
         <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
@@ -424,7 +424,7 @@ export default class BackendAIData extends BackendAIPage {
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="clone-folder-dialog" fixed backdrop>
+      <backend-ai-dialog id="clone-folder-dialog">
         <span slot="title">${_t('data.folders.CloneAFolder')}</span>
         <div slot="content" style="width:100%;">
           <mwc-textfield id="clone-folder-src" label="${_t('data.FolderToCopy')}" value="${this.cloneFolderName}"
@@ -499,7 +499,7 @@ export default class BackendAIData extends BackendAIPage {
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="help-description" fixed backdrop>
+      <backend-ai-dialog id="help-description">
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="horizontal layout center">
         ${this._helpDescriptionIcon == '' ? html`` : html`

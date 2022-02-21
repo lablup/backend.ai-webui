@@ -221,7 +221,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </vaadin-grid>
         </div>
       </div>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="modify-template-dialog" narrowLayout>
         <span slot="title">${_t('resourcePreset.ModifyResourcePreset')}</span>
         <div slot="content">
           <form id="login-form">
@@ -262,7 +262,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="create-preset-dialog" narrowLayout>
         <span slot="title">${_t('resourcePreset.CreateResourcePreset')}</span>
         <div slot="content">
           <mwc-textfield
@@ -307,7 +307,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="delete-resource-preset-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="delete-resource-preset-dialog">
          <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
          <div slot="content">
             <p>${_t('resourcePreset.AboutToDeletePreset')}</p>

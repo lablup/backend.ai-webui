@@ -138,7 +138,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <backend-ai-dialog id="verification-success-dialog" scrimClickAction="" style="padding:0;">
         <span slot="title">${_t('signup.EmailVerified')}</span>
 
         <div slot="content">
@@ -155,7 +155,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <backend-ai-dialog id="verification-fail-dialog" scrimClickAction="" style="padding:0;">
         <span slot="title">${_t('signup.EmailVerificationFailed')}</span>
 
         <div slot="content">

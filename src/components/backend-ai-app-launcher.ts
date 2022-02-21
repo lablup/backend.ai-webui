@@ -1019,7 +1019,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
+      <backend-ai-dialog id="app-dialog" narrowLayout>
         <div slot="title" class="horizontal layout center">
           <span>App</span>
         </div>
@@ -1062,7 +1062,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" >
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
@@ -1106,7 +1106,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="vnc-dialog" fixed backdrop>
+      <backend-ai-dialog id="vnc-dialog">
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.UseYourFavoriteVNCApp')}</div>
@@ -1117,7 +1117,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
+      <backend-ai-dialog id="xrdp-dialog">
         <span slot="title">${_t('session.XRDPconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.UseYourFavoriteMSTSCApp')}</div>
@@ -1128,7 +1128,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+      <backend-ai-dialog id="app-launch-confirmation-dialog" warning>
         <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
         <div slot="content" class="vertical layout">
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
@@ -1145,7 +1145,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="terminal-guide" fixed backdrop>
+      <backend-ai-dialog id="terminal-guide">
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>

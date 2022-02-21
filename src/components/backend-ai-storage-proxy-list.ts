@@ -467,7 +467,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
+      <backend-ai-dialog id="storage-proxy-detail" scrimClickAction="" scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">

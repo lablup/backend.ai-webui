@@ -2519,7 +2519,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         <wl-icon>power_settings_new</wl-icon>
         <span>${_t('session.launcher.Start')}</span>
       </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
+      <backend-ai-dialog id="new-session-dialog" narrowLayout scrimClickAction="">
         <span
           slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered">
@@ -2925,7 +2925,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
+    <backend-ai-dialog id="modify-env-dialog" scrimClickAction="" closeWithConfirmation>
       <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
       <span slot="action">
         <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
@@ -2980,7 +2980,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
             @click="${()=>this.modifyEnv()}"></mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="help-description" fixed backdrop>
+    <backend-ai-dialog id="help-description">
       <span slot="title">${this._helpDescriptionTitle}</span>
       <div slot="content" class="horizontal layout center" style="margin:5px;">
       ${this._helpDescriptionIcon == '' ? html`` : html`
@@ -2989,7 +2989,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>
+    <backend-ai-dialog id="launch-confirmation-dialog" warning>
       <span slot="title">${_t('session.launcher.NoFolderMounted')}</span>
       <div slot="content" class="vertical layout">
         <p>${_t('session.launcher.HomeDirectoryDeletionDialog')}</p>
@@ -3007,7 +3007,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         </mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-dialog id="env-config-confirmation" warning fixed>
+    <backend-ai-dialog id="env-config-confirmation" warning>
       <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
       <div slot="content">
         <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>

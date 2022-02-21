@@ -37,7 +37,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) scrollable = false;
   @property({type: Boolean}) backdrop = false;
   @property({type: Boolean}) noclosebutton = false;
-  @property({type: Boolean}) persistent = false;
+  @property({type: String}) scrimClickAction= '';
   @property({type: Boolean}) blockscrolling = false;
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
@@ -121,19 +121,10 @@ export default class BackendAiDialog extends LitElement {
 
   firstUpdated() {
     this.open = this.dialog.open;
-    if (this.persistent) {
-      this.dialog.scrimClickAction = '';
-    }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;
     });
     this.dialog.addEventListener('closed', (e) => {
-      // execute action only if the event target is dialog
-      if (e.target.id === 'dialog' && 'action' in e.detail && e.detail.action === 'persistent') {
-        this.show();
-      } else {
-        this.open = this.dialog.open;
-      }
 
       /**
        * custom event for bubbling event of closing dialog
@@ -189,13 +180,10 @@ export default class BackendAiDialog extends LitElement {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <mwc-dialog id="dialog"
-                    ?fixed="${(this.fixed)}"
                     ?narrow="${(this.narrowLayout)}"
-                    ?backdrop="${this.backdrop}"
-                    ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
-                    blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
+                    scrimClickAction="${this.scrimClickAction}"
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold">

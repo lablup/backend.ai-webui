@@ -492,7 +492,7 @@ export default class BackendAiSessionView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog id="export-to-csv" fixed backdrop>
+      <backend-ai-dialog id="export-to-csv">
         <span slot="title">${_t('session.ExportSessionListToCSVFile')}</span>
         <div slot="content">
           <mwc-textfield id="export-file-name" label="File name"

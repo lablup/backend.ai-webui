@@ -342,7 +342,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="component-add-dialog" fixed backdrop>
+      <backend-ai-dialog id="component-add-dialog">
         <span slot="title">
           ${this.componentCreateMode === 'create' ? _t('pipeline.ComponentDialog.CreateTitle') : _t('pipeline.ComponentDialog.UpdateTitle')}
         </span>
@@ -369,7 +369,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="component-delete-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="component-delete-dialog">
         <span slot="title">${_t('pipeline.ComponentDialog.DeleteTitle')}</span>
         <div slot="content" class="layout vertical">
           <p>${_t('session.CheckAgainDialog')}</p>

@@ -897,7 +897,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
+      <backend-ai-dialog id="agent-detail" scrimClickAction="">
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
           <div class="horizontal start start-justified layout">
@@ -1027,7 +1027,7 @@ export default class BackendAIAgentList extends BackendAIPage {
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
+      <backend-ai-dialog id="agent-setting" scrimClickAction="" scrollable>
         <span slot="title">${_t('agent.AgentSetting')}</span>
         <div slot="content" class="horizontal layout justified center">
           <span>${_t('agent.Schedulable')}</span>
