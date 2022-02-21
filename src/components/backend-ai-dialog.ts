@@ -43,7 +43,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
-  @property({type: Boolean}) preventEscapeKeyClose = false;
+  @property({type: String}) escapeKeyAction = 'close';
 
   @query('#dialog') protected dialog;
 
@@ -125,7 +125,6 @@ export default class BackendAiDialog extends LitElement {
     if (this.persistent) {
       this.dialog.scrimClickAction = '';
     }
-    this.checkPreventEscapeKeyClose();
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;
     });
@@ -162,19 +161,7 @@ export default class BackendAiDialog extends LitElement {
    * Open a dialog.
    */
   show() {
-    this.checkPreventEscapeKeyClose();
     this.dialog.show();
-  }
-
-  /**
-   * check preventEscapeKeyClose and apply it to current dialog
-   */
-  checkPreventEscapeKeyClose() {
-    if (this.preventEscapeKeyClose) {
-      this.dialog.escapeKeyAction = '';
-    } else {
-      this.dialog.escapeKeyAction = close;
-    }
   }
 
   /**
@@ -210,7 +197,7 @@ export default class BackendAiDialog extends LitElement {
                     ?backdrop="${this.backdrop}"
                     ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
-                    ?preventEscapeKeyClose="${this.preventEscapeKeyClose}"
+                    escapeKeyAction="${this.escapeKeyAction}"
                     blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">

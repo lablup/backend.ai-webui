@@ -572,10 +572,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockMessage = message;
     this.blockType = type;
     if (message === _text('login.PleaseWait') && type === _text('login.ConnectingToCluster')) {
-      this.blockPanel.preventEscapeKeyClose = true;
+      this.blockPanel.escapeKeyAction = '';
       this.blockPanel.closeWithConfirmation = true;
     } else {
-      this.blockPanel.preventEscapeKeyClose = false;
+      this.blockPanel.escapeKeyAction = 'close';
       this.blockPanel.closeWithConfirmation = false;
     }
     setTimeout(() => {
@@ -1128,7 +1128,7 @@ export default class BackendAILogin extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap preventEscapeKeyClose>
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap escapeKeyAction>
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
