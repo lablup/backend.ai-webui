@@ -2770,7 +2770,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
-  moveProgress(n) {
+  async moveProgress(n) {
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     this.currentIndex += n;
     // limit the range of progress number
@@ -2790,6 +2790,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
+    if(this.currentIndex === 2) {
+      await this._fetchDelegatedSessionVfolder();
+    }
   }
 
   /**
@@ -3120,8 +3123,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </mwc-select>
                 </div>
                 <div class="horizontal layout start-justified center">
-                <mwc-checkbox id="owner-enabled"
-                              @change="${() => this._fetchDelegatedSessionVfolder()}">
+                <mwc-checkbox id="owner-enabled">
                 </mwc-checkbox>
                 <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>

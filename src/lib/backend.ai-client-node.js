@@ -1420,16 +1420,15 @@ class VFolder {
      */
     async list(groupId = null, userEmail = null) {
         let reqUrl = this.urlPrefix;
-        if (groupId || userEmail) {
-            let params = {
-                group_id: groupId,
-            };
-            if (userEmail) {
-                params['user_id'] = userEmail;
-            };
-            const q = querystring.stringify(params);
-            reqUrl += `?${q}`;
+        let params = {};
+        if (groupId) {
+            params['group_id'] = groupId;
         }
+        if (userEmail) {
+            params['user_id'] = userEmail;
+        }
+        const q = querystring.stringify(params);
+        reqUrl += `?${q}`;
         let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
