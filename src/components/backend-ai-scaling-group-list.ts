@@ -331,7 +331,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.selectedIndex = rowData.index;
     this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
     Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
-      this._initializeCreateSchedulerOpts(key, value);
+      this._initializeModifySchedulerOpts(key, value);
     });
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
@@ -535,7 +535,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @param {String} name - scheduler option key in selected scalingGroup
    * @param {Any} value - scheduler option value in selected scalingGroup
    * */
-  _initializeCreateSchedulerOpts(name = '', value: any) {
+  _initializeModifySchedulerOpts(name = '', value: any) {
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
@@ -554,9 +554,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * reset all value to default in scheduler option input form
+   * reset all value to default in scheduler option input form in create dialog
    * */
-  _initializeModifySchedulerOpts() {
+  _initializeCreateSchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
@@ -631,7 +631,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _launchCreateDialog() {
-    this._initializeModifySchedulerOpts();
+    this._initializeCreateSchedulerOpts();
     this._launchDialogById('#create-scaling-group-dialog');
   }
 
