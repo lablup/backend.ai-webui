@@ -16,10 +16,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import {css, customElement} from 'lit-element';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 import {TopAppBarBase} from '@material/mwc-top-app-bar/mwc-top-app-bar-base';
-import {style} from '@material/mwc-top-app-bar/mwc-top-app-bar-css';
+import {styles} from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -30,7 +31,7 @@ declare global {
 @customElement('mwc-top-app-bar')
 export class TopAppBar extends TopAppBarBase {
   static get styles() {
-    return [style,
+    return [styles,
       css`
         .mdc-top-app-bar {
           width: calc(100% - var(--mdc-drawer-width, 256px));

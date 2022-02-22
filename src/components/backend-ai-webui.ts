@@ -226,7 +226,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 .includes('reload')
           );
           tabcount.tabsCount(true);
-          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded) {
             this.loginPanel.check_login().then((result) => {
               const current_time: number = new Date().getTime() / 1000;
               if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { // currently login.
@@ -306,7 +306,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       // console.log(this.connection_server);
     }
-    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general) ? config.general.autoLogout : globalThis.backendaioptions.get('auto_logout', false);
+    if ((typeof config.general !== 'undefined' && 'autoLogout' in config.general) && globalThis.backendaioptions.get('auto_logout') === null) {
+      this.auto_logout = config.general.autoLogout;
+    } else {
+      this.auto_logout = globalThis.backendaioptions.get('auto_logout', false);
+    }
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
@@ -1360,7 +1364,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.09.3.220113</small>
+                <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1384,7 +1388,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.09.3.220113</small>
+              <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
