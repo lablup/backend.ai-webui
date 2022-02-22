@@ -192,9 +192,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           font-size: 12px;
           font-weight: 100;
         }
-        vaadin-item:hover {
-          background-color: transparent;
-        }
 
         .scheduler-option-value {
           font-size: 16px;
@@ -204,10 +201,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         #resource-group-detail-dialog wl-textarea {
           --input-border-width: 0;
           margin-bottom: 0px;
+          --input-padding-top-bottom: 0px;
           --textarea-height: 100px;
-          --input-border-radius-outlined: 0px;
-          --input-bg: transparent;
-          --input-bg-filled-hover: transparent;
         }
       `
     ];
@@ -886,8 +881,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               </h4>
               <wl-textarea
               readonly
-              filled
-              outlined
               value="${this.scalingGroups[this.selectedIndex].description}">
               </wl-textarea>
             </div>
