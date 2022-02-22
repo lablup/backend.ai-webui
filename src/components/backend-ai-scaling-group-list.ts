@@ -530,7 +530,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * reset all value to default in scheduler option input form in create dialog
+   * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
@@ -545,7 +545,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * set selected scaling group's values to scheduler option input form in modify-dialog.
+   * set selected scaling group's values to scheduler option input form in modify dialog.
    *
    * @param {String} name - scheduler option key in selected scalingGroup
    * @param {Any} value - scheduler option value in selected scalingGroup
@@ -569,7 +569,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * verify create dialog's schedulerOptions key and value
+   * verify create dialog's schedulerOptions key and value.
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
@@ -584,7 +584,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * verify modify dialog's schedulerOptions key and value
+   * verify modify dialog's schedulerOptions key and value.
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
@@ -599,7 +599,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * save create dialog's SchedulerOptsInputForms value to schedulerOpts property
+   * save create dialog's SchedulerOptsInputForms value to schedulerOpts property.
    * */
   _saveCreateSchedulerOpts() {
     this.schedulerOpts = {};
@@ -615,7 +615,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * save modify dialog's SchedulerOptsInputForms value to schedulerOpts property
+   * save modify dialog's SchedulerOptsInputForms value to schedulerOpts property.
    * */
   _saveModifySchedulerOpts() {
     this.schedulerOpts = {};
