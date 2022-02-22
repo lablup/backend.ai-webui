@@ -522,7 +522,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     allowedSessionTypes.value= 'both';
     schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
-      pendingTimeout.value = 0;
+      pendingTimeout.value = '';
     }
   }
 
@@ -589,8 +589,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
       this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
+    } 
+    if (pendingTimeout.value !== '') {
+      this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
     }
-    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
 
   /**
@@ -605,8 +607,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
       this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
+    } 
+    if (pendingTimeout.value !== '') {
+      this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
     }
-    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
 
   _launchCreateDialog() {
@@ -700,7 +704,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               placeholder="0"
               suffix="${_t('resourceGroup.TimeoutSeconds')}"
               validationMessage="${_t('settings.InvalidValue')}"
-              required
               autoValidate
               min="0"
             ></mwc-textfield>
@@ -766,7 +769,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               placeholder="0"
               suffix="${_t('resourceGroup.TimeoutSeconds')}"
               validationMessage="${_t('settings.InvalidValue')}"
-              required
               autoValidate
               min="0"
             ></mwc-textfield>
