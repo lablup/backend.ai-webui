@@ -58,8 +58,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Object}) schedulerOpts;
-  @property({type: Object}) allowedSessionType;
-  @property({type: Object}) pendingTimeout;
   @property({type: Object}) allowedSessionTypeObjects = {
     'interactive': 'interactive',
     'batch': 'batch',
@@ -333,7 +331,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.selectedIndex = rowData.index;
     this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
     Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
-      this._setSchedulerOptsInputForm(key, value);
+      this._initializeCreateSchedulerOpts(key, value);
     });
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
@@ -407,9 +405,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * */
   _createScalingGroup() {
     const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
-    this._saveOpenedDialogToProperty();
-    if (scalingGroupEl.checkValidity() && this._verifySchedulerOpts()) {
-      this._saveSchedulerOpts();
+    if (scalingGroupEl.checkValidity() && this._verifyCreateSchedulerOpts()) {
+      this._saveCreateSchedulerOpts();
       const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
       const description = this.shadowRoot.querySelector('#scaling-group-description').value;
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
@@ -456,11 +453,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * Modify scaling group such as description, scheduler, is_active, and name.
    * */
   _modifyScalingGroup() {
-    this._saveOpenedDialogToProperty();
-    if (this._verifySchedulerOpts() === false) {
+    if (this._verifyModifySchedulerOpts() === false) {
       return;
     }
-    this._saveSchedulerOpts();
+    this._saveModifySchedulerOpts();
     const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
@@ -539,7 +535,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @param {String} name - scheduler option key in selected scalingGroup
    * @param {Any} value - scheduler option value in selected scalingGroup
    * */
-  _setSchedulerOptsInputForm(name = '', value: any) {
+  _initializeCreateSchedulerOpts(name = '', value: any) {
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
@@ -560,7 +556,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * reset all value to default in scheduler option input form
    * */
-  _resetAllSchedulerOptsValues() {
+   _initializeModifySchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
@@ -573,48 +569,69 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * verify schedulerOptions key and value
+   * verify create dialog's schedulerOptions key and value 
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
-  _verifySchedulerOpts() {
-    let isValid = true;
-
-    if (this.allowedSessionType.checkValidity() === false || this.pendingTimeout.checkValidity() === false) {
-      isValid = false;
+  _verifyCreateSchedulerOpts() {
+    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+    
+    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+      return false;
     }
-    return isValid;
+    return true;
   }
 
   /**
-   * save SchedulerOptsInputForms value to schedulerOpts property
+   * verify modify dialog's schedulerOptions key and value
+   *
+   * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
-  _saveSchedulerOpts() {
+   _verifyModifySchedulerOpts() {
+    const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
+
+    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * save create dialog's SchedulerOptsInputForms value to schedulerOpts property
+   * */
+  _saveCreateSchedulerOpts() {
     this.schedulerOpts = {};
-    if (this.allowedSessionType.value === 'both') {
+    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+    
+    if (allowedSessionType.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.schedulerOpts['allowed_session_types'] = [this.allowedSessionType.value];
+      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
     }
-    this.schedulerOpts['pending_timeout'] = this.pendingTimeout.value;
+    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
 
   /**
-   * find opened dialog and
-   * save scheduler option input form element of opened dialog to property.
+   * save modify dialog's SchedulerOptsInputForms value to schedulerOpts property
    * */
-  _saveOpenedDialogToProperty() {
-    if (this.shadowRoot.querySelector('#create-scaling-group-dialog').open) {
-      this.allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
-      this.pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+   _saveModifySchedulerOpts() {
+    this.schedulerOpts = {};
+    const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
+
+    if (allowedSessionType.value === 'both') {
+      this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
-      this.pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
+      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
     }
+    this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
 
   _launchCreateDialog() {
-    this._resetAllSchedulerOptsValues();
+    this._initializeModifySchedulerOpts();
     this._launchDialogById('#create-scaling-group-dialog');
   }
 
