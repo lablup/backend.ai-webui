@@ -129,6 +129,7 @@
       "Environments": "Ympäristöt",
       "Start": "alkaa",
       "FolderToMount": "Asennettava kansio",
+      "FolderToMountList": "Asennettava kansio",
       "ResourceAllocation": "Resurssien kohdentaminen",
       "NoSuitablePreset": "Ei sopivaa esiasetusta",
       "Advanced": "Pitkälle kehittynyt",
