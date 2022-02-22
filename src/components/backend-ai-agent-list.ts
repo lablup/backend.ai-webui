@@ -876,7 +876,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                    .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                             .renderer="${this._boundRegionRenderer}">
