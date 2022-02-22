@@ -129,6 +129,7 @@
       "Environments": "Umgebungen",
       "Start": "Start",
       "FolderToMount": "Ordner zum Einhängen",
+      "FolderToMountList": "Ordner zum Einhängen",
       "ResourceAllocation": "Ressourcenzuweisung",
       "NoSuitablePreset": "Keine passende Voreinstellung",
       "Advanced": "Fortgeschritten",

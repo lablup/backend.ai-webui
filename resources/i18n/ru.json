@@ -129,6 +129,7 @@
       "Environments": "Вычислительные среды",
       "Start": "Старт",
       "FolderToMount": "Папка для монтажа",
+      "FolderToMountList": "Папка для монтажа",
       "ResourceAllocation": "Распределение ресурсов",
       "NoSuitablePreset": "Нет подходящей предустановки",
       "Advanced": "Продвинутый",
