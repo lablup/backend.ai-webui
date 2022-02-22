@@ -559,6 +559,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 50%;
           --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
+          --mdc-menu-min-width: 200px;
         }
 
         mwc-textfield {
@@ -2256,6 +2257,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
       this.shadowRoot.querySelector('#owner-accesskey').select(0);
+      this.shadowRoot.querySelector('#owner-accesskey').createAdapter().setSelectedText(this.ownerKeypairs[0]['access_key']);
     });
 
     /* Fetch domain / group information */
@@ -2265,6 +2267,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerGroups) {
       this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerGroups[0]['name']);
       });
     }
   }
@@ -2280,6 +2283,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
       });
     }
   }
@@ -3080,7 +3084,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 `}
             </div>
-              <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
