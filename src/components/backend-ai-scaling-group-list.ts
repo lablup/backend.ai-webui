@@ -556,7 +556,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * reset all value to default in scheduler option input form
    * */
-   _initializeModifySchedulerOpts() {
+  _initializeModifySchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
@@ -569,14 +569,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
-   * verify create dialog's schedulerOptions key and value 
+   * verify create dialog's schedulerOptions key and value
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifyCreateSchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
-    
+
     if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
       return false;
     }
@@ -588,7 +588,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    *
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
-   _verifyModifySchedulerOpts() {
+  _verifyModifySchedulerOpts() {
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
@@ -605,7 +605,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.schedulerOpts = {};
     const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
-    
+
     if (allowedSessionType.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
@@ -617,7 +617,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   /**
    * save modify dialog's SchedulerOptsInputForms value to schedulerOpts property
    * */
-   _saveModifySchedulerOpts() {
+  _saveModifySchedulerOpts() {
     this.schedulerOpts = {};
     const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
