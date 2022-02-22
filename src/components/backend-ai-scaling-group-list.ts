@@ -58,7 +58,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Object}) schedulerOpts;
-  @property({type: Object}) allowedSessionTypeObjects = {
+  @property({type: Object}) allowedSessionTypesObjects = {
     'interactive': 'interactive',
     'batch': 'batch',
     'both': 'both (interactive, batch)'
@@ -203,6 +203,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-bottom: 0px;
           --input-padding-top-bottom: 0px;
           --textarea-height: 100px;
+          --input-padding-left-right: 12px;
         }
       `
     ];
@@ -305,63 +306,49 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _controlRenderer(root, column, rowData) {
+    const launchDetailDialog = () => {
+      this.selectedIndex = rowData.index;
+      this._launchDialogById('#resource-group-detail-dialog');
+    };
+
+    const launchModifyDialog = () => {
+      this.selectedIndex = rowData.index;
+      this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
+      Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
+        this._initializeModifySchedulerOpts(key, value);
+      });
+      this._launchDialogById('#modify-scaling-group-dialog');
+    };
+
+    const launchDeleteDialog = () => {
+      this.selectedIndex = rowData.index;
+      this._launchDialogById('#delete-scaling-group-dialog');
+    };
+
     render(
       html`
         <div
           id="controls"
           class="layout horizontal flex center"
         >
-        <wl-button fab flat inverted
-          icon="device_hub"
-          class="fg green"
-          @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._launchDialogById('#resource-group-detail-dialog');
-  }}
-      ><wl-icon>assignment</wl-icon></wl-button>
+          <wl-button fab flat inverted
+            icon="device_hub"
+            class="fg green"
+            @click=${launchDetailDialog}
+          ><wl-icon>assignment</wl-icon></wl-button>
           <wl-button fab flat inverted
             icon="settings"
             class="fg blue"
-            @click=${() => {
-    this.selectedIndex = rowData.index;
-    this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
-    Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
-      this._initializeModifySchedulerOpts(key, value);
-    });
-    this._launchDialogById('#modify-scaling-group-dialog');
-  }}
+            @click=${launchModifyDialog}
           ><wl-icon>settings</wl-icon></wl-button>
           <wl-button fab flat inverted
             icon="delete"
             class="fg red"
-            @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._launchDialogById('#delete-scaling-group-dialog');
-  }}><wl-icon>delete</wl-icon></wl-button>
+            @click=${launchDeleteDialog}
+          ><wl-icon>delete</wl-icon></wl-button>
         </div>
       `, root
     );
-  }
-
-  _schedulerOptionsRenderer() {
-    const scheduler_opts = Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts));
-    const _schedulerKeyValueTemplate = (key, value) => {
-      return html`
-      <vaadin-item>
-        <div><strong>${key}</strong></div>
-        <div class="scheduler-option-value">${value}</div>
-      </vaadin-item>`;
-    };
-
-    return scheduler_opts.map((item: any) => {
-      if (item[0] === 'allowed_session_types') {
-        return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1].join(', '));
-      } else if (item[0] === 'pending_timeout') {
-        return _schedulerKeyValueTemplate(item[0].replaceAll('_', ' '), item[1] + ' ' + _text('resourceGroup.TimeoutSeconds'));
-      } else {
-        return '';
-      }
-    });
   }
 
   _validateResourceGroupName() {
@@ -528,11 +515,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
-    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
 
-    allowedSessionType.value= 'both';
+    allowedSessionTypes.value= 'both';
     schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
       pendingTimeout.value = 0;
@@ -546,20 +533,17 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @param {Any} value - scheduler option value in selected scalingGroup
    * */
   _initializeModifySchedulerOpts(name = '', value: any) {
-    const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
-    switch (name) {
-    case 'allowed_session_types':
+    if ('allowed_session_types' === name) {
       if (value.includes('interactive') && value.includes('batch')) {
-        allowedSessionType.value = 'both';
+        allowedSessionTypes.value = 'both';
       } else {
-        allowedSessionType.value = value[0];
+        allowedSessionTypes.value = value[0];
       }
-      break;
-    case 'pending_timeout':
+    } else if ('pending_timeout' === name) {
       pendingTimeout.value = value;
-      break;
     }
   }
 
@@ -569,10 +553,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifyCreateSchedulerOpts() {
-    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
 
-    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+    if (allowedSessionTypes.checkValidity() === false || pendingTimeout.checkValidity() === false) {
       return false;
     }
     return true;
@@ -584,10 +568,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifyModifySchedulerOpts() {
-    const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
-    if (allowedSessionType.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+    if (allowedSessionTypes.checkValidity() === false || pendingTimeout.checkValidity() === false) {
       return false;
     }
     return true;
@@ -598,13 +582,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * */
   _saveCreateSchedulerOpts() {
     this.schedulerOpts = {};
-    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#create-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
 
-    if (allowedSessionType.value === 'both') {
+    if (allowedSessionTypes.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
+      this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
     }
     this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
@@ -614,13 +598,13 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * */
   _saveModifySchedulerOpts() {
     this.schedulerOpts = {};
-    const allowedSessionType = this.shadowRoot.querySelector('#modify-allowed-session-types');
+    const allowedSessionTypes = this.shadowRoot.querySelector('#modify-allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#modify-pending-timeout');
 
-    if (allowedSessionType.value === 'both') {
+    if (allowedSessionTypes.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.schedulerOpts['allowed_session_types'] = [allowedSessionType.value];
+      this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
     }
     this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
   }
@@ -704,7 +688,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="create-allowed-session-types"
             label="allowed session types"
             required>
-              ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
+              ${Object.entries(this.allowedSessionTypesObjects).map(([key, value]) => {
     return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
   })}
             </mwc-select>
@@ -770,7 +754,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             id="modify-allowed-session-types"
             label="allowed session types"
             required>
-              ${Object.entries(this.allowedSessionTypeObjects).map(([key, value]) => {
+              ${Object.entries(this.allowedSessionTypesObjects).map(([key, value]) => {
     return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
   })}
             </mwc-select>
@@ -863,7 +847,23 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                     ${_t('resourceGroup.SchedulerOptions')}
                   </h4>
                   <div role="listbox">
-                    ${this._schedulerOptionsRenderer()}
+                    ${Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).map(([key, value]: any) => {
+    if (key === 'allowed_session_types') {
+      return html`
+      <vaadin-item>
+        <div><strong>allowed session types</strong></div>
+        <div class="scheduler-option-value">${value.join(', ')}</div>
+      </vaadin-item>`;
+    } else if (key === 'pending_timeout') {
+      return html`
+      <vaadin-item>
+        <div><strong>pending timeout</strong></div>
+        <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+      </vaadin-item>`;
+    } else {
+      return '';
+    }
+  })}
                   </div>
                 </div>
                 <div>
