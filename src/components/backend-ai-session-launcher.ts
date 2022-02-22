@@ -2288,9 +2288,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     const userEmail = this.shadowRoot.querySelector('#owner-email').value;
     if (ownerEnabled && ownerEnabled.checked) {
-      await this.resourceBroker.updateVirtualFolderList(userEmail).then(() => {
-        this.vfolders = this.resourceBroker.vfolders;
-      });
+      await this.resourceBroker.updateVirtualFolderList(userEmail)
+      this.vfolders = this.resourceBroker.vfolders;
     } else {
       await this._updateVirtualFolderList();
     }
