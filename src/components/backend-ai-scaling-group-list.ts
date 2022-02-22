@@ -530,6 +530,21 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   /**
+   * reset all value to default in scheduler option input form in create dialog
+   * */
+  _initializeCreateSchedulerOpts() {
+    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
+    const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
+    const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
+
+    allowedSessionType.value= 'both';
+    schedulerOptsInputForms.checked = false;
+    if (pendingTimeout?.value) {
+      pendingTimeout.value = 0;
+    }
+  }
+
+  /**
    * set selected scaling group's values to scheduler option input form in modify-dialog.
    *
    * @param {String} name - scheduler option key in selected scalingGroup
@@ -550,21 +565,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     case 'pending_timeout':
       pendingTimeout.value = value;
       break;
-    }
-  }
-
-  /**
-   * reset all value to default in scheduler option input form in create dialog
-   * */
-  _initializeCreateSchedulerOpts() {
-    const allowedSessionType = this.shadowRoot.querySelector('#create-allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#create-pending-timeout');
-    const schedulerOptsInputForms = this.shadowRoot.querySelector('#create-scheduler-options-input-form');
-
-    allowedSessionType.value= 'both';
-    schedulerOptsInputForms.checked = false;
-    if (pendingTimeout?.value) {
-      pendingTimeout.value = 0;
     }
   }
 
@@ -667,7 +667,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling scrollable>
+      <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>
         <div slot="content" class="login-panel intro centered">
           <mwc-select
@@ -738,7 +738,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
               @click="${this._createScalingGroup}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling scrollable>
+      <backend-ai-dialog id="modify-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.ModifyResourceGroup')}</span>
         <div slot="content" class="vertical layout wrap">
           <div class="horizontal layout flex wrap center justified">
