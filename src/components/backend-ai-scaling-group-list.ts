@@ -589,7 +589,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
       this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
-    } 
+    }
     if (pendingTimeout.value !== '') {
       this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
     }
@@ -607,7 +607,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
       this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
-    } 
+    }
     if (pendingTimeout.value !== '') {
       this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
     }
