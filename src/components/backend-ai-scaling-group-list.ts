@@ -388,7 +388,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
       const wsproxyAddress = this.shadowRoot.querySelector('#scaling-group-wsproxy-address').value;
       const schedulerOptions = JSON.stringify(this.schedulerOpts);
-      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, schedulerOptions, wsproxyAddress)
+      globalThis.backendaiclient.scalingGroup.create(scalingGroup, description, wsproxyAddress, schedulerOptions)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
             return globalThis.backendaiclient.scalingGroup.associate_domain(domain, scalingGroup);

@@ -3168,7 +3168,7 @@ class ScalingGroup {
      * @param {string} description - Scaling group description
      * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
      */
-    async create(name, description = "", scheduler_opts = "{}", wsproxyAddress = null) {
+    async create(name, description = "", wsproxyAddress = null, scheduler_opts = "{}") {
         const input = {
             description: description,
             is_active: true,
