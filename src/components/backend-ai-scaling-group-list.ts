@@ -99,6 +99,10 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           margin-top: 20px;
         }
 
+        backend-ai-dialog {
+          --component-min-width: 350px;
+        }
+
         backend-ai-dialog wl-textarea,
         backend-ai-dialog wl-select {
           margin-bottom: 20px;
@@ -156,10 +160,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           --mdc-menu-item-height: 20px;
         }
 
-        backend-ai-dialog {
-          --component-min-width: 350px;
-        }
-
         #resource-group-detail-dialog {
           --component-width: 500px;
         }
@@ -199,11 +199,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         }
 
         #resource-group-detail-dialog wl-textarea {
-          --input-border-width: 0;
           margin-bottom: 0px;
+          --input-border-width: 0;
           --input-padding-top-bottom: 0px;
-          --textarea-height: 100px;
           --input-padding-left-right: 12px;
+          --input-font-size: 0.75rem;
+          --textarea-height: 100px;
         }
       `
     ];
@@ -306,43 +307,36 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   _controlRenderer(root, column, rowData) {
+    this.selectedIndex = rowData.index;
     const launchDetailDialog = () => {
-      this.selectedIndex = rowData.index;
       this._launchDialogById('#resource-group-detail-dialog');
     };
 
     const launchModifyDialog = () => {
-      this.selectedIndex = rowData.index;
-      this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[rowData.index].is_active;
-      Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).forEach(([key, value]) => {
+      this.shadowRoot.querySelector('#modify-scaling-group-active').selected = this.scalingGroups[this.selectedIndex].is_active;
+      const schedulerOpts = JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts);
+      Object.entries(schedulerOpts).forEach(([key, value]) => {
         this._initializeModifySchedulerOpts(key, value);
       });
       this._launchDialogById('#modify-scaling-group-dialog');
     };
 
     const launchDeleteDialog = () => {
-      this.selectedIndex = rowData.index;
       this._launchDialogById('#delete-scaling-group-dialog');
     };
 
     render(
       html`
-        <div
-          id="controls"
-          class="layout horizontal flex center"
-        >
+        <div id="controls" class="layout horizontal flex center">
           <wl-button fab flat inverted
-            icon="device_hub"
             class="fg green"
             @click=${launchDetailDialog}
           ><wl-icon>assignment</wl-icon></wl-button>
           <wl-button fab flat inverted
-            icon="settings"
             class="fg blue"
             @click=${launchModifyDialog}
           ><wl-icon>settings</wl-icon></wl-button>
           <wl-button fab flat inverted
-            icon="delete"
             class="fg red"
             @click=${launchDeleteDialog}
           ><wl-icon>delete</wl-icon></wl-button>
@@ -544,6 +538,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       }
     } else if ('pending_timeout' === name) {
       pendingTimeout.value = value;
+    } else {
+      // other scheduler options
     }
   }
 
@@ -742,6 +738,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <mwc-textarea
             id="modify-scaling-group-description"
             type="text"
+            maxLength="512"
             label="${_t('resourceGroup.Description')}"
             value=${this.scalingGroups.length === 0 ? '' : this.scalingGroups[this.selectedIndex].description ?? ''}
           ></mwc-textarea>
@@ -852,16 +849,16 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
                     ${Object.entries(JSON.parse(this.scalingGroups[this.selectedIndex].scheduler_opts)).map(([key, value]: any) => {
     if (key === 'allowed_session_types') {
       return html`
-      <vaadin-item>
-        <div><strong>allowed session types</strong></div>
-        <div class="scheduler-option-value">${value.join(', ')}</div>
-      </vaadin-item>`;
+                        <vaadin-item>
+                          <div><strong>allowed session types</strong></div>
+                          <div class="scheduler-option-value">${value.join(', ')}</div>
+                        </vaadin-item>`;
     } else if (key === 'pending_timeout') {
       return html`
-      <vaadin-item>
-        <div><strong>pending timeout</strong></div>
-        <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
-      </vaadin-item>`;
+                        <vaadin-item>
+                          <div><strong>pending timeout</strong></div>
+                          <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+                        </vaadin-item>`;
     } else {
       return '';
     }
