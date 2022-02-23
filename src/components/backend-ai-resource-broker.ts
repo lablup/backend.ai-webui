@@ -363,7 +363,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * Update virtual folder list. Also divide automount folders from general ones.
    *
    */
-   async updateVirtualFolderList(userEmail = null) {
+  async updateVirtualFolderList(userEmail = null) {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }

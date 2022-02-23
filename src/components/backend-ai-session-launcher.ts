@@ -2292,7 +2292,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     const userEmail = this.shadowRoot.querySelector('#owner-email').value;
     if (ownerEnabled && ownerEnabled.checked) {
-      await this.resourceBroker.updateVirtualFolderList(userEmail)
+      await this.resourceBroker.updateVirtualFolderList(userEmail);
       this.vfolders = this.resourceBroker.vfolders;
     } else {
       await this._updateVirtualFolderList();
@@ -2793,7 +2793,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
-    if(this.currentIndex === 2) {
+    if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
     }
   }
