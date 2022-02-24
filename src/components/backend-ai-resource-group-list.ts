@@ -380,9 +380,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       const input = {
         description: description,
         is_active: true,
-        driver: "static",
-        driver_opts: "{}",
-        scheduler: "fifo",
+        driver: 'static',
+        driver_opts: '{}',
+        scheduler: 'fifo',
       };
 
       if (this.enableSchedulerOpts) {
@@ -628,7 +628,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
   /**
    * Open the deleteDialog to remove the resource group(scaling group)
-   * 
+   *
    * @param {Object} resourceGroup - resource group object selected by delete icon click event trigger
    */
   _launchDeleteDialog(resourceGroup: Object) {
@@ -638,17 +638,17 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
   /**
    * Open the deleteDialog to remove the resource group(scaling group)
-   * 
+   *
    * @param {Object} resourceGroup - resource group object selected by detail icon click event trigger
    */
   _launchDetailDialog(resourceGroup: Object) {
     this.resourceGroupInfo = resourceGroup;
     this._launchDialogById('#resource-group-detail-dialog');
-  };
+  }
 
   /**
    * Open the deleteDialog to remove the resource group(scaling group)
-   * 
+   *
    * @param {Object} resourceGroup - resource group object selected by edit icon click event trigger
    */
   _launchModifyDialog(resourceGroup: Object) {
@@ -754,9 +754,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <mwc-select id="allowed-session-types" label="allowed session types" required>
                 ${Object.entries(this.allowedSessionTypesObjects).map(([key, value]) => {
-                    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
-                  })
-                }
+    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
+  })
+}
               </mwc-select>
               <mwc-textfield
                 type="number"
@@ -858,22 +858,22 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   <div role="listbox">
                     ${this.enableSchedulerOpts ? html`
                       ${Object.entries(JSON.parse(this.resourceGroupInfo?.scheduler_opts)).map(([key, value]: any) => {
-                        if (key === 'allowed_session_types') {
-                          return html`
+    if (key === 'allowed_session_types') {
+      return html`
                                   <vaadin-item>
                                     <div><strong>allowed session types</strong></div>
                                     <div class="scheduler-option-value">${value.join(', ')}</div>
                                   </vaadin-item>`;
-                        } else if (key === 'pending_timeout') {
-                          return html`
+    } else if (key === 'pending_timeout') {
+      return html`
                                   <vaadin-item>
                                     <div><strong>pending timeout</strong></div>
                                     <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
                                   </vaadin-item>`;
-                        } else {
-                          return '';
-                        }
-                      })}
+    } else {
+      return '';
+    }
+  })}
                     ` : html``}
                   </div>
                 </div>
@@ -894,7 +894,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               </wl-textarea>
             </div>
           </div>` : ``
-        }
+}
       </backend-ai-dialog>
     `;
   }
