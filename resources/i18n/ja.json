@@ -129,6 +129,7 @@
       "Environments": "環境",
       "Start": "開始",
       "FolderToMount": "マウントするフォルダー",
+      "FolderToMountList": "マウントするフォルダー",
       "ResourceAllocation": "資源の配分",
       "NoSuitablePreset": "適切なプリセットがありません",
       "Advanced": "高度な",

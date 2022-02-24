@@ -1117,7 +1117,7 @@ export default class BackendAILogin extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap escapeKeyAction>
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
@@ -1274,7 +1274,7 @@ export default class BackendAILogin extends BackendAIPage {
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
+      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent escapeKeyAction>
         ${this.blockMessage != '' ? html`
           ${this.blockType !== '' ? html`
             <span slot="title" id="work-title">${this.blockType}</span>

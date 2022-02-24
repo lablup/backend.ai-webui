@@ -129,6 +129,7 @@
       "Environments": "环境",
       "Start": "开始",
       "FolderToMount": "要挂载的文件夹",
+      "FolderToMountList": "要挂载的文件夹",
       "ResourceAllocation": "资源分配",
       "NoSuitablePreset": "没有合适的预设",
       "Advanced": "先进的",

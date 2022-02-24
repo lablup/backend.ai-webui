@@ -129,6 +129,7 @@
       "Environments": "Ambientes",
       "Start": "Comienzo",
       "FolderToMount": "Carpeta para montar",
+      "FolderToMountList": "Carpeta para montar",
       "ResourceAllocation": "Asignación de recursos",
       "NoSuitablePreset": "Sin preajuste adecuado",
       "Advanced": "Avanzado",
