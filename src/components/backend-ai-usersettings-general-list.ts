@@ -992,19 +992,18 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <span>${_t('usersettings.ShellEnvironments')}</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout setting-item">
+        <div class="horizontal wrap layout">
           <mwc-button
             icon="edit"
             outlined
             label="${_t('usersettings.EditBootstrapScript')}"
-            style="margin-right:20px; background: none; display: none;"
             @click="${() => this._editBootstrapScript()}"></mwc-button>
-        <mwc-button
+          <mwc-button
             icon="edit"
             outlined
             label="${_t('usersettings.EditUserConfigScript')}"
             @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-      </div>
+        </div>
       <h3 class="horizontal center layout" style="display:none;">
         <span>${_t('usersettings.PackageInstallation')}</span>
         <span class="flex"></span>
@@ -1024,6 +1023,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
         <span slot="title">${_t('usersettings.BootstrapScript')}</span>
         <div slot="content">
+          <div style="margin-bottom:1em">${_t('usersettings.BootstrapScriptDescription')}</div>
           <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
