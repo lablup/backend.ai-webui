@@ -87,7 +87,12 @@ export default class LablupCodemirror extends LitElement {
    * Give the editor focus
    * */
   focus() {
-    globalThis.setTimeout(() => this.editor.focus(), 100);
+    globalThis.setTimeout(() => {
+      // Set the cursor at the end of existing content
+      this.editor.execCommand('goDocEnd');
+      this.editor.focus();
+      this.refresh();
+    }, 100);
   }
 
   /**

@@ -674,6 +674,7 @@
     "BetaFeatures": "베타 기능",
     "DescBetaFeatures": "GUI용으로 테스트중인 기능들을 사용합니다.<br />베타 기능들은 불안정할 수 있습니다. 몇몇 베타 기능들은 정식 버전에서는 채택되지 않을 수 있습니다.",
     "DescNoBetaFeatures": "사용 가능한 베타 기능이 없습니다. :)",
+    "BootstrapScriptDescription": "부트스트랩 스크립트는 세션 생성 후 한 번만 실행됩니다",
     "EditBootstrapScript": "부트스트랩 스크립트 수정",
     "EditUserConfigScript": "사용자 환경 스크립트 수정",
     "PackageInstallation": "패키지 설치",
@@ -706,7 +707,7 @@
     "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다.",
     "ShellEnvironments": "쉘 스크립트 환경",
     "ConfigFilename": "구성 파일 이름 선택",
-    "Edit_ShellScriptTitle_1": "편집",
+    "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
