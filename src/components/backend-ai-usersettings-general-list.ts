@@ -163,6 +163,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --component-max-height: calc(100vh - 100px);
         }
 
+        .terminal-area {
+          height:calc(100vh - 300px);
+        }
+
         mwc-select {
           width: 140px;
           font-family: var(--general-font-family);
@@ -214,6 +218,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         mwc-button[unelevated] {
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-on-theme-primary: var(--general-button-background-color);
+        }
+
+        mwc-button.shell-button {
+          margin: 5px;
+          width: 260px;
         }
 
         wl-icon.warning {
@@ -275,6 +284,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
+  }
+
+  /**
+   * Check the admin and set the keypair grid when backend.ai client connected.
+   *
+   * @param {Booelan} active - The component will work if active is true.
+   */
+  async _viewStateChanged(active: boolean) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -307,7 +329,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         this.userconfigDialog.hide();
       }
     });
-    // this.beta_feature_panel = !this.shadowRoot.querySelector('#beta-feature-switch').disabled;
   }
 
   /**
@@ -476,10 +497,11 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this._hideBootstrapScriptDialog();
   }
 
-  async _editBootstrapScript() {
+  async _launchBootstrapScriptDialog() {
     const editor = this.shadowRoot.querySelector('#bootstrap-editor');
     const script = await this._fetchBootstrapScript();
     editor.setValue(script);
+    editor.focus();
     this.bootstrapDialog.show();
   }
 
@@ -523,7 +545,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     } else {
       editor.setValue('');
     }
-    editor.refresh();
+    editor.focus();
     this.spinner.hide();
     this._toggleDeleteButton();
   }
@@ -994,11 +1016,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </h3>
         <div class="horizontal wrap layout">
           <mwc-button
+            class="shell-button"
             icon="edit"
             outlined
             label="${_t('usersettings.EditBootstrapScript')}"
-            @click="${() => this._editBootstrapScript()}"></mwc-button>
+            @click="${() => this._launchBootstrapScriptDialog()}"></mwc-button>
           <mwc-button
+            class="shell-button"
             icon="edit"
             outlined
             label="${_t('usersettings.EditUserConfigScript')}"
@@ -1021,10 +1045,12 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         </div>
       </div>` : html``}
       <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
-        <span slot="title">${_t('usersettings.BootstrapScript')}</span>
-        <div slot="content">
+        <span slot="title">${_t('usersettings.EditBootstrapScript')}</span>
+        <div slot="content" class="vertical layout terminal-area">
           <div style="margin-bottom:1em">${_t('usersettings.BootstrapScriptDescription')}</div>
-          <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
+          <div style="background-color:#272823;height:100%;">
+            <lablup-codemirror id="bootstrap-editor" mode="shell"></lablup-codemirror>
+          </div>
         </div>
         <div slot="footer" class="end-justified layout flex horizontal">
           <mwc-button id="discard-code" label="${_t('button.Cancel')}" @click="${() => this._hideBootstrapScriptDialog()}"></mwc-button>
@@ -1034,7 +1060,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="userconfig-dialog" fixed backdrop scrollable blockScrolling persistent closeWithConfirmation>
         <span slot="title">${_t('usersettings.Edit_ShellScriptTitle_1')} ${this.rcfile} ${_t('usersettings.Edit_ShellScriptTitle_2')}</span>
-        <div slot="content" class="vertical layout" style="height:calc(100vh - 261px);">
+        <div slot="content" class="vertical layout terminal-area">
           <mwc-select id="select-rcfile-type"
                   label="${_t('usersettings.ConfigFilename')}"
                   required
