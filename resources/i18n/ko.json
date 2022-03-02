@@ -706,7 +706,7 @@
     "SSHKeyClipboardCopy": "SSH 키가 클립보드에 복사되었습니다.",
     "ShellEnvironments": "쉘 스크립트 환경",
     "ConfigFilename": "구성 파일 이름 선택",
-    "Edit_ShellScriptTitle_1": "편집",
+    "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
