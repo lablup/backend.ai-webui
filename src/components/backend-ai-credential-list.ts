@@ -74,8 +74,10 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) _boundPermissionRenderer = this.permissionRenderer.bind(this);
   @property({type: Object}) _boundResourcePolicyRenderer = this.resourcePolicyRenderer.bind(this);
   @property({type: Object}) _boundAllocationRenderer = this.allocationRenderer.bind(this);
+  @property({type: Object}) _boundUserIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
   @property({type: Number}) _totalCredentialCount = 0;
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
@@ -180,11 +182,13 @@ export default class BackendAICredentialList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
     }
   }
@@ -541,7 +545,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
-   * Render accesskey column
+   * Render accesskey column according to configuration
    *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
@@ -551,7 +555,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="monospace">${rowData.item.access_key}</div>
+      <div class="monospace">${this._getAccessKey(rowData.item.access_key)}</div>
       `, root
     );
   }
@@ -663,6 +667,21 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
+   * Render userId according to configuration
+   *
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
+  userIdRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <span>${this._getUserId(rowData.item.user_id)}</span>
+      `, root);
+  }
+
+  /**
    * Save a keypair modification.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
@@ -722,14 +741,43 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  /**
+   * Get user access key according to configuration
+   *
+   * @param {string} accessKey
+   * @return {string}
+   */
+  _getAccessKey(accessKey = '') {
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 4;
+      const maskLength = accessKey.length - maskStartIdx;
+      accessKey = globalThis.backendaiutils._maskString(accessKey, '*', maskStartIdx, maskLength);
+    }
+    return accessKey;
+  }
+
   render() {
     // language=HTML
     return html`
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-
-        <vaadin-grid-filter-column path="user_id" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="access_key" header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
         <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
         <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>

@@ -65,6 +65,8 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = 'active';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
+  @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
@@ -72,6 +74,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
   @property({type: Number}) _totalUserCount = 0;
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
@@ -207,11 +210,13 @@ export default class BackendAIUserList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
@@ -416,6 +421,36 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * Render UserId according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userIdRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUserId(rowData.item.email)}</span>
+      `, root
+    );
+  }
+
+  /**
+   * Render Username according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userNameRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUsername(rowData.item.username)}</span>
+      `, root
+    );
+  }
+
+  /**
    * Toggle password visible/invisible mode.
    *
    * @param {HTMLElement} element - password visibility toggle component
@@ -532,6 +567,30 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  _getUsername(username = '') {
+    if (username && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = username.length - maskStartIdx;
+      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
+    }
+    return username;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -540,8 +599,10 @@ export default class BackendAIUserList extends BackendAIPage {
                    aria-label="User list" id="user-grid" .items="${this.users}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column path="email" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column resizable header="${_t('credential.Name')}" path="username"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
+                            .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
+                            .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
         <vaadin-grid-column resizable header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>

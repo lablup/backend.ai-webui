@@ -13,6 +13,7 @@ allowProjectResourceMonitor = true
 allowSignupWithoutConfirmation = false
 autoLogout = false
 debug = false
+maskUserInfo = false
 
 [wsproxy]
 proxyURL = "http://127.0.0.1:5050/"
