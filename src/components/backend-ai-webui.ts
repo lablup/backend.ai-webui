@@ -125,6 +125,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
+  @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -317,6 +318,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
       this.blockedMenuitem = config.menu.blocklist.split(',');
     }
+    if ((typeof config.general !== 'undefined' && 'maskUserInfo' in config.general)) {
+      this.isUserInfoMaskEnabled = config.general.maskUserInfo;
+    }
 
     globalThis.packageEdition = this.edition;
     if (typeof config.license !== 'undefined' && 'validUntil' in config.license) {
@@ -381,8 +385,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
-
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
+    this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -1212,8 +1216,32 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    const name = this.full_name ? this.full_name : this.user_id;
+    let name = this.full_name ? this.full_name : this.user_id;
+    // mask username only when the configuration is enabled
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(name);
+      const maskLength = isEmail ? name.split('@')[0].length - maskStartIdx : name.length - maskStartIdx;
+      name = globalThis.backendaiutils._maskString(name, '*', maskStartIdx, maskLength);
+    }
     return name;
+  }
+
+  /**
+   *  Get user id according to configuration
+   *
+   *  @return {string} userId
+   */
+  _getUserId() {
+    let userId = this.user_id;
+    // mask user id(email) only when the configuration is enabled
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
 
   _getRole(user_id) {
@@ -1448,7 +1476,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
                               <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
-                              <span class="dropdown-menu-name">${this.user_id}</span>
+                              <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
                               <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
@@ -1477,7 +1505,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         </mwc-menu>
                       </div>
                       <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
-                        ${this.full_name}
+                        ${this._getUsername()}
                       </span>
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
                         <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
