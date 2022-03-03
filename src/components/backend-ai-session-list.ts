@@ -113,6 +113,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) total_session_count = 0;
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
@@ -426,6 +427,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -446,6 +448,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this._refreshJobData();
     }
   }
@@ -1939,10 +1942,11 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   userInfoRenderer(root, column?, rowData?) {
+    const userInfo = this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email;
     render(
       html`
         <div class="layout vertical">
-          <span class="indicator">${this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email}</span>
+          <span class="indicator">${this._getUserId(userInfo)}</span>
         </div>
       `, root
     );
@@ -1966,6 +1970,23 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
       `, root
     );
+  }
+
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string} userId
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(userId);
+      const maskStartIdx = isEmail ? 2 : 0; // show only 2 characters if session mode
+      const maskLength = isEmail ? userId.split('@')[0].length - maskStartIdx : 0;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
 
   render() {
