@@ -555,7 +555,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="monospace">${this._getAccessKey(rowData.item.access_key)}</div>
+      <div class="monospace">${rowData.item.access_key}</div>
       `, root
     );
   }
@@ -778,7 +778,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                    id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
         <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="access_key" header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
         <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
         <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
         <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}" .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
