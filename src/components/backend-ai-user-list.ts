@@ -222,17 +222,10 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _refreshUserData() {
-    let is_active = true;
-    switch (this.condition) {
-    case 'active':
-      is_active = true;
-      break;
-    default:
-      is_active = false;
-    }
+    const status = (this.condition ==='active') ? 'active' : 'inactive';
     this.spinner.hide();
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
-    return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}', 'status'];
+    return globalThis.backendaiclient.user.list(status, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
       // var user = users[objectKey];
@@ -307,7 +300,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
@@ -489,7 +482,7 @@ export default class BackendAIUserList extends BackendAIPage {
     const confirmEl = this.shadowRoot.querySelector('#confirm');
     const confirm = confirmEl.value;
     const description = this.shadowRoot.querySelector('#description').value;
-    const is_active = this.shadowRoot.querySelector('#is_active').selected;
+    const status = this.shadowRoot.querySelector('#status').selected ? 'active': 'inactive';
     const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
 
     this._togglePasswordInputRequired();
@@ -526,11 +519,9 @@ export default class BackendAIUserList extends BackendAIPage {
       input.need_password_change = need_password_change;
     }
 
-    if (is_active !== this.userInfo.is_active) {
-      input.is_active = is_active;
+    if (status !== this.userInfo.status) {
+      input.status = status;
     }
-
-    this.refresh();
 
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
@@ -558,6 +549,14 @@ export default class BackendAIUserList extends BackendAIPage {
           this.shadowRoot.querySelector('#description').value = this.userInfo.description;
         }
         this.notification.show();
+        this.refresh();
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
       });
 
     // if updated user info is current user, then apply it right away
@@ -692,8 +691,8 @@ export default class BackendAIUserList extends BackendAIPage {
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescActiveUser')}</p>
                   <mwc-switch
-                      id="is_active"
-                      ?selected="${this.userInfo.is_active}"></mwc-switch>
+                      id="status"
+                      ?selected="${this.userInfo.status === 'active'}"></mwc-switch>
                 </div>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
@@ -704,7 +703,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescActiveUser')}"
-                        value="${this.userInfo.is_active ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescRequirePasswordChange')}"

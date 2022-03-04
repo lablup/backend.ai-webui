@@ -3153,7 +3153,7 @@ class User {
    *
    * TODO: we need new paginated list API after implementation of server-side dynamic filtering.
    *
-   * @param {boolean} is_active - List whether active users or inactive users.
+   * @param {string} status - filter user list according to status: active/inactive
    * @param {json} input - User specification to query. Fields are:
    * {
    *   'username': String,      // User name for given user id.
@@ -3161,26 +3161,25 @@ class User {
    *   'need_password_change': Boolean, // Let user change password at the next login.
    *   'full_name': String,     // Full name of given user id.
    *   'description': String,   // Description for user.
-   *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
    *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async list(is_active = true,
+  async list(status = 'active',
              fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
       q = this.client.is_admin ? `
-        query($is_active:Boolean) {
-          users(is_active:$is_active) { ${fields.join(' ')} }
+        query($status:String) {
+          users(status:$status) { ${fields.join(' ')} }
         }
       ` : `
         query {
           users { ${fields.join(' ')} }
         }
       `;
-      v = this.client.is_admin ? {is_active} : {};
+      v = this.client.is_admin ? {status} : {};
       return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every users, so
@@ -3188,8 +3187,8 @@ class User {
       const limit = 100;
       const users = [] as any;
       q = this.client.is_admin ? `
-        query($offset:Int!, $limit:Int!, $is_active:Boolean) {
-          user_list(offset:$offset, limit:$limit, is_active:$is_active) {
+        query($offset:Int!, $limit:Int!, $status:String) {
+          user_list(offset:$offset, limit:$limit, status:$status) {
             items { ${fields.join(' ')} }
             total_count
           }
@@ -3204,7 +3203,7 @@ class User {
       `;
       // Prevent fetching more than 1000 users.
       for (let offset = 0; offset < 10 * limit; offset+=limit) {
-        v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
+        v = this.client.is_admin ? {offset, limit, status} : {offset, limit};
         const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
         if (offset >= page.user_list.total_count) {
