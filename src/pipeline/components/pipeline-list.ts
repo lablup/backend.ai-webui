@@ -239,6 +239,7 @@ export default class PipelineList extends BackendAIPage {
     this.shadowRoot.querySelector('#pipeline-environment').addEventListener(
       'selected', this.updateLanguage.bind(this));
     this.vfolderGrid = this.shadowRoot.querySelector('#vfolder-grid');
+    this.pipelineGrid = this.shadowRoot.querySelector('vaadin-grid#pipeline-list');
   }
 
   async _viewStateChanged(active) {
@@ -253,14 +254,12 @@ export default class PipelineList extends BackendAIPage {
         this._refreshImageList();
         this.selectDefaultLanguage();
         this._fetchUserInfo(); 
-        this.pipelineGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._loadPipelineList();
       this._refreshImageList();
       this.selectDefaultLanguage();
       this._fetchUserInfo();
-      this.pipelineGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
 
@@ -449,9 +448,14 @@ export default class PipelineList extends BackendAIPage {
     };
     const resources = {
       cpu: cpuRequest,
-      mem: memRequest,
-      shmem: shmemRequest,
-      gpu: gpuRequest,
+      mem: memRequest + 'g',
+      resource_opts: {
+        shmem: shmemRequest + 'g'
+      },
+      cuda: {
+        shares: gpuRequest,
+        device: ''
+      },
     };
     const mounts = this.selectedVfolders;
 
@@ -467,14 +471,14 @@ export default class PipelineList extends BackendAIPage {
         description: description,
         ownership: {
           domain_name: this.userInfo.domain_name,
-          group_id: this.userInfo.group_id,
-          user_uuid: this.userInfo.user_uuid,
+          group_name: this.userInfo.group_name,
         },
         environment: environment,
         resources: resources,
         mounts: mounts,
         tasks: {}, // this will be handled in server-side
       },
+      dataflow: {}, // used for graph visualization
       version: '',
       is_active: true,
       created_at: createdAt,
@@ -514,10 +518,10 @@ export default class PipelineList extends BackendAIPage {
     globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, ['full_name', 'username', 'domain_name', 'id']).then((res) => {
       const userInfo = res.user;
       this.userInfo = {
-        username: userInfo.full_name ? userInfo.full_name : userInfo.username,
+        // username: userInfo.full_name ? userInfo.full_name : userInfo.username,
         domain_name: userInfo.domain_name,
-        group_id: globalThis.backendaiclient.current_group_id(),
-        user_uuid: userInfo.id
+        group_name: globalThis.backendaiclient.current_group,
+        // user_uuid: userInfo.id
       }
     }).catch(err => {
       console.log(err);
@@ -838,10 +842,10 @@ export default class PipelineList extends BackendAIPage {
                         ?selected="${idx === 0}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1"></mwc-textfield>
-            <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0"></mwc-textfield>
-            <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125"></mwc-textfield>
-            <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0"></mwc-textfield>
+            <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core"></mwc-textfield>
+            <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0" suffix="GB"></mwc-textfield>
+            <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GB"></mwc-textfield>
+            <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0" suffix="Unit"></mwc-textfield>
         </div>
         <div id="pipeline-mounts" class="vertical layout center flex tab-content" style="display:none;">
         <div class="vfolder-list">
