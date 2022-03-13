@@ -63,7 +63,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
-  @property({type: String}) condition = 'active';
+  @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
@@ -222,10 +222,17 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _refreshUserData() {
-    const status = (this.condition ==='active') ? 'active' : 'inactive';
+    let is_active = true;
+    switch (this.condition) {
+    case 'active':
+      is_active = true;
+      break;
+    default:
+      is_active = false;
+    }
     this.spinner.hide();
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}', 'status'];
-    return globalThis.backendaiclient.user.list(status, fields).then((response) => {
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
+    return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
       // var user = users[objectKey];
