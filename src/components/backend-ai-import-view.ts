@@ -201,19 +201,41 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
       name = nameWithVersion.replace('/tree/', '').substring(1);
+      url = url.replace('https://github.com', 'https://codeload.github.com');
+      url = url + '/zip/' + tree;
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
     } else {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
-    }
-    url = url.replace('https://github.com', 'https://codeload.github.com');
-    url = url + '/zip/' + tree;
-    const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-    if (['http', 'https'].includes(protocol)) {
-      return this.importRepoFromURL(url, name);
-    } else {
-      this.notification.text = _text('import.WrongURLType');
-      this.importMessage = this.notification.text;
-      this.notification.show();
-      return false;
+      var repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
+      const defaultRepo = async() =>  { return (await (await fetch(repoUrl)).json()).default_branch }
+      return defaultRepo().then((result) => {
+        tree = result;
+        url = url.replace('https://github.com', 'https://codeload.github.com');
+        url = url + '/zip/' + tree;
+        const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+        if (['http', 'https'].includes(protocol)) {
+          return this.importRepoFromURL(url, name);
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importMessage = this.notification.text;
+          this.notification.show();
+          return false;
+        }
+      }).catch((e) => {
+        console.log("error" + e);
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      });
     }
   }
 
