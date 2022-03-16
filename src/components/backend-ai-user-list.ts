@@ -63,10 +63,11 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
-  @property({type: String}) condition = 'active';
+  @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
+  @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
   @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
@@ -75,6 +76,12 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) userGrid = Object();
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @property({type: Object}) userStatus = {
+    'active': 'Active',
+    'inactive': 'Inactive',
+    'before-verification': 'Before Verification',
+    'deleted': 'Deleted',
+  };
 
   constructor() {
     super();
@@ -168,6 +175,13 @@ export default class BackendAIUserList extends BackendAIPage {
           --mdc-typography-font-family: var(--general-font-family);
         }
 
+        mwc-select.full-width {
+          width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 330px;
+          --mdc-menu-min-width: 330px;
+        }
+
         mwc-textfield, mwc-textarea {
           width: 100%;
           --mdc-typography-font-family: var(--general-font-family);
@@ -231,7 +245,7 @@ export default class BackendAIUserList extends BackendAIPage {
       is_active = false;
     }
     this.spinner.hide();
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -307,7 +321,7 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
@@ -451,6 +465,26 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * Render current status of user
+   * - active
+   * - inactive
+   * - before-verification
+   * - deleted
+   *
+   * @param root
+   * @param column
+   * @param rowData
+   */
+  userStatusRenderer(root, column?, rowData?) {
+    const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
+    render(
+      html`
+        <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
+      `, root
+    );
+  }
+
+  /**
    * Toggle password visible/invisible mode.
    *
    * @param {HTMLElement} element - password visibility toggle component
@@ -489,7 +523,7 @@ export default class BackendAIUserList extends BackendAIPage {
     const confirmEl = this.shadowRoot.querySelector('#confirm');
     const confirm = confirmEl.value;
     const description = this.shadowRoot.querySelector('#description').value;
-    const is_active = this.shadowRoot.querySelector('#is_active').selected;
+    const status = this.shadowRoot.querySelector('#status').value;
     const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
 
     this._togglePasswordInputRequired();
@@ -526,11 +560,9 @@ export default class BackendAIUserList extends BackendAIPage {
       input.need_password_change = need_password_change;
     }
 
-    if (is_active !== this.userInfo.is_active) {
-      input.is_active = is_active;
+    if (status !== this.userInfo.status) {
+      input.status = status;
     }
-
-    this.refresh();
 
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
@@ -558,6 +590,14 @@ export default class BackendAIUserList extends BackendAIPage {
           this.shadowRoot.querySelector('#description').value = this.userInfo.description;
         }
         this.notification.show();
+        this.refresh();
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
       });
 
     // if updated user info is current user, then apply it right away
@@ -603,6 +643,9 @@ export default class BackendAIUserList extends BackendAIPage {
                             .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
                             .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
+        ${this.condition !== 'active' ? html`
+          <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
+                            .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
         <vaadin-grid-column resizable header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
@@ -689,12 +732,11 @@ export default class BackendAIUserList extends BackendAIPage {
                     value="${this.userInfo.description}"
                     id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
-                <div class="horizontal layout center" style="margin:10px;">
-                  <p class="label">${_text('credential.DescActiveUser')}</p>
-                  <mwc-switch
-                      id="is_active"
-                      ?selected="${this.userInfo.is_active}"></mwc-switch>
-                </div>
+                <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
+                  ${Object.keys(this.userStatus).map((item) => html`
+                    <mwc-list-item value="${item}" ?selected="${item === this.userInfo.status}">${this.userStatus[item]}</mwc-list-item>
+                  `)}
+                </mwc-select>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
                   <mwc-switch
@@ -704,7 +746,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescActiveUser')}"
-                        value="${this.userInfo.is_active ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescRequirePasswordChange')}"
