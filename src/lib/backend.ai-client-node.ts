@@ -3875,7 +3875,7 @@ class utils {
   }
 
   changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
-    if (value === undefined) {
+    if (value === undefined || value === null) {
       return value;
     }
     let sourceUnit;
