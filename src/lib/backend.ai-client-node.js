@@ -2938,13 +2938,13 @@ class User {
      *   'need_password_change': Boolean, // Let user change password at the next login.
      *   'full_name': String,     // Full name of given user id.
      *   'description': String,   // Description for user.
-     *   'is_active': Boolean,    // Flag if user is active or not.
+     *   'is_active': Boolean, // Flag if user is active or not.
      *   'domain_name': String,   // Domain for user.
      *   'role': String,          // Role for user.
      *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
      * };
      */
-    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
         let q, v;
         if (this.client._apiVersionMajor < 5) {
             q = this.client.is_admin ? `
