@@ -675,6 +675,19 @@
         }
       ]
     },
+    "wandb": {
+      "name": "Weight&Biases",
+      "description": "Build better models faster with experiment tracking, dataset versioning, and model management.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "label": [
+        {
+          "category": "Env",
+          "tag": "Python",
+          "color": "blue"
+        }
+      ]
+    },
     "filebrowser": {
       "name": "FileBrowser",
       "description": "",
