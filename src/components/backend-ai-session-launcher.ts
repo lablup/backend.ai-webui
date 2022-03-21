@@ -1889,10 +1889,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
+          if (!mem_metric.max) {
+            mem_metric.max = 0;
+          }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
             const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
-            if (parseInt(image_mem_max) !== 0) {
+            if (!isNaN(parseInt(image_mem_max)) && (parseInt(image_mem_max) !== 0)) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             } else {
               mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
