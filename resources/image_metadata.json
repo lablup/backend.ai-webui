@@ -349,6 +349,19 @@
         }
       ]
     },
+    "wandb": {
+      "name": "Weight&Biases",
+      "description": "Build better models faster with experiment tracking, dataset versioning, and model management.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "label": [
+        {
+          "category": "Env",
+          "tag": "W&B",
+          "color": "blue"
+        }
+      ]
+    },
     "ngc-matlab": {
       "name": "MATLAB (NGC)",
       "description": "MATLAB® combines a desktop environment tuned for iterative analysis and design processes with a programming language that expresses matrix and array mathematics directly. This environment is integrated with Nvidia GPU Cloud.",
@@ -671,19 +684,6 @@
         {
           "category": "Env",
           "tag": "LaTeX",
-          "color": "blue"
-        }
-      ]
-    },
-    "wandb": {
-      "name": "Weight&Biases",
-      "description": "Build better models faster with experiment tracking, dataset versioning, and model management.",
-      "group": "Machine Learning / Deep Learning",
-      "tags": [],
-      "label": [
-        {
-          "category": "Env",
-          "tag": "Python",
           "color": "blue"
         }
       ]
