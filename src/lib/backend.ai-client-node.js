@@ -3155,7 +3155,7 @@ class ScalingGroup {
      */
     async getWsproxyVersion(group) {
         if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-            return Promise.resolve({ version: 'v1' }); // for manager<=21.03 compatibility.
+            return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
         }
         const queryString = `/scaling-groups/${group}/wsproxy-version`;
         const rqst = this.client.newSignedRequest("GET", queryString, null);
