@@ -101,13 +101,13 @@
         "src": "./resources/icons/h2o.png"
       }
     ],
-    "h2o-dai": [
+    "wandb": [
       {
         "name": "wandb",
         "title": "Weights & Biases",
         "category": "3.Machine Learning Tools",
         "redirect": "",
-        "src": "./resources/icons/default.png"
+        "src": "./resources/icons/wandb.svg"
       }
     ],
     "triton-server": [

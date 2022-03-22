@@ -354,6 +354,7 @@
       "description": "Build better models faster with experiment tracking, dataset versioning, and model management.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],
+      "icon": "wandb.svg",
       "label": [
         {
           "category": "Env",
