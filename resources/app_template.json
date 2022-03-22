@@ -65,6 +65,15 @@
         "icon": "vaadin:flask"
       }
     ],
+    "vscode": [
+      {
+        "name": "vscode",
+        "title": "Visual Studio Code",
+        "category": "2.Development",
+        "redirect": "",
+        "src": "./resources/icons/vscode.svg"
+      }
+    ],
     "tensorboard": [
       {
         "name": "tensorboard",
@@ -92,13 +101,13 @@
         "src": "./resources/icons/h2o.png"
       }
     ],
-    "vscode": [
+    "h2o-dai": [
       {
-        "name": "vscode",
-        "title": "Visual Studio Code",
-        "category": "2.Development",
+        "name": "wandb",
+        "title": "Weights & Biases",
+        "category": "3.Machine Learning Tools",
         "redirect": "",
-        "src": "./resources/icons/vscode.svg"
+        "src": "./resources/icons/default.png"
       }
     ],
     "triton-server": [
