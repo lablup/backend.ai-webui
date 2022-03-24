@@ -8,10 +8,10 @@ import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import 'drawflow';
-import { style } from 'drawflow/dist/drawflow.style';
-import { DrawflowBaseStyle } from './drawflow-base-style.css';
+import {style} from 'drawflow/dist/drawflow.style';
+import {DrawflowBaseStyle} from './drawflow-base-style.css';
 import 'drawflow/dist/drawflow.min';
-import { DrawflowNode } from 'drawflow';
+import {DrawflowNode} from 'drawflow';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -215,7 +215,7 @@ export default class PipelineFlow extends LitElement {
       if (e.detail && isEditorMode) {
         this._updateNode(e.detail.nodeId, e.detail.data);
       }
-    })
+    });
 
     document.addEventListener('remove-task', (e: any) => {
       if (e.detail) {
@@ -291,15 +291,20 @@ export default class PipelineFlow extends LitElement {
 
 
   /**
-   * Add node into pane 
+   * Add node into pane
+   * 
+   * @param {DrawflowNode} nodeInfo
    */
   _addNode(nodeInfo: DrawflowNode) {
-    this.editor.addNode(nodeInfo.name, nodeInfo.inputs, nodeInfo.outputs, 
-                        nodeInfo.pos_x, nodeInfo.pos_y, nodeInfo.class, nodeInfo.data, nodeInfo.html);
+    this.editor.addNode(nodeInfo.name, nodeInfo.inputs, nodeInfo.outputs,
+      nodeInfo.pos_x, nodeInfo.pos_y, nodeInfo.class, nodeInfo.data, nodeInfo.html);
   }
 
   /**
    * Update node according to data
+   * 
+   * @param {number} id
+   * @param {DrawflowNode} nodeInfo
    */
   _updateNode(id: number, nodeInfo: DrawflowNode) {
     const moduleName = this.editor.getModuleFromNodeId(id);
@@ -311,16 +316,16 @@ export default class PipelineFlow extends LitElement {
       name: nodeInfo.name});
     // monkeypatch: manually update node name
     const nodeElem = this.shadowRoot.querySelector(`.${nodeInfo.class}.selected`);
-    const titleElement = [...nodeElem.children].find(elem => elem.className === 'drawflow_content_node');
+    const titleElement = [...nodeElem.children].find((elem) => elem.className === 'drawflow_content_node');
     titleElement.innerHTML = nodeInfo.html;
   }
 
   /**
    * Remove node from pane
-   * 
-   * @param id 
+   *
+   * @param {number} id
    */
-   _removeNode(id: number) {
+  _removeNode(id: number) {
     // NOTE: every node element id starts with 'node-'
     const nodeId = `node-${id}`;
     this.editor.removeNodeId(nodeId);
@@ -328,7 +333,7 @@ export default class PipelineFlow extends LitElement {
 
   /**
    * Zoom in 10% from current pane
-   * 
+   *
    */
   _zoomInPane() {
     this.editor.zoom_in();

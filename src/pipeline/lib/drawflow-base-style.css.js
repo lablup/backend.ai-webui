@@ -3,6 +3,8 @@ import {css} from 'lit';
 export const DrawflowBaseStyle = css`
 :host {
 
+    font-size: 1.2rem;
+
     /* Custom variable definition used for drawflow theming */
     --dfBackgroundColor: #ffffff;
     --dfBackgroundSize: 15px;
