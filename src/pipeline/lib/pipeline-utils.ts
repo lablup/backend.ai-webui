@@ -21,25 +21,43 @@ export default class PipelineUtils extends LitElement {
     super();
   }
 
-  static _humanReadableTimeDuration(d1, d2) {
-    let distance = Math.abs(d1 - d2);
-    const days = Math.floor(distance / 86400000);
-    distance -= days * 86400000;
-    const hours = Math.floor(distance / 3600000);
-    distance -= hours * 3600000;
-    const minutes = Math.floor(distance / 60000);
-    distance -= minutes * 60000;
-    const seconds = Math.floor(distance / 1000);
+  static _humanReadableDate(start) {
+    const d = new Date(start);
+    return d.toLocaleString();
+  }
+
+  static _humanReadableTimeDuration(d1, d2 = null) {
+    const startTime = new Date(d1).getTime();
     let result = '';
-    result += days > 0 ? `${days}d ` : '';
-    result += hours > 0 ? `${hours}h ` : '';
-    result += minutes > 0 ? `${minutes}m ` : '';
-    result += seconds > 0 ? `${seconds}s` : '';
+    if (d2 !== null && d2 !== undefined) {
+      const passedTime = new Date(d2).getTime();
+      let distance = Math.abs(passedTime - startTime); // multiply to second
+      const days = Math.floor(distance / 86400000);
+      distance -= days * 86400000;
+      const hours = Math.floor(distance / 3600000);
+      distance -= hours * 3600000;
+      const minutes = Math.floor(distance / 60000);
+      distance -= minutes * 60000;
+      const seconds = Math.floor(distance / 1000);
+      result += days > 0 ? `${days}d` : '';
+      result += hours > 0 ? `${hours}h ` : '';
+      result += minutes > 0 ? `${minutes}m ` : '';
+      result += seconds > 0 ? `${seconds}s` : '';
+      // if updated time was too short to display then just return 1 second
+      if (result === '') {
+        result = `1s`;
+      }
+    } else {
+      // if d2 is null, then it's on-going
+      result = '-';
+    }
     return result;
   }
 
   static _humanReadablePassedTime(d) {
-    const distance = new Date().getTime() - d;
+    const startTime = new Date(d).getTime();
+    const currentTime = new Date().getTime();
+    const distance = currentTime - startTime;
     const days = Math.floor(distance / 86400000);
     if (days > 0) {
       return `${days}d ago`;
@@ -57,17 +75,6 @@ export default class PipelineUtils extends LitElement {
     d -= minutes * 60000;
     const seconds = Math.floor(distance / 1000);
     return `${seconds}s ago`;
-  }
-
-  /**
-   * Change d of any type to locale date time.
-   *
-   * @param {string | Date} d - Data string or object
-   * @return {string} Locale time string
-   */
-  static _toLocaleString(d: any) {
-    d = new Date(d);
-    return d.toLocaleString();
   }
 
   static _getStatusColor(status) {
