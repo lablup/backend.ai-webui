@@ -149,6 +149,9 @@ class Client {
         this.enterprise = new Enterprise(this);
         this.cloud = new Cloud(this);
         this.eduApp = new EduApp(this);
+        this.pipeline = new Pipeline(this);
+        this.pipelineJob = new PipelineJob(this);
+        this.pipelineTaskInstance = new PipelineTaskInstance(this);
         this._features = {}; // feature support list
         this.abortController = new AbortController();
         this.abortSignal = this.abortController.signal;
@@ -1050,7 +1053,7 @@ class Client {
      * @param {string} queryString - the URI path and GET parameters
      * @param {any} body - an object that will be encoded as JSON in the request body
      */
-    newSignedRequest(method, queryString, body) {
+    newSignedRequest(method, queryString, body, serviceName = '') {
         let content_type = "application/json";
         let requestBody;
         let authBody;
@@ -1072,8 +1075,7 @@ class Client {
         //queryString = '/' + this._config.apiVersionMajor + queryString;
         let aStr;
         let hdrs;
-        let uri;
-        uri = '';
+        let uri = '';
         if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
             hdrs = new Headers({
                 "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
@@ -1104,6 +1106,17 @@ class Client {
                 "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
             });
             uri = this._config.endpoint + queryString;
+        }
+        if (serviceName === 'pipeline') {
+            uri = this._config.endpoint + '/flow' + queryString;
+            hdrs = new Headers({
+                "Accept": content_type,
+                "Allow-Control-Allow-Origin": "*"
+            });
+            if (queryString.startsWith('/api') === true) { // Append Authorization token for every API request to pipeline
+                const token = this.pipeline.getPipelineToken();
+                hdrs.set("Authorization", `Token ${token}`);
+            }
         }
         if (body != undefined) {
             if (typeof body.getBoundary === 'function') {
@@ -3554,6 +3567,252 @@ class Cloud {
     async change_password(email, password, token) {
         const body = { email, password, token };
         const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class Pipeline {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.tokenName = 'pipeline-token';
+        this.urlPrefix = `/api/pipelines`;
+    }
+    /**
+     *
+     * @param {json} input - pipeline specification and data. Required fields are:
+     * {
+     *    'username': string,
+     *    'password': string,
+     *    'access_key': string,
+     *    'secret_key': string,
+     * }
+     */
+    async login(input) {
+        const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
+        let result;
+        try {
+            result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, { 'log': JSON.stringify({
+                    'username': input.username,
+                    'password': '********'
+                }) });
+            // if there's no token, then user account is invalid
+            if (result.hasOwnProperty('token') === false) {
+                return Promise.resolve(false);
+            }
+            else {
+                const token = result.token;
+                document.cookie = `${this.tokenName}=${token}`;
+            }
+        }
+        catch (err) {
+            console.log(err);
+            throw {
+                "title": "No Pipeline Server found at API Endpoint.",
+                "message": "Authentication failed. Check information and pipeline server status."
+            };
+        }
+    }
+    logout() {
+        if (this.client._config.pipelineToken !== null) {
+            this._removeCookieByName(this.tokenName);
+        }
+    }
+    async check_login() {
+        let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    getPipelineToken() {
+        return this._getCookieByName(this.tokenName);
+    }
+    /**
+     * List all pipelines
+     */
+    async list() {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get pipeline with given its id
+     *
+     * @param {string} id - pipeline id
+     */
+    async info(id) {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Create a pipeline with input
+     *
+     * @param {json} input - pipeline specification and data. Required fields are:
+     * {
+     *    'name': string,
+     *    'description' : string,
+     *    'yaml': string,
+     *    'dataflow': object,
+     *    'is_active': boolean
+     * }
+     */
+    async create(input) {
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update the pipeline based on input value
+     *
+     * @param {string} id - pipeline id
+     * @param {json} input - pipeline specification and data. Required fields are:
+     * {
+     *    'name': string,
+     *    'description': string, // TODO
+     *    'yaml': string,
+     *    'dataflow': {},
+     *    'is_active': boolean, // TODO
+     * }
+     */
+    async update(id, input) {
+        let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Delete the pipeline
+     *
+     * @param {string} id - pipeline id
+     */
+    async delete(id) {
+        let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Instantiate(Run) pipeline to pipeline-job
+     *
+     * @param {string} id - pipeline id
+     * @param {json} input - piepline specification and data. Required fields are:
+     * {
+     *    'name': string,
+     *    'description': string,
+     *    'yaml': string,
+     *    'dataflow': {},
+     *    'is_active': boolean,
+     * }
+     */
+    async run(id, input) {
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get Cookie By its name if exists
+     *
+     * @param {string} name - cookie name
+     * @returns {string} cookieValue
+     */
+    _getCookieByName(name = '') {
+        let cookieValue = '';
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+    /**
+     * Remove Cooke By its name if exists
+     *
+     * @param {string} name - cookie name
+     */
+    _removeCookieByName(name = '') {
+        if (name !== '') {
+            document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+        }
+    }
+}
+class PipelineJob {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.urlPrefix = `/api/pipeline-jobs`;
+    }
+    /**
+     * List all pipeline jobs
+     */
+    async list() {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get pipeline job with given its id
+     *
+     * @param {string} id - pipeline id
+     */
+    async info(id) {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+}
+class PipelineTaskInstance {
+    /**
+     * Setting API wrapper.
+     *
+     * @param {Client} client - the Client API wrapper object to bind
+     */
+    constructor(client) {
+        this.client = client;
+        this.urlPrefix = `/api/task-instances`;
+    }
+    /**
+     * List all task instances in all pipeline-jobs
+     */
+    async list() {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Get task instance with given its id
+     *
+     * @param {string} id - task instance id
+     */
+    async info(id) {
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Create custom task instance with input
+     *
+     * @param {json} input
+     */
+    async create(input) {
+        let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Update the task instance based on input value
+     *
+     * @param {string} id - task instance id
+     * @param {json} input - task-instance specification and data.
+     */
+    async update(id, input) {
+        let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+        return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * Delete the task-instance
+     *
+     * @param {string} id - task instance id
+     */
+    async delete(id) {
+        let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
         return this.client._wrapWithPromise(rqst);
     }
 }
