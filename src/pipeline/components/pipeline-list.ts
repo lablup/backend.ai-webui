@@ -5,6 +5,8 @@
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
+import PipelineUtils from '../lib/pipeline-utils';
+import '../lib/pipeline-login';
 import '../../components/backend-ai-dialog';
 import '../../components/lablup-activity-panel';
 import '../../components/lablup-codemirror';
@@ -32,8 +34,8 @@ import '@material/mwc-textfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
 import 'weightless/expansion';
 
@@ -54,12 +56,14 @@ import 'weightless/expansion';
 @customElement('pipeline-list')
 export default class PipelineList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Array}) pipelineTypes = ['Custom']; // 
+  @property({type: Array}) pipelineTypes = ['Custom']; //
   @property({type: Object}) pipelineInfo = Object();
-  @property({type: Array}) pipelines = Array();
+  @property({type: Array}) pipelines = [];
   @property({type: Object}) userInfo;
   @property({type: Array}) pipelineGrid;
   @property({type: String}) _activeTab = 'pipeline-general';
+  @property({type: String}) pipelineUserId = '';
+  @property({type: String}) pipelineUserPassword = '';
 
   // Elements
   @property({type: Object}) spinner = Object();
@@ -123,6 +127,25 @@ export default class PipelineList extends BackendAIPage {
           color: black;
         }
 
+        .login-input {
+          background-color: #FAFAFA;
+          border-bottom: 1px solid #ccc;
+          height: 50px;
+        }
+
+        .login-input mwc-icon {
+          margin: 5px 15px 5px 15px;
+          color: #737373;
+        }
+
+        .login-input input {
+          width: 100%;
+          background-color: #FAFAFA;
+          margin-bottom: 5px;
+          font-size: 18px;
+          margin-top: 5px;
+        }
+
         .tab-content {
           width: 100%;
         }
@@ -133,6 +156,10 @@ export default class PipelineList extends BackendAIPage {
 
         .pipeline-detail-items {
           margin-bottom: 10px;
+        }
+
+        #login-title-area {
+          margin: 10px;
         }
 
         a.pipeline-link:hover {
@@ -147,6 +174,19 @@ export default class PipelineList extends BackendAIPage {
         backend-ai-dialog.yaml {
           --component-min-width: auto;
           --component-max-width: 100%;
+        }
+
+        form#pipeline-server-login-form {
+          width: 100%;
+        }
+
+        fieldset input {
+          width: 100%;
+          border: 0;
+          margin: 15px 0 0 0;
+          font: inherit;
+          font-size: 16px;
+          outline: none;
         }
 
         mwc-button {
@@ -250,16 +290,16 @@ export default class PipelineList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
+        await this._fetchUserInfo();
         this._loadPipelineList();
         this._refreshImageList();
         this.selectDefaultLanguage();
-        this._fetchUserInfo(); 
       }, true);
     } else { // already connected
+      await this._fetchUserInfo();
       this._loadPipelineList();
       this._refreshImageList();
       this.selectDefaultLanguage();
-      this._fetchUserInfo();
     }
   }
 
@@ -355,6 +395,12 @@ export default class PipelineList extends BackendAIPage {
     this._initAliases();
   }
 
+  /**
+   * Select fallback(default) image
+   *
+   * @param {boolean} forceUpdate - only update default language when its value is true
+   * @param {string} language - default language
+   */
   async selectDefaultLanguage(forceUpdate = false, language = '') {
     if (this._defaultLanguageUpdated === true && forceUpdate === false) {
       return;
@@ -386,10 +432,15 @@ export default class PipelineList extends BackendAIPage {
     environment.select(idx);
     this._defaultLanguageUpdated = true;
     return Promise.resolve(true);
-    console.log(this.defaultLanguage)
   }
 
-    _guessHumanizedNames(kernelName) {
+  /**
+   * Convert raw kernel name to formatted one
+   *
+   * @param {string} kernelName - raw kernel name
+   * @return {string} humanizedName - kernel name with a certain format
+   */
+  _guessHumanizedNames(kernelName) {
     const candidate = this.imageNames;
     let imageName = '';
     let humanizedName = null;
@@ -412,6 +463,10 @@ export default class PipelineList extends BackendAIPage {
     return humanizedName;
   }
 
+  /**
+   * Copy forward aliases to backward aliases.
+   *
+   */
   _initAliases() {
     for (const item in this.aliases) {
       if ({}.hasOwnProperty.call(this.aliases, item)) {
@@ -420,6 +475,13 @@ export default class PipelineList extends BackendAIPage {
     }
   }
 
+  /**
+   * Combine kernel and version
+   *
+   * @param {string} kernel - kernel name
+   * @param {string} version - version
+   * @return {string} `${kernel}:${version}`
+   */
   _generateKernelIndex(kernel, version) {
     return kernel + ':' + version;
   }
@@ -428,10 +490,6 @@ export default class PipelineList extends BackendAIPage {
    * Create a pipeline
    */
   _createPipeline() {
-    /**
-     * TODO: Add pipeline according to selected type
-     * 
-     */
     const name = this.shadowRoot.querySelector('#pipeline-name').value;
     const description = this.shadowRoot.querySelector('#pipeline-description').value;
     const scalingGroup = this.shadowRoot.querySelector('#scaling-group').value;
@@ -458,35 +516,34 @@ export default class PipelineList extends BackendAIPage {
       },
     };
     const mounts = this.selectedVfolders;
-
-    const createdAt = this._humanReadableTime();
-    const modifiedAt = createdAt;
-
-    this.pipelineInfo = {
-      owner: this.userInfo.username,
+    const yaml = { // used for tasks
       name: name,
       description: description,
-      yaml: { // used for tasks
-        name: name,
-        description: description,
-        ownership: {
-          domain_name: this.userInfo.domain_name,
-          group_name: this.userInfo.group_name,
-        },
-        environment: environment,
-        resources: resources,
-        mounts: mounts,
-        tasks: {}, // this will be handled in server-side
+      ownership: {
+        domain_name: this.userInfo.domain_name,
+        group_name: this.userInfo.group_name,
       },
-      dataflow: {}, // used for graph visualization
-      version: '',
-      is_active: true,
-      created_at: createdAt,
-      last_modified: modifiedAt,
+      environment: environment,
+      resources: resources,
+      mounts: mounts,
+      tasks: {}, // this will be handled in server-side
     };
-    this._savePipelineList(this.pipelineInfo);
-    this._loadPipelineList();
 
+    this.pipelineInfo = {
+      name: name,
+      description: description,
+      yaml: JSON.stringify(yaml),
+      dataflow: {}, // used for graph visualization
+      is_active: true,
+    };
+    globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
+      const pipeline = res;
+      this.notification.text = `Pipeline ${pipeline.name} created.`;
+      this.notification.show();
+      this._loadPipelineList();
+    }).catch((err) => {
+      console.log(err);
+    });
     // move to pipeline view page with current pipeline info
     this.moveToViewTab();
     this.pipelineInfo = {};
@@ -495,26 +552,23 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Delete selected pipeline
-   * 
    */
   _deletePipeline() {
-    /**
-     * TODO: send delete pipline request to server
-     */
-    const pipelineList = JSON.parse(localStorage.getItem('pipeline-list') || '[]');
-    /**
-     * FIXME: temporally find pipeline via name, but it have to be replaced into id.
-     */ 
-    const updatedPipelineList = pipelineList.filter(elem => elem.name !== this.pipelineInfo.name);
-    localStorage.setItem('pipeline-list', JSON.stringify(updatedPipelineList));
-    this._loadPipelineList();
-    this.notification.text = `Pipeline ${this.pipelineInfo.name} deleted.`;
-    this.notification.show();
-    this.pipelineInfo = {};
+    globalThis.backendaiclient.pipeline.delete(this.pipelineInfo.id).then((res) => {
+      this.notification.text = `Pipeline ${this.pipelineInfo.name} deleted.`;
+      this.notification.show();
+      this.pipelineInfo = {};
+      this._loadPipelineList();
+    }).catch((err) => {
+      console.log(err);
+    });
     this._hideDialogById('#delete-pipeline');
   }
 
-  _fetchUserInfo() {
+  /**
+   * Initialize user info
+   */
+  async _fetchUserInfo() {
     globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, ['full_name', 'username', 'domain_name', 'id']).then((res) => {
       const userInfo = res.user;
       this.userInfo = {
@@ -522,43 +576,62 @@ export default class PipelineList extends BackendAIPage {
         domain_name: userInfo.domain_name,
         group_name: globalThis.backendaiclient.current_group,
         // user_uuid: userInfo.id
-      }
-    }).catch(err => {
+      };
+    }).catch((err) => {
       console.log(err);
     });
   }
 
-  _savePipelineList(data) {
-    const pipelineList = JSON.parse(localStorage.getItem('pipeline-list') || '[]');
-    pipelineList.push(data);
-    localStorage.setItem('pipeline-list', JSON.stringify(pipelineList));
-  }
-
-  _loadPipelineList() {
-    const pipelineList = [...JSON.parse(localStorage.getItem('pipeline-list') || '[]')];
-    this.pipelines = pipelineList;
+  /**
+   * Get Pipeline list from pipeline server
+   *
+   */
+  async _loadPipelineList() {
+    const sanitizeYaml = (yaml) => {
+      if (typeof yaml === 'string') {
+        return (yaml === '') ? {} : JSON.parse(yaml);
+      } else {
+        // already parsed
+        return yaml;
+      }
+    };
+    globalThis.backendaiclient.pipeline.list().then((res) => {
+      const pipelineList = res.map((pipeline) => {
+        console.log(pipeline);
+        // data transformation on yaml and date (created_at, last_modified)
+        pipeline.yaml = sanitizeYaml(pipeline.yaml);
+        pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
+        pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
+        return pipeline;
+      });
+      this.pipelines = pipelineList;
+    }).catch((err) => {
+      console.log(err);
+    });
     this.requestUpdate();
   }
 
   /**
-   * Change d of any type to human readable date time.
+   * Display a dialog by id.
    *
-   * @param {any} d   - string or DateTime object to convert
-   * @return {Date}   - Formatted date / time to be human-readable text.
+   * @param {string} id - Dialog component ID
    */
-  _humanReadableTime(d = '') {
-    const date = d ? new Date(d) : new Date();
-    return date.toUTCString();
-  }
-
   _launchDialogById(id) {
     this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * Hide a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
   _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Show pipeline dialog
+   */
   async _launchPipelineDialog() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       setTimeout(() => {
@@ -572,25 +645,42 @@ export default class PipelineList extends BackendAIPage {
     }
   }
 
+  /**
+   * Show information dialog of selected pipeline
+   *
+   * @param {json} pipelineInfo
+   */
   _launchPipelineDetailDialog(pipelineInfo: Object) {
     this.pipelineInfo = pipelineInfo;
     this._launchDialogById('#pipeline-detail');
   }
 
+  /**
+   * Show delete dialog of selected pipeline
+   *
+   * @param {json} pipelineInfo
+   */
   _launchPipelineDeleteDialog(pipelineInfo: Object) {
     this.pipelineInfo = pipelineInfo;
     this._launchDialogById('#delete-pipeline');
   }
 
+  /**
+   * Show yaml data dialog of selected pipeline
+   *
+   */
   _launchPipelineYAMLDialog() {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#yaml-data');
-    const yamlString = YAML.dump(this.pipelineInfo.yaml, {
-
-    });
+    const yamlString = YAML.dump(this.pipelineInfo.yaml, {});
     codemirror.setValue(yamlString);
     this._launchDialogById('#pipeline-yaml');
   }
 
+  /**
+   * Update accessible vfolders
+   *
+   * @return {void}
+   */
   async _updateVirtualFolderList() {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
@@ -621,7 +711,7 @@ export default class PipelineList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   nameRenderer(root, column, rowData) {
+  nameRenderer(root, column, rowData) {
     render(
       html`
         <div>
@@ -698,29 +788,38 @@ export default class PipelineList extends BackendAIPage {
     );
   }
 
+  /**
+   * Move to pipeline-view tab
+   */
   moveToViewTab() {
-    /**
-     * TODO: Go to view tab loaded with current pipeline info
-     * 
-     */
-    const moveToViewEvent = 
-      new CustomEvent('pipeline-view-active-tab-change', 
+    const moveToViewEvent =
+      new CustomEvent('pipeline-view-active-tab-change',
         {
           'detail': {
-          'activeTab': {
-            title :'pipeline-view'
-          },
-          'pipeline': this.pipelineInfo
-        }
-      });
+            'activeTab': {
+              title: 'pipeline-view'
+            },
+            'pipeline': this.pipelineInfo
+          }
+        });
     document.dispatchEvent(moveToViewEvent);
   }
 
+  /**
+   * Move to pipeline view tab with selected pipeline data
+   *
+   * @param {json} pipelineInfo
+   */
   loadPipeline(pipelineInfo: object) {
     this.pipelineInfo = pipelineInfo;
     this.moveToViewTab();
   }
 
+  /**
+   * Display the tab.
+   *
+   * @param {HTMLElement} tab - mwc-tab element
+   */
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
@@ -730,6 +829,9 @@ export default class PipelineList extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
+  /**
+   * Invoke updating available versions corresponding to installed environment
+   */
   updateLanguage() {
     const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
     if (selectedItem === null) return;
@@ -737,6 +839,11 @@ export default class PipelineList extends BackendAIPage {
     this._updateVersions(kernel);
   }
 
+  /**
+   * Update available versions according to kernel
+   *
+   * @param {string} kernel - environment image name
+   */
   _updateVersions(kernel) {
     const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
     if (kernel in this.supports) {
@@ -753,26 +860,30 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
- * Update selected folders.
- * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
- *
- * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
- * */
-    _updateSelectedFolder(forceInitialize = false) {
-      if (this.vfolderGrid && this.vfolderGrid.selectedItems) {
-        const selectedFolderItems = this.vfolderGrid.selectedItems;
-        let selectedFolders: string[] = [];
-        if (selectedFolderItems.length > 0) {
-          selectedFolders = selectedFolderItems.map((item) => item.name);
-          if (forceInitialize) {
-            this._unselectAllSelectedFolder();
-          }
+   * Update selected folders.
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
+   * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
+   * */
+  _updateSelectedFolder(forceInitialize = false) {
+    if (this.vfolderGrid && this.vfolderGrid.selectedItems) {
+      const selectedFolderItems = this.vfolderGrid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        selectedFolders = selectedFolderItems.map((item) => item.name);
+        if (forceInitialize) {
+          this._unselectAllSelectedFolder();
         }
-        this.selectedVfolders = selectedFolders;
       }
-      return Promise.resolve(true);
+      this.selectedVfolders = selectedFolders;
+    }
+    return Promise.resolve(true);
   }
 
+  /**
+   * Unselect the selected items and update selectedVfolders to be empty.
+   *
+   */
   _unselectAllSelectedFolder() {
     if (this.vfolderGrid && this.vfolderGrid.selectedItems) {
       this.vfolderGrid.selectedItems.forEach((item) => {
@@ -780,7 +891,7 @@ export default class PipelineList extends BackendAIPage {
       });
       this.vfolderGrid.selectedItems = [];
     }
-      this.selectedVfolders = [];
+    this.selectedVfolders = [];
   }
 
   render() {
@@ -809,17 +920,17 @@ export default class PipelineList extends BackendAIPage {
           <mwc-textfield id="pipeline-name" label="Pipeline Name" required></mwc-textfield>
           <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
             <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
-            ${this.pipelineTypes.map(item => {
-              return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`
-            })} 
+            ${this.pipelineTypes.map((item) => {
+    return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
+  })} 
           </mwc-select>
           <mwc-textarea id="pipeline-description" label="Pipeline Description"></mwc-textarea>
         </div>
         <div id="pipeline-resources" class="vertical layout center flex tab-content" style="display:none;">
           <mwc-select class="full-width" id="scaling-group" label="Scaling Group" fixedMenuPosition>
             ${this.scalingGroups.map((item, idx) => {
-              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`
-            })}
+    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+  })}
           </mwc-select>
           <mwc-select class="full-width" id="pipeline-environment" label="Default Environment" required fixedMenuPosition value="${this.defaultLanguage}">
                 ${this.languages.map((item) => html`
@@ -833,7 +944,7 @@ export default class PipelineList extends BackendAIPage {
                         </div>
                     </div>
                   </mwc-list-item>`
-                )}
+  )}
             </mwc-select>
             <mwc-select class="full-width" id="pipeline-environment-tag" label="Version" required fixedMenuPosition>
               <mwc-list-item style="display:none"></mwc-list-item>

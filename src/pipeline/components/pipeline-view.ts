@@ -5,6 +5,7 @@
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
+import PipelineUtils from '../lib/pipeline-utils';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import '../../components/backend-ai-dialog';
 import '../../components/lablup-activity-panel';
@@ -193,7 +194,7 @@ export default class PipelineView extends BackendAIPage {
    *
    * @param {Boolean} active
    */
-   async _viewStateChanged(active) {
+  async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -202,11 +203,11 @@ export default class PipelineView extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();
-        this.selectDefaultLanguage();
+        this._selectDefaultLanguage();
       }, true);
     } else { // already connected
       this._refreshImageList();
-      this.selectDefaultLanguage();
+      this._selectDefaultLanguage();
     }
   }
 
@@ -238,7 +239,7 @@ export default class PipelineView extends BackendAIPage {
       });
     this.shadowRoot.querySelector('#task-environment').addEventListener(
       'selected', this.updateLanguage.bind(this));
-    
+
     document.addEventListener('node-selected', (e: any) => {
       if (e.detail) {
         this.selectedNode = e.detail;
@@ -257,9 +258,10 @@ export default class PipelineView extends BackendAIPage {
     document.addEventListener('pipeline-view-active-tab-change', (e: any) => {
       if (e.detail) {
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-pane').children];
-        this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map(tab => tab.title).indexOf(e.detail.activeTab.title);
+        this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
         this._showTab(e.detail.activeTab, '.tab-content');
         this.pipelineInfo = e.detail.pipeline;
+        this.pipelineInfo = this._deserializePipelineInfo(this.pipelineInfo);
         this._loadCurrentFlowData();
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       }
@@ -268,15 +270,20 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Enable button only when pipelineInfo is loaded
-   * 
    */
   _toggleButtonStatus() {
-    let buttonList = [...this.shadowRoot.querySelectorAll('mwc-icon-button.pipeline-operation'), this.shadowRoot.querySelector('mwc-button#new-task')];
+    const buttonList = [...this.shadowRoot.querySelectorAll('mwc-icon-button.pipeline-operation'), this.shadowRoot.querySelector('mwc-button#new-task')] ?? [];
     for (const elem of buttonList) {
       elem.disabled = this.pipelineInfo.name ? false : true;
     }
   }
 
+  /**
+   * Display the tab.
+   *
+   * @param {HTMLElement} tab - mwc-tab element
+   * @param {string} tabClass - class name of tab
+   */
   _showTab(tab, tabClass='') {
     const els = this.shadowRoot.querySelectorAll(tabClass);
     for (const obj of els) {
@@ -286,6 +293,9 @@ export default class PipelineView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
+  /**
+   * Invoke updating available versions corresponding to installed environment
+   */
   updateLanguage() {
     const selectedItem = this.shadowRoot.querySelector('#task-environment').selected;
     if (selectedItem === null) return;
@@ -293,6 +303,11 @@ export default class PipelineView extends BackendAIPage {
     this._updateVersions(kernel);
   }
 
+  /**
+   * Update available versions according to kernel
+   *
+   * @param {string} kernel - environment image name
+   */
   _updateVersions(kernel) {
     const tagEl = this.shadowRoot.querySelector('#task-environment-tag');
     if (kernel in this.supports) {
@@ -308,6 +323,9 @@ export default class PipelineView extends BackendAIPage {
     }
   }
 
+  /**
+   * Refresh environment image information from manager.
+   */
   _refreshImageList() {
     const fields = [
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
@@ -347,6 +365,9 @@ export default class PipelineView extends BackendAIPage {
     });
   }
 
+  /**
+   * Refresh environment image information into at most three tags
+   */
   _updateEnvironment() {
     // this.languages = Object.keys(this.supports);
     // this.languages.sort();
@@ -400,16 +421,9 @@ export default class PipelineView extends BackendAIPage {
     this._initAliases();
   }
 
-  selectDefaultLanguage() {
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._selectDefaultLanguage();
-      }, true);
-    } else {
-      this._selectDefaultLanguage();
-    }
-  }
-
+  /**
+   * Select fallback(default) image
+   */
   _selectDefaultLanguage() {
     if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
@@ -420,10 +434,15 @@ export default class PipelineView extends BackendAIPage {
     } else {
       this.defaultLanguage = 'cr.backend.ai/stable/python';
     }
-    return true;
   }
 
-    _guessHumanizedNames(kernelName) {
+  /**
+   * Convert raw kernel name to formatted one
+   *
+   * @param {string} kernelName - raw kernel name
+   * @return {string} humanizedName - kernel name with a certain format
+   */
+  _guessHumanizedNames(kernelName) {
     const candidate = this.imageNames;
     let imageName = '';
     let humanizedName = null;
@@ -446,6 +465,10 @@ export default class PipelineView extends BackendAIPage {
     return humanizedName;
   }
 
+  /**
+   * Copy forward aliases to backward aliases.
+   *
+   */
   _initAliases() {
     for (const item in this.aliases) {
       if ({}.hasOwnProperty.call(this.aliases, item)) {
@@ -458,7 +481,7 @@ export default class PipelineView extends BackendAIPage {
    * Create a task in pipeline
    */
   _createTask() {
-    let taskInfo = this._readCurrentTaskInfo();
+    const taskInfo = this._readCurrentTaskInfo();
 
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     const paneElement = this.shadowRoot.querySelector('pipeline-flow');
@@ -467,7 +490,7 @@ export default class PipelineView extends BackendAIPage {
       pos_x: paneSize.width / 2,
       pos_y: paneSize.height / 3,
     });
-    const addTaskEvent = new CustomEvent("add-task", {'detail': taskInfo});
+    const addTaskEvent = new CustomEvent('add-task', {'detail': taskInfo});
     document.dispatchEvent(addTaskEvent);
 
     this.notification.text = `Task ${taskInfo.name} updated.`;
@@ -475,12 +498,18 @@ export default class PipelineView extends BackendAIPage {
     this._hideDialogById('#task-dialog');
   }
 
+  /**
+   * Return task into formatted json
+   *
+   * @return {json} task
+   */
   _readCurrentTaskInfo() {
     const taskName = this.shadowRoot.querySelector('#task-name').value;
     const taskType = this.shadowRoot.querySelector('#task-type').value;
     const taskEnvironment = {
-      kernel: this.shadowRoot.querySelector('#task-environment').value,
-      version: this.shadowRoot.querySelector('#task-environment-tag').value
+      'kernel': this.shadowRoot.querySelector('#task-environment').value,
+      'version': this.shadowRoot.querySelector('#task-environment-tag').value,
+      'scaling-group': this.shadowRoot.querySelector('#task-environment-scaling-group').value,
     };
     const taskResources = {
       cpu: this.shadowRoot.querySelector('#task-cpu').value,
@@ -517,17 +546,17 @@ export default class PipelineView extends BackendAIPage {
    * Update the selected task in pipeline
    */
   _updateTask() {
-    let taskInfo = this._readCurrentTaskInfo();
+    const taskInfo = this._readCurrentTaskInfo();
 
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     Object.assign(taskInfo, {
       pos_x: this.selectedNode.pos_x,
       pos_y: this.selectedNode.pos_y,
     });
-    const updateTaskEvent = new CustomEvent("update-task", {'detail': {
-        nodeId: this.selectedNode.id,
-        data: taskInfo
-      }
+    const updateTaskEvent = new CustomEvent('update-task', {'detail': {
+      nodeId: this.selectedNode.id,
+      data: taskInfo
+    }
     });
     document.dispatchEvent(updateTaskEvent);
     this._hideDialogById('#task-dialog');
@@ -541,16 +570,15 @@ export default class PipelineView extends BackendAIPage {
   _removeTask() {
     /**
      * TODO: Remove task with confirmation dialog
-     * 
+     *
      * procedure:
      *    step 1. Show remove task confirmation dialog
      *    step 2. If confirmation dialog returns true, then dispatchEvent to remove the node.
      */
-    
     // step 1. Show remove task confirmation dialog
 
     // step 2. If confirmation dialog returns true, then dispatchEvent to remove the node.
-    const removeTaskEvent = new CustomEvent("remove-task", {'detail': this.selectedNode.id});
+    const removeTaskEvent = new CustomEvent('remove-task', {'detail': this.selectedNode.id});
     document.dispatchEvent(removeTaskEvent);
     this.notification.text = `Task ${this.selectedNode.name} removed.`;
     this.notification.show();
@@ -558,54 +586,73 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Update Pipeline Information to current change
-   * 
+   *
    */
-   _updatePipelineInfo() {
-     const oldName = this.pipelineInfo.name;
-     const newName = this.shadowRoot.querySelector('#edit-pipeline-name').value;
-     const selectedScalingGroup = this.shadowRoot.querySelector('#edit-scaling-group').value;
-     /**
-      * TODO: Update pipeline info based on current value
-      * 
-      * procedure:
-      *     step 1. Send update request to corresponding API server
-      *     step 2. Receive the response and if succeeds, then change current pipeline info
-      *     step 3. Close the edit-pipeline dialog
-      */
+  _updatePipelineInfo() {
+    // if name input field is empty, then use original name instead
+    const name = this.shadowRoot.querySelector('#edit-pipeline-name').value ?? this.pipelineInfo.name;
+    const selectedScalingGroup = this.shadowRoot.querySelector('#edit-scaling-group').value;
 
+    /**
+     * TODO: update pipeline edit dialog with rich input form
+     */
+    const yaml = this.pipelineInfo.yaml;
+    yaml.name = name;
+    yaml.environment.scaling_group = selectedScalingGroup;
+    const input = {
+      name: name,
+      // description: '',
+      yaml: JSON.stringify(yaml),
+      // dataflow: {},
+      // is_active: true,
+    };
     // step 1. Send update request to corresponding API server
-
-    // step 2. Receive the response and if succeeds, then change current pipeline info
-    this.pipelineInfo.name = (oldName !== newName) ? newName: oldName;
-    this.pipelineInfo.yaml.environment.scaling_group = selectedScalingGroup;
-    this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
-    const pipelineList = [...JSON.parse(localStorage.getItem('pipeline-list') || '[]')];
-    const idx = pipelineList.findIndex((pipeline => pipeline.name === oldName));
-    if (idx > -1) {
-      pipelineList[idx] = this.pipelineInfo;
-      localStorage.setItem('pipeline-list', JSON.stringify(pipelineList));
-    }
-    this.notification.text = `Pipeline ${this.pipelineInfo.name} updated.`;
-    this.notification.show();
+    const pipelineId = this.pipelineInfo.id;
+    globalThis.backendaiclient.pipeline.update(pipelineId, input).then((res) => {
+      // step 2. Receive the response and if succeeds, then change current pipeline info
+      const pipeline = res;
+      pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
+      pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
+      this.pipelineInfo = this._deserializePipelineInfo(pipeline);
+      this.pipelineInfo.yaml.environment.scaling_group = selectedScalingGroup;
+      this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
+      this.notification.text = `Pipeline ${this.pipelineInfo.name} updated.`;
+      this.notification.show();
+    }).catch((err) => {
+      console.log(err);
+    });
+    // step 3. Close the edit-pipeline dialog
     this._hideDialogById('#edit-pipeline');
   }
 
+  /**
+   * Give focus on command-editor
+   */
   _focusCmdEditor() {
     const cmdEditor = this.shadowRoot.querySelector('#command-editor');
     cmdEditor.refresh();
     cmdEditor.focus();
   }
 
+  /**
+   * Remove any string typed in command-editor
+   */
   _clearCmdEditor() {
     const cmdEditor = this.shadowRoot.querySelector('#command-editor');
     cmdEditor.setValue('');
   }
 
+  /**
+   * Load string to command-editor
+   */
   _loadDataToCmdEditor() {
     const cmdEditor = this.shadowRoot.querySelector('#command-editor');
     cmdEditor.setValue(this.selectedNode.data?.cmd ?? '');
   }
 
+  /**
+   * Import pipeline node graph to dataflow pane
+   */
   _loadCurrentFlowData() {
     const currentFlowData = this.pipelineInfo.dataflow;
     const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
@@ -614,48 +661,150 @@ export default class PipelineView extends BackendAIPage {
     this.notification.show();
   }
 
+  /**
+   * Save pipeline node graph into pipeline data
+   *
+   */
   _saveCurrentFlowData() {
     const flowDataReqEvent = new CustomEvent('export-flow');
     document.dispatchEvent(flowDataReqEvent);
-    const pipelineList = [...JSON.parse(localStorage.getItem('pipeline-list') || '[]')];
-    const idx = pipelineList.findIndex((pipeline => pipeline.name === this.pipelineInfo.name));
-    if (idx > -1) {
-      this.pipelineInfo.yaml.tasks = this.parseTaskListInfo(this.pipelineInfo.dataflow);
-      pipelineList[idx] = this.pipelineInfo;
-      localStorage.setItem('pipeline-list', JSON.stringify(pipelineList));
-    }
-    this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
-    this.notification.show();
+
+    // convert object to string (dataflow)
+    this.pipelineInfo.yaml.tasks = this.parseTaskListInfo(this.pipelineInfo.dataflow);
+    this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
+    globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
+      const pipeline = res;
+      this.pipelineInfo = this._deserializePipelineInfo(pipeline);
+      this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
+      this.notification.show();
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
+  /**
+   * Return pipelineInfo to sendable data stream
+   */
+  _serializePipelineInfo(pipelineInfo) {
+    if (Object.keys(pipelineInfo).length !== 0) {
+      return {
+        ...pipelineInfo,
+        yaml: (typeof pipelineInfo.yaml !== 'string') ? JSON.stringify(pipelineInfo.yaml ?? {}) : pipelineInfo.yaml,
+        dataflow: (typeof pipelineInfo.dataflow !== 'string') ? JSON.stringify(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
+      };
+    }
+  }
+
+  /**
+   * Return pipelineInfo to modificable data object
+   */
+  _deserializePipelineInfo(pipelineInfo) {
+    if (Object.keys(pipelineInfo).length !== 0) {
+      return {
+        ...pipelineInfo,
+        yaml: (typeof pipelineInfo.yaml === 'string') ? JSON.parse(pipelineInfo.yaml ?? `{}`) : pipelineInfo.yaml,
+        dataflow: (typeof pipelineInfo.dataflow === 'string') ? JSON.parse(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
+      };
+    }
+  }
+
+  /**
+   * Move from current page to the other page corrsponding to url address and tab
+   *
+   * @param {string} url - page to redirect from the current page.
+   */
+  _moveTo(url = '', tabTitle = '') {
+    // const page = url !== '' ? url : '/pipeline';
+    // const tab = tabTitle !== '' ? tabTitle : 'pipeline-job-list';
+    // setTimeout(() => {}, 100);
+    // globalThis.history.pushState({}, '', url);
+    // store.dispatch(navigate(decodeURIComponent(page), {tab: tab}));
+    const activePageChangeEvent = new CustomEvent('active-menu-change-event', {
+      'detail': {
+        activePage: url,
+        activeTab: tabTitle
+      }
+    });
+    document.dispatchEvent(activePageChangeEvent);
+    // FIXME: temporally redirect page due to inert attribute in page element
+    globalThis.location.href = url;
+  }
+
+  /**
+   * Instantiate pipeline to pipeline job and move to pipeline job page
+   */
+  _runPipeline() {
+    this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
+    globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
+      console.log(res);
+      this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.id}...`;
+      this.notification.show();
+      this._moveTo('/pipeline-job');
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+
+  /**
+   * Show run pipeline dialog
+   */
   _showRunPipelineDialog() {
     // automatically save current pipeline info before execute
     this._saveCurrentFlowData();
     this._launchDialogById('#run-pipeline');
   }
 
+  /**
+   * Show task create dialog
+   */
   _showTaskCreateDialog() {
     this._clearCmdEditor();
-    this._launchDialogById('#task-dialog')
+    this._launchDialogById('#task-dialog');
   }
 
+  /**
+   * Show task edit dialog
+   */
   _showTaskEditDialog() {
     this._loadDataToCmdEditor();
-    this._launchDialogById('#task-dialog')
+    this._launchDialogById('#task-dialog');
   }
 
+  /**
+   * Display a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
   _launchDialogById(id) {
     this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * Hide a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
   _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Combine kernel and version
+   *
+   * @param {string} kernel - kernel name
+   * @param {string} version - version
+   * @return {string} `${kernel}:${version}`
+   */
   _generateKernelIndex(kernel, version) {
     return kernel + ':' + version;
   }
 
+  /**
+   * Parse custom data from dataflow element to array of formatted task (json)
+   *
+   * @param {json} rawData - raw object from dataflow
+   * @return {Array} taskList
+   */
   parseTaskListInfo(rawData) {
     const rawTaskList = rawData?.drawflow?.Home?.data;
     const getTaskNameFromNodeId = (connectionList) => {
@@ -670,26 +819,26 @@ export default class PipelineView extends BackendAIPage {
         return {
           name: task.name,
           description: task.description,
-          type: Object.keys(this.taskType).find(type => this.taskType[type] === task.data.type),
+          type: Object.keys(this.taskType).find((type) => this.taskType[type] === task.data.type),
           module_uri: '',
           command: task.data.cmd,
           environment: {
-            'scaling-group': this.pipelineInfo.scaling_group,
-            image: this._generateKernelIndex(task.data.environment.kernel, task.data.environment.version),
-            envs: task.data.environment.envs ?? '',
+            'scaling-group': this.pipelineInfo?.yaml?.environment?.scaling_group,
+            'image': `${this._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
+            'envs': task.data.environment.envs ?? {},
           },
           resources: {
-            cpu: task.data.resources.cpu,
+            cpu: parseInt(task.data.resources.cpu),
             mem: task.data.resources.mem + 'g',
             resource_opts: {
               shmem: task.data.resources.resource_opts.shmem + 'g'
             },
-            cuda: task.data.resources.cuda
+            // cuda: task.data.resources.cuda
           },
           mounts: [], // TODO: add mount feature
           depends: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
-        }
-      })
+        };
+      });
     } else {
       taskList = [];
     }
@@ -738,7 +887,7 @@ export default class PipelineView extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal layout end-justified flex">
           <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-pipeline')}"></mwc-button>
-          <mwc-button unelevated label="Proceed"></mwc-button>
+          <mwc-button unelevated label="Proceed" @click="${() => this._runPipeline()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent>
@@ -747,8 +896,8 @@ export default class PipelineView extends BackendAIPage {
           <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
           <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
             ${this.scalingGroups.map((item) => {
-              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.scaling_group}">${item}</mwc-list-item>`
-            })}
+    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.scaling_group}">${item}</mwc-list-item>`;
+  })}
           </mwc-select>
         </div>
         <div slot="footer" class="horizontal layout end-justified flex">
@@ -757,7 +906,7 @@ export default class PipelineView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent>
-        <span slot="title">${this.isNodeSelected ? "Edit Task" : "Add Task"}</span>
+        <span slot="title">${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span>
         <div slot="content" class="vertical layout center flex">
           <mwc-tab-bar class="task-tab">
             <mwc-tab title="task-settings" label="Settings" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
@@ -771,15 +920,20 @@ export default class PipelineView extends BackendAIPage {
             ` : html`
               <mwc-select class="full-width" id="task-type" label="Task Type" fixedMenuPosition required>
                 ${Object.keys(this.taskType).map((item) => {
-                  return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === "custom"}">${this.taskType[item]}</mwc-list-item>`
-                })}
+    return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}">${this.taskType[item]}</mwc-list-item>`;
+  })}
               </mwc-select>
             `}
           </div>
           <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">
+          <mwc-select class="full-width" id="task-environment-scaling-group" label="Scaling Group" fixedMenuPosition>
+            ${this.scalingGroups.map((item, idx) => {
+    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+  })}
+          </mwc-select>
             <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition value="${this.defaultLanguage}">
                 ${this.languages.map((item) => html`
-                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === this.selectedNode?.environment?.kernel ?? this.defaultLanguage }">
+                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === (this.selectedNode?.environment?.kernel ?? this.defaultLanguage)}">
                     <div class="horizontal justified center flex layout" style="width:325px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="horizontal layout end-justified center flex">
@@ -789,18 +943,18 @@ export default class PipelineView extends BackendAIPage {
                         </div>
                     </div>
                   </mwc-list-item>`
-                )}
+  )}
             </mwc-select>
 
             <mwc-select class="full-width" id="task-environment-tag" label="Version" required fixedMenuPosition>
               <mwc-list-item style="display:none"></mwc-list-item>
               ${this.isNodeSelected ? html`
                 ${this.versions.map((item) => {
-                  return html`
+    return html`
                   <mwc-list-item id="${item}" value="${item}"
                   ?selected="${item === this.selectedNode?.data?.environment?.version}">${item}</mwc-list-item>
-                  `
-                })}
+                  `;
+  })}
               ` : html`
                   ${this.versions.map((item, idx) => html`
                     <mwc-list-item id="${item}" value="${item}"
@@ -808,10 +962,10 @@ export default class PipelineView extends BackendAIPage {
                   `)}
               `}
             </mwc-select>
-            <mwc-textfield id="task-cpu" label="CPU" type="number" value="${this.selectedNode.data?.resource?.cpu ?? 1}" min="1" suffix="Core"></mwc-textfield>
-            <mwc-textfield id="task-mem" label="Memory (GiB)" type="number" value="${this.selectedNode.data?.resource?.mem ?? 0}" min="0" suffix="GB"></mwc-textfield>
-            <mwc-textfield id="task-shmem" label="Shared Memory" type="number" value="${this.selectedNode.data?.resource?.resource_opts?.shmem ?? 0.0125}" min="0.0125" suffix="GB"></mwc-textfield>
-            <mwc-textfield id="task-gpu" label="GPU" type="number" value="${this.selectedNode.data?.resource?.gpu ?? 0}" min="0" suffix="Unit"></mwc-textfield>
+            <mwc-textfield id="task-cpu" label="CPU" type="number" value="${this.selectedNode.data?.resources?.cpu ?? 1}" min="1" suffix="Core"></mwc-textfield>
+            <mwc-textfield id="task-mem" label="Memory (GiB)" type="number" value="${this.selectedNode.data?.resources?.mem ?? 0}" min="0" suffix="GB"></mwc-textfield>
+            <mwc-textfield id="task-shmem" label="Shared Memory" type="number" value="${this.selectedNode.data?.resources?.resource_opts?.shmem ?? 0.0125}" min="0.0125" suffix="GB"></mwc-textfield>
+            <mwc-textfield id="task-gpu" label="GPU" type="number" value="${this.selectedNode.data?.resources?.cuda?.shares ?? 0}" min="0" suffix="Unit"></mwc-textfield>
           </div>
           <div id="task-command" class="vertical layout center flex task-tab-content" style="display:none;">
             <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
