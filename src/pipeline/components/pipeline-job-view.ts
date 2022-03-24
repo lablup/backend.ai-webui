@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement, render} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
@@ -21,10 +21,13 @@ import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import PipelineUtils from '../lib/pipeline-utils';
+import {BackendAIPage} from '../../components/backend-ai-page';
 import './pipeline-job-list';
 import '../lib/pipeline-flow';
 import '../../components/lablup-activity-panel';
 import '../../components/backend-ai-dialog';
+
+import {store} from '../../store';
 
 /**
  Pipeline Job View
@@ -41,9 +44,9 @@ import '../../components/backend-ai-dialog';
  @element pipeline-job-view
 */
 @customElement('pipeline-job-view')
-export default class PipelineJobView extends LitElement {
+export default class PipelineJobView extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
-  @property({type: String}) _activeTab = 'job-list';
+  @property({type: String}) _activeTab = 'pipeline-job-list';
   @property({type: String}) totalDuration;
   @property({type: Object}) pipelineJob = Object();
   @property({type: Array}) pipelineJobs;
@@ -151,6 +154,30 @@ export default class PipelineJobView extends LitElement {
         this.pipelineJobs = e.detail.pipelineJobs;
       }
     });
+    document.addEventListener('active-menu-change-event', (e: any) => {
+      if (e.detail) {
+        this._showTab(e.detail.tabTitle, '.tab-content');
+      }
+    });
+  }
+
+  /**
+   * Initialize the admin.
+   *
+   * @param {Boolean} active
+   */
+  async _viewStateChanged(active) {
+    await this.updateComplete;
+    if (active === false) {
+      return;
+    }
+    // If disconnected
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+      }, true);
+    } else { // already connected
+
+    }
   }
 
   _showTab(tab, tabClass='') {
@@ -158,7 +185,7 @@ export default class PipelineJobView extends LitElement {
     for (const obj of els) {
       obj.style.display = 'none';
     }
-    this._activeTab = tab.title;
+    this._activeTab = tab?.title ?? tab;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
@@ -250,7 +277,7 @@ export default class PipelineJobView extends LitElement {
             </mwc-tab-bar>
           </h3>
           <div id="pipeline-job-list" class="tab-content">
-            <pipeline-job-list></pipeline-job-list>
+            <pipeline-job-list ?active="${this._activeTab === 'pipeline-job-list'}"></pipeline-job-list>
           </div>
           <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
@@ -264,7 +291,7 @@ export default class PipelineJobView extends LitElement {
               </mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
-                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}</span>
+                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_modified)}</span>
               </mwc-list-item>
               <span class="flex"></span>
               ${['WAITING', 'RUNNING', 'STOPPED'].includes(this.pipelineJob.status) ? html`

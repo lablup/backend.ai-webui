@@ -2,10 +2,11 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement, render} from 'lit';
+import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPage} from '../../components/backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../../plastics/layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -40,7 +41,7 @@ import '../../components/backend-ai-dialog';
 */
 
 @customElement('pipeline-job-list')
-export default class PipelineJobList extends LitElement {
+export default class PipelineJobList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: Array}) pipelineJobs = [];
   @property({type: Object}) pipelineJob = Object();
@@ -135,12 +136,31 @@ export default class PipelineJobList extends LitElement {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
+        await this._loadPipelineJobList();
         this._createTaskProgressChart();
       }, true);
     } else { // already connected
+      await this._loadPipelineJobList();
       this._createTaskProgressChart();
     }
+  }
+
+  async _loadPipelineJobList() {
+    globalThis.backendaiclient.pipelineJob.list().then((res) => {
+      console.log(res);
+      const pipelineJobList = res.map((pipeline) => {
+        // // data transformation on yaml and date (created_at, last_modified)
+        // pipeline.yaml = JSON.parse(pipeline.yaml);
+        // pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
+        // pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
+        return pipeline;
+      });
+      this.pipelineJobs = pipelineJobList;
+    }).catch((err) => {
+      console.log(err);
+    });
+    this.requestUpdate();
   }
 
   /**
@@ -213,7 +233,7 @@ export default class PipelineJobList extends LitElement {
     };
     columns[2].renderer = (root, column, rowData) => { // duration
       const createdAt = PipelineUtils._humanReadablePassedTime(rowData.item.created_at);
-      const duration = PipelineUtils._humanReadableTimeDuration(rowData.item.created_at, rowData.item.last_updated);
+      const duration = PipelineUtils._humanReadableTimeDuration(rowData.item.created_at, rowData.item.terminated_at);
       render(html`
         <mwc-list-item class="vertical layout start center-justified" style="font-size:15px;">
           <span class="horizontal layout"><mwc-icon>calendar_today</mwc-icon>${createdAt}</span>
@@ -261,7 +281,7 @@ export default class PipelineJobList extends LitElement {
         aria-label="Pipeline Job List" .items="${this.pipelineJobs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
         <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
-        <vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>
+        <!--<vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>-->
         <vaadin-grid-filter-column path="vfolder" header="Mounted folder" resizable></vaadin-grid-filter-column>
         <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
         <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
@@ -278,19 +298,19 @@ export default class PipelineJobList extends LitElement {
             <mwc-list-item twoline>
               <span><strong>Created At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._toLocaleString(this.pipelineJob.created_at)}
+                ${PipelineUtils._humanReadableDate(this.pipelineJob.created_at)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Updated At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._toLocaleString(this.pipelineJob.last_updated)}
+                ${PipelineUtils._humanReadableDate(this.pipelineJob.last_modified)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Duration</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.last_updated)}
+                ${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.terminated_at)}
               </span>
             </mwc-list-item>
           </mwc-list>
