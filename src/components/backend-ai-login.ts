@@ -590,7 +590,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  login(showError = true) {
+  async login(showError = true) {
     if (this.api_endpoint === '') {
       const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
       if (api_endpoint != null) {
@@ -600,10 +600,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingSession(showError);
+      await this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingAPI(showError);
+      await this._connectUsingAPI(showError);
     } else {
       this.open();
     }
@@ -734,6 +734,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
       document.dispatchEvent(event);
+      globalThis.backendaiclient.pipeline.logout(); // pipeline logout
     }).catch((err) => { // Signout failed
       this.free();
       if (this.signoutPanel.open !== true) {
@@ -788,6 +789,7 @@ export default class BackendAILogin extends BackendAIPage {
         this._enableUserInput();
       } else {
         this._connectUsingSession(true);
+        // globalThis.backendaiclient.pipeline.login()
       }
     } else {
       this._disableUserInput();
@@ -983,7 +985,7 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient.is_superadmin = true;
       }
       return globalThis.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
-    }).then((response) => {
+    }).then(async (response) => {
       const groups = response.groups;
       const user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
@@ -1037,6 +1039,25 @@ export default class BackendAILogin extends BackendAIPage {
       localStorage.setItem('backendaiwebui.api_endpoint', this.api_endpoint);
       // this.notification.text = 'Connected.';
       // this.notification.show();
+    }).then(() => {
+      /**
+       * FIXME: Pipeline Login after WebUI Login
+       *
+       */
+      return globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
+    }).then((res) => {
+      const keypairs = res.keypairs;
+      const loginInfo = {
+        username: this.user_id,
+        password: this.password,
+        // use first keypair
+        access_key: keypairs[0].access_key,
+        secret_key: keypairs[0].secret_key,
+      };
+      const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
+      if (!pipelineToken) {
+        globalThis.backendaiclient.pipeline.login(loginInfo);
+      }
     }).catch((err) => { // Connection failed
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== 'undefined') {
@@ -1061,6 +1082,7 @@ export default class BackendAILogin extends BackendAIPage {
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
         this.client.logout();
+        globalThis.backendaiclient.pipeline.logout(); // pipeline logout
       }
       this._enableUserInput();
     });
