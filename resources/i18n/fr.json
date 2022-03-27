@@ -1082,7 +1082,10 @@
     "FolderName": "Nom du dossier importé :",
     "NotebookBadgeCodeHTML": "Code de badge de bloc-notes (HTML)",
     "NotebookBadgeCodeMarkdown": "Code de badge de bloc-notes (Markdown)",
-    "Installed": "installée"
+    "Installed": "installée",
+    "GithubInternalError": "",
+    "GithubAPILimitError": "",
+    "GithubAPIEtcError": ""
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiques pour ce mois",

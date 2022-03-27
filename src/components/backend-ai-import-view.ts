@@ -215,8 +215,59 @@ export default class BackendAIImport extends BackendAIPage {
     } else {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
       var repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
-      const defaultRepo = async() =>  { return (await (await fetch(repoUrl)).json()).default_branch }
-      return defaultRepo().then((result) => {
+      const getRepoUrl = async() => {
+        try {
+          const response = await fetch(repoUrl);
+          if (response.status === 200) {
+            const responseJson = await response.json();
+            return responseJson.default_branch;
+          } else if (response.status === 404) {
+            throw 'WrongURLType';
+          } else if (response.status === 403) { //forbidden
+            const statusCode = response.status
+            const errorBody = response.text
+            const limitCnt = response.headers.get('x-ratelimit-limit');
+            const limitUsedCnt = response.headers.get('x-ratelimit-used')
+            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
+            console.log(`error statusCode: ${statusCode}`);
+            console.log(`error body: ${errorBody}`);
+            console.log(`error limit count: ${limitCnt}`);
+            console.log(`error limit used count: ${limitUsedCnt}`);
+            console.log(`error limit remaining count: ${limitRemainingCnt}`);
+            if (limitRemainingCnt === '0') {
+              throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+            } else {
+              throw 'GithubAPIEtcError';
+            }
+          } else if (response.status === 429) { // Too Many Requests
+            const statusCode = response.status
+            const errorBody = response.text
+            const limitCnt = response.headers.get('x-ratelimit-limit');
+            const limitUsedCnt = response.headers.get('x-ratelimit-used')
+            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
+            console.log(`error statusCode: ${statusCode}`);
+            console.log(`error body: ${errorBody}`);
+            console.log(`error limit count: ${limitCnt}`);
+            console.log(`error limit used count: ${limitUsedCnt}`);
+            console.log(`error limit remaining count: ${limitRemainingCnt}`);
+            throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+          } else if (response.status === 500) {
+            throw 'GithubInternalError';
+          }
+          else {
+            const headers = response.headers
+            const statusCode = response.status
+            const errorBody = response.text
+            console.log(`error headers: ${headers}`);
+            console.log(`error statusCode: ${statusCode}`);
+            console.log(`error body: ${errorBody}`);
+            throw 'GithubAPIEtcError';
+          }
+        } catch (error) {
+          throw error;
+        }
+      }
+      return getRepoUrl().then((result) => {
         tree = result;
         url = url.replace('https://github.com', 'https://codeload.github.com');
         url = url + '/zip/' + tree;
@@ -229,9 +280,23 @@ export default class BackendAIImport extends BackendAIPage {
           this.notification.show();
           return false;
         }
-      }).catch((e) => {
-        console.log("error" + e);
-        this.notification.text = _text('import.WrongURLType');
+      }).catch((e) => { // check exception
+        console.log("error: " + e);
+        switch (e) {
+          case 'WrongURLType':
+            this.notification.text = _text('import.WrongURLType');
+            break;
+          case 'GithubInternalError':
+            this.notification.text = _text('import.GithubInternalError');
+            break;
+          default:
+            if (e.indexOf('|') !== -1) {
+              this.notification.text = _text('import.GithubAPILimitError');
+            } else {
+              this.notification.text = _text('import.GithubAPIEtcError');
+            }
+            break;
+        }
         this.importMessage = this.notification.text;
         this.notification.show();
         return false;

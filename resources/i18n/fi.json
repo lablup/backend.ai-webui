@@ -1054,7 +1054,10 @@
     "FolderName": "Tuodun kansion nimi:",
     "NotebookBadgeCodeHTML": "Muistikirjan tunnus (HTML)",
     "NotebookBadgeCodeMarkdown": "Muistikirjan tunnuskoodi (Markdown)",
-    "Installed": "Asennettu"
+    "Installed": "Asennettu",
+    "GithubInternalError": "",
+    "GithubAPILimitError": "",
+    "GithubAPIEtcError": ""
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Tämän kuukauden tilastot",

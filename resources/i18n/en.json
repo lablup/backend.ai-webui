@@ -1113,7 +1113,10 @@
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
-    "Installed": "Installed"
+    "Installed": "Installed",
+    "GithubInternalError": "Github Internal Error.",
+    "GithubAPILimitError": "Github API Limitation Error.",
+    "GithubAPIEtcError": "Github Server Issue."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",

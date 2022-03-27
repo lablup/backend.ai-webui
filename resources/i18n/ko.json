@@ -1113,7 +1113,10 @@
     "FolderName": "가져올 폴더 이름: ",
     "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)",
-    "Installed": "설치됨"
+    "Installed": "설치됨",
+    "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
+    "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
+    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",

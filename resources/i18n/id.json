@@ -1082,7 +1082,10 @@
     "FolderName": "Nama folder yang diimpor:",
     "NotebookBadgeCodeHTML": "Kode Lencana Notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Kode Lencana Notebook (Markdown)",
-    "Installed": "Terinstalasi"
+    "Installed": "Terinstalasi",
+    "GithubInternalError": "",
+    "GithubAPILimitError": "",
+    "GithubAPIEtcError": ""
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",

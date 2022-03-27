@@ -1082,7 +1082,10 @@
     "FolderName": "Импортын фолдерын нэр:",
     "NotebookBadgeCodeHTML": "Jupyter Notebook-ийн код (HTML)",
     "NotebookBadgeCodeMarkdown": "Jupyter Notebook-ийн код (Markdown)",
-    "Installed": "Суулгасан"
+    "Installed": "Суулгасан",
+    "GithubInternalError": "",
+    "GithubAPILimitError": "",
+    "GithubAPIEtcError": ""
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",

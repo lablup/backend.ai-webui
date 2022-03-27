@@ -1082,7 +1082,10 @@
     "FolderName": "Имя импортированной папки:",
     "NotebookBadgeCodeHTML": "Код значка блокнота (HTML)",
     "NotebookBadgeCodeMarkdown": "Код значка блокнота (маркдаун)",
-    "Installed": "Установлены"
+    "Installed": "Установлены",
+    "GithubInternalError": "",
+    "GithubAPILimitError": "",
+    "GithubAPIEtcError": ""
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",
