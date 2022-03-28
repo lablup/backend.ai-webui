@@ -3892,7 +3892,7 @@ class Pipeline {
         return Promise.resolve(false);
       } else {
         const token = result.token;
-        document.cookie = `${this.tokenName}=${token}`;
+        document.cookie = `${this.tokenName}=${token}; path=/`;
       }
     } catch (err) {
       console.log(err);
@@ -3904,9 +3904,7 @@ class Pipeline {
   }
 
   logout() {
-    if (this.client._config.pipelineToken !== null) {
-      this._removeCookieByName(this.tokenName);
-    }
+    this._removeCookieByName(this.tokenName);
   }
 
   async check_login() {

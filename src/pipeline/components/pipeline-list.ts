@@ -536,18 +536,23 @@ export default class PipelineList extends BackendAIPage {
       dataflow: {}, // used for graph visualization
       is_active: true,
     };
-    globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
+    this._checkAuthToken().then(() => {
+      return globalThis.backendaiclient.pipeline.create(this.pipelineInfo);
+    }).then((res) => {
       const pipeline = res;
       this.notification.text = `Pipeline ${pipeline.name} created.`;
       this.notification.show();
       this._loadPipelineList();
+      // move to pipeline view page with current pipeline info
+      this.moveToViewTab();
     }).catch((err) => {
       console.log(err);
+      this.notification.text = `Pipeline Creation failed. Check Input or server status.`
+      this.notification.show(true);
+    }).finally(() => {
+      this.pipelineInfo = {};
+      this._hideDialogById('#create-pipeline');
     });
-    // move to pipeline view page with current pipeline info
-    this.moveToViewTab();
-    this.pipelineInfo = {};
-    this._hideDialogById('#create-pipeline');
   }
 
   /**
@@ -595,20 +600,23 @@ export default class PipelineList extends BackendAIPage {
         return yaml;
       }
     };
-    globalThis.backendaiclient.pipeline.list().then((res) => {
-      const pipelineList = res.map((pipeline) => {
-        console.log(pipeline);
-        // data transformation on yaml and date (created_at, last_modified)
+    try {
+      await this._checkAuthToken();
+      const pipelineList = await globalThis.backendaiclient.pipeline.list();
+      this.pipelines = pipelineList.map((pipeline) => {
         pipeline.yaml = sanitizeYaml(pipeline.yaml);
+        // data transformation on yaml and date (created_at, last_modified)
         pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
         pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
         return pipeline;
       });
-      this.pipelines = pipelineList;
-    }).catch((err) => {
-      console.log(err);
-    });
-    this.requestUpdate();
+      this.requestUpdate();
+    } catch (err) {
+      this.notification.text = err.message;
+      this.notification.show();
+      const event = new CustomEvent('backend-ai-logout', {'detail': ''});
+      document.dispatchEvent(event);
+    } 
   }
 
   /**
@@ -627,6 +635,14 @@ export default class PipelineList extends BackendAIPage {
    */
   _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
+  }
+
+  async _checkAuthToken() {
+    const res = await globalThis.backendaiclient.pipeline.check_login();
+    const username = globalThis.backendaiclient.email.split('@')[0];
+    if (res.username !== username) {
+      throw new Error("Pipeline Token is invalid");
+    }
   }
 
   /**

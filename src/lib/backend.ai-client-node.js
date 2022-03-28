@@ -3605,7 +3605,7 @@ class Pipeline {
             }
             else {
                 const token = result.token;
-                document.cookie = `${this.tokenName}=${token}`;
+                document.cookie = `${this.tokenName}=${token}; path=/`;
             }
         }
         catch (err) {
@@ -3617,9 +3617,7 @@ class Pipeline {
         }
     }
     logout() {
-        if (this.client._config.pipelineToken !== null) {
-            this._removeCookieByName(this.tokenName);
-        }
+        this._removeCookieByName(this.tokenName);
     }
     async check_login() {
         let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");

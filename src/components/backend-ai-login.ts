@@ -961,7 +961,7 @@ export default class BackendAILogin extends BackendAIPage {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
-    return this.client.query(q, v).then((response) => {
+    return this.client.query(q, v).then(async (response) => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       const resource_policy = response['keypair'].resource_policy;
@@ -970,6 +970,23 @@ export default class BackendAILogin extends BackendAIPage {
       const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
+
+      /**
+       * FIXME: Pipeline Login after WebUI Login
+       */
+      const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
+      if (!pipelineToken) {
+        const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
+        const keypairs = res.keypairs;
+        const loginInfo = {
+          username: this.user_id,
+          password: this.password,
+          // use first keypair
+          access_key: keypairs[0].access_key,
+          secret_key: keypairs[0].secret_key,
+        };
+        await globalThis.backendaiclient.pipeline.login(loginInfo);
+      }
       return globalThis.backendaiclient.query(q, v);
     }).then((response) => {
       const email = response['user'].email;
@@ -1046,25 +1063,6 @@ export default class BackendAILogin extends BackendAIPage {
       localStorage.setItem('backendaiwebui.api_endpoint', this.api_endpoint);
       // this.notification.text = 'Connected.';
       // this.notification.show();
-    }).then(() => {
-      /**
-       * FIXME: Pipeline Login after WebUI Login
-       *
-       */
-      return globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
-    }).then((res) => {
-      const keypairs = res.keypairs;
-      const loginInfo = {
-        username: this.user_id,
-        password: this.password,
-        // use first keypair
-        access_key: keypairs[0].access_key,
-        secret_key: keypairs[0].secret_key,
-      };
-      const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
-      if (!pipelineToken) {
-        globalThis.backendaiclient.pipeline.login(loginInfo);
-      }
     }).catch((err) => { // Connection failed
       if (this.loginPanel.open !== true) {
         if (typeof err.message !== 'undefined') {
