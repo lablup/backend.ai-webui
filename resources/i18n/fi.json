@@ -1055,9 +1055,9 @@
     "NotebookBadgeCodeHTML": "Muistikirjan tunnus (HTML)",
     "NotebookBadgeCodeMarkdown": "Muistikirjan tunnuskoodi (Markdown)",
     "Installed": "Asennettu",
-    "GithubInternalError": "",
-    "GithubAPILimitError": "",
-    "GithubAPIEtcError": ""
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Tämän kuukauden tilastot",
