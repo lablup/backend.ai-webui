@@ -546,7 +546,7 @@ export default class PipelineList extends BackendAIPage {
       this.pipelineInfo = {};
     }).catch((err) => {
       console.log(err);
-      this.notification.text = `Pipeline Creation failed. Check Input or server status.`
+      this.notification.text = `Pipeline Creation failed. Check Input or server status.`;
       this.notification.show(true);
     }).finally(() => {
       this._hideDialogById('#create-pipeline');
@@ -613,7 +613,7 @@ export default class PipelineList extends BackendAIPage {
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
       document.dispatchEvent(event);
-    } 
+    }
   }
 
   /**

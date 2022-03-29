@@ -292,7 +292,7 @@ export default class PipelineFlow extends LitElement {
 
   /**
    * Add node into pane
-   * 
+   *
    * @param {DrawflowNode} nodeInfo
    */
   _addNode(nodeInfo: DrawflowNode) {
@@ -302,7 +302,7 @@ export default class PipelineFlow extends LitElement {
 
   /**
    * Update node according to data
-   * 
+   *
    * @param {number} id
    * @param {DrawflowNode} nodeInfo
    */
