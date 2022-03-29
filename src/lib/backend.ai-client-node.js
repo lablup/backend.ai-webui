@@ -1113,7 +1113,9 @@ class Client {
                 "Accept": content_type,
                 "Allow-Control-Allow-Origin": "*"
             });
-            if (queryString.startsWith('/api') === true) { // Append Authorization token for every API request to pipeline
+            const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
+            // Append Authorization token for every API request to pipeline
+            if (queryString.startsWith('/api') === true || isDeleteTokenRequest) {
                 const token = this.pipeline.getPipelineToken();
                 hdrs.set("Authorization", `Token ${token}`);
             }
@@ -3616,8 +3618,20 @@ class Pipeline {
             };
         }
     }
-    logout() {
-        this._removeCookieByName(this.tokenName);
+    async logout() {
+        const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
+        let result;
+        try {
+            result = await this.client._wrapWithPromise(rqst);
+            this._removeCookieByName(this.tokenName);
+        }
+        catch (err) {
+            console.log(err);
+            throw {
+                "title": "Pipeline Logout Failed.",
+                "message": "Pipeline Loout failed. Check information and pipeline server status."
+            };
+        }
     }
     async check_login() {
         let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");

@@ -740,7 +740,6 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
       document.dispatchEvent(event);
-      globalThis.backendaiclient.pipeline.logout(); // pipeline logout
     }).catch((err) => { // Signout failed
       this.free();
       if (this.signoutPanel.open !== true) {
@@ -1087,7 +1086,6 @@ export default class BackendAILogin extends BackendAIPage {
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
         this.client.logout();
-        globalThis.backendaiclient.pipeline.logout(); // pipeline logout
       }
       this._enableUserInput();
     });
