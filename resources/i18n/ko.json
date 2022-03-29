@@ -222,7 +222,7 @@
       "GPUSlot": "슬롯",
       "FolderAlias": "경로 & 대체이름",
       "FolderAliasOverlapping": "대체 이름이 이미 존재하는 다른 이름과 겹칩니다.",
-      "DescFolderAlias":"<p>이 입력을 채우면 폴더 이름이 마운트될 때 별칭으로 변경됩니다.</p><p>절대 경로는 '/'에 마운트되고, / 또는 공백으로 시작하지 않으면 /home/work의 하위 경로에 속하게 됩니다.</p><p>시스템 폴더들과 같은 별칭을 사용하지 마십시오.</p><p>아래의 '마운트된 폴더'에서 최종 경로를 확인하십시오.</p><p>이 창을 다시 보고 싶으면 '경로 & 대체이름' 옆의 아이콘을 누르세요.</p>",
+      "DescFolderAlias": "<p>이 입력을 채우면 폴더 이름이 마운트될 때 별칭으로 변경됩니다.</p><p>절대 경로는 '/'에 마운트되고, / 또는 공백으로 시작하지 않으면 /home/work의 하위 경로에 속하게 됩니다.</p><p>시스템 폴더들과 같은 별칭을 사용하지 마십시오.</p><p>아래의 '마운트된 폴더'에서 최종 경로를 확인하십시오.</p><p>이 창을 다시 보고 싶으면 '경로 & 대체이름' 옆의 아이콘을 누르세요.</p>",
       "OpenMPOptimization": "OpenMP/OpenBLAS 최적화",
       "DescOpenMPOptimization": "<p>이 값은 nthreads-var 내부 컨트롤 변수의 초기 값을 설정하여 병렬 영역에 사용할 스레드 수를 설정합니다.</p><p>Backend.AI는 이 값을 CPU 코어수와 같게 설정하며, 일반적인 고성능 컴퓨팅 워크로드를 가속하는 효과가 있습니다. 그러나 일부 멀티스레드 워크로드의 경우 OpenMP를 사용하는 여러 프로세스가 동시에 사용되어 비정상적으로 많은 스레드를 생성하여 상당한 성능 저하가 발생합니다. 이러한 경우 이 값을 1 또는 2로 조정하시기 바랍니다.</p>",
       "HPCOptimization": "고성능 컴퓨팅 최적화",
@@ -254,7 +254,7 @@
     "Agent": "실행노드",
     "Usage": "사용량",
     "OpenToPublic": "앱을 외부에 공개",
-    "AllowedClientIps":"허용된 클라이언트 IP",
+    "AllowedClientIps": "허용된 클라이언트 IP",
     "CommaSeparated": "콤마로 구분",
     "TryPreferredPort": "선호 포트",
     "SFTPDescription": "SSH/SFTP 클라이언트를 이용해서 접속하세요.",
@@ -791,7 +791,8 @@
     "RegistryUpdateFailed": "레지스트리 업데이트가 실패하였습니다.",
     "RescanImages": "이미지 리스캔중...",
     "RescanFailed": "리스캔 작업이 실패하였습니다.",
-    "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다."
+    "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
+    "PleaseSelectOption": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
@@ -1116,7 +1117,10 @@
     "FolderName": "가져올 폴더 이름: ",
     "NotebookBadgeCodeHTML": "노트북 배지 코드(HTML)",
     "NotebookBadgeCodeMarkdown": "노트북 배지 코드(Markdown)",
-    "Installed": "설치됨"
+    "Installed": "설치됨",
+    "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
+    "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
+    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다."
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",

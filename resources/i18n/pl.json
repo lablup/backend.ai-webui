@@ -1054,7 +1054,10 @@
     "FolderName": "Nazwa importowanego folderu:",
     "NotebookBadgeCodeHTML": "Kod plakietki notatnika (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod plakietki notebooka (przecena)",
-    "Installed": "Zainstalowane"
+    "Installed": "Zainstalowane",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statystyki za ten miesiąc",

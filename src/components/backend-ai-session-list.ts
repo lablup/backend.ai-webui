@@ -1184,8 +1184,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    const regExp = /[[\],'"]/g;
-
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
@@ -1201,11 +1199,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
         mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-        if (mounts.length > 1) {
-          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
-        } else {
-          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
-        }
+        mountedFolderItem.innerHTML = (mounts.length > 1) ? key : _text('session.OnlyOneFolderAttached');
+
         menu.appendChild(mountedFolderItem);
       });
       document.body.appendChild(menu);
@@ -1663,7 +1658,10 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   configRenderer(root, column?, rowData?) {
     // extract mounted folder names and convert them to an array.
-    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem) => JSON.parse(elem.replace(/'/g, '"'))[0]);
+    // monkeypatch for extracting and formatting legacy mounts info
+    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem: string) => {
+      return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
+    });
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1671,7 +1669,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${rowData.item.mounts.length > 0 ? html`
               <wl-icon class="fg green indicator">folder_open</wl-icon>
               <button class="mount-button"
-                @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}">
                 ${mountedFolderList.join(', ')}
               </button>
