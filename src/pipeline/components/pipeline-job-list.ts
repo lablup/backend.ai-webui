@@ -7,7 +7,14 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 import {BackendAIPage} from '../../components/backend-ai-page';
-import {IronFlex, IronFlexAlignment} from '../../plastics/layout/iron-flex-layout-classes';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../../plastics/layout/iron-flex-layout-classes';
+
+import {default as YAML} from 'js-yaml';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
@@ -44,7 +51,7 @@ import '../../components/backend-ai-dialog';
 export default class PipelineJobList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: Array}) pipelineJobs = [];
-  @property({type: Object}) pipelineJob = Object();
+  @property({type: Object}) pipelineJobInfo = Object();
   @property({type: Object}) tasks;
   @property({type: Object}) options;
 
@@ -57,6 +64,8 @@ export default class PipelineJobList extends BackendAIPage {
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
+      IronFlexFactors,
+      IronPositioning,
       // language=CSS
       css`
         #pipeline-job-list {
@@ -146,54 +155,100 @@ export default class PipelineJobList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get Pipelin Job list from pipeline server
+   *
+   */
   async _loadPipelineJobList() {
-    globalThis.backendaiclient.pipelineJob.list().then((res) => {
-      console.log(res);
-      const pipelineJobList = res.map((pipeline) => {
-        // // data transformation on yaml and date (created_at, last_modified)
-        // pipeline.yaml = JSON.parse(pipeline.yaml);
-        // pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
-        // pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
-        return pipeline;
+    try {
+      const pipelineJobList = await globalThis.backendaiclient.pipelineJob.list();
+      this.pipelineJobs = pipelineJobList.map((pipelineJob) => {
+        // data transformation on yaml
+        pipelineJob.yaml = JSON.parse(pipelineJob.yaml);
+        return pipelineJob;
       });
-      this.pipelineJobs = pipelineJobList;
-    }).catch((err) => {
+      this.requestUpdate();
+    } catch (err) {
       console.log(err);
-    });
-    this.requestUpdate();
+      this.notification.text = err.message;
+      this.notification.show();
+      const event = new CustomEvent('backend-ai-logout', {'detail': ''});
+      document.dispatchEvent(event);
+    }
   }
 
   /**
    * Create Task Progress Doughnut Chart
    */
-  async _createTaskProgressChart() {
-    const tasks = this.pipelineJob.tasks;
-    const numRunningTasks = tasks?.filter((task) => ['PENDING', 'PREPARING', 'RUNNING'].includes(task.status)).length?? 0;
-    const numSuccessTasks = tasks?.filter((task) => ['SUCCESS'].includes(task.status)).length?? 0;
-    const numFailedTasks = tasks?.filter((task) => ['FAILED', 'ERROR', 'CANCELLED'].includes(task.status)).length?? 0;
-    this.tasks = {
-      labels: [
-        `${numRunningTasks} RUNNING`,
-        `${numSuccessTasks} SUCCESS`,
-        `${numFailedTasks} FAILED`,
-      ],
-      datasets: [{
-        data: [
-          numRunningTasks,
-          numSuccessTasks,
-          numFailedTasks,
+  _createTaskProgressChart() {
+    this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
+      const tasks = res;
+      const numActiveTasks = tasks?.filter((task) =>
+        ['PENDING', 'SCHEDULED', 'PREPARING', 'BUILDING', 'PULLING', 'RUNNING', 'RESTARTING', 'RESIZING', 'SUSPENDED', 'TERMINATING'].includes(task.status)).length?? 0;
+      const numFinishedTasks = tasks?.filter((task) => ['TERMINATED', 'ERROR', 'CANCELLED'].includes(task.status)).length?? 0;
+      this.tasks = {
+        labels: [
+          `${numActiveTasks} ACTIVE`,
+          `${numFinishedTasks} FINISHED`,
         ],
-        backgroundColor: [
-          '#007ec6',
-          '#97ca00',
-          '#e05d44'
-        ]
-      }]
-    };
+        datasets: [{
+          data: [
+            numActiveTasks,
+            numFinishedTasks,
+          ],
+          backgroundColor: [
+            // '#007ec6',
+            '#97ca00',
+            '#9f9f9f'
+            // '#e05d44'
+          ]
+        }]
+      };
+    }).catch((err) => {
+      console.log(err);
+      this.notification.text = err.message;
+      this.notification.show();
+    });
   }
 
-  _showDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+  /**
+   * Display a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
+  _launchDialogById(id) {
+    this.shadowRoot.querySelector(id).show();
+  }
+
+  /**
+   * Hide a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
+  _hideDialogById(id) {
+    this.shadowRoot.querySelector(id).hide();
+  }
+
+  /**
+   * Show yaml data dialog of selected pipeline
+   *
+   */
+  _launchWorkFlowDialog() {
+    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
+    const yamlString = YAML.dump(this.pipelineJobInfo.yaml, {});
+    codemirror.setValue(yamlString);
+    this._launchDialogById('#workflow-file-dialog');
+  }
+
+  /**
+   * Show information dialog of selected pipeline
+   *
+   * @param {json} pipelineJobInfo
+   */
+  async _launchPipelineJobDetailDialog(pipelineJobInfo: Object) {
+    this.pipelineJobInfo = pipelineJobInfo;
+    await this._createTaskProgressChart();
+    this._launchDialogById('#pipeline-job-detail-dialog');
   }
 
   _toggleRunningIcon(e) {
@@ -205,15 +260,24 @@ export default class PipelineJobList extends BackendAIPage {
     }
   }
 
+  async _loadTaskInstances(pipelineJobId = '') {
+    return globalThis.backendaiclient.pipelineTaskInstance.list(pipelineJobId);
+  }
+
+  _togglePipelineJobExecution(pipelineJob) {
+    this.pipelineJobInfo = pipelineJob;
+    // this._toggleRunningIcon(e);
+  }
+
   _loadPipelineJobView(pipelineJob) {
-    this.pipelineJob = pipelineJob;
+    this.pipelineJobInfo = pipelineJob;
     PipelineUtils._setCustomEvent('pipeline-job-view-active-tab-change',
       {
         detail: {
           activeTab: {
             title: 'pipeline-job-view',
           },
-          pipelineJob: this.pipelineJob,
+          pipelineJob: this.pipelineJobInfo,
           pipelineJobs: this.pipelineJobs,
         }
       }
@@ -242,25 +306,22 @@ export default class PipelineJobList extends BackendAIPage {
       `, root);
     };
     columns[3].renderer = (root, column, rowData) => { // control
-      const isCompleted = ['SUCCESS', 'FAILED'].includes(rowData.item.status);
-      const isRunning = ['WAITING', 'RUNNING'].includes(rowData.item.status);
-      const icon = isRunning ? 'pause' : 'play_arrow';
+      const isCompleted = ['TERMINATED', 'ERROR', 'CANCELLED'].includes(rowData.item.status);
+      const isActive = ['PENDING', 'RUNNING', 'WAITING', 'PAUSED'].includes(rowData.item.status);
+      const icon = isActive ? 'pause' : 'play_arrow';
       render(html`
         <div id="controls" class="layout horizontal flex center" pipeline-id="${rowData.item.id}">
           <mwc-icon-button class="fg green info"
             icon="assignment"
             @click="${() => {
-    this.pipelineJob = rowData.item;
-    this._createTaskProgressChart();
-    this._showDialog('pipeline-job-detail-dialog');
+    this._launchPipelineJobDetailDialog(rowData.item);
   }}"></mwc-icon-button>
           <mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
           ${!isCompleted ? html`
             <mwc-icon-button class="fg green start"
               icon="${icon}"
-              @click="${(e) => {
-    this.pipelineJob = rowData.item;
-    this._toggleRunningIcon(e);
+              @click="${() => {
+    this._togglePipelineJobExecution(rowData.item);
   }}"></mwc-icon-button>` : html``}
         </div>
       `, root);
@@ -288,29 +349,29 @@ export default class PipelineJobList extends BackendAIPage {
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
-        <span slot="title">${this.pipelineJob.name || 'Pipeline Details'}</span>
+        <span slot="title">${this.pipelineJobInfo.name || 'Pipeline Details'}</span>
         <div slot="content" role="listbox" class="horizontal center layout">
           <mwc-list class="vertical center layout">
             <mwc-list-item twoline>
               <span><strong>ID</strong></span>
-              <span class="monospace" slot="secondary">${this.pipelineJob.id}</span>
+              <span class="monospace" slot="secondary">${this.pipelineJobInfo.id}</span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Created At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._humanReadableDate(this.pipelineJob.created_at)}
+                ${PipelineUtils._humanReadableDate(this.pipelineJobInfo.created_at)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Updated At</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._humanReadableDate(this.pipelineJob.last_modified)}
+                ${PipelineUtils._humanReadableDate(this.pipelineJobInfo.last_modified)}
               </span>
             </mwc-list-item>
             <mwc-list-item twoline>
               <span><strong>Duration</strong></span>
               <span class="monospace" slot="secondary">
-                ${PipelineUtils._humanReadableTimeDuration(this.pipelineJob.created_at, this.pipelineJob.terminated_at)}
+                ${PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at)}
               </span>
             </mwc-list-item>
           </mwc-list>
@@ -318,38 +379,37 @@ export default class PipelineJobList extends BackendAIPage {
             <mwc-list-item id="status" twoline>
               <span><strong>Status</strong></span>
               <div slot="secondary" class="horizontal center layout">
-                <lablup-shields id="pipeline-status" description="${this.pipelineJob.status}"
-                  color="${PipelineUtils._getStatusColor(this.pipelineJob.status)}"></lablup-shields>
+                <lablup-shields id="pipeline-status" description="${this.pipelineJobInfo.status}"
+                  color="${PipelineUtils._getStatusColor(this.pipelineJobInfo.status)}"></lablup-shields>
                 <chart-js id="tasks-status" type="doughnut" .data="${this.tasks}" .options="${this.options}" width="160" height="40"></chart-js>
               </div>
             </mwc-list-item>
-            ${this.pipelineJob.ownership ? html`
+            ${this.pipelineJobInfo.ownership ? html`
               <mwc-list-item twoline>
                 <span><strong>Ownership</strong></span>
-                <span class="monospace" slot="secondary">${this.pipelineJob.ownership}</span>
+                <span class="monospace" slot="secondary">${this.pipelineJobInfo.ownership}</span>
               </mwc-list-item>
             ` : html``}
             <mwc-list-item twoline>
               <span><strong>Mounted Folder</strong></span>
-              <span class="monospace" slot="secondary">${this.pipelineJob.vfolder}</span>
+              <span class="monospace" slot="secondary">${this.pipelineJobInfo.vfolder}</span>
             </mwc-list-item>
             <mwc-list-item id="workflow-item" twoline>
               <span><strong>View Workflow File</strong></span>
               <mwc-button id="view-workflow-button" unelevated slot="secondary" 
                 icon="assignment" label="View workflow file"
                 @click="${() => {
-    this._showDialog('workflow-file-dialog');
-    this.shadowRoot.querySelector('#workflow-editor').refresh();
+    this._launchWorkFlowDialog();
   }}">
               </mwc-button>
             </mwc-list-item>
           </mwc-list>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="workflow-file-dialog">
+      <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
         <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
         <div slot="content">
-          <lablup-codemirror id="workflow-editor" mode="yaml"></lablup-codemirror>
+          <lablup-codemirror id="workflow-editor" mode="yaml" readonly></lablup-codemirror>
         </div>
       </backend-ai-dialog>
     `;

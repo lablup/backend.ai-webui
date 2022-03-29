@@ -4092,10 +4092,15 @@ class PipelineTaskInstance {
   }
 
   /**
-   * List all task instances in all pipeline-jobs
+   * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
+   * if not, then bring all task instances that pipeline server user created via every pipeline job
+   * 
+   * @param {stirng} pipelineJobId - pipeline job id
    */
-  async list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+  async list(pipelineJobId = '') {
+    let queryString = `${this.urlPrefix}`;
+    queryString += (pipelineJobId) ? `?pipeline_job=${pipelineJobId}` : `/`;
+    let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
 
