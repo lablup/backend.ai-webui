@@ -224,43 +224,26 @@ export default class BackendAIImport extends BackendAIPage {
           } else if (response.status === 404) {
             throw 'WrongURLType';
           } else if (response.status === 403) { //forbidden
-            const statusCode = response.status
-            const errorBody = response.text
             const limitCnt = response.headers.get('x-ratelimit-limit');
             const limitUsedCnt = response.headers.get('x-ratelimit-used')
             const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
-            console.log(`error statusCode: ${statusCode}`);
-            console.log(`error body: ${errorBody}`);
-            console.log(`error limit count: ${limitCnt}`);
-            console.log(`error limit used count: ${limitUsedCnt}`);
-            console.log(`error limit remaining count: ${limitRemainingCnt}`);
+            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
             if (limitRemainingCnt === '0') {
               throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
             } else {
               throw 'GithubAPIEtcError';
             }
           } else if (response.status === 429) { // Too Many Requests
-            const statusCode = response.status
-            const errorBody = response.text
             const limitCnt = response.headers.get('x-ratelimit-limit');
             const limitUsedCnt = response.headers.get('x-ratelimit-used')
             const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
-            console.log(`error statusCode: ${statusCode}`);
-            console.log(`error body: ${errorBody}`);
-            console.log(`error limit count: ${limitCnt}`);
-            console.log(`error limit used count: ${limitUsedCnt}`);
-            console.log(`error limit remaining count: ${limitRemainingCnt}`);
+            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
             throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
           } else if (response.status === 500) {
             throw 'GithubInternalError';
           }
           else {
-            const headers = response.headers
-            const statusCode = response.status
-            const errorBody = response.text
-            console.log(`error headers: ${headers}`);
-            console.log(`error statusCode: ${statusCode}`);
-            console.log(`error body: ${errorBody}`);
+            console.log(`error statusCode: ${response.status}, body: ${response.text}`);
             throw 'GithubAPIEtcError';
           }
         } catch (error) {
@@ -281,7 +264,6 @@ export default class BackendAIImport extends BackendAIPage {
           return false;
         }
       }).catch((e) => { // check exception
-        console.log("error: " + e);
         switch (e) {
           case 'WrongURLType':
             this.notification.text = _text('import.WrongURLType');
