@@ -223,7 +223,7 @@ export default class BackendAIImport extends BackendAIPage {
             return responseJson.default_branch;
           } else if (response.status === 404) {
             throw 'WrongURLType';
-          } else if (response.status === 403) { //forbidden
+          } else if (response.status === 403 || response.status === 429) { //forbidden & Too Many Requests
             const limitCnt = response.headers.get('x-ratelimit-limit');
             const limitUsedCnt = response.headers.get('x-ratelimit-used')
             const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
@@ -233,16 +233,9 @@ export default class BackendAIImport extends BackendAIPage {
             } else {
               throw 'GithubAPIEtcError';
             }
-          } else if (response.status === 429) { // Too Many Requests
-            const limitCnt = response.headers.get('x-ratelimit-limit');
-            const limitUsedCnt = response.headers.get('x-ratelimit-used')
-            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
-            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
-            throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
           } else if (response.status === 500) {
             throw 'GithubInternalError';
-          }
-          else {
+          } else {
             console.log(`error statusCode: ${response.status}, body: ${response.text}`);
             throw 'GithubAPIEtcError';
           }
