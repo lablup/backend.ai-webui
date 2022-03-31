@@ -13,6 +13,8 @@ import {
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
 
+import {default as YAML} from 'js-yaml';
+
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-menu/mwc-menu';
@@ -54,7 +56,9 @@ export default class PipelineJobView extends BackendAIPage {
   @property({type: Object}) pipelineJobInfo = Object();
   @property({type: Array}) pipelineJobs;
   @property({type: Array}) taskInstanceList;
-
+  @property({type: Boolean}) refreshing = false;
+  @property({type: Object}) refreshTimer = Object();
+  @property({type: Object}) taskInstanceNodeMap = Object();
   // Elements
   @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
@@ -73,6 +77,25 @@ export default class PipelineJobView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
+        .tab-content {
+          width: 100%;
+        }
+      
+        div.configuration {
+          width: 90px !important;
+          height: 20px;
+        }
+
+        div.configuration mwc-icon {
+          padding-right: 5px;
+        }
+
+        div.indicator,
+        span.indicator {
+          font-size: 9px;
+          margin-right: 5px;
+        }
+
         h3.tab {
           background-color: var(--general-tabbar-background-color);
           border-radius: 5px 5px 0px 0px;
@@ -90,36 +113,25 @@ export default class PipelineJobView extends BackendAIPage {
           color: var(--general-button-background-color);
         }
 
-        div.configuration {
-          width: 90px !important;
-          height: 20px;
-        }
-
-        div.configuration mwc-icon {
-          padding-right: 5px;
-        }
-
         mwc-icon.indicator {
           --mdc-icon-size: 16px;
         }
 
-        div.indicator,
-        span.indicator {
-          font-size: 9px;
-          margin-right: 5px;
+        pipeline-flow {
+          --pane-height: 400px;
         }
 
-        .tab-content {
-          width: 100%;
+        pre {
+          white-space: pre-wrap;
+          white-space: -moz-pre-wrap;
+          white-space: -pre-wrap;
+          white-space: -o-pre-wrap;
+          word-wrap: break-word;
         }
 
         #pipeline-list {
           border: 1px solid #ccc;
           margin-right: 20px;
-        }
-
-        #pipeline-job-flow {
-          --pane-height: 300px;
         }
 
         #dropdown-menu-container {
@@ -154,6 +166,7 @@ export default class PipelineJobView extends BackendAIPage {
     this._setVaadinGridRenderers();
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
+    this.refreshTimer = null;
     document.addEventListener('pipeline-job-view-active-tab-change', (e: any) => {
       if (e.detail) {
         this._initPipelineTaskListItem();
@@ -162,6 +175,7 @@ export default class PipelineJobView extends BackendAIPage {
         this._showTab(e.detail.activeTab, '.tab-content');
         this.pipelineJobInfo = this._deserializePipelineInfo(e.detail.pipelineJob);
         this.pipelineJobs = e.detail.pipelineJobs;
+        this._matchTaskNodeId();
         this._loadCurrentFlowData();
         this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
           this.taskInstanceList = res;
@@ -188,9 +202,14 @@ export default class PipelineJobView extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        if (this._activeTab === 'pipeline-job-view') {
+          this._loadCurrentFlowData();
+        }
       }, true);
     } else { // already connected
-
+      if (this._activeTab === 'pipeline-job-view') {
+        this._loadCurrentFlowData();
+      }
     }
   }
 
@@ -224,15 +243,72 @@ export default class PipelineJobView extends BackendAIPage {
     return globalThis.backendaiclient.pipelineTaskInstance.list(pipelineJobId);
   }
 
+  async _refreshPipelineJob(repeat = true) {
+    await this.updateComplete;
+    if (this.active !== true) {
+      return;
+    }
+    if (this.refreshing === true) {
+      return;
+    }
+    this.refreshing = true;
+    globalThis.backendaiclient.pipelineJob.info(this.pipelineJobInfo.id).then((res) => {
+      this.pipelineJobInfo = this._deserializePipelineInfo(res);
+      if (['SUCCESS', 'FAILURE'].includes(this.pipelineJobInfo.result)) {
+        repeat = false;
+      }
+      return this._loadTaskInstances(this.pipelineJobInfo.id);
+    }).then((res) => {
+      this.taskInstanceList = res;
+      this.taskInstanceList.forEach((task) => {
+        const updateTaskStatusEvent = new CustomEvent('update-task-status', {'detail': {
+          nodeId: this.taskInstanceNodeMap[task.config.name]['nodeId'],
+          status: task.status
+        }});
+        document.dispatchEvent(updateTaskStatusEvent);
+      });
+      const refreshTime = 5000; // refresh
+      this.refreshing = false;
+      if (this.active === true) {
+        if (repeat === true) {
+          this.refreshTimer = setTimeout(async () => {
+            await this._refreshPipelineJob();
+          }, refreshTime);
+        } else {
+        }
+      }
+    }).catch((err) => {
+      console.log(err);
+      this.notification.text = err.title;
+      this.notification.show(true);
+    });
+  }
+
+  _matchTaskNodeId() {
+    const dataflowObj = this.pipelineJobInfo.dataflow;
+    const rawTaskInstanceList = dataflowObj?.drawflow?.Home?.data;
+    const taskInstanceNodes = Object.values(rawTaskInstanceList ?? {});
+    if (taskInstanceNodes.length > 0) {
+      taskInstanceNodes.forEach((task: any) => {
+        const nodemap = {};
+        nodemap[task.name] = {};
+        nodemap[task.name]['nodeId'] = task.id;
+        Object.assign(this.taskInstanceNodeMap, nodemap);
+      });
+    }
+  }
+
   /**
    * Import pipeline node graph to dataflow pane
    */
-  _loadCurrentFlowData() {
-    const currentFlowData = this.pipelineJobInfo.dataflow;
+  async _loadCurrentFlowData() {
+    const currentFlowData = this.pipelineJobInfo.dataflow ?? {};
     const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
     document.dispatchEvent(flowDataReqEvent);
-    this.notification.text = `Pipeline ${this.pipelineJobInfo.name} loaded.`;
-    this.notification.show();
+    if (Object.keys(this.pipelineJobInfo).length > 0) {
+      await this._refreshPipelineJob();
+      this.requestUpdate();
+    }
   }
 
   _showTab(tab, tabClass='') {
@@ -244,8 +320,22 @@ export default class PipelineJobView extends BackendAIPage {
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
-  _showDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+  /**
+   * Display a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
+  _launchDialogById(id) {
+    this.shadowRoot.querySelector(id).show();
+  }
+
+  /**
+   * Hide a dialog by id.
+   *
+   * @param {string} id - Dialog component ID
+   */
+  _hideDialogById(id) {
+    this.shadowRoot.querySelector(id).hide();
   }
 
   _initPipelineTaskListItem() {
@@ -256,6 +346,27 @@ export default class PipelineJobView extends BackendAIPage {
     const selectedPipelineJobName = e.target.value;
     this._initPipelineTaskListItem();
     this.pipelineJobInfo = this.pipelineJobs.filter((job) => job.name === selectedPipelineJobName)[0];
+    this._loadCurrentFlowData();
+  }
+
+  async _refreshViewPane() {
+    await this._loadCurrentFlowData();
+    this._toggleButtonStatus();
+  }
+
+  /**
+   * Show yaml data dialog of current pipeline job
+   *
+   */
+  _launchWorkFlowDialog() {
+    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
+    const yamlString = YAML.dump(this.pipelineJobInfo.yaml, {});
+    codemirror.setValue(yamlString);
+    this._launchDialogById('#workflow-dialog');
+  }
+
+  _toggleButtonStatus() {
+    /* TODO: Enable/Disable button when pipeline job selected/unselected */
   }
 
   /**
@@ -304,7 +415,15 @@ export default class PipelineJobView extends BackendAIPage {
         `
         , root);
     };
-    columns[2].renderer = (root, column, rowData) => { // resources
+    columns[2].renderer = (root, column, rowData) => { // status
+      const color = PipelineUtils._getStatusColor(rowData.item.status);
+      render(
+        html`
+          <lablup-shields description="${rowData.item.status}" color="${color}"></lablup-shields>
+        `, root
+      );
+    };
+    columns[3].renderer = (root, column, rowData) => { // resources
       render(
         html`
         <div class="layout vertical flex">
@@ -328,12 +447,14 @@ export default class PipelineJobView extends BackendAIPage {
         </div>
       `, root);
     };
-    columns[3].renderer = (root, column, rowData) => { // command
+    columns[4].renderer = (root, column, rowData) => { // command
       render(
         html`
-          <span class="monosapce" style="font-size:0.8rem">
-            ${rowData.item.config.command}
-          </span>
+          <div class="horizontal center start-justified layout">
+            <pre class="monospace" style="font-size:0.8rem;">
+              ${rowData.item.config.command}
+            </pre>
+          </div>
         `
         , root);
     };
@@ -359,7 +480,7 @@ export default class PipelineJobView extends BackendAIPage {
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
-            <mwc-tab-bar id="pipeline-job-pane">
+            <mwc-tab-bar id="pipeline-job-pane" @MDCTabBar:activated="${() => this._refreshViewPane()}">
               <mwc-tab title="pipeline-job-list" label="Job List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
               <mwc-tab title="pipeline-job-view" label="Job View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
@@ -379,7 +500,7 @@ export default class PipelineJobView extends BackendAIPage {
               </mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
-                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.last_modified)}</span>
+                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at)}</span>
               </mwc-list-item>
               <span class="flex"></span>
               ${['WAITING', 'RUNNING', 'STOPPED'].includes(this.pipelineJobInfo.status) ? html`
@@ -390,8 +511,7 @@ export default class PipelineJobView extends BackendAIPage {
                 <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
                   <mwc-list-item class="horizontal layout center"
                     @click="${() => {
-    this._showDialog('workflow-dialog');
-    this.shadowRoot.querySelector('#workflow-editor').refresh();
+    this._launchWorkFlowDialog();
   }}">
                     <mwc-icon>assignment</mwc-icon>
                     <span>View workflow file</span>
@@ -399,12 +519,13 @@ export default class PipelineJobView extends BackendAIPage {
                 </mwc-menu>
               </div>
             </h4>
-            <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
+            <pipeline-flow id="pipeline-job-flow" isEditable="false"></pipeline-flow>
             <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact"
               aria-label="Pipeline Task List" .items="${this.taskInstanceList}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
               <vaadin-grid-filter-column width="120px" header="Name" resizable frozen></vaadin-grid-filter-column>
-              <vaadin-grid-column path="id" header="Id" resizable></vaadin-grid-column>
+              <vaadin-grid-column path="id" header="ID" resizable></vaadin-grid-column>
+              <vaadin-grid-column path="status" header="Status" auto-width resizable></vaadin-grid-column>
               <vaadin-grid-sort-column header="Type" resizable></vaadin-grid-sort-column>
               <vaadin-grid-column path="resources" header="Resources" resizable></vaadin-grid-column>
               <vaadin-grid-column path="command" header="Command" resizable></vaadin-grid-column>
