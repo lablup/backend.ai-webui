@@ -80,19 +80,49 @@ export default class PipelineUtils extends LitElement {
   static _getStatusColor(status) {
     let color = 'lightgrey';
     switch (status) {
-    case 'SUCCESS':
+    case 'RUNNING':
+    case 'RESTARTING':
+    case 'RESIZING':
+    case 'TERMINATING':
       color = 'green';
       break;
-    case 'FAILED':
+    case 'ERROR':
+    case 'CANCELLED':
       color = 'red';
       break;
     case 'WAITING':
+    case 'PAUSED':
+    case 'SUSPENDED':
+    case 'BUILDING':
+    case 'PULLING':
+    case 'SCHEDULED':
+    case 'PREPARING':
+    case 'PENDING':
       color = 'yellow';
       break;
-    case 'RUNNING':
+    case 'TERMINATED':
+      color = 'lightgrey';
+      break;
+    default:
+      color = 'lightgrey';
+      break;
+    }
+    return color;
+  }
+
+  static _getResultColor(result) {
+    let color = 'lightgrey';
+    switch (result) {
+    case 'SUCCESS':
       color = 'blue';
       break;
-    case 'STOPPED':
+    case 'FAILURE':
+      color = 'red';
+      break;
+    case 'UNDEFINED':
+      color = 'lightgrey';
+      break;
+    default:
       color = 'lightgrey';
       break;
     }
