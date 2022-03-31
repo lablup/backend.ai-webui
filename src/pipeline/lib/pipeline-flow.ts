@@ -71,8 +71,10 @@ export default class PipelineFlow extends LitElement {
           border: var(--dfNodeBorderSize)  solid var(--dfNodeBorderColor);
           border-radius: var(--dfNodeBorderRadius);
           min-height: var(--dfNodeMinHeight);
+          max-heigth: 100px;
           width: auto;
           min-width: var(--dfNodeMinWidth);
+          max-width: 200px; // max-width of node
           padding-top: var(--dfNodePaddingTop);
           padding-bottom: var(--dfNodePaddingBottom);
           -webkit-box-shadow: var(--dfNodeBoxShadowHL) var(--dfNodeBoxShadowVL) var(--dfNodeBoxShadowBR) var(--dfNodeBoxShadowS) var(--dfNodeBoxShadowColor);
@@ -95,6 +97,46 @@ export default class PipelineFlow extends LitElement {
           border-radius: var(--dfNodeSelectedBorderRadius);
           -webkit-box-shadow: var(--dfNodeSelectedBoxShadowHL) var(--dfNodeSelectedBoxShadowVL) var(--dfNodeSelectedBoxShadowBR) var(--dfNodeSelectedBoxShadowS) var(--dfNodeSelectedBoxShadowColor);
           box-shadow:  var(--dfNodeSelectedBoxShadowHL) var(--dfNodeSelectedBoxShadowVL) var(--dfNodeSelectedBoxShadowBR) var(--dfNodeSelectedBoxShadowS) var(--dfNodeSelectedBoxShadowColor);
+        }
+
+        /**
+         * Custom style for the status of task instance
+         */
+        .drawflow .drawflow-node.pending {
+          background: #9f9f9f;
+          color: black; // text-color
+        }
+
+        .drawflow .drawflow-node.scheduled,
+        .drawflow .drawflow-node.preparing,
+        .drawflow .drawflow-node.restarting,
+        .drawflow .drawflow-node.resizing,
+        .drawflow .drawflow-node.suspended {
+          background: #9f9f9f;
+          color: black; // text-color
+        }
+
+        .drawflow .drawflow-node.running,
+        .drawflow .drawflow-node.terminating {
+          background: #97ca00;
+          color: white; // text-color
+        }
+
+        .drawflow .drawflow-node.terminated {
+          background: #007ec6;
+          color: white; // text-color
+        }
+
+        .drawflow .drawflow-node.error,
+        .drawflow .drawflow-node.cancelled {
+          background: #c85530;
+          color: black;
+        }
+
+        .drawflow .drawflow-node.building,
+        .drawflow .drawflow-node.pulling {
+          background: #5773d4;
+          color: white; // text-color
         }
         
         .drawflow .drawflow-node .input {
@@ -143,6 +185,10 @@ export default class PipelineFlow extends LitElement {
         .drawflow .connection .main-path.selected {
           stroke: var(--dfLineSelectedColor);
         }
+
+        .drawflow .connection .main-path.fixed {
+          pointer-events: none;
+      }
         
         .drawflow .connection .point {
           stroke: var(--dfRerouteBorderColor);
@@ -200,7 +246,6 @@ export default class PipelineFlow extends LitElement {
     const parentDrawflowElement: HTMLElement = this.shadowRoot?.getElementById('drawflow')!;
     this.editor = new Drawflow(parentDrawflowElement);
     this.editor.start();
-
     this.data = {};
 
     document.addEventListener('add-task', (e: any) => {
@@ -223,11 +268,38 @@ export default class PipelineFlow extends LitElement {
       }
     });
 
+    document.addEventListener('update-task-status', (e: any) => {
+      const isFixedMode = this.editor.editor_mode === 'fixed';
+      if (e.detail && !isFixedMode) { // only update in read-only mode.
+        this._updateNodeStatus(e.detail.nodeId, e.detail.status);
+      }
+    });
+
     document.addEventListener('import-flow', (e: any) => {
       if (e.detail) {
-        const data: object = e.detail;
-        if (Object.keys(data).length > 0) {
-          this.editor.import(data);
+        const drawflowData = e.detail;
+        if (Object.keys(drawflowData).length > 0) {
+          // force-rearrangement only in "fixed" mode
+          if (!this.isEditable) {
+            const moduleName = this.editor.module;
+            const maxWidth = globalThis.backendaiclient.utils.clamp(this.editor.precanvas.clientWidth, 0, (this.editor.precanvas.clientWidth - 200) * 0.9);
+            const maxHeight = globalThis.backendaiclient.utils.clamp(this.editor.precanvas.clientHeight, 0, (this.editor.precanvas.clientHeight - 100) * 0.9);
+
+            Object.keys(drawflowData.drawflow[moduleName].data).map(([key, value]) => {
+              if (drawflowData.drawflow[moduleName].data[key].pos_x > maxWidth) {
+                drawflowData.drawflow[moduleName].data[key].pos_x = globalThis.backendaiclient.utils.clamp(drawflowData.drawflow[moduleName].data[key].pos_x, 0, maxWidth);
+              } else if (drawflowData.drawflow[moduleName].data[key].pos_x <= 0) {
+                drawflowData.drawflow[moduleName].data[key].pos_x = 200;
+              }
+
+              if (drawflowData.drawflow[moduleName].data[key].pos_y > maxHeight) {
+                drawflowData.drawflow[moduleName].data[key].pos_y = globalThis.backendaiclient.utils.clamp(drawflowData.drawflow[moduleName].data[key].pos_y, 0, maxHeight);
+              } else if (drawflowData.drawflow[moduleName].data[key].pos_y <= 0) {
+                drawflowData.drawflow[moduleName].data[key].pos_y = 100;
+              }
+            });
+          }
+          this.editor.import(drawflowData);
         } else {
           // clear editor when saved data is empty
           this.editor.clear();
@@ -281,7 +353,7 @@ export default class PipelineFlow extends LitElement {
           <mwc-icon-button-toggle ?on="${this.isEditable}" onIcon="lock_open" offIcon="lock" @click="${this._togglePaneMode}"></mwc-icon-button-toggle>
         </div>
         <div class="pane-options">
-          <mwc-icon-button icon="zoom_out" @click="${this._zoomOutPane}}"></mwc-icon-button>
+          <mwc-icon-button icon="zoom_out" @click="${this._zoomOutPane}"></mwc-icon-button>
           <mwc-icon-button icon="search" @click="${this._resetZoom}"></mwc-icon-button>
           <mwc-icon-button icon="zoom_in" @click="${this._zoomInPane}"></mwc-icon-button>
         </div>
@@ -307,7 +379,7 @@ export default class PipelineFlow extends LitElement {
    * @param {DrawflowNode} nodeInfo
    */
   _updateNode(id: number, nodeInfo: DrawflowNode) {
-    const moduleName = this.editor.getModuleFromNodeId(id);
+    const moduleName = this.editor.module;
     const node = this.editor.drawflow.drawflow[moduleName].data[id];
     // partially modify data
     Object.assign(node, {
@@ -316,8 +388,28 @@ export default class PipelineFlow extends LitElement {
       name: nodeInfo.name});
     // monkeypatch: manually update node name
     const nodeElem = this.shadowRoot.querySelector(`.${nodeInfo.class}.selected`);
-    const titleElement = [...nodeElem.children].find((elem) => elem.className === 'drawflow_content_node');
-    titleElement.innerHTML = nodeInfo.html;
+    if (nodeElem) {
+      const titleElement = [...nodeElem.children].find((elem) => elem.className === 'drawflow_content_node');
+      titleElement.innerHTML = nodeInfo.html;
+    }
+  }
+
+  /**
+   * Update node style according to data
+   *
+   * @param {number} id
+   * @param {string} status
+   */
+  _updateNodeStatus(id: number, status: string) {
+    const moduleName = this.editor.module;
+    const node = this.editor.drawflow.drawflow[moduleName].data[id];
+    if (node) {
+      const statusClassName = status.toLowerCase();
+      node.class += statusClassName;
+      // monkeypatch: manually update node status
+      const nodeElem = this.shadowRoot.querySelector(`#node-${id}`);
+      nodeElem.classList.add(statusClassName);
+    }
   }
 
   /**
