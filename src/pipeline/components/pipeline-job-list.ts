@@ -295,7 +295,13 @@ export default class PipelineJobList extends BackendAIPage {
         <lablup-shields description="${rowData.item.status}" color="${color}"></lablup-shields>
       `;
     };
-    columns[2].renderer = (root, column, rowData) => { // duration
+    columns[2].renderer = (root, column, rowData) => { // result
+      const color = PipelineUtils._getResultColor(rowData.item.result);
+      root.innerHTML = `
+        <lablup-shields description="${rowData.item.result}" color="${color}"></lablup-shields>
+      `;
+    };
+    columns[3].renderer = (root, column, rowData) => { // duration
       const createdAt = PipelineUtils._humanReadablePassedTime(rowData.item.created_at);
       const duration = PipelineUtils._humanReadableTimeDuration(rowData.item.created_at, rowData.item.terminated_at);
       render(html`
@@ -305,9 +311,9 @@ export default class PipelineJobList extends BackendAIPage {
         </mwc-list-item>
       `, root);
     };
-    columns[3].renderer = (root, column, rowData) => { // control
-      const isCompleted = ['TERMINATED', 'ERROR', 'CANCELLED'].includes(rowData.item.status);
-      const isActive = ['PENDING', 'RUNNING', 'WAITING', 'PAUSED'].includes(rowData.item.status);
+    columns[4].renderer = (root, column, rowData) => { // control
+      const isFinished = ['SUCCESS', 'FAILURE'].includes(rowData.item.result);
+      const isActive = ['PENDING', 'RUNNING', 'WAITING'].includes(rowData.item.status);
       const icon = isActive ? 'pause' : 'play_arrow';
       render(html`
         <div id="controls" class="layout horizontal flex center" pipeline-id="${rowData.item.id}">
@@ -316,8 +322,8 @@ export default class PipelineJobList extends BackendAIPage {
             @click="${() => {
     this._launchPipelineJobDetailDialog(rowData.item);
   }}"></mwc-icon-button>
-          <mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
-          ${!isCompleted ? html`
+          <!--<mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>-->
+          ${!isFinished ? html`
             <mwc-icon-button class="fg green start"
               icon="${icon}"
               @click="${() => {
@@ -345,6 +351,7 @@ export default class PipelineJobList extends BackendAIPage {
         <!--<vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>-->
         <vaadin-grid-filter-column path="vfolder" header="Mounted folder" resizable></vaadin-grid-filter-column>
         <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
+        <vaadin-grid-column header="Result" resizable></vaadin-grid-column>
         <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
