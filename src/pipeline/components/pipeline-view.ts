@@ -204,10 +204,16 @@ export default class PipelineView extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();
         this._selectDefaultLanguage();
+        if (this._activeTab === 'pipeline-view') {
+          this._loadCurrentFlowData();
+        }
       }, true);
     } else { // already connected
       this._refreshImageList();
       this._selectDefaultLanguage();
+      if (this._activeTab === 'pipeline-view') {
+        this._loadCurrentFlowData();
+      }
     }
   }
 
@@ -272,7 +278,15 @@ export default class PipelineView extends BackendAIPage {
    * Enable button only when pipelineInfo is loaded
    */
   _toggleButtonStatus() {
-    const buttonList = [...this.shadowRoot.querySelectorAll('mwc-icon-button.pipeline-operation'), this.shadowRoot.querySelector('mwc-button#new-task')] ?? [];
+    const buttonList = <any>[];
+    const pipelineOperationBtnList = [...this.shadowRoot.querySelectorAll('mwc-icon-button.pipeline-operation')];
+    const newTaskBtn = this.shadowRoot.querySelector('mwc-button#new-task');
+    if (pipelineOperationBtnList !== null) {
+      buttonList.push(...pipelineOperationBtnList);
+    }
+    if (newTaskBtn !== null) {
+      buttonList.push(newTaskBtn);
+    }
     for (const elem of buttonList) {
       elem.disabled = this.pipelineInfo.name ? false : true;
     }
@@ -492,7 +506,6 @@ export default class PipelineView extends BackendAIPage {
     });
     const addTaskEvent = new CustomEvent('add-task', {'detail': taskInfo});
     document.dispatchEvent(addTaskEvent);
-
     this.notification.text = `Task ${taskInfo.name} updated.`;
     this.notification.show();
     this._hideDialogById('#task-dialog');
@@ -560,7 +573,7 @@ export default class PipelineView extends BackendAIPage {
     });
     document.dispatchEvent(updateTaskEvent);
     this._hideDialogById('#task-dialog');
-    this.notification.text = `Task ${this.selectedNode.name} updated.`;
+    this.notification.text = `Task ${taskInfo.name} updated.`;
     this.notification.show();
   }
 
@@ -654,11 +667,15 @@ export default class PipelineView extends BackendAIPage {
    * Import pipeline node graph to dataflow pane
    */
   _loadCurrentFlowData() {
-    const currentFlowData = this.pipelineInfo.dataflow;
-    const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
-    document.dispatchEvent(flowDataReqEvent);
-    this.notification.text = `Pipeline ${this.pipelineInfo.name} loaded.`;
-    this.notification.show();
+    if (this.pipelineInfo) {
+      const currentFlowData = this.pipelineInfo.dataflow ?? {};
+      const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
+      document.dispatchEvent(flowDataReqEvent);
+      if (this.pipelineInfo.name) {
+        this.notification.text = `Pipeline ${this.pipelineInfo.name} loaded.`;
+        this.notification.show();
+      }
+    }
   }
 
   /**
@@ -669,6 +686,7 @@ export default class PipelineView extends BackendAIPage {
     const flowDataReqEvent = new CustomEvent('export-flow');
     document.dispatchEvent(flowDataReqEvent);
 
+    this.pipelineInfo = this._deserializePipelineInfo(this.pipelineInfo);
     // convert object to string (dataflow)
     this.pipelineInfo.yaml.tasks = this.parseTaskListInfo(this.pipelineInfo.dataflow);
     this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
@@ -736,7 +754,6 @@ export default class PipelineView extends BackendAIPage {
   _runPipeline() {
     this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
     globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
-      console.log(res);
       this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.id}...`;
       this.notification.show();
       this._moveTo('/pipeline-job');
@@ -830,13 +847,13 @@ export default class PipelineView extends BackendAIPage {
           resources: {
             cpu: parseInt(task.data.resources.cpu),
             mem: task.data.resources.mem + 'g',
-            resource_opts: {
-              shmem: task.data.resources.resource_opts.shmem + 'g'
-            },
             // cuda: task.data.resources.cuda
           },
+          resource_opts: {
+            shmem: task.data.resources.resource_opts.shmem + 'g'
+          },
           mounts: [], // TODO: add mount feature
-          depends: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
+          dependencies: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
         };
       });
     } else {
@@ -876,7 +893,7 @@ export default class PipelineView extends BackendAIPage {
               `}
             </div>
           </div>
-          <pipeline-flow isEditable></pipeline-flow>
+          <pipeline-flow isEditable="true"></pipeline-flow>
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
