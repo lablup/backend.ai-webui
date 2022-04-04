@@ -53,7 +53,8 @@
       "Experiments": "Eksperimen",
       "Menu": "Menu",
       "Run": "Jalankan",
-      "UserName": "Nama Pengguna"
+      "UserName": "Nama Pengguna",
+      "PipelineJob": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -436,7 +437,9 @@
     "UserAccountCreatedError": "Akun ini sudah terdaftar.",
     "KeypairCreated": "Pasangan kunci berhasil dibuat.",
     "UserNotFound": "Pembuatan kredensial gagal, karena ID pengguna berikut tidak dapat ditemukan : ",
-    "UserIDRequired": "ID pengguna diperlukan."
+    "UserIDRequired": "ID pengguna diperlukan.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",
