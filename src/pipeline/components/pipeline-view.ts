@@ -65,10 +65,15 @@ export default class PipelineView extends BackendAIPage {
   @property({type: Array}) scalingGroups = ['default'];
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
+  @property({type: Array}) vfolders;
+  @property({type: Object}) vfolderGrid = Object();
+  @property({type: Array}) selectedVfolders;
+  @property({type: Array}) defaultSelectedVfolders;
   @property({type: Object}) images = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
   @property({type: Object}) resourceLimits = Object();
+  @property({type: Object}) resourceBroker;
   @property({type: Object}) supports = Object();
   @property({type: Object}) aliases = Object();
 
@@ -89,6 +94,10 @@ export default class PipelineView extends BackendAIPage {
       'Python': 'python',
     };
     this.languages = [];
+    this.vfolders = [];
+    this.selectedVfolders = [];
+    this.defaultSelectedVfolders = [];
+    this.resourceBroker = globalThis.resourceBroker;
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -117,7 +126,7 @@ export default class PipelineView extends BackendAIPage {
         }
 
         lablup-codemirror {
-          width: 370px;
+          width: 360px;
         }
 
         mwc-button { 
@@ -182,7 +191,7 @@ export default class PipelineView extends BackendAIPage {
         }
 
         pipeline-flow {
-          --pane-height: 500px;
+          --pane-height: 70vh;
         }
       `
     ];
@@ -204,6 +213,7 @@ export default class PipelineView extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();
         this._selectDefaultLanguage();
+        this._updateVirtualFolderList();
         if (this._activeTab === 'pipeline-view') {
           this._loadCurrentFlowData();
         }
@@ -211,6 +221,7 @@ export default class PipelineView extends BackendAIPage {
     } else { // already connected
       this._refreshImageList();
       this._selectDefaultLanguage();
+      this._updateVirtualFolderList();
       if (this._activeTab === 'pipeline-view') {
         this._loadCurrentFlowData();
       }
@@ -245,6 +256,7 @@ export default class PipelineView extends BackendAIPage {
       });
     this.shadowRoot.querySelector('#task-environment').addEventListener(
       'selected', this.updateLanguage.bind(this));
+    this.vfolderGrid = this.shadowRoot.querySelector('#vfolder-grid');
 
     document.addEventListener('node-selected', (e: any) => {
       if (e.detail) {
@@ -269,6 +281,7 @@ export default class PipelineView extends BackendAIPage {
         this.pipelineInfo = e.detail.pipeline;
         this.pipelineInfo = this._deserializePipelineInfo(this.pipelineInfo);
         this._loadCurrentFlowData();
+        this._loadDefaultMounts();
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       }
     });
@@ -536,7 +549,7 @@ export default class PipelineView extends BackendAIPage {
       },
     };
     const taskCommand = this.shadowRoot.querySelector('#command-editor').getValue();
-    // TODO: Trigger custom event to add corresponding node into pipeline-flow pane.
+    const taskMounts = this.selectedVfolders;
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     return {
       name: taskName,
@@ -550,6 +563,7 @@ export default class PipelineView extends BackendAIPage {
         environment: taskEnvironment,
         resources: taskResources,
         cmd: taskCommand,
+        mounts: taskMounts,
       },
       html: `${taskName}`, // put raw html code
     };
@@ -639,6 +653,23 @@ export default class PipelineView extends BackendAIPage {
   }
 
   /**
+   * Update selected folders.
+   * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
+   *
+   * */
+  _updateSelectedFolder() {
+    if (this.vfolderGrid && this.vfolderGrid.selectedItems) {
+      const selectedFolderItems = this.vfolderGrid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        selectedFolders = selectedFolderItems.map((item) => item.name);
+      }
+      this.selectedVfolders = selectedFolders;
+    }
+    return Promise.resolve(true);
+  }
+
+  /**
    * Give focus on command-editor
    */
   _focusCmdEditor() {
@@ -676,6 +707,29 @@ export default class PipelineView extends BackendAIPage {
         this.notification.show();
       }
     }
+  }
+
+  _loadDefaultMounts() {
+    this.defaultSelectedVfolders = this.pipelineInfo.yaml.mounts;
+    if (this.vfolderGrid.items) {
+      this.vfolderGrid.items.forEach((item) => {
+        if (this.defaultSelectedVfolders.includes(item.name)) {
+          // force-select vfolder
+          this.vfolderGrid.selectItem(item);
+        }
+      });
+    }
+  }
+
+  /**
+   * Update accessible vfolders
+   *
+   * @return {void}
+   */
+  async _updateVirtualFolderList() {
+    return this.resourceBroker.updateVirtualFolderList().then(() => {
+      this.vfolders = this.resourceBroker.vfolders;
+    });
   }
 
   /**
@@ -776,6 +830,7 @@ export default class PipelineView extends BackendAIPage {
    */
   _showTaskCreateDialog() {
     this._clearCmdEditor();
+    this._updateSelectedFolder();
     this._launchDialogById('#task-dialog');
   }
 
@@ -784,6 +839,7 @@ export default class PipelineView extends BackendAIPage {
    */
   _showTaskEditDialog() {
     this._loadDataToCmdEditor();
+    this._updateSelectedFolder();
     this._launchDialogById('#task-dialog');
   }
 
@@ -852,7 +908,7 @@ export default class PipelineView extends BackendAIPage {
           resource_opts: {
             shmem: task.data.resources.resource_opts.shmem + 'g'
           },
-          mounts: [], // TODO: add mount feature
+          mounts: task.data.mounts,
           dependencies: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
         };
       });
@@ -926,9 +982,9 @@ export default class PipelineView extends BackendAIPage {
         <span slot="title">${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span>
         <div slot="content" class="vertical layout center flex">
           <mwc-tab-bar class="task-tab">
-            <mwc-tab title="task-settings" label="Settings" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
+            <mwc-tab title="task-settings" label="Settings" @MDCTab:interacted=${() => this._focusCmdEditor()} @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
             <mwc-tab title="task-resources" label="Resources" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
-            <mwc-tab title="task-command" label="Command" @MDCTab:interacted=${() => this._focusCmdEditor()} @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
+            <mwc-tab title="task-mounts" label="Mounts" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
           </mwc-tab-bar>
           <div id="task-settings" class="vertical layout center flex task-tab-content">
             <mwc-textfield id="task-name" label="Task Name" value="${this.selectedNode?.name}" required></mwc-textfield>
@@ -941,6 +997,10 @@ export default class PipelineView extends BackendAIPage {
   })}
               </mwc-select>
             `}
+            <div class="vertical layout start-justified flex">
+              <span style="padding-left:15px;">Command</span>
+              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+            </div>
           </div>
           <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">
           <mwc-select class="full-width" id="task-environment-scaling-group" label="Scaling Group" fixedMenuPosition>
@@ -984,8 +1044,26 @@ export default class PipelineView extends BackendAIPage {
             <mwc-textfield id="task-shmem" label="Shared Memory" type="number" value="${this.selectedNode.data?.resources?.resource_opts?.shmem ?? 0.0125}" min="0.0125" suffix="GB"></mwc-textfield>
             <mwc-textfield id="task-gpu" label="GPU" type="number" value="${this.selectedNode.data?.resources?.cuda?.shares ?? 0}" min="0" suffix="Unit"></mwc-textfield>
           </div>
-          <div id="task-command" class="vertical layout center flex task-tab-content" style="display:none;">
-            <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+          <div id="task-mounts" class="vertical layout center flex task-tab-content" style="display:none;">
+            <vaadin-grid
+                theme="row-stripes column-borders compact wrap-cell-content"
+                id="vfolder-grid"
+                aria-label="vfolder list"
+                all-rows-visible
+                .items="${this.vfolders}"
+                @selected-items-changed="${() => this._updateSelectedFolder()}">
+              <vaadin-grid-selection-column id="select-column"
+                                            flex-grow="0"
+                                            text-align="center"
+                                            auto-select></vaadin-grid-selection-column>
+              <vaadin-grid-filter-column header="Folder"
+                                        path="name" resizable></vaadin-grid-filter-column>
+            </vaadin-grid>
+            ${this.vfolders.length > 0 ? html`` : html`
+              <div class="vertical layout center flex blank-box-medium">
+                <span>There's no available folder to mount :(</span>
+              </div>
+            `}
           </div>
         </div>
         <div slot="footer" class="horizontal layout center center-justified flex">

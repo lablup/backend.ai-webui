@@ -537,8 +537,8 @@ export default class PipelineList extends BackendAIPage {
       is_active: true,
     };
     globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
-      const pipeline = res;
-      this.notification.text = `Pipeline ${pipeline.name} created.`;
+      this.pipelineInfo = res;
+      this.notification.text = `Pipeline ${this.pipelineInfo.name} created.`;
       this.notification.show();
       this._loadPipelineList();
       // move to pipeline view page with current pipeline info
