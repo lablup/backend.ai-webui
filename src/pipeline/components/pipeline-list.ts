@@ -908,7 +908,7 @@ export default class PipelineList extends BackendAIPage {
     <vaadin-grid id="pipeline-list" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Pipeline List" .items="${this.pipelines}">
       <vaadin-grid-column auto-width flex-grow="0" header="#" text-align="center" .renderer="${this._boundIndexRenderer}"></vaadin-grid-column>
       <vaadin-grid-filter-column id="name" auto-width header="Name" resizable .renderer="${this._boundNameRenderer}"></vaadin-grid-filter-column>
-      <vaadin-grid-column id="owner" header="Owner" resizable path="owner"></vaadin-grid-column>
+      <!--<vaadin-grid-column id="owner" header="Owner" resizable path="owner"></vaadin-grid-column>-->
       <vaadin-grid-column id="control" header="Controls" resizable .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       <vaadin-grid-column id="created-at" header="Created At" resizable .renderer="${this._boundCreateAtRenderer}"></vaadin-grid-column>
       <vaadin-grid-column id="modified-at" header="Last Modified" resizable .renderer="${this._boundModifiedAtRenderer}"></vaadin-grid-column>
