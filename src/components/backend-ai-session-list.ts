@@ -1393,13 +1393,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     renameField.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          renameField.validationMessage = _text('session.SessionNameRequired');
+          renameField.validationMessage = _text('session.Validation.SessionNameRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
+        } else if (nativeValidity.patternMismatch) {
+          renameField.validationMessage = _text('session.Validation.LetterNumber-_dot');
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
         } else {
-          renameField.validationMessage = _text('session.EnterValidSessionName');
+          renameField.validationMessage = _text('session.Validation.EnterValidSessionName');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -1408,7 +1414,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       } else {
         const isValid = (!sessionNames.includes(value) || value === currentName);
         if (!isValid) {
-          renameField.validationMessage = _text('session.SessionNameAlreadyExist');
+          renameField.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
         }
         return {
           valid: isValid,

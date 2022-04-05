@@ -292,9 +292,13 @@
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
-    "SessionNameRequired": "Session name is required",
-    "EnterValidSessionName": "Enter valid session name",
-    "SessionNameAlreadyExist": "Session name already exists"
+    "Validation": {
+      "LetterNumber-_dot": "Allows letters, numbers and -_.",
+      "SessionNameRequired": "Session name is required",
+      "EnterValidSessionName": "Enter valid session name",
+      "SessionNameAlreadyExist": "Session name already exists"
+    },
+    "EnterValidSessionName": "EnterValidSessionName"
   },
   "button": {
     "Cancel": "Cancel",
@@ -410,7 +414,7 @@
     "Role": "Role",
     "Groups": "Groups",
     "DescActiveUser": "Active user?",
-    "UserStatus":"User Status",
+    "UserStatus": "User Status",
     "UserName": "User Name",
     "FullName": "Full Name",
     "Description": "Description",

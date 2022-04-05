@@ -292,9 +292,12 @@
     "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다.",
     "NoLogMsgAvailable": "현재 표시할 수 있는 로그 메시지가 없습니다.",
     "SessionRenamed": "세션 이름이 변경되었습니다",
-    "SessionNameRequired": "세션 이름을 입력해주세요",
-    "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
-    "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    "Validation": {
+      "SessionNameRequired": "세션 이름을 입력해주세요",
+      "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다",
+      "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+      "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    }
   },
   "button": {
     "Cancel": "취소",
@@ -410,7 +413,7 @@
     "Role": "역할",
     "Groups": "그룹",
     "DescActiveUser": "활성화 유저?",
-    "UserStatus":"사용자 상태",
+    "UserStatus": "사용자 상태",
     "UserName": "사용자명",
     "FullName": "성명",
     "Description": "소개",

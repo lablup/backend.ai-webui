@@ -295,7 +295,13 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "LetterNumber-_dot": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -436,7 +442,9 @@
     "UserAccountCreatedError": "Энэ данс аль хэдийн бүртгэгдсэн байна.",
     "KeypairCreated": "Түлхүүр хослолыг амжилттай үүсгэсэн.",
     "UserNotFound": "Дараах хэрэглэгчийн ID олдсонгүй тул итгэмжлэл үүсгэх амжилтгүй боллоо.",
-    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай."
+    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",

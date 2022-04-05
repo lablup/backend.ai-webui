@@ -295,7 +295,13 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "LetterNumber-_dot": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Annuler",
@@ -436,7 +442,9 @@
     "UserAccountCreatedError": "Ce compte a déjà été enregistré.",
     "KeypairCreated": "Paire de clés créée avec succès.",
     "UserNotFound": "La création des identifiants a échoué, car l'ID utilisateur suivant est introuvable :",
-    "UserIDRequired": "L'ID utilisateur est requis."
+    "UserIDRequired": "L'ID utilisateur est requis.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",
