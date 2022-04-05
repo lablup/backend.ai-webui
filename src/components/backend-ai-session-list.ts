@@ -1527,7 +1527,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
-            ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
+            ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
             <mwc-textfield id="session-rename-field" required
                              pattern="^(?:[a-zA-Z0-9._-]{4,}[a-zA-Z0-9])?$" maxLength="64"
                              helper="${_text('maxLength.64chars')}" autoValidate
