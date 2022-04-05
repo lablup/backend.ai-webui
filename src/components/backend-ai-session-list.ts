@@ -1505,6 +1505,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           #session-rename-field {
             display: none;
+            white-space: normal;
+            word-break: break-word;
             font-family: var(--general-monospace-font-family);
             --mdc-ripple-color: transparent;
             --mdc-text-field-fill-color: transparent;
@@ -1521,7 +1523,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
             ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
             <mwc-textfield id="session-rename-field" required
-                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
+                             pattern="^(?:[a-zA-Z0-9._-]{4,}[a-zA-Z0-9])?$" maxLength="64"
                              helper="${_text('maxLength.64chars')}" autoValidate
                              validationMessage="${_text('session.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
