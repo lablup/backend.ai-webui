@@ -113,6 +113,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) total_session_count = 0;
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
@@ -426,6 +427,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -446,6 +448,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this._refreshJobData();
     }
   }
@@ -1181,8 +1184,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    const regExp = /[[\],'"]/g;
-
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
@@ -1198,11 +1199,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
         mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-        if (mounts.length > 1) {
-          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
-        } else {
-          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
-        }
+        mountedFolderItem.innerHTML = (mounts.length > 1) ? key : _text('session.OnlyOneFolderAttached');
+
         menu.appendChild(mountedFolderItem);
       });
       document.body.appendChild(menu);
@@ -1613,7 +1611,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
+                               ?disabled="${!mySession}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
@@ -1660,7 +1658,10 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   configRenderer(root, column?, rowData?) {
     // extract mounted folder names and convert them to an array.
-    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem) => JSON.parse(elem.replace(/'/g, '"'))[0]);
+    // monkeypatch for extracting and formatting legacy mounts info
+    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem: string) => {
+      return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
+    });
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1668,7 +1669,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${rowData.item.mounts.length > 0 ? html`
               <wl-icon class="fg green indicator">folder_open</wl-icon>
               <button class="mount-button"
-                @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}">
                 ${mountedFolderList.join(', ')}
               </button>
@@ -1939,10 +1940,11 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   userInfoRenderer(root, column?, rowData?) {
+    const userInfo = this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email;
     render(
       html`
         <div class="layout vertical">
-          <span class="indicator">${this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email}</span>
+          <span class="indicator">${this._getUserId(userInfo)}</span>
         </div>
       `, root
     );
@@ -1966,6 +1968,23 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
       `, root
     );
+  }
+
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string} userId
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(userId);
+      const maskStartIdx = isEmail ? 2 : 0; // show only 2 characters if session mode
+      const maskLength = isEmail ? userId.split('@')[0].length - maskStartIdx : 0;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
 
   render() {

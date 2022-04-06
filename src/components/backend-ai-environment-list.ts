@@ -1349,8 +1349,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'tpu.device') {
               resource.key = 'tpu_device';
             }
-            image[resource.key + '_limit_min'] = this._addUnit(resource.min);
-            image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            if (resource.min !== null && resource.min !== undefined) {
+              image[resource.key + '_limit_min'] = this._addUnit(resource.min);
+            }
+            if (resource.max !== null && resource.max !== undefined) {
+              image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            }
           });
 
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});

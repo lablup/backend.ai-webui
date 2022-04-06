@@ -1117,7 +1117,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${rowData.shared_to.email}</div>
+        <div>${rowData.item.shared_to.email}</div>
       `, root
     );
   }

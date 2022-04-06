@@ -43,6 +43,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
+  @property({type: String}) escapeKeyAction = 'close';
 
   @query('#dialog') protected dialog;
 
@@ -194,6 +195,7 @@ export default class BackendAiDialog extends LitElement {
                     ?backdrop="${this.backdrop}"
                     ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
+                    escapeKeyAction="${this.escapeKeyAction}"
                     blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">

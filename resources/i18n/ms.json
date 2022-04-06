@@ -129,6 +129,7 @@
       "Environments": "Persekitaran",
       "Start": "Mulakan",
       "FolderToMount": "Folder untuk dipasang",
+      "FolderToMountList": "Folder untuk dipasang",
       "ResourceAllocation": "Peruntukan sumber",
       "NoSuitablePreset": "Tiada pratetap yang sesuai",
       "Advanced": "Mahir",
@@ -1053,7 +1054,10 @@
     "FolderName": "Nama folder yang diimport:",
     "NotebookBadgeCodeHTML": "Kod Lencana Notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod Lencana Notebook (Markdown)",
-    "Installed": "Dipasang"
+    "Installed": "Dipasang",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
