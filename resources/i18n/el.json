@@ -1057,7 +1057,10 @@
     "FolderName": "Εισαγόμενο όνομα φακέλου:",
     "NotebookBadgeCodeHTML": "Κωδικός σήματος σημειωματάριου (HTML)",
     "NotebookBadgeCodeMarkdown": "Κωδικός σήματος σημειωματάριου (Markdown)",
-    "Installed": "Εγκατεστημένο"
+    "Installed": "Εγκατεστημένο",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",

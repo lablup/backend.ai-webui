@@ -1057,7 +1057,10 @@
     "FolderName": "İçe aktarılan klasör adı:",
     "NotebookBadgeCodeHTML": "Defter Rozeti Kodu (HTML)",
     "NotebookBadgeCodeMarkdown": "Defter Rozeti Kodu (Markdown)",
-    "Installed": "Kurulmuş"
+    "Installed": "Kurulmuş",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",

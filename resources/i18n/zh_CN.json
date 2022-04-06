@@ -1057,7 +1057,10 @@
     "FolderName": "导入的文件夹名称：",
     "NotebookBadgeCodeHTML": "笔记本徽章代码 (HTML)",
     "NotebookBadgeCodeMarkdown": "笔记本徽章代码 (Markdown)",
-    "Installed": "已安装"
+    "Installed": "已安装",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月统计",

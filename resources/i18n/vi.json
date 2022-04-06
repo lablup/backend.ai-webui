@@ -1057,7 +1057,10 @@
     "FolderName": "Tên thư mục đã nhập:",
     "NotebookBadgeCodeHTML": "Mã huy hiệu sổ tay (HTML)",
     "NotebookBadgeCodeMarkdown": "Mã huy hiệu sổ tay (Markdown)",
-    "Installed": "Cài đặt"
+    "Installed": "Cài đặt",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Số liệu thống kê cho tháng này",

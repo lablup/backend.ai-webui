@@ -1296,7 +1296,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['mount_map'] = {};
         for (const f in this.folderMapping) {
           if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            if (!(this.folderMapping[f].startsWith("/"))) {
+            if (!(this.folderMapping[f].startsWith('/'))) {
               config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
             } else {
               config['mount_map'][f] = this.folderMapping[f];
@@ -1889,10 +1889,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
+          if (!mem_metric.max) {
+            mem_metric.max = 0;
+          }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
             const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
-            if (parseInt(image_mem_max) !== 0) {
+            if (!isNaN(parseInt(image_mem_max)) && (parseInt(image_mem_max) !== 0)) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             } else {
               mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
@@ -2065,11 +2068,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   helpDescTagCount(helpDescription) {
     let childCount = 0;
-    let searchChild = '<p>';
-    let descPos = helpDescription.indexOf(helpDescription); 
+    const searchChild = '<p>';
+    let descPos = helpDescription.indexOf(helpDescription);
     while (descPos !== -1) {
       childCount++;
-      descPos = helpDescription.indexOf(searchChild, descPos + 1); 
+      descPos = helpDescription.indexOf(searchChild, descPos + 1);
     }
     return childCount;
   }
@@ -2089,7 +2092,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       pathContentLastChild.appendChild(div);
       const eventCheckbox = this.shadowRoot.querySelector('#hide-guide');
       eventCheckbox.addEventListener('change', (event) => {
-        if(event.target !== null) {
+        if (event.target !== null) {
           event.stopPropagation();
           const eventTarget = event.target as HTMLInputElement;
           if (!eventTarget.checked) {
@@ -2859,7 +2862,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (!isVisible || isVisible === 'true') {
         this._showPathDescription();
       }
-    } 
+    }
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
@@ -3189,9 +3192,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     ${this.selectedVfolders.map((item) => html`
                       <li><mwc-icon>folder_open</mwc-icon>${item}
                       ${item in this.folderMapping ?
-                        this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`: 
-                        html`(&#10140; /home/work/${this.folderMapping[item]})` : 
-                        html`(&#10140; /home/work/${item})`}
+    this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+      html`(&#10140; /home/work/${this.folderMapping[item]})` :
+    html`(&#10140; /home/work/${item})`}
                       </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
@@ -3602,9 +3605,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   ${this.selectedVfolders.map((item) => html`
                     <li><mwc-icon>folder_open</mwc-icon>${item}
                     ${item in this.folderMapping ?
-                      this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`: 
-                      html`(&#10140; /home/work/${this.folderMapping[item]})` : 
-                      html`(&#10140; /home/work/${item})`}
+    this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+      html`(&#10140; /home/work/${this.folderMapping[item]})` :
+    html`(&#10140; /home/work/${item})`}
                     </li>
                   `)}
                   ${this.autoMountedVfolders.map((item) => html`

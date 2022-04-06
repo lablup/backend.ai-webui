@@ -1057,7 +1057,10 @@
     "FolderName": "Nome della cartella importata:",
     "NotebookBadgeCodeHTML": "Codice badge per notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Codice badge per notebook (markdown)",
-    "Installed": "Installato"
+    "Installed": "Installato",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiche per questo mese",
