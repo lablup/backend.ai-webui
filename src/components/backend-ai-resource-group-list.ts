@@ -373,7 +373,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _createResourceGroup() {
     const ResourceGroupNameEl = this.shadowRoot.querySelector('#resource-group-name');
     if (ResourceGroupNameEl.checkValidity() && this._verifyCreateSchedulerOpts()) {
-      this._saveCreateSchedulerOpts();
+      this._saveSchedulerOpts();
       const resourceGroupName = ResourceGroupNameEl.value;
       const description = this.shadowRoot.querySelector('#resource-group-description').value;
       const domain = this.shadowRoot.querySelector('#resource-group-domain').value;
@@ -390,7 +390,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       }
       if (this.enableWSProxyAddr) {
         const wsproxyAddress = this.shadowRoot.querySelector('#resource-group-wsproxy-address').value;
-        input['wsproxyAddress'] = wsproxyAddress;
+        input['wsproxy_addr'] = wsproxyAddress;
       }
       globalThis.backendaiclient.scalingGroup.create(resourceGroupName, input)
         .then(({create_scaling_group: res}) => {
@@ -436,7 +436,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     if (this._verifyModifySchedulerOpts() === false) {
       return;
     }
-    this._saveModifySchedulerOpts();
+    this._saveSchedulerOpts();
     const description = this.shadowRoot.querySelector('#resource-group-description').value;
     const scheduler = this.shadowRoot.querySelector('#resource-group-scheduler').value;
     const is_active = this.shadowRoot.querySelector('#resource-group-active').checked;
@@ -583,27 +583,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   }
 
   /**
-   * save create dialog's SchedulerOptsInputForms value to schedulerOpts property.
+   * Save SchedulerOptsInputForms value to schedulerOpts property.
    * */
-  _saveCreateSchedulerOpts() {
-    this.schedulerOpts = {};
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-
-    if (allowedSessionTypes.value === 'both') {
-      this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
-    } else {
-      this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
-    }
-    if (pendingTimeout.value !== '') {
-      this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
-    }
-  }
-
-  /**
-   * save modify dialog's SchedulerOptsInputForms value to schedulerOpts property.
-   * */
-  _saveModifySchedulerOpts() {
+  _saveSchedulerOpts() {
     this.schedulerOpts = {};
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
@@ -713,6 +695,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               ${this.schedulerTypes.map((sched) => html`
                 <mwc-list-item value="${sched}">${sched}</mwc-list-item>
               `)}
+            </mwc-select>
           ` : html`
           <mwc-select id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
             ${this.domains.map( (domain) => html`
