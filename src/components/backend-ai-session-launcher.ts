@@ -3592,7 +3592,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
                   <div class="horizontal layout">
                     <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                    <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                    <span style="text-align:center;">${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
                   </div>
                   <p class="small">${_t('session.launcher.AllocateNode')}</p>
                 </div>
