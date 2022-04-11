@@ -1399,7 +1399,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             valueMissing: !nativeValidity.valid
           };
         } else if (nativeValidity.patternMismatch) {
-          renameField.validationMessage = _text('session.Validation.LetterNumber-_dot');
+          renameField.validationMessage = _text('session.Validation.SluggedStrings');
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
@@ -1528,10 +1528,9 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
             ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
-            <mwc-textfield id="session-rename-field" required
-                             pattern="^(?:[a-zA-Z0-9._-]{4,}[a-zA-Z0-9])?$" maxLength="64"
-                             helper="${_text('maxLength.64chars')}" autoValidate
-                             validationMessage="${_text('session.EnterValidSessionName')}"
+            <mwc-textfield id="session-rename-field" required autoValidate
+                             pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
+                             validationMessage="${_text('session.Validation.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
                              @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
               <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"

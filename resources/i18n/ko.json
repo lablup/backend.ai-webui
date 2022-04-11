@@ -294,7 +294,7 @@
     "SessionRenamed": "세션 이름이 변경되었습니다",
     "Validation": {
       "SessionNameRequired": "세션 이름을 입력해주세요",
-      "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다",
+      "SluggedStrings": "고유문자열로 입력해주세요 (3 > 글자 수)",
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     }

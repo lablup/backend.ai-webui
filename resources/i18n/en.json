@@ -293,8 +293,8 @@
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
     "Validation": {
-      "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "SessionNameRequired": "Session name is required",
+      "SluggedStrings": "Slugged strings (>3 chars)",
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists"
     },
