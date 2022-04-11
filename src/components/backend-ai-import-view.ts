@@ -51,6 +51,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
+  @property({type: String}) importGitlabMessage = '';
 
   constructor() {
     super();
@@ -279,6 +280,46 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
+  getGitLabRepoFromURL() {
+    let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
+    let tree = 'master';
+    let name = '';
+    // if contains .git extension, then remove it.
+    if (url.substring(url.length - 4, url.length) === '.git') {
+      url = url.split('.git')[0];
+    }
+
+    if (url.includes('/tree')) { // Branch.
+      var pathname = new URL(url).pathname;
+      var splitPaths = pathname.split( '/' );
+      name = splitPaths[2];
+      tree = splitPaths[splitPaths.length -1];
+      url = url.replace('/tree/', '/archive/');
+      url += '/' + name + '-' + tree + '.zip';
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
+    } else {
+      name = url.split('/').slice(-1)[0];
+      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip'
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importGitlabMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
+    }
+  }
+
   async importRepoFromURL(url, folderName) {
     // Create folder to
     const imageResource: Record<string, unknown> = {};
@@ -481,6 +522,23 @@ export default class BackendAIImport extends BackendAIPage {
               </mwc-button>
             </div>
             ${this.importMessage}
+          </div>
+        </lablup-activity-panel>
+      </div>
+      <div class="horizontal wrap layout">
+        <lablup-activity-panel title="${_t('import.ImportGitlabRepo')}" elevation="1" horizontalsize="2x">
+          <div slot="message">
+            <div class="description">
+              <p>${_t('import.GitlabRepoWillBeFolder')}</p>
+            </div>
+            <div class="horizontal wrap layout center">
+              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitLabURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+              <mwc-button icon="cloud_download" @click="${() => this.getGitLabRepoFromURL()}">
+                <span>${_t('import.GetToFolder')}</span>
+              </mwc-button>
+            </div>
+            ${this.importGitlabMessage}
           </div>
         </lablup-activity-panel>
       </div>

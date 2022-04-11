@@ -436,7 +436,9 @@
     "UserAccountCreatedError": "Эта учетная запись уже была зарегистрирована.",
     "KeypairCreated": "Пара ключей успешно создана.",
     "UserNotFound": "Не удалось создать учетные данные, поскольку не удалось найти следующий идентификатор пользователя:",
-    "UserIDRequired": "Требуется идентификатор пользователя."
+    "UserIDRequired": "Требуется идентификатор пользователя.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
@@ -1119,7 +1121,10 @@
     "Installed": "Установлены",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitLabURL": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",

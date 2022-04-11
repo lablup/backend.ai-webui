@@ -410,7 +410,7 @@
     "Role": "Role",
     "Groups": "Groups",
     "DescActiveUser": "Active user?",
-    "UserStatus":"User Status",
+    "UserStatus": "User Status",
     "UserName": "User Name",
     "FullName": "Full Name",
     "Description": "Description",
@@ -1119,7 +1119,10 @@
     "Installed": "Installed",
     "GithubInternalError": "Github Internal Error.",
     "GithubAPILimitError": "Github API Limitation Error.",
-    "GithubAPIEtcError": "Github Server Issue."
+    "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGitlabRepo": "Import Gitlab Repository",
+    "GitlabRepoWillBeFolder": "Imported GitLab repositories are converted to folders and can be mounted when session starts.",
+    "GitLabURL": "GitLab URL"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
