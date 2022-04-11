@@ -1544,10 +1544,10 @@ class VFolder {
     let reqUrl = this.urlPrefix;
     let params = {};
     if (groupId) {
-      params['group_id'] = groupId
+      params['group_id'] = groupId;
     }
     if (userEmail) {
-      params['user_id'] = userEmail
+      params['owner_user_email'] = userEmail;
     }
     const q = querystring.stringify(params);
     reqUrl += `?${q}`;
