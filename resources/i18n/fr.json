@@ -298,7 +298,6 @@
     "Batch": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
-      "LetterNumber-_dot": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
