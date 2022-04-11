@@ -129,6 +129,7 @@
       "Environments": "Lingkungan",
       "Start": "Mulai",
       "FolderToMount": "Folder untuk dipasang",
+      "FolderToMountList": "Folder untuk dipasang",
       "ResourceAllocation": "Alokasi sumber daya",
       "NoSuitablePreset": "Tidak ada preset yang cocok",
       "Advanced": "Lanjutan",
@@ -207,7 +208,7 @@
       "ConfirmAndLaunch": "Konfirmasi dan luncurkan",
       "FolderAliasOverlapping": "Nama lain (alias) folder sama dengan nama lain yang sudah dipakai",
       "NoEnvConfigured": "Tidak ada lingkungan yang terkonfigurasi",
-      "FolderAlias": "Nama lain",
+      "FolderAlias": "Jalur & Nama lain",
       "NoAvailableFolderToMount": "Tidak ada folder yang dapat dipasang",
       "MountedFolders": "Folder Terpasang",
       "EnvironmentVariablePaneTitle": "Nama Panel Variabel Lingkungan",
@@ -218,7 +219,17 @@
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
       "NumOpenBLASthreads": "__NOT_TRANSLATED__",
-      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -271,7 +282,20 @@
     "UseYourFavoriteVNCApp": "Gunakan aplikasi VNC favorit Anda",
     "XRDPconnection": "Koneksi RDP",
     "UseYourFavoriteMSTSCApp": "Gunakan aplikasi MS Remote Desktop favorit Anda",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -316,7 +340,11 @@
     "Running": "Jalankan",
     "BackendType": "Jenis Backend",
     "Capabilities": "Kemampuan",
-    "NoNetworkSignal": "Tidak ada sinyal jaringan."
+    "NoNetworkSignal": "Tidak ada sinyal jaringan.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -479,7 +507,11 @@
       "Edit": "Sunting",
       "EditDelete": "Sunting+Hapus",
       "KickOut": "Keluarkan pengguna",
-      "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu."
+      "CannotDeleteFolder": "Tidak dapat menghapus folder yang dipasang di satu atau beberapa sesi. Mohon hentikan sesi terlebih dahulu.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -677,7 +709,8 @@
     "Edit_ShellScriptTitle_1": "Sunting",
     "Edit_ShellScriptTitle_2": " skrip shell",
     "AutoLogout": "Keluar Otomatis",
-    "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)"
+    "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
@@ -755,7 +788,9 @@
     "RegistryUpdateFailed": "Pembaruan registri gagal.",
     "RescanImages": "Memindai Ulang Gambar...",
     "RescanFailed": "Pemindaian Ulang Gagal.",
-    "PleaseSelectOption": "Silakan pilih salah satu opsi."
+    "PleaseSelectOption": "Silakan pilih salah satu opsi.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",
@@ -1081,7 +1116,10 @@
     "FolderName": "Nama folder yang diimpor:",
     "NotebookBadgeCodeHTML": "Kode Lencana Notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Kode Lencana Notebook (Markdown)",
-    "Installed": "Terinstalasi"
+    "Installed": "Terinstalasi",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",

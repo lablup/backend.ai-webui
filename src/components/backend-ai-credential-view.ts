@@ -1038,7 +1038,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </h4>
             <div>
               <backend-ai-user-list class="list-content" id="active-user-list" condition="active" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
-              <backend-ai-user-list class="list-content" id="inactive-user-list"  style="display:none;"  condition="inactive" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
+              <backend-ai-user-list class="list-content" id="inactive-user-list" style="display:none;" ?active="${this._activeTab === 'user-lists'}"></backend-ai-user-list>
             </div>
           </div>
           <div id="credential-lists" class="item tab-content card" style="display:none;">
