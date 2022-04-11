@@ -2738,7 +2738,7 @@ class ComputeSession {
       app,
       port: port || undefined,
       envs: envs || undefined,
-      args: args || undefined,
+      arguments: JSON.stringify(args) || undefined,
     });
 
     return this.client._wrapWithPromise(rqst);
