@@ -2330,10 +2330,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     /* Fetch keypair */
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
       this.notification.text = _text('session.launcher.NoActiveKeypair');
       this.notification.show();
+      ownerEnabled.checked = false;
+      ownerEnabled.disabled = true;
       this.ownerKeypairs = [];
       this.ownerGroups = [];
       return;
@@ -2353,6 +2356,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerGroups[0]['name']);
       });
     }
+    ownerEnabled.disabled = false;
   }
 
   async _fetchSessionOwnerScalingGroups() {
@@ -2374,7 +2378,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   async _fetchDelegatedSessionVfolder() {
     const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     const userEmail = this.shadowRoot.querySelector('#owner-email').value;
-    if (ownerEnabled && ownerEnabled.checked) {
+    if (this.ownerKeypairs.length > 0 && ownerEnabled && ownerEnabled.checked) {
       await this.resourceBroker.updateVirtualFolderList(userEmail);
       this.vfolders = this.resourceBroker.vfolders;
     } else {
