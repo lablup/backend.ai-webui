@@ -228,7 +228,8 @@
       "(Automatic)": "(자동설정)",
       "NumOpenMPthreads": "OpenMP 쓰레드 수",
       "NumOpenBLASthreads": "OpenBLAS 쓰레드 수",
-      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용"
+      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용",
+      "Architecture": "아키텍쳐"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -294,7 +295,8 @@
     "SessionRenamed": "세션 이름이 변경되었습니다",
     "SessionNameRequired": "세션 이름을 입력해주세요",
     "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
-    "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다",
+    "Architecture": "아키텍쳐"
   },
   "button": {
     "Cancel": "취소",
@@ -343,7 +345,8 @@
     "Running": "실행중",
     "BackendType": "백엔드",
     "Capabilities": "지원기능",
-    "NoNetworkSignal": "네트워크 신호 없음"
+    "NoNetworkSignal": "네트워크 신호 없음",
+    "Architecture": "아키텍쳐"
   },
   "general": {
     "cores": "코어",
@@ -410,7 +413,7 @@
     "Role": "역할",
     "Groups": "그룹",
     "DescActiveUser": "활성화 유저?",
-    "UserStatus":"사용자 상태",
+    "UserStatus": "사용자 상태",
     "UserName": "사용자명",
     "FullName": "성명",
     "Description": "소개",
@@ -638,7 +641,8 @@
     "SuccessfullyModified": "성공적으로 수정되었습니다.",
     "ProblemOccurred": "문제가 발생했습니다.",
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
-    "NoChangeMade": "변경된 부분이 없습니다."
+    "NoChangeMade": "변경된 부분이 없습니다.",
+    "Architecture": "아키텍쳐"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
