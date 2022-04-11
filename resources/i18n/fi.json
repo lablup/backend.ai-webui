@@ -129,6 +129,7 @@
       "Environments": "Ympäristöt",
       "Start": "alkaa",
       "FolderToMount": "Asennettava kansio",
+      "FolderToMountList": "Asennettava kansio",
       "ResourceAllocation": "Resurssien kohdentaminen",
       "NoSuitablePreset": "Ei sopivaa esiasetusta",
       "Advanced": "Pitkälle kehittynyt",
@@ -1053,7 +1054,10 @@
     "FolderName": "Tuodun kansion nimi:",
     "NotebookBadgeCodeHTML": "Muistikirjan tunnus (HTML)",
     "NotebookBadgeCodeMarkdown": "Muistikirjan tunnuskoodi (Markdown)",
-    "Installed": "Asennettu"
+    "Installed": "Asennettu",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Tämän kuukauden tilastot",

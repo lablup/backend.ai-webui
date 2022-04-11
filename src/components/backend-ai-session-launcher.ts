@@ -189,6 +189,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
+  @property({type: Object}) _boundPathRenderer = this.infoHeaderRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
   @property({type: Object}) schedulerTimer;
   @property({type: Object}) sessionInfoObj = {
@@ -589,6 +590,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-theme-secondary: var(--general-checkbox-color);
         }
 
+        mwc-checkbox#hide-guide {
+          margin-right: 10px;
+        }
+
         #prev-button, #next-button {
           color: #27824F;
         }
@@ -608,6 +613,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #vfolder mwc-list-item[disabled] {
           background-color: rgba(255, 0, 0, 0.04) !important;
+        }
+
+        #vfolder-header-title {
+          text-align: center; 
+          font-size: 16px;
+          font-family: var(--general-font-family);
+          font-weight: 500;
         }
 
         wl-label {
@@ -1287,7 +1299,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['mount_map'] = {};
         for (const f in this.folderMapping) {
           if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+            if (!(this.folderMapping[f].startsWith('/'))) {
+              config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+            } else {
+              config['mount_map'][f] = this.folderMapping[f];
+            }
           }
         }
       }
@@ -1888,10 +1904,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (mem_metric.min < 0.1) {
             mem_metric.min = 0.1;
           }
+          if (!mem_metric.max) {
+            mem_metric.max = 0;
+          }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           if ('mem' in this.userResourceLimit) {
             const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
-            if (parseInt(image_mem_max) !== 0) {
+            if (!isNaN(parseInt(image_mem_max)) && (parseInt(image_mem_max) !== 0)) {
               mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
             } else {
               mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
@@ -2029,14 +2048,78 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     render(
       html`
         <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
-                           pattern="^[a-zA-Z0-9\._-]*$" ?disabled="${!rowData.selected}"
-                           theme="small" placeholder="${rowData.item.name}"
+                           pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
+                           theme="small" placeholder="/home/work/${rowData.item.name}"
                            @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         </template>
       `,
       root
     );
   }
+
+  infoHeaderRenderer(root, column?) {
+    render(
+      html`
+      <div class="horizontal layout center">
+        <span id="vfolder-header-title">${_t('session.launcher.FolderAlias')}</span>
+        <mwc-icon-button icon="info" class="fg green info" @click="${(e) => this._showPathDescription(e)}"></mwc-icon-button>
+      </div>
+      `,
+      root
+    );
+  }
+
+  _showPathDescription(e?) {
+    if (e != undefined) {
+      e.stopPropagation();
+    }
+    this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
+    this._helpDescription = _text('session.launcher.DescFolderAlias');
+    this._helpDescriptionIcon = '';
+    const pathDialog = this.shadowRoot.querySelector('#help-description');
+    setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
+    pathDialog.show();
+  }
+
+  helpDescTagCount(helpDescription) {
+    let childCount = 0;
+    const searchChild = '<p>';
+    let descPos = helpDescription.indexOf(helpDescription);
+    while (descPos !== -1) {
+      childCount++;
+      descPos = helpDescription.indexOf(searchChild, descPos + 1);
+    }
+    return childCount;
+  }
+
+  setPathContent(pathDialog, helpDescChildNum) {
+    const pathLastChild = pathDialog.children[pathDialog.children.length - 1];
+    const pathContentLastChild = pathLastChild.children[pathLastChild.children.length - 1];
+    if (pathContentLastChild.children.length < helpDescChildNum + 1) {
+      const div: HTMLElement = document.createElement('div');
+      div.setAttribute('class', 'horizontal layout flex center');
+      const pathCheckbox = document.createElement('mwc-checkbox');
+      pathCheckbox.setAttribute('id', 'hide-guide');
+      const checkboxMsg = document.createElement('span');
+      checkboxMsg.innerHTML = `${_text('dialog.hide.DonotShowThisAgain')}`;
+      div.appendChild(pathCheckbox);
+      div.appendChild(checkboxMsg);
+      pathContentLastChild.appendChild(div);
+      const eventCheckbox = this.shadowRoot.querySelector('#hide-guide');
+      eventCheckbox.addEventListener('change', (event) => {
+        if (event.target !== null) {
+          event.stopPropagation();
+          const eventTarget = event.target as HTMLInputElement;
+          if (!eventTarget.checked) {
+            localStorage.setItem('backendaiwebui.pathguide', 'true');
+          } else {
+            localStorage.setItem('backendaiwebui.pathguide', 'false');
+          }
+        }
+      });
+    }
+  }
+
   async _updateFolderMap(folder, alias) {
     if (alias === '') {
       if (folder in this.folderMapping) {
@@ -2794,6 +2877,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
     this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
+    if (this.currentIndex == 2) {
+      const isVisible = localStorage.getItem('backendaiwebui.pathguide');
+      if (!isVisible || isVisible === 'true') {
+        this._showPathDescription();
+      }
+    }
+
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
   }
@@ -3101,10 +3191,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               flex-grow="0"
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
-                <vaadin-grid-filter-column header="${_text('session.launcher.FolderToMount')}"
+                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
                                            path="name" resizable></vaadin-grid-filter-column>
-                <vaadin-grid-column .renderer="${this._boundFolderMapRenderer}" header="${_text('session.launcher.FolderAlias')}">
-                </vaadin-grid-column>
+                <vaadin-grid-column width="135px"
+                                    path=" ${_t('session.launcher.FolderAlias')}"
+                                    .renderer="${this._boundFolderMapRenderer}" 
+                                    .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
               <div class="vertical layout center flex blank-box-medium">
@@ -3120,7 +3212,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <ul class="vfolder-list">
                     ${this.selectedVfolders.map((item) => html`
                       <li><mwc-icon>folder_open</mwc-icon>${item}
-                      ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                      ${item in this.folderMapping ?
+    this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+      html`(&#10140; /home/work/${this.folderMapping[item]})` :
+    html`(&#10140; /home/work/${item})`}
                       </li>
                     `)}
                     ${this.autoMountedVfolders.map((item) => html`
@@ -3530,7 +3625,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <ul class="vfolder-list">
                   ${this.selectedVfolders.map((item) => html`
                     <li><mwc-icon>folder_open</mwc-icon>${item}
-                    ${item in this.folderMapping ? html` (&#10140; ${this.folderMapping[item]})`: html``}
+                    ${item in this.folderMapping ?
+    this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+      html`(&#10140; /home/work/${this.folderMapping[item]})` :
+    html`(&#10140; /home/work/${item})`}
                     </li>
                   `)}
                   ${this.autoMountedVfolders.map((item) => html`

@@ -454,7 +454,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
                    .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">

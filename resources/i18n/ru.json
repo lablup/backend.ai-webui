@@ -129,6 +129,7 @@
       "Environments": "Вычислительные среды",
       "Start": "Старт",
       "FolderToMount": "Папка для монтажа",
+      "FolderToMountList": "Папка для монтажа",
       "ResourceAllocation": "Распределение ресурсов",
       "NoSuitablePreset": "Нет подходящей предустановки",
       "Advanced": "Продвинутый",
@@ -218,7 +219,17 @@
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
       "NumOpenBLASthreads": "__NOT_TRANSLATED__",
-      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -271,7 +282,20 @@
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
     "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -316,7 +340,11 @@
     "Running": "Выполнение",
     "BackendType": "Тип бэкэнда",
     "Capabilities": "Возможности",
-    "NoNetworkSignal": "Нет сетевых сигналов."
+    "NoNetworkSignal": "Нет сетевых сигналов.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "ядра",
@@ -479,7 +507,11 @@
       "Edit": "Редактировать",
       "EditDelete": "Изменить + Удалить",
       "KickOut": "Выкинуть пользователя",
-      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс."
+      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -677,7 +709,8 @@
     "Edit_ShellScriptTitle_1": "Редактировать",
     "Edit_ShellScriptTitle_2": " сценарий оболочки",
     "AutoLogout": "Автоматический выход",
-    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)"
+    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
@@ -755,7 +788,9 @@
     "RegistryUpdateFailed": "Не удалось обновить реестр.",
     "RescanImages": "Повторное сканирование изображений ...",
     "RescanFailed": "Ошибка повторного сканирования.",
-    "PleaseSelectOption": "Пожалуйста, выберите один вариант."
+    "PleaseSelectOption": "Пожалуйста, выберите один вариант.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",
@@ -1081,7 +1116,10 @@
     "FolderName": "Имя импортированной папки:",
     "NotebookBadgeCodeHTML": "Код значка блокнота (HTML)",
     "NotebookBadgeCodeMarkdown": "Код значка блокнота (маркдаун)",
-    "Installed": "Установлены"
+    "Installed": "Установлены",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",

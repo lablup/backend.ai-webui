@@ -92,6 +92,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Number}) maxCUDASharesPerContainer = 16;
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
+  @property({type: Boolean}) maskUserInfo = false;
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
@@ -513,6 +514,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.allow_image_list = [];
     } else {
       this.allow_image_list = config.environments.allowlist.split(',');
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
+      this.maskUserInfo = false;
+    } else {
+      this.maskUserInfo = config.general.maskUserInfo;
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
@@ -1022,6 +1028,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
+      globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1117,7 +1124,7 @@ export default class BackendAILogin extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap escapeKeyAction>
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
@@ -1274,7 +1281,7 @@ export default class BackendAILogin extends BackendAIPage {
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
+      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent escapeKeyAction>
         ${this.blockMessage != '' ? html`
           ${this.blockType !== '' ? html`
             <span slot="title" id="work-title">${this.blockType}</span>

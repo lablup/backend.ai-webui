@@ -201,19 +201,81 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
       name = nameWithVersion.replace('/tree/', '').substring(1);
+      url = url.replace('https://github.com', 'https://codeload.github.com');
+      url = url + '/zip/' + tree;
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
     } else {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
-    }
-    url = url.replace('https://github.com', 'https://codeload.github.com');
-    url = url + '/zip/' + tree;
-    const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-    if (['http', 'https'].includes(protocol)) {
-      return this.importRepoFromURL(url, name);
-    } else {
-      this.notification.text = _text('import.WrongURLType');
-      this.importMessage = this.notification.text;
-      this.notification.show();
-      return false;
+      var repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
+      const getRepoUrl = async() => {
+        try {
+          const response = await fetch(repoUrl);
+          if (response.status === 200) {
+            const responseJson = await response.json();
+            return responseJson.default_branch;
+          } else if (response.status === 404) {
+            throw 'WrongURLType';
+          } else if (response.status === 403 || response.status === 429) { //forbidden & Too Many Requests
+            const limitCnt = response.headers.get('x-ratelimit-limit');
+            const limitUsedCnt = response.headers.get('x-ratelimit-used')
+            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
+            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
+            if (limitRemainingCnt === '0') {
+              throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+            } else {
+              throw 'GithubAPIEtcError';
+            }
+          } else if (response.status === 500) {
+            throw 'GithubInternalError';
+          } else {
+            console.log(`error statusCode: ${response.status}, body: ${response.text}`);
+            throw 'GithubAPIEtcError';
+          }
+        } catch (error) {
+          throw error;
+        }
+      }
+      return getRepoUrl().then((result) => {
+        tree = result;
+        url = url.replace('https://github.com', 'https://codeload.github.com');
+        url = url + '/zip/' + tree;
+        const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+        if (['http', 'https'].includes(protocol)) {
+          return this.importRepoFromURL(url, name);
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importMessage = this.notification.text;
+          this.notification.show();
+          return false;
+        }
+      }).catch((e) => { // check exception
+        switch (e) {
+          case 'WrongURLType':
+            this.notification.text = _text('import.WrongURLType');
+            break;
+          case 'GithubInternalError':
+            this.notification.text = _text('import.GithubInternalError');
+            break;
+          default:
+            if (e.indexOf('|') !== -1) {
+              this.notification.text = _text('import.GithubAPILimitError');
+            } else {
+              this.notification.text = _text('import.GithubAPIEtcError');
+            }
+            break;
+        }
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      });
     }
   }
 

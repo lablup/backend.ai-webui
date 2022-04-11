@@ -129,6 +129,7 @@
       "Environments": "环境",
       "Start": "开始",
       "FolderToMount": "要挂载的文件夹",
+      "FolderToMountList": "要挂载的文件夹",
       "ResourceAllocation": "资源分配",
       "NoSuitablePreset": "没有合适的预设",
       "Advanced": "先进的",
@@ -1053,7 +1054,10 @@
     "FolderName": "导入的文件夹名称：",
     "NotebookBadgeCodeHTML": "笔记本徽章代码 (HTML)",
     "NotebookBadgeCodeMarkdown": "笔记本徽章代码 (Markdown)",
-    "Installed": "已安装"
+    "Installed": "已安装",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月统计",

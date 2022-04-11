@@ -2551,7 +2551,7 @@ class ComputeSession {
             app,
             port: port || undefined,
             envs: envs || undefined,
-            args: args || undefined,
+            arguments: JSON.stringify(args) || undefined,
         });
         return this.client._wrapWithPromise(rqst);
     }
@@ -2941,13 +2941,13 @@ class User {
      *   'need_password_change': Boolean, // Let user change password at the next login.
      *   'full_name': String,     // Full name of given user id.
      *   'description': String,   // Description for user.
-     *   'is_active': Boolean,    // Flag if user is active or not.
+     *   'is_active': Boolean, // Flag if user is active or not.
      *   'domain_name': String,   // Domain for user.
      *   'role': String,          // Role for user.
      *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
      * };
      */
-    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
         let q, v;
         if (this.client._apiVersionMajor < 5) {
             q = this.client.is_admin ? `
@@ -3158,7 +3158,7 @@ class ScalingGroup {
      */
     async getWsproxyVersion(group) {
         if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-            return Promise.resolve({ version: 'v1' }); // for manager<=21.03 compatibility.
+            return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
         }
         const queryString = `/scaling-groups/${group}/wsproxy-version`;
         const rqst = this.client.newSignedRequest("GET", queryString, null);
@@ -3590,7 +3590,7 @@ class utils {
         this.client = client;
     }
     changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
-        if (value === undefined) {
+        if (value === undefined || value === null) {
             return value;
         }
         let sourceUnit;
