@@ -560,6 +560,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 50%;
           --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
+          --mdc-menu-min-width: 200px;
         }
 
         mwc-textfield {
@@ -2329,16 +2330,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     /* Fetch keypair */
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
       this.notification.text = _text('session.launcher.NoActiveKeypair');
       this.notification.show();
+      ownerEnabled.checked = false;
+      ownerEnabled.disabled = true;
       this.ownerKeypairs = [];
       this.ownerGroups = [];
       return;
     }
     this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
       this.shadowRoot.querySelector('#owner-accesskey').select(0);
+      this.shadowRoot.querySelector('#owner-accesskey').createAdapter().setSelectedText(this.ownerKeypairs[0]['access_key']);
     });
 
     /* Fetch domain / group information */
@@ -2348,8 +2353,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerGroups) {
       this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerGroups[0]['name']);
       });
     }
+    ownerEnabled.disabled = false;
   }
 
   async _fetchSessionOwnerScalingGroups() {
@@ -2363,8 +2370,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
       });
     }
+  }
+
+  async _fetchDelegatedSessionVfolder() {
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    const userEmail = this.shadowRoot.querySelector('#owner-email').value;
+    if (this.ownerKeypairs.length > 0 && ownerEnabled && ownerEnabled.checked) {
+      await this.resourceBroker.updateVirtualFolderList(userEmail);
+      this.vfolders = this.resourceBroker.vfolders;
+    } else {
+      await this._updateVirtualFolderList();
+    }
+    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
   }
 
   _toggleResourceGauge() {
@@ -2839,7 +2860,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
-  moveProgress(n) {
+  async moveProgress(n) {
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     this.currentIndex += n;
     // limit the range of progress number
@@ -2866,6 +2887,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
+    if (this.currentIndex === 2) {
+      await this._fetchDelegatedSessionVfolder();
+    }
   }
 
   /**
@@ -3154,6 +3178,54 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 `}
             </div>
+            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                                pattern="^.+@.+\..+$" icon="mail"
+                                label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                  <mwc-icon-button icon="refresh" class="blue"
+                                  @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
+                  ${this.ownerKeypairs.map((item) => html`
+                    <mwc-list-item class="owner-group-dropdown"
+                                  id="${item.access_key}"
+                                  value="${item.access_key}">
+                      ${item.access_key}
+                    </mwc-list-item>
+                  `)}
+                </mwc-select>
+                <div class="horizontal center layout">
+                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
+                    ${this.ownerGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
+                              icon="storage" fixedMenuPosition>
+                    ${this.ownerScalingGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                </div>
+                <div class="horizontal layout start-justified center">
+                <mwc-checkbox id="owner-enabled">
+                </mwc-checkbox>
+                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
+                </div>
+              </div>
+            </wl-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
           <wl-expansion class="vfolder" name="vfolder" open>
@@ -3443,53 +3515,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._showResourceDescription(e, 'openmp-optimization');
   }}"></mwc-icon-button>
                   </div>
-                </div>
-              </div>
-            </wl-expansion>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
-              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
-              <div class="vertical layout">
-                <div class="horizontal center layout">
-                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                                 pattern="^.+@.+\..+$" icon="mail"
-                                 label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
-                  <mwc-icon-button icon="refresh" class="blue"
-                                   @click="${() => this._fetchSessionOwnerGroups()}">
-                  </mwc-icon-button>
-                </div>
-                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
-                  ${this.ownerKeypairs.map((item) => html`
-                    <mwc-list-item class="owner-group-dropdown"
-                                   id="${item.access_key}"
-                                   value="${item.access_key}">
-                      ${item.access_key}
-                    </mwc-list-item>
-                  `)}
-                </mwc-select>
-                <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
-                    ${this.ownerGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
-                              icon="storage" fixedMenuPosition>
-                    ${this.ownerScalingGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                </div>
-                <div class="horizontal layout start-justified center">
-                <mwc-checkbox id="owner-enabled"></mwc-checkbox>
-                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
             </wl-expansion>
