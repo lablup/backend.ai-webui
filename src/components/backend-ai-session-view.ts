@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -517,9 +517,9 @@ export default class BackendAiSessionView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated 
+          <mwc-button unelevated
                       fullwidth
-                      icon="get_app" 
+                      icon="get_app"
                       label="${_t('session.ExportCSVFile')}"
                       @click="${this._exportToCSV}"></mwc-button>
         </div>

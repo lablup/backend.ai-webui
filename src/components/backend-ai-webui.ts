@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -1462,11 +1462,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                               <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">

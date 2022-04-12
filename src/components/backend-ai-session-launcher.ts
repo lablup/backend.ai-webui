@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -617,7 +617,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #vfolder-header-title {
-          text-align: center; 
+          text-align: center;
           font-size: 16px;
           font-family: var(--general-font-family);
           font-weight: 500;
@@ -3246,7 +3246,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                            path="name" resizable></vaadin-grid-filter-column>
                 <vaadin-grid-column width="135px"
                                     path=" ${_t('session.launcher.FolderAlias')}"
-                                    .renderer="${this._boundFolderMapRenderer}" 
+                                    .renderer="${this._boundFolderMapRenderer}"
                                     .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
