@@ -2063,7 +2063,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._helpDescription = _text('session.launcher.DescFolderAlias');
     this._helpDescriptionIcon = '';
     const pathDialog = this.shadowRoot.querySelector('#help-description');
-    setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
+    // setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
     pathDialog.show();
   }
 
@@ -2878,12 +2878,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
     this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
-    if (this.currentIndex == 2) {
-      const isVisible = localStorage.getItem('backendaiwebui.pathguide');
-      if (!isVisible || isVisible === 'true') {
-        this._showPathDescription();
-      }
-    }
+    // if (this.currentIndex == 2) {
+    //   const isVisible = localStorage.getItem('backendaiwebui.pathguide');
+    //   if (!isVisible || isVisible === 'true') {
+    //     this._showPathDescription();
+    //   }
+    // }
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
