@@ -1060,7 +1060,8 @@
     "GithubAPIEtcError": "__NOT_TRANSLATED__",
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
-    "GitLabURL": "__NOT_TRANSLATED__"
+    "GitLabURL": "__NOT_TRANSLATED__",
+    "GitLabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
@@ -1119,6 +1120,7 @@
     "20chars": "(έως 20 χαρακτήρες)",
     "40chars": "(έως 40 χαρακτήρες)",
     "64chars": "(έως 64 χαρακτήρες)",
+    "200chars": "(έως 200 χαρακτήρες)",
     "255chars": "(έως 255 χαρακτήρες)",
     "500chars": "(έως 500 χαρακτήρες)",
     "512chars": "(έως 512 χαρακτήρες)",

@@ -283,6 +283,10 @@ export default class BackendAIImport extends BackendAIPage {
   getGitLabRepoFromURL() {
     let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
     let tree = 'master';
+    let get_branch_name = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    if (get_branch_name.length > 0) {
+      tree = get_branch_name;
+    }
     let name = '';
     // if contains .git extension, then remove it.
     if (url.substring(url.length - 4, url.length) === '.git') {
@@ -329,8 +333,8 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
-    folderName = await this._checkFolderNameAlreadyExists(folderName);
-    await this._addFolderWithName(folderName);
+    folderName = await this._checkFolderNameAlreadyExists(folderName, url);
+    await this._addFolderWithName(folderName, url);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
@@ -351,15 +355,19 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _addFolderWithName(name) {
+  async _addFolderWithName(name, url) {
     const permission = 'rw';
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     const host = vhost_info.default;
-    name = await this._checkFolderNameAlreadyExists(name);
+    name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      this.importMessage = _text('import.FolderName') + name;
+      if (url.includes('github.com/')) {
+        this.importMessage = _text('import.FolderName') + name;
+      } else {
+        this.importGitlabMessage = _text('import.FolderName') + name;
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -370,14 +378,18 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _checkFolderNameAlreadyExists(name) {
+  async _checkFolderNameAlreadyExists(name, url) {
     const vfolderObj = await globalThis.backendaiclient.vfolder.list();
     const vfolders = vfolderObj.map(function(value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
-      this.importMessage = this.notification.text;
+      if (url.includes('github.com/')) {
+        this.importMessage = this.notification.text;
+      } else {
+        this.importGitlabMessage = this.notification.text;
+      }
       this.notification.show();
       let i = 1;
       let newName: string = name;
@@ -534,6 +546,8 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitLabURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitLabDefaultBranch')}"
+                             maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
               <mwc-button icon="cloud_download" @click="${() => this.getGitLabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>

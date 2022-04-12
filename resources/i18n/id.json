@@ -1124,7 +1124,8 @@
     "GithubAPIEtcError": "__NOT_TRANSLATED__",
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
-    "GitLabURL": "__NOT_TRANSLATED__"
+    "GitLabURL": "__NOT_TRANSLATED__",
+    "GitLabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",
@@ -1183,6 +1184,7 @@
     "20chars": "(maksimum 20 karakter)",
     "40chars": "(maksimum 40 karakter)",
     "64chars": "(maksimum 64 karakter)",
+    "200chars": "(maksimum 200 karakter)",
     "255chars": "(maksimum 255 karakter)",
     "500chars": "(maksimum 500 karakter)",
     "512chars": "(maksimum 512 karakter)",

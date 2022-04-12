@@ -1060,7 +1060,8 @@
     "GithubAPIEtcError": "__NOT_TRANSLATED__",
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
-    "GitLabURL": "__NOT_TRANSLATED__"
+    "GitLabURL": "__NOT_TRANSLATED__",
+    "GitLabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",
@@ -1119,6 +1120,7 @@
     "20chars": "（最大20文字）",
     "40chars": "（最大40文字）",
     "64chars": "（最大64文字）",
+    "200chars": "（最大200文字）",
     "255chars": "（最大255文字）",
     "500chars": "（最大500文字）",
     "512chars": "（最大512文字）",

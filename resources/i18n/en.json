@@ -1122,7 +1122,8 @@
     "GithubAPIEtcError": "Github Server Issue.",
     "ImportGitlabRepo": "Import Gitlab Repository",
     "GitlabRepoWillBeFolder": "Imported GitLab repositories are converted to folders and can be mounted when session starts.",
-    "GitLabURL": "GitLab URL"
+    "GitLabURL": "GitLab URL",
+    "GitLabDefaultBranch": "Gitlab Branch Name"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
@@ -1182,6 +1183,7 @@
     "20chars": "(maximum 20 chars)",
     "40chars": "(maximum 40 chars)",
     "64chars": "(maximum 64 chars)",
+    "200chars": "(maximum 200 chars)",
     "255chars": "(maximum 255 chars)",
     "500chars": "(maximum 500 chars)",
     "512chars": "(maximum 512 chars)",
