@@ -1057,7 +1057,11 @@
     "Installed": "Dipasang",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
@@ -1116,6 +1120,7 @@
     "20chars": "(maksimum 20 watak)",
     "40chars": "(maksimum 40 watak)",
     "64chars": "(maksimum 64 watak)",
+    "200chars": "(maksimum 200 watak)",
     "255chars": "(maksimum 255 watak)",
     "500chars": "(maksimum 500 watak)",
     "512chars": "(maksimum 512 watak)",
