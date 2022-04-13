@@ -1120,10 +1120,10 @@
     "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
     "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
     "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다.",
-    "ImportGitlabRepo": "GitLab 저장소 가져오기",
-    "GitlabRepoWillBeFolder": "가져온 GitLab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
-    "GitLabURL": "GitLab 주소",
-    "GitLabDefaultBranch": "Gitlab 브랜치 이름"
+    "ImportGitlabRepo": "Gitlab 저장소 가져오기",
+    "GitlabRepoWillBeFolder": "가져온 Gitlab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
+    "GitlabURL": "Gitlab 주소",
+    "GitlabDefaultBranch": "Gitlab 브랜치 이름"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",

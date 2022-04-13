@@ -280,12 +280,12 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
-  getGitLabRepoFromURL() {
+  getGitlabRepoFromURL() {
     let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
     let tree = 'master';
-    let get_branch_name = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
-    if (get_branch_name.length > 0) {
-      tree = get_branch_name;
+    let getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    if (getBranchName.length > 0) {
+      tree = getBranchName;
     }
     let name = '';
     // if contains .git extension, then remove it.
@@ -544,11 +544,11 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.GitlabRepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitLabURL')}"
+              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitlabURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitLabDefaultBranch')}"
+              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitLabRepoFromURL()}">
+              <mwc-button icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>

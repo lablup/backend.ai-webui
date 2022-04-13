@@ -1060,8 +1060,8 @@
     "GithubAPIEtcError": "__NOT_TRANSLATED__",
     "ImportGitlabRepo": "__NOT_TRANSLATED__",
     "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
-    "GitLabURL": "__NOT_TRANSLATED__",
-    "GitLabDefaultBranch": "__NOT_TRANSLATED__"
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik für diesen Monat",

@@ -1121,9 +1121,9 @@
     "GithubAPILimitError": "Github API Limitation Error.",
     "GithubAPIEtcError": "Github Server Issue.",
     "ImportGitlabRepo": "Import Gitlab Repository",
-    "GitlabRepoWillBeFolder": "Imported GitLab repositories are converted to folders and can be mounted when session starts.",
-    "GitLabURL": "GitLab URL",
-    "GitLabDefaultBranch": "Gitlab Branch Name"
+    "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
+    "GitlabURL": "Gitlab URL",
+    "GitlabDefaultBranch": "Gitlab Branch Name"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
