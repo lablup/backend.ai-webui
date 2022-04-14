@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -560,6 +560,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           width: 50%;
           --mdc-menu-max-width: 200px;
           --mdc-select-min-width: 190px;
+          --mdc-menu-min-width: 200px;
         }
 
         mwc-textfield {
@@ -616,7 +617,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         #vfolder-header-title {
-          text-align: center; 
+          text-align: center;
           font-size: 16px;
           font-family: var(--general-font-family);
           font-weight: 500;
@@ -1815,13 +1816,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cuda_device_metric = {...item};
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
           if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max)) {
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max) && cuda_device_metric.max != null) {
               cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
             } else {
               cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             }
           } else {
-            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max)) {
+            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max) && cuda_device_metric.max != null) {
               cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
             } else {
               cuda_device_metric.max = Math.min(parseInt(this.available_slot['cuda_device']), this.max_cuda_device_per_container);
@@ -1840,16 +1841,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cuda_shares_metric = {...item};
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
           if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max)) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
+            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max) && cuda_shares_metric.max != null) {
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
             } else {
-              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
+              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
             }
           } else {
-            if (parseFloat(cuda_shares_metric.max) !== 0) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), available_slot['cuda_shares'], this.max_cuda_shares_per_container);
+            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max) && cuda_shares_metric.max != null) {
+              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
             } else {
-              cuda_shares_metric.max = 0;
+              cuda_shares_metric.max = Math.min(parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
             }
           }
           if (cuda_shares_metric.min >= cuda_shares_metric.max) {
@@ -2062,7 +2063,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._helpDescription = _text('session.launcher.DescFolderAlias');
     this._helpDescriptionIcon = '';
     const pathDialog = this.shadowRoot.querySelector('#help-description');
-    setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
+    // setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
     pathDialog.show();
   }
 
@@ -2329,16 +2330,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     /* Fetch keypair */
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
       this.notification.text = _text('session.launcher.NoActiveKeypair');
       this.notification.show();
+      ownerEnabled.checked = false;
+      ownerEnabled.disabled = true;
       this.ownerKeypairs = [];
       this.ownerGroups = [];
       return;
     }
     this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
       this.shadowRoot.querySelector('#owner-accesskey').select(0);
+      this.shadowRoot.querySelector('#owner-accesskey').createAdapter().setSelectedText(this.ownerKeypairs[0]['access_key']);
     });
 
     /* Fetch domain / group information */
@@ -2348,8 +2353,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerGroups) {
       this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerGroups[0]['name']);
       });
     }
+    ownerEnabled.disabled = false;
   }
 
   async _fetchSessionOwnerScalingGroups() {
@@ -2363,8 +2370,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.ownerScalingGroups) {
       this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
         this.shadowRoot.querySelector('#owner-scaling-group').select(0);
+        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
       });
     }
+  }
+
+  async _fetchDelegatedSessionVfolder() {
+    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    const userEmail = this.shadowRoot.querySelector('#owner-email').value;
+    if (this.ownerKeypairs.length > 0 && ownerEnabled && ownerEnabled.checked) {
+      await this.resourceBroker.updateVirtualFolderList(userEmail);
+      this.vfolders = this.resourceBroker.vfolders;
+    } else {
+      await this._updateVirtualFolderList();
+    }
+    this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
   }
 
   _toggleResourceGauge() {
@@ -2846,7 +2867,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
-  moveProgress(n) {
+  async moveProgress(n) {
     const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
     this.currentIndex += n;
     // limit the range of progress number
@@ -2864,15 +2885,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
     this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
 
-    if (this.currentIndex == 2) {
-      const isVisible = localStorage.getItem('backendaiwebui.pathguide');
-      if (!isVisible || isVisible === 'true') {
-        this._showPathDescription();
-      }
-    }
+    // if (this.currentIndex == 2) {
+    //   const isVisible = localStorage.getItem('backendaiwebui.pathguide');
+    //   if (!isVisible || isVisible === 'true') {
+    //     this._showPathDescription();
+    //   }
+    // }
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
     this._grid?.clearCache();
+    if (this.currentIndex === 2) {
+      await this._fetchDelegatedSessionVfolder();
+    }
   }
 
   /**
@@ -3161,6 +3185,54 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 `}
             </div>
+            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                                pattern="^.+@.+\..+$" icon="mail"
+                                label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                  <mwc-icon-button icon="refresh" class="blue"
+                                  @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
+                  ${this.ownerKeypairs.map((item) => html`
+                    <mwc-list-item class="owner-group-dropdown"
+                                  id="${item.access_key}"
+                                  value="${item.access_key}">
+                      ${item.access_key}
+                    </mwc-list-item>
+                  `)}
+                </mwc-select>
+                <div class="horizontal center layout">
+                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
+                    ${this.ownerGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
+                              icon="storage" fixedMenuPosition>
+                    ${this.ownerScalingGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                    id="${item.name}"
+                                    value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                </div>
+                <div class="horizontal layout start-justified center">
+                <mwc-checkbox id="owner-enabled">
+                </mwc-checkbox>
+                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
+                </div>
+              </div>
+            </wl-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
           <wl-expansion class="vfolder" name="vfolder" open>
@@ -3181,7 +3253,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                            path="name" resizable></vaadin-grid-filter-column>
                 <vaadin-grid-column width="135px"
                                     path=" ${_t('session.launcher.FolderAlias')}"
-                                    .renderer="${this._boundFolderMapRenderer}" 
+                                    .renderer="${this._boundFolderMapRenderer}"
                                     .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
               </vaadin-grid>
               ${this.vfolders.length > 0 ? html`` : html`
@@ -3453,53 +3525,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             </wl-expansion>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
-              <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
-              <div class="vertical layout">
-                <div class="horizontal center layout">
-                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                                 pattern="^.+@.+\..+$" icon="mail"
-                                 label="${_text('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
-                  <mwc-icon-button icon="refresh" class="blue"
-                                   @click="${() => this._fetchSessionOwnerGroups()}">
-                  </mwc-icon-button>
-                </div>
-                <mwc-select id="owner-accesskey" label="${_text('session.launcher.OwnerAccessKey')}" icon="vpn_key" fixedMenuPosition naturalMenuWidth>
-                  ${this.ownerKeypairs.map((item) => html`
-                    <mwc-list-item class="owner-group-dropdown"
-                                   id="${item.access_key}"
-                                   value="${item.access_key}">
-                      ${item.access_key}
-                    </mwc-list-item>
-                  `)}
-                </mwc-select>
-                <div class="horizontal center layout">
-                  <mwc-select id="owner-group" label="${_text('session.launcher.OwnerGroup')}" icon="group_work" fixedMenuPosition naturalMenuWidth>
-                    ${this.ownerGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
-                              icon="storage" fixedMenuPosition>
-                    ${this.ownerScalingGroups.map((item) => html`
-                      <mwc-list-item class="owner-group-dropdown"
-                                     id="${item.name}"
-                                     value="${item.name}">
-                        ${item.name}
-                      </mwc-list-item>
-                    `)}
-                  </mwc-select>
-                </div>
-                <div class="horizontal layout start-justified center">
-                <mwc-checkbox id="owner-enabled"></mwc-checkbox>
-                <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
-                </div>
-              </div>
-            </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.SessionInfo')}</p>
@@ -3599,7 +3624,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
                   <div class="horizontal layout">
                     <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                    <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                    <span style="text-align:center;">${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
                   </div>
                   <p class="small">${_t('session.launcher.AllocateNode')}</p>
                 </div>

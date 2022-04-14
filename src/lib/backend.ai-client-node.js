@@ -1418,13 +1418,17 @@ class VFolder {
     /**
      * List Virtual folders that requested accessKey has permission to.
      */
-    async list(groupId = null) {
+    async list(groupId = null, userEmail = null) {
         let reqUrl = this.urlPrefix;
+        let params = {};
         if (groupId) {
-            const params = { group_id: groupId };
-            const q = querystring.stringify(params);
-            reqUrl += `?${q}`;
+            params['group_id'] = groupId;
         }
+        if (userEmail) {
+            params['owner_user_email'] = userEmail;
+        }
+        const q = querystring.stringify(params);
+        reqUrl += `?${q}`;
         let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
@@ -2548,7 +2552,7 @@ class ComputeSession {
             app,
             port: port || undefined,
             envs: envs || undefined,
-            args: args || undefined,
+            arguments: JSON.stringify(args) || undefined,
         });
         return this.client._wrapWithPromise(rqst);
     }

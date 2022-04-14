@@ -295,7 +295,13 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -436,7 +442,9 @@
     "UserAccountCreatedError": "Энэ данс аль хэдийн бүртгэгдсэн байна.",
     "KeypairCreated": "Түлхүүр хослолыг амжилттай үүсгэсэн.",
     "UserNotFound": "Дараах хэрэглэгчийн ID олдсонгүй тул итгэмжлэл үүсгэх амжилтгүй боллоо.",
-    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай."
+    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -1119,7 +1127,11 @@
     "Installed": "Суулгасан",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
@@ -1178,6 +1190,7 @@
     "20chars": "(хамгийн ихдээ 20 тэмдэгт)",
     "40chars": "(хамгийн ихдээ 40 тэмдэгт)",
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
+    "200chars": "(хамгийн ихдээ 200 тэмдэгт)",
     "255chars": "(хамгийн ихдээ 255 тэмдэгт)",
     "500chars": "(хамгийн ихдээ 500 тэмдэгт)",
     "512chars": "(хамгийн ихдээ 512 тэмдэгт)",

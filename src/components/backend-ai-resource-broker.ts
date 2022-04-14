@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -363,11 +363,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * Update virtual folder list. Also divide automount folders from general ones.
    *
    */
-  async updateVirtualFolderList() {
+  async updateVirtualFolderList(userEmail = null) {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
+    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];

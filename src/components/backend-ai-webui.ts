@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -1392,7 +1392,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.03.0.220412</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1416,7 +1416,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.03.0.220412</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1462,11 +1462,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                               <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">

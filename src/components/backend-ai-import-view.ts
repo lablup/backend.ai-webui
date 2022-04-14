@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -51,6 +51,7 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
+  @property({type: String}) importGitlabMessage = '';
 
   constructor() {
     super();
@@ -279,6 +280,50 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
+  getGitlabRepoFromURL() {
+    let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
+    let tree = 'master';
+    let getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    if (getBranchName.length > 0) {
+      tree = getBranchName;
+    }
+    let name = '';
+    // if contains .git extension, then remove it.
+    if (url.substring(url.length - 4, url.length) === '.git') {
+      url = url.split('.git')[0];
+    }
+
+    if (url.includes('/tree')) { // Branch.
+      var pathname = new URL(url).pathname;
+      var splitPaths = pathname.split( '/' );
+      name = splitPaths[2];
+      tree = splitPaths[splitPaths.length -1];
+      url = url.replace('/tree/', '/archive/');
+      url += '/' + name + '-' + tree + '.zip';
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
+    } else {
+      name = url.split('/').slice(-1)[0];
+      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip'
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importGitlabMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
+    }
+  }
+
   async importRepoFromURL(url, folderName) {
     // Create folder to
     const imageResource: Record<string, unknown> = {};
@@ -288,8 +333,8 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
-    folderName = await this._checkFolderNameAlreadyExists(folderName);
-    await this._addFolderWithName(folderName);
+    folderName = await this._checkFolderNameAlreadyExists(folderName, url);
+    await this._addFolderWithName(folderName, url);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
@@ -310,15 +355,19 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _addFolderWithName(name) {
+  async _addFolderWithName(name, url) {
     const permission = 'rw';
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     const host = vhost_info.default;
-    name = await this._checkFolderNameAlreadyExists(name);
+    name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      this.importMessage = _text('import.FolderName') + name;
+      if (url.includes('github.com/')) {
+        this.importMessage = _text('import.FolderName') + name;
+      } else {
+        this.importGitlabMessage = _text('import.FolderName') + name;
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -329,14 +378,18 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _checkFolderNameAlreadyExists(name) {
+  async _checkFolderNameAlreadyExists(name, url) {
     const vfolderObj = await globalThis.backendaiclient.vfolder.list();
     const vfolders = vfolderObj.map(function(value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
-      this.importMessage = this.notification.text;
+      if (url.includes('github.com/')) {
+        this.importMessage = this.notification.text;
+      } else {
+        this.importGitlabMessage = this.notification.text;
+      }
       this.notification.show();
       let i = 1;
       let newName: string = name;
@@ -481,6 +534,25 @@ export default class BackendAIImport extends BackendAIPage {
               </mwc-button>
             </div>
             ${this.importMessage}
+          </div>
+        </lablup-activity-panel>
+      </div>
+      <div class="horizontal wrap layout">
+        <lablup-activity-panel title="${_t('import.ImportGitlabRepo')}" elevation="1" horizontalsize="2x">
+          <div slot="message">
+            <div class="description">
+              <p>${_t('import.GitlabRepoWillBeFolder')}</p>
+            </div>
+            <div class="horizontal wrap layout center">
+              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitlabURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
+                             maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
+              <mwc-button icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+                <span>${_t('import.GetToFolder')}</span>
+              </mwc-button>
+            </div>
+            ${this.importGitlabMessage}
           </div>
         </lablup-activity-panel>
       </div>
