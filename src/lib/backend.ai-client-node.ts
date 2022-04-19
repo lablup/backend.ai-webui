@@ -2018,7 +2018,7 @@ class Agent {
    * @param {string} agent_id - resource preset name.
    * @param {json} input - resource preset specification and data. Required fields are:
    * {
-   *   'schedulable': schedulable 
+   *   'schedulable': schedulable
    * };
    */
    async update(id = null, input) {
@@ -3165,7 +3165,7 @@ class User {
    *   'need_password_change': Boolean, // Let user change password at the next login.
    *   'full_name': String,     // Full name of given user id.
    *   'description': String,   // Description for user.
-   *   'is_active': Boolean, // Flag if user is active or not. 
+   *   'is_active': Boolean, // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
    *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
@@ -3384,14 +3384,15 @@ class ScalingGroup {
    * Get the version of WSProxy for a specific scaling group.
    * (NEW) manager version 21.09.
    *
-   * @param {string} group - Scaling group name
+   * @param {string} scalingGroup - Scaling group name
+   * @param {string} groupId - Project (group) ID
    */
-  async getWsproxyVersion(group) {
+  async getWsproxyVersion(scalingGroup, groupId) {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
     }
-    const queryString = `/scaling-groups/${group}/wsproxy-version`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
+    const rqst = this.client.newSignedRequest("GET", url, null);
     return this.client._wrapWithPromise(rqst);
   }
 
