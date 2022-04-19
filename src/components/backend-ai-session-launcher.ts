@@ -3355,8 +3355,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item class="slider-list-item">
                     <lablup-slider id="cpu-resource" class="cpu"
                                    pin snaps expand editable markers
-                                   @click="${(e) => this._applyResourceValueChanges(e)}"
-                                   @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                   @change="${(e) => this._applyResourceValueChanges(e)}"
                                    marker_limit="${this.marker_limit}"
                                    suffix="${_text('session.launcher.Core')}"
                                    min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
@@ -3373,13 +3372,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item  class="slider-list-item">
                     <lablup-slider id="mem-resource" class="mem"
                                    pin snaps expand step=0.05 editable markers
-                                   @click="${(e) => {
+                                   @change="${(e) => {
     this._applyResourceValueChanges(e);
   }}"
                                    @changed="${() => {
     this._updateShmemLimit();
   }}"
-                                   @focusout="${(e) => this._applyResourceValueChanges(e)}"
                                    marker_limit="${this.marker_limit}" suffix="GB"
                                    min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                    value="${this.mem_request}"></lablup-slider>
@@ -3394,8 +3392,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <mwc-list-item class="slider-list-item">
                   <lablup-slider id="shmem-resource" class="mem"
                                  pin snaps step="0.0125" editable markers
-                                 @click="${(e) => this._applyResourceValueChanges(e)}"
-                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 @change="${(e) => this._applyResourceValueChanges(e)}"
                                  marker_limit="${this.marker_limit}" suffix="GB"
                                  min="0.0625" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
@@ -3410,8 +3407,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="gpu-resource" class="gpu"
                                  pin snaps editable markers step="${this.gpu_step}"
-                                 @click="${(e) => this._applyResourceValueChanges(e)}"
-                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 @change="${(e) => this._applyResourceValueChanges(e)}"
                                  marker_limit="${this.marker_limit}" suffix="GPU"
                                  min="0.0" max="${this.cuda_device_metric.max}"
                                  value="${this.gpu_request}"></lablup-slider>
@@ -3426,8 +3422,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
                                  pin snaps editable markers step="1"
-                                 @click="${(e) => this._applyResourceValueChanges(e)}"
-                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 @change="${(e) => this._applyResourceValueChanges(e)}"
                                  marker_limit="${this.marker_limit}" suffix="#"
                                  min="1" max="${this.concurrency_limit}"
                                  value="${this.session_request}"></lablup-slider>
@@ -3466,8 +3461,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                    marker_limit="${this.marker_limit}"
                                    min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
                                    value="${this.cluster_size}"
-                                   @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                                   @focusout="${(e) => this._applyResourceValueChanges(e, false)}"
+                                   @change="${(e) => this._applyResourceValueChanges(e, false)}"
                                    suffix="${this.cluster_mode === 'single-node' ? _text('session.launcher.Container') : _text('session.launcher.Node')}"></lablup-slider>
                   </mwc-list-item>
                 </mwc-list>

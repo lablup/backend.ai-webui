@@ -130,7 +130,9 @@ export default class LablupSlider extends LitElement {
       if (propName === 'value') {
         setTimeout(() => {
           if (this.editable) {
-            this.syncToText();
+            if (oldVal && oldVal !== 0 && oldVal > this.min) {
+              this.syncToText();
+            }
             this.syncToSlider();
           }
           this.slider.layout();
