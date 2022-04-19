@@ -2866,7 +2866,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
     nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
-    this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
+    if (!this.shadowRoot.querySelector('#launch-button').disabled) {
+      this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
+    }
 
     // if (this.currentIndex == 2) {
     //   const isVisible = localStorage.getItem('backendaiwebui.pathguide');
