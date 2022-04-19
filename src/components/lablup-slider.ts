@@ -114,9 +114,10 @@ export default class LablupSlider extends LitElement {
 
   update(changedProperties: Map<any, any>) {
     if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
-      this.min = (this.min >= this.max) ? 0 : this.min;
-      if (this.min == this.max && this.max == 0) {
+      // this.min = (this.min >= this.max) ? 0 : this.min;
+      if (this.min == this.max) {
         this.max = this.max + 1;
+        this.value = this.min;
         this.disabled = true;
       }
     }
@@ -129,10 +130,11 @@ export default class LablupSlider extends LitElement {
       if (propName === 'value') {
         setTimeout(() => {
           if (this.editable) {
+            this.syncToText();
             this.syncToSlider();
           }
           this.slider.layout();
-        }, 500);
+        }, 100);
         const event = new CustomEvent('value-changed', {'detail': {}});
         this.dispatchEvent(event);
       }
@@ -172,7 +174,6 @@ export default class LablupSlider extends LitElement {
       this.textfield.value = this.min;
     }
     this.value = this.textfield.value;
-    this.slider.value = this.textfield.value;
     this.slider.step = this.step;
     // updated function will be automatically called.
   }
