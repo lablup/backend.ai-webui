@@ -6,7 +6,7 @@
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -52,6 +52,15 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
   @property({type: String}) importGitlabMessage = '';
+  @property({type: Array}) allowedGroups = [];
+  @property({type: Array}) allowed_folder_type = [];
+  @property({type: String}) vhost = '';
+  @property({type: Array}) vhosts = [];
+  @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
@@ -103,6 +112,15 @@ export default class BackendAIImport extends BackendAIPage {
             display: none;
           }
         }
+
+        #help-description {
+          --component-width: 350px;
+          --dialog-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
+        }
       `
     ];
   }
@@ -112,6 +130,41 @@ export default class BackendAIImport extends BackendAIPage {
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
+    globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
+      this.allowed_folder_type = response;
+    });
+    this._getFolderList();
+    fetch('resources/storage_metadata.json').then(
+      (response) => response.json()
+    ).then(
+      (json) => {
+        const storageInfo = Object();
+        for (const key in json.storageInfo) {
+          if ({}.hasOwnProperty.call(json.storageInfo, key)) {
+            storageInfo[key] = {};
+            if ('name' in json.storageInfo[key]) {
+              storageInfo[key].name = json.storageInfo[key].name;
+            }
+            if ('description' in json.storageInfo[key]) {
+              storageInfo[key].description = json.storageInfo[key].description;
+            } else {
+              storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+            }
+            if ('icon' in json.storageInfo[key]) {
+              storageInfo[key].icon = json.storageInfo[key].icon;
+            } else {
+              storageInfo[key].icon = 'local.png';
+            }
+            if ('dialects' in json.storageInfo[key]) {
+              json.storageInfo[key].dialects.forEach((item) => {
+                storageInfo[item] = storageInfo[key];
+              });
+            }
+          }
+        }
+        this.storageInfo = storageInfo;
+      }
+    );
   }
 
   async _viewStateChanged(active: boolean) {
@@ -360,7 +413,12 @@ export default class BackendAIImport extends BackendAIPage {
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const host = vhost_info.default;
+    let host = vhost_info.default;
+    if (url.includes('github.com/')) {
+      host = this.shadowRoot.querySelector('#github-add-folder-host').value;
+    } else {
+      host = this.shadowRoot.querySelector('#gitlab-add-folder-host').value;
+    }
     name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       if (url.includes('github.com/')) {
@@ -481,6 +539,37 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
+  async _getFolderList() {
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
+    if ((this.allowed_folder_type as string[]).includes('group')) {
+      const group_info = await globalThis.backendaiclient.group.list();
+      this.allowedGroups = group_info.groups;
+    }
+  }
+
+  /**
+   * Display the storage description.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * @param {object} item
+   */
+   _showStorageDescription(e, item) {
+    e.stopPropagation();
+    if (item in this.storageInfo) {
+      this._helpDescriptionTitle = this.storageInfo[item].name;
+      this._helpDescription = this.storageInfo[item].description;
+      this._helpDescriptionIcon = this.storageInfo[item].icon;
+    } else {
+      this._helpDescriptionTitle = item;
+      this._helpDescriptionIcon = 'local.png';
+      this._helpDescription = _text('data.NoStorageDescriptionFound');
+    }
+    const desc = this.shadowRoot.querySelector('#help-description');
+    desc.show();
+  }
+
   render() {
     // language=HTML
     return html`
@@ -529,6 +618,16 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+              <mwc-select class="full-width fixed-position" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                    <mwc-icon-button slot="meta" icon="info"
+                        @click="${(e) => this._showStorageDescription(e, item)}">
+                    </mwc-icon-button>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
               <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
@@ -548,6 +647,16 @@ export default class BackendAIImport extends BackendAIPage {
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
+              <mwc-select class="full-width fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                    <mwc-icon-button slot="meta" icon="info"
+                        @click="${(e) => this._showStorageDescription(e, item)}">
+                    </mwc-icon-button>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
               <mwc-button icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
@@ -556,6 +665,15 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center">
+          ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+          `}
+          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+        </div>
+      </backend-ai-dialog>
 `;
   }
 }
