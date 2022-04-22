@@ -61,7 +61,7 @@ export default class LablupSlider extends LitElement {
           width: var(--textfield-min-width, 65px);
           height: 40px;
           margin-left: 10px;
-          --mdc-theme-primary: transparent;
+          // --mdc-theme-primary: transparent;
           --mdc-text-field-hover-line-color: transparent;
           --mdc-text-field-idle-line-color: transparent;
         }
