@@ -46,7 +46,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import { isThisHour } from 'date-fns';
 
 /**
  Backend AI Session Launcher Carousel
@@ -828,7 +827,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
-      }, true);
+        event.cancelBubble = true;
+        if (event && event.key === 'Tab' && event.target?.tagName === 'LABLUP-SLIDER') {
+          const sliderList = [...this.shadowRoot.querySelectorAll('lablup-slider')];
+          sliderList.forEach((elem, idx) => {
+            const nextIdx = (event.shiftKey) ? idx - 1 : idx + 1;
+            if (event?.target?.id === elem.id) {
+              setTimeout(() => {
+                if (nextIdx > -1 && nextIdx < sliderList.length) {
+                  sliderList[nextIdx].textfield.focus();
+                }
+              }, 0);
+            }
+          });
+        }
+      });
     });
 
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
@@ -3436,6 +3449,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ${this.cluster_mode_list.map((item) => html`
                   <mwc-list-item
                       class="cluster-mode-dropdown"
+                      ?selected="${item === this.cluster_mode}"
                       id="${item}"
                       value="${item}">
                     <div class="horizontal layout center" style="width:100%;">
