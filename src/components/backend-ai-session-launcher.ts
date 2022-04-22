@@ -2537,13 +2537,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
     let shmem_value = shmemEl.value;
-    this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
+    // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
-    shmemEl.max = this.shmem_metric.max;
-    if (parseFloat(shmem_value) > this.shmem_metric.max) {
-      shmem_value = this.shmem_metric.max;
+    // shmemEl.max = this.shmem_metric.max;
+    if (parseFloat(shmem_value) > currentMemLimit) {
+      shmem_value = currentMemLimit;
       this.shmem_request = shmem_value;
-      shmemEl.syncToSlider(); // explicitly call method of the slider component to avoid value mismatching
+      shmemEl.value = shmem_value;
+      this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
+      this.notification.show();
     }
   }
 
@@ -3374,12 +3376,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item  class="slider-list-item">
                     <lablup-slider id="mem-resource" class="mem"
                                    pin snaps expand step=0.05 editable markers
-                                   @change="${(e) => {
-    this._applyResourceValueChanges(e);
-  }}"
-                                   @changed="${() => {
-    this._updateShmemLimit();
-  }}"
+                                   @change="${(e) => {this._applyResourceValueChanges(e);}}"
                                    marker_limit="${this.marker_limit}" suffix="GB"
                                    min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                    value="${this.mem_request}"></lablup-slider>
@@ -3394,7 +3391,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <mwc-list-item class="slider-list-item">
                   <lablup-slider id="shmem-resource" class="mem"
                                  pin snaps step="0.0125" editable markers
-                                 @change="${(e) => this._applyResourceValueChanges(e)}"
+                                 @change="${(e) => {this._applyResourceValueChanges(e);}}}"
+                                 @changed="${() => {this._updateShmemLimit();}}"
                                  marker_limit="${this.marker_limit}" suffix="GB"
                                  min="0.0625" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
