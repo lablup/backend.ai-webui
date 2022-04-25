@@ -89,9 +89,19 @@ export default class BackendAIImport extends BackendAIPage {
           margin: 10px auto;
         }
 
-        mwc-textfield#notebook-url,
-        mwc-textfield#github-repo-url {
+        mwc-textfield#notebook-url {
           width: 75%;
+        }
+        mwc-textfield#github-repo-url {
+          width: 100%;
+        }
+        mwc-textfield#gitlab-repo-url {
+          width: 100%;
+        }
+        mwc-textfield#gitlab-default-branch-name {
+          margin: inherit;
+          width: 30%;
+          margin-bottom: 10px;
         }
 
         mwc-button {
@@ -99,11 +109,48 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: #38bd73 !important;
         }
 
+        mwc-select {
+          margin: auto;
+          width: 50%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.fixed-position > mwc-list-item {
+          width: 300px; // default width
+        }
+        mwc-select.github-select {
+          margin: inherit;
+          width: 85%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.github-select > mwc-list-item {
+          width: 550px; // default width
+        }
+
         @media screen and (max-width: 1015px) {
-          mwc-textfield#notebook-url,
-          mwc-textfield#github-repo-url {
+          mwc-textfield#notebook-url {
             width: 85%;
             margin: 10px 0px;
+          }
+          mwc-textfield#github-repo-url,
+          mwc-textfield#gitlab-repo-url {
+            width: 85%;
+            margin: 10px 0px;
+          }
+          mwc-textfield#gitlab-default-branch-name {
+            width: 25%;
+            margin: inherit;
           }
           mwc-button {
             width: 36px;
@@ -111,15 +158,6 @@ export default class BackendAIImport extends BackendAIPage {
           mwc-button > span {
             display: none;
           }
-        }
-
-        #help-description {
-          --component-width: 350px;
-          --dialog-width: 350px;
-        }
-
-        #help-description p {
-          padding: 5px !important;
         }
       `
     ];
@@ -618,13 +656,10 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-select class="full-width fixed-position" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                     <span>${item}</span>
-                    <mwc-icon-button slot="meta" icon="info"
-                        @click="${(e) => this._showStorageDescription(e, item)}">
-                    </mwc-icon-button>
                 </mwc-list-item>
                 `)}
               </mwc-select>
@@ -647,13 +682,10 @@ export default class BackendAIImport extends BackendAIPage {
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
-              <mwc-select class="full-width fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+              <mwc-select class="fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                     <span>${item}</span>
-                    <mwc-icon-button slot="meta" icon="info"
-                        @click="${(e) => this._showStorageDescription(e, item)}">
-                    </mwc-icon-button>
                 </mwc-list-item>
                 `)}
               </mwc-select>
@@ -665,15 +697,6 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-      <backend-ai-dialog id="help-description" fixed backdrop>
-        <span slot="title">${this._helpDescriptionTitle}</span>
-        <div slot="content" class="horizontal layout center">
-          ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
-          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
-        </div>
-      </backend-ai-dialog>
 `;
   }
 }
