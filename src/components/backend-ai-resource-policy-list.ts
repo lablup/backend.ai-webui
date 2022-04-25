@@ -204,7 +204,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <mwc-textfield id="id_new_policy_name" label="${_t('resourcePolicy.PolicyName')}" disabled></mwc-textfield>
           <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
           <div class="horizontal justified layout distancing">
-            <div class="vertical layout">
+            <div class="vertical layout" style="margin-right: 5px;">
               <wl-label>CPU</wl-label>
               <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
@@ -213,7 +213,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
             </div>
-            <div class="vertical layout">
+            <div class="vertical layout" style="margin-left: 5px; margin-right: 5px;">
               <wl-label>RAM(GB)</wl-label>
               <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
@@ -222,7 +222,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout">
+            <div class="vertical layout" style="margin-left: 5px; margin-right: 5px;">
               <wl-label>GPU</wl-label>
               <mwc-textfield class="discrete resource-input" id="gpu-resource" type="number" min="0" max="64"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
@@ -231,7 +231,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                 ${_t('resourcePolicy.Unlimited')}
               </wl-label>
             </div>
-            <div class="vertical layout">
+            <div class="vertical layout" style="margin-left: 5px;">
               <wl-label>fGPU</wl-label>
               <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
@@ -285,7 +285,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               `)}
             </mwc-select>
             <div class="horizontal layout justified" style="width:100%;">
-              <div class="vertical layout flex">
+              <div class="vertical layout flex" style="margin-right: 5px;">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
                 <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
@@ -294,7 +294,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                   ${_t('resourcePolicy.Unlimited')}
                 </wl-label>
               </div>
-              <div class="vertical layout flex">
+              <div class="vertical layout flex" style="margin-left: 5px;">
                 <wl-label class="folders">${_t('credential.Max#')}</wl-label>
                 <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
