@@ -2191,23 +2191,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Set Cluster size when the cluster mode is 'multi-node'
-   *
-   * @param {Event} e
-   */
-  _setClusterSize(e) {
-    this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 1;
-    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
-    if (globalThis.backendaiclient.supports('multi-container')) {
-      if (this.cluster_size > 1) {
-        this.gpu_step = 1;
-      } else {
-        this.gpu_step = this.resourceBroker.gpu_step;
-      }
-    }
-  }
-
-  /**
    * Choose resource template
    * - cpu, mem, cuda_device, cuda_shares, rocm_device, tpu_device, shmem
    *
@@ -2514,8 +2497,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.requestUpdate();
     if (isResourceClicked) { // resource allocation
       this._resourceTemplateToCustom();
-    } else { // cluster mode
-      this._setClusterSize(e);
     }
   }
 
