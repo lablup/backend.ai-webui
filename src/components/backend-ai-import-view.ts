@@ -109,9 +109,13 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: #38bd73 !important;
         }
 
+        mwc-button.left-align {
+          margin-left: auto;
+        }
+
         mwc-select {
           margin: auto;
-          width: 50%;
+          width: 35%;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -121,11 +125,11 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
         }
         mwc-select.fixed-position > mwc-list-item {
-          width: 300px; // default width
+          width: 200px; // default width
         }
         mwc-select.github-select {
           margin: inherit;
-          width: 85%;
+          width: 68%;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -135,7 +139,7 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
         }
         mwc-select.github-select > mwc-list-item {
-          width: 550px; // default width
+          width: 440px; // default width
         }
 
         @media screen and (max-width: 1015px) {
@@ -663,7 +667,7 @@ export default class BackendAIImport extends BackendAIPage {
                 </mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
@@ -689,7 +693,7 @@ export default class BackendAIImport extends BackendAIPage {
                 </mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
