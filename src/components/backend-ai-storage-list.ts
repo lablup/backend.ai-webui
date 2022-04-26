@@ -285,6 +285,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: #637282;
           font-size: 1em;
           margin-bottom: 10px;
+          margin-left: 20px;
         }
 
         div.breadcrumb span:first-child {
@@ -449,6 +450,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         img#filebrowser-img {
           width:24px;
           margin:15px 10px;
+        }
+
+        div.align-top-center {
+          position: absolute;
+          left: 40%;
         }
 
         @media screen and (max-width: 700px) {
@@ -714,7 +720,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout space-between folder-action-buttons">
+        <div slot="action" class="horizontal layout space-between folder-action-buttons align-top-center">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
