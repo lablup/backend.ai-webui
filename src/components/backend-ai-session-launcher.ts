@@ -18,6 +18,7 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-select';
 import '@material/mwc-switch';
+import '@material/mwc-slider';
 import '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -292,6 +293,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 500;
           height: 20px;
           padding: 5px;
+        }
+
+        mwc-slider {
+          width: 200px;
         }
 
         div.vfolder-list,
@@ -2472,6 +2477,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _applyResourceValueChanges(e, isResourceClicked = true) {
     const value = e.target.value;
     const id = e.target.id.split('-')[0];
+    console.log('changed:', value)
     switch (id) {
     case 'cpu':
       this.cpu_request = value;
@@ -3350,7 +3356,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
-                    <lablup-slider id="cpu-resource" class="cpu"
+                  <lablup-slider id="cpu-resource" class="cpu" step="1"
                                    pin snaps expand editable markers
                                    @change="${(e) => this._applyResourceValueChanges(e)}"
                                    marker_limit="${this.marker_limit}"
@@ -3451,7 +3457,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                     <lablup-slider id="cluster-size" class="cluster"
-                                   pin snaps expand editable markers
+                                   pin snaps expand editable markers step="1"
                                    marker_limit="${this.marker_limit}"
                                    min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
                                    value="${this.cluster_size}"

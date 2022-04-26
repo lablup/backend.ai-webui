@@ -85,11 +85,10 @@ export default class LablupSlider extends LitElement {
                     ?markers="${this.markers}"
                     @change="${() => this.syncToText()}">
         </mwc-slider>
-        <mwc-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+        <mwc-textfield id="textfield" class="${this.id}" type="number"
                       value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
                       prefix="${this.prefix}" suffix="${this.suffix}"
-                      ?disabled="${this.disabled}"
-                      @change="${() => this.syncToSlider()}">
+                      ?disabled="${this.disabled}">
         </mwc-textfield>
       </div>
     `;
@@ -99,8 +98,11 @@ export default class LablupSlider extends LitElement {
     if (this.editable) {
       this.textfield = this.shadowRoot.querySelector('#textfield');
       this.textfield.style.display = 'flex';
+      this.textfield.addEventListener('change', (e) => {
+        // FIX ME: the value itself doesn't change.
+        this.syncToSlider();
+      });
     }
-    this.updateStep();
     this.checkMarkerDisplay();
   }
 
@@ -130,9 +132,11 @@ export default class LablupSlider extends LitElement {
       if (propName === 'value') {
         setTimeout(() => {
           if (this.editable) {
-            if (!this.textfield.focused && oldVal && oldVal !== 0 && oldVal > this.min) {
-              this.syncToText();
-            }
+            // FIX ME: if you enable this code, knob moves but it will cause overflow.
+            // if (!this.textfield.focused && oldVal && oldVal !== 0 && oldVal > this.min) {
+            //   this.syncToText();
+            //   console.log('called!')
+            // }
             this.syncToSlider();
           }
           this.slider.layout();
@@ -176,6 +180,7 @@ export default class LablupSlider extends LitElement {
       this.textfield.value = this.min;
     }
     this.value = this.textfield.value;
+    this.slider.value = this.textfield.value;
     this.slider.step = this.step;
     // updated function will be automatically called.
   }
@@ -189,25 +194,6 @@ export default class LablupSlider extends LitElement {
         this.slider.removeAttribute('markers');
       }
     }
-    this.updateStep();
-  }
-
-  updateStep() {
-    // wl-textfield does not provide step property. The default step for number input
-    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
-    // So, we manually set the step property of wl-textfield's input field here.
-    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
-    setTimeout(() => {
-      textfields.forEach((el) => {
-        const step = el.getAttribute('step');
-        el.$formElement.step = step;
-      });
-    }, 100);
-    if (!this.step) {
-      this.step = 1.0;
-    }
-    this.slider.setAttribute('step', this.step);
-    this.slider.step = this.step;
   }
 }
 
