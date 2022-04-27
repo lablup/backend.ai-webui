@@ -452,10 +452,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           margin:15px 10px;
         }
 
-        div.align-top-center {
-          position: relative;
-        }
-
         @media screen and (max-width: 700px) {
           #folder-explorer-dialog,
           #folder-explorer-dialog.mini_ui {
@@ -485,11 +481,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           #modify-permission-dialog {
             --component-min-width: 100%;
           }
-
-          div.align-top-center {
-            position: relative;
-            right: unset;
-          }
         }
 
         @media screen and (min-width: 900px) {
@@ -497,22 +488,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog.mini_ui
            {
             --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
-          div.align-top-center {
-            position: relative;
-            right: unset
-          }
-        }
-
-        @media screen and (min-width: 1400px) {
-          #folder-explorer-dialog,
-          #folder-explorer-dialog.mini_ui
-           {
-            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
-          }
-          div.align-top-center {
-            position: relative;
-            right: 20%
           }
         }
       `];
@@ -740,7 +715,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout space-between folder-action-buttons align-top-center">
+        <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
