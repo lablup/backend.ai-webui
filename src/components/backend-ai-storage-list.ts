@@ -453,8 +453,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         div.align-top-center {
-          position: absolute;
-          left: 40%;
+          position: relative;
         }
 
         @media screen and (max-width: 700px) {
@@ -486,6 +485,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           #modify-permission-dialog {
             --component-min-width: 100%;
           }
+
+          div.align-top-center {
+            position: relative;
+            right: unset;
+          }
         }
 
         @media screen and (min-width: 900px) {
@@ -493,6 +497,22 @@ export default class BackendAiStorageList extends BackendAIPage {
           #folder-explorer-dialog.mini_ui
            {
             --component-width: calc(100% - 45px); /* calc(100% - 30px); */
+          }
+          div.align-top-center {
+            position: relative;
+            right: unset
+          }
+        }
+
+        @media screen and (min-width: 1400px) {
+          #folder-explorer-dialog,
+          #folder-explorer-dialog.mini_ui
+           {
+            --component-width: calc(100% - 45px); /* calc(100% - 30px); */
+          }
+          div.align-top-center {
+            position: relative;
+            right: 20%
           }
         }
       `];
