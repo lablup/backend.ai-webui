@@ -6,7 +6,7 @@
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
-import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -92,10 +92,7 @@ export default class BackendAIImport extends BackendAIPage {
         mwc-textfield#notebook-url {
           width: 75%;
         }
-        mwc-textfield#github-repo-url {
-          width: 100%;
-        }
-        mwc-textfield#gitlab-repo-url {
+        mwc-textfield.repo-url {
           width: 100%;
         }
         mwc-textfield#gitlab-default-branch-name {
@@ -147,8 +144,7 @@ export default class BackendAIImport extends BackendAIPage {
             width: 85%;
             margin: 10px 0px;
           }
-          mwc-textfield#github-repo-url,
-          mwc-textfield#gitlab-repo-url {
+          mwc-textfield.repo-url {
             width: 85%;
             margin: 10px 0px;
           }
@@ -591,27 +587,6 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
-  /**
-   * Display the storage description.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   * @param {object} item
-   */
-   _showStorageDescription(e, item) {
-    e.stopPropagation();
-    if (item in this.storageInfo) {
-      this._helpDescriptionTitle = this.storageInfo[item].name;
-      this._helpDescription = this.storageInfo[item].description;
-      this._helpDescriptionIcon = this.storageInfo[item].icon;
-    } else {
-      this._helpDescriptionTitle = item;
-      this._helpDescriptionIcon = 'local.png';
-      this._helpDescription = _text('data.NoStorageDescriptionFound');
-    }
-    const desc = this.shadowRoot.querySelector('#help-description');
-    desc.show();
-  }
-
   render() {
     // language=HTML
     return html`
@@ -658,7 +633,7 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
+              <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
                 ${this.vhosts.map((item, idx) => html `
@@ -682,7 +657,7 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.GitlabRepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitlabURL')}"
+              <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
