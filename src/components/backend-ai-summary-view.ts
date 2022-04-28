@@ -14,6 +14,7 @@ import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
+import 'weightless/textfield';
 
 import '@material/mwc-button';
 import '@material/mwc-linear-progress/mwc-linear-progress';
