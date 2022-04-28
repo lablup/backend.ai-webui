@@ -188,6 +188,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) progressLength;
   @property({type: Object}) _grid = Object();
   @property({type: Boolean}) _debug = false;
+  @property({type: Object}) _boundFolderToMountListRenderer = this.folderToMountListRenderer.bind(this);
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
   @property({type: Object}) _boundPathRenderer = this.infoHeaderRenderer.bind(this);
   @property({type: Boolean}) useScheduledTime = false;
@@ -2023,6 +2024,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._updateVersions(kernel);
   }
 
+  folderToMountListRenderer(root, column, rowData) {
+    render(
+      html`
+        <div style="font-size:14px;text-overflow:ellipsis;overflow:hidden;">${rowData.item.name}</div>
+        <span style="font-size:10px;">${rowData.item.host}</span>
+      `,
+      root
+    );
+  }
+
   /**
    * Render a folder Map
    *
@@ -2037,7 +2048,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                            pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
                            theme="small" placeholder="/home/work/${rowData.item.name}"
                            @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
-        </template>
       `,
       root
     );
@@ -3243,7 +3253,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                               text-align="center"
                                               auto-select></vaadin-grid-selection-column>
                 <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
-                                           path="name" resizable></vaadin-grid-filter-column>
+                                           path="name" resizable
+                                           .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
                 <vaadin-grid-column width="135px"
                                     path=" ${_t('session.launcher.FolderAlias')}"
                                     .renderer="${this._boundFolderMapRenderer}"
