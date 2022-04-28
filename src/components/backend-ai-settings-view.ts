@@ -204,6 +204,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
         mwc-textfield#num-retries {
           width: 10rem;
         }
+
+        mwc-button {
+          word-break: keep-all;
+        }
         @media screen and (max-width: 750px) {
           .setting-desc, .setting-desc-shrink {
             width: 275px;
