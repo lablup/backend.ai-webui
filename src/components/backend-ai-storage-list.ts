@@ -1459,7 +1459,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} refreshOnly
    * @param {string} source
    */
-  _refreshFolderList(refreshOnly = false, source = 'unknown') {
+  async _refreshFolderList(refreshOnly = false, source = 'unknown') {
     // Skip if it is already refreshing OR is not on the page.
     if (this._folderRefreshing || !this.active) {
       return;
@@ -1471,15 +1471,19 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.lastQueryTime = Date.now();
     this._getMaxSize();
     this.spinner.show();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const allowedHosts = vhostInfo.allowed;
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       this.spinner.hide();
       const folders = value.filter((item) => {
-        if (this.storageType === 'general' && !item.name.startsWith('.')) {
-          return item;
-        } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
-          return item;
+        if (allowedHosts.includes(item.host)) {
+          if (this.storageType === 'general' && !item.name.startsWith('.')) {
+            return item;
+          } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
+            return item;
+          }
         }
       });
       this.folders = folders;

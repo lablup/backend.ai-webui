@@ -626,7 +626,10 @@ export default class BackendAIData extends BackendAIPage {
     const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
     const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
     const groupId = globalThis.backendaiclient.current_group_id();
-    const folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    let folders = await globalThis.backendaiclient.vfolder.list(groupId);
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const allowedHosts = vhostInfo.allowed;
+    folders = folders.filter((item) => allowedHosts.includes(item.host));
     this.createdCount = folders.filter((item) => item.is_owner).length;
     this.invitedCount = folders.length - this.createdCount;
     this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
