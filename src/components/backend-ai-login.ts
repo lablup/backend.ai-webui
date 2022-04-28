@@ -606,6 +606,16 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+      if (!window.location.href.startsWith(this.api_endpoint)) {
+        // Override configs with Webserver's config.
+        const webuiEl = document.querySelector('backend-ai-webui');
+        if (webuiEl) {
+          const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
+          webuiEl._parseConfig(webserverConfigURL).then(() => {
+            this.refreshWithConfig(webuiEl.config);
+          });
+        }
+      }
       this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
@@ -624,6 +634,16 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
+      if (!window.location.href.startsWith(this.api_endpoint)) {
+        // Override configs with Webserver's config.
+        const webuiEl = document.querySelector('backend-ai-webui');
+        if (webuiEl) {
+          const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
+          webuiEl._parseConfig(webserverConfigURL).then(() => {
+            this.refreshWithConfig(webuiEl.config);
+          });
+        }
+      }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === 'API') {
       return Promise.resolve(false);
