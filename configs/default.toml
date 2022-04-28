@@ -34,7 +34,7 @@ maxFileUploadSize = 4294967296 # 4GB. 4294967296
 #allowlist = ""
 
 [server]
-consoleServerURL =
+webServerURL =
 
 [plugin]
 #login = "signup-cloud.js"
