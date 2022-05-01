@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
+const {app, Menu, shell, BrowserWindow, protocol, session, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 function isDev() {
   return process.argv[2] == '--dev';
@@ -320,7 +320,7 @@ app.once('ready', function() {
 function createWindow() {
   // Create the browser window.
   devtools = null;
-
+  setSameSitePolicy();
   mainWindow = new BrowserWindow({
     width: windowWidth,
     height: windowHeight,
@@ -449,6 +449,17 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
       c.destroy();
     }
   });
+}
+
+function setSameSitePolicy(){
+	const filter = { urls: ["http://*/*", "https://*/*"] };
+	session.defaultSession.webRequest.onHeadersReceived(filter, (details, callback) => {
+		const cookies = (details.responseHeaders['Set-Cookie'] || []);
+		if(cookies.length > 0 && !cookies.includes('SameSite')) {
+			details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
+    }
+    callback({ cancel: false, responseHeaders: details.responseHeaders });
+	});
 }
 
 app.on('ready', () => {
