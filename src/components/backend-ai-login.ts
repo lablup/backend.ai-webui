@@ -809,7 +809,7 @@ export default class BackendAILogin extends BackendAIPage {
    * @param {boolean} showError
    * */
   async _connectUsingSession(showError = true) {
-    if (this.api_endpoint === '') {
+    if (this.api_endpoint === '' || this.user_id === '' || this.password === '') {
       this.free();
       this.open();
       return Promise.resolve(false);
