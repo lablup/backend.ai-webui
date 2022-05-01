@@ -2187,10 +2187,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-    * Set Cluster size when the cluster mode is 'multi-node'
-    *
-    * @param {Event} e
-    */
+   * Set Cluster size when the cluster mode is 'multi-node'
+   *
+   * @param {Event} e
+   */
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
     this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
@@ -2208,11 +2208,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-  * Set session count limit to value
-  *
-  * @param {Number} maxValue - max value to limit session in multi-container mode
-  *
-  */
+   * Set session count limit to value
+   *
+   * @param {Number} maxValue - max value to limit session in multi-container mode
+   *
+   */
   _setSessionLimit(maxValue = 1) {
     const sessionSlider = this.shadowRoot.querySelector('#session-resource');
     if (maxValue > 0) {
