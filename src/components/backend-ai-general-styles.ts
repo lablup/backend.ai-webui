@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {PaperColor} from './paper-color';
 
 export const BackendAiStyles = [
@@ -62,10 +62,11 @@ export const BackendAiStyles = [
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
+      --general-switch-on-background-color: #E3E7D8; 
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
-      --general-monospace-font-family: Menlo, Courier, "Courier New", RobotoMono, sans-serif;
+      --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier, "Courier New", RobotoMono, sans-serif;
       --general-progress-bar-bg: #e8e8e8;
       --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
@@ -300,9 +301,25 @@ export const BackendAiStyles = [
     }
 
     mwc-switch {
-      --mdc-theme-surface: var(--general-switch-off-color);
-      --mdc-theme-on-surface: var(--general-switch-off-color);
-      --mdc-theme-secondary: var(--general-switch-on-color);
+      --mdc-switch-unselected-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-unselected-hover-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-hover-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-focus-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-focus-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-pressed-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-selected-hover-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-hover-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-hover-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-focus-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-pressed-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-pressed-state-layer-color: var(--general-switch-on-color);
     }
 
     wl-card p,
@@ -768,6 +785,12 @@ export const BackendAiStyles = [
       margin-top: 5px;
       margin-left: 5px;
       padding-bottom: 5px;
+    }
+
+    span.helper-text {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: var(--general-textfield-selected-color);
     }
 
     .resource-name {

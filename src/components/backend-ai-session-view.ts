@@ -1,10 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
@@ -15,6 +16,7 @@ import 'weightless/textfield';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-button/mwc-button';
 import '@material/mwc-icon-button/mwc-icon-button';
 import '@material/mwc-menu/mwc-menu';
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -62,7 +64,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'inactive';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -144,6 +146,10 @@ export default class BackendAiSessionView extends BackendAIPage {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--paper-green-600);
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
         }
 
         backend-ai-resource-monitor {
@@ -430,24 +436,27 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <div class="horizontal layout wrap">
-        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
-          <div slot="message">
-            <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
-          </div>
-        </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
-        </lablup-activity-panel>
-      </div>
+      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
+        <div slot="message">
+          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
+        </div>
+      </lablup-activity-panel>
+      <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
+      </lablup-activity-panel>
       <lablup-activity-panel elevation="1" autowidth narrow noheader>
         <div slot="message">
-          <h3 class="tab horizontal center layout">
-            <div class="horizontal layout flex start-justified">
-            <mwc-tab-bar>
-              <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-              <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-            </mwc-tab-bar>
+          <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
+            <div class="scroll hide-scrollbar">
+              <div class="horizontal layout flex start-justified" style="width:70%;">
+                <mwc-tab-bar>
+                  <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                </mwc-tab-bar>
+              </div>
+            </div>
             ${this.is_admin ? html`
               <div style="position: relative;">
                 <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
@@ -462,13 +471,18 @@ export default class BackendAiSessionView extends BackendAIPage {
                   </mwc-menu>
                 </div>
               ` : html``}
-            </div>
             <div class="horizontal layout flex end-justified" style="margin-right:20px;">
-            <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}" isSupportingFab></backend-ai-session-launcher>
+              <backend-ai-session-launcher location="session" id="session-launcher" ?active="${this.active === true}"></backend-ai-session-launcher>
             </div>
           </h3>
           <div id="running-lists" class="tab-content">
             <backend-ai-session-list id="running-jobs" condition="running"></backend-ai-session-list>
+          </div>
+          <div id="interactive-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="interactive-jobs" condition="interactive"></backend-ai-session-list>
+          </div>
+          <div id="batch-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="batch-jobs" condition="batch"></backend-ai-session-list>
           </div>
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
@@ -501,13 +515,13 @@ export default class BackendAiSessionView extends BackendAIPage {
             <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
             <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
           </div>
-          <div class="horizontal center layout">
-            <wl-button class="fg green" type="button" inverted outlined style="width:100%;"
-            @click="${this._exportToCSV}">
-              <wl-icon>get_app</wl-icon>
-              ${_t('session.ExportCSVFile')}
-            </wl-button>
-          </div>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated
+                      fullwidth
+                      icon="get_app"
+                      label="${_t('session.ExportCSVFile')}"
+                      @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

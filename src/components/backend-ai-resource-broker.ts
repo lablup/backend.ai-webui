@@ -1,8 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 @customElement('backend-ai-resource-broker')
@@ -105,7 +107,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return 'backend-ai-resource-broker';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [];
   }
 
@@ -361,11 +363,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * Update virtual folder list. Also divide automount folders from general ones.
    *
    */
-  async updateVirtualFolderList() {
+  async updateVirtualFolderList(userEmail = null) {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
+    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
@@ -708,6 +710,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
+      const privateImages: Object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
@@ -748,7 +751,23 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           if (label['key'] === 'com.nvidia.pytorch.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'PyTorch ' + label['value'];
           }
+          if (label['key'] === 'ai.backend.features' && label['value'].includes('private')) {
+            if (!(supportsKey in privateImages)) {
+              privateImages[supportsKey] = [];
+            }
+            privateImages[supportsKey].push(item.tag);
+          }
         });
+      });
+      Object.keys(privateImages).forEach((key) => {
+        // Hide "private" images.
+        const tags = this.supports[key];
+        this.supports[key] = tags.filter((tag) => !privateImages[key].includes(tag));
+        if (this.supports[key].length < 1) {
+          // If there is no availabe version, remove the environment itself.
+          delete this.supports[key];
+          // delete this.supportImages[key];
+        }
       });
       this._updateEnvironment();
     }).catch((err) => {
@@ -835,30 +854,36 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.icons) {
         icon = this.icons[kernelName];
       }
-      if (interCategory !== this.supportImages[item].group) {
+      if ( globalThis.backendaiclient._config.allow_image_list !== undefined &&
+        globalThis.backendaiclient._config.allow_image_list.length > 0 &&
+        !globalThis.backendaiclient._config.allow_image_list.includes(item)) {
+        // Do nothing
+      } else {
+        if (interCategory !== this.supportImages[item].group) {
+          this.languages.push({
+            name: '',
+            registry: '',
+            prefix: '',
+            kernelname: '',
+            alias: '',
+            icon: '',
+            basename: this.supportImages[item].group,
+            tags: [],
+            clickable: false
+          });
+          interCategory = this.supportImages[item].group;
+        }
         this.languages.push({
-          name: '',
-          registry: '',
-          prefix: '',
-          kernelname: '',
-          alias: '',
-          icon: '',
-          basename: this.supportImages[item].group,
-          tags: [],
-          clickable: false
+          name: item,
+          registry: registry,
+          prefix: prefix,
+          kernelname: kernelName,
+          alias: alias,
+          basename: basename,
+          tags: tags,
+          icon: icon
         });
-        interCategory = this.supportImages[item].group;
       }
-      this.languages.push({
-        name: item,
-        registry: registry,
-        prefix: prefix,
-        kernelname: kernelName,
-        alias: alias,
-        basename: basename,
-        tags: tags,
-        icon: icon
-      });
     });
     // this._initAliases();
     this.image_updating = false;

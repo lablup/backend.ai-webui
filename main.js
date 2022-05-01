@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
@@ -222,7 +222,7 @@ app.once('ready', function() {
           {
             label: 'Online Manual',
             click: function() {
-              shell.openExternal('https://console.docs.backend.ai/');
+              shell.openExternal('https://webui.docs.backend.ai/');
             }
           },
           {
@@ -299,7 +299,7 @@ app.once('ready', function() {
           {
             label: 'Online Manual',
             click: function() {
-              shell.openExternal('https://console.docs.backend.ai/');
+              shell.openExternal('https://webui.docs.backend.ai/');
             }
           },
           {

@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-select';
@@ -78,7 +80,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return 'backend-ai-resource-monitor';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -606,6 +608,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       'py37': 'Python 3.7',
       'py38': 'Python 3.8',
       'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
+      'ji15': 'Julia 1.5',
+      'ji16': 'Julia 1.6',
+      'ji17': 'Julia 1.7',
       'lxde': 'LXDE',
       'lxqt': 'LXQt',
       'xfce': 'XFCE',
@@ -703,7 +709,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    */
   _toggleResourceGauge(e) {
     const legend = this.shadowRoot.querySelector('#resource-legend');
-    if (e.target.checked) {
+    if (e.target.selected) {
       this.resourceGauge.style.display = 'flex';
       if (legend) {
         legend.style.display = 'flex';
@@ -891,7 +897,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             ${_t('session.launcher.ResourceMonitorToggle')}
           </p>
           <mwc-switch class="fg blue ${this.direction}" id="resource-gauge-switch-button"
-            @change="${(e) => this._toggleResourceGauge(e)}">
+            @click="${(e) => this._toggleResourceGauge(e)}">
           </mwc-switch>
         </div>
       </div>

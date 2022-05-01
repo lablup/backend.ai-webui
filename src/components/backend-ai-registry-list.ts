@@ -3,11 +3,13 @@
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
+
 import '../plastics/lablup-shields/lablup-shields';
 
 import 'weightless/button';
@@ -39,23 +41,26 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
   @property({type: Object}) indicator = Object();
-  @property({type: Number}) selectedIndex = 0;
-  @property({type: String}) boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
-  @property({type: String}) boundControlsRenderer = this._controlsRenderer.bind(this);
-  @property({type: Array}) _registryType;
+  @property({type: Number}) selectedIndex = -1;
+  @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
+  @property({type: Object}) _boundControlsRenderer = this._controlsRenderer.bind(this);
+  @property({type: Object}) _boundPasswordRenderer = this._passwordRenderer.bind(this);
+  @property({type: Array}) _registryTypes;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) hostnames;
-  @property({type: String}) projectName = 'docker';
+  @property({type: String}) registryType = 'docker';
+  @property({type: Boolean}) editMode;
 
   constructor() {
     super();
     this.registryList = [];
-    this._registryType = [];
+    this._registryTypes = [];
     this.allowed_registries = [];
     this.hostnames = [];
+    this.editMode = false;
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -111,8 +116,15 @@ class BackendAIRegistryList extends BackendAIPage {
           --label-font-size: 11px;
         }
 
-        mwc-select#select-registry-type {
+        mwc-select.full-width {
           width: 100%;
+        }
+
+        mwc-select.full-width.fixed-position > mwc-list-item {
+          width: 330px; // default width
+        }
+
+        mwc-select#select-registry-type {
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
@@ -169,7 +181,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this.registryList = this._parseRegistryList(result);
-      this.hostnames = this.registryList.map( (value) => {
+      this.hostnames = this.registryList.map((value) => {
         return value.hostname;
       });
       this.requestUpdate();
@@ -190,11 +202,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._registryType = ['docker', 'harbor', 'harbor2'];
+        this._registryTypes = ['docker', 'harbor', 'harbor2'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this._registryType = ['docker', 'harbor', 'harbor2'];
+      this._registryTypes = ['docker', 'harbor', 'harbor2'];
     }
   }
 
@@ -220,7 +232,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const username = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-username')).value;
     const password = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-password')).value;
     const registerType = this.shadowRoot.querySelector('#select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#add-project-name').value;
+    const projectName = this.shadowRoot.querySelector('#add-project-name').value.replace(/\s/g, '');
 
     if (!this.shadowRoot.querySelector('#add-registry-hostname').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
@@ -241,11 +253,8 @@ class BackendAIRegistryList extends BackendAIPage {
     const input = {};
     input[''] = url;
 
-    if (username !== '') {
-      input['username'] = username;
-
-      if (password !== '') input['password'] = password;
-    }
+    input['username'] = username;
+    input['password'] = password;
 
     input['type'] = registerType;
     if (['harbor', 'harbor2'].includes(registerType)) {
@@ -254,26 +263,33 @@ class BackendAIRegistryList extends BackendAIPage {
       } else {
         return;
       }
+    } else {
+      input['project'] = '';
     }
 
     // if hostname already exists
-    if (this.hostnames.includes(hostname)) {
+    if (!this.editMode && this.hostnames.includes(hostname)) {
       this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
       this.notification.show();
       return;
     }
 
-    globalThis.backendaiclient.registry.add(hostname, input)
+    globalThis.backendaiclient.registry.set(hostname, input)
       .then(({result}) => {
         if (result === 'ok') {
-          this.notification.text = _text('registry.RegistrySuccessfullyAdded');
-          // add
-          this.hostnames.push(hostname);
+          if (this.editMode) {
+            this.notification.text = _text('registry.RegistrySuccessfullyModified');
+          } else {
+            this.notification.text = _text('registry.RegistrySuccessfullyAdded');
+            // add
+            this.hostnames.push(hostname);
+          }
           this._refreshRegistryList();
         } else {
           this.notification.text = _text('dialog.ErrorOccurred');
         }
         this._hideDialogById('#add-registry-dialog');
+        this._resetRegistryField();
         this.notification.show();
       });
   }
@@ -363,16 +379,40 @@ class BackendAIRegistryList extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
-  _toggleProjectNameInput() {
-    const select = this.shadowRoot.querySelector('#select-registry-type');
-    const projectTextEl = this.shadowRoot.querySelector('#add-project-name');
-    projectTextEl.disabled = !(select.value && ['harbor', 'harbor2'].includes(select.value));
-    this.shadowRoot.querySelector('#project-name-validation').style.display = 'block';
-    if (projectTextEl.disabled) {
-      this.shadowRoot.querySelector('#project-name-validation').textContent = _text('registry.ForHarborOnly');
-    } else {
-      this.shadowRoot.querySelector('#project-name-validation').textContent = _text('registry.ProjectNameIsRequired');
+  _openCreateRegistryDialog() {
+    this.editMode = false;
+    this.selectedIndex = -1;
+    this.registryType = 'docker';
+    this._launchDialogById('#add-registry-dialog');
+  }
+
+  _hideValidationMessage() {
+    this.shadowRoot.querySelector('#registry-hostname-validation').style.display = 'none';
+    this.shadowRoot.querySelector('#registry-url-validation').style.display = 'none';
+    this.shadowRoot.querySelector('#project-name-validation').style.display = 'none';
+  }
+
+  _openEditRegistryDialog(registry) {
+    this.editMode = true;
+    let registryInfo;
+    for (let i = 0; i < this.registryList.length; i++) {
+      if (this.registryList[i].hostname === registry) {
+        registryInfo = this.registryList[i];
+        break;
+      }
     }
+    if (!registryInfo) {
+      globalThis.notification.show(`No such registry: ${registry}`);
+      return;
+    }
+    this.registryList[this.selectedIndex] = registryInfo;
+    this._hideValidationMessage();
+    this._launchDialogById('#add-registry-dialog');
+  }
+
+  _toggleProjectNameInput() {
+    this.registryType = this.shadowRoot.querySelector('#select-registry-type').value;
+    this._validateProjectName();
   }
 
   _validateUrl() {
@@ -392,17 +432,41 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectName = this.projectName;
-    const validationMessage = this.shadowRoot.querySelector('#project-name-validation');
-    if (projectName && projectName !== '') {
-      validationMessage.style.display = 'none';
+    const projectTextEl = this.shadowRoot.querySelector('#add-project-name');
+    const validationEl = this.shadowRoot.querySelector('#project-name-validation');
+    projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
+    validationEl.style.display = 'block';
+    if (['harbor', 'harbor2'].includes(this.registryType)) {
+      if (!projectTextEl.value) {
+        validationEl.textContent = _text('registry.ProjectNameIsRequired');
+      } else {
+        validationEl.style.display = 'none';
+      }
+      projectTextEl.disabled = false;
     } else {
-      validationMessage.style.display = 'block';
+      validationEl.textContent = _text('registry.ForHarborOnly');
+      projectTextEl.disabled = true;
     }
   }
 
+  _resetRegistryField() {
+    const registryHostname = this.shadowRoot.querySelector('#add-registry-hostname');
+    const registryURL = this.shadowRoot.querySelector('#add-registry-url');
+    const registryUsername = this.shadowRoot.querySelector('#add-registry-username');
+    const registryPassword = this.shadowRoot.querySelector('#add-registry-password');
+    const registrySelect = this.shadowRoot.querySelector('#select-registry-type');
+    const registryProjectName = this.shadowRoot.querySelector('#add-project-name');
+
+    registryHostname.value = '';
+    registryURL.value = '';
+    registryUsername.value = '';
+    registryPassword.value = '';
+    registrySelect.value = '';
+    registryProjectName.value = '';
+  }
+
   toggleRegistry(e, hostname) {
-    if (!e.target.checked) {
+    if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
       this._changeRegistryState(hostname, true);
@@ -465,6 +529,17 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
+  _passwordRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div>
+          <input type="password" id="registry-password" readonly value="${rowData.item['password']}"/>
+        </div>
+      `
+      , root
+    );
+  }
+
   /**
    * Render a switch to check that registry is turned on or off.
    *
@@ -477,8 +552,8 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div>
           <mwc-switch
-              @change="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
-              ?checked="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
+              @click="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
+              ?selected="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
         </div>
       `,
       root
@@ -496,9 +571,18 @@ class BackendAIRegistryList extends BackendAIPage {
     render(
       html`
         <div
+          icon="settings"
           id="controls"
           class="layout horizontal flex center"
         >
+          <wl-button fab flat inverted
+              class="fg blue"
+              @click=${() => {
+    this.selectedIndex = rowData.index;
+    this._openEditRegistryDialog(rowData.item.hostname);
+  }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
           <wl-button fab flat inverted
             icon="delete"
             class="fg red"
@@ -506,12 +590,11 @@ class BackendAIRegistryList extends BackendAIPage {
     this.selectedIndex = rowData.index;
     this._launchDialogById('#delete-registry-dialog');
   }}>
-                  <wl-icon>delete</wl-icon>
-
+            <wl-icon>delete</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             icon="refresh"
-            class="fg blue"
+            class="fg green"
             @click=${() => {
     this.selectedIndex = rowData.index;
     this._rescanImage();
@@ -531,7 +614,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <span>${_t('registry.Registries')}</span>
         <span class="flex"></span>
         <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
-            @click=${() => this._launchDialogById('#add-registry-dialog')}></mwc-button>
+            @click=${this._openCreateRegistryDialog}></mwc-button>
       </h4>
 
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
@@ -541,35 +624,24 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}">
-          <template>
-            <div> [[item.type]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}">
-          <template>
-            <div> [[item.project]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}">
-          <template>
-            <div> [[item.username]] </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}">
-          <template>
-            <div>
-              <input type="password" id="registry-password" readonly value="[[item.password]]"/>
-            </div>
-          </template>
+        <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this.boundIsEnabledRenderer}></vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this.boundControlsRenderer}>
+        <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer}></vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
+      ${this.editMode ? html`
+        <span slot="title">${_t('registry.ModifyRegistry')}</span>
+      ` : html`
         <span slot="title">${_t('registry.AddRegistry')}</span>
-
+      `}
         <div slot="content" class="login-panel intro centered">
           <wl-textfield
             id="add-registry-hostname"
@@ -577,6 +649,8 @@ class BackendAIRegistryList extends BackendAIPage {
             type="text"
             label="${_t('registry.RegistryHostname')}"
             required
+            ?disabled="${this.editMode}"
+            value="${this.registryList[this.selectedIndex]?.hostname || ''}"
             @click=${this._validateHostname}
             @change=${this._validateHostname}
           ></wl-textfield>
@@ -586,9 +660,10 @@ class BackendAIRegistryList extends BackendAIPage {
             class="helper-text"
             label="${_t('registry.RegistryURL')}"
             required
-            pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$";"
-            @click=${() => this._validateUrl()}
-            @change=${() => this._validateUrl()}
+            pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
+            value="${this.registryList[this.selectedIndex]?.[''] || ''}"
+            @click=${this._validateUrl}
+            @change=${this._validateUrl}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t('registry.DescURLStartString')}</wl-label>
          <div class="horizontal layout flex">
@@ -597,37 +672,48 @@ class BackendAIRegistryList extends BackendAIPage {
             type="text"
             label="${_t('registry.UsernameOptional')}"
             style="padding-right:10px;"
+            value="${this.registryList[this.selectedIndex]?.username || ''}"
           ></wl-textfield>
           <wl-textfield
             id="add-registry-password"
             type="password"
             label="${_t('registry.PasswordOptional')}"
             style="padding-left:10px;"
+            value="${this.registryList[this.selectedIndex]?.password || ''}"
           ></wl-textfield>
          </div>
          <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
                       @change=${this._toggleProjectNameInput} required
-                      validationMessage="${_t('registry.PleaseSelectOption')}" value="${this.projectName}">
-            ${this._registryType.map((item) => html`
+                      validationMessage="${_t('registry.PleaseSelectOption')}"
+                      value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
+            ${this._registryTypes.map((item) => html`
               <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
             `)}
           </mwc-select>
           <div class="vertical layout end-justified">
-              <wl-textfield
+            <wl-textfield
               id="add-project-name"
               class="helper-text"
               type="text"
               label="${_t('registry.ProjectName')}"
               required
-              ?disabled="${this.projectName === 'docker'}"
+              value="${this.registryList[this.selectedIndex]?.project || ''}"
+              ?disabled="${this.registryType === 'docker'}"
               @change=${this._validateProjectName}
-              ></wl-textfield>
-              <wl-label class="helper-text" id="project-name-validation" style="display:block;">${_t('registry.ForHarborOnly')}</wl-label>
+            ></wl-textfield>
+              <wl-label class="helper-text" id="project-name-validation">
+                ${this.editMode ? html`` : _t('registry.ForHarborOnly')}
+              </wl-label>
          </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated icon="add" label="${_t('button.Add')}"
+        <div slot="footer" class="horizontal center-justified flex layout">
+          ${this.editMode ? html`
+            <mwc-button unelevated fullwidth icon="add" label="${_t('button.Save')}"
             @click=${this._addRegistry}></mwc-button>
+          ` : html`
+            <mwc-button unelevated fullwidth icon="add" label="${_t('button.Add')}"
+            @click=${this._addRegistry}></mwc-button>
+          `}
         </div>
       </backend-ai-dialog>
 
@@ -640,9 +726,9 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t('registry.TypeRegistryNameToDelete')}"
           ></wl-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated icon="delete" label="${_t('button.Delete')}"
-              @click=${this._deleteRegistry} style="width:100%;"></mwc-button>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <mwc-button unelevated fullwidth icon="delete" label="${_t('button.Delete')}"
+              @click=${this._deleteRegistry}></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

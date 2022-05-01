@@ -1,17 +1,17 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
-import {render} from 'lit-html';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
@@ -65,19 +65,25 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) keypairs = Object();
+  @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) _boundKeyageRenderer = this.keyageRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundAccessKeyRenderer = this.accessKeyRenderer.bind(this);
+  @property({type: Object}) _boundPermissionRenderer = this.permissionRenderer.bind(this);
+  @property({type: Object}) _boundResourcePolicyRenderer = this.resourcePolicyRenderer.bind(this);
+  @property({type: Object}) _boundAllocationRenderer = this.allocationRenderer.bind(this);
+  @property({type: Object}) _boundUserIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
   @property({type: Number}) _totalCredentialCount = 0;
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -176,11 +182,13 @@ export default class BackendAICredentialList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshKeyData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
     }
   }
@@ -400,7 +408,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   _mutateKey(e, is_active) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
-    const original = this.keypairs.find(this._findKeyItem, accessKey);
+    const original: any = this.keypairs.find(this._findKeyItem, accessKey);
     const input = {
       'is_active': is_active,
       'is_admin': original.is_admin,
@@ -537,6 +545,143 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
+   * Render accesskey column according to configuration
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param rowData
+   */
+  accessKeyRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="monospace">${rowData.item.access_key}</div>
+      `, root
+    );
+  }
+
+  /**
+   * Render permission(role) column
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param rowData
+   */
+  permissionRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout horizontal center flex">
+        ${rowData.item.is_admin? html`
+            <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+          ` : html``}
+        <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+      </div>
+      `, root
+    );
+  }
+
+  /**
+   * Render resourcePolicy column
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param rowData
+   */
+  resourcePolicyRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal wrap center">
+          <span>${rowData.item.resource_policy}</span>
+        </div>
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <mwc-icon class="fg green">developer_board</mwc-icon>
+            <span>${rowData.item.total_resource_slots.cpu}</span>
+            <span class="indicator">${_t('general.cores')}</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <mwc-icon class="fg green">memory</mwc-icon>
+            <span>${rowData.item.total_resource_slots.mem}</span>
+            <span class="indicator">GB</span>
+          </div>
+        </div>
+        <div class="layout horizontal wrap center">
+          ${rowData.item.total_resource_slots.cuda_device ? html`
+            <div class="layout horizontal configuration">
+              <mwc-icon class="fg green">view_module</mwc-icon>
+              <span>${rowData.item.total_resource_slots.cuda_device}</span>
+              <span class="indicator">GPU</span>
+            </div>
+          ` : html``}
+          ${rowData.item.total_resource_slots.cuda_shares ? html`
+            <div class="layout horizontal configuration">
+              <mwc-icon class="fg green">view_module</mwc-icon>
+              <span>${rowData.item.total_resource_slots.cuda_shares}</span>
+              <span class="indicator">fGPU</span>
+            </div>
+          ` : html``}
+        </div>
+        <div class="layout horizontal wrap center">
+          <div class="layout horizontal configuration">
+            <mwc-icon class="fg green">cloud_queue</mwc-icon>
+            <span>${rowData.item.max_vfolder_size}</span>
+            <span class="indicator">GB</span>
+          </div>
+          <div class="layout horizontal configuration">
+            <mwc-icon class="fg green">folder</mwc-icon>
+            <span>${rowData.item.max_vfolder_count}</span>
+            <span class="indicator">${_t('general.Folders')}</span>
+          </div>
+        </div>
+      `, root
+    );
+  }
+
+  /**
+   * Render allocation column
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param rowData
+   */
+  allocationRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout horizontal center flex">
+        <div class="vertical start layout">
+          <div style="font-size:11px;width:40px;">
+            ${rowData.item.concurrency_used} / ${rowData.item.concurrency_limit}
+          </div>
+          <span class="indicator">Sess.</span>
+        </div>
+        <div class="vertical start layout">
+          <span style="font-size:8px">${rowData.item.rate_limit} <span class="indicator">req./15m.</span></span>
+          <span style="font-size:8px">${rowData.item.num_queries} <span class="indicator">queries</span></span>
+        </div>
+      </div>
+      `, root
+    );
+  }
+
+  /**
+   * Render userId according to configuration
+   *
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
+  userIdRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <span>${this._getUserId(rowData.item.user_id)}</span>
+      `, root);
+  }
+
+  /**
    * Save a keypair modification.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
@@ -596,100 +741,48 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  /**
+   * Get user access key according to configuration
+   *
+   * @param {string} accessKey
+   * @return {string}
+   */
+  _getAccessKey(accessKey = '') {
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 4;
+      const maskLength = accessKey.length - maskStartIdx;
+      accessKey = globalThis.backendaiutils._maskString(accessKey, '*', maskStartIdx, maskLength);
+    }
+    return accessKey;
+  }
+
   render() {
     // language=HTML
     return html`
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
                    id="keypair-grid" .items="${this.keypairs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-
-        <vaadin-grid-filter-column path="user_id" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="access_key" header="${_t('general.AccessKey')}" resizable>
-          <template>
-            <div class="monospace">[[item.access_key]]</div>
-          </template>
-        </vaadin-grid-filter-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">
-            <vaadin-grid-sorter path="is_admin">${_t('credential.Permission')}</vaadin-grid-sorter>
-          </template>
-          <template>
-            <div class="layout horizontal center flex">
-              <template is="dom-if" if="[[item.is_admin]]">
-                <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-              </template>
-              <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-sort-column resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}">
-        </vaadin-grid-sort-column>
-
-        <vaadin-grid-column width="150px" resizable>
-          <template class="header">${_t('credential.ResourcePolicy')}</template>
-          <template>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">developer_board</mwc-icon>
-                <span>[[item.total_resource_slots.cpu]]</span>
-                <span class="indicator">${_t('general.cores')}</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">memory</mwc-icon>
-                <span>[[item.total_resource_slots.mem]]</span>
-                <span class="indicator">GB</span>
-              </div>
-            </div>
-            <div class="layout horizontal wrap center">
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_device]]">
-                <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span>[[item.total_resource_slots.cuda_device]]</span>
-                  <span class="indicator">GPU</span>
-                </div>
-              </template>
-              <template is="dom-if" if="[[item.total_resource_slots.cuda_shares]]">
-                <div class="layout horizontal configuration">
-                  <mwc-icon class="fg green">view_module</mwc-icon>
-                  <span>[[item.total_resource_slots.cuda_shares]]</span>
-                  <span class="indicator">fGPU</span>
-                </div>
-              </template>
-            </div>
-            <div class="layout horizontal wrap center">
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">cloud_queue</mwc-icon>
-                <span>[[item.max_vfolder_size]]</span>
-                <span class="indicator">GB</span>
-              </div>
-              <div class="layout horizontal configuration">
-                <mwc-icon class="fg green">folder</mwc-icon>
-                <span>[[item.max_vfolder_count]]</span>
-                <span class="indicator">${_t('general.Folders')}</span>
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
-
-        <vaadin-grid-column resizable>
-          <template class="header">${_t('credential.Allocation')}</template>
-          <template>
-            <div class="layout horizontal center flex">
-              <div class="vertical start layout">
-                <div style="font-size:11px;width:40px;">[[item.concurrency_used]] /
-                  [[item.concurrency_limit]]
-                </div>
-                <span class="indicator">Sess.</span>
-              </div>
-              <div class="vertical start layout">
-                <span style="font-size:8px">[[item.rate_limit]] <span class="indicator">req./15m.</span></span>
-                <span style="font-size:8px">[[item.num_queries]] <span class="indicator">queries</span></span>
-              </div>
-            </div>
-          </template>
-        </vaadin-grid-column>
+        <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
+        <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
+        <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
+        <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}" .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}" .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
         <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
@@ -783,9 +876,10 @@ export default class BackendAICredentialList extends BackendAIPage {
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               id="keypair-modify-save"
               icon="check"
               label="${_t('button.SaveChanges')}"

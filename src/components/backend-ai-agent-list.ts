@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -15,9 +15,11 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
+import '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
+
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -47,19 +49,22 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) agentSettingDialog = Object();
+  @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -74,6 +79,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         mwc-icon {
           --mdc-icon-size: 16px;
+        }
+
+        mwc-icon.schedulable {
+          --mdc-icon-size: 24px;
         }
 
         img.indicator-icon {
@@ -102,6 +111,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           --component-max-width: 90%;
           --component-min-width: 350px;
         }
+
+        backend-ai-dialog {
+          --component-width: 350px;
+        }
+
 
         lablup-progress-bar {
           --progress-bar-width: 100px;
@@ -141,6 +155,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
   }
 
   connectedCallback() {
@@ -160,10 +175,12 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
         const status = 'ALIVE';
         this._loadAgentList(status);
       }, true);
     } else { // already connected
+      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
       const status = 'ALIVE';
       this._loadAgentList(status);
     }
@@ -198,6 +215,10 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
       fields.push('hardware_metadata');
+    }
+
+    if (globalThis.backendaiclient.supports('schedulable')) {
+      fields.push('schedulable');
     }
 
     globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
@@ -346,6 +367,9 @@ export default class BackendAIAgentList extends BackendAIPage {
             }
             if ('hardware_metadata' in agent) {
               agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
+            }
+            if ('schedulable' in agent) {
+              agents[objectKey].schedulable = agent.schedulable;
             }
             this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
           }
@@ -711,6 +735,27 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render whether the agent is schedulable or not
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  schedulableRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.schedulable ? html`
+            <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
+          ` : html`
+            <mwc-icon class="fg red schedulable">block</mwc-icon>
+          `}
+        </div>`, root
+    );
+  }
+
+  /**
    * Render a heartbeat status.
    *
    * @param {DOMelement} root
@@ -764,9 +809,13 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+          <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
+            ${this.enableAgentSchedulable ? html`
+              <mwc-icon-button class="fg blue controls-running" icon="settings"
+                               @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+            ` : html``}
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled
@@ -782,8 +831,42 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Show configuration field of agent in dialog form.
+   *
+   * @param {string} agentId - ID of agent to configure
+   */
+  _showConfigDialog(agentId) {
+    this.agentDetail = this.agentsObject[agentId];
+    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
+    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
+    this.agentSettingDialog.show();
+    return;
+  }
+
+
   _bytesToMB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  _modifyAgentSetting() {
+    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
+    if (this.agentDetail?.schedulable !== schedulable) {
+      globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
+        this.notification.text = _text('agent.AgentSettingUpdated');
+        this.notification.show();
+        this.agentSettingDialog.hide();
+        this._loadAgentList();
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      });
+    } else {
+      this.notification.text = _text('agent.NoChanges');
+      this.notification.show();
+      this.agentSettingDialog.hide();
+    }
   }
 
   render() {
@@ -793,7 +876,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                    .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                             .renderer="${this._boundRegionRenderer}">
@@ -807,6 +890,10 @@ export default class BackendAIAgentList extends BackendAIPage {
                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                             .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+        ${this.enableAgentSchedulable ? html`
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                          .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+        ` : html``}
         <vaadin-grid-column resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
@@ -938,6 +1025,21 @@ export default class BackendAIAgentList extends BackendAIPage {
             icon="check"
             label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
+        <span slot="title">${_t('agent.AgentSetting')}</span>
+        <div slot="content" class="horizontal layout justified center">
+          <span>${_t('agent.Schedulable')}</span>
+          <mwc-switch id="schedulable-switch" ?selected="${this.agentDetail?.schedulable}"></mwc-switch>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+          unelevated
+          id="update-agent-setting-button"
+          icon="check"
+          label="${_t('button.Update')}"
+          @click="${() => this._modifyAgentSetting()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

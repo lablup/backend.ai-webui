@@ -1,10 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -82,12 +83,17 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) change_signin_support = false;
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
+  @property({type: Boolean}) allow_manual_image_name_for_session = false;
+  @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
+  @property({type: Boolean}) maxMemoryPerContainer = 16;
   @property({type: Number}) maxCUDADevicesPerContainer = 16;
   @property({type: Number}) maxCUDASharesPerContainer = 16;
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
+  @property({type: Boolean}) maskUserInfo = false;
+  @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
@@ -98,7 +104,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -216,7 +222,7 @@ export default class BackendAILogin extends BackendAIPage {
         .login-form {
           position: relative;
         }
-        
+
         .waiting-animation {
           top: 20%;
           left: 40%;
@@ -233,7 +239,7 @@ export default class BackendAILogin extends BackendAIPage {
           -webkit-transform: rotateZ(45deg);
           transform: rotateZ(45deg);
         }
-    
+
         .sk-folding-cube .sk-cube {
           float: left;
           width: 50%;
@@ -243,7 +249,7 @@ export default class BackendAILogin extends BackendAIPage {
           -ms-transform: scale(1.1);
           transform: scale(1.1);
         }
-    
+
         .sk-folding-cube .sk-cube:before {
           content: '';
           position: absolute;
@@ -258,37 +264,37 @@ export default class BackendAILogin extends BackendAIPage {
           -ms-transform-origin: 100% 100%;
           transform-origin: 100% 100%;
         }
-    
+
         .sk-folding-cube .sk-cube2 {
           -webkit-transform: scale(1.1) rotateZ(90deg);
           transform: scale(1.1) rotateZ(90deg);
         }
-    
+
         .sk-folding-cube .sk-cube3 {
           -webkit-transform: scale(1.1) rotateZ(180deg);
           transform: scale(1.1) rotateZ(180deg);
         }
-    
+
         .sk-folding-cube .sk-cube4 {
           -webkit-transform: scale(1.1) rotateZ(270deg);
           transform: scale(1.1) rotateZ(270deg);
         }
-    
+
         .sk-folding-cube .sk-cube2:before {
           -webkit-animation-delay: 0.3s;
           animation-delay: 0.3s;
         }
-    
+
         .sk-folding-cube .sk-cube3:before {
           -webkit-animation-delay: 0.6s;
           animation-delay: 0.6s;
         }
-    
+
         .sk-folding-cube .sk-cube4:before {
           -webkit-animation-delay: 0.9s;
           animation-delay: 0.9s;
         }
-    
+
         @-webkit-keyframes sk-foldCubeAngle {
           0%,
           10% {
@@ -309,7 +315,7 @@ export default class BackendAILogin extends BackendAIPage {
             opacity: 0;
           }
         }
-    
+
         @keyframes sk-foldCubeAngle {
           0%,
           10% {
@@ -346,6 +352,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
 
+
   /**
    * Change the signin mode with SESSION or API
    * */
@@ -364,6 +371,7 @@ export default class BackendAILogin extends BackendAIPage {
 
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
+      this._enableUserInput();
     } else {
       import('../plugins/' + config.plugin.login).then(() => {
         console.log('Plugin loaded.');
@@ -410,6 +418,11 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_project_resource_monitor = true;
     }
+    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession == false) {
+      this.allow_manual_image_name_for_session = false;
+    } else {
+      this.allow_manual_image_name_for_session = true;
+    }
 
     if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
       this.openPortToPublic = false;
@@ -420,6 +433,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.maxCPUCoresPerContainer = 64;
     } else {
       this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
+    }
+    if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
+      this.maxMemoryPerContainer = 16;
+    } else {
+      this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
     }
     if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
       this.maxCUDADevicesPerContainer = 16;
@@ -476,6 +494,11 @@ export default class BackendAILogin extends BackendAIPage {
       (this.shadowRoot.querySelector('#id_api_endpoint') as any).disabled = true;
       (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).disabled = true;
     }
+    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation == false) {
+      this.allowSignupWithoutConfirmation = false;
+    } else {
+      this.allowSignupWithoutConfirmation = true;
+    }
 
     if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
       this.default_session_environment = '';
@@ -486,6 +509,16 @@ export default class BackendAILogin extends BackendAIPage {
       this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
     } else {
       this.default_import_environment = config.general.defaultImportEnvironment;
+    }
+    if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
+      this.allow_image_list = [];
+    } else {
+      this.allow_image_list = config.environments.allowlist.split(',');
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
+      this.maskUserInfo = false;
+    } else {
+      this.maskUserInfo = config.general.maskUserInfo;
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
@@ -647,9 +680,10 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    (this.shadowRoot.querySelector('#signup-dialog') as any).endpoint = this.api_endpoint;
-    // this.shadowRoot.querySelector('#signup-dialog').receiveAgreement();
-    (this.shadowRoot.querySelector('#signup-dialog') as any).open();
+    const signupDialog = this.shadowRoot.querySelector('#signup-dialog');
+    signupDialog.endpoint = this.api_endpoint;
+    signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
+    signupDialog.open();
   }
 
   _showChangePasswordEmailDialog() {
@@ -775,7 +809,7 @@ export default class BackendAILogin extends BackendAIPage {
    * @param {boolean} showError
    * */
   async _connectUsingSession(showError = true) {
-    if (this.api_endpoint === '') {
+    if (this.api_endpoint === '' || this.user_id === '' || this.password === '') {
       this.free();
       this.open();
       return Promise.resolve(false);
@@ -974,7 +1008,8 @@ export default class BackendAILogin extends BackendAIPage {
       } else {
         globalThis.backendaiclient.groups = ['default'];
       }
-      globalThis.backendaiclient.current_group = globalThis.backendaiclient.groups[0];
+      const currentGroup = globalThis.backendaiutils._readRecentProjectGroup();
+      globalThis.backendaiclient.current_group = currentGroup ? currentGroup : globalThis.backendaiclient.groups[0];
       globalThis.backendaiclient.current_group_id = () => {
         return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
       };
@@ -984,12 +1019,16 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment = this.default_session_environment;
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
+      globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
+      globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
       globalThis.backendaiclient._config.maxCUDASharesPerContainer = this.maxCUDASharesPerContainer;
       globalThis.backendaiclient._config.maxShmPerContainer = this.maxShmPerContainer;
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
+      globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
+      globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1084,7 +1123,8 @@ export default class BackendAILogin extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap>
+      <link rel="stylesheet" href="resources/custom.css">
+      <backend-ai-dialog id="login-panel" noclosebutton fixed blockscrolling persistent disablefocustrap escapeKeyAction>
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
@@ -1169,10 +1209,9 @@ export default class BackendAILogin extends BackendAIPage {
                       unelevated
                       id="login-button"
                       icon="check"
-                      style="width:100%;"
+                      fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
-                ${this.signup_support && this.allowAnonymousChangePassword ? html`
                 <div class="layout horizontal" style="margin-top:2em;">
                   ${this.signup_support ? html`
                     <div class="vertical center-justified layout" style="width:100%;">
@@ -1195,7 +1234,7 @@ export default class BackendAILogin extends BackendAIPage {
                           @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
                     </div>
                   ` : html``}
-                </div>`:html``}
+                </div>
               </fieldset>
             </form>
           </div>
@@ -1212,9 +1251,10 @@ export default class BackendAILogin extends BackendAIPage {
           <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
               label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               id="signout-button"
               icon="check"
               label="${_t('login.LeaveService')}"
@@ -1232,15 +1272,16 @@ export default class BackendAILogin extends BackendAIPage {
               validationMessage="${_t('signup.InvalidEmail')}"
               pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"></mwc-textfield>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               icon="check"
               label="${_t('login.EmailSendButton')}"
               @click="${() => this._sendChangePasswordEmail()}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent>
+      <backend-ai-dialog id="block-panel" fixed blockscrolling persistent escapeKeyAction>
         ${this.blockMessage != '' ? html`
           ${this.blockType !== '' ? html`
             <span slot="title" id="work-title">${this.blockType}</span>
@@ -1248,9 +1289,10 @@ export default class BackendAILogin extends BackendAIPage {
           <div slot="content" style="text-align:center;padding-top:15px;">
           ${this.blockMessage}
           </div>
-          <div slot="footer" class="horizontal end-justified flex layout">
+          <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               outlined
+              fullwidth
               label="${_t('login.CancelLogin')}"
               @click="${(e) => this._cancelLogin(e)}"></mwc-button>
           </div>

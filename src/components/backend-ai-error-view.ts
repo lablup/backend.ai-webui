@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -32,7 +34,7 @@ export default class BackendAIErrorView extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -86,9 +88,10 @@ export default class BackendAIErrorView extends BackendAIPage {
       <div class="vertical layout" style="width:100%;">
         <div class="title">${_tr('webui.NOTFOUND')}</div>
         <p class="description">${_t('webui.DescNOTFOUND')}</p>
-        <div style="width:auto;">
+        <div>
           <mwc-button
               unelevated
+              fullwidth
               id="go-to-summary"
               label="${_t('button.GoBackToSummaryPage')}"
               @click="${() => this._moveTo('summary')}"></mwc-button>

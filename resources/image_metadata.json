@@ -64,6 +64,20 @@
         }
       ]
     },
+    "aifactory-tensorflow": {
+      "name": "TensorFlow (Fashion-How)",
+      "description": "TensorFlow is an end-to-end open source platform for machine learning. It has a comprehensive, flexible ecosystem of tools, libraries and community resources that lets researchers push the state-of-the-art in ML and developers easily build and deploy ML powered applications.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "tensorflow.png",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "TensorFlow",
+          "color": "blue"
+        }
+      ]
+    },
     "python-tfx": {
       "name": "TensorFlow Extended",
       "description": "TensorFlow Extended (TFX) is an end-to-end platform for deploying production ML pipelines.",
@@ -80,6 +94,20 @@
     },
     "python-pytorch": {
       "name": "PyTorch",
+      "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment.",
+      "group": "Machine Learning / Deep Learning",
+      "tags": [],
+      "icon": "pytorch.svg",
+      "label": [
+        {
+          "category": "Env",
+          "tag": "PyTorch",
+          "color": "blue"
+        }
+      ]
+    },
+    "aifactory-pytorch": {
+      "name": "PyTorch (Fashion-How)",
       "description": "PyTorch is an open source machine learning framework that accelerates the path from research prototyping to production deployment.",
       "group": "Machine Learning / Deep Learning",
       "tags": [],

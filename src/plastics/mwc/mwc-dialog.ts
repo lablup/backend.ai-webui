@@ -17,7 +17,7 @@ limitations under the License.
 import {css, customElement} from 'lit-element';
 
 import {DialogBase} from '@material/mwc-dialog/mwc-dialog-base';
-import {style} from '@material/mwc-dialog/mwc-dialog-css';
+import {styles} from '@material/mwc-dialog/mwc-dialog.css';
 
 declare global {
   interface HTMLElementTagNameMap {
@@ -28,7 +28,7 @@ declare global {
 @customElement('mwc-dialog')
 export class Dialog extends DialogBase {
   static get styles() {
-    return [style,
+    return [styles,
       css`
     .mdc-dialog .mdc-dialog__content {
       padding: 0;

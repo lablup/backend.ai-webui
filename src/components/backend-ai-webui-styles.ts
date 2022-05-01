@@ -1,5 +1,5 @@
-import { css } from "lit-element";
-import { BackendAiStyles } from "./backend-ai-general-styles";
+import {css} from 'lit';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 export const BackendAIWebUIStyles = [
   BackendAiStyles,
@@ -12,7 +12,7 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("/resources/images/loading-background-large.jpg");
+      background-image: url('/resources/images/loading-background-large.jpg');
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
@@ -336,6 +336,10 @@ export const BackendAIWebUIStyles = [
       --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
+    mwc-select.fixed-position > mwc-list-item {
+      width: 255px;
+    }
+
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
@@ -388,6 +392,10 @@ export const BackendAIWebUIStyles = [
 
     mwc-textfield {
       width: 100%;
+    }
+
+    #user-preference-dialog mwc-textfield#secretkey {
+      --mdc-typography-subtitle1-font-size: 0.7rem;
     }
 
     mwc-textarea {
@@ -469,7 +477,7 @@ export const BackendAIWebUIStyles = [
       width: 48px;
       height: 48px;
       background-color: #ffffff;
-      background-image: url("/manifest/backend.ai-brand-simple.svg");
+      background-image: url('/manifest/backend.ai-brand-simple.svg');
       background-repeat: no-repeat;
       background-size: 36px 36px;
       background-position: center center;
@@ -485,6 +493,10 @@ export const BackendAIWebUIStyles = [
       -webkit-appearance: none;
       width: 0 !important;
       height: 0;
+    }
+
+    .terms-of-use {
+      margin-bottom: 10px;
     }
 
     footer#short-height {

@@ -1,11 +1,13 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
 import '@material/mwc-slider';
-import 'weightless/textfield';
+import '@material/mwc-textfield/mwc-textfield';
 
 import {
   IronFlex,
@@ -36,15 +38,17 @@ export default class LablupSlider extends LitElement {
   @property({type: Number}) value;
   @property({type: Number}) max;
   @property({type: Number}) min;
-  @property({type: Boolean}) editable = null;
-  @property({type: Boolean}) pin = null;
-  @property({type: Boolean}) markers = null;
+  @property({type: String}) prefix;
+  @property({type: String}) suffix;
+  @property({type: Boolean}) editable = false;
+  @property({type: Boolean}) pin = false;
+  @property({type: Boolean}) markers = false;
   @property({type: Number}) marker_limit = 30;
-  @property({type: Boolean}) disabled = null;
+  @property({type: Boolean}) disabled = false;
   @property({type: Object}) textfield;
   @query('#slider', true) slider;
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -53,14 +57,13 @@ export default class LablupSlider extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        .mdc-text-field {
-          height: 25px;
-        }
-
-        wl-textfield {
-          --input-state-color-invalid: var(--input-state-color-inactive, hsl(var(--shade-400, var(--shade-hue, 200), var(--shade-saturation, 4%), var(--shade-lightness, 65%))));
+        mwc-textfield {
           width: var(--textfield-min-width, 65px);
+          height: 40px;
           margin-left: 10px;
+          --mdc-theme-primary: transparent;
+          --mdc-text-field-hover-line-color: transparent;
+          --mdc-text-field-idle-line-color: transparent;
         }
 
         mwc-slider {
@@ -82,11 +85,12 @@ export default class LablupSlider extends LitElement {
                     ?markers="${this.markers}"
                     @change="${() => this.syncToText()}">
         </mwc-slider>
-        <wl-textfield style="display:none" id="textfield" class="${this.id}" type="number"
+        <mwc-textfield style="display:none" id="textfield" class="${this.id}" type="number"
                       value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+                      prefix="${this.prefix}" suffix="${this.suffix}"
                       ?disabled="${this.disabled}"
                       @change="${() => this.syncToSlider()}">
-        </wl-textfield>
+        </mwc-textfield>
       </div>
     `;
   }
@@ -108,8 +112,15 @@ export default class LablupSlider extends LitElement {
     super.disconnectedCallback();
   }
 
-  update(changedProperties) {
-    this.min = (this.min > this.max) ? this.max : this.min;
+  update(changedProperties: Map<any, any>) {
+    if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
+      this.min = (this.min >= this.max) ? 0 : this.min;
+      if (this.min == this.max && this.max == 0) {
+        this.max = this.max + 1;
+        this.disabled = true;
+      }
+    }
+    // this.min = (this.min > this.max) ? this.max : this.min;
     super.update(changedProperties);
   }
 
