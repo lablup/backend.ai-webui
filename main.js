@@ -455,7 +455,8 @@ function setSameSitePolicy(){
 	const filter = { urls: ["http://*/*", "https://*/*"] };
 	session.defaultSession.webRequest.onHeadersReceived(filter, (details, callback) => {
 		const cookies = (details.responseHeaders['Set-Cookie'] || []);
-		if(cookies.length > 0 && !cookies.includes('SameSite')) {
+    cookies.map(cookie => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
+		if(cookies.length > 0 && !cookies.includes('SameSite')) { // Add SameSite policy if not present.
 			details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
     }
     callback({ cancel: false, responseHeaders: details.responseHeaders });
