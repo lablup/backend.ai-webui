@@ -250,7 +250,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="horizontal justified layout distancing">
             <div class="vertical left layout">
                 <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="1" max="100"
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -268,7 +268,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
               <div class="vertical left layout">
                   <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="1" max="100"
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
                       @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}" style="border-width: 1px;"></wl-checkbox>
@@ -730,11 +730,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
-    }
-
-    if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be upper than 0.
-      textfield.value = (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id)) ? 1 : 0;
     }
 
     if (!textfield.valid) {
