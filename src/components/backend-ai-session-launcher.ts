@@ -2574,7 +2574,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       shmem_value = currentMemLimit;
       this.shmem_request = shmem_value;
       shmemEl.value = shmem_value;
-      shmemEl.max = shmem_value;
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     }
