@@ -2566,16 +2566,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateShmemLimit() {
     const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
     const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
-    let shmem_value = shmemEl.value;
+    let shmemValue = shmemEl.value;
     // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     // shmemEl.max = this.shmem_metric.max;
-    if (parseFloat(shmem_value) > currentMemLimit) {
-      shmem_value = currentMemLimit;
-      this.shmem_request = shmem_value;
-      shmemEl.value = shmem_value;
+    if (parseFloat(shmemValue) > currentMemLimit) {
+      shmemValue = currentMemLimit;
+      this.shmem_request = shmemValue;
+      shmemEl.value = shmemValue;
+      shmemEl.max = shmemValue;
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
+    } else if (this.max_shm_per_container > shmemValue) {
+      shmemEl.max = this.max_shm_per_container;
     }
   }
 
