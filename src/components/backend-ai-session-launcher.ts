@@ -405,16 +405,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 0px 5px;
           background-color: var(--general-button-background-color);
           color: white;
+          line-height: 1.2em;
         }
 
         .cluster-allocated > div.horizontal > p {
           font-size: 1rem;
           margin: 0px;
+          line-height: 1.2em;
         }
 
         .cluster-allocated > p.small {
           font-size: 8px;
           margin: 0px;
+          margin-top: 0.5em;
+          text-align: center;
+          line-height: 1.2em;
         }
 
         .resource-allocated > span,
