@@ -2196,6 +2196,45 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+    * Set Cluster size when the cluster mode is 'multi-node'
+    *
+    * @param {Event} e
+    */
+  _setClusterSize(e) {
+    this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
+    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+    let maxSessionCount = 1;
+    if (globalThis.backendaiclient.supports('multi-container')) {
+      if (this.cluster_size > 1) {
+        // this.gpu_step = 1;
+        this.gpu_step = this.resourceBroker.gpu_step;
+      } else {
+        maxSessionCount = 0;
+        this.gpu_step = this.resourceBroker.gpu_step;
+      }
+      this._setSessionLimit(maxSessionCount);
+    }
+  }
+
+  /**
+  * Set session count limit to value
+  *
+  * @param {Number} maxValue - max value to limit session in multi-container mode
+  *
+  */
+  _setSessionLimit(maxValue = 1) {
+    const sessionSlider = this.shadowRoot.querySelector('#session-resource');
+    if (maxValue > 0) {
+      sessionSlider.value = maxValue;
+      this.session_request = maxValue;
+      sessionSlider.disabled = true;
+    } else {
+      sessionSlider.max = this.concurrency_limit;
+      sessionSlider.disabled = false;
+    }
+  }
+
+  /**
    * Choose resource template
    * - cpu, mem, cuda_device, cuda_shares, rocm_device, tpu_device, shmem
    *
@@ -2502,6 +2541,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.requestUpdate();
     if (isResourceClicked) { // resource allocation
       this._resourceTemplateToCustom();
+    } else { // cluster mode
+      this._setClusterSize(e);
     }
   }
 
@@ -3557,10 +3598,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
-                    <span>${this.gpu_request * this.cluster_size * this.session_request}</span>
+                    <span>${this._roundResourceAllocation(this.gpu_request * this.cluster_size * this.session_request, 2)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
                 </div>
+                <div style="height:1em"></div>
               </div>
               <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
                 <div id="total-allocation-pane" style="position:relative;">
