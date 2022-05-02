@@ -31,6 +31,11 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+class BigNumber {
+  static getValue() {
+    return 1000000;
+  }
+}
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
@@ -406,7 +411,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   concurrencyRenderer(root, column?, rowData?) {
     render(
       html`
-        <div>${rowData.item.max_concurrent_sessions === 1000000 ? '∞' : rowData.item.max_concurrent_sessions}</div>
+        <div>${[0, BigNumber.getValue()].includes(rowData.item.max_concurrent_sessions) ? '∞' : rowData.item.max_concurrent_sessions}</div>
     `, root
     );
   }
@@ -444,7 +449,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div>${rowData.item.max_containers_per_session}</div>
+      <div>${[0, BigNumber.getValue()].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
       `, root
     );
   }
@@ -621,10 +626,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
-
-    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 1000000 : parseInt(this.concurrency_limit['value']);
+    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? BigNumber.getValue() : parseInt(this.concurrency_limit['value']);
     this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
-    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
+    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? BigNumber.getValue() : parseInt(this.container_per_session_limit['value']);
     this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseFloat(this.vfolder_capacity['value']);
     this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
 
@@ -716,7 +720,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     TextEl.disabled = checked;
     if (!TextEl.disabled) {
       if (TextEl.value === '') {
-        TextEl.value = 0;
+        TextEl.value = TextEl.min ?? 0;
       }
     }
   }
@@ -738,11 +742,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be upper than 0.
-      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
-    }
-
     if (!textfield.valid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
       textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
@@ -754,7 +753,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _updateUnlimitedValue(value) {
-    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value) ? '' : value;
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity', BigNumber.getValue()].includes(value) ? '' : value;
   }
 
   /**
@@ -775,10 +774,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _updateInputStatus(resource) {
     const textfield = resource;
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value === '' || textfield.value === '0') {
+    if (textfield.value === '' || textfield.value === 0) {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (textfield.id === 'concurrency-limit' && textfield.value === '1000000') {
+    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BigNumber.getValue()) {
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
