@@ -367,7 +367,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
     const allowedHosts = vhostInfo.allowed;
     const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
