@@ -1558,8 +1558,15 @@ class VFolder {
   /**
    * List Virtual folder hosts that requested accessKey has permission to.
    */
-  async list_hosts() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
+  async list_hosts(groupId = null) {
+    let reqUrl = `${this.urlPrefix}/_/hosts`;
+    let params = {};
+    if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
+      params['group_id'] = groupId;
+    }
+    const q = querystring.stringify(params);
+    reqUrl += `?${q}`;
+    let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
   }
 
