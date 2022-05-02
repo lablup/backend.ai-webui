@@ -459,29 +459,6 @@ function setSameSitePolicy(){
     cookies.map(cookie => cookie.replace('SameSite=Lax', 'SameSite=None')); // Override SameSite Lax option to None for App mode cookie.
 		if(cookies.length > 0 && !cookies.includes('SameSite')) { // Add SameSite policy if not present.
       details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
-      /*
-
-      if (details.url.startsWith('https')) {
-  			details.responseHeaders['Set-Cookie'] = cookies + '; SameSite=None; Secure';
-      } else {
-        details.responseHeaders['Set-Cookie'] = cookies;// + '; SameSite=None';
-        let pairs = details.responseHeaders['Set-Cookie'][0].split(';');
-        let splittedPairs = pairs.map(cookie => cookie.split("="));
-        const cookieObj = splittedPairs.reduce(function (obj, cookie) {
-          if(cookie.length == 2) {
-            obj[decodeURIComponent(cookie[0].trim())] = decodeURIComponent(cookie[1].trim());
-          }
-          return obj;
-        }, {});
-        const localCookie = {
-          url: details.url,
-          name: 'AIOHTTP_SESSION',
-          value: cookieObj.AIOHTTP_SESSION,
-          expirationDate: Math.floor(new Date(cookieObj.expires).getTime() / 1000),
-          sameSite: 'no_restriction'
-        }
-        session.defaultSession.cookies.set(localCookie);
-      }*/
     }
     callback({ cancel: false, responseHeaders: details.responseHeaders });
 	});
