@@ -96,6 +96,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) needPasswordChange = false;
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
@@ -387,6 +388,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+    this.needPasswordChange = globalThis.backendaiclient.need_password_change;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -1272,6 +1274,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
   }
 
+  _hidePasswordChangeRequest() {
+    const passwordChangeRequest = this.shadowRoot.querySelector('#password-change-request');
+    passwordChangeRequest.style.display = 'none';
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1508,6 +1515,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         </mwc-icon-button>
                       </div>
                     </div>
+                  </div>
+                  <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
+                    <span>${_t('webui.menu.PleaseChangeYourPassword')}</span>
+                    <mwc-icon-button @click="${() => this._hidePasswordChangeRequest()}">
+                      <i class="fa fa-times"></i>
+                    </mwc-icon-button>
                   </div>
                 </div>
               </mwc-top-app-bar-fixed>

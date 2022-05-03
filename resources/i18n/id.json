@@ -53,7 +53,8 @@
       "Experiments": "Eksperimen",
       "Menu": "Menu",
       "Run": "Jalankan",
-      "UserName": "Nama Pengguna"
+      "UserName": "Nama Pengguna",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -229,7 +230,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -296,6 +298,7 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
@@ -350,7 +353,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -645,7 +649,8 @@
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "ProblemOccurred": "Masalah terjadi",
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
-    "NoChangeMade": "Tidak ada perubahan yang dibuat"
+    "NoChangeMade": "Tidak ada perubahan yang dibuat",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",

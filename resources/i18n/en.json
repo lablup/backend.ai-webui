@@ -53,7 +53,8 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "UserName": "User Name"
+      "UserName": "User Name",
+      "PleaseChangeYourPassword": "Please change your password."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -228,7 +229,8 @@
       "(Automatic)": "(Automatic)",
       "NumOpenMPthreads": "Number of OpenMP threads",
       "NumOpenBLASthreads": "Number of OpenBLAS threads",
-      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization"
+      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
+      "Architecture": "Architecture"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -251,6 +253,7 @@
     "Starts": "Starts",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
     "AllowedClientIps": "Allowed client IPs",
@@ -333,6 +336,7 @@
   "agent": {
     "Endpoint": "Endpoint",
     "Region": "Region",
+    "Architecture": "Architecture",
     "Starts": "Starts",
     "Resources": "Resources",
     "Connected": "Connected",
@@ -602,6 +606,7 @@
     "DescProblemOccurred": "Problem occurred during installation",
     "DescServicePortModified": "Service port successfully modified",
     "Registry": "Registry",
+    "Architecture": "Architecture",
     "Namespace": "Namespace",
     "Language": "Language",
     "Version": "Version",
