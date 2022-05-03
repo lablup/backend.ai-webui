@@ -14,6 +14,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
+  @property({type: Object}) imageArchitectures = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
@@ -703,7 +704,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async _refreshImageList() {
     const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
+      'name', 'humanized_name', 'tag', 'registry', 'architecture', 'digest', 'installed',
       'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
@@ -714,6 +715,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
+      this.imageArchitectures = {};
       const privateImages: Object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -721,7 +723,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
         }
-        this.supports[supportsKey].push(item.tag);
+        // check if tag already exists since we can have multiple images with same tag and different architecture
+        if (this.supports[supportsKey].indexOf(item.tag) === -1) {
+          this.supports[supportsKey].push(item.tag);
+        }
         let imageName: string;
         const specs: string[] = item.name.split('/');
         if (specs.length === 1) {
@@ -748,6 +753,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
         this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
+        if (!this.imageArchitectures[`${supportsKey}:${item.tag}`]) {
+          this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
+        }
+        this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
