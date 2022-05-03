@@ -683,7 +683,7 @@ class Client {
      * @param {object} resources - Per-session resource
      * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
      */
-    async createIfNotExists(kernelType, sessionId, architecture = undefined, resources = {}, timeout = 0) {
+    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0, architecture = undefined) {
         if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
@@ -971,7 +971,7 @@ class Client {
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-        return this.createIfNotExists(kernelType, sessionId, 'x86_64', resources, timeout);
+        return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
     }
     // legacy aliases (DO NOT USE for new codes)
     destroyKernel(sessionId, ownerKey = null) {
@@ -2393,7 +2393,7 @@ class ContainerImage {
         if (Object.keys(resource).length === 0) {
             resource = { 'cpu': '1', 'mem': '512m' };
         }
-        return this.client.createIfNotExists(registry + name, sessionId, architecture, resource, 600000).then((response) => {
+        return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
             return this.client.destroy(sessionId);
         }).catch(err => {
             throw err;
