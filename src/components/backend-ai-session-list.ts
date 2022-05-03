@@ -74,6 +74,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
   @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
+  @property({type: Object}) _boundArchitectureRenderer = this.architectureRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
@@ -1592,6 +1593,24 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Render architecture column
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  architectureRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <lablup-shields app=""
+                        color="lightgreen"
+                        description="${rowData.item.architecture}"
+                        ui="round"></lablup-shields>
+      `, root
+    );
+  }
+
+  /**
    * Render control options - _showAppLauncher, _runTerminal, _openTerminateSessionDialog, and _showLogs
    *
    * @param {Element} root - the row details content DOM element
@@ -2031,7 +2050,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="architecture" auto-width header="${_t('session.Architecture')}" resizable>
+        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                   .renderer="${this._boundArchitectureRenderer}">
         </vaadin-grid-filter-column>
         ${this._isIntegratedCondition ? html`
           <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
