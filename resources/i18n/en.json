@@ -53,7 +53,8 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "UserName": "User Name"
+      "UserName": "User Name",
+      "PleaseChangeYourPassword": "Please change your password."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -294,9 +295,13 @@
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
-    "SessionNameRequired": "Session name is required",
-    "EnterValidSessionName": "Enter valid session name",
-    "SessionNameAlreadyExist": "Session name already exists"
+    "Validation": {
+      "SessionNameRequired": "Session name is required",
+      "SluggedStrings": "Slugged strings (>3 chars)",
+      "EnterValidSessionName": "Enter valid session name",
+      "SessionNameAlreadyExist": "Session name already exists"
+    },
+    "EnterValidSessionName": "EnterValidSessionName"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1123,7 +1128,11 @@
     "Installed": "Installed",
     "GithubInternalError": "Github Internal Error.",
     "GithubAPILimitError": "Github API Limitation Error.",
-    "GithubAPIEtcError": "Github Server Issue."
+    "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGitlabRepo": "Import Gitlab Repository",
+    "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
+    "GitlabURL": "Gitlab URL",
+    "GitlabDefaultBranch": "Gitlab Branch Name"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
@@ -1183,6 +1192,7 @@
     "20chars": "(maximum 20 chars)",
     "40chars": "(maximum 40 chars)",
     "64chars": "(maximum 64 chars)",
+    "200chars": "(maximum 200 chars)",
     "255chars": "(maximum 255 chars)",
     "500chars": "(maximum 500 chars)",
     "512chars": "(maximum 512 chars)",

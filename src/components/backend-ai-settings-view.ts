@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
@@ -203,6 +203,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
 
         mwc-textfield#num-retries {
           width: 10rem;
+        }
+
+        mwc-button {
+          word-break: keep-all;
         }
         @media screen and (max-width: 750px) {
           .setting-desc, .setting-desc-shrink {

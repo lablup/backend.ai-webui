@@ -1057,7 +1057,11 @@
     "Installed": "Asennettu",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Tämän kuukauden tilastot",
@@ -1116,6 +1120,7 @@
     "20chars": "(enintään 20 merkkiä)",
     "40chars": "(enintään 40 merkkiä)",
     "64chars": "(enintään 64 merkkiä)",
+    "200chars": "(enintään 200 merkkiä)",
     "255chars": "(enintään 255 merkkiä)",
     "500chars": "(enintään 500 merkkiä)",
     "512chars": "(enintään 512 merkkiä)",

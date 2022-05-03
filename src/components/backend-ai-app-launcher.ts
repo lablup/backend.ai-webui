@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -532,7 +532,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
     const scalingGroupId = kInfo.compute_session.scaling_group;
     // Apply v1 when executing in electron mode
-    const wsproxyVersion = (globalThis.isElectron) ? 'v1' : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId)).wsproxy_version;
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const wsproxyVersion = (globalThis.isElectron) ? 'v1' : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
     let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, port, envs, args);
     if (!uri) {
       return Promise.resolve(false);

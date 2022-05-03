@@ -53,7 +53,8 @@
       "Experiments": "Eksperimen",
       "Menu": "Menu",
       "Run": "Jalankan",
-      "UserName": "Nama Pengguna"
+      "UserName": "Nama Pengguna",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -297,7 +298,13 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Batalkan",
@@ -1125,7 +1132,11 @@
     "Installed": "Terinstalasi",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",
@@ -1184,6 +1195,7 @@
     "20chars": "(maksimum 20 karakter)",
     "40chars": "(maksimum 40 karakter)",
     "64chars": "(maksimum 64 karakter)",
+    "200chars": "(maksimum 200 karakter)",
     "255chars": "(maksimum 255 karakter)",
     "500chars": "(maksimum 500 karakter)",
     "512chars": "(maksimum 512 karakter)",

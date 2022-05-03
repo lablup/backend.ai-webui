@@ -53,7 +53,8 @@
       "Experiments": "Туршилт",
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
-      "UserName": "Хэрэглэгчийн нэр"
+      "UserName": "Хэрэглэгчийн нэр",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -297,7 +298,13 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -1125,7 +1132,11 @@
     "Installed": "Суулгасан",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
@@ -1184,6 +1195,7 @@
     "20chars": "(хамгийн ихдээ 20 тэмдэгт)",
     "40chars": "(хамгийн ихдээ 40 тэмдэгт)",
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
+    "200chars": "(хамгийн ихдээ 200 тэмдэгт)",
     "255chars": "(хамгийн ихдээ 255 тэмдэгт)",
     "500chars": "(хамгийн ихдээ 500 тэмдэгт)",
     "512chars": "(хамгийн ихдээ 512 тэмдэгт)",

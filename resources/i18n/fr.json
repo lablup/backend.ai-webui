@@ -53,7 +53,8 @@
       "Experiments": "Expériences",
       "Menu": "Menu",
       "Run": "Exécuter",
-      "UserName": "Nom d'utilisateur"
+      "UserName": "Nom d'utilisateur",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -297,7 +298,13 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Annuler",
@@ -1125,7 +1132,11 @@
     "Installed": "installée",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiques pour ce mois",
@@ -1184,6 +1195,7 @@
     "20chars": "(maximum 20 caractères)",
     "40chars": "(maximum 40 caractères)",
     "64chars": "(maximum 64 caractères)",
+    "200chars": "(maximum 200 caractères)",
     "255chars": "(maximum 255 caractères)",
     "500chars": "(maximum 500 caractères)",
     "512chars": "(maximum 512 caractères)",

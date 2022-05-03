@@ -53,7 +53,8 @@
       "Experiments": "실험",
       "Menu": "메뉴",
       "Run": "실행",
-      "UserName": "사용자"
+      "UserName": "사용자",
+      "PleaseChangeYourPassword": "비밀번호를 변경해주세요."
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -296,7 +297,13 @@
     "SessionNameRequired": "세션 이름을 입력해주세요",
     "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
     "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다",
-    "Architecture": "아키텍쳐"
+    "Architecture": "아키텍쳐",
+    "Validation": {
+      "SessionNameRequired": "세션 이름을 입력해주세요",
+      "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
+      "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+      "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    }
   },
   "button": {
     "Cancel": "취소",
@@ -1123,7 +1130,11 @@
     "Installed": "설치됨",
     "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
     "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
-    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다."
+    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다.",
+    "ImportGitlabRepo": "Gitlab 저장소 가져오기",
+    "GitlabRepoWillBeFolder": "가져온 Gitlab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
+    "GitlabURL": "Gitlab 주소",
+    "GitlabDefaultBranch": "Gitlab 브랜치 이름"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",
@@ -1183,6 +1194,7 @@
     "20chars": "(최대 길이 20자)",
     "40chars": "(최대 길이 40자)",
     "64chars": "(최대 길이 64자)",
+    "200chars": "(최대 길이 200자)",
     "255chars": "(최대 길이 255자)",
     "500chars": "(최대 길이 500자)",
     "512chars": "(최대 길이 512자)",
