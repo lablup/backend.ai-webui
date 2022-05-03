@@ -965,7 +965,7 @@ export default class BackendAILogin extends BackendAIPage {
       const resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}'];
+      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}', 'need_password_change'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
       return globalThis.backendaiclient.query(q, v);
@@ -981,6 +981,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient.full_name = response['user'].full_name;
       globalThis.backendaiclient.is_admin = false;
       globalThis.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.need_password_change = response['user'].need_password_change;
 
       if (['superadmin', 'admin'].includes(role)) {
         globalThis.backendaiclient.is_admin = true;

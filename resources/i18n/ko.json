@@ -53,7 +53,8 @@
       "Experiments": "실험",
       "Menu": "메뉴",
       "Run": "실행",
-      "UserName": "사용자"
+      "UserName": "사용자",
+      "PleaseChangeYourPassword": "비밀번호를 변경해주세요."
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",

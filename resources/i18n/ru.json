@@ -53,7 +53,8 @@
       "Experiments": "Эксперименты",
       "Menu": "Меню",
       "Run": "Запустить",
-      "UserName": "Имя пользователя"
+      "UserName": "Имя пользователя",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
