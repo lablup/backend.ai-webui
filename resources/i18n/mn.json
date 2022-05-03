@@ -53,7 +53,8 @@
       "Experiments": "Туршилт",
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
-      "UserName": "Хэрэглэгчийн нэр"
+      "UserName": "Хэрэглэгчийн нэр",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",

@@ -53,7 +53,8 @@
       "Experiments": "Eksperimen",
       "Menu": "Menu",
       "Run": "Jalankan",
-      "UserName": "Nama Pengguna"
+      "UserName": "Nama Pengguna",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",

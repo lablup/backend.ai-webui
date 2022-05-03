@@ -53,7 +53,8 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "UserName": "User Name"
+      "UserName": "User Name",
+      "PleaseChangeYourPassword": "Please change your password."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
