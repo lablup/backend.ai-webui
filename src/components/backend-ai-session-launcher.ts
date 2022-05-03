@@ -1468,7 +1468,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, architecture, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, architecture, config, 20000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000, architecture);
     task.catch((err) => {
       // console.log(err);
       if (err && err.message) {
