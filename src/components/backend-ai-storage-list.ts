@@ -57,7 +57,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 @group Backend.AI Web UI
  @element backend-ai-storage-list
  */
-7
+
 @customElement('backend-ai-storage-list')
 export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
