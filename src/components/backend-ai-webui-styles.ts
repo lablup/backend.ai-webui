@@ -549,7 +549,7 @@ export const BackendAIWebUIStyles = [
     }
 
     #password-change-request {
-      background-color: var(--paper-green-400);
+      background-color: var(--paper-orange-400);
       color: white;
       font-size: 14px;
       height: 28px;
