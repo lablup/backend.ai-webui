@@ -545,6 +545,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.appBody.type = 'modal';
       this.appBody.open = false;
       // this.contentBody.style.width = 'calc('+width+'px - 190px)';
+      this.contentBody.style.width = width + 'px';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
