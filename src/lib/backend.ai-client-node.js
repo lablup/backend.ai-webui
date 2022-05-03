@@ -1435,8 +1435,15 @@ class VFolder {
     /**
      * List Virtual folder hosts that requested accessKey has permission to.
      */
-    async list_hosts() {
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
+    async list_hosts(groupId = null) {
+        let reqUrl = `${this.urlPrefix}/_/hosts`;
+        let params = {};
+        if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
+            params['group_id'] = groupId;
+        }
+        const q = querystring.stringify(params);
+        reqUrl += `?${q}`;
+        let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -3155,14 +3162,15 @@ class ScalingGroup {
      * Get the version of WSProxy for a specific scaling group.
      * (NEW) manager version 21.09.
      *
-     * @param {string} group - Scaling group name
+     * @param {string} scalingGroup - Scaling group name
+     * @param {string} groupId - Project (group) ID
      */
-    async getWsproxyVersion(group) {
+    async getWsproxyVersion(scalingGroup, groupId) {
         if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
             return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
         }
-        const queryString = `/scaling-groups/${group}/wsproxy-version`;
-        const rqst = this.client.newSignedRequest("GET", queryString, null);
+        const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
+        const rqst = this.client.newSignedRequest("GET", url, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**

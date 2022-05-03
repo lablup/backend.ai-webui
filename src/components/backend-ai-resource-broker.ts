@@ -367,18 +367,22 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
+    const allowedHosts = vhostInfo.allowed;
     const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
-        if (item.name.startsWith('.')) {
-          item.disabled = true;
-          item.name = item.name + ' (Automount folder)';
-          automountFolders.push(item);
-        } else {
-          selectableFolders.push(item);
+        if (allowedHosts.includes(item.host)) {
+          if (item.name.startsWith('.')) {
+            item.disabled = true;
+            item.name = item.name + ' (Automount folder)';
+            automountFolders.push(item);
+          } else {
+            selectableFolders.push(item);
+          }
         }
       });
       this.vfolders = selectableFolders.concat(automountFolders);
