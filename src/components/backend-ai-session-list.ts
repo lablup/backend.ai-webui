@@ -916,8 +916,8 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
+    if (globalThis.__local_proxy !== undefined && globalThis.__local_proxy.url !== undefined) {
+      url = globalThis.__local_proxy.url;
     } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
       url = globalThis.backendaiclient._config.proxyURL;
     }

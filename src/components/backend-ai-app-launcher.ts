@@ -319,8 +319,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _getProxyURL() {
     let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
+    if (globalThis.__local_proxy !== undefined && globalThis.__local_proxy.url != undefined) {
+      url = globalThis.__local_proxy.url;
     } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
       url = globalThis.backendaiclient._config.proxyURL;
     }
@@ -456,7 +456,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['secret_key'] = globalThis.backendaiclient._config.secretKey;
     }
     param['api_version'] = globalThis.backendaiclient.APIMajorVersion;
-    if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
+    if (globalThis.isElectron && globalThis.__local_proxy.url === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
 
