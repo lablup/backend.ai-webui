@@ -138,6 +138,7 @@
       "Environments": "Environments",
       "Start": "Start",
       "FolderToMount": "Folder to mount",
+      "FolderToMountList": "Folder to mount",
       "MountedFolders": "Mounted folders",
       "ResourceAllocation": "Resource allocation",
       "NoSuitablePreset": "No suitable preset",
@@ -218,8 +219,9 @@
       "EnvConfigWillDisappear": "Any unsaved environment variable and value will be disappeared.",
       "SharedMemoryAbbr": "SHMEM",
       "GPUSlot": "Slot",
-      "FolderAlias": "Alias",
+      "FolderAlias": "Path & Alias",
       "FolderAliasOverlapping": "Aliases overlap with other names that already exist",
+      "DescFolderAlias": "<p>If you fill out this input, folder name will change to alias when it mount.</p><p>Absolute paths will be mount in '/', the others are sub path of /home/work</p><p>Don't use alias same as system folders.</p><p>Please check final path which is printed in 'Mounted folders' below.</p><p>If you want to see this window again, click icon next to the 'Path & Alias'</p>",
       "OpenMPOptimization": "OpenMP/OpenBLAS Optimization",
       "DescOpenMPOptimization": "<p>This value sets the number of threads to use for parallel regions by setting the initial value of the nthreads-var internal control variable.</p><p>Backend.AI sets this value equal to the number of CPU cores, which has the effect of accelerating typical high-performance computing workloads. However, for some multi-threaded workloads, multiple processes using OpenMP are used at the same time, resulting in an abnormally large number of threads and significant performance degradation. In this case, please adjust this value to 1 or 2.</p>",
       "HPCOptimization": "High-Performance Computing Optimizations",
@@ -251,7 +253,7 @@
     "Agent": "Agent",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
-    "AllowedClientIps":"Allowed client IPs",
+    "AllowedClientIps": "Allowed client IPs",
     "CommaSeparated": "comma-separated",
     "TryPreferredPort": "Try preferred port",
     "SFTPDescription": "Use your favorite SSH/SFTP application to connect.",
@@ -290,9 +292,13 @@
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
-    "SessionNameRequired": "Session name is required",
-    "EnterValidSessionName": "Enter valid session name",
-    "SessionNameAlreadyExist": "Session name already exists"
+    "Validation": {
+      "SessionNameRequired": "Session name is required",
+      "SluggedStrings": "Slugged strings (>3 chars)",
+      "EnterValidSessionName": "Enter valid session name",
+      "SessionNameAlreadyExist": "Session name already exists"
+    },
+    "EnterValidSessionName": "EnterValidSessionName"
   },
   "button": {
     "Cancel": "Cancel",
@@ -399,6 +405,7 @@
     "Credentials": "Credentials",
     "ResourcePolicies": "Resource Policies",
     "UserID": "User ID",
+    "Status": "Status",
     "Name": "Name",
     "UserDetail": "User Detail",
     "DescRequirePasswordChange": "Require password change?",
@@ -407,6 +414,7 @@
     "Role": "Role",
     "Groups": "Groups",
     "DescActiveUser": "Active user?",
+    "UserStatus": "User Status",
     "UserName": "User Name",
     "FullName": "Full Name",
     "Description": "Description",
@@ -671,6 +679,7 @@
     "BetaFeatures": "Beta Features",
     "DescBetaFeatures": "Use beta features for Web UI.<br />Beta features may be unstable. Some beta features may not be adopted as official feature.",
     "DescNoBetaFeatures": "No beta feature available now. :)",
+    "BootstrapScriptDescription": "Bootstrap script will be executed only once after session creation",
     "EditBootstrapScript": "Edit Bootstrap Script",
     "EditUserConfigScript": "Edit User Config Script",
     "PackageInstallation": "Package Installation",
@@ -785,7 +794,8 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
-    "RegistrySuccessfullyModified": "Registry successfully modified."
+    "RegistrySuccessfullyModified": "Registry successfully modified.",
+    "PleaseSelectOption": "PleaseSelectOption"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
@@ -1110,7 +1120,14 @@
     "FolderName": "Imported folder name: ",
     "NotebookBadgeCodeHTML": "Notebook Badge Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook Badge Code (Markdown)",
-    "Installed": "Installed"
+    "Installed": "Installed",
+    "GithubInternalError": "Github Internal Error.",
+    "GithubAPILimitError": "Github API Limitation Error.",
+    "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGitlabRepo": "Import Gitlab Repository",
+    "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
+    "GitlabURL": "Gitlab URL",
+    "GitlabDefaultBranch": "Gitlab Branch Name"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
@@ -1170,6 +1187,7 @@
     "20chars": "(maximum 20 chars)",
     "40chars": "(maximum 40 chars)",
     "64chars": "(maximum 64 chars)",
+    "200chars": "(maximum 200 chars)",
     "255chars": "(maximum 255 chars)",
     "500chars": "(maximum 500 chars)",
     "512chars": "(maximum 512 chars)",

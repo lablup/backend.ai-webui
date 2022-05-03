@@ -129,6 +129,7 @@
       "Environments": "ortamlar",
       "Start": "Başlat",
       "FolderToMount": "Bağlanacak klasör",
+      "FolderToMountList": "Bağlanacak klasör",
       "ResourceAllocation": "Kaynak tahsisi",
       "NoSuitablePreset": "Uygun ön ayar yok",
       "Advanced": "ileri",
@@ -1053,7 +1054,14 @@
     "FolderName": "İçe aktarılan klasör adı:",
     "NotebookBadgeCodeHTML": "Defter Rozeti Kodu (HTML)",
     "NotebookBadgeCodeMarkdown": "Defter Rozeti Kodu (Markdown)",
-    "Installed": "Kurulmuş"
+    "Installed": "Kurulmuş",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Bu Ay İçin İstatistikler",
@@ -1112,6 +1120,7 @@
     "20chars": "(maksimum 20 karakter)",
     "40chars": "(maksimum 40 karakter)",
     "64chars": "(maksimum 64 karakter)",
+    "200chars": "(maksimum 200 karakter)",
     "255chars": "(maksimum 255 karakter)",
     "500chars": "(maksimum 500 karakter)",
     "512chars": "(maksimum 512 karakter)",

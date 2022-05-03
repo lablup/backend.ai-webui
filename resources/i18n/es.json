@@ -129,6 +129,7 @@
       "Environments": "Ambientes",
       "Start": "Comienzo",
       "FolderToMount": "Carpeta para montar",
+      "FolderToMountList": "Carpeta para montar",
       "ResourceAllocation": "Asignación de recursos",
       "NoSuitablePreset": "Sin preajuste adecuado",
       "Advanced": "Avanzado",
@@ -1053,7 +1054,14 @@
     "FolderName": "Nombre de la carpeta importada:",
     "NotebookBadgeCodeHTML": "Código de insignia del cuaderno (HTML)",
     "NotebookBadgeCodeMarkdown": "Código de insignia del cuaderno (Markdown)",
-    "Installed": "Instalado"
+    "Installed": "Instalado",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Estadísticas de este mes",
@@ -1112,6 +1120,7 @@
     "20chars": "(máximo 20 caracteres)",
     "40chars": "(máximo 40 caracteres)",
     "64chars": "(máximo 64 caracteres)",
+    "200chars": "(máximo 200 caracteres)",
     "255chars": "(máximo 255 caracteres)",
     "500chars": "(máximo 500 caracteres)",
     "512chars": "(máximo 512 caracteres)",

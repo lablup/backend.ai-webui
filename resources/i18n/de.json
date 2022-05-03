@@ -129,6 +129,7 @@
       "Environments": "Umgebungen",
       "Start": "Start",
       "FolderToMount": "Ordner zum Einhängen",
+      "FolderToMountList": "Ordner zum Einhängen",
       "ResourceAllocation": "Ressourcenzuweisung",
       "NoSuitablePreset": "Keine passende Voreinstellung",
       "Advanced": "Fortgeschritten",
@@ -1053,7 +1054,14 @@
     "FolderName": "Name des importierten Ordners:",
     "NotebookBadgeCodeHTML": "Notebook-Badge-Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook-Badge-Code (Abschlag)",
-    "Installed": "Eingerichtet"
+    "Installed": "Eingerichtet",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik für diesen Monat",
@@ -1112,6 +1120,7 @@
     "20chars": "(maximal 20 Zeichen)",
     "40chars": "(maximal 40 Zeichen)",
     "64chars": "(maximal 64 Zeichen)",
+    "200chars": "(maximal 200 Zeichen)",
     "255chars": "(maximal 255 Zeichen)",
     "500chars": "(maximal 500 Zeichen)",
     "512chars": "(maximal 512 Zeichen)",

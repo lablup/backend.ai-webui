@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -285,6 +285,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: #637282;
           font-size: 1em;
           margin-bottom: 10px;
+          margin-left: 20px;
         }
 
         div.breadcrumb span:first-child {
@@ -714,7 +715,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout space-between folder-action-buttons">
+        <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
@@ -1117,7 +1118,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${rowData.shared_to.email}</div>
+        <div>${rowData.item.shared_to.email}</div>
       `, root
     );
   }
@@ -1127,7 +1128,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
       <div class="layout vertical">
-        <span class="indicator monospace">${rowData.id}</span>
+        <span class="indicator monospace">${rowData.item.id}</span>
       </div>
       `, root
     );

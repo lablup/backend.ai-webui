@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -67,6 +67,21 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     let i = Math.floor(Math.log(bytes) / Math.log(k));
     i = i < 0 ? 0 : i; // avoid negative value
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Mask String with range
+   *
+   * @param {string} value - string to mask
+   * @param {string} maskChar - character used for masking (default: '*')
+   * @param {number} startFrom - exclusive index masking starts
+   * @param {number} maskLength - range length to mask
+   * @return {string} maskedString
+   */
+  _maskString(value = '', maskChar = '*', startFrom = 0, maskLength = 0) {
+    // clamp mask length
+    maskLength = (startFrom + maskLength > value.length) ? value.length : maskLength;
+    return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
   }
 
   render() {

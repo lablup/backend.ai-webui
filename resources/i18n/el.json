@@ -129,6 +129,7 @@
       "Environments": "Περιβάλλοντα",
       "Start": "Αρχή",
       "FolderToMount": "Φάκελος για προσάρτηση",
+      "FolderToMountList": "Φάκελος για προσάρτηση",
       "ResourceAllocation": "Κατανομή των πόρων",
       "NoSuitablePreset": "Δεν υπάρχει κατάλληλη προεπιλογή",
       "Advanced": "Προχωρημένος",
@@ -1053,7 +1054,14 @@
     "FolderName": "Εισαγόμενο όνομα φακέλου:",
     "NotebookBadgeCodeHTML": "Κωδικός σήματος σημειωματάριου (HTML)",
     "NotebookBadgeCodeMarkdown": "Κωδικός σήματος σημειωματάριου (Markdown)",
-    "Installed": "Εγκατεστημένο"
+    "Installed": "Εγκατεστημένο",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Στατιστικά για αυτόν τον μήνα",
@@ -1112,6 +1120,7 @@
     "20chars": "(έως 20 χαρακτήρες)",
     "40chars": "(έως 40 χαρακτήρες)",
     "64chars": "(έως 64 χαρακτήρες)",
+    "200chars": "(έως 200 χαρακτήρες)",
     "255chars": "(έως 255 χαρακτήρες)",
     "500chars": "(έως 500 χαρακτήρες)",
     "512chars": "(έως 512 χαρακτήρες)",

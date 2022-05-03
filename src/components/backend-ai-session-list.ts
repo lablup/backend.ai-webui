@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -113,6 +113,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) total_session_count = 0;
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
   constructor() {
     super();
@@ -426,6 +427,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -446,6 +448,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this._refreshJobData();
     }
   }
@@ -1181,8 +1184,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as any;
-    const regExp = /[[\],'"]/g;
-
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
@@ -1198,11 +1199,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         mountedFolderItem.style.fontWeight = '400';
         mountedFolderItem.style.fontSize = '14px';
         mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
-        if (mounts.length > 1) {
-          mountedFolderItem.innerHTML = ` ${key.replace(regExp, '').split(' ')[0]}`;
-        } else {
-          mountedFolderItem.innerHTML = _text('session.OnlyOneFolderAttached');
-        }
+        mountedFolderItem.innerHTML = (mounts.length > 1) ? key : _text('session.OnlyOneFolderAttached');
+
         menu.appendChild(mountedFolderItem);
       });
       document.body.appendChild(menu);
@@ -1395,13 +1393,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     renameField.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          renameField.validationMessage = _text('session.SessionNameRequired');
+          renameField.validationMessage = _text('session.Validation.SessionNameRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
+        } else if (nativeValidity.patternMismatch) {
+          renameField.validationMessage = _text('session.Validation.SluggedStrings');
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
         } else {
-          renameField.validationMessage = _text('session.EnterValidSessionName');
+          renameField.validationMessage = _text('session.Validation.EnterValidSessionName');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -1410,7 +1414,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       } else {
         const isValid = (!sessionNames.includes(value) || value === currentName);
         if (!isValid) {
-          renameField.validationMessage = _text('session.SessionNameAlreadyExist');
+          renameField.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
         }
         return {
           valid: isValid,
@@ -1441,7 +1445,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.text = _text('session.SessionRenamed');
           this.notification.show();
         }).catch((err) => {
-          renameField.value = nameField.value;
+          renameField.value = nameField.innerText;
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -1507,11 +1511,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           #session-rename-field {
             display: none;
+            white-space: normal;
+            word-break: break-word;
+            font-family: var(--general-monospace-font-family);
+            --mdc-ripple-color: transparent;
             --mdc-text-field-fill-color: transparent;
             --mdc-text-field-disabled-fill-color: transparent;
-            --mdc-ripple-color: transparent;
-            width: min-content;
-            font-family: var(--general-monospace-font-family);
             --mdc-typography-font-family: var(--general-monospace-font-family);
             --mdc-typography-subtitle1-font-family: var(--general-monospace-font-family);
           }
@@ -1522,11 +1527,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
-            ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
-            <mwc-textfield id="session-rename-field" required
-                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
-                             helper="${_t('maxLength.64chars')}" autoValidate
-                             validationMessage="${_t('session.EnterValidSessionName')}"
+            ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
+            <mwc-textfield id="session-rename-field" required autoValidate
+                             pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
+                             validationMessage="${_text('session.Validation.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
                              @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
               <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
@@ -1613,7 +1617,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
                                icon="apps"></mwc-icon-button>
             <mwc-icon-button class="fg controls-running"
-                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
+                               ?disabled="${!mySession}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
                  width="471.362px" height="471.362px" viewBox="0 0 471.362 471.362" style="enable-background:new 0 0 471.362 471.362;"
@@ -1660,7 +1664,10 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   configRenderer(root, column?, rowData?) {
     // extract mounted folder names and convert them to an array.
-    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem) => JSON.parse(elem.replace(/'/g, '"'))[0]);
+    // monkeypatch for extracting and formatting legacy mounts info
+    const mountedFolderList: Array<string> = rowData.item.mounts.map((elem: string) => {
+      return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
+    });
     render(
       html`
         <div class="layout horizontal center flex">
@@ -1668,7 +1675,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${rowData.item.mounts.length > 0 ? html`
               <wl-icon class="fg green indicator">folder_open</wl-icon>
               <button class="mount-button"
-                @mouseenter="${(e) => this._createMountedFolderDropdown(e, rowData.item.mounts)}"
+                @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                 @mouseleave="${() => this._removeMountedFolderDropdown()}">
                 ${mountedFolderList.join(', ')}
               </button>
@@ -1939,10 +1946,11 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   userInfoRenderer(root, column?, rowData?) {
+    const userInfo = this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email;
     render(
       html`
         <div class="layout vertical">
-          <span class="indicator">${this._connectionMode === 'API' ? rowData.item.access_key : rowData.item.user_email}</span>
+          <span class="indicator">${this._getUserId(userInfo)}</span>
         </div>
       `, root
     );
@@ -1966,6 +1974,23 @@ export default class BackendAiSessionList extends BackendAIPage {
         ` : html``}
       `, root
     );
+  }
+
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string} userId
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(userId);
+      const maskStartIdx = isEmail ? 2 : 0; // show only 2 characters if session mode
+      const maskLength = isEmail ? userId.split('@')[0].length - maskStartIdx : 0;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
 
   render() {

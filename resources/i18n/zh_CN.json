@@ -129,6 +129,7 @@
       "Environments": "环境",
       "Start": "开始",
       "FolderToMount": "要挂载的文件夹",
+      "FolderToMountList": "要挂载的文件夹",
       "ResourceAllocation": "资源分配",
       "NoSuitablePreset": "没有合适的预设",
       "Advanced": "先进的",
@@ -1053,7 +1054,14 @@
     "FolderName": "导入的文件夹名称：",
     "NotebookBadgeCodeHTML": "笔记本徽章代码 (HTML)",
     "NotebookBadgeCodeMarkdown": "笔记本徽章代码 (Markdown)",
-    "Installed": "已安装"
+    "Installed": "已安装",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月统计",
@@ -1112,6 +1120,7 @@
     "20chars": "（最多 20 个字符）",
     "40chars": "（最多 40 个字符）",
     "64chars": "（最多 64 个字符）",
+    "200chars": "（最多 200 个字符）",
     "255chars": "（最多 255 个字符）",
     "500chars": "（最多 500 个字符）",
     "512chars": "（最多 512 个字符）",

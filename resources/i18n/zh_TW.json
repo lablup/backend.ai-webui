@@ -129,6 +129,7 @@
       "Environments": "環境",
       "Start": "開始",
       "FolderToMount": "要掛載的文件夾",
+      "FolderToMountList": "要掛載的文件夾",
       "ResourceAllocation": "資源分配",
       "NoSuitablePreset": "沒有合適的預設",
       "Advanced": "先進的",
@@ -1053,7 +1054,14 @@
     "FolderName": "導入的文件夾名稱：",
     "NotebookBadgeCodeHTML": "筆記本徽章代碼 (HTML)",
     "NotebookBadgeCodeMarkdown": "筆記本徽章代碼 (Markdown)",
-    "Installed": "已安裝"
+    "Installed": "已安裝",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "本月統計",
@@ -1112,6 +1120,7 @@
     "20chars": "（最多 20 個字符）",
     "40chars": "（最多 40 個字符）",
     "64chars": "（最多 64 個字符）",
+    "200chars": "（最多 200 個字符）",
     "255chars": "（最多 255 個字符）",
     "500chars": "（最多 500 個字符）",
     "512chars": "（最多 512 個字符）",

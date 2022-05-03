@@ -129,6 +129,7 @@
       "Environments": "Środowiska",
       "Start": "Początek",
       "FolderToMount": "Folder do zamontowania",
+      "FolderToMountList": "Folder do zamontowania",
       "ResourceAllocation": "Alokacja zasobów",
       "NoSuitablePreset": "Brak odpowiedniego ustawienia wstępnego",
       "Advanced": "zaawansowane",
@@ -1053,7 +1054,14 @@
     "FolderName": "Nazwa importowanego folderu:",
     "NotebookBadgeCodeHTML": "Kod plakietki notatnika (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod plakietki notebooka (przecena)",
-    "Installed": "Zainstalowane"
+    "Installed": "Zainstalowane",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statystyki za ten miesiąc",
@@ -1112,6 +1120,7 @@
     "20chars": "(maksymalnie 20 znaków)",
     "40chars": "(maksymalnie 40 znaków)",
     "64chars": "(maksymalnie 64 znaki)",
+    "200chars": "(maksymalnie 200 znaków)",
     "255chars": "(maksymalnie 255 znaków)",
     "500chars": "(maksymalnie 500 znaków)",
     "512chars": "(maksymalnie 512 znaków)",

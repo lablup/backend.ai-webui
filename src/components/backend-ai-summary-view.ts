@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -14,6 +14,7 @@ import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
+import 'weightless/textfield';
 
 import '@material/mwc-button';
 import '@material/mwc-linear-progress/mwc-linear-progress';
