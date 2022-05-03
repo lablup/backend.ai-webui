@@ -1060,7 +1060,11 @@
     "Installed": "Cài đặt",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Số liệu thống kê cho tháng này",
@@ -1119,6 +1123,7 @@
     "20chars": "(tối đa 20 ký tự)",
     "40chars": "(tối đa 40 ký tự)",
     "64chars": "(tối đa 64 ký tự)",
+    "200chars": "(tối đa 200 ký tự)",
     "255chars": "(tối đa 255 ký tự)",
     "500chars": "(tối đa 500 ký tự)",
     "512chars": "(tối đa 512 ký tự)",

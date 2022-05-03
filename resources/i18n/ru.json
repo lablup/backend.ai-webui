@@ -295,7 +295,13 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Отмена",
@@ -436,7 +442,9 @@
     "UserAccountCreatedError": "Эта учетная запись уже была зарегистрирована.",
     "KeypairCreated": "Пара ключей успешно создана.",
     "UserNotFound": "Не удалось создать учетные данные, поскольку не удалось найти следующий идентификатор пользователя:",
-    "UserIDRequired": "Требуется идентификатор пользователя."
+    "UserIDRequired": "Требуется идентификатор пользователя.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
@@ -1122,7 +1130,11 @@
     "Installed": "Установлены",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",
@@ -1181,6 +1193,7 @@
     "20chars": "(максимум 20 символов)",
     "40chars": "(максимум 40 символов)",
     "64chars": "(максимум 64 символа)",
+    "200chars": "(максимум 200 символов)",
     "255chars": "(максимум 255 символов)",
     "500chars": "(максимум 500 символов)",
     "512chars": "(максимум 512 символов)",

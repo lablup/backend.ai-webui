@@ -1062,7 +1062,11 @@
     "Installed": "Instalado",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Estatísticas para este mês",
@@ -1121,6 +1125,7 @@
     "20chars": "(máximo de 20 caracteres)",
     "40chars": "(máximo de 40 caracteres)",
     "64chars": "(máximo de 64 caracteres)",
+    "200chars": "(máximo de 200 caracteres)",
     "255chars": "(máximo de 255 caracteres)",
     "500chars": "(máximo de 500 caracteres)",
     "512chars": "(máximo de 512 caracteres)",

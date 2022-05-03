@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -363,22 +363,26 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * Update virtual folder list. Also divide automount folders from general ones.
    *
    */
-  async updateVirtualFolderList() {
+  async updateVirtualFolderList(userEmail = null) {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
+    const allowedHosts = vhostInfo.allowed;
+    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
-        if (item.name.startsWith('.')) {
-          item.disabled = true;
-          item.name = item.name + ' (Automount folder)';
-          automountFolders.push(item);
-        } else {
-          selectableFolders.push(item);
+        if (allowedHosts.includes(item.host)) {
+          if (item.name.startsWith('.')) {
+            item.disabled = true;
+            item.name = item.name + ' (Automount folder)';
+            automountFolders.push(item);
+          } else {
+            selectableFolders.push(item);
+          }
         }
       });
       this.vfolders = selectableFolders.concat(automountFolders);

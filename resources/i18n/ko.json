@@ -292,9 +292,12 @@
     "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다.",
     "NoLogMsgAvailable": "현재 표시할 수 있는 로그 메시지가 없습니다.",
     "SessionRenamed": "세션 이름이 변경되었습니다",
-    "SessionNameRequired": "세션 이름을 입력해주세요",
-    "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
-    "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    "Validation": {
+      "SessionNameRequired": "세션 이름을 입력해주세요",
+      "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
+      "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+      "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
+    }
   },
   "button": {
     "Cancel": "취소",
@@ -410,7 +413,7 @@
     "Role": "역할",
     "Groups": "그룹",
     "DescActiveUser": "활성화 유저?",
-    "UserStatus":"사용자 상태",
+    "UserStatus": "사용자 상태",
     "UserName": "사용자명",
     "FullName": "성명",
     "Description": "소개",
@@ -1122,7 +1125,11 @@
     "Installed": "설치됨",
     "GithubInternalError": "Github 저장소가 잠시 중단되었습니다. 잠시 후 시도하시기 바랍니다.",
     "GithubAPILimitError": "Github API 호출횟수가 많습니다. 잠시 후에 시도하시기 바랍니다.",
-    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다."
+    "GithubAPIEtcError": "Github API 호출이슈가 있습니다. 잠시 후에 시도하시기 바랍니다.",
+    "ImportGitlabRepo": "Gitlab 저장소 가져오기",
+    "GitlabRepoWillBeFolder": "가져온 Gitlab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
+    "GitlabURL": "Gitlab 주소",
+    "GitlabDefaultBranch": "Gitlab 브랜치 이름"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",
@@ -1182,6 +1189,7 @@
     "20chars": "(최대 길이 20자)",
     "40chars": "(최대 길이 40자)",
     "64chars": "(최대 길이 64자)",
+    "200chars": "(최대 길이 200자)",
     "255chars": "(최대 길이 255자)",
     "500chars": "(최대 길이 500자)",
     "512chars": "(최대 길이 512자)",

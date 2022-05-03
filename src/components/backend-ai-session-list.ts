@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -1393,13 +1393,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     renameField.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          renameField.validationMessage = _text('session.SessionNameRequired');
+          renameField.validationMessage = _text('session.Validation.SessionNameRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
+        } else if (nativeValidity.patternMismatch) {
+          renameField.validationMessage = _text('session.Validation.SluggedStrings');
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
         } else {
-          renameField.validationMessage = _text('session.EnterValidSessionName');
+          renameField.validationMessage = _text('session.Validation.EnterValidSessionName');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -1408,7 +1414,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       } else {
         const isValid = (!sessionNames.includes(value) || value === currentName);
         if (!isValid) {
-          renameField.validationMessage = _text('session.SessionNameAlreadyExist');
+          renameField.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
         }
         return {
           valid: isValid,
@@ -1439,7 +1445,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.text = _text('session.SessionRenamed');
           this.notification.show();
         }).catch((err) => {
-          renameField.value = nameField.value;
+          renameField.value = nameField.innerText;
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -1505,11 +1511,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           #session-rename-field {
             display: none;
+            white-space: normal;
+            word-break: break-word;
+            font-family: var(--general-monospace-font-family);
+            --mdc-ripple-color: transparent;
             --mdc-text-field-fill-color: transparent;
             --mdc-text-field-disabled-fill-color: transparent;
-            --mdc-ripple-color: transparent;
-            width: min-content;
-            font-family: var(--general-monospace-font-family);
             --mdc-typography-font-family: var(--general-monospace-font-family);
             --mdc-typography-subtitle1-font-family: var(--general-monospace-font-family);
           }
@@ -1520,11 +1527,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
-            ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
-            <mwc-textfield id="session-rename-field" required
-                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
-                             helper="${_t('maxLength.64chars')}" autoValidate
-                             validationMessage="${_t('session.EnterValidSessionName')}"
+            ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
+            <mwc-textfield id="session-rename-field" required autoValidate
+                             pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
+                             validationMessage="${_text('session.Validation.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
                              @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
               <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
