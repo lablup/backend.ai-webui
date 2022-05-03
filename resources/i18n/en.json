@@ -54,7 +54,8 @@
       "Menu": "Menu",
       "Run": "Run",
       "UserName": "User Name",
-      "PleaseChangeYourPassword": "Please change your password."
+      "PleaseChangeYourPassword": "Please change your password.",
+      "PasswordChangePlace": "Click the person icon on the top bar and go to the \"My Account\" menu."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",

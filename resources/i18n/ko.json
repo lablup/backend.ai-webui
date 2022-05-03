@@ -54,7 +54,8 @@
       "Menu": "메뉴",
       "Run": "실행",
       "UserName": "사용자",
-      "PleaseChangeYourPassword": "비밀번호를 변경해주세요."
+      "PleaseChangeYourPassword": "비밀번호를 변경해주세요.",
+      "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요."
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",

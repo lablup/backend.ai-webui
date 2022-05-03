@@ -54,7 +54,8 @@
       "Menu": "Меню",
       "Run": "Запустить",
       "UserName": "Имя пользователя",
-      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",

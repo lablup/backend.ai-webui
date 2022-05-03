@@ -1517,7 +1517,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     </div>
                   </div>
                   <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
-                    <span>${_t('webui.menu.PleaseChangeYourPassword')}</span>
+                    <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t('webui.menu.PasswordChangePlace')})</span>
                     <mwc-icon-button @click="${() => this._hidePasswordChangeRequest()}">
                       <i class="fa fa-times"></i>
                     </mwc-icon-button>
