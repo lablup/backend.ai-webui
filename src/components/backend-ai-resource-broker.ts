@@ -14,6 +14,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
+  @property({type: Object}) imageArchitectures = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
@@ -367,18 +368,22 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
+    const allowedHosts = vhostInfo.allowed;
     const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
-        if (item.name.startsWith('.')) {
-          item.disabled = true;
-          item.name = item.name + ' (Automount folder)';
-          automountFolders.push(item);
-        } else {
-          selectableFolders.push(item);
+        if (allowedHosts.includes(item.host)) {
+          if (item.name.startsWith('.')) {
+            item.disabled = true;
+            item.name = item.name + ' (Automount folder)';
+            automountFolders.push(item);
+          } else {
+            selectableFolders.push(item);
+          }
         }
       });
       this.vfolders = selectableFolders.concat(automountFolders);
@@ -699,7 +704,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async _refreshImageList() {
     const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
+      'name', 'humanized_name', 'tag', 'registry', 'architecture', 'digest', 'installed',
       'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
@@ -710,6 +715,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
+      this.imageArchitectures = {};
       const privateImages: Object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -717,7 +723,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
         }
-        this.supports[supportsKey].push(item.tag);
+        // check if tag already exists since we can have multiple images with same tag and different architecture
+        if (this.supports[supportsKey].indexOf(item.tag) === -1) {
+          this.supports[supportsKey].push(item.tag);
+        }
         let imageName: string;
         const specs: string[] = item.name.split('/');
         if (specs.length === 1) {
@@ -744,6 +753,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
         this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
+        if (!this.imageArchitectures[`${supportsKey}:${item.tag}`]) {
+          this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
+        }
+        this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];

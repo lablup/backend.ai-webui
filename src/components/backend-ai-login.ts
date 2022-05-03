@@ -592,6 +592,23 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   /**
+   * Load configuration file from the WebServer when using Session mode.
+   *
+   * */
+  _loadConfigFromWebServer() {
+    if (!window.location.href.startsWith(this.api_endpoint)) {
+      // Override configs with Webserver's config.
+      const webuiEl = document.querySelector('backend-ai-webui');
+      if (webuiEl) {
+        const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
+        webuiEl._parseConfig(webserverConfigURL).then(() => {
+          this.refreshWithConfig(webuiEl.config);
+        });
+      }
+    }
+  }
+
+  /**
    * Login according to connection_mode and api_endpoint.
    *
    * @param {boolean} showError
@@ -605,7 +622,7 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+      this._loadConfigFromWebServer();
       this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
@@ -624,6 +641,7 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
+      this._loadConfigFromWebServer();
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === 'API') {
       return Promise.resolve(false);
@@ -809,7 +827,7 @@ export default class BackendAILogin extends BackendAIPage {
    * @param {boolean} showError
    * */
   async _connectUsingSession(showError = true) {
-    if (this.api_endpoint === '' || this.user_id === '' || this.password === '') {
+    if (this.api_endpoint === '') {
       this.free();
       this.open();
       return Promise.resolve(false);
@@ -965,7 +983,7 @@ export default class BackendAILogin extends BackendAIPage {
       const resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}'];
+      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}', 'need_password_change'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
       return globalThis.backendaiclient.query(q, v);
@@ -981,6 +999,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient.full_name = response['user'].full_name;
       globalThis.backendaiclient.is_admin = false;
       globalThis.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.need_password_change = response['user'].need_password_change;
 
       if (['superadmin', 'admin'].includes(role)) {
         globalThis.backendaiclient.is_admin = true;

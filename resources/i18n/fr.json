@@ -53,7 +53,8 @@
       "Experiments": "Expériences",
       "Menu": "Menu",
       "Run": "Exécuter",
-      "UserName": "Nom d'utilisateur"
+      "UserName": "Nom d'utilisateur",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -229,7 +230,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -296,6 +298,7 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
@@ -350,7 +353,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -645,7 +649,8 @@
     "SuccessfullyModified": "Modifié avec succès",
     "ProblemOccurred": "Un problème est survenu",
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
-    "NoChangeMade": "__NOT_TRANSLATED__"
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -824,7 +829,10 @@
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Définir les options du planificateur",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Détail du groupe de ressources"
   },
   "maintenance": {
     "General": "Général",

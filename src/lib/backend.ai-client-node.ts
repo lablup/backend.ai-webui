@@ -559,6 +559,10 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('21.09')) {
       this._features['schedulable'] = true;
+      this._features['wsproxy-addr'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('22.03')) {
+      this._features['scheduler-opts'] = true;
     }
   }
 
@@ -763,15 +767,17 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
+   * @param {string} architecture - image architecture
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0) {
+  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = undefined) {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
       "clientSessionToken": sessionId,
+      "architecture": architecture,
     };
     if (resources != {}) {
       let config = {};
@@ -1060,7 +1066,7 @@ class Client {
 
   // legacy aliases (DO NOT USE for new codes)
   createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-    return this.createIfNotExists(kernelType, sessionId, resources, timeout);
+    return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
   }
 
   // legacy aliases (DO NOT USE for new codes)
@@ -1558,8 +1564,15 @@ class VFolder {
   /**
    * List Virtual folder hosts that requested accessKey has permission to.
    */
-  async list_hosts() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
+  async list_hosts(groupId = null) {
+    let reqUrl = `${this.urlPrefix}/_/hosts`;
+    let params = {};
+    if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
+      params['group_id'] = groupId;
+    }
+    const q = querystring.stringify(params);
+    reqUrl += `?${q}`;
+    let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -2538,10 +2551,11 @@ class ContainerImage {
    * install specific container images from registry
    *
    * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+   * @param {string} architecture - architecture to install.
    * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  async install(name, resource: object = {}, registry: string = 'index.docker.io') {
+  async install(name, architecture, resource: object = {}, registry: string = 'index.docker.io') {
     if (registry != 'index.docker.io') {
       registry = registry + '/';
     } else {
@@ -2552,7 +2566,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
       return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
@@ -3399,23 +3413,18 @@ class ScalingGroup {
   /**
    * Create a scaling group
    *
-   * @param {string} name - Scaling group name
-   * @param {string} description - Scaling group description
-   * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
+   * @param {json} input - object containing desired modifications
+   * {
+   *   'description': String          // description of scaling group
+   *   'is_active': Boolean           // active status of scaling group
+   *   'driver': String
+   *   'driver_opts': JSONString
+   *   'scheduler': String
+   *   'scheduler_opts': JSONString   // NEW in manager 22.03
+   *   'wsproxy_addr': String         // NEW in manager 21.09
+   * }
    */
-  async create(name, description = "", wsproxyAddress = null) {
-    const input = {
-      description: description,
-      is_active: true,
-      driver: "static",
-      scheduler: "fifo",
-      driver_opts: "{}",
-      scheduler_opts: "{}"
-    };
-    if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      input['wsproxy_addr'] = wsproxyAddress;
-    }
-    // if (this.client.is_admin === true) {
+  async create(name, input) {
     let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
@@ -3426,9 +3435,6 @@ class ScalingGroup {
       input
     };
     return this.client.query(q, v);
-    // } else {
-    //   return Promise.resolve(false);
-    // }
   }
 
   /**
@@ -3447,7 +3453,6 @@ class ScalingGroup {
       domain,
       scaling_group
     };
-
     return this.client.query(q, v);
   }
 
@@ -3462,7 +3467,7 @@ class ScalingGroup {
    *   'driver': String
    *   'driver_opts': JSONString
    *   'scheduler': String
-   *   'scheduler_opts': JSONString
+   *   'scheduler_opts': JSONString   // NEW in manager 22.03
    *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */

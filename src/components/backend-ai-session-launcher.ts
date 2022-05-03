@@ -1203,17 +1203,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     confirmationDialog.hide();
     let kernel;
     let version;
+    let architecture = undefined;
     if (this.manualImageName && this.manualImageName.value) {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
+      // TODO: Add support for selecting image architecture when starting kernel with manual image name
     } else {
       // When the "Environment" dropdown is disabled after typing the image name manually,
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
       // That's why we need if-else block here.
       const selectedItem = this.shadowRoot.querySelector('#environment').selected;
       kernel = selectedItem.id;
-      version = this.shadowRoot.querySelector('#version').value;
+      version = this.shadowRoot.querySelector('#version').selected.value;
+      architecture = this.shadowRoot.querySelector('#version').selected.getAttribute('architecture');
     }
     this.sessionType = this.shadowRoot.querySelector('#session-type').value;
     let sessionName = this.shadowRoot.querySelector('#session-name').value;
@@ -1362,14 +1365,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (this.num_sessions > 1) {
       for (let i = 1; i <= this.num_sessions; i++) {
-        const add_session = {'kernelName': kernelName, 'sessionName': `${sessionName}-${randStr}-${i}`, config};
+        const add_session = {
+          'kernelName': kernelName,
+          'sessionName': `${sessionName}-${randStr}-${i}`,
+          'architecture': architecture,
+          config
+        };
         sessions.push(add_session);
       }
     } else {
-      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, config});
+      sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'architecture': architecture, config});
     }
     const createSessionQueue = sessions.map((item) => {
-      return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.config), '', 'session');
+      return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.architecture, item.config), '', 'session');
     });
     Promise.all(createSessionQueue).then((res: any) => {
       this.shadowRoot.querySelector('#new-session-dialog').hide();
@@ -1459,8 +1467,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return randstr;
   }
 
-  _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
+  _createKernel(kernelName, sessionName, architecture, config) {
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, architecture, config, 20000);
     task.catch((err) => {
       // console.log(err);
       if (err && err.message) {
@@ -1577,8 +1585,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateVersions(kernel) {
     if (kernel in this.resourceBroker.supports) {
       this.version_selector.disabled = true;
-      const versions = this.resourceBroker.supports[kernel];
-      versions.sort();
+      let versions: {version: string, architecture: string}[] = []
+      for (const version of this.resourceBroker.supports[kernel]) {
+        for (const architecture of this.resourceBroker.imageArchitectures[kernel + ':' + version]) {
+          versions.push({ version, architecture })
+        }
+      }
+      versions.sort((a, b) => a.version > b.version ? 1 : -1);
       versions.reverse(); // New version comes first.
       this.versions = versions;
       this.kernel = kernel;
@@ -1592,9 +1605,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
         this.version_selector.select(1);
-        this.version_selector.value = this.versions[0];
+        this.version_selector.value = this.versions[0].version;
+        this.version_selector.architecture = this.versions[0].architecture;
         // this.version_selector.selectedText = this.version_selector.value;
-        this._updateVersionSelectorText(this.version_selector.value);
+        this._updateVersionSelectorText(this.version_selector.value, this.version_selector.architecture);
         this.version_selector.disabled = false;
         this.environ_values = {};
         this.updateResourceAllocationPane('update versions');
@@ -1607,8 +1621,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {any} text - version
    * */
-  _updateVersionSelectorText(text) {
-    const res = this._getVersionInfo(text);
+  _updateVersionSelectorText(version, architecture) {
+    const res = this._getVersionInfo(version, architecture);
     const resultArray: string[] = [];
     res.forEach((item) => {
       resultArray.push(item.tag);
@@ -1720,7 +1734,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     const selectedVersionValue = selectedVersionItem.value;
-    this._updateVersionSelectorText(selectedVersionValue);
+    const selectedVersionArchitecture = selectedVersionItem.getAttribute('architecture');
+    this._updateVersionSelectorText(selectedVersionValue, selectedVersionArchitecture);
     // Environment is not selected yet.
     if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute('disabled')) {
       this.metric_updating = false;
@@ -2635,13 +2650,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {any} version
    * @return {Record<string, unknown>} Array containing information object
    * */
-  _getVersionInfo(version) {
+  _getVersionInfo(version, architecture) {
     const info: any = [];
     const fragment = version.split('-');
     info.push({ // Version
       tag: this._aliasName(fragment[0]),
       color: 'blue',
-      size: '80px'
+      size: '60px'
     });
     if (fragment.length > 1) {
       // Image requirement overrides language information.
@@ -2649,16 +2664,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         info.push({ // Language
           tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
           color: 'red',
-          size: '120px'
+          size: '110px'
         });
       } else {
         info.push({ // Language
           tag: this._aliasName(fragment[1]),
           color: 'red',
-          size: '120px'
+          size: '110px'
         });
       }
     }
+    info.push({
+      tag: architecture,
+      color: 'lightgreen',
+      size: '90px',
+    });
     if (fragment.length > 2) {
       const requirements = this._aliasName(fragment[2]).split(':');
       if (requirements.length > 1) {
@@ -2666,13 +2686,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           tag: requirements[1],
           app: requirements[0],
           color: 'green',
-          size: '150px'
+          size: '90px'
         });
       } else {
         info.push({ // Additional information
           tag: requirements[0],
           color: 'green',
-          size: '150px'
+          size: '90px'
         });
       }
     }
@@ -3138,24 +3158,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
               <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
                   role="separator" disabled="true" class="horizontal layout">
-                <div style="width:80px;">${_t('session.launcher.Version')}</div>
-                <div style="width:120px;">${_t('session.launcher.Base')}</div>
-                <div style="width:150px;">${_t('session.launcher.Requirements')}</div>
+                  <div style="width:60px;">${_t('session.launcher.Version')}</div>
+                  <div style="width:110px;">${_t('session.launcher.Base')}</div>
+                  <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
+                <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
               </h5>
-              ${this.versions.map((item) => html`
-                <mwc-list-item id="${item}" value="${item}">
-                  <span style="display:none">${item}</span>
-                  <div class="horizontal layout end-justified">
-                  ${this._getVersionInfo(item).map((item) => html`
-                    <lablup-shields style="width:${item.size}!important;"
-                                    color="${item.color}"
-                                    app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                    description="${item.tag}">
-                    </lablup-shields>
-                  `)}
-                </div>
-              </mwc-list-item>
-            `)}
+              ${this.versions.map(({version, architecture}) => html`
+              <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                <span style="display:none">${version}</span>
+                <div class="horizontal layout end-justified">
+                ${this._getVersionInfo(version || '', architecture).map((item) => html`
+                  <lablup-shields style="width:${item.size}!important;"
+                                  color="${item.color}"
+                                  app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                  description="${item.tag}">
+                  </lablup-shields>
+                `)}
+              </div>
+            </mwc-list-item>
+          `)}
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
             <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
