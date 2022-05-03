@@ -53,7 +53,8 @@
       "Experiments": "Туршилт",
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
-      "UserName": "Хэрэглэгчийн нэр"
+      "UserName": "Хэрэглэгчийн нэр",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -229,7 +230,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -296,6 +298,7 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
@@ -350,7 +353,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "цөм",
@@ -645,7 +649,8 @@
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "ProblemOccurred": "Асуудал гарсан",
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
-    "NoChangeMade": "Өөрчлөлт ороогүй"
+    "NoChangeMade": "Өөрчлөлт ороогүй",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",

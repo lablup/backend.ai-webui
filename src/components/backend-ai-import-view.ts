@@ -52,6 +52,15 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
   @property({type: String}) importGitlabMessage = '';
+  @property({type: Array}) allowedGroups = [];
+  @property({type: Array}) allowed_folder_type = [];
+  @property({type: String}) vhost = '';
+  @property({type: Array}) vhosts = [];
+  @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
@@ -80,9 +89,16 @@ export default class BackendAIImport extends BackendAIPage {
           margin: 10px auto;
         }
 
-        mwc-textfield#notebook-url,
-        mwc-textfield#github-repo-url {
+        mwc-textfield#notebook-url {
           width: 75%;
+        }
+        mwc-textfield.repo-url {
+          width: 100%;
+        }
+        mwc-textfield#gitlab-default-branch-name {
+          margin: inherit;
+          width: 30%;
+          margin-bottom: 10px;
         }
 
         mwc-button {
@@ -90,11 +106,51 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: #38bd73 !important;
         }
 
+        mwc-button.left-align {
+          margin-left: auto;
+        }
+
+        mwc-select {
+          margin: auto;
+          width: 35%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.fixed-position > mwc-list-item {
+          width: 200px; // default width
+        }
+        mwc-select.github-select {
+          margin: inherit;
+          width: 68%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.github-select > mwc-list-item {
+          width: 440px; // default width
+        }
+
         @media screen and (max-width: 1015px) {
-          mwc-textfield#notebook-url,
-          mwc-textfield#github-repo-url {
+          mwc-textfield#notebook-url {
             width: 85%;
             margin: 10px 0px;
+          }
+          mwc-textfield.repo-url {
+            width: 85%;
+            margin: 10px 0px;
+          }
+          mwc-textfield#gitlab-default-branch-name {
+            width: 25%;
+            margin: inherit;
           }
           mwc-button {
             width: 36px;
@@ -112,6 +168,41 @@ export default class BackendAIImport extends BackendAIPage {
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
+    globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
+      this.allowed_folder_type = response;
+    });
+    this._getFolderList();
+    fetch('resources/storage_metadata.json').then(
+      (response) => response.json()
+    ).then(
+      (json) => {
+        const storageInfo = Object();
+        for (const key in json.storageInfo) {
+          if ({}.hasOwnProperty.call(json.storageInfo, key)) {
+            storageInfo[key] = {};
+            if ('name' in json.storageInfo[key]) {
+              storageInfo[key].name = json.storageInfo[key].name;
+            }
+            if ('description' in json.storageInfo[key]) {
+              storageInfo[key].description = json.storageInfo[key].description;
+            } else {
+              storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+            }
+            if ('icon' in json.storageInfo[key]) {
+              storageInfo[key].icon = json.storageInfo[key].icon;
+            } else {
+              storageInfo[key].icon = 'local.png';
+            }
+            if ('dialects' in json.storageInfo[key]) {
+              json.storageInfo[key].dialects.forEach((item) => {
+                storageInfo[item] = storageInfo[key];
+              });
+            }
+          }
+        }
+        this.storageInfo = storageInfo;
+      }
+    );
   }
 
   async _viewStateChanged(active: boolean) {
@@ -341,7 +432,7 @@ export default class BackendAIImport extends BackendAIPage {
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
-      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000);
+      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, undefined, imageResource, 60000);
     }).then(async (response) => {
       indicator.set(80, _text('import.CleanUpImportTask'));
       await globalThis.backendaiclient.destroy(response.sessionId);
@@ -360,7 +451,12 @@ export default class BackendAIImport extends BackendAIPage {
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const host = vhost_info.default;
+    let host = vhost_info.default;
+    if (url.includes('github.com/')) {
+      host = this.shadowRoot.querySelector('#github-add-folder-host').value;
+    } else {
+      host = this.shadowRoot.querySelector('#gitlab-add-folder-host').value;
+    }
     name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       if (url.includes('github.com/')) {
@@ -481,6 +577,16 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
+  async _getFolderList() {
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
+    if ((this.allowed_folder_type as string[]).includes('group')) {
+      const group_info = await globalThis.backendaiclient.group.list();
+      this.allowedGroups = group_info.groups;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -527,9 +633,16 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
+              <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
+              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
@@ -544,11 +657,18 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.GitlabRepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="gitlab-repo-url" label="${_t('import.GitlabURL')}"
+              <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+              <mwc-select class="fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>

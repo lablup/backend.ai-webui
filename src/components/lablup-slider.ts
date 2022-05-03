@@ -7,7 +7,7 @@ import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-slider';
-import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textfield';
 
 import {
   IronFlex,
@@ -45,8 +45,8 @@ export default class LablupSlider extends LitElement {
   @property({type: Boolean}) markers = false;
   @property({type: Number}) marker_limit = 30;
   @property({type: Boolean}) disabled = false;
-  @property({type: Object}) textfield;
   @query('#slider', true) slider;
+  @query('#textfield', true) textfield;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -61,7 +61,7 @@ export default class LablupSlider extends LitElement {
           width: var(--textfield-min-width, 65px);
           height: 40px;
           margin-left: 10px;
-          --mdc-theme-primary: transparent;
+          // --mdc-theme-primary: transparent;
           --mdc-text-field-hover-line-color: transparent;
           --mdc-text-field-idle-line-color: transparent;
         }
@@ -78,45 +78,59 @@ export default class LablupSlider extends LitElement {
     // language=HTML
     return html`
       <div class="horizontal center layout">
-        <mwc-slider id="slider" class="${this.id}" value="${this.value}"
-                    min="${this.min}" max="${this.max}"
-                    ?pin="${this.pin}"
-                    ?disabled="${this.disabled}"
-                    ?markers="${this.markers}"
-                    @change="${() => this.syncToText()}">
-        </mwc-slider>
-        <mwc-textfield style="display:none" id="textfield" class="${this.id}" type="number"
-                      value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-                      prefix="${this.prefix}" suffix="${this.suffix}"
-                      ?disabled="${this.disabled}"
-                      @change="${() => this.syncToSlider()}">
-        </mwc-textfield>
+        <mwc-slider
+          id="slider" class="${this.id}"
+          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+          ?pin="${this.pin}"
+          ?disabled="${this.disabled}"
+          ?markers="${this.markers}"
+          @change="${() => this.syncToText()}"
+        ></mwc-slider>
+        <mwc-textfield
+          id="textfield" class="${this.id}"
+          type="number"
+          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+          prefix="${this.prefix}" suffix="${this.suffix}"
+          ?disabled="${this.disabled}"
+          @change="${() => this.syncToSlider()}"
+        ></mwc-textfield>
       </div>
     `;
   }
 
+  constructor() {
+    super();
+
+    // Note: Update the `mwc-slider`'s layout when the element is visible.
+    //       Without this, the slider's knob doesn't move.
+    const observer = new IntersectionObserver((entries, observer) => {
+      entries.forEach((entry) => {
+        if (entry.intersectionRatio > 0) {
+          if (this.value !== this.slider.value) {
+            // NOTE: Some `mwc-slider`s have a different value than `lablup-slider`.
+            //       We don't know why, so just manually set the `mwc-slider`'s value.
+            this.slider.value = this.value;
+          }
+          this.slider.layout();
+        }
+      });
+    }, {});
+    observer.observe(this);
+  }
+
   firstUpdated() {
     if (this.editable) {
-      this.textfield = this.shadowRoot.querySelector('#textfield');
       this.textfield.style.display = 'flex';
     }
-    this.updateStep();
     this.checkMarkerDisplay();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
   }
 
   update(changedProperties: Map<any, any>) {
     if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
-      this.min = (this.min >= this.max) ? 0 : this.min;
-      if (this.min == this.max && this.max == 0) {
+      // this.min = (this.min >= this.max) ? 0 : this.min;
+      if (this.min == this.max) {
         this.max = this.max + 1;
+        this.value = this.min;
         this.disabled = true;
       }
     }
@@ -124,24 +138,12 @@ export default class LablupSlider extends LitElement {
     super.update(changedProperties);
   }
 
-  updated(changedProperties) {
+  updated(changedProperties: Map<any, any>) {
     changedProperties.forEach((oldVal, propName) => {
-      if (propName === 'value') {
-        setTimeout(() => {
-          if (this.editable) {
-            this.syncToSlider();
-          }
-          this.slider.layout();
-        }, 500);
-        const event = new CustomEvent('value-changed', {'detail': {}});
-        this.dispatchEvent(event);
-      }
       if (['min', 'max', 'step'].includes(propName)) {
         this.checkMarkerDisplay();
       }
     });
-    const event = new CustomEvent('changed', {'detail': ''});
-    this.dispatchEvent(event);
   }
 
   /**
@@ -149,7 +151,9 @@ export default class LablupSlider extends LitElement {
    * */
   syncToText() {
     this.value = this.slider.value;
-    // updated function will be automatically called.
+    // NOTE: `mwc-slider` fires the `change` event, which bubbles up to the
+    //       `lablup-slider`, so we don't need to dispatch the event explicitly
+    //       for `lablup-slider` when `mwc-slider` is changed by user interaction.
   }
 
   /**
@@ -164,7 +168,6 @@ export default class LablupSlider extends LitElement {
       }
       return decimal_places.toString().split('.')[1].length || 0;
     })(this.step));
-
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
@@ -172,9 +175,10 @@ export default class LablupSlider extends LitElement {
       this.textfield.value = this.min;
     }
     this.value = this.textfield.value;
-    this.slider.value = this.textfield.value;
-    this.slider.step = this.step;
-    // updated function will be automatically called.
+    // NOTE: `mwc-textfield` does not fire the `change` event, so we need to
+    //       explicitly fire it for the `lablup-slider`.
+    const event = new CustomEvent('change', {detail: {}});
+    this.dispatchEvent(event);
   }
 
   /**
@@ -186,25 +190,6 @@ export default class LablupSlider extends LitElement {
         this.slider.removeAttribute('markers');
       }
     }
-    this.updateStep();
-  }
-
-  updateStep() {
-    // wl-textfield does not provide step property. The default step for number input
-    // is 1, so float numbers will invalidate the wl-textfield, which is a problem.
-    // So, we manually set the step property of wl-textfield's input field here.
-    const textfields = this.shadowRoot.querySelectorAll('wl-textfield');
-    setTimeout(() => {
-      textfields.forEach((el) => {
-        const step = el.getAttribute('step');
-        el.$formElement.step = step;
-      });
-    }, 100);
-    if (!this.step) {
-      this.step = 1.0;
-    }
-    this.slider.setAttribute('step', this.step);
-    this.slider.step = this.step;
   }
 }
 

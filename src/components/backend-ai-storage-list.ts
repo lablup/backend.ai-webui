@@ -285,6 +285,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: #637282;
           font-size: 1em;
           margin-bottom: 10px;
+          margin-left: 20px;
         }
 
         div.breadcrumb span:first-child {
@@ -714,7 +715,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout space-between folder-action-buttons">
+        <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
@@ -2544,7 +2545,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
+      return globalThis.backendaiclient.createIfNotExists(environment, null, undefined, imageResource, 10000);
     }).then(async (res) => {
       const service_info = res.servicePorts;
       appOptions = {
