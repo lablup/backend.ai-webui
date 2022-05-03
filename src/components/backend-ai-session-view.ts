@@ -215,6 +215,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     dateTo.disabled = checkbox.checked;
   }
 
+  _triggerClearTimeout() {
+    const event = new CustomEvent('backend-ai-clear-timeout');
+    document.dispatchEvent(event);
+  }
+
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
@@ -224,6 +229,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
+    this._triggerClearTimeout();
     this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
   }
 
