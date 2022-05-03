@@ -829,7 +829,10 @@
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
+    "TimeoutSeconds": "Секунд",
+    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй"
   },
   "maintenance": {
     "General": "Ерөнхий",

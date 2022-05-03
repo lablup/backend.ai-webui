@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "Η ομάδα πόρων διαγράφηκε με επιτυχία",
     "EnterValidResourceGroupName": "Εισαγάγετε έγκυρο όνομα ομάδας πόρων",
     "ResourceGroupNameRequired": "Απαιτείται όνομα ομάδας πόρων.",
-    "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα."
+    "ResourceGroupAlreadyExist": "Υπάρχει ήδη μια ομάδα πόρων με το ίδιο όνομα.",
+    "SetSchedulerOptions": "Ορισμός Επιλογών Προγραμματιστή",
+    "TimeoutSeconds": "δευτερόλεπτα",
+    "ResourceGroupDetail": "Λεπτομέρεια ομάδας πόρων"
   },
   "maintenance": {
     "General": "Γενικός",

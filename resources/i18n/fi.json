@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "Resurssiryhmä poistettu",
     "EnterValidResourceGroupName": "Anna kelvollinen resurssiryhmän nimi",
     "ResourceGroupNameRequired": "Resurssiryhmän nimi vaaditaan.",
-    "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa."
+    "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
+    "SetSchedulerOptions": "Aseta ajoitusasetukset",
+    "TimeoutSeconds": "Sekuntia",
+    "ResourceGroupDetail": "Resurssiryhmän tiedot"
   },
   "maintenance": {
     "General": "Kenraali",
