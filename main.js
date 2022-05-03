@@ -19,7 +19,6 @@ const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
 const nfs = require('fs');
-const { defaultMaxListeners } = require('events');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
 let ProxyManager; let versions; let es6Path; let electronPath; let mainIndex;
