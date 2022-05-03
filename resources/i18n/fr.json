@@ -829,7 +829,10 @@
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Définir les options du planificateur",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Détail du groupe de ressources"
   },
   "maintenance": {
     "General": "Général",

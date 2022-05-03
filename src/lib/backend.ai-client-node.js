@@ -475,6 +475,10 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('21.09')) {
             this._features['schedulable'] = true;
+            this._features['wsproxy-addr'] = true;
+        }
+        if (this.isManagerVersionCompatibleWith('22.03')) {
+            this._features['scheduler-opts'] = true;
         }
     }
     /**
@@ -3179,23 +3183,18 @@ class ScalingGroup {
     /**
      * Create a scaling group
      *
-     * @param {string} name - Scaling group name
-     * @param {string} description - Scaling group description
-     * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
+     * @param {json} input - object containing desired modifications
+     * {
+     *   'description': String          // description of scaling group
+     *   'is_active': Boolean           // active status of scaling group
+     *   'driver': String
+     *   'driver_opts': JSONString
+     *   'scheduler': String
+     *   'scheduler_opts': JSONString   // NEW in manager 22.03
+     *   'wsproxy_addr': String         // NEW in manager 21.09
+     * }
      */
-    async create(name, description = "", wsproxyAddress = null) {
-        const input = {
-            description: description,
-            is_active: true,
-            driver: "static",
-            scheduler: "fifo",
-            driver_opts: "{}",
-            scheduler_opts: "{}"
-        };
-        if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
-            input['wsproxy_addr'] = wsproxyAddress;
-        }
-        // if (this.client.is_admin === true) {
+    async create(name, input) {
         let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
             `  create_scaling_group(name: $name, props: $input) {` +
             `    ok msg` +
@@ -3206,9 +3205,6 @@ class ScalingGroup {
             input
         };
         return this.client.query(q, v);
-        // } else {
-        //   return Promise.resolve(false);
-        // }
     }
     /**
      * Associate a scaling group with a domain
@@ -3239,7 +3235,7 @@ class ScalingGroup {
      *   'driver': String
      *   'driver_opts': JSONString
      *   'scheduler': String
-     *   'scheduler_opts': JSONString
+     *   'scheduler_opts': JSONString   // NEW in manager 22.03
      *   'wsproxy_addr': String         // NEW in manager 21.09
      * }
      */

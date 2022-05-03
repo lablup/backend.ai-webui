@@ -829,7 +829,10 @@
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
     "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Установить параметры планировщика",
+    "TimeoutSeconds": "Секунды",
+    "ResourceGroupDetail": "Сведения о группе ресурсов"
   },
   "maintenance": {
     "General": "Общий",

@@ -829,7 +829,10 @@
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Setel Opsi Penjadwal",
+    "TimeoutSeconds": "Detik",
+    "ResourceGroupDetail": "Detail Grup Sumber Daya"
   },
   "maintenance": {
     "General": "Umum",

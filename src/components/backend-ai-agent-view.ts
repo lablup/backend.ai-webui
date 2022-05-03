@@ -15,7 +15,7 @@ import '@material/mwc-tab';
 import './lablup-activity-panel';
 import './backend-ai-agent-list';
 import './backend-ai-storage-proxy-list';
-import './backend-ai-scaling-group-list';
+import './backend-ai-resource-group-list';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
@@ -143,7 +143,7 @@ export default class BackendAIAgentView extends BackendAIPage {
             <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active' && this._tab === 'storage-proxy-lists'}"></backend-ai-storage-proxy-list>
           </div>`:html``}
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
-            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-scaling-group-list>
+            <backend-ai-resource-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-resource-group-list>
           </div>
         </div>
       </lablup-activity-panel>

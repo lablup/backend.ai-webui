@@ -826,7 +826,10 @@
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
-    "WsproxyAddress": "WSProxy Server Address"
+    "WsproxyAddress": "WSProxy Server Address",
+    "SetSchedulerOptions": "Set Scheduler Options",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "ResourceGroup Detail"
   },
   "maintenance": {
     "General": "General",
