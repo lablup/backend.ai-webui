@@ -442,7 +442,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName): Promise<void> {
+  _parseConfig(fileName, returning = false): Promise<void> {
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -451,7 +451,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         return '';
       })
       .then((res) => {
-        this.config = toml(res);
+        const tomlConfig = toml(res);
+        if (returning) {
+          return tomlConfig;
+        } else {
+          this.config = toml(res);
+        }
       }).catch((err) => {
         console.log('Configuration file missing.');
       });

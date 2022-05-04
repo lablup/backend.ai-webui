@@ -600,9 +600,19 @@ export default class BackendAILogin extends BackendAIPage {
       // Override configs with Webserver's config.
       const webuiEl = document.querySelector('backend-ai-webui');
       if (webuiEl) {
+        const fieldsToExclude = [
+          'general.apiEndpoint',
+          'general.apiEndpointText',
+          'general.siteDescription',
+        ]
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
-        webuiEl._parseConfig(webserverConfigURL).then(() => {
-          this.refreshWithConfig(webuiEl.config);
+        webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+          fieldsToExclude.forEach((key) => {
+            globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
+          });
+          const mergedConfig = globalThis.backendaiutils.mergeNestedObjects(webuiEl.config, config);
+          webuiEl.config = mergedConfig;
+          this.refreshWithConfig(mergedConfig);
         });
       }
     }

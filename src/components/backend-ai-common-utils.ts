@@ -84,6 +84,44 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
   }
 
+  /**
+   * Delete a nested key from an object.
+   *
+   * @param {Object} obj - target object
+   * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
+   * @param {String} sep - separator of the `nestedKey`
+   */
+  deleteNestedKeyFromObject(obj: Object, nestedKey: String, sep: String = '.') {
+    if (!obj || obj.constructor !== Object || !nestedKey) {
+      return obj;
+    }
+    const keys = nestedKey.split(sep)
+    const lastKey = keys.pop();
+    delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    return obj;
+  }
+
+  /**
+   * Merge two nested objects into one.
+   *
+   * @param {Object} obj1 - source object
+   * @param {Object} obj2 - the objects that will override obj1
+   */
+  mergeNestedObjects(obj1: Object, obj2: Object) {
+    if (!obj1 || !obj2) {
+      return obj1 || obj2 || {}
+    }
+    function _merge(a, b) {
+      return Object.entries(b).reduce((o, [k, v]) => {
+          o[k] = v && v.constructor === Object
+              ? _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v)
+              : v;
+          return o;
+      }, a);
+    }
+    return [obj1, obj2].reduce(_merge, {});
+  }
+
   render() {
     // language=HTML
     return html`
