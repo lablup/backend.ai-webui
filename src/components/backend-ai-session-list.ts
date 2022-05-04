@@ -400,6 +400,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.sessionStatusInfoDialog = this.shadowRoot.querySelector('#status-detail-dialog');
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
+    document.addEventListener('backend-ai-clear-timeout', () => {
+      clearTimeout(this.refreshTimer);
+    });
     this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
   }
 
