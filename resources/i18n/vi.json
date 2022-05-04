@@ -20,8 +20,8 @@
       "Information": "Thông tin",
       "About": "Trong khoảng",
       "AboutBackendAI": "Giới thiệu về Backend.AI",
-      "ChangeUserInformation": "Thay đổi thông tin người dùng",
-      "ChangeUserInfo": "Thay đổi thông tin người dùng",
+      "MyAccountInformation": "Thay đổi thông tin người dùng",
+      "MyAccount": "Thay đổi thông tin người dùng",
       "FullName": "Họ và tên",
       "FullNameInvalid": "Tên đầy đủ không được vượt quá 64 ký tự",
       "ChangePassword": "Đổi mật khẩu",
@@ -129,6 +129,7 @@
       "Environments": "Môi trường",
       "Start": "Khởi đầu",
       "FolderToMount": "Thư mục để gắn kết",
+      "FolderToMountList": "Thư mục để gắn kết",
       "ResourceAllocation": "Phân bổ tài nguyên",
       "NoSuitablePreset": "Không có cài đặt trước phù hợp",
       "Advanced": "Nâng cao",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Đã xóa thành công nhóm tài nguyên",
     "EnterValidResourceGroupName": "Nhập tên nhóm tài nguyên hợp lệ",
     "ResourceGroupNameRequired": "Tên nhóm tài nguyên là bắt buộc.",
-    "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại."
+    "ResourceGroupAlreadyExist": "Một nhóm tài nguyên có cùng tên đã tồn tại.",
+    "SetSchedulerOptions": "Đặt các tùy chọn của bộ lập lịch biểu",
+    "TimeoutSeconds": "Giây",
+    "ResourceGroupDetail": "Chi tiết Nhóm Tài nguyên"
   },
   "maintenance": {
     "General": "Chung",
@@ -1053,7 +1057,14 @@
     "FolderName": "Tên thư mục đã nhập:",
     "NotebookBadgeCodeHTML": "Mã huy hiệu sổ tay (HTML)",
     "NotebookBadgeCodeMarkdown": "Mã huy hiệu sổ tay (Markdown)",
-    "Installed": "Cài đặt"
+    "Installed": "Cài đặt",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Số liệu thống kê cho tháng này",
@@ -1112,6 +1123,7 @@
     "20chars": "(tối đa 20 ký tự)",
     "40chars": "(tối đa 40 ký tự)",
     "64chars": "(tối đa 64 ký tự)",
+    "200chars": "(tối đa 200 ký tự)",
     "255chars": "(tối đa 255 ký tự)",
     "500chars": "(tối đa 500 ký tự)",
     "512chars": "(tối đa 512 ký tự)",

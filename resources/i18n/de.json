@@ -20,8 +20,8 @@
       "Information": "Information",
       "About": "Über",
       "AboutBackendAI": "Über Backend.AI",
-      "ChangeUserInformation": "Benutzerinformationen ändern",
-      "ChangeUserInfo": "Benutzerinformationen ändern",
+      "MyAccountInformation": "Benutzerinformationen ändern",
+      "MyAccount": "Benutzerinformationen ändern",
       "FullName": "Vollständiger Name",
       "FullNameInvalid": "Der vollständige Name sollte 64 Zeichen nicht überschreiten",
       "ChangePassword": "Kennwort ändern",
@@ -129,6 +129,7 @@
       "Environments": "Umgebungen",
       "Start": "Start",
       "FolderToMount": "Ordner zum Einhängen",
+      "FolderToMountList": "Ordner zum Einhängen",
       "ResourceAllocation": "Ressourcenzuweisung",
       "NoSuitablePreset": "Keine passende Voreinstellung",
       "Advanced": "Fortgeschritten",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Ressourcengruppe erfolgreich gelöscht",
     "EnterValidResourceGroupName": "Geben Sie einen gültigen Ressourcengruppennamen ein",
     "ResourceGroupNameRequired": "Der Name der Ressourcengruppe ist erforderlich.",
-    "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden."
+    "ResourceGroupAlreadyExist": "Eine Ressourcengruppe mit demselben Namen ist bereits vorhanden.",
+    "SetSchedulerOptions": "Planer-Optionen festlegen",
+    "TimeoutSeconds": "Sekunden",
+    "ResourceGroupDetail": "Ressourcengruppendetail"
   },
   "maintenance": {
     "General": "Allgemeines",
@@ -1053,7 +1057,14 @@
     "FolderName": "Name des importierten Ordners:",
     "NotebookBadgeCodeHTML": "Notebook-Badge-Code (HTML)",
     "NotebookBadgeCodeMarkdown": "Notebook-Badge-Code (Abschlag)",
-    "Installed": "Eingerichtet"
+    "Installed": "Eingerichtet",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik für diesen Monat",
@@ -1112,6 +1123,7 @@
     "20chars": "(maximal 20 Zeichen)",
     "40chars": "(maximal 40 Zeichen)",
     "64chars": "(maximal 64 Zeichen)",
+    "200chars": "(maximal 200 Zeichen)",
     "255chars": "(maximal 255 Zeichen)",
     "500chars": "(maximal 500 Zeichen)",
     "512chars": "(maximal 512 Zeichen)",

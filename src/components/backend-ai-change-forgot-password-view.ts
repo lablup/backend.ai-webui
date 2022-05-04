@@ -1,9 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -41,7 +42,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   @property({type: Object}) failDialog = Object();
   @property({type: String}) token = '';
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -170,9 +171,10 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             <div style="height:1em"></div>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('webui.menu.Update')}"
               @click="${() => this._updatePassword()}"></mwc-button>
         </div>

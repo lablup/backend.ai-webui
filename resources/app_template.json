@@ -226,6 +226,15 @@
         "redirect": "",
         "src": "./resources/icons/default_app.svg"
       }
+    ],
+    "submit": [
+      {
+        "name": "submit",
+        "title": "Submit",
+        "category": "9.ETC",
+        "redirect": "",
+        "src": "./resources/icons/check-list.svg"
+      }
     ]
   }
 }

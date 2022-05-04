@@ -1,17 +1,20 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
+import 'weightless/textfield';
 
 import '@material/mwc-button';
 import '@material/mwc-linear-progress/mwc-linear-progress';
@@ -25,7 +28,7 @@ import './backend-ai-session-launcher';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-import marked from 'marked/lib/marked.esm.js';
+import {marked} from 'marked';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -85,7 +88,7 @@ export default class BackendAISummary extends BackendAIPage {
     this.invitations = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -456,7 +459,7 @@ export default class BackendAISummary extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div class="item" elevation="1" style="padding-bottom:20px;">
+      <div class="item" elevation="1">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
@@ -516,16 +519,16 @@ export default class BackendAISummary extends BackendAIPage {
                                         description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
   })}
                           </div>
-                          <div style="margin:15px auto;" class="horizontal layout justified">
+                          <div style="margin:15px auto;" class="horizontal layout end-justified">
+                            <mwc-button
+                                outlined
+                                label="${_t('summary.Decline')}"
+                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
                             <mwc-button
                                 unelevated
                                 label="${_t('summary.Accept')}"
                                 @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
                             <span class="flex"></span>
-                            <mwc-button
-                                outlined
-                                label="${_t('summary.Decline')}"
-                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
                           </div>
                         </div>
                       </lablup-activity-panel>`) : html`

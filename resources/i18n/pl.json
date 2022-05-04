@@ -20,8 +20,8 @@
       "Information": "Informacja",
       "About": "O",
       "AboutBackendAI": "O Backend.AI",
-      "ChangeUserInformation": "Zmień informacje o użytkowniku",
-      "ChangeUserInfo": "Zmień informacje o użytkowniku",
+      "MyAccountInformation": "Zmień informacje o użytkowniku",
+      "MyAccount": "Zmień informacje o użytkowniku",
       "FullName": "Pełne imię i nazwisko",
       "FullNameInvalid": "Pełna nazwa nie powinna przekraczać 64 znaków",
       "ChangePassword": "Zmień hasło",
@@ -129,6 +129,7 @@
       "Environments": "Środowiska",
       "Start": "Początek",
       "FolderToMount": "Folder do zamontowania",
+      "FolderToMountList": "Folder do zamontowania",
       "ResourceAllocation": "Alokacja zasobów",
       "NoSuitablePreset": "Brak odpowiedniego ustawienia wstępnego",
       "Advanced": "zaawansowane",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Grupa zasobów została pomyślnie usunięta",
     "EnterValidResourceGroupName": "Wpisz poprawną nazwę grupy zasobów",
     "ResourceGroupNameRequired": "Nazwa grupy zasobów jest wymagana.",
-    "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje."
+    "ResourceGroupAlreadyExist": "Grupa zasobów o tej samej nazwie już istnieje.",
+    "SetSchedulerOptions": "Ustaw opcje harmonogramu",
+    "TimeoutSeconds": "sekundy",
+    "ResourceGroupDetail": "Szczegóły grupy zasobów"
   },
   "maintenance": {
     "General": "Generał",
@@ -1053,7 +1057,14 @@
     "FolderName": "Nazwa importowanego folderu:",
     "NotebookBadgeCodeHTML": "Kod plakietki notatnika (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod plakietki notebooka (przecena)",
-    "Installed": "Zainstalowane"
+    "Installed": "Zainstalowane",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statystyki za ten miesiąc",
@@ -1112,6 +1123,7 @@
     "20chars": "(maksymalnie 20 znaków)",
     "40chars": "(maksymalnie 40 znaków)",
     "64chars": "(maksymalnie 64 znaki)",
+    "200chars": "(maksymalnie 200 znaków)",
     "255chars": "(maksymalnie 255 znaków)",
     "500chars": "(maksymalnie 500 znaków)",
     "512chars": "(maksymalnie 512 znaków)",

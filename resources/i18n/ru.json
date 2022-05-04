@@ -20,8 +20,8 @@
       "Information": "Информация",
       "About": "О нас",
       "AboutBackendAI": "О Backend.AI",
-      "ChangeUserInformation": "Изменить информацию о пользователе",
-      "ChangeUserInfo": "Изменить информацию о пользователе",
+      "MyAccountInformation": "Изменить информацию о пользователе",
+      "MyAccount": "Изменить информацию о пользователе",
       "FullName": "ФИО",
       "FullNameInvalid": "Полное имя не должно превышать 64 символа.",
       "ChangePassword": "Изменить пароль",
@@ -53,7 +53,9 @@
       "Experiments": "Эксперименты",
       "Menu": "Меню",
       "Run": "Запустить",
-      "UserName": "Имя пользователя"
+      "UserName": "Имя пользователя",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
@@ -129,6 +131,7 @@
       "Environments": "Вычислительные среды",
       "Start": "Старт",
       "FolderToMount": "Папка для монтажа",
+      "FolderToMountList": "Папка для монтажа",
       "ResourceAllocation": "Распределение ресурсов",
       "NoSuitablePreset": "Нет подходящей предустановки",
       "Advanced": "Продвинутый",
@@ -203,7 +206,33 @@
       "EnvironmentVariableConfigurationDone": "Переменная среды настроена успешно.",
       "EnvConfigWillDisappear": "Все несохраненные переменные среды и значения будут удалены.",
       "SharedMemoryAbbr": "Обш. Пам.",
-      "GPUSlot": "Слот"
+      "GPUSlot": "Слот",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -255,7 +284,28 @@
     "UseThisArguments": "Используйте эти аргументы",
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
-    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Отмена",
@@ -300,7 +350,12 @@
     "Running": "Выполнение",
     "BackendType": "Тип бэкэнда",
     "Capabilities": "Возможности",
-    "NoNetworkSignal": "Нет сетевых сигналов."
+    "NoNetworkSignal": "Нет сетевых сигналов.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "ядра",
@@ -392,7 +447,9 @@
     "UserAccountCreatedError": "Эта учетная запись уже была зарегистрирована.",
     "KeypairCreated": "Пара ключей успешно создана.",
     "UserNotFound": "Не удалось создать учетные данные, поскольку не удалось найти следующий идентификатор пользователя:",
-    "UserIDRequired": "Требуется идентификатор пользователя."
+    "UserIDRequired": "Требуется идентификатор пользователя.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
@@ -463,7 +520,11 @@
       "Edit": "Редактировать",
       "EditDelete": "Изменить + Удалить",
       "KickOut": "Выкинуть пользователя",
-      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс."
+      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -588,7 +649,9 @@
     "AppInfoDeleted": "Информация о приложении успешно удалена.",
     "SuccessfullyModified": "Успешно изменено",
     "ProblemOccurred": "Возникла проблема",
-    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают."
+    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают.",
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -660,7 +723,8 @@
     "Edit_ShellScriptTitle_1": "Редактировать",
     "Edit_ShellScriptTitle_2": " сценарий оболочки",
     "AutoLogout": "Автоматический выход",
-    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)"
+    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
@@ -738,7 +802,9 @@
     "RegistryUpdateFailed": "Не удалось обновить реестр.",
     "RescanImages": "Повторное сканирование изображений ...",
     "RescanFailed": "Ошибка повторного сканирования.",
-    "PleaseSelectOption": "Пожалуйста, выберите один вариант."
+    "PleaseSelectOption": "Пожалуйста, выберите один вариант.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",
@@ -763,7 +829,11 @@
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
-    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует."
+    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Установить параметры планировщика",
+    "TimeoutSeconds": "Секунды",
+    "ResourceGroupDetail": "Сведения о группе ресурсов"
   },
   "maintenance": {
     "General": "Общий",
@@ -838,7 +908,9 @@
     "Language": "Язык",
     "OSDefault": "ОС по умолчанию",
     "Russian": "русский",
-    "French": "Французский"
+    "French": "Французский",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "Общий",
@@ -894,7 +966,13 @@
       "digest": "Дайджест",
       "tag": "Тег",
       "none": "Никто"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -1055,7 +1133,14 @@
     "FolderName": "Имя импортированной папки:",
     "NotebookBadgeCodeHTML": "Код значка блокнота (HTML)",
     "NotebookBadgeCodeMarkdown": "Код значка блокнота (маркдаун)",
-    "Installed": "Установлены"
+    "Installed": "Установлены",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",
@@ -1114,6 +1199,7 @@
     "20chars": "(максимум 20 символов)",
     "40chars": "(максимум 40 символов)",
     "64chars": "(максимум 64 символа)",
+    "200chars": "(максимум 200 символов)",
     "255chars": "(максимум 255 символов)",
     "500chars": "(максимум 500 символов)",
     "512chars": "(максимум 512 символов)",

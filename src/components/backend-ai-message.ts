@@ -1,8 +1,8 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {LitElement} from 'lit-element';
+import {LitElement} from 'lit';
 
 /**
  Backend.AI Message handler
@@ -30,10 +30,6 @@ class BackendAiMessage extends LitElement {
 
   disconnectedCallback() {
     super.disconnectedCallback();
-  }
-
-  attributeChangedCallback(name, oldval, newval) {
-    super.attributeChangedCallback(name, oldval, newval);
   }
 }
 

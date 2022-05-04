@@ -4,7 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -275,7 +276,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return;
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -296,7 +297,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return html`
       <div class="card" elevation="0">
         <div class="layout horizontal center wrap" style="margin:0.2em">
-          <mwc-button dense outlined id="add-component-btn" icon="add"
+          <mwc-button outlined id="add-component-btn" icon="add"
               label="${_t('button.Add')}" @click="${() => this._openComponentAddDialog()}">
           </mwc-button>
           ${this.componentsSelected.length === 1 ? html`
@@ -315,7 +316,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
             </mwc-button>
           ` : html``}
           <span class="flex"></span>
-          <mwc-button dense raised id="run-pipeline-btn" icon="play_arrow"
+          <mwc-button raised id="run-pipeline-btn" icon="play_arrow"
               label="${_t('pipeline.RunPipeline')}" @click="${() => this._runPipeline()}">
           </mwc-button>
         </div>

@@ -20,8 +20,8 @@
       "Information": "Informations",
       "About": "À propos",
       "AboutBackendAI": "À propos de Backend.AI",
-      "ChangeUserInformation": "Modifier les informations utilisateur",
-      "ChangeUserInfo": "Modifier les informations utilisateur",
+      "MyAccountInformation": "Modifier les informations utilisateur",
+      "MyAccount": "Modifier les informations utilisateur",
       "FullName": "Nom et prénom",
       "FullNameInvalid": "Le nom complet ne doit pas dépasser 64 caractères",
       "ChangePassword": "Changer le mot de passe",
@@ -53,7 +53,9 @@
       "Experiments": "Expériences",
       "Menu": "Menu",
       "Run": "Exécuter",
-      "UserName": "Nom d'utilisateur"
+      "UserName": "Nom d'utilisateur",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -129,6 +131,7 @@
       "Environments": "Environnements",
       "Start": "Démarrer",
       "FolderToMount": "Dossier à monter",
+      "FolderToMountList": "Dossier à monter",
       "ResourceAllocation": "Allocation des ressources",
       "NoSuitablePreset": "Pas de préréglage approprié",
       "Advanced": "Avancée",
@@ -203,7 +206,33 @@
       "EnvironmentVariableConfigurationDone": "Variable d'environnement configurée avec succès.",
       "EnvConfigWillDisappear": "Toute variable et valeur d'environnement non enregistrées disparaîtront.",
       "SharedMemoryAbbr": "SHMEM",
-      "GPUSlot": "Slot"
+      "GPUSlot": "Slot",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -255,7 +284,28 @@
     "UseThisArguments": "Utilisez cet argument",
     "UseYourFavoriteVNCApp": "Utilisez votre application VNC préférée",
     "XRDPconnection": "Connexion RDP",
-    "UseYourFavoriteMSTSCApp": "Utilisez votre application MS Remote Desktop préférée"
+    "UseYourFavoriteMSTSCApp": "Utilisez votre application MS Remote Desktop préférée",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    }
   },
   "button": {
     "Cancel": "Annuler",
@@ -300,7 +350,12 @@
     "Running": "En cours",
     "BackendType": "Type de back-end",
     "Capabilities": "Capacités",
-    "NoNetworkSignal": "Aucun signal réseau."
+    "NoNetworkSignal": "Aucun signal réseau.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -392,7 +447,9 @@
     "UserAccountCreatedError": "Ce compte a déjà été enregistré.",
     "KeypairCreated": "Paire de clés créée avec succès.",
     "UserNotFound": "La création des identifiants a échoué, car l'ID utilisateur suivant est introuvable :",
-    "UserIDRequired": "L'ID utilisateur est requis."
+    "UserIDRequired": "L'ID utilisateur est requis.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",
@@ -463,7 +520,11 @@
       "Edit": "Éditer",
       "EditDelete": "Modifier+Supprimer",
       "KickOut": "Exclure l'utilisateur",
-      "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session."
+      "CannotDeleteFolder": "Impossible de supprimer le dossier monté dans une ou plusieurs sessions. Veuillez d'abord terminer la session.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -588,7 +649,9 @@
     "AppInfoDeleted": "Informations sur l'application supprimées avec succès.",
     "SuccessfullyModified": "Modifié avec succès",
     "ProblemOccurred": "Un problème est survenu",
-    "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas."
+    "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -660,7 +723,8 @@
     "Edit_ShellScriptTitle_1": "Éditer",
     "Edit_ShellScriptTitle_2": " script shell",
     "AutoLogout": "Déconnexion automatique",
-    "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)"
+    "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -738,7 +802,9 @@
     "RegistryUpdateFailed": "La mise à jour du registre a échoué.",
     "RescanImages": "Nouvelle numérisation des images...",
     "RescanFailed": "Échec de la réanalyse.",
-    "PleaseSelectOption": "Veuillez sélectionner une option."
+    "PleaseSelectOption": "Veuillez sélectionner une option.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
@@ -763,7 +829,11 @@
     "ResourceGroupDeleted": "Groupe de ressources supprimé avec succès",
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
-    "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà."
+    "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Définir les options du planificateur",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Détail du groupe de ressources"
   },
   "maintenance": {
     "General": "Général",
@@ -838,7 +908,9 @@
     "Language": "Langue",
     "OSDefault": "Système d'exploitation par défaut",
     "Russian": "Russe",
-    "French": "Français"
+    "French": "Français",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "Général",
@@ -894,7 +966,13 @@
       "digest": "Digérer",
       "tag": "Étiqueter",
       "none": "Rien"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1055,7 +1133,14 @@
     "FolderName": "Nom du dossier importé :",
     "NotebookBadgeCodeHTML": "Code de badge de bloc-notes (HTML)",
     "NotebookBadgeCodeMarkdown": "Code de badge de bloc-notes (Markdown)",
-    "Installed": "installée"
+    "Installed": "installée",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiques pour ce mois",
@@ -1114,6 +1199,7 @@
     "20chars": "(maximum 20 caractères)",
     "40chars": "(maximum 40 caractères)",
     "64chars": "(maximum 64 caractères)",
+    "200chars": "(maximum 200 caractères)",
     "255chars": "(maximum 255 caractères)",
     "500chars": "(maximum 500 caractères)",
     "512chars": "(maximum 512 caractères)",

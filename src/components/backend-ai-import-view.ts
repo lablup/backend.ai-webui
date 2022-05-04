@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
@@ -49,12 +51,22 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
   @property({type: String}) importMessage = '';
+  @property({type: String}) importGitlabMessage = '';
+  @property({type: Array}) allowedGroups = [];
+  @property({type: Array}) allowed_folder_type = [];
+  @property({type: String}) vhost = '';
+  @property({type: Array}) vhosts = [];
+  @property({type: Object}) storageInfo = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -77,9 +89,16 @@ export default class BackendAIImport extends BackendAIPage {
           margin: 10px auto;
         }
 
-        mwc-textfield#notebook-url,
-        mwc-textfield#github-repo-url {
+        mwc-textfield#notebook-url {
           width: 75%;
+        }
+        mwc-textfield.repo-url {
+          width: 100%;
+        }
+        mwc-textfield#gitlab-default-branch-name {
+          margin: inherit;
+          width: 30%;
+          margin-bottom: 10px;
         }
 
         mwc-button {
@@ -87,11 +106,51 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: #38bd73 !important;
         }
 
+        mwc-button.left-align {
+          margin-left: auto;
+        }
+
+        mwc-select {
+          margin: auto;
+          width: 35%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.fixed-position > mwc-list-item {
+          width: 200px; // default width
+        }
+        mwc-select.github-select {
+          margin: inherit;
+          width: 68%;
+          margin-bottom: 10px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-select-fill-color: transparent;
+          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
+          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
+          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-list-vertical-padding: 5px;
+        }
+        mwc-select.github-select > mwc-list-item {
+          width: 440px; // default width
+        }
+
         @media screen and (max-width: 1015px) {
-          mwc-textfield#notebook-url,
-          mwc-textfield#github-repo-url {
+          mwc-textfield#notebook-url {
             width: 85%;
             margin: 10px 0px;
+          }
+          mwc-textfield.repo-url {
+            width: 85%;
+            margin: 10px 0px;
+          }
+          mwc-textfield#gitlab-default-branch-name {
+            width: 25%;
+            margin: inherit;
           }
           mwc-button {
             width: 36px;
@@ -109,6 +168,41 @@ export default class BackendAIImport extends BackendAIPage {
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
+    globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
+      this.allowed_folder_type = response;
+    });
+    this._getFolderList();
+    fetch('resources/storage_metadata.json').then(
+      (response) => response.json()
+    ).then(
+      (json) => {
+        const storageInfo = Object();
+        for (const key in json.storageInfo) {
+          if ({}.hasOwnProperty.call(json.storageInfo, key)) {
+            storageInfo[key] = {};
+            if ('name' in json.storageInfo[key]) {
+              storageInfo[key].name = json.storageInfo[key].name;
+            }
+            if ('description' in json.storageInfo[key]) {
+              storageInfo[key].description = json.storageInfo[key].description;
+            } else {
+              storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+            }
+            if ('icon' in json.storageInfo[key]) {
+              storageInfo[key].icon = json.storageInfo[key].icon;
+            } else {
+              storageInfo[key].icon = 'local.png';
+            }
+            if ('dialects' in json.storageInfo[key]) {
+              json.storageInfo[key].dialects.forEach((item) => {
+                storageInfo[item] = storageInfo[key];
+              });
+            }
+          }
+        }
+        this.storageInfo = storageInfo;
+      }
+    );
   }
 
   async _viewStateChanged(active: boolean) {
@@ -199,19 +293,125 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
       name = nameWithVersion.replace('/tree/', '').substring(1);
+      url = url.replace('https://github.com', 'https://codeload.github.com');
+      url = url + '/zip/' + tree;
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
     } else {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
+      var repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
+      const getRepoUrl = async() => {
+        try {
+          const response = await fetch(repoUrl);
+          if (response.status === 200) {
+            const responseJson = await response.json();
+            return responseJson.default_branch;
+          } else if (response.status === 404) {
+            throw 'WrongURLType';
+          } else if (response.status === 403 || response.status === 429) { //forbidden & Too Many Requests
+            const limitCnt = response.headers.get('x-ratelimit-limit');
+            const limitUsedCnt = response.headers.get('x-ratelimit-used')
+            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
+            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
+            if (limitRemainingCnt === '0') {
+              throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+            } else {
+              throw 'GithubAPIEtcError';
+            }
+          } else if (response.status === 500) {
+            throw 'GithubInternalError';
+          } else {
+            console.log(`error statusCode: ${response.status}, body: ${response.text}`);
+            throw 'GithubAPIEtcError';
+          }
+        } catch (error) {
+          throw error;
+        }
+      }
+      return getRepoUrl().then((result) => {
+        tree = result;
+        url = url.replace('https://github.com', 'https://codeload.github.com');
+        url = url + '/zip/' + tree;
+        const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+        if (['http', 'https'].includes(protocol)) {
+          return this.importRepoFromURL(url, name);
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importMessage = this.notification.text;
+          this.notification.show();
+          return false;
+        }
+      }).catch((e) => { // check exception
+        switch (e) {
+          case 'WrongURLType':
+            this.notification.text = _text('import.WrongURLType');
+            break;
+          case 'GithubInternalError':
+            this.notification.text = _text('import.GithubInternalError');
+            break;
+          default:
+            if (e.indexOf('|') !== -1) {
+              this.notification.text = _text('import.GithubAPILimitError');
+            } else {
+              this.notification.text = _text('import.GithubAPIEtcError');
+            }
+            break;
+        }
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      });
     }
-    url = url.replace('https://github.com', 'https://codeload.github.com');
-    url = url + '/zip/' + tree;
-    const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-    if (['http', 'https'].includes(protocol)) {
-      return this.importRepoFromURL(url, name);
+  }
+
+  getGitlabRepoFromURL() {
+    let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
+    let tree = 'master';
+    let getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    if (getBranchName.length > 0) {
+      tree = getBranchName;
+    }
+    let name = '';
+    // if contains .git extension, then remove it.
+    if (url.substring(url.length - 4, url.length) === '.git') {
+      url = url.split('.git')[0];
+    }
+
+    if (url.includes('/tree')) { // Branch.
+      var pathname = new URL(url).pathname;
+      var splitPaths = pathname.split( '/' );
+      name = splitPaths[2];
+      tree = splitPaths[splitPaths.length -1];
+      url = url.replace('/tree/', '/archive/');
+      url += '/' + name + '-' + tree + '.zip';
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
     } else {
-      this.notification.text = _text('import.WrongURLType');
-      this.importMessage = this.notification.text;
-      this.notification.show();
-      return false;
+      name = url.split('/').slice(-1)[0];
+      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip'
+      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+      if (['http', 'https'].includes(protocol)) {
+        return this.importRepoFromURL(url, name);
+      } else {
+        this.notification.text = _text('import.WrongURLType');
+        this.importGitlabMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      }
     }
   }
 
@@ -224,15 +424,15 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
-    folderName = await this._checkFolderNameAlreadyExists(folderName);
-    await this._addFolderWithName(folderName);
+    folderName = await this._checkFolderNameAlreadyExists(folderName, url);
+    await this._addFolderWithName(folderName, url);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
-      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000);
+      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000, undefined);
     }).then(async (response) => {
       indicator.set(80, _text('import.CleanUpImportTask'));
       await globalThis.backendaiclient.destroy(response.sessionId);
@@ -246,15 +446,24 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _addFolderWithName(name) {
+  async _addFolderWithName(name, url) {
     const permission = 'rw';
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const host = vhost_info.default;
-    name = await this._checkFolderNameAlreadyExists(name);
+    let host = vhost_info.default;
+    if (url.includes('github.com/')) {
+      host = this.shadowRoot.querySelector('#github-add-folder-host').value;
+    } else {
+      host = this.shadowRoot.querySelector('#gitlab-add-folder-host').value;
+    }
+    name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      this.importMessage = _text('import.FolderName') + name;
+      if (url.includes('github.com/')) {
+        this.importMessage = _text('import.FolderName') + name;
+      } else {
+        this.importGitlabMessage = _text('import.FolderName') + name;
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -265,14 +474,18 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _checkFolderNameAlreadyExists(name) {
+  async _checkFolderNameAlreadyExists(name, url) {
     const vfolderObj = await globalThis.backendaiclient.vfolder.list();
     const vfolders = vfolderObj.map(function(value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
-      this.importMessage = this.notification.text;
+      if (url.includes('github.com/')) {
+        this.importMessage = this.notification.text;
+      } else {
+        this.importGitlabMessage = this.notification.text;
+      }
       this.notification.show();
       let i = 1;
       let newName: string = name;
@@ -364,6 +577,16 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
+  async _getFolderList() {
+    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.vhosts = vhost_info.allowed;
+    this.vhost = vhost_info.default;
+    if ((this.allowed_folder_type as string[]).includes('group')) {
+      const group_info = await globalThis.backendaiclient.group.list();
+      this.allowedGroups = group_info.groups;
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -396,7 +619,7 @@ export default class BackendAIImport extends BackendAIPage {
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
               <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-button style="width:100%;" @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
+              <mwc-button fullwidth @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
               <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
               <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
             </div>
@@ -410,13 +633,46 @@ export default class BackendAIImport extends BackendAIPage {
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" label="${_t('import.GitHubURL')}"
+              <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-button icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
+              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
             ${this.importMessage}
+          </div>
+        </lablup-activity-panel>
+      </div>
+      <div class="horizontal wrap layout">
+        <lablup-activity-panel title="${_t('import.ImportGitlabRepo')}" elevation="1" horizontalsize="2x">
+          <div slot="message">
+            <div class="description">
+              <p>${_t('import.GitlabRepoWillBeFolder')}</p>
+            </div>
+            <div class="horizontal wrap layout center">
+              <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
+                             maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
+              <mwc-select class="fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+                ${this.vhosts.map((item, idx) => html `
+                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                    <span>${item}</span>
+                </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+                <span>${_t('import.GetToFolder')}</span>
+              </mwc-button>
+            </div>
+            ${this.importGitlabMessage}
           </div>
         </lablup-activity-panel>
       </div>

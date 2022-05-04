@@ -31,8 +31,10 @@ export default class BackendAIPainKiller {
     // virtual folders
     'server responded failure: 400 Bad Request - The virtual folder already exists with the same name.': 'error.VirtualFolderAlreadyExist',
     '400 Bad Request - The virtual folder already exists with the same name.': 'error.VirtualFolderAlreadyExist',
+    'server responded failure: 400 Bad Request - One of your accessible vfolders already has the name you requested.': 'error.VirtualFolderAlreadyExist',
     'server responded failure: 400 Bad Request - You cannot create more vfolders.': 'error.MaximumVfolderCreation',
     'server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)': 'error.MaximumVfolderCreation',
+    'server responded failure: 400 Bad Request - Cannot change the options of a vfolder that is not owned by myself.': 'error.CannotChangeVirtualFolderOption',
     // Resource
     'server responded failure: 412 Precondition Failed - You have reached your resource limit.': 'error.ReachedResourceLimit',
     // User

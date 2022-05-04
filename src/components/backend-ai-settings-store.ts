@@ -1,8 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from 'lit-element';
+import {html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 /**

@@ -20,8 +20,8 @@
       "Information": "Em formação",
       "About": "Cerca de",
       "AboutBackendAI": "Sobre Backend.AI",
-      "ChangeUserInformation": "Alterar as informações do usuário",
-      "ChangeUserInfo": "Alterar informações do usuário",
+      "MyAccountInformation": "Alterar as informações do usuário",
+      "MyAccount": "Alterar informações do usuário",
       "FullName": "Nome completo",
       "FullNameInvalid": "O nome completo não deve ter mais de 64 caracteres",
       "ChangePassword": "Alterar a senha",
@@ -129,6 +129,7 @@
       "Environments": "Ambientes",
       "Start": "Começar",
       "FolderToMount": "Pasta para montar",
+      "FolderToMountList": "Pasta para montar",
       "ResourceAllocation": "Alocação de recursos",
       "NoSuitablePreset": "Sem predefinição adequada",
       "Advanced": "Avançado",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Grupo de recursos excluído com sucesso",
     "EnterValidResourceGroupName": "Insira um nome de grupo de recursos válido",
     "ResourceGroupNameRequired": "O nome do grupo de recursos é obrigatório.",
-    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome."
+    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
+    "SetSchedulerOptions": "Definir opções do agendador",
+    "TimeoutSeconds": "Segundos",
+    "ResourceGroupDetail": "Detalhe do grupo de recursos"
   },
   "maintenance": {
     "General": "Em geral",
@@ -1055,7 +1059,14 @@
     "FolderName": "Nome da pasta importada:",
     "NotebookBadgeCodeHTML": "Código do emblema do notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Código do emblema do notebook (Markdown)",
-    "Installed": "Instalado"
+    "Installed": "Instalado",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Estatísticas para este mês",
@@ -1114,6 +1125,7 @@
     "20chars": "(máximo de 20 caracteres)",
     "40chars": "(máximo de 40 caracteres)",
     "64chars": "(máximo de 64 caracteres)",
+    "200chars": "(máximo de 200 caracteres)",
     "255chars": "(máximo de 255 caracteres)",
     "500chars": "(máximo de 500 caracteres)",
     "512chars": "(máximo de 512 caracteres)",
