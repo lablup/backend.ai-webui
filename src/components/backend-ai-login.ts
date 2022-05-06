@@ -604,7 +604,7 @@ export default class BackendAILogin extends BackendAIPage {
           'general.apiEndpoint',
           'general.apiEndpointText',
           'general.siteDescription',
-          'wsproxy.proxyURL',
+          'wsproxy',
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
         webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
