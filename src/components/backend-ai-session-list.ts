@@ -2040,27 +2040,20 @@ export default class BackendAiSessionList extends BackendAIPage {
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}" height-by-rows>
         ${this._isRunning ? html`
-          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+          <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
           </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+          <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
                                      header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
                                      .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                   .renderer="${this._boundArchitectureRenderer}">
-        </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
+        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
         <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
@@ -2073,6 +2066,13 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
                                  path="created_at" .renderer="${this._boundReservationRenderer}">
         </vaadin-grid-sort-column>
+        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                   .renderer="${this._boundArchitectureRenderer}">
+        </vaadin-grid-filter-column>
+        ${this._isIntegratedCondition ? html`
+          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+        ` :
+    html``}
         ${this.is_superadmin ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                               .renderer="${this._boundAgentRenderer}">
