@@ -770,7 +770,8 @@
     "SuccessfullyUpdated": "Политика ресурсов успешно обновлена.",
     "SuccessfullyDeleted": "Политика ресурсов успешно удалена.",
     "PolicyNameEmpty": "Имя политики не должно быть пустым.",
-    "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:"
+    "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Имя хоста",

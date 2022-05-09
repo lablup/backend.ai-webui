@@ -770,7 +770,8 @@
     "SuccessfullyUpdated": "Нөөцийн бодлогыг амжилттай шинэчилсэн.",
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
-    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:"
+    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",

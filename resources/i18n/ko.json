@@ -769,7 +769,8 @@
     "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다.",
     "SuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
-    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: "
+    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
+    "MaxSessionLifeTime": "세션 최대 실행시간"
   },
   "registry": {
     "Hostname": "호스트명",
