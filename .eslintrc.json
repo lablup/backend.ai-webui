@@ -23,6 +23,7 @@
   "plugins": [
     "@typescript-eslint",
     "lit-a11y",
+    "unicorn",
     "wc"
   ],
   "rules": {
@@ -35,6 +36,7 @@
     "no-empty": "off",
     "no-empty-function": "off",
     "no-invalid-this": "off",
-    "wc/guard-super-call": "off"
+    "wc/guard-super-call": "off",
+    "unicorn/template-indent": "error"
   }
 }
