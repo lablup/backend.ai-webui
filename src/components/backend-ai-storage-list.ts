@@ -556,7 +556,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         ${this.enableStorageProxy ? html`
           <!--<vaadin-grid-column
               auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
-              .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
+              .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>
+        ` : html``}
         <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
       </vaadin-grid>
 
@@ -570,8 +571,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
                 <mwc-select class="fixed-position" id="modify-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}" fixedMenuPosition>
                 ${Object.keys(this.quotaUnit).map((unit, idx) => html`
-                      <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
-                    `)}
+                  <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
+                `)}
                 </mwc-select>
             </div>
             <span class="helper-text">${_t('data.folders.MaxFolderQuota')} : ${this.maxSize.value + ' ' + this.maxSize.unit}</span>
@@ -583,13 +584,13 @@ export default class BackendAiStorageList extends BackendAIPage {
                   `)}
           </mwc-select>
           ${this.enableStorageProxy ? html`
-          <!--<div class="horizontal layout flex wrap center justified">
-            <p style="color:rgba(0, 0, 0, 0.6);">
-              ${_t('data.folders.Cloneable')}
-            </p>
-            <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
-            </mwc-switch>
-          </div>-->
+            <!--<div class="horizontal layout flex wrap center justified">
+              <p style="color:rgba(0, 0, 0, 0.6);">
+                ${_t('data.folders.Cloneable')}
+              </p>
+              <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
+              </mwc-switch>
+            </div>-->
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -676,14 +677,18 @@ export default class BackendAiStorageList extends BackendAIPage {
               <div slot="secondary" class="horizontal layout">
               ${this.folderInfo.permission ? html`
                 ${this._hasPermission(this.folderInfo, 'r') ? html`
-                    <lablup-shields app="" color="green"
-                                    description="R" ui="flat"></lablup-shields>` : html``}
+                  <lablup-shields app="" color="green"
+                                  description="R" ui="flat"></lablup-shields>
+                ` : html``}
                 ${this._hasPermission(this.folderInfo, 'w') ? html`
-                    <lablup-shields app="" color="blue"
-                                    description="W" ui="flat"></lablup-shields>` : html``}
+                  <lablup-shields app="" color="blue"
+                                  description="W" ui="flat"></lablup-shields>
+                ` : html``}
                 ${this._hasPermission(this.folderInfo, 'd') ? html`
-                    <lablup-shields app="" color="red"
-                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
+                  <lablup-shields app="" color="red"
+                                  description="D" ui="flat"></lablup-shields>
+                ` : html``}
+              ` : html``}
               </div>
             </mwc-list-item>
             ${this.enableStorageProxy ? html`
@@ -691,9 +696,9 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span><strong>${_t('data.folders.Cloneable')}</strong></span>
                 <span class="monospace" slot="secondary">
                     ${this.folderInfo.cloneable ? html`
-                    <mwc-icon class="cloneable" style="color:green;">check_circle</mwc-icon>
+                      <mwc-icon class="cloneable" style="color:green;">check_circle</mwc-icon>
                     ` : html`
-                    <mwc-icon class="cloneable" style="color:red;">block</mwc-icon>
+                      <mwc-icon class="cloneable" style="color:red;">block</mwc-icon>
                     `}
                 </span>
               </mwc-list-item>
@@ -758,11 +763,11 @@ export default class BackendAiStorageList extends BackendAIPage {
               </mwc-button>
             </div>
           ` : html`
-          <mwc-button
-              id="readonly-btn"
-              disabled>
-            <span>${_t('data.explorer.ReadonlyFolder')}</span>
-          </mwc-button>
+            <mwc-button
+                id="readonly-btn"
+                disabled>
+              <span>${_t('data.explorer.ReadonlyFolder')}</span>
+            </mwc-button>
           `}
         </div>
         <div slot="content">
@@ -787,15 +792,16 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
             ${this.uploadFilesExist ? html`
-            <div class="horizontal layout start-justified">
-              <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
-                ${_t('data.explorer.StopUploading')}
-              </mwc-button>
-            </div>
-          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
-            <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this._boundUploadListRenderer}"></vaadin-grid-column>
-            <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
-          </vaadin-grid>` : html``}
+              <div class="horizontal layout start-justified">
+                  <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
+                    ${_t('data.explorer.StopUploading')}
+                  </mwc-button>
+                </div>
+              <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
+                <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this._boundUploadListRenderer}"></vaadin-grid-column>
+                <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
+              </vaadin-grid>
+            ` : html``}
           <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
@@ -948,20 +954,20 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-button outlined fullwidth @click="${(e) => this._keepFileExtension()}">
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
     html`
-                ${_text('data.explorer.KeepFileExtension') + this.oldFileExtension}
-              ` :
+      ${_text('data.explorer.KeepFileExtension') + this.oldFileExtension}
+    ` :
     html`
-                ${this.oldFileExtension + _text('data.explorer.KeepFileExtension')}
-              `}
+      ${this.oldFileExtension + _text('data.explorer.KeepFileExtension')}
+    `}
           </mwc-button>
           <mwc-button unelevated fullwidth @click="${() => this._renameFile()}">
             ${globalThis.backendaioptions.get('language') !== 'ko' ?
     html`
-                ${this.newFileExtension ? _text('data.explorer.UseNewFileExtension') + this.newFileExtension : _text('data.explorer.RemoveFileExtension')}
-              ` :
+      ${this.newFileExtension ? _text('data.explorer.UseNewFileExtension') + this.newFileExtension : _text('data.explorer.RemoveFileExtension')}
+    ` :
     html`
-                ${this.newFileExtension ? this.newFileExtension + _text('data.explorer.UseNewFileExtension') : _text('data.explorer.RemoveFileExtension')}
-              `}
+      ${this.newFileExtension ? this.newFileExtension + _text('data.explorer.UseNewFileExtension') : _text('data.explorer.RemoveFileExtension')}
+    `}
           </mwc-button>
         </div>
       </backend-ai-dialog>
@@ -1036,17 +1042,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   permissionRenderer(root, column?, rowData?) {
     render(
       html`
-      <div class="vertical layout">
-        <wl-select label="${_t('data.folders.SelectPermission')}">
-          <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
-          <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
-          <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
-          <option value="kickout">${_t('data.folders.KickOut')}</option>
-        </wl-select>
-      </div>`, root);
-    this.shadowRoot.querySelector('wl-select').requestUpdate().then(()=>{
-      render(
-        html`
         <div class="vertical layout">
           <wl-select label="${_t('data.folders.SelectPermission')}">
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
@@ -1054,7 +1049,20 @@ export default class BackendAiStorageList extends BackendAIPage {
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
             <option value="kickout">${_t('data.folders.KickOut')}</option>
           </wl-select>
-        </div>`, root);
+        </div>
+      `, root);
+    this.shadowRoot.querySelector('wl-select').requestUpdate().then(()=>{
+      render(
+        html`
+          <div class="vertical layout">
+            <wl-select label="${_t('data.folders.SelectPermission')}">
+              <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
+              <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
+              <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
+              <option value="kickout">${_t('data.folders.KickOut')}</option>
+            </wl-select>
+          </div>
+        `, root);
     });
   }
 
@@ -1084,13 +1092,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <vaadin-item class="progress-item">
-        <div>
-          ${rowData.item.complete ? html`
-            <wl-icon>check</wl-icon>
-          ` : html``}
-        </div>
-      </vaadin-item>
+        <vaadin-item class="progress-item">
+          <div>
+            ${rowData.item.complete ? html`
+              <wl-icon>check</wl-icon>
+            ` : html``}
+          </div>
+        </vaadin-item>
       `, root
     );
   }
@@ -1099,17 +1107,17 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <vaadin-item>
-        <span>${rowData.item.name}</span>
-        ${rowData.item.complete ? html`` : html`
-        <div>
-            <vaadin-progress-bar value="${rowData.item.progress}"></vaadin-progress-bar>
-          </div>
-          <div>
-            <span>${rowData.item.caption}</span>
-          </div>
-        `}
-      </vaadin-item>
+        <vaadin-item>
+          <span>${rowData.item.name}</span>
+          ${rowData.item.complete ? html`` : html`
+            <div>
+                <vaadin-progress-bar value="${rowData.item.progress}"></vaadin-progress-bar>
+              </div>
+              <div>
+                <span>${rowData.item.caption}</span>
+              </div>
+          `}
+        </vaadin-item>
       `, root
     );
   }
@@ -1127,9 +1135,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout vertical">
-        <span class="indicator monospace">${rowData.item.id}</span>
-      </div>
+        <div class="layout vertical">
+          <span class="indicator monospace">${rowData.item.id}</span>
+        </div>
       `, root
     );
   }
@@ -1192,90 +1200,90 @@ export default class BackendAiStorageList extends BackendAIPage {
 
           ${this._hasPermission(rowData.item, 'r') ?
     html`
-              <mwc-icon-button
-                class="fg blue controls-running"
-                icon="folder_open"
-                @click="${(e) =>
-    this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
+      <mwc-icon-button
+        class="fg blue controls-running"
+        icon="folder_open"
+        @click="${(e) =>
+      this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
                 rowData.item.is_owner ||
                 (rowData.item.type === 'group' && this.is_admin)))}"
-                .folder-id="${rowData.item.name}"></mwc-icon-button>
-            ` :
+        .folder-id="${rowData.item.name}"></mwc-icon-button>
+    ` :
     html``
 }
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
     html`
-            <mwc-icon-button
-              class="fg blue controls-running"
-              icon="content_copy"
-              disabled
-              @click="${() => {
-    this._requestCloneFolder(rowData.item);
-  }}"></mwc-icon-button>
-            ` : html``}-->
+      <mwc-icon-button
+        class="fg blue controls-running"
+        icon="content_copy"
+        disabled
+        @click="${() => {
+      this._requestCloneFolder(rowData.item);
+    }}"></mwc-icon-button>
+    ` : html``}-->
           ${rowData.item.is_owner ?
     html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="share"
-                @click="${(e) => this._shareFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+        icon="share"
+        @click="${(e) => this._shareFolderDialog(e)}"
+      ></mwc-icon-button>
+    ` :
     html``
 }
 
           ${rowData.item.is_owner ?
     html`
-              <mwc-icon-button
-                class="fg cyan controls-running"
-                icon="perm_identity"
-                @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg cyan controls-running"
+        icon="perm_identity"
+        @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
+      ></mwc-icon-button>
+    ` :
     html``
 }
           ${rowData.item.is_owner ?
     html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="create"
-                @click="${(e) => this._renameFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+        icon="create"
+        @click="${(e) => this._renameFolderDialog(e)}"
+      ></mwc-icon-button>
+    ` :
     html``
 }
           ${rowData.item.is_owner ?
     html`
-              <mwc-icon-button
-                class="fg blue controls-running"
-                icon="settings"
-                @click="${(e) => this._modifyFolderOptionDialog(e)}"
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg blue controls-running"
+        icon="settings"
+        @click="${(e) => this._modifyFolderOptionDialog(e)}"
+      ></mwc-icon-button>
+    ` :
     html``
 }
           ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
     html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="delete"
-                @click="${(e) => this._deleteFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg red controls-running"
+        icon="delete"
+        @click="${(e) => this._deleteFolderDialog(e)}"
+      ></mwc-icon-button>
+    ` :
     html``
 }
           ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
     html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="remove_circle"
-                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
+      <mwc-icon-button
+        class="fg red controls-running"
+        icon="remove_circle"
+        @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+      ></mwc-icon-button>
+    ` :
     html``
 }
         </div>
-       `, root
+      `, root
     );
   }
 
@@ -1303,7 +1311,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button id="delete-btn" ?disabled="${!this.isWritable}" class="tiny fg red" icon="delete_forever"
               filename="${rowData.item.filename}" @click="${(e) => this._openDeleteFileDialog(e)}"></mwc-icon-button>
         </div>
-       `, root
+      `, root
     );
   }
 
@@ -1319,17 +1327,17 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         ${this._isDir(rowData.item) ?
     html`
-          <div class="indicator horizontal center layout" name="${rowData.item.filename}">
-            <mwc-icon-button class="fg controls-running" icon="folder_open" name="${rowData.item.filename}"
-                               @click="${(e) => this._enqueueFolder(e)}"></mwc-icon-button>
-            ${rowData.item.filename}
-          </div>
-       ` : html`
-          <div class="indicator horizontal center layout">
-            <mwc-icon-button class="fg controls-running" icon="insert_drive_file"></mwc-icon-button>
-            ${rowData.item.filename}
-          </div>
-       `}
+      <div class="indicator horizontal center layout" name="${rowData.item.filename}">
+        <mwc-icon-button class="fg controls-running" icon="folder_open" name="${rowData.item.filename}"
+                           @click="${(e) => this._enqueueFolder(e)}"></mwc-icon-button>
+        ${rowData.item.filename}
+      </div>
+    ` : html`
+      <div class="indicator horizontal center layout">
+        <mwc-icon-button class="fg controls-running" icon="insert_drive_file"></mwc-icon-button>
+        ${rowData.item.filename}
+      </div>
+    `}
       `, root
     );
   }
@@ -1347,15 +1355,19 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="horizontal center-justified wrap layout">
         ${this._hasPermission(rowData.item, 'r') ? html`
-            <lablup-shields app="" color="green"
-                            description="R" ui="flat"></lablup-shields>` : html``}
+          <lablup-shields app="" color="green"
+                          description="R" ui="flat"></lablup-shields>
+        ` : html``}
         ${this._hasPermission(rowData.item, 'w') ? html`
-            <lablup-shields app="" color="blue"
-                            description="W" ui="flat"></lablup-shields>` : html``}
+          <lablup-shields app="" color="blue"
+                          description="W" ui="flat"></lablup-shields>
+        ` : html``}
         ${this._hasPermission(rowData.item, 'd') ? html`
-            <lablup-shields app="" color="red"
-                            description="D" ui="flat"></lablup-shields>` : html``}
-        </div>`, root
+          <lablup-shields app="" color="red"
+                          description="D" ui="flat"></lablup-shields>
+        ` : html``}
+        </div>
+      `, root
     );
   }
 
@@ -1373,8 +1385,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         ${rowData.item.is_owner ? html`
           <div class="horizontal center-justified center layout">
             <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
-          </div>`: html``}
-        `, root
+          </div>
+        `: html``}
+      `, root
     );
   }
 
@@ -1392,8 +1405,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         ${rowData.item.cloneable ? html`
           <div class="horizontal center-justified center layout">
             <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
-          </div>`: html``}
-        `, root
+          </div>
+        `: html``}
+      `, root
     );
   }
 
@@ -1410,7 +1424,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="layout vertical">
             <span>${this._humanReadableTime(rowData.item.ctime)}</span>
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -1431,7 +1446,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         ` : html`
           <wl-icon class="fg green">group</wl-icon>
         `}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 

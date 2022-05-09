@@ -932,30 +932,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             ${this.supportLanguages.map((item) => html`
               <mwc-list-item value="${item.code}" ?selected=${globalThis.backendaioptions.get('language') === item.code}>
                 ${item.name}
-              </mwc-list-item>`)}
+              </mwc-list-item>
+            `)}
             </mwc-select>
           </div>
         </div>
         ${globalThis.isElectron ? html`
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-desc">
-            <div class="title">${_t('usersettings.KeepLoginSessionInformation')}</div>
-            <div class="description">${_tr('usersettings.DescKeepLoginSessionInformation')}</div>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start start-justified layout setting-desc">
+              <div class="title">${_t('usersettings.KeepLoginSessionInformation')}</div>
+              <div class="description">${_tr('usersettings.DescKeepLoginSessionInformation')}</div>
+            </div>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="preserve-login-switch" @click="${(e) => this.togglePreserveLogin(e)}" ?selected="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
+            </div>
           </div>
-          <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="preserve-login-switch" @click="${(e) => this.togglePreserveLogin(e)}" ?selected="${globalThis.backendaioptions.get('preserve_login')}"></mwc-switch>
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical start start-justified layout setting-text-desc">
+              <div class="title">${_t('usersettings.PreferredSSHPort')}</div>
+              <div class="description">${_tr('usersettings.DescPreferredSSHPort')}</div>
+            </div>
+            <div class="vertical center-justified layout setting-text">
+              <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
+                  value="${this.preferredSSHPort}" validationMessage="${_t('credential.validation.NumbersOnly')}" auto-validate maxLength="5"></mwc-textfield>
+            </div>
           </div>
-        </div>
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical start start-justified layout setting-text-desc">
-            <div class="title">${_t('usersettings.PreferredSSHPort')}</div>
-            <div class="description">${_tr('usersettings.DescPreferredSSHPort')}</div>
-          </div>
-          <div class="vertical center-justified layout setting-text">
-            <mwc-textfield pattern="[0-9]*" @change="${(e) => this.changePreferredSSHPort(e)}"
-                value="${this.preferredSSHPort}" validationMessage="${_t('credential.validation.NumbersOnly')}" auto-validate maxLength="5"></mwc-textfield>
-          </div>
-        </div>
         ` : html``}
         <div class="horizontal layout wrap setting-item">
           <div class="vertical start start-justified layout setting-desc">
@@ -1007,43 +1008,44 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <div class="description">
             ${_t('usersettings.DescNoBetaFeatures')}
           </div>
-      ` : html``}
+        ` : html``}
       </div>
       ${this.shell_script_edit ? html`
         <h3 class="horizontal center layout">
-          <span>${_t('usersettings.ShellEnvironments')}</span>
+            <span>${_t('usersettings.ShellEnvironments')}</span>
+            <span class="flex"></span>
+          </h3>
+          <div class="horizontal wrap layout">
+            <mwc-button
+              class="shell-button"
+              icon="edit"
+              outlined
+              label="${_t('usersettings.EditBootstrapScript')}"
+              @click="${() => this._launchBootstrapScriptDialog()}"></mwc-button>
+            <mwc-button
+              class="shell-button"
+              icon="edit"
+              outlined
+              label="${_t('usersettings.EditUserConfigScript')}"
+              @click="${() => this._launchUserConfigDialog()}"></mwc-button>
+          </div>
+        <h3 class="horizontal center layout" style="display:none;">
+          <span>${_t('usersettings.PackageInstallation')}</span>
           <span class="flex"></span>
         </h3>
-        <div class="horizontal wrap layout">
-          <mwc-button
-            class="shell-button"
-            icon="edit"
-            outlined
-            label="${_t('usersettings.EditBootstrapScript')}"
-            @click="${() => this._launchBootstrapScriptDialog()}"></mwc-button>
-          <mwc-button
-            class="shell-button"
-            icon="edit"
-            outlined
-            label="${_t('usersettings.EditUserConfigScript')}"
-            @click="${() => this._launchUserConfigDialog()}"></mwc-button>
-        </div>
-      <h3 class="horizontal center layout" style="display:none;">
-        <span>${_t('usersettings.PackageInstallation')}</span>
-        <span class="flex"></span>
-      </h3>
-      <div class="horizontal wrap layout" style="display:none;">
-        <div class="horizontal layout wrap setting-item">
-          <div class="vertical center-justified layout setting-desc">
-            <div>TEST1</div>
-            <div class="description">This is description.
+        <div class="horizontal wrap layout" style="display:none;">
+          <div class="horizontal layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div>TEST1</div>
+              <div class="description">This is description.
+              </div>
+            </div>
+            <div class="vertical center-justified layout setting-button flex end">
+              <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
             </div>
           </div>
-          <div class="vertical center-justified layout setting-button flex end">
-            <mwc-switch id="register-new-image-switch" disabled></mwc-switch>
-          </div>
         </div>
-      </div>` : html``}
+      ` : html``}
       <backend-ai-dialog id="bootstrap-dialog" fixed backdrop scrollable blockScrolling persistent>
         <span slot="title">${_t('usersettings.EditBootstrapScript')}</span>
         <div slot="content" class="vertical layout terminal-area">
@@ -1071,7 +1073,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             ${this.rcfiles.map((item: any) => html`
               <mwc-list-item id="${item.path}" value="${item.path}" ?selected=${this.rcfile === item.path}>
                 ${item.path}
-              </mwc-list-item>`
+              </mwc-list-item>
+            `
   )}
           </mwc-select>
           <div style="background-color:#272823;height:100%;">

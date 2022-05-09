@@ -505,7 +505,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
-          <div class="layout horizontal center flex">
+        <div class="layout horizontal center flex">
             <div class="layout horizontal configuration">
               <wl-icon class="fg green">developer_board</wl-icon>
               <span>${rowData.item.cpu_limit_min}</span> ~
@@ -521,46 +521,45 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             </div>
           </div>
         ${rowData.item.cuda_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                <span>${rowData.item.cuda_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
-                <span class="indicator">CUDA GPU</span>
-              </div>
-            </div>
-            ` : html``}
+          <div class="layout horizontal center flex">
+             <div class="layout horizontal configuration">
+               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+               <span>${rowData.item.cuda_device_limit_min}</span> ~
+               <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
+               <span class="indicator">CUDA GPU</span>
+             </div>
+           </div>
+        ` : html``}
         ${rowData.item.cuda_shares_limit_min ? html`
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green">apps</wl-icon>
-                <span>${rowData.item.cuda_shares_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                <span class="indicator">CUDA fGPU</span>
-              </div>
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal configuration">
+              <wl-icon class="fg green">apps</wl-icon>
+              <span>${rowData.item.cuda_shares_limit_min}</span> ~
+              <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
+              <span class="indicator">CUDA fGPU</span>
             </div>
-            ` : html``}
+          </div>
+        ` : html``}
         ${rowData.item.rocm_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                <span>${rowData.item.rocm_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
-                <span class="indicator">ROCm GPU</span>
-              </div>
-            </div>
-            ` : html``}
+          <div class="layout horizontal center flex">
+             <div class="layout horizontal configuration">
+               <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+               <span>${rowData.item.rocm_device_limit_min}</span> ~
+               <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
+               <span class="indicator">ROCm GPU</span>
+             </div>
+           </div>
+        ` : html``}
         ${rowData.item.tpu_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
-                <span>${rowData.item.tpu_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
-                <span class="indicator">TPU</span>
-              </div>
-            </div>
-            ` : html``}
-
+          <div class="layout horizontal center flex">
+             <div class="layout horizontal configuration">
+               <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+               <span>${rowData.item.tpu_device_limit_min}</span> ~
+               <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
+               <span class="indicator">TPU</span>
+             </div>
+           </div>
+        ` : html``}
       `, root
     );
   }
@@ -748,24 +747,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <wl-button fab flat inverted
             class="fg blue controls-running"
             @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-    this._launchDialogById('#modify-image-dialog');
-    this.requestUpdate();
-  }}>
+        this.selectedIndex = rowData.index;
+        this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+        this._launchDialogById('#modify-image-dialog');
+        this.requestUpdate();
+      }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             class="fg pink controls-running"
             @click=${() => {
-    if (this.selectedIndex !== rowData.index) {
-      this._clearRows();
-    }
-    this.selectedIndex = rowData.index;
-    this._decodeServicePort();
-    this._launchDialogById('#modify-app-dialog');
-    this.requestUpdate();
-  }}>
+        if (this.selectedIndex !== rowData.index) {
+          this._clearRows();
+        }
+        this.selectedIndex = rowData.index;
+        this._decodeServicePort();
+        this._launchDialogById('#modify-app-dialog');
+        this.requestUpdate();
+      }}>
             <wl-icon>apps</wl-icon>
           </wl-button>
         </div>
@@ -787,22 +786,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
         <div class="layout horizontal center center-justified">
           ${rowData.item.installed ? html`
-          <wl-label class="installed"
-              id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+            <wl-label class="installed"
+                id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
                     rowData.item.name.replace('/', '-') + '-' +
                     rowData.item.tag.replace(/\./gi, '-')}">
-            ${_t('environment.Installed')}
-          </wl-label>
+              ${_t('environment.Installed')}
+            </wl-label>
           ` :
     html`
-          <wl-label class="installing"
-            id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+      <wl-label class="installing"
+        id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
                   rowData.item.name.replace('/', '-') + '-' +
                   rowData.item.tag.replace(/\./gi, '-')}"
-            style="display:none">
-            ${_t('environment.Installing')}
-            </wl-label>
-          `}
+        style="display:none">
+        ${_t('environment.Installing')}
+        </wl-label>
+    `}
         </div>
       `
       , root);
@@ -822,10 +821,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=HTML
       html`
         ${rowData.item.baseimage.map((image) =>
-    html`
-            <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
+        html`
+          <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
         `)}
-        `, root);
+      `, root);
   }
 
   /**
@@ -858,9 +857,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout vertical">
-        <span class="indicator monospace">${rowData.item.digest}</span>
-      </div>
+        <div class="layout vertical">
+          <span class="indicator monospace">${rowData.item.digest}</span>
+        </div>
       `
       , root);
   }
@@ -988,27 +987,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             <div> ${_t('environment.Action')} </div>
           </div>
           ${this.servicePorts.map((item, index) => html`
-          <div class="row">
-            <wl-textfield
-              type="text"
-              value=${item.app}
-            ></wl-textfield>
-            <wl-textfield
-              type="text"
-              value=${item.protocol}
-            ></wl-textfield>
-            <wl-textfield
-              type="number"
-              value=${item.port}
-            ></wl-textfield>
-            <wl-button
-              fab flat
-              class="fg pink"
-              @click=${(e) => this._checkDeleteAppInfo(e)}
-            >
-              <wl-icon>remove</wl-icon>
-            </wl-button>
-          </div>
+            <div class="row">
+              <wl-textfield
+                type="text"
+                value=${item.app}
+              ></wl-textfield>
+              <wl-textfield
+                type="text"
+                value=${item.protocol}
+              ></wl-textfield>
+              <wl-textfield
+                type="number"
+                value=${item.port}
+              ></wl-textfield>
+              <wl-button
+                fab flat
+                class="fg pink"
+                @click=${(e) => this._checkDeleteAppInfo(e)}
+              >
+                <wl-icon>remove</wl-icon>
+              </wl-button>
+            </div>
           `)}
           <div class="row">
             <wl-textfield type="text"></wl-textfield>
@@ -1039,8 +1038,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <p>${_t('environment.DescDownloadImage')}</p>
           <p style="margin:auto; "><span style="color:blue;">
           ${this.installImageNameList.map((el) => {
-    return html`${el}<br />`;
-  })}
+      return html`${el}<br />`;
+    })}
           </span></p>
           <p>${_t('environment.DescSignificantDownloadTime')} ${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
@@ -1050,9 +1049,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="operation"
               label="${_t('button.Cancel')}"
               @click="${(e) => {
-    this._hideDialog(e);
-    this._uncheckSelectedRow();
-  }}"></mwc-button>
+      this._hideDialog(e);
+      this._uncheckSelectedRow();
+    }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
@@ -1066,8 +1065,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <p>${_t('environment.DescDeleteImage')}</p>
           <p style="margin:auto; "><span style="color:blue;">
           ${this.deleteImageNameList.map((el) => {
-    return html`${el}<br />`;
-  })}
+      return html`${el}<br />`;
+    })}
           </span></p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
@@ -1077,9 +1076,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="operation"
               label="${_t('button.Cancel')}"
               @click="${(e) => {
-    this._hideDialog(e);
-    this._uncheckSelectedRow();
-  }}"></mwc-button>
+      this._hideDialog(e);
+      this._uncheckSelectedRow();
+    }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
@@ -1111,8 +1110,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               class="operation"
               label="${_t('button.Cancel')}"
               @click="${(e) => {
-    this._hideDialog(e);
-  }}"></mwc-button>
+      this._hideDialog(e);
+    }}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"

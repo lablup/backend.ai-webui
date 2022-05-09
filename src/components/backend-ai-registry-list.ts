@@ -578,27 +578,27 @@ class BackendAIRegistryList extends BackendAIPage {
           <wl-button fab flat inverted
               class="fg blue"
               @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._openEditRegistryDialog(rowData.item.hostname);
-  }}>
+        this.selectedIndex = rowData.index;
+        this._openEditRegistryDialog(rowData.item.hostname);
+      }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._launchDialogById('#delete-registry-dialog');
-  }}>
+        this.selectedIndex = rowData.index;
+        this._launchDialogById('#delete-registry-dialog');
+      }}>
             <wl-icon>delete</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             icon="refresh"
             class="fg green"
             @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._rescanImage();
-  }}>
+        this.selectedIndex = rowData.index;
+        this._rescanImage();
+      }}>
             <wl-icon>refresh</wl-icon>
           </wl-button>
         </div>

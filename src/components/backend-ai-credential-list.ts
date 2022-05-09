@@ -505,10 +505,10 @@ export default class BackendAICredentialList extends BackendAIPage {
   keyageRenderer(root, column?, rowData?) {
     render(
       html`
-            <div class="layout vertical">
-              <span>${rowData.item.elapsed} ${_t('credential.Days')}</span>
-              <span class="indicator">(${rowData.item.created_at_formatted})</span>
-            </div>
+        <div class="layout vertical">
+          <span>${rowData.item.elapsed} ${_t('credential.Days')}</span>
+          <span class="indicator">(${rowData.item.created_at_formatted})</span>
+        </div>
       `, root
     );
   }
@@ -523,23 +523,23 @@ export default class BackendAICredentialList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-            <div id="controls" class="layout horizontal flex center"
-                 .access-key="${rowData.item.access_key}">
-              <mwc-icon-button class="fg green" icon="assignment" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
-              </mwc-icon-button>
-              <mwc-icon-button class="fg blue" icon="settings" fab flat inverted @click="${(e) => this._modifyResourcePolicy(e)}">
-              </mwc-icon-button>
-              ${this.isAdmin && this._isActive() ? html`
-                <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
-                </mwc-icon-button>
-                <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted @click="${(e) => this._deleteKey(e)}">
-                </mwc-icon-button>
-              ` : html``}
-              ${this._isActive() === false ? html`
-                <mwc-icon-button class="fg blue" icon="redo" fab flat inverted @click="${(e) => this._reuseKey(e)}">
-                </mwc-icon-button>
-              ` : html``}
-            </div>
+        <div id="controls" class="layout horizontal flex center"
+             .access-key="${rowData.item.access_key}">
+          <mwc-icon-button class="fg green" icon="assignment" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
+          </mwc-icon-button>
+          <mwc-icon-button class="fg blue" icon="settings" fab flat inverted @click="${(e) => this._modifyResourcePolicy(e)}">
+          </mwc-icon-button>
+          ${this.isAdmin && this._isActive() ? html`
+            <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
+            </mwc-icon-button>
+            <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted @click="${(e) => this._deleteKey(e)}">
+            </mwc-icon-button>
+          ` : html``}
+          ${this._isActive() === false ? html`
+            <mwc-icon-button class="fg blue" icon="redo" fab flat inverted @click="${(e) => this._reuseKey(e)}">
+            </mwc-icon-button>
+          ` : html``}
+        </div>
       `, root
     );
   }
@@ -555,7 +555,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="monospace">${rowData.item.access_key}</div>
+        <div class="monospace">${rowData.item.access_key}</div>
       `, root
     );
   }
@@ -571,12 +571,12 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        ${rowData.item.is_admin? html`
+        <div class="layout horizontal center flex">
+          ${rowData.item.is_admin? html`
             <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
           ` : html``}
-        <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-      </div>
+          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+        </div>
       `, root
     );
   }
@@ -650,18 +650,18 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        <div class="vertical start layout">
-          <div style="font-size:11px;width:40px;">
-            ${rowData.item.concurrency_used} / ${rowData.item.concurrency_limit}
+        <div class="layout horizontal center flex">
+          <div class="vertical start layout">
+            <div style="font-size:11px;width:40px;">
+              ${rowData.item.concurrency_used} / ${rowData.item.concurrency_limit}
+            </div>
+            <span class="indicator">Sess.</span>
           </div>
-          <span class="indicator">Sess.</span>
+          <div class="vertical start layout">
+            <span style="font-size:8px">${rowData.item.rate_limit} <span class="indicator">req./15m.</span></span>
+            <span style="font-size:8px">${rowData.item.num_queries} <span class="indicator">queries</span></span>
+          </div>
         </div>
-        <div class="vertical start layout">
-          <span style="font-size:8px">${rowData.item.rate_limit} <span class="indicator">req./15m.</span></span>
-          <span style="font-size:8px">${rowData.item.num_queries} <span class="indicator">queries</span></span>
-        </div>
-      </div>
       `, root
     );
   }
@@ -791,7 +791,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         <div slot="action" class="horizontal end-justified flex layout">
         ${this.keypairInfo.is_admin ? html`
           <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
-          ` : html``}
+        ` : html``}
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
         </div>
         <div slot="content" class="intro">
@@ -856,10 +856,11 @@ export default class BackendAICredentialList extends BackendAIPage {
                   id="policy-list"
                   label="${_t('credential.SelectPolicy')}">
                   ${Object.keys(this.resourcePolicy).map((rp) =>
-    html`
-                      <mwc-list-item value=${this.resourcePolicy[rp].name}>
-                        ${this.resourcePolicy[rp].name}
-                      </mwc-list-item>`
+      html`
+        <mwc-list-item value=${this.resourcePolicy[rp].name}>
+          ${this.resourcePolicy[rp].name}
+        </mwc-list-item>
+      `
   )}
               </mwc-select>
           </div>

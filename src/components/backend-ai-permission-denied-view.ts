@@ -126,21 +126,21 @@ export default class BackendAIPermissionDeniedView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <div class="page-layout">
-      <img id="unauthorized-access" src="/resources/images/401_unauthorized_access.svg" />
-      <div class="vertical layout desc">
-        <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
-        <p class="description">${_tr('webui.AdminOnlyPage')}</p>
-        <div>
-          <mwc-button
-              unelevated
-              fullwidth
-              id="go-to-summary"
-              label="${_t('button.GoBackToSummaryPage')}"
-              @click="${() => this._moveTo('summary')}"></mwc-button>
+      <div class="page-layout">
+        <img id="unauthorized-access" src="/resources/images/401_unauthorized_access.svg" />
+        <div class="vertical layout desc">
+          <div class="title">${_tr('webui.UNAUTHORIZEDACCESS')}</div>
+          <p class="description">${_tr('webui.AdminOnlyPage')}</p>
+          <div>
+            <mwc-button
+                unelevated
+                fullwidth
+                id="go-to-summary"
+                label="${_t('button.GoBackToSummaryPage')}"
+                @click="${() => this._moveTo('summary')}"></mwc-button>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 }

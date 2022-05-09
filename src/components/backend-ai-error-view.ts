@@ -83,21 +83,21 @@ export default class BackendAIErrorView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <div class="horizontal center flex layout" style="margin:20px;">
-      <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
-      <div class="vertical layout" style="width:100%;">
-        <div class="title">${_tr('webui.NOTFOUND')}</div>
-        <p class="description">${_t('webui.DescNOTFOUND')}</p>
-        <div>
-          <mwc-button
-              unelevated
-              fullwidth
-              id="go-to-summary"
-              label="${_t('button.GoBackToSummaryPage')}"
-              @click="${() => this._moveTo('summary')}"></mwc-button>
+      <div class="horizontal center flex layout" style="margin:20px;">
+        <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
+        <div class="vertical layout" style="width:100%;">
+          <div class="title">${_tr('webui.NOTFOUND')}</div>
+          <p class="description">${_t('webui.DescNOTFOUND')}</p>
+          <div>
+            <mwc-button
+                unelevated
+                fullwidth
+                id="go-to-summary"
+                label="${_t('button.GoBackToSummaryPage')}"
+                @click="${() => this._moveTo('summary')}"></mwc-button>
+          </div>
         </div>
       </div>
-    </div>
     `;
   }
 }

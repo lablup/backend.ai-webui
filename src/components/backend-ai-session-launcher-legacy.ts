@@ -2513,430 +2513,429 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
-      <link rel="stylesheet" href="resources/custom.css">
-      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
-                 @click="${() => this._launchSessionDialog()}">
-        <wl-icon>power_settings_new</wl-icon>
-        <span>${_t('session.launcher.Start')}</span>
-      </wl-button>
-      <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
-        <span
-          slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
-        <form slot="content" id="launch-session-form" class="centered">
-          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:12;">
-            <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" fullwidth required
-                        value="${this.default_language}">
-              <mwc-list-item selected graphic="icon" style="display:none!important;">
-                ${_t('session.launcher.ChooseEnvironment')}
-              </mwc-list-item>
-              ${this.languages.map((item) => html`
-                ${item.clickable === false ? html`
-                  <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
-                      role="separator" disabled="true">${item.basename}</h5>
-                ` : html`
-                  <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                    <img slot="graphic" src="resources/icons/${item.icon}" style="width:24px;height:24px;"/>
-                    <div class="horizontal justified center flex layout" style="width:340px;">
-                      <div style="padding-right:5px;">${item.basename}</div>
-                      <div class="flex"></div>
-                      <div class="horizontal layout end-justified center flex">
-                        ${item.tags ? item.tags.map((item) => html`
-                          <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}"
-                                          description="${item.tag}"></lablup-shields>
-                          <span style="display:none">(${item.tag})</span>
-                        `) : ''}
-                        <mwc-icon-button icon="info"
-                                         class="fg blue info"
-                                         @click="${(e) => {
-    this._showKernelDescription(e, item);
-  }}">
-                        </mwc-icon-button>
-                      </div>
-                    </div>
-                  </mwc-list-item>
-                `}
-              `)}
-            </mwc-select>
-            <mwc-select id="version" icon="architecture" label="${_t('session.launcher.Version')}" fullwidth required>
-              <mwc-list-item selected style="display:none!important"></mwc-list-item>
-              <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-                  role="separator" disabled="true" class="horizontal layout">
-                <div style="width:80px;">${_t('session.launcher.Version')}</div>
-                <div style="width:120px;">${_t('session.launcher.Base')}</div>
-                <div style="width:150px;">${_t('session.launcher.Requirements')}</div>
-              </h5>
-              ${this.versions.map((item) => html`
-                <mwc-list-item id="${item}" value="${item}">
-                  <span style="display:none">${item}</span>
-                  <div class="horizontal layout end-justified">
-                  ${this._getVersionInfo(item).map((item) => html`
-                    <lablup-shields style="width:${item.size}!important;"
-                                    color="${item.color}"
-                                    app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                    description="${item.tag}">
-                    </lablup-shields>
-                  `)}
-                </div>
-              </mwc-list-item>
-            `)}
-            </mwc-select>
-            ${this._debug || this.allow_manual_image_name_for_session ? html`
-
-            <mwc-textfield id="image-name" type="text" class="flex" value=""
-              label="${_t('session.launcher.ManualImageName')}" @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
-
-            `:html``}
-          </div>
-          <div style="display:none;">
-            <wl-checkbox id="use-gpu-checkbox">${_t('session.launcher.UseGPU')}</wl-checkbox>
-          </div>
-          <div class="horizontal center layout">
-            <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" required
-                        icon="storage"
-                        @selected="${(e) => this.updateScalingGroup(false, e)}">
-              ${this.scaling_groups.map((item) => html`
-                <mwc-list-item class="scaling-group-dropdown"
-                               id="${item.name}" graphic="icon"
-                               value="${item.name}">
-                  ${item.name}
+        <link rel="stylesheet" href="resources/custom.css">
+        <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
+                   @click="${() => this._launchSessionDialog()}">
+          <wl-icon>power_settings_new</wl-icon>
+          <span>${_t('session.launcher.Start')}</span>
+        </wl-button>
+        <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent>
+          <span
+            slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
+          <form slot="content" id="launch-session-form" class="centered">
+            <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:12;">
+              <mwc-select id="environment" icon="code" label="${_t('session.launcher.Environments')}" fullwidth required
+                          value="${this.default_language}">
+                <mwc-list-item selected graphic="icon" style="display:none!important;">
+                  ${_t('session.launcher.ChooseEnvironment')}
                 </mwc-list-item>
-              `)}
-            </mwc-select>
-            <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
-                           pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64" icon="label"
-                           helper="${_t('maxLength.64chars')}"
-                           validationMessage="${_t('session.launcher.SessionNameAllowCondition')}"
-                           style="margin-left:5px;">
-            </mwc-textfield>
-          </div>
-          <wl-expansion
-                id="vfolder-select-expansion" name="vfolder-group"
-                style="--expansion-header-padding:16px;--expansion-content-padding:0;"
-                @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
-            <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
-            <mwc-list fullwidth multi id="vfolder"
-              @selected="${() => this._updateSelectedFolder()}">
-            ${this.vfolders.length === 0 ? html`
-              <mwc-list-item value="" ?disabled="${true}">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
-            `:html``}
-            ${this.vfolders.map((item) => html`
-              <mwc-check-list-item
-                  value="${item.name}"
-                  ?selected="${this.selectedVfolders.includes(item.name)}"
-                  ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
-            `)}
-            </mwc-list>
-          </wl-expansion>
-          <ul style="color:#646464;font-size:12px;">
-          ${this.selectedVfolders.map((item) => html`
-                <li><mwc-icon>folder_open</mwc-icon>${item}</li>
-              `)}
-          </ul>
-          ${this.selectedVfolders.length > 0 ? html`
-            <div class="horizontal layout end-justified" style="margin-bottom:10px;">
-              <mwc-button
-                  outlined
-                  label="${_t('session.launcher.UnSelectAllVFolders')}"
-                  id="unselect-all-vfolders"
-                  style="width:auto;margin-right:10px;"
-                  @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
-            </div>
-          ` : html``}
-          <div class="horizontal layout center justified">
-            <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
-            <mwc-button
-              unelevated
-              icon="rule"
-              label="${_t('session.launcher.Config')}"
-              style="width:auto;margin-right:15px;"
-              @click="${()=>this._showEnvDialog()}"></mwc-button>
-          </div>
-          <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
-          <div class="horizontal layout center center-justified allocation-check">
-            <div id="total-allocation-pane" style="position:relative;">
-              <div class="horizontal layout resource-allocated-box">
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.CPU')}</p>
-                  <span>${this.cpu_request}</span>
-                  <p>Core</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.Memory')}</p>
-                  <span>${this.mem_request}</span>
-                  <p>GB</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                  <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                  <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
-                </div>
-                <div class="vertical layout center center-justified resource-allocated">
-                  <p>${_t('session.launcher.GPU')}</p>
-                  <span>${this.gpu_request}</span>
-                  <p>${_t('session.launcher.GPUSlot')}</p>
-                </div>
-              </div>
-              <div id="resource-allocated-box-shadow"></div>
-            </div>
-            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-              <div class="horizontal layout">
-                <p>×</p>
-                <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
-              </div>
-              <p class="small">${_t('session.launcher.Container')}</p>
-            </div>
-            <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
-              <div class="horizontal layout">
-                <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
-                <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
-              </div>
-              <p class="small">${_t('session.launcher.AllocateNode')}</p>
-            </div>
-          </div>
-          <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
-            <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
-                        icon="dashboard_customize" fullwidth required>
-              <mwc-list-item selected style="display:none!important"></mwc-list-item>
-              <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-                  role="separator" disabled="true" class="horizontal layout center">
-                <div style="width:110px;">Name</div>
-                <div style="width:50px;text-align:right;">CPU</div>
-                <div style="width:50px;text-align:right;">RAM</div>
-                <div style="width:50px;text-align:right;">${_t('session.launcher.SharedMemory')}</div>
-                <div style="width:90px;text-align:right;">${_t('session.launcher.Accelerator')}</div>
-              </h5>
-              ${this.resource_templates_filtered.map((item) => html`
-                <mwc-list-item value="${item.name}"
-                           id="${item.name}-button"
-                           @click="${(e) => {
-    this._chooseResourceTemplate(e);
-  }}"
-                           .cpu="${item.cpu}"
-                           .mem="${item.mem}"
-                           .cuda_device="${item.cuda_device}"
-                           .cuda_shares="${item.cuda_shares}"
-                           .rocm_device="${item.rocm_device}"
-                           .tpu_device="${item.tpu_device}"
-                           .shmem="${item.shmem}">
-                <div class="horizontal layout end-justified">
-                  <div style="width:110px;">${item.name}</div>
-                  <div style="display:none"> (</div>
-                  <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
-                  <div style="width:50px;text-align:right;">${item.mem}GB</div>
-                  <div style="width:60px;text-align:right;">${item.shmem ?
-    html`
-                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB` :
-    html`
-                        64MB
-                        `}</div>
-                  <div style="width:80px;text-align:right;">
-                    ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
-                    ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
-                    ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
-                    ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
-                  </div>
-                  <div style="display:none">)</div>
-                </div>
-              </mwc-list-item>
-            `)}
-            ${this.isEmpty(this.resource_templates_filtered) ? html`
-              <mwc-list-item class="resource-button vertical center start layout" role="option"
-                             style="height:140px;width:350px;" type="button"
-                             flat inverted outlined disabled>
-                <div>
-                  <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
-                  <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
-                </div>
-              </mwc-list-item>
-            ` : html``}
-            </mwc-select>
-          </div>
-          <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
-            <span slot="title" style="font-size:12px;color: rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
-            <span slot="description" class="launcher-item-title"></span>
-            <div class="vertical center layout">
-              <div class="horizontal center layout" style="margin-top:15px;">
-                <div class="resource-type" style="width:70px;">CPU</div>
-                <lablup-slider id="cpu-resource" class="cpu"
-                               pin snaps expand editable markers
-                               @click="${(e) => this._applyResourceValueChanges(e)}"
-                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                               marker_limit="${this.marker_limit}"
-                               min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
-                               value="${this.cpu_request}"></lablup-slider>
-                <span class="caption">${_t('session.launcher.Core')}</span>
-                <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
-    this._showResourceDescription(e, 'cpu');
-  }}"></mwc-icon-button>
-            </div>
-            <div class="horizontal center layout">
-              <div class="resource-type">RAM</div>
-              <lablup-slider id="mem-resource" class="mem"
-                             pin snaps step=0.05 editable markers
-                              @click="${() => {
-    this._resourceTemplateToCustom();
-  }}"
-                              @changed="${() => {
-    this._updateShmemLimit();
-  }}"
-                             marker_limit="${this.marker_limit}"
-                             min="${this.mem_metric.min}" max="${this.mem_metric.max}"
-                             value="${this.mem_request}"></lablup-slider>
-              <span class="caption">GB</span>
-              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-    this._showResourceDescription(e, 'mem');
-  }}"></mwc-icon-button>
-            </div>
-            <div class="horizontal center layout">
-              <div class="resource-type">${_t('session.launcher.SharedMemory')}</div>
-              <lablup-slider id="shmem-resource" class="mem"
-                             pin snaps step="0.0025" editable markers
-                             @click="${(e) => this._applyResourceValueChanges(e)}"
-                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                             marker_limit="${this.marker_limit}"
-                             min="0.0625" max="${this.shmem_metric.max}"
-                             value="${this.shmem_request}"></lablup-slider>
-              <span class="caption">GB</span>
-              <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
-    this._showResourceDescription(e, 'shmem');
-  }}"></mwc-icon-button>
-            </div>
-            <div class="horizontal center layout">
-              <div class="resource-type">GPU</div>
-              <lablup-slider id="gpu-resource" class="gpu"
-                             pin snaps editable markers step="${this.gpu_step}"
-                             @click="${(e) => this._applyResourceValueChanges(e)}"
-                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                             marker_limit="${this.marker_limit}"
-                             min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
-              <span class="caption">GPU</span>
-              <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
-    this._showResourceDescription(e, 'gpu');
-  }}"></mwc-icon-button>
-            </div>
-            <div class="horizontal center layout">
-              <div class="resource-type">${_t('webui.menu.Sessions')}</div>
-              <lablup-slider id="session-resource" class="session"
-                             pin snaps editable markers step="1"
-                             @click="${(e) => this._applyResourceValueChanges(e)}"
-                             @focusout="${(e) => this._applyResourceValueChanges(e)}"
-                             marker_limit="${this.marker_limit}"
-                             min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
-              <span class="caption">#</span>
-              <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
-    this._showResourceDescription(e, 'session');
-  }}"></mwc-icon-button>
-            </div>
-          </div>
-        </wl-expansion>
-        ${this.cluster_support ? html`
-          <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" fullwidth required
-                      icon="account_tree"
-                      value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
-            ${this.cluster_mode_list.map((item) => html`
-              <mwc-list-item
-                  class="cluster-mode-dropdown"
-                  id="${item}"
-                  value="${item}">
-                <div class="horizontal layout center" style="width:100%;">
-                  <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
-                  <mwc-icon-button
-                      icon="info"
-                      @click="${(e) => this._showResourceDescription(e, item)}">
-                  </mwc-icon-button>
-                </div>
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
-            <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
-            <lablup-slider id="cluster-size" class="cluster"
-                           pin snaps expand editable markers
-                           marker_limit="${this.marker_limit}"
-                           min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
-                           value="${this.cluster_size}"
-                           @click="${(e) => this._applyResourceValueChanges(e, false)}"
-                           @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
-            ${this.cluster_mode === 'single-node' ? html`
-              <span class="caption">${_t('session.launcher.Container')}</span>
-            ` : html`
-              <span class="caption">${_t('session.launcher.Node')}</span>
-            `}
-          </div>
-        ` : html``}
-          <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
-            <span slot="title"
-                  style="font-size:12px;font-weight:400;color:#404040;">${_t('session.launcher.SetSessionOwner')}</span>
-            <span slot="description"></span>
-            <div class="vertical layout">
-              <div class="horizontal center layout">
-                <mwc-textfield id="owner-email" type="email" class="flex" value=""
-                               pattern="^.+@.+\..+$" icon="mail"
-                               label="${_t('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
-                <mwc-icon-button icon="refresh" class="blue"
-                                 @click="${() => this._fetchSessionOwnerGroups()}">
-                </mwc-icon-button>
-              </div>
-              <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key">
-                ${this.ownerKeypairs.map((item) => html`
-                  <mwc-list-item class="owner-group-dropdown"
-                                 id="${item.access_key}"
-                                 value="${item.access_key}">
-                    ${item.access_key}
+                ${this.languages.map((item) => html`
+                  ${item.clickable === false ? html`
+                    <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                        role="separator" disabled="true">${item.basename}</h5>
+                  ` : html`
+                    <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+                      <img slot="graphic" src="resources/icons/${item.icon}" style="width:24px;height:24px;"/>
+                      <div class="horizontal justified center flex layout" style="width:340px;">
+                        <div style="padding-right:5px;">${item.basename}</div>
+                        <div class="flex"></div>
+                        <div class="horizontal layout end-justified center flex">
+                          ${item.tags ? item.tags.map((item) => html`
+                            <lablup-shields slot="meta" style="margin-right:5px;" color="${item.color}"
+                                            description="${item.tag}"></lablup-shields>
+                            <span style="display:none">(${item.tag})</span>
+                          `) : ''}
+                          <mwc-icon-button icon="info"
+                                           class="fg blue info"
+                                           @click="${(e) => {
+      this._showKernelDescription(e, item);
+    }}">
+                          </mwc-icon-button>
+                        </div>
+                      </div>
+                    </mwc-list-item>
+                  `}
+                `)}
+              </mwc-select>
+              <mwc-select id="version" icon="architecture" label="${_t('session.launcher.Version')}" fullwidth required>
+                <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                    role="separator" disabled="true" class="horizontal layout">
+                  <div style="width:80px;">${_t('session.launcher.Version')}</div>
+                  <div style="width:120px;">${_t('session.launcher.Base')}</div>
+                  <div style="width:150px;">${_t('session.launcher.Requirements')}</div>
+                </h5>
+                ${this.versions.map((item) => html`
+                  <mwc-list-item id="${item}" value="${item}">
+                      <span style="display:none">${item}</span>
+                      <div class="horizontal layout end-justified">
+                      ${this._getVersionInfo(item).map((item) => html`
+                        <lablup-shields style="width:${item.size}!important;"
+                                        color="${item.color}"
+                                        app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                        description="${item.tag}">
+                        </lablup-shields>
+                      `)}
+                    </div>
                   </mwc-list-item>
                 `)}
               </mwc-select>
-              <div class="horizontal center layout">
-                <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work">
-                  ${this.ownerGroups.map((item) => html`
-                    <mwc-list-item class="owner-group-dropdown"
-                                   id="${item.name}"
-                                   value="${item.name}">
-                      ${item.name}
-                    </mwc-list-item>
-                  `)}
-                </mwc-select>
-                <mwc-select id="owner-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}"
-                            icon="storage">
-                  ${this.ownerScalingGroups.map((item) => html`
-                    <mwc-list-item class="owner-group-dropdown"
-                                   id="${item.name}"
-                                   value="${item.name}">
-                      ${item.name}
-                    </mwc-list-item>
-                  `)}
-                </mwc-select>
+              ${this._debug || this.allow_manual_image_name_for_session ? html`
+                <mwc-textfield id="image-name" type="text" class="flex" value=""
+                  label="${_t('session.launcher.ManualImageName')}" @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
+              `:html``}
+            </div>
+            <div style="display:none;">
+              <wl-checkbox id="use-gpu-checkbox">${_t('session.launcher.UseGPU')}</wl-checkbox>
+            </div>
+            <div class="horizontal center layout">
+              <mwc-select id="scaling-groups" label="${_t('session.launcher.ResourceGroup')}" required
+                          icon="storage"
+                          @selected="${(e) => this.updateScalingGroup(false, e)}">
+                ${this.scaling_groups.map((item) => html`
+                  <mwc-list-item class="scaling-group-dropdown"
+                                 id="${item.name}" graphic="icon"
+                                 value="${item.name}">
+                    ${item.name}
+                  </mwc-list-item>
+                `)}
+              </mwc-select>
+              <mwc-textfield id="session-name" placeholder="${_t('session.launcher.SessionNameOptional')}"
+                             pattern="[a-zA-Z0-9_-]{4,}" fullwidth maxLength="64" icon="label"
+                             helper="${_t('maxLength.64chars')}"
+                             validationMessage="${_t('session.launcher.SessionNameAllowCondition')}"
+                             style="margin-left:5px;">
+              </mwc-textfield>
+            </div>
+            <wl-expansion
+                  id="vfolder-select-expansion" name="vfolder-group"
+                  style="--expansion-header-padding:16px;--expansion-content-padding:0;"
+                  @change=${(e) => this.toggleUnselectAllVfoldersButton(e)}>
+              <span slot="title" class="launcher-item-title">${_t('session.launcher.FolderToMount')}</span>
+              <mwc-list fullwidth multi id="vfolder"
+                @selected="${() => this._updateSelectedFolder()}">
+              ${this.vfolders.length === 0 ? html`
+                <mwc-list-item value="" ?disabled="${true}">${_t('session.launcher.NoFolderExists')}</mwc-list-item>
+              `:html``}
+              ${this.vfolders.map((item) => html`
+                <mwc-check-list-item
+                    value="${item.name}"
+                    ?selected="${this.selectedVfolders.includes(item.name)}"
+                    ?disabled="${item.disabled}">${item.name}</mwc-check-list-item>
+              `)}
+              </mwc-list>
+            </wl-expansion>
+            <ul style="color:#646464;font-size:12px;">
+            ${this.selectedVfolders.map((item) => html`
+              <li><mwc-icon>folder_open</mwc-icon>${item}</li>
+            `)}
+            </ul>
+            ${this.selectedVfolders.length > 0 ? html`
+              <div class="horizontal layout end-justified" style="margin-bottom:10px;">
+                <mwc-button
+                    outlined
+                    label="${_t('session.launcher.UnSelectAllVFolders')}"
+                    id="unselect-all-vfolders"
+                    style="width:auto;margin-right:10px;"
+                    @click=${() => this._unselectAllSelectedFolder()}></mwc-button>
               </div>
-              <wl-label style="padding:15px;">
-              <wl-checkbox id="owner-enabled"></wl-checkbox>
-              ${_t('session.launcher.LaunchSessionWithAccessKey')}
-            </wl-label>
-          </div>
-        </wl-expansion>
-      </form>
-      <div slot="footer" class="horizontal center-justified flex layout distancing">
-        <mwc-button
-            unelevated
-            class="launch-button"
-            id="launch-button"
-            icon="rowing"
-            @click="${() => this._newSessionWithConfirmation()}">
-          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-        </mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
-      <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
-      <span slot="action">
-        <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
-      </span>
-      <div slot="content" id="modify-env-container">
-        <div class="row header">
-          <div> ${_t('session.launcher.EnvironmentVariable')} </div>
-          <div> ${_t('session.launcher.EnvironmentVariableValue')} </div>
-        </div>
-        ${this.environ.forEach((item: any, index) =>
+            ` : html``}
+            <div class="horizontal layout center justified">
+              <span class="launcher-item-title" style="padding-left:16px;">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <mwc-button
+                unelevated
+                icon="rule"
+                label="${_t('session.launcher.Config')}"
+                style="width:auto;margin-right:15px;"
+                @click="${()=>this._showEnvDialog()}"></mwc-button>
+            </div>
+            <p class="title" style="font-weight:400;">${_t('session.launcher.TotalAllocation')}</p>
+            <div class="horizontal layout center center-justified allocation-check">
+              <div id="total-allocation-pane" style="position:relative;">
+                <div class="horizontal layout resource-allocated-box">
+                  <div class="vertical layout center center-justified resource-allocated">
+                    <p>${_t('session.launcher.CPU')}</p>
+                    <span>${this.cpu_request}</span>
+                    <p>Core</p>
+                  </div>
+                  <div class="vertical layout center center-justified resource-allocated">
+                    <p>${_t('session.launcher.Memory')}</p>
+                    <span>${this.mem_request}</span>
+                    <p>GB</p>
+                  </div>
+                  <div class="vertical layout center center-justified resource-allocated">
+                    <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
+                    <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
+                    <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                  </div>
+                  <div class="vertical layout center center-justified resource-allocated">
+                    <p>${_t('session.launcher.GPU')}</p>
+                    <span>${this.gpu_request}</span>
+                    <p>${_t('session.launcher.GPUSlot')}</p>
+                  </div>
+                </div>
+                <div id="resource-allocated-box-shadow"></div>
+              </div>
+              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                <div class="horizontal layout">
+                  <p>×</p>
+                  <span>${this.cluster_size <= 1 ? this.session_request : this.cluster_size}</span>
+                </div>
+                <p class="small">${_t('session.launcher.Container')}</p>
+              </div>
+              <div class="vertical layout center center-justified cluster-allocated" style="z-index:10;">
+                <div class="horizontal layout">
+                  <p>${this.cluster_mode === 'single-node' ? '' : ''}</p>
+                  <span>${this.cluster_mode === 'single-node' ? _t('session.launcher.SingleNode') : _t('session.launcher.MultiNode')}</span>
+                </div>
+                <p class="small">${_t('session.launcher.AllocateNode')}</p>
+              </div>
+            </div>
+            <div class="vertical center layout" style="padding-top:15px;position:relative;z-index:11;">
+              <mwc-select id="resource-templates" label="${_t('session.launcher.ResourceAllocation')}"
+                          icon="dashboard_customize" fullwidth required>
+                <mwc-list-item selected style="display:none!important"></mwc-list-item>
+                <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                    role="separator" disabled="true" class="horizontal layout center">
+                  <div style="width:110px;">Name</div>
+                  <div style="width:50px;text-align:right;">CPU</div>
+                  <div style="width:50px;text-align:right;">RAM</div>
+                  <div style="width:50px;text-align:right;">${_t('session.launcher.SharedMemory')}</div>
+                  <div style="width:90px;text-align:right;">${_t('session.launcher.Accelerator')}</div>
+                </h5>
+                ${this.resource_templates_filtered.map((item) => html`
+                  <mwc-list-item value="${item.name}"
+                               id="${item.name}-button"
+                               @click="${(e) => {
+      this._chooseResourceTemplate(e);
+    }}"
+                               .cpu="${item.cpu}"
+                               .mem="${item.mem}"
+                               .cuda_device="${item.cuda_device}"
+                               .cuda_shares="${item.cuda_shares}"
+                               .rocm_device="${item.rocm_device}"
+                               .tpu_device="${item.tpu_device}"
+                               .shmem="${item.shmem}">
+                    <div class="horizontal layout end-justified">
+                      <div style="width:110px;">${item.name}</div>
+                      <div style="display:none"> (</div>
+                      <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
+                      <div style="width:50px;text-align:right;">${item.mem}GB</div>
+                      <div style="width:60px;text-align:right;">${item.shmem ?
     html`
+      ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB
+    ` :
+    html`
+      64MB
+    `}</div>
+                      <div style="width:80px;text-align:right;">
+                        ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
+                        ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
+                        ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
+                        ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
+                      </div>
+                      <div style="display:none">)</div>
+                    </div>
+                  </mwc-list-item>
+                `)}
+              ${this.isEmpty(this.resource_templates_filtered) ? html`
+                <mwc-list-item class="resource-button vertical center start layout" role="option"
+                               style="height:140px;width:350px;" type="button"
+                               flat inverted outlined disabled>
+                  <div>
+                    <h4>${_t('session.launcher.NoSuitablePreset')}</h4>
+                    <div style="font-size:12px;">Use advanced settings to <br>start custom session</div>
+                  </div>
+                </mwc-list-item>
+              ` : html``}
+              </mwc-select>
+            </div>
+            <wl-expansion name="resource-group" style="--expansion-header-padding:16px;">
+              <span slot="title" style="font-size:12px;color: rgb(64, 64, 64);font-weight:400;">${_t('session.launcher.CustomAllocation')}</span>
+              <span slot="description" class="launcher-item-title"></span>
+              <div class="vertical center layout">
+                <div class="horizontal center layout" style="margin-top:15px;">
+                  <div class="resource-type" style="width:70px;">CPU</div>
+                  <lablup-slider id="cpu-resource" class="cpu"
+                                 pin snaps expand editable markers
+                                 @click="${(e) => this._applyResourceValueChanges(e)}"
+                                 @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                                 marker_limit="${this.marker_limit}"
+                                 min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
+                                 value="${this.cpu_request}"></lablup-slider>
+                  <span class="caption">${_t('session.launcher.Core')}</span>
+                  <mwc-icon-button icon="info" class="fg green info" @click="${(e) => {
+      this._showResourceDescription(e, 'cpu');
+    }}"></mwc-icon-button>
+              </div>
+              <div class="horizontal center layout">
+                <div class="resource-type">RAM</div>
+                <lablup-slider id="mem-resource" class="mem"
+                               pin snaps step=0.05 editable markers
+                                @click="${() => {
+      this._resourceTemplateToCustom();
+    }}"
+                                @changed="${() => {
+      this._updateShmemLimit();
+    }}"
+                               marker_limit="${this.marker_limit}"
+                               min="${this.mem_metric.min}" max="${this.mem_metric.max}"
+                               value="${this.mem_request}"></lablup-slider>
+                <span class="caption">GB</span>
+                <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+      this._showResourceDescription(e, 'mem');
+    }}"></mwc-icon-button>
+              </div>
+              <div class="horizontal center layout">
+                <div class="resource-type">${_t('session.launcher.SharedMemory')}</div>
+                <lablup-slider id="shmem-resource" class="mem"
+                               pin snaps step="0.0025" editable markers
+                               @click="${(e) => this._applyResourceValueChanges(e)}"
+                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                               marker_limit="${this.marker_limit}"
+                               min="0.0625" max="${this.shmem_metric.max}"
+                               value="${this.shmem_request}"></lablup-slider>
+                <span class="caption">GB</span>
+                <mwc-icon-button icon="info" class="fg orange info" @click="${(e) => {
+      this._showResourceDescription(e, 'shmem');
+    }}"></mwc-icon-button>
+              </div>
+              <div class="horizontal center layout">
+                <div class="resource-type">GPU</div>
+                <lablup-slider id="gpu-resource" class="gpu"
+                               pin snaps editable markers step="${this.gpu_step}"
+                               @click="${(e) => this._applyResourceValueChanges(e)}"
+                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                               marker_limit="${this.marker_limit}"
+                               min="0.0" max="${this.cuda_device_metric.max}" value="${this.gpu_request}"></lablup-slider>
+                <span class="caption">GPU</span>
+                <mwc-icon-button icon="info" class="fg blue info" @click="${(e) => {
+      this._showResourceDescription(e, 'gpu');
+    }}"></mwc-icon-button>
+              </div>
+              <div class="horizontal center layout">
+                <div class="resource-type">${_t('webui.menu.Sessions')}</div>
+                <lablup-slider id="session-resource" class="session"
+                               pin snaps editable markers step="1"
+                               @click="${(e) => this._applyResourceValueChanges(e)}"
+                               @focusout="${(e) => this._applyResourceValueChanges(e)}"
+                               marker_limit="${this.marker_limit}"
+                               min="1" max="${this.concurrency_limit}" value="${this.session_request}"></lablup-slider>
+                <span class="caption">#</span>
+                <mwc-icon-button icon="info" class="fg red info" @click="${(e) => {
+      this._showResourceDescription(e, 'session');
+    }}"></mwc-icon-button>
+              </div>
+            </div>
+          </wl-expansion>
+          ${this.cluster_support ? html`
+            <mwc-select id="cluster-mode" label="${_t('session.launcher.ClusterMode')}" fullwidth required
+                        icon="account_tree"
+                        value="${this.cluster_mode}" @change="${(e) => this._setClusterMode(e)}">
+              ${this.cluster_mode_list.map((item) => html`
+                <mwc-list-item
+                    class="cluster-mode-dropdown"
+                    id="${item}"
+                    value="${item}">
+                  <div class="horizontal layout center" style="width:100%;">
+                    <p style="width:300px;margin-left:21px;">${_t('session.launcher.'+ item)}</p>
+                    <mwc-icon-button
+                        icon="info"
+                        @click="${(e) => this._showResourceDescription(e, item)}">
+                    </mwc-icon-button>
+                  </div>
+                </mwc-list-item>
+              `)}
+            </mwc-select>
+            <div class="horizontal layout center" style="padding:0 24px 24px 24px;">
+              <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
+              <lablup-slider id="cluster-size" class="cluster"
+                             pin snaps expand editable markers
+                             marker_limit="${this.marker_limit}"
+                             min="${this.cluster_metric.min}" max="${this.cluster_metric.max}"
+                             value="${this.cluster_size}"
+                             @click="${(e) => this._applyResourceValueChanges(e, false)}"
+                             @focusout="${(e) => this._applyResourceValueChanges(e, false)}"></lablup-slider>
+              ${this.cluster_mode === 'single-node' ? html`
+                <span class="caption">${_t('session.launcher.Container')}</span>
+              ` : html`
+                <span class="caption">${_t('session.launcher.Node')}</span>
+              `}
+            </div>
+          ` : html``}
+            <wl-expansion name="ownership" style="--expansion-header-padding:16px;--expansion-content-padding:15px 0;">
+              <span slot="title"
+                    style="font-size:12px;font-weight:400;color:#404040;">${_t('session.launcher.SetSessionOwner')}</span>
+              <span slot="description"></span>
+              <div class="vertical layout">
+                <div class="horizontal center layout">
+                  <mwc-textfield id="owner-email" type="email" class="flex" value=""
+                                 pattern="^.+@.+\..+$" icon="mail"
+                                 label="${_t('session.launcher.OwnerEmail')}" size="40"></mwc-textfield>
+                  <mwc-icon-button icon="refresh" class="blue"
+                                   @click="${() => this._fetchSessionOwnerGroups()}">
+                  </mwc-icon-button>
+                </div>
+                <mwc-select id="owner-accesskey" label="${_t('session.launcher.OwnerAccessKey')}" icon="vpn_key">
+                  ${this.ownerKeypairs.map((item) => html`
+                    <mwc-list-item class="owner-group-dropdown"
+                                   id="${item.access_key}"
+                                   value="${item.access_key}">
+                      ${item.access_key}
+                    </mwc-list-item>
+                  `)}
+                </mwc-select>
+                <div class="horizontal center layout">
+                  <mwc-select id="owner-group" label="${_t('session.launcher.OwnerGroup')}" icon="group_work">
+                    ${this.ownerGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                     id="${item.name}"
+                                     value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                  <mwc-select id="owner-scaling-group" label="${_t('session.launcher.OwnerResourceGroup')}"
+                              icon="storage">
+                    ${this.ownerScalingGroups.map((item) => html`
+                      <mwc-list-item class="owner-group-dropdown"
+                                     id="${item.name}"
+                                     value="${item.name}">
+                        ${item.name}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
+                </div>
+                <wl-label style="padding:15px;">
+                <wl-checkbox id="owner-enabled"></wl-checkbox>
+                ${_t('session.launcher.LaunchSessionWithAccessKey')}
+              </wl-label>
+            </div>
+          </wl-expansion>
+        </form>
+        <div slot="footer" class="horizontal center-justified flex layout distancing">
+          <mwc-button
+              unelevated
+              class="launch-button"
+              id="launch-button"
+              icon="rowing"
+              @click="${() => this._newSessionWithConfirmation()}">
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-env-dialog" fixed backdrop persistent closeWithConfirmation>
+        <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
+        <span slot="action">
+          <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+        </span>
+        <div slot="content" id="modify-env-container">
+          <div class="row header">
+            <div> ${_t('session.launcher.EnvironmentVariable')} </div>
+            <div> ${_t('session.launcher.EnvironmentVariableValue')} </div>
+          </div>
+          ${this.environ.forEach((item: any, index) =>
+      html`
         <div class="row">
           <wl-textfield
             type="text"
@@ -2954,83 +2953,83 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
             <wl-icon>remove</wl-icon>
           </wl-button>
         </div>
-        `)}
-        <div class="row">
-          <wl-textfield type="text"></wl-textfield>
-          <wl-textfield type="text"></wl-textfield>
-          <wl-button
-            fab flat
-            class="fg pink"
-            @click=${()=>this._appendEnvRow()}
-          >
-            <wl-icon>add</wl-icon>
-          </wl-button>
+      `)}
+          <div class="row">
+            <wl-textfield type="text"></wl-textfield>
+            <wl-textfield type="text"></wl-textfield>
+            <wl-button
+              fab flat
+              class="fg pink"
+              @click=${()=>this._appendEnvRow()}
+            >
+              <wl-icon>add</wl-icon>
+            </wl-button>
+          </div>
         </div>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button
-            icon="delete"
-            label="${_t('button.DeleteAll')}"
-            @click="${()=>this._clearRows()}"></mwc-button>
-        <mwc-button
-            unelevated
-            slot="footer"
-            icon="check"
-            label="${_t('button.Save')}"
-            @click="${()=>this.modifyEnv()}"></mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="help-description" fixed backdrop>
-      <span slot="title">${this._helpDescriptionTitle}</span>
-      <div slot="content" class="horizontal layout center" style="margin:5px;">
-      ${this._helpDescriptionIcon == '' ? html`` : html`
-        <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              icon="delete"
+              label="${_t('button.DeleteAll')}"
+              @click="${()=>this._clearRows()}"></mwc-button>
+          <mwc-button
+              unelevated
+              slot="footer"
+              icon="check"
+              label="${_t('button.Save')}"
+              @click="${()=>this.modifyEnv()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:5px;">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
         `}
-        <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>
-      <span slot="title">${_t('session.launcher.NoFolderMounted')}</span>
-      <div slot="content" class="vertical layout">
-        <p>${_t('session.launcher.HomeDirectoryDeletionDialog')}</p>
-        <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
-        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button
-            unelevated
-            class="launch-confirmation-button"
-            id="launch-confirmation-button"
-            icon="rowing"
-            @click="${() => this._newSession()}">
-          <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
-        </mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="env-config-confirmation" warning fixed>
-      <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
-      <div slot="content">
-        <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>
-        <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button
-            unelevated
-            id="env-config-reset-button"
-            style="width:auto;margin-right:10px;"
-            @click="${() => this._closeAndResetEnvInput()}">
-          <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
-        </mwc-button>
-        <mwc-button
-            outlined
-            id="env-config-remain-button"
-            style="width:auto;"
-            @click="${() => this.closeDialog('env-config-confirmation')}">
-          <span id="launch-button-msg">${_t('button.Cancel')}</span>
-        </mwc-button>
-      </div>
-    </backend-ai-dialog>
-`;
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="launch-confirmation-dialog" warning fixed backdrop>
+        <span slot="title">${_t('session.launcher.NoFolderMounted')}</span>
+        <div slot="content" class="vertical layout">
+          <p>${_t('session.launcher.HomeDirectoryDeletionDialog')}</p>
+          <p>${_t('session.launcher.LaunchConfirmationDialog')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              class="launch-confirmation-button"
+              id="launch-confirmation-button"
+              icon="rowing"
+              @click="${() => this._newSession()}">
+            <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="env-config-confirmation" warning fixed>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('session.launcher.EnvConfigWillDisappear')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              id="env-config-reset-button"
+              style="width:auto;margin-right:10px;"
+              @click="${() => this._closeAndResetEnvInput()}">
+            <span id="launch-button-msg">${_t('button.DismissAndProceed')}</span>
+          </mwc-button>
+          <mwc-button
+              outlined
+              id="env-config-remain-button"
+              style="width:auto;"
+              @click="${() => this.closeDialog('env-config-confirmation')}">
+            <span id="launch-button-msg">${_t('button.Cancel')}</span>
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
   }
 }
 

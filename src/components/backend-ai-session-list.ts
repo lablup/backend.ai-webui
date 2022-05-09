@@ -1309,7 +1309,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </span>
           <mwc-list>
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
-    return `
+        return `
           ${item.name === 'reserved_time' ? `
               <mwc-list-item twoline graphic="icon" noninteractive>
                 <span>${item.name}</span>
@@ -1323,16 +1323,16 @@ export default class BackendAiSessionList extends BackendAIPage {
               </mwc-list-item>`}
               <li divider role="separator"></li>
               `;
-  }).join('')}
+      }).join('')}
           ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
-    return `
+        return `
                 <mwc-list-item graphic="icon" noninteractive>
                   <span style="padding-left:3px;">${item.name}</span>
                   <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked</mwc-icon>
                 </mwc-list-item>
                 <li divider role="separator"></li>
                 `;
-  }).join('')}
+      }).join('')}
           </mwc-list>
         </wl-expansion>
         </div>
@@ -1347,7 +1347,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             ${errorList.map((item) => {
-    return `
+        return `
               <div style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;">
                 <div class="vertical layout start">
                   <span class="subheading">Error</span>
@@ -1365,7 +1365,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 </div>
               </div>
               `;
-  }).join('')}
+      }).join('')}
         </div>
       </div>
       `;
@@ -1532,51 +1532,54 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
             ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
-            <mwc-textfield id="session-rename-field" required autoValidate
-                             pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
-                             validationMessage="${_text('session.Validation.EnterValidSessionName')}"
-                             value="${rowData.item[this.sessionNameField]}"
-                             @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
-              <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
-                                      @click="${(e) => this._renameSessionName(rowData.item.session_id, e)}"></mwc-icon-button-toggle>
+              <mwc-textfield id="session-rename-field" required autoValidate
+                               pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
+                               validationMessage="${_text('session.Validation.EnterValidSessionName')}"
+                               value="${rowData.item[this.sessionNameField]}"
+                               @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
+                <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
+                                        @click="${(e) => this._renameSessionName(rowData.item.session_id, e)}"></mwc-icon-button-toggle>
             ` : html`
+
             `}
           </div>
           <div class="horizontal center center-justified layout">
           ${rowData.item.icon ? html`
             <img src="resources/icons/${rowData.item.icon}" style="width:32px;height:32px;margin-right:10px;" />
           `: html`
+
           `}
             <div class="vertical start layout">
               ${rowData.item.sessionTags ? rowData.item.sessionTags.map((item) => html`
-              <div class="horizontal center layout">
-                ${item.map((item) => {
-    if (item.category === 'Env') {
-      item.category = item.tag;
-    }
-    if (item.category && rowData.item.baseversion) {
-      item.tag = rowData.item.baseversion;
-    }
-    return html`
-                <lablup-shields app="${item.category === undefined ? '' : item.category}"
-                                color="${item.color}"
-                                description="${item.tag}"
-                                ui="round"
-                                style="margin-top:3px;margin-right:3px;"></lablup-shields>
-                    `;
-  })}
-              </div>`) : html``}
+                <div class="horizontal center layout">
+                  ${item.map((item) => {
+        if (item.category === 'Env') {
+          item.category = item.tag;
+        }
+        if (item.category && rowData.item.baseversion) {
+          item.tag = rowData.item.baseversion;
+        }
+        return html`
+          <lablup-shields app="${item.category === undefined ? '' : item.category}"
+                          color="${item.color}"
+                          description="${item.tag}"
+                          ui="round"
+                          style="margin-top:3px;margin-right:3px;"></lablup-shields>
+        `;
+      })}
+                </div>
+              `) : html``}
               ${rowData.item.additional_reqs ? html`
                 <div class="layout horizontal center wrap">
                   ${rowData.item.additional_reqs.map((tag) => {
-    return html`
-                      <lablup-shields app=""
-                                      color="green"
-                                      description="${tag}"
-                                      ui="round"
-                                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
-                    `;
-  })}
+        return html`
+          <lablup-shields app=""
+                          color="green"
+                          description="${tag}"
+                          ui="round"
+                          style="margin-top:3px;margin-right:3px;"></lablup-shields>
+        `;
+      })}
                 </div>
               ` : html``}
               ${rowData.item.cluster_size > 1 ? html`
@@ -1702,19 +1705,20 @@ export default class BackendAiSessionList extends BackendAIPage {
                 ${mountedFolderList.join(', ')}
               </button>
             ` : html`
-            <wl-icon class="indicator no-mount">folder_open</wl-icon>
-            <span class="no-mount">No mount</span>
+              <wl-icon class="indicator no-mount">folder_open</wl-icon>
+              <span class="no-mount">No mount</span>
             `}
           </div>
         </div>
         ${rowData.item.scaling_group ? html`
-        <div class="layout horizontal center flex">
-          <div class="layout horizontal center configuration">
-            <wl-icon class="fg green indicator">work</wl-icon>
-            <span>${rowData.item.scaling_group}</span>
-            <span class="indicator">RG</span>
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal center configuration">
+              <wl-icon class="fg green indicator">work</wl-icon>
+              <span>${rowData.item.scaling_group}</span>
+              <span class="indicator">RG</span>
+            </div>
           </div>
-        </div>` : html``}
+        ` : html``}
         <div class="layout vertical flex" style="padding-left: 25px">
           <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
@@ -1731,33 +1735,33 @@ export default class BackendAiSessionList extends BackendAIPage {
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_gpu_slot}</span>
               <span class="indicator">GPU</span>
-              ` : html``}
+            ` : html``}
             ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_fgpu_slot}</span>
               <span class="indicator">GPU</span>
-              ` : html``}
+            ` : html``}
             ${rowData.item.rocm_gpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
               <span>${rowData.item.rocm_gpu_slot}</span>
               <span class="indicator">GPU</span>
-              ` : html``}
+            ` : html``}
             ${rowData.item.tpu_slot ? html`
               <wl-icon class="fg green indicator">view_module</wl-icon>
               <span>${rowData.item.tpu_slot}</span>
               <span class="indicator">TPU</span>
-              ` : html``}
+            ` : html``}
             ${!rowData.item.cuda_gpu_slot &&
       !rowData.item.cuda_fgpu_slot &&
       !rowData.item.rocm_gpu_slot &&
       !rowData.item.tpu_slot ? html`
-              <wl-icon class="fg green indicator">view_module</wl-icon>
-              <span>-</span>
-              <span class="indicator">GPU</span>
-              ` : html``}
+        <wl-icon class="fg green indicator">view_module</wl-icon>
+        <span>-</span>
+        <span class="indicator">GPU</span>
+      ` : html``}
           </div>
         </div>
-     `, root
+      `, root
     );
   }
 
@@ -1773,121 +1777,132 @@ export default class BackendAiSessionList extends BackendAIPage {
       render(
         // language=HTML
         html`
-        <div class="vertical start start-justified layout">
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">CPU</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
+          <div class="vertical start start-justified layout">
+             <div class="horizontal start-justified center layout">
+               <div style="font-size:8px;width:35px;">CPU</div>
+               <div class="horizontal start-justified center layout">
+                 <lablup-progress-bar class="usage"
+                   progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
+                   description=""
+                 ></lablup-progress-bar>
+               </div>
+             </div>
+             <div class="horizontal start-justified center layout">
+               <div style="font-size:8px;width:35px;">RAM</div>
+               <div class="horizontal start-justified center layout">
+                 <lablup-progress-bar class="usage"
+                   progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
+                   description=""
+                 ></lablup-progress-bar>
+               </div>
+             </div>
+             ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
+               <div class="horizontal start-justified center layout">
+                 <div style="font-size:8px;width:35px;">GPU</div>
+                 <div class="horizontal start-justified center layout">
+                   <lablup-progress-bar class="usage"
+                     progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
+                     description=""
+                   ></lablup-progress-bar>
+                 </div>
+               </div>
+             ` : html``}
+             ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
+               <div class="horizontal start-justified center layout">
+                 <div style="font-size:8px;width:35px;">GPU</div>
+                 <div class="horizontal start-justified center layout">
+                   <lablup-progress-bar class="usage"
+                     progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
+                     description=""
+                   ></lablup-progress-bar>
+                 </div>
+               </div>
+             ` : html``}
+             ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
+               <div class="horizontal start-justified center layout">
+                 <div style="font-size:8px;width:35px;">GPU</div>
+                 <div class="horizontal start-justified center layout">
+                   <lablup-progress-bar class="usage"
+                     progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
+                     description=""
+                   ></lablup-progress-bar>
+                 </div>
+               </div>
+             ` : html``}
+             ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
+               <div class="horizontal start-justified center layout">
+                 <div style="font-size:8px;width:35px;">TPU</div>
+                 <div class="horizontal start-justified center layout">
+                   <lablup-progress-bar class="usage"
+                     progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
+                     description=""
+                   ></lablup-progress-bar>
+                 </div>
+               </div>
+             ` : html``}
+             <div class="horizontal start-justified center layout">
+               <div style="font-size:8px;width:35px;">I/O</div>
+               <div style="font-size:8px;" class="horizontal start-justified center layout">
+               R: ${rowData.item.io_read_bytes_mb}MB /
+               W: ${rowData.item.io_write_bytes_mb}MB
+               </div>
+             </div>
           </div>
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">RAM</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>
-          ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>` : html``}
-          ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>` : html``}
-          ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>` : html``}
-          ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">TPU</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>` : html``}
-          <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">I/O</div>
-            <div style="font-size:8px;" class="horizontal start-justified center layout">
-            R: ${rowData.item.io_read_bytes_mb}MB /
-            W: ${rowData.item.io_write_bytes_mb}MB
-            </div>
-          </div>
-       </div>
         `, root);
     } else if (this.condition === 'finished') {
       render(
         // language=HTML
         html`
-        <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
-          ${rowData.item.cpu_used_time.D ? html`
-          <div class="vertical center-justified center layout">
-            <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
-            <span class="indicator">day</span>
-          </div>` : html``}
-          ${rowData.item.cpu_used_time.H ? html`
-          <div class="vertical center-justified center layout">
-            <span style="font-size:11px">${rowData.item.cpu_used_time.H}</span>
-            <span class="indicator">hour</span>
-          </div>` : html``}
-          ${rowData.item.cpu_used_time.M ? html`
-          <div class="vertical start layout">
-            <span style="font-size:11px">${rowData.item.cpu_used_time.M}</span>
-            <span class="indicator">min.</span>
-          </div>` : html``}
-          ${rowData.item.cpu_used_time.S ? html`
-          <div class="vertical start layout">
-            <span style="font-size:11px">${rowData.item.cpu_used_time.S}</span>
-            <span class="indicator">sec.</span>
-          </div>` : html``}
-          ${rowData.item.cpu_used_time.MS ? html`
-          <div class="vertical start layout">
-            <span style="font-size:11px">${rowData.item.cpu_used_time.MS}</span>
-            <span class="indicator">msec.</span>
-          </div>` : html``}
-          ${rowData.item.cpu_used_time.NODATA ? html`
-          <div class="vertical start layout">
-            <span style="font-size:11px">No data</span>
-          </div>` : html``}
-        </div>
-        <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
-          <div class="vertical start layout">
-            <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
-            <span class="indicator">READ</span>
+          <div class="layout horizontal center flex">
+            <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
+            ${rowData.item.cpu_used_time.D ? html`
+              <div class="vertical center-justified center layout">
+                <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
+                <span class="indicator">day</span>
+              </div>
+            ` : html``}
+            ${rowData.item.cpu_used_time.H ? html`
+              <div class="vertical center-justified center layout">
+                <span style="font-size:11px">${rowData.item.cpu_used_time.H}</span>
+                <span class="indicator">hour</span>
+              </div>
+            ` : html``}
+            ${rowData.item.cpu_used_time.M ? html`
+              <div class="vertical start layout">
+                <span style="font-size:11px">${rowData.item.cpu_used_time.M}</span>
+                <span class="indicator">min.</span>
+              </div>
+            ` : html``}
+            ${rowData.item.cpu_used_time.S ? html`
+              <div class="vertical start layout">
+                <span style="font-size:11px">${rowData.item.cpu_used_time.S}</span>
+                <span class="indicator">sec.</span>
+              </div>
+            ` : html``}
+            ${rowData.item.cpu_used_time.MS ? html`
+              <div class="vertical start layout">
+                <span style="font-size:11px">${rowData.item.cpu_used_time.MS}</span>
+                <span class="indicator">msec.</span>
+              </div>
+            ` : html``}
+            ${rowData.item.cpu_used_time.NODATA ? html`
+              <div class="vertical start layout">
+                <span style="font-size:11px">No data</span>
+              </div>
+            ` : html``}
           </div>
-          <div class="vertical start layout">
-            <span style="font-size:8px">${rowData.item.io_write_bytes_mb}<span class="indicator">MB</span></span>
-            <span class="indicator">WRITE</span>
+          <div class="layout horizontal center flex">
+            <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
+            <div class="vertical start layout">
+              <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
+              <span class="indicator">READ</span>
+            </div>
+            <div class="vertical start layout">
+              <span style="font-size:8px">${rowData.item.io_write_bytes_mb}<span class="indicator">MB</span></span>
+              <span class="indicator">WRITE</span>
+            </div>
           </div>
-        </div>`, root
+        `, root
       );
     }
   }
@@ -1952,7 +1967,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+          <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
         `, root
       );
     } else {
@@ -2115,7 +2130,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
               ${_t('button.ForceTerminate')}
             </wl-button>
-            <span class="flex"></span>` : html``}
+            <span class="flex"></span>
+          ` : html``}
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
@@ -2131,7 +2147,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-button class="warning fg red" inverted flat
                        @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
             </wl-button>
-            <span class="flex"></span>` : html``}
+            <span class="flex"></span>
+          ` : html``}
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}

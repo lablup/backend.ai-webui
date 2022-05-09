@@ -1037,7 +1037,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                     <img src="${item.src}"/>
                   </mwc-icon-button>
                   <span class="label">${item.title}</span>
-                </div>`}
+                </div>
+              `}
             `)}
           </div>
           <div style="padding:10px 20px 15px 20px">

@@ -138,28 +138,28 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div class="layout horizontal wrap center">
         ${rowData.item.resource_slots['cuda.device'] ?
     html`
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
-            <span class="indicator">GPU</span>
-          </div>
-        ` : html``}
+      <div class="layout horizontal configuration">
+        <wl-icon class="fg green">view_module</wl-icon>
+        <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
+        <span class="indicator">GPU</span>
+      </div>
+    ` : html``}
         ${rowData.item.resource_slots['cuda.shares'] ?
     html`
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
-            <span class="indicator">GPU</span>
-          </div>
-        ` : html``}
+      <div class="layout horizontal configuration">
+        <wl-icon class="fg green">view_module</wl-icon>
+        <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
+        <span class="indicator">GPU</span>
+      </div>
+    ` : html``}
         ${rowData.item.shared_memory ?
     html`
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg blue">memory</wl-icon>
-            <span>${rowData.item.shared_memory_gb}</span>
-            <span class="indicator">GB</span>
-          </div>
-        ` : html``}
+      <div class="layout horizontal configuration">
+        <wl-icon class="fg blue">memory</wl-icon>
+        <span>${rowData.item.shared_memory_gb}</span>
+        <span class="indicator">GB</span>
+      </div>
+    ` : html``}
         </div>
       `, root
     );

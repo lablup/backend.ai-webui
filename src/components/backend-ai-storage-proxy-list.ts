@@ -399,7 +399,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
             <lablup-shields app="" color="blue"
                             description="${item}" ui="round"></lablup-shields>
           `) : html``}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -439,7 +440,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <mwc-icon-button class="fg blue controls-running" icon="assignment"
                           ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -473,19 +475,21 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <div class="horizontal start start-justified layout">
             ${'cpu_util_live' in this.storageProxyDetail ?
     html`
-                <div>
-                  <h3>CPU</h3>
-                  <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.storageProxyDetail.cpu_util_live.map((item) => html`
-                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                        <lablup-progress-bar class="cpu"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
-                        ></lablup-progress-bar>
-                      </div>`)}
-                  </div>
-                </div>` : html``}
+      <div>
+        <h3>CPU</h3>
+        <div class="horizontal wrap layout" style="max-width:600px;">
+          ${this.storageProxyDetail.cpu_util_live.map((item) => html`
+            <div class="horizontal start-justified center layout" style="padding:0 5px;">
+              <div style="font-size:8px;width:35px;">CPU${item.num}</div>
+              <lablup-progress-bar class="cpu"
+                                   progress="${item.pct / 100.0}"
+                                   description=""
+              ></lablup-progress-bar>
+            </div>
+          `)}
+        </div>
+      </div>
+    ` : html``}
             <div style="margin-left:10px;">
               <h3>Memory</h3>
               <div>

@@ -1022,20 +1022,20 @@ export default class BackendAICredentialView extends BackendAIPage {
                 @click="${(e) => this._showTab(e.target)}"></mwc-tab>
            </mwc-tab-bar>
             ${this.isAdmin ? html`
-                <span class="flex"></span>
-                <div style="position: relative;">
-                  <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
-                                  @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
-                  <mwc-menu id="dropdown-menu">
-                      <mwc-list-item>
-                        <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
-                          <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
-                          ${_t('credential.exportCSV')}
-                        </a>
-                      </mwc-list-item>
-                    </mwc-menu>
-                </div>
-              ` : html``}
+              <span class="flex"></span>
+              <div style="position: relative;">
+                <mwc-icon-button id="dropdown-menu-button" icon="more_horiz" raised
+                                @click="${(e) => this._toggleDropdown(e)}"></mwc-icon-button>
+                <mwc-menu id="dropdown-menu">
+                    <mwc-list-item>
+                      <a class="horizontal layout start center" @click="${this._openExportToCsvDialog}">
+                        <mwc-icon style="color:#242424;padding-right:10px;">get_app</mwc-icon>
+                        ${_t('credential.exportCSV')}
+                      </a>
+                    </mwc-list-item>
+                  </mwc-menu>
+              </div>
+            ` : html``}
           </h3>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
@@ -1101,7 +1101,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </mwc-select>
             <mwc-select outlined id="rate-limit" label="${_t('credential.RateLimitFor15min')}" style="width:100%;margin:10px 0;">
               ${this.rate_metric.map((item) => html`
-                  <mwc-list-item value="${item}">${item}</mwc-list-item>
+                <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
             <!--<wl-expansion name="advanced-keypair-info" style="width:100%;">

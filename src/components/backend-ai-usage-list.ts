@@ -292,8 +292,8 @@ export default class BackendAIUsageList extends BackendAIPage {
           <mwc-select label="${_t('statistics.SelectPeriod')}"
               id="period-selector" style="width:130px; border:1px solid #ccc;"
               @change="${(e) => {
-    this.pulldownChange(e);
-  }}">
+      this.pulldownChange(e);
+    }}">
             <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
             ${this.elapsedDays > 7 ? html`
               <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
@@ -304,17 +304,17 @@ export default class BackendAIUsageList extends BackendAIPage {
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
       html`
-              <h3 class="horizontal center layout">
-                <span style="color:#222222;">${this._map[key]}</span>
-                <span class="flex"></span>
-              </h3>
-              <div style="width:100%;min-height:180px;">
-                <backend-ai-chart
-                  idx=${idx}
-                  .collection=${this.collection[this.period][key]}
-                ></backend-ai-chart>
-              </div>
-            `
+        <h3 class="horizontal center layout">
+          <span style="color:#222222;">${this._map[key]}</span>
+          <span class="flex"></span>
+        </h3>
+        <div style="width:100%;min-height:180px;">
+          <backend-ai-chart
+            idx=${idx}
+            .collection=${this.collection[this.period][key]}
+          ></backend-ai-chart>
+        </div>
+      `
     ) : html``}
       </div>
     `;

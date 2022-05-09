@@ -264,7 +264,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   <mwc-list-item value="${item.behavior}"
                                  ?selected=${this.options['image_pulling_behavior'] === item.behavior}>
                     ${item.name}
-                  </mwc-list-item>`)}
+                  </mwc-list-item>
+                `)}
                 </mwc-select>
               </div>
             </div>
@@ -331,9 +332,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
                         label="${_t('settings.Config')}"
                         style="float: right;"
                         @click="${() => {
-    this.updateNetworkOptionElements();
-    this._openDialogWithConfirmation('overlay-network-env-dialog');
-  }}"></mwc-button>
+      this.updateNetworkOptionElements();
+      this._openDialogWithConfirmation('overlay-network-env-dialog');
+    }}"></mwc-button>
                     </div>
                   </div>
                 </div>
@@ -427,7 +428,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
               ${this.jobschedulerType.map((item) => html`
                 <mwc-list-item value="${item}">
                   ${item.toUpperCase()}
-                </mwc-list-item>`)}
+                </mwc-list-item>
+              `)}
             </mwc-select>
             <h4>${_t('settings.SchedulerOptions')}</h4>
             <div class="horizontal center layout flex row">

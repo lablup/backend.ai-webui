@@ -379,12 +379,12 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
-                ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
-                `)}
-              </mwc-select>
-            </div>
-          ` : html``}
+                  ${(this.allowedGroups as any).map((item, idx) => html`
+                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  `)}
+                </mwc-select>
+              </div>
+            ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
             <div class="horizontal layout">
@@ -402,14 +402,14 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.enableStorageProxy ?
     html`
-          <!--<div class="horizontal layout flex wrap center justified">
-              <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t('data.folders.Cloneable')}
-              </p>
-              <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
-              </mwc-switch>
-            </div>-->
-            ` : html``}
+      <!--<div class="horizontal layout flex wrap center justified">
+          <p style="color:rgba(0, 0, 0, 0.6);">
+            ${_t('data.folders.Cloneable')}
+          </p>
+          <mwc-switch id="add-folder-cloneable" style="margin-right:10px;">
+          </mwc-switch>
+        </div>-->
+    ` : html``}
           <div style="font-size:11px;">
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
@@ -454,11 +454,11 @@ export default class BackendAIData extends BackendAIPage {
               ` : html``}
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-                <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
-                  ${(this.allowedGroups as any).map((item, idx) => html`
-                    <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
-                  `)}
-                </mwc-select>
+              <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+                ${(this.allowedGroups as any).map((item, idx) => html`
+                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                `)}
+              </mwc-select>
             ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
@@ -477,14 +477,14 @@ export default class BackendAIData extends BackendAIPage {
           ` : html``}
           ${this.enableStorageProxy ?
     html`
-          <div class="horizontal layout flex wrap center justified">
-              <p style="color:rgba(0, 0, 0, 0.6);">
-                ${_t('data.folders.Cloneable')}
-              </p>
-              <mwc-switch id="clone-folder-cloneable" style="margin-right:10px;">
-              </mwc-switch>
-            </div>
-            ` : html``}
+      <div class="horizontal layout flex wrap center justified">
+          <p style="color:rgba(0, 0, 0, 0.6);">
+            ${_t('data.folders.Cloneable')}
+          </p>
+          <mwc-switch id="clone-folder-cloneable" style="margin-right:10px;">
+          </mwc-switch>
+        </div>
+    ` : html``}
           <div style="font-size:11px;">
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
@@ -504,7 +504,7 @@ export default class BackendAIData extends BackendAIPage {
         <div slot="content" class="horizontal layout center">
         ${this._helpDescriptionIcon == '' ? html`` : html`
           <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
+        `}
           <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
         </div>
       </backend-ai-dialog>

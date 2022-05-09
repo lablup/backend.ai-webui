@@ -205,8 +205,8 @@ export default class BackendAiDialog extends LitElement {
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
-            <mwc-icon-button icon="close" fab flat inverted @click="${() => this._hideDialog()}">
-            </mwc-icon-button>
+              <mwc-icon-button icon="close" fab flat inverted @click="${() => this._hideDialog()}">
+              </mwc-icon-button>
             `}
           </h3>
           <div class="content content-area">
@@ -217,7 +217,7 @@ export default class BackendAiDialog extends LitElement {
           </div>
         </div>
       </mwc-dialog>
-      `;
+    `;
   }
 }
 

@@ -112,6 +112,7 @@ export default class BackendAIIndicatorPool extends LitElement {
   render() {
     // language=HTML
     return html`
+
     `;
   }
 }

@@ -112,8 +112,7 @@ export default class LablupTermsOfService extends LitElement {
 
   tos_contents() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 
   render() {
@@ -140,8 +139,8 @@ export default class LablupTermsOfService extends LitElement {
                 id="dismiss-button"
                 label=${_t('button.Dismiss')}
                 @click="${() => {
-    this.close();
-  }}"></mwc-button>
+      this.close();
+    }}"></mwc-button>
           </div>
         </div>
       </backend-ai-dialog>

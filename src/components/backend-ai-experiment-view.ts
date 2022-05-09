@@ -483,8 +483,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
           <backend-ai-session-list id="finished-jobs" condition="finished" ?active="${this._status === 'active'}"></backend-ai-session-list>
         </div>
       </wl-card>
-
-`;
+    `;
   }
 }
 declare global {

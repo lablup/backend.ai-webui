@@ -682,7 +682,7 @@ export default class BackendAILogin extends BackendAIPage {
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
-      `Backend.AI Console.`,
+        `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async ()=>{
       const isLogon = await this.client.check_login();
@@ -855,7 +855,7 @@ export default class BackendAILogin extends BackendAIPage {
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
-      `Backend.AI Console.`,
+        `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async ()=>{
       const isLogon = await this.client.check_login();
@@ -933,7 +933,7 @@ export default class BackendAILogin extends BackendAIPage {
     );
     this.client = new ai.backend.Client(
       this.clientConfig,
-      `Backend.AI Console.`,
+        `Backend.AI Console.`,
     );
     this.client.ready = false;
     this.client.get_manager_version().then((response) => {
@@ -1171,15 +1171,15 @@ export default class BackendAILogin extends BackendAIPage {
             <div>${this.connection_mode == 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
-                <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:5px 10px;text-align:center;font-weight:400;">${_t('login.LoginAnotherway')}</div>
-                  <mwc-button
-                      class="change-login-mode-button"
-                      outlined
-                      label="${this.connection_mode == 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
-                      @click="${() => this._changeSigninMode()}">
-                  </mwc-button>
-                </div>
+              <div class="vertical center-justified layout">
+                <div style="font-size:12px;margin:5px 10px;text-align:center;font-weight:400;">${_t('login.LoginAnotherway')}</div>
+                <mwc-button
+                    class="change-login-mode-button"
+                    outlined
+                    label="${this.connection_mode == 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
+                    @click="${() => this._changeSigninMode()}">
+                </mwc-button>
+              </div>
             ` : html``}
           </h3>
           <div class="login-form">
@@ -1221,16 +1221,18 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
                     <mwc-list-item disabled>${_t('login.EndpointHistory')}</mwc-list-item>
                     ${this.endpoints.length === 0 ? html`
-                    <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
+                      <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
                     ` : html``}
 
                     ${this.endpoints.map((item) =>
-    html`<mwc-list-item value="${item}">
-                      <div class="horizontal justified center flex layout" style="width:365px;">
-                        <span>${item}</span><span class="flex"></span>
-                        <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
-                      </div>
-                    </mwc-list-item>`)}
+      html`
+        <mwc-list-item value="${item}">
+                              <div class="horizontal justified center flex layout" style="width:365px;">
+                                <span>${item}</span><span class="flex"></span>
+                                <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
+                              </div>
+                            </mwc-list-item>
+      `)}
                   </mwc-menu>
                   <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" maxLength="2048"
                               style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"

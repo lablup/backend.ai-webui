@@ -425,7 +425,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="vertical layout center system-health-indicator">
                 <div class="big indicator">${this.agents}</div>
                 <span>${_tr('summary.ConnectedNodes')}</span>
-              </div>` : html``}
+              </div>
+            ` : html``}
             <div class="vertical layout center system-health-indicator">
               <div class="big indicator">${this.sessions}</div>
               <span>${_t('summary.ActiveSessions')}</span>
@@ -433,134 +434,138 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           </div>
           <div class="vertical-card" style="align-items: flex-start">
             ${this.is_superadmin ? html`
-            <div class="layout horizontal center flex resource">
-              <div class="layout vertical center center-justified resource-name">
-                <div class="gauge-name">CPU</div>
+              <div class="layout horizontal center flex resource">
+                <div class="layout vertical center center-justified resource-name">
+                  <div class="gauge-name">CPU</div>
+                </div>
+                <div class="layout vertical start-justified wrap">
+                  <lablup-progress-bar id="cpu-usage-bar" class="start"
+                    progress="${this.cpu_total_usage_ratio / 100.0}"
+                    description="${this._addComma(this.cpu_used)}/${this._addComma(this.cpu_total)} ${_t('summary.CoresReserved')}."
+                  ></lablup-progress-bar>
+                  <lablup-progress-bar id="cpu-usage-bar-2" class="end"
+                    progress="${this.cpu_current_usage_ratio / 100.0}"
+                    description="${_t('summary.Using')} ${this.cpu_total_percent} % (util. ${this.cpu_percent} %)"
+                  ></lablup-progress-bar>
+                </div>
+                <div class="layout vertical center center-justified">
+                  <span class="percentage start-bar">${parseInt(this.cpu_total_percent)+ '%'}</span>
+                  <span class="percentage end-bar">${parseInt(this.cpu_percent) + '%'}</span>
+                </div>
               </div>
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="cpu-usage-bar" class="start"
-                  progress="${this.cpu_total_usage_ratio / 100.0}"
-                  description="${this._addComma(this.cpu_used)}/${this._addComma(this.cpu_total)} ${_t('summary.CoresReserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="cpu-usage-bar-2" class="end"
-                  progress="${this.cpu_current_usage_ratio / 100.0}"
-                  description="${_t('summary.Using')} ${this.cpu_total_percent} % (util. ${this.cpu_percent} %)"
-                ></lablup-progress-bar>
+              <div class="resource-line"></div>
+              <div class="layout horizontal center flex resource">
+                <div class="layout vertical center center-justified resource-name">
+                  <div class="gauge-name">RAM</div>
+                </div>
+                <div class="layout vertical start-justified wrap">
+                  <lablup-progress-bar id="mem-usage-bar" class="start"
+                    progress="${this.mem_total_usage_ratio / 100.0}"
+                    description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}."
+                  ></lablup-progress-bar>
+                  <lablup-progress-bar id="mem-usage-bar-2" class="end"
+                    progress="${this.mem_current_usage_ratio / 100.0}"
+                    description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
+                      (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)"
+                  ></lablup-progress-bar>
+                </div>
+                <div class="layout vertical center center-justified">
+                  <span class="percentage start-bar">${this.mem_total_usage_ratio.toFixed(1) + '%'}</span>
+                  <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
+                </div>
               </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${parseInt(this.cpu_total_percent)+ '%'}</span>
-                <span class="percentage end-bar">${parseInt(this.cpu_percent) + '%'}</span>
-              </div>
-            </div>
-            <div class="resource-line"></div>
-            <div class="layout horizontal center flex resource">
-              <div class="layout vertical center center-justified resource-name">
-                <div class="gauge-name">RAM</div>
-              </div>
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="mem-usage-bar" class="start"
-                  progress="${this.mem_total_usage_ratio / 100.0}"
-                  description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="mem-usage-bar-2" class="end"
-                  progress="${this.mem_current_usage_ratio / 100.0}"
-                  description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
-                    (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)"
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.mem_total_usage_ratio.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
-              </div>
-            </div>
-            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
-            <div class="resource-line"></div>
-            <div class="layout horizontal center flex resource">
-              <div class="layout vertical center center-justified resource-name">
-                <div class="gauge-name">GPU</div>
-              </div>
-              ${this.cuda_gpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="gpu-usage-bar" class="start"
-                  progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
-                  description="${this.cuda_gpu_used !== 0 ? this.cuda_gpu_used.toFixed(1) : 0} / ${this.cuda_gpu_total !== 0 ? this.cuda_gpu_total.toFixed(1) : 0} CUDA GPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="gpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.FractionalGPUScalingEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>
-              `: html``}
-              ${this.cuda_fgpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="fgpu-usage-bar" class="start"
-                progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                description="${this.cuda_fgpu_used !== 0 ? this.cuda_fgpu_used.toFixed(1) : 0} / ${this.cuda_fgpu_total !== 0 ? this.cuda_fgpu_total.toFixed(1) : 0} CUDA fGPUs ${_t('summary.reserved')}."
-              ></lablup-progress-bar>
-              <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
-                progress="0"
-                description="${_t('summary.FractionalGPUScalingEnabled')}."
-              ></lablup-progress-bar>
+              ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
+                <div class="resource-line"></div>
+                <div class="layout horizontal center flex resource">
+                  <div class="layout vertical center center-justified resource-name">
+                    <div class="gauge-name">GPU</div>
+                  </div>
+                  ${this.cuda_gpu_total ? html`
+                    <div class="layout vertical start-justified wrap">
+                      <lablup-progress-bar id="gpu-usage-bar" class="start"
+                        progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
+                        description="${this.cuda_gpu_used !== 0 ? this.cuda_gpu_used.toFixed(1) : 0} / ${this.cuda_gpu_total !== 0 ? this.cuda_gpu_total.toFixed(1) : 0} CUDA GPUs ${_t('summary.reserved')}."
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar id="gpu-usage-bar-2" class="end"
+                        progress="0"
+                        description="${_t('summary.FractionalGPUScalingEnabled')}."
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
+                      <span class="percentage end-bar">&nbsp;</span>
+                    </div>
+                  `: html``}
+                  ${this.cuda_fgpu_total ? html`
+                    <div class="layout vertical start-justified wrap">
+                    <lablup-progress-bar id="fgpu-usage-bar" class="start"
+                      progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
+                      description="${this.cuda_fgpu_used !== 0 ? this.cuda_fgpu_used.toFixed(1) : 0} / ${this.cuda_fgpu_total !== 0 ? this.cuda_fgpu_total.toFixed(1) : 0} CUDA fGPUs ${_t('summary.reserved')}."
+                    ></lablup-progress-bar>
+                    <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
+                      progress="0"
+                      description="${_t('summary.FractionalGPUScalingEnabled')}."
+                    ></lablup-progress-bar>
 
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
+                      <span class="percentage end-bar">&nbsp;</span>
+                    </div>
+                  `: html``}
+                  ${this.rocm_gpu_total ? html`
+                    <div class="layout vertical start-justified wrap">
+                      <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
+                        progress="${this.rocm_gpu_used / 100.0}"
+                        description="${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}."
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
+                        progress="0"
+                        description="${_t('summary.ROCMGPUEnabled')}."
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
+                      <span class="percentage end-bar">&nbsp;</span>
+                    </div>
+                  `: html``}
+                  ${this.tpu_total ? html`
+                    <div class="layout vertical start-justified wrap">
+                      <lablup-progress-bar id="tpu-usage-bar" class="start"
+                        progress="${this.tpu_used / 100.0}"
+                        description="${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}."
+                      ></lablup-progress-bar>
+                      <lablup-progress-bar id="tpu-usage-bar-2" class="end"
+                        progress="0"
+                        description="${_t('summary.TPUEnabled')}."
+                      ></lablup-progress-bar>
+                    </div>
+                    <div class="layout vertical center center-justified">
+                      <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
+                      <span class="percentage end-bar"></span>
+                    </div>
+                  `: html``}
+                </div>
               `: html``}
-              ${this.rocm_gpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
-                  progress="${this.rocm_gpu_used / 100.0}"
-                  description="${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.ROCMGPUEnabled')}."
-                ></lablup-progress-bar>
+              <div class="vertical start layout" style="margin-top:30px;">
+                <div class="horizontal layout resource-legend-stack">
+                  <div class="resource-legend-icon start"></div>
+                  <span class="resource-legend">${_t('summary.Reserved')} ${_t('resourcePolicy.Resources')}</span>
+                </div>
+                <div class="horizontal layout resource-legend-stack">
+                  <div class="resource-legend-icon end"></div>
+                  <span class="resource-legend">${_t('summary.Used')} ${_t('resourcePolicy.Resources')}</span>
+                </div>
+                <div class="horizontal layout">
+                  <div class="resource-legend-icon total"></div>
+                  <span class="resource-legend">${_t('summary.Total')} ${_t('resourcePolicy.Resources')}</span>
+                </div>
               </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>`: html``}
-              ${this.tpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="tpu-usage-bar" class="start"
-                  progress="${this.tpu_used / 100.0}"
-                  description="${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="tpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.TPUEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
-            </div>`: html``}
-            <div class="vertical start layout" style="margin-top:30px;">
-              <div class="horizontal layout resource-legend-stack">
-                <div class="resource-legend-icon start"></div>
-                <span class="resource-legend">${_t('summary.Reserved')} ${_t('resourcePolicy.Resources')}</span>
-              </div>
-              <div class="horizontal layout resource-legend-stack">
-                <div class="resource-legend-icon end"></div>
-                <span class="resource-legend">${_t('summary.Used')} ${_t('resourcePolicy.Resources')}</span>
-              </div>
-              <div class="horizontal layout">
-                <div class="resource-legend-icon total"></div>
-                <span class="resource-legend">${_t('summary.Total')} ${_t('resourcePolicy.Resources')}</span>
-              </div>
-            </div>` : html``}
+            ` : html``}
           </div>
         </div>
       </lablup-activity-panel>
-`;
+    `;
   }
 }
 

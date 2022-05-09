@@ -306,8 +306,8 @@ export default class BackendAIImport extends BackendAIPage {
       }
     } else {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
-      var repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
-      const getRepoUrl = async() => {
+      const repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
+      const getRepoUrl = async () => {
         try {
           const response = await fetch(repoUrl);
           if (response.status === 200) {
@@ -315,10 +315,10 @@ export default class BackendAIImport extends BackendAIPage {
             return responseJson.default_branch;
           } else if (response.status === 404) {
             throw 'WrongURLType';
-          } else if (response.status === 403 || response.status === 429) { //forbidden & Too Many Requests
+          } else if (response.status === 403 || response.status === 429) { // forbidden & Too Many Requests
             const limitCnt = response.headers.get('x-ratelimit-limit');
-            const limitUsedCnt = response.headers.get('x-ratelimit-used')
-            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining')
+            const limitUsedCnt = response.headers.get('x-ratelimit-used');
+            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining');
             console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
             if (limitRemainingCnt === '0') {
               throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
@@ -334,7 +334,7 @@ export default class BackendAIImport extends BackendAIPage {
         } catch (error) {
           throw error;
         }
-      }
+      };
       return getRepoUrl().then((result) => {
         tree = result;
         url = url.replace('https://github.com', 'https://codeload.github.com');
@@ -350,19 +350,19 @@ export default class BackendAIImport extends BackendAIPage {
         }
       }).catch((e) => { // check exception
         switch (e) {
-          case 'WrongURLType':
-            this.notification.text = _text('import.WrongURLType');
-            break;
-          case 'GithubInternalError':
-            this.notification.text = _text('import.GithubInternalError');
-            break;
-          default:
-            if (e.indexOf('|') !== -1) {
-              this.notification.text = _text('import.GithubAPILimitError');
-            } else {
-              this.notification.text = _text('import.GithubAPIEtcError');
-            }
-            break;
+        case 'WrongURLType':
+          this.notification.text = _text('import.WrongURLType');
+          break;
+        case 'GithubInternalError':
+          this.notification.text = _text('import.GithubInternalError');
+          break;
+        default:
+          if (e.indexOf('|') !== -1) {
+            this.notification.text = _text('import.GithubAPILimitError');
+          } else {
+            this.notification.text = _text('import.GithubAPIEtcError');
+          }
+          break;
         }
         this.importMessage = this.notification.text;
         this.notification.show();
@@ -374,7 +374,7 @@ export default class BackendAIImport extends BackendAIPage {
   getGitlabRepoFromURL() {
     let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
     let tree = 'master';
-    let getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    const getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
     if (getBranchName.length > 0) {
       tree = getBranchName;
     }
@@ -385,8 +385,8 @@ export default class BackendAIImport extends BackendAIPage {
     }
 
     if (url.includes('/tree')) { // Branch.
-      var pathname = new URL(url).pathname;
-      var splitPaths = pathname.split( '/' );
+      const pathname = new URL(url).pathname;
+      const splitPaths = pathname.split( '/' );
       name = splitPaths[2];
       tree = splitPaths[splitPaths.length -1];
       url = url.replace('/tree/', '/archive/');
@@ -402,7 +402,7 @@ export default class BackendAIImport extends BackendAIPage {
       }
     } else {
       name = url.split('/').slice(-1)[0];
-      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip'
+      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip';
       const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
       if (['http', 'https'].includes(protocol)) {
         return this.importRepoFromURL(url, name);
@@ -637,9 +637,9 @@ export default class BackendAIImport extends BackendAIPage {
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
                 ${this.vhosts.map((item, idx) => html `
-                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
-                    <span>${item}</span>
-                </mwc-list-item>
+                  <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                      <span>${item}</span>
+                  </mwc-list-item>
                 `)}
               </mwc-select>
               <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
@@ -663,9 +663,9 @@ export default class BackendAIImport extends BackendAIPage {
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
               <mwc-select class="fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
                 ${this.vhosts.map((item, idx) => html `
-                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
-                    <span>${item}</span>
-                </mwc-list-item>
+                  <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+                      <span>${item}</span>
+                  </mwc-list-item>
                 `)}
               </mwc-select>
               <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
@@ -676,7 +676,7 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-`;
+    `;
   }
 }
 

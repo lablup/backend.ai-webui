@@ -228,7 +228,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.timestamp_hr}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -244,7 +245,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.statusCode+` `+rowData.item.statusText}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -258,9 +260,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout vertical">
-        <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.title}</span>
-      </div>`, root);
+        <div class="layout vertical">
+          <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.title}</span>
+        </div>
+      `, root);
   }
 
   /**
@@ -276,7 +279,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.message}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -292,7 +296,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.type}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -308,7 +313,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestMethod}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -324,7 +330,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestUrl}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   /**
@@ -340,7 +347,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       html`
         <div class="layout vertical">
           <span class="monospace ${rowData.item.isError ? `error-cell` : ``}">${rowData.item.requestParameters}</span>
-        </div>`, root);
+        </div>
+      `, root);
   }
 
   render() {
@@ -374,8 +382,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             icon="navigate_before"
             ?disabled="${this._currentPage === 1}"
             @click="${(e) => {
-    this._updateItemsFromPage(e);
-  }}"></mwc-icon-button>
+      this._updateItemsFromPage(e);
+    }}"></mwc-icon-button>
         <wl-label style="padding: 5px 15px 0px 15px;">
           ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
         </wl-label>
@@ -385,8 +393,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             icon="navigate_next"
             ?disabled="${this._totalLogCount <= this._pageSize * this._currentPage}"
             @click="${(e) => {
-    this._updateItemsFromPage(e);
-  }}"></mwc-icon-button>
+      this._updateItemsFromPage(e);
+    }}"></mwc-icon-button>
       </div>
     `;
   }

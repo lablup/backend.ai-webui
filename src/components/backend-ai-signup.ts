@@ -203,7 +203,7 @@ export default class BackendAiSignup extends BackendAIPage {
         };
         this.client = new ai.backend.Client(
           clientConfig,
-          `Backend.AI Console.`,
+            `Backend.AI Console.`,
         );
       }
     }
@@ -433,9 +433,11 @@ export default class BackendAiSignup extends BackendAIPage {
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${this.allowSignupWithoutConfirmation ? html`
-          ${_t('signup.Signup')}` :
-    html`${_t('signup.SignupBETA')}
-          `}
+          ${_t('signup.Signup')}
+        ` :
+    html`
+      ${_t('signup.SignupBETA')}
+    `}
         </span>
         <div slot="content" class="vertical flex layout">
           <mwc-textfield type="email" name="user_email" id="id_user_email" autofocus

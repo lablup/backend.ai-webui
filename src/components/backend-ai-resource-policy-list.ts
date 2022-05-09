@@ -377,20 +377,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
         ${rowData.item.total_resource_slots['cuda_device'] ?
     html`
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
-            <span class="indicator">GPU</span>
-          </div>
-` : html``}
+      <div class="layout horizontal configuration">
+        <wl-icon class="fg green indicator">view_module</wl-icon>
+        <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+        <span class="indicator">GPU</span>
+      </div>
+    ` : html``}
         ${rowData.item.total_resource_slots['cuda_shares'] ?
     html`
-          <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
-            <span class="indicator">fGPU</span>
-          </div>
-` : html``}
+      <div class="layout horizontal configuration">
+        <wl-icon class="fg green indicator">view_module</wl-icon>
+        <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+        <span class="indicator">fGPU</span>
+      </div>
+    ` : html``}
         </div>
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
@@ -412,7 +412,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       html`
         <div>${[0, BigNumber.getValue()].includes(rowData.item.max_concurrent_sessions) ? '∞' : rowData.item.max_concurrent_sessions}</div>
-    `, root
+      `, root
     );
   }
 
@@ -422,15 +422,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
              .policy-name="${rowData.item.name}">
         ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
-                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
-                                 ` : html``}
+          <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
+                             @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
+        ` : html``}
         ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg red controls-running" icon="delete"
-                                 @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
-                                 ` : html``}
+          <wl-button fab flat inverted class="fg red controls-running" icon="delete"
+                             @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
+        ` : html``}
         </div>
-    `, root
+      `, root
     );
   }
 
@@ -438,9 +438,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        <div>${rowData.item.name}</div>
-      </div>
+        <div class="layout horizontal center flex">
+          <div>${rowData.item.name}</div>
+        </div>
       `, root
     );
   }
@@ -449,7 +449,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div>${[0, BigNumber.getValue()].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
+        <div>${[0, BigNumber.getValue()].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
       `, root
     );
   }
@@ -458,11 +458,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        <div class="vertical start layout">
-          ${rowData.item.allowed_vfolder_hosts}
+        <div class="layout horizontal center flex">
+          <div class="vertical start layout">
+            ${rowData.item.allowed_vfolder_hosts}
+          </div>
         </div>
-      </div>
       `, root
     );
   }

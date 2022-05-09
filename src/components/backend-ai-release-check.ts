@@ -45,6 +45,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   render() {
     // language=HTML
     return html`
+
     `;
   }
 

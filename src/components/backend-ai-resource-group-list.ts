@@ -291,7 +291,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           description=${rowData.item.is_active ? 'active' : 'inactive'}
           ui="flat"
         ></lablup-shields>
-    `,
+      `,
       root
     );
   }
@@ -677,8 +677,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
         </vaadin-grid-column>
         ${this.enableWSProxyAddr ? html`
-        <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
-        </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
+          </vaadin-grid-column>
         ` : html``}
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
@@ -703,24 +703,24 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `)}
             </mwc-select>
           ` : html`
-          <mwc-select id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
-            ${this.domains.map( (domain) => html`
-              <mwc-list-item value="${domain.name}">
-                ${domain.name}
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <mwc-textfield
-            type="text"
-            id="resource-group-name"
-            label="${_t('resourceGroup.ResourceGroupName')}"
-            maxLength="64"
-            placeholder="${_t('maxLength.64chars')}"
-            validationMessage="${_t('data.explorer.ValueRequired')}"
-            required
-            autoValidate
-            @change="${() => this._validateResourceGroupName()}"
-          ></mwc-textfield>
+            <mwc-select id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
+              ${this.domains.map( (domain) => html`
+                <mwc-list-item value="${domain.name}">
+                  ${domain.name}
+                </mwc-list-item>
+              `)}
+            </mwc-select>
+            <mwc-textfield
+              type="text"
+              id="resource-group-name"
+              label="${_t('resourceGroup.ResourceGroupName')}"
+              maxLength="64"
+              placeholder="${_t('maxLength.64chars')}"
+              validationMessage="${_t('data.explorer.ValueRequired')}"
+              required
+              autoValidate
+              @change="${() => this._validateResourceGroupName()}"
+            ></mwc-textfield>
           `}
           <mwc-textarea
             name="description"
@@ -731,20 +731,20 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             value="${this.resourceGroupInfo?.description ?? ''}"
           ></mwc-textarea>
           ${this.enableWSProxyAddr ? html`
-          <mwc-textfield
-                id="resource-group-wsproxy-address"
-                type="url"
-                label="${_t('resourceGroup.WsproxyAddress')}"
-                placeholder="http://localhost:10200"
-              ></mwc-textfield>
-            ` : html``}
+            <mwc-textfield
+                  id="resource-group-wsproxy-address"
+                  type="url"
+                  label="${_t('resourceGroup.WsproxyAddress')}"
+                  placeholder="http://localhost:10200"
+                ></mwc-textfield>
+          ` : html``}
           ${this.enableSchedulerOpts ? html`
             <wl-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <mwc-select id="allowed-session-types" label="allowed session types" required>
                 ${Object.entries(this.allowedSessionTypesObjects).map(([key, value]) => {
-    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
-  })
+      return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
+    })
 }
               </mwc-select>
               <mwc-textfield
@@ -760,22 +760,22 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 value="${this.resourceGroupInfo?.scheduler_opts?.pending_timeout ?? ''}"
               ></mwc-textfield>
             </wl-expansion>
-            ` : html``}
+          ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           ${Object.keys(this.resourceGroupInfo).length > 0 ? html`
-          <mwc-button
-              unelevated
-              icon="save"
-              label="${_t('button.Save')}"
-              @click="${this._modifyResourceGroup}">
-          </mwc-button>
+            <mwc-button
+                unelevated
+                icon="save"
+                label="${_t('button.Save')}"
+                @click="${this._modifyResourceGroup}">
+            </mwc-button>
           `: html`
-          <mwc-button
-              unelevated
-              icon="add"
-              label="${_t('button.Create')}"
-              @click="${this._createResourceGroup}"></mwc-button>
+            <mwc-button
+                unelevated
+                icon="add"
+                label="${_t('button.Create')}"
+                @click="${this._createResourceGroup}"></mwc-button>
           `}
         </div>
       </backend-ai-dialog>
@@ -832,10 +832,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     <div class="scheduler-option-value">${this.resourceGroupInfo?.scheduler}</div>
                   </vaadin-item>
                   ${this.enableWSProxyAddr ? html`
-                  <vaadin-item>
-                    <div><strong>${_text('resourceGroup.WsproxyAddress')}</strong></div>
-                    <div class="scheduler-option-value">${this.resourceGroupInfo?.wsproxy_addr ?? 'none'}</div>
-                  </vaadin-item>
+                    <vaadin-item>
+                      <div><strong>${_text('resourceGroup.WsproxyAddress')}</strong></div>
+                      <div class="scheduler-option-value">${this.resourceGroupInfo?.wsproxy_addr ?? 'none'}</div>
+                    </vaadin-item>
                   ` : html``}
                 </div>
               </div>
@@ -847,22 +847,24 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   <div role="listbox">
                     ${this.enableSchedulerOpts ? html`
                       ${Object.entries(JSON.parse(this.resourceGroupInfo?.scheduler_opts)).map(([key, value]: any) => {
-    if (key === 'allowed_session_types') {
-      return html`
-                                  <vaadin-item>
-                                    <div><strong>allowed session types</strong></div>
-                                    <div class="scheduler-option-value">${value.join(', ')}</div>
-                                  </vaadin-item>`;
-    } else if (key === 'pending_timeout') {
-      return html`
-                                  <vaadin-item>
-                                    <div><strong>pending timeout</strong></div>
-                                    <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
-                                  </vaadin-item>`;
-    } else {
-      return '';
-    }
-  })}
+  if (key === 'allowed_session_types') {
+    return html`
+      <vaadin-item>
+        <div><strong>allowed session types</strong></div>
+        <div class="scheduler-option-value">${value.join(', ')}</div>
+      </vaadin-item>
+    `;
+  } else if (key === 'pending_timeout') {
+    return html`
+      <vaadin-item>
+        <div><strong>pending timeout</strong></div>
+        <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+      </vaadin-item>
+    `;
+  } else {
+    return '';
+  }
+})}
                     ` : html``}
                   </div>
                 </div>
@@ -882,7 +884,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <wl-textarea readonly value="${this.resourceGroupInfo?.description ?? ''}">
               </wl-textarea>
             </div>
-          </div>` : ``
+          </div>
+        ` : ``
 }
       </backend-ai-dialog>
     `;

@@ -645,7 +645,8 @@ export default class BackendAIUserList extends BackendAIPage {
                             .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
         ${this.condition !== 'active' ? html`
           <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
-                            .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
+                            .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>
+        ` : html``}
         <vaadin-grid-column resizable header="${_t('general.Control')}"
             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
@@ -730,7 +731,8 @@ export default class BackendAIUserList extends BackendAIPage {
                     label="${_text('credential.Description')}"
                     placeholder="${_text('maxLength.500chars')}"
                     value="${this.userInfo.description}"
-                    id="description"></mwc-textfield>`: html``}
+                    id="description"></mwc-textfield>
+              `: html``}
               ${this.editMode ? html`
                 <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
                   ${Object.keys(this.userStatus).map((item) => html`
@@ -742,16 +744,17 @@ export default class BackendAIUserList extends BackendAIPage {
                   <mwc-switch
                       id="need_password_change"
                       ?selected=${this.userInfo.need_password_change}></mwc-switch>
-                </div>` : html`
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescActiveUser')}"
-                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescRequirePasswordChange')}"
-                        value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-            `}
+                </div>
+              ` : html`
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescActiveUser')}"
+                    value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescRequirePasswordChange')}"
+                    value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+              `}
           </div>
         </div>
         ${this.editMode ? html`` : html`
@@ -787,7 +790,8 @@ export default class BackendAIUserList extends BackendAIPage {
               fullwidth
               label="${_t('button.SaveChanges')}"
               icon="check"
-              @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}
+              @click=${(e) => this._saveChanges(e)}></mwc-button>
+        `:html``}
         </div>
       </backend-ai-dialog>
     `;

@@ -60,7 +60,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
       <wl-card class="item" elevation="1">
         <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
       </wl-card>
-      `;
+    `;
   }
 }
 
