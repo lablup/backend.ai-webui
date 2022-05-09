@@ -3370,9 +3370,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 ${this.resource_templates_filtered.map((item) => html`
                   <mwc-list-item value="${item.name}"
                             id="${item.name}-button"
-                            @click="${(e) => {
-    this._chooseResourceTemplate(e);
-  }}"
+                            @click="${(e) => {this._chooseResourceTemplate(e);}}"
                             .cpu="${item.cpu}"
                             .mem="${item.mem}"
                             .cuda_device="${item.cuda_device}"
@@ -3590,16 +3588,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                     style="margin-right:3px;"></lablup-shields>
                     <div class="horizontal layout">
                       ${this.sessionInfoObj.version.map((item, index) => {
-    if (index > 0) {
-      return html`
+                        if (index > 0) {
+                          return html`
                           <lablup-shields color="green"
                                           description="${item}"
                                           ui="round"
                                           style="margin-top:3px;margin-right:3px;"></lablup-shields>`;
-    } else {
-      return html``;
-    }
-  })}
+                        } else {
+                          return html``;
+                        }
+                      })}
                     </div>
                     <lablup-shields color="blue"
                                     description="${this.sessionType.toUpperCase()}"
