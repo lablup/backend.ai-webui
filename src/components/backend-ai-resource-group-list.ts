@@ -784,7 +784,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   type="number"
                   value="0"
                   id="num-retries-to-skip"
-                  label="# retries to skip"
+                  label="# retries to skip pending session"
                   placeholder="0"
                   suffix="${_t('resourceGroup.RetriesToSkip')}"
                   validationMessage="${_t('settings.InvalidValue')}"
