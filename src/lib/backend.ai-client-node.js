@@ -479,6 +479,7 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('22.03')) {
             this._features['scheduler-opts'] = true;
+            this._features['session-lifetime'] = true;
         }
     }
     /**
@@ -2182,6 +2183,9 @@ class ResourcePolicy {
         'max_vfolder_size',
         'allowed_vfolder_hosts',
         'idle_timeout']) {
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         let q, v;
         if (name === null) {
             q = `query {` +
@@ -2210,7 +2214,8 @@ class ResourcePolicy {
      *   'idle_timeout': idle_timeout,
      *   'max_vfolder_count': vfolder_count_limit,
      *   'max_vfolder_size': vfolder_capacity_limit,
-     *   'allowed_vfolder_hosts': vfolder_hosts
+     *   'allowed_vfolder_hosts': vfolder_hosts,
+     *   'max_session_lifetime': max_session_lifetime
      * };
      */
     async add(name = null, input) {
@@ -2224,6 +2229,9 @@ class ResourcePolicy {
             'max_vfolder_size',
             'allowed_vfolder_hosts',
             'idle_timeout'];
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
                 `  create_keypair_resource_policy(name: $name, props: $input) {` +
@@ -2253,7 +2261,8 @@ class ResourcePolicy {
      *   {bigint} 'idle_timeout': idle_timeout,
      *   {int} 'max_vfolder_count': vfolder_count_limit,
      *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
-     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts
+     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
+     *   {int} 'max_session_lifetime': max_session_lifetime
      * };
      */
     async mutate(name = null, input) {

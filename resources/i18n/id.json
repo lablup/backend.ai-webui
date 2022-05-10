@@ -770,7 +770,8 @@
     "SuccessfullyUpdated": "Kebijakan sumber daya berhasil diperbarui.",
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
-    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:"
+    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nama host",

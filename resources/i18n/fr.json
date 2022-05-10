@@ -770,7 +770,8 @@
     "SuccessfullyUpdated": "Stratégie de ressources mise à jour avec succès.",
     "SuccessfullyDeleted": "La stratégie de ressources a bien été supprimée.",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
-    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :"
+    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nom d'hôte",

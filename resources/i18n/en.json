@@ -757,6 +757,7 @@
     "ContainerPerSession": "Container Per Session",
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "ConcurrentJobs": "Concurrent Jobs",
+    "MaxSessionLifeTime": "Session Lifetime (sec.)",
     "Capacity": "Capacity",
     "Folders": "Folders",
     "Name": "Name",
