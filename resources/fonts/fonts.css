@@ -199,3 +199,12 @@
        url('./fa-solid-900.woff2') format('woff2'),
        url('./fa-solid-900.woff') format('woff');
 }
+
+/* Pretendard Variable */
+@font-face {
+	font-family: 'Pretendard Variable';
+	font-weight: 45 920;
+	font-style: normal;
+	font-display: swap;
+	src: local('Pretendard Variable'), url('./PretendardVariable.woff2') format('woff2-variations');
+}

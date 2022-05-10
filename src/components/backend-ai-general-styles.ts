@@ -62,10 +62,10 @@ export const BackendAiStyles = [
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
-      --general-switch-on-background-color: #E3E7D8; 
+      --general-switch-on-background-color: #E3E7D8;
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
-      --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
+      --general-font-family: 'Pretendard Variable', -apple-system, Roboto, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
       --general-monospace-font-family: 'Ubuntu Mono', Menlo, Courier, "Courier New", RobotoMono, sans-serif;
       --general-progress-bar-bg: #e8e8e8;
       --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
