@@ -834,7 +834,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Установить параметры планировщика",
     "TimeoutSeconds": "Секунды",
-    "ResourceGroupDetail": "Сведения о группе ресурсов"
+    "ResourceGroupDetail": "Сведения о группе ресурсов",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",

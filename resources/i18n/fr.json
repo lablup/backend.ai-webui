@@ -834,7 +834,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Définir les options du planificateur",
     "TimeoutSeconds": "Seconds",
-    "ResourceGroupDetail": "Détail du groupe de ressources"
+    "ResourceGroupDetail": "Détail du groupe de ressources",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",

@@ -831,7 +831,8 @@
     "WsproxyAddress": "WSProxy Server Address",
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
-    "ResourceGroupDetail": "ResourceGroup Detail"
+    "ResourceGroupDetail": "ResourceGroup Detail",
+    "RetriesToSkip": "Times"
   },
   "maintenance": {
     "General": "General",

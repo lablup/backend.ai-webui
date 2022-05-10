@@ -834,7 +834,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
-    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй"
+    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",

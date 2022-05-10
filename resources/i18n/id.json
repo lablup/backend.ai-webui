@@ -834,7 +834,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Setel Opsi Penjadwal",
     "TimeoutSeconds": "Detik",
-    "ResourceGroupDetail": "Detail Grup Sumber Daya"
+    "ResourceGroupDetail": "Detail Grup Sumber Daya",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

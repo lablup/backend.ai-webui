@@ -833,7 +833,8 @@
     "WsproxyAddress": "WSProxy 서버 주소",
     "SetSchedulerOptions": "스케쥴러 옵션 설정",
     "TimeoutSeconds": "초",
-    "ResourceGroupDetail": "자원 그룹 세부 정보"
+    "ResourceGroupDetail": "자원 그룹 세부 정보",
+    "RetriesToSkip": "회"
   },
   "maintenance": {
     "General": "일반",
