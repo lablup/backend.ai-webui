@@ -1,4 +1,3 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app "Backend.AI Desktop" --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
@@ -31,9 +30,6 @@ compile_wsproxy:
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
-	#cp -u ./scripts/pre-commit ./.git/hooks/pre-commit && chmod 755 ./.git/hooks/pre-commit
-	#cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
-	#cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js # Temporary fix for lit-2 rc stage.
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -68,7 +64,6 @@ mac: mac_intel mac_apple
 mac_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js mac x64
-	#$(EP) --platform=darwin --arch=x64 --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-desktop-macos-x64
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
@@ -80,7 +75,6 @@ endif
 mac_apple: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js mac arm64
-	#$(EP) --platform=darwin --arch=arm64 --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-desktop-macos-arm64
 	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
@@ -92,7 +86,6 @@ endif
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js win x64
-	#$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-x64.zip
@@ -102,7 +95,6 @@ endif
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux x64
-	#$(EP) --platform=linux --icon=manifest/backend-ai.ico
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
 	#cd app;mkdir dist;cp -Rp "./Backend.AI Desktop-linux-x64" "./dist/backend.ai-webui"
 	#./node_modules/electron-installer-debian/src/cli.js --config packager-config.json
