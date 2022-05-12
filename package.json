@@ -95,6 +95,7 @@
     "babel-eslint": "^10.1.0",
     "browserify": "^17.0.0",
     "buffer": "^6.0.3",
+    "cli-color": "^2.0.2",
     "cors": "^2.8.5",
     "electron": "^14.2.4",
     "electron-installer-debian": "^3.1.0",

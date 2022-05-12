@@ -67,7 +67,8 @@ web:
 mac: mac_intel mac_apple
 mac_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=darwin --arch=x64 --icon=manifest/backend-ai.icns
+	node ./app-packager.js mac x64
+	#$(EP) --platform=darwin --arch=x64 --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-desktop-macos-x64
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
@@ -78,7 +79,8 @@ else
 endif
 mac_apple: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=darwin --arch=arm64 --icon=manifest/backend-ai.icns
+	node ./app-packager.js mac arm64
+	#$(EP) --platform=darwin --arch=arm64 --icon=manifest/backend-ai.icns
 	rm -rf ./app/backend.ai-desktop-macos-arm64
 	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
@@ -89,7 +91,8 @@ else
 endif
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
+	node ./app-packager.js win x64
+	#$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-x64.zip
@@ -98,7 +101,8 @@ else
 endif
 linux: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=linux --icon=manifest/backend-ai.ico
+	node ./app-packager.js linux x64
+	#$(EP) --platform=linux --icon=manifest/backend-ai.ico
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
 	#cd app;mkdir dist;cp -Rp "./Backend.AI Desktop-linux-x64" "./dist/backend.ai-webui"
 	#./node_modules/electron-installer-debian/src/cli.js --config packager-config.json
