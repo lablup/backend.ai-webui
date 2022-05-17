@@ -109,7 +109,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         backend-ai-dialog#agent-detail {
           --component-max-width: 90%;
-          --component-min-width: 350px;
+          --component-min-width: 400px;
         }
 
         backend-ai-dialog {
