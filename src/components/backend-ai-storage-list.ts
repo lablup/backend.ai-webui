@@ -281,7 +281,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
-        #filebrowser-notificatin-dialog {
+        #filebrowser-notification-dialog {
           --component-width: 350px;
         }
 
@@ -972,7 +972,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="filebrowser-notificatin-dialog" fixed backdrop narrowLayout>
+      <backend-ai-dialog id="filebrowser-notification-dialog" fixed backdrop narrowLayout>
         <span slot="title">${_t('dialog.title.Notice')}</span>
         <div slot="content" style="margin: 15px;">
           <span>${_t('data.explorer.ReadOnlyFolderOnFileBrowser')}</span>
@@ -2530,7 +2530,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this.filebrowserSupportedImages.length > 0) {
         const isNotificationVisible = localStorage.getItem('backendaiwebui.filebrowserNotification');
         if ((isNotificationVisible == null || isNotificationVisible === 'true') && !this.isWritable) {
-          this.shadowRoot.querySelector('#filebrowser-notificatin-dialog').show();
+          this.shadowRoot.querySelector('#filebrowser-notification-dialog').show();
         }
         this._launchSession();
         this._toggleFilebrowserButton();
