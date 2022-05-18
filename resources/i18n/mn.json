@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -671,7 +672,8 @@
     "MinimumMemUnit": "Санах ой нь 1 ГБ-аас эхэлдэг",
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Хуваалцсан санах ой (GB)"
+    "SharedMemory": "Хуваалцсан санах ой (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",

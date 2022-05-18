@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -671,7 +672,8 @@
     "MinimumMemUnit": "La mémoire commence avec 1 Go",
     "MinimumShmemUnit": "L'unité minimale pour la mémoire partagée est de 0,01 Go.",
     "RAM": "RAM (Go)",
-    "SharedMemory": "Mémoire partagée (Go)"
+    "SharedMemory": "Mémoire partagée (Go)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Général",

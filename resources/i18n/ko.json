@@ -304,7 +304,8 @@
       "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "취소",
@@ -670,7 +671,8 @@
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
-    "SharedMemory": "공유메모리 (GB)"
+    "SharedMemory": "공유메모리 (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "일반",
