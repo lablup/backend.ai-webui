@@ -568,7 +568,8 @@
       "FileBrowserSessionRunningAlready": "Sesi dengan filebrowser sudah berjalan. Harap unggah folder menggunakan sesi itu.",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
-      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser."
+      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",
@@ -596,7 +597,8 @@
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
-      "LetsDouble-Check": "Mari Periksa Kembali"
+      "LetsDouble-Check": "Mari Periksa Kembali",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {
