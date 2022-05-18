@@ -377,7 +377,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _deleteResourcePresetWithCheck(e) {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
       this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
-      this.notification.text = 'Resource preset is successfully deleted.';
+      this.notification.text = _text('resourcePreset.Deleted');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {
