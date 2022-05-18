@@ -817,7 +817,7 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName",
+    "ResourceGroupName": "Resource Group Name",
     "Active": "Active",
     "SelectScheduler": "Select Scheduler",
     "NochangesMade": "No changes made",
@@ -831,7 +831,7 @@
     "WsproxyAddress": "WSProxy Server Address",
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
-    "ResourceGroupDetail": "ResourceGroup Detail",
+    "ResourceGroupDetail": "Resource Group Detail",
     "RetriesToSkip": "Times"
   },
   "maintenance": {
