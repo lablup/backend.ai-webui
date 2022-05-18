@@ -304,6 +304,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           white-space: pre-wrap;
         }
 
+        .error-description {
+          font-size: 0.8rem;
+          word-break: break-word;
+        }
+
         wl-button.multiple-action-button {
           --button-color: var(--paper-red-600);
           --button-color-active: red;
@@ -1376,7 +1381,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 `: ``}
                 <div class="vertical layout start">
                   <span class="subheading">Message</span>
-                  <span style="font-size:0.8rem;">${sanitizeErrMsg(item.repr)}</span>
+                  <span class="error-description">${sanitizeErrMsg(item.repr)}</span>
                 </div>
               </div>
               `;
