@@ -569,7 +569,8 @@
       "FileBrowserSessionRunningAlready": "La session prenant en charge le navigateur de fichiers est déjà en cours d'exécution. Veuillez télécharger le(s) dossier(s) en utilisant cette session.",
       "NotEnoughResourceForFileBrowserSession": "Pas assez de ressources (cpu : 1 Core, mem : 0,5 Go) pour créer la session pour le navigateur de fichiers. veuillez vérifier les ressources disponibles.",
       "NoImagesSupportingFileBrowser": "Il n'y a pas encore d'images prenant en charge le navigateur de fichiers. Au moins une ou plusieurs images prenant en charge le navigateur de fichiers sont requises pour télécharger le(s) dossier(s).",
-      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers."
+      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Entrer l'adresse e-mail",
@@ -597,7 +598,8 @@
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
-      "LetsDouble-Check": "Vérifions deux fois"
+      "LetsDouble-Check": "Vérifions deux fois",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {

@@ -569,7 +569,8 @@
       "FileBrowserSessionRunningAlready": "Filebrowser-ийг дэмждэг Session аль хэдийн ажиллаж байна. Энэ хуралдааныг ашиглан фолдер (ууд) байршуулна уу.",
       "NotEnoughResourceForFileBrowserSession": "Filebrowser-д зориулж Session үүсгэх хангалттай нөөц байхгүй (cpu: 1 Core, mem: 0.5GB). боломжтой нөөцийг шалгана уу.",
       "NoImagesSupportingFileBrowser": "Файл хөтөчийг дэмжих зураг хараахан алга байна. Фолдер хөтөчийг дэмждэг дор хаяж нэг буюу түүнээс дээш дүрс оруулах шаардлагатай.",
-      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу."
+      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",
@@ -597,7 +598,8 @@
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
-      "LetsDouble-Check": "Давхар шалгуулъя"
+      "LetsDouble-Check": "Давхар шалгуулъя",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {

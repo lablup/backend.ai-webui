@@ -565,7 +565,8 @@
       "ExecuteFileBrowser": "Execute filebrowser",
       "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
       "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
-      "NoImagesSupportingFileBrowser": "There is no images supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "NoImagesSupportingFileBrowser": "There is no image supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "ReadOnlyFolderOnFileBrowser": "Opening read-only folder in filebrowser, only downloading file(s)/folder(s) are allowed.",
       "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
     },
     "invitation": {
@@ -594,6 +595,7 @@
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
+      "Notice": "Notice",
       "LetsDouble-Check": "Let's Double-check"
     },
     "ErrorOccurred": "Error Occurred",
