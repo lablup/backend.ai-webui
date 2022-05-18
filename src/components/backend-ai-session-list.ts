@@ -1278,11 +1278,11 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-list>
               <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading"><strong>Kernel Exit Code</strong></span>
-                <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
               </mwc-list-item>
               <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading">Session Status</span>
-                <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.session?.status}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.session?.status}</span>
               </mwc-list-item>
             </mwc-list>
           </div>
@@ -1299,11 +1299,11 @@ export default class BackendAiSessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractiv class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
-                  <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.LastTry')}</span>
-                  <span class="monospace predicate-check" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
                 </mwc-list-item>
               </mwc-list>
             </div>
