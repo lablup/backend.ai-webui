@@ -1024,7 +1024,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const accessKey = controls['access-key'];
 
     if (this.terminationQueue.includes(sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
@@ -1033,7 +1033,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }

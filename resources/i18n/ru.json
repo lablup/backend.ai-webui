@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -671,7 +672,8 @@
     "MinimumMemUnit": "Память начинается с 1 ГБ",
     "MinimumShmemUnit": "Минимальный размер разделяемой памяти составляет 0,01 ГБ.",
     "RAM": "RAM (ГБ)",
-    "SharedMemory": "Общая память (ГБ)"
+    "SharedMemory": "Общая память (ГБ)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Общий",

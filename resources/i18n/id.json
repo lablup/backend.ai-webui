@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -671,7 +672,8 @@
     "MinimumMemUnit": "Memori dimulai dengan 1 GB",
     "MinimumShmemUnit": "Unit minimum untuk memori bersama adalah 0,01 GB.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Memori bersama (GB)"
+    "SharedMemory": "Memori bersama (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Umum",
