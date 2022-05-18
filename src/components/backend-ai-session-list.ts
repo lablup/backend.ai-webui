@@ -295,6 +295,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-weight: bold;
         }
 
+        mwc-list-item.predicate-check {
+          height: 100%;
+          margin-bottom: 5px;
+        }
+
+        .predicate-check-comment {
+          white-space: pre-wrap;
+        }
+
         wl-button.multiple-action-button {
           --button-color: var(--paper-red-600);
           --button-color-active: red;
@@ -1262,13 +1271,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
           <div class="vertical layout flex" style="width:100%;">
             <mwc-list>
-              <mwc-list-item twoline noninteractiv>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading"><strong>Kernel Exit Code</strong></span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
+                <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
               </mwc-list-item>
-              <mwc-list-item twoline noninteractive>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading">Session Status</span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.session?.status}</span>
+                <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.session?.status}</span>
               </mwc-list-item>
             </mwc-list>
           </div>
@@ -1283,13 +1292,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractiv>
+                <mwc-list-item twoline noninteractiv class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
-                  <span class="monospace" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
+                  <span class="monospace predicate-check" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
                 </mwc-list-item>
-                <mwc-list-item twoline noninteractive>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.LastTry')}</span>
-                  <span class="monospace" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
+                  <span class="monospace predicate-check" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
                 </mwc-list-item>
               </mwc-list>
             </div>
@@ -1311,14 +1320,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return `
           ${item.name === 'reserved_time' ? `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>` : `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>`}
               <li divider role="separator"></li>
@@ -1339,7 +1348,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     `;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
-        return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
+        return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
+      };
+      // FIXME: stopgap for handling html entities in msg
+      const encodedStr = (str) => {
+        return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
+          return '&#' + i.charCodeAt(0) + ';';
+        })
       };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
