@@ -757,7 +757,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 type="url"
                 label="${_t('resourceGroup.WsproxyAddress')}"
                 placeholder="http://localhost:10200"
-                value="${this.resourceGroupInfo?.wsproxy_addr}"
+                value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
               ></mwc-textfield>
             ` : html``}
           ${this.enableSchedulerOpts ? html`
