@@ -314,17 +314,42 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   /**
    * Get a proxy url by checking local proxy and config proxy url.
+   * When `sessionUuid` is given, this will return versioned proxy url
+   * by using the session's resource group (scaling group).
    *
-   * @return {string} url - Proxy URL
+   * @param {string} sessionUuid: session's UUID
+   * @return {string} Proxy URL
    */
-  _getProxyURL() {
+  async _getProxyURL(sessionUuid: string) {
     let url = 'http://127.0.0.1:5050/';
     if (globalThis.__local_proxy !== undefined) {
       url = globalThis.__local_proxy;
     } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
       url = globalThis.backendaiclient._config.proxyURL;
     }
+    if (sessionUuid) {
+      const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
+      url += `${wsproxyVersion}/`;
+    }
     return url;
+  }
+
+  /**
+   * Get the wsproxy version.
+   * The wsproxy version should be determined dynamically since
+   * it can be configurable per resource group.
+   *
+   * @param {string} sessionUuid : session's UUID
+   * @return {string} wsproxy version
+   */
+  async _getWSProxyVersion(sessionUuid) {
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    const scalingGroupId = kInfo.compute_session.scaling_group;
+    const groupId = globalThis.backendaiclient.current_group_id();
+    const wsproxyVersion = (globalThis.isElectron)
+        ? 'v1'
+        : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
+    return wsproxyVersion;
   }
 
   /**
@@ -459,10 +484,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (globalThis.isElectron && globalThis.__local_proxy === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.launcher.ProxyNotReady');
-
       this.notification.show();
       return;
     }
+    const proxyURL = await this._getProxyURL(sessionUuid);
     const rqst = {
       method: 'PUT',
       body: JSON.stringify(param),
@@ -470,7 +495,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: this._getProxyURL() + 'conf'
+      uri: proxyURL + 'conf'
     };
     this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     const response = await this.sendRequest(rqst);
@@ -481,7 +506,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
     const token = response.token;
-    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, this._getProxyURL()).href;
+    return new URL(`proxy/${token}/${sessionUuid}/add?app=${app}`, proxyURL).href;
   }
 
   /**
@@ -585,7 +610,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
     const token = globalThis.backendaiclient._config.accessKey;
-    const uri = this._getProxyURL() + `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    let uri = await this._getProxyURL(sessionUuid);
+    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`
     const rqst_proxy = {
       method: 'GET',
       app: app,

@@ -903,11 +903,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionId) {
+  async _terminateApp(sessionId) {
     const token = globalThis.backendaiclient._config.accessKey;
+    const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+      uri: proxyURL + `proxy/${token}/${sessionId}`
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -915,7 +916,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
             credentials: 'include',
             mode: 'cors'
           };
@@ -930,16 +931,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-  }
-
-  _getProxyURL() {
-    let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
-    } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
-      url = globalThis.backendaiclient._config.proxyURL;
-    }
-    return url;
   }
 
   _getProxyToken() {
