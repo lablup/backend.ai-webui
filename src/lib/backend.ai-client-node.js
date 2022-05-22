@@ -2570,8 +2570,9 @@ class ComputeSession {
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
     }
-    async startService(session, app, port = null, envs = null, args = null) {
+    async startService(loginSessionToken, session, app, port = null, envs = null, args = null) {
         let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+            login_session_token: loginSessionToken,
             app,
             port: port || undefined,
             envs: envs || undefined,

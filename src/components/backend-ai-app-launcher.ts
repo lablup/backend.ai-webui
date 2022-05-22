@@ -347,8 +347,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const scalingGroupId = kInfo.compute_session.scaling_group;
     const groupId = globalThis.backendaiclient.current_group_id();
     const wsproxyVersion = (globalThis.isElectron)
-        ? 'v1'
-        : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
+      ? 'v1'
+      : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
     return wsproxyVersion;
   }
 
@@ -519,8 +519,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {object | null} args
    */
   async _resolveV2ProxyUri(sessionUuid: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null): Promise<string | undefined> {
+    const loginSessionToken = globalThis.backendaiclient._config._session_id;
     const tokenResponse = await globalThis.backendaiclient.computeSession.startService(
-      sessionUuid, app, port, envs, args
+      loginSessionToken, sessionUuid, app, port, envs, args
     );
     if (tokenResponse === undefined) {
       this.indicator.end();
@@ -609,7 +610,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri = await this._getProxyURL(sessionUuid);
-    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`
+    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`;
     const rqst_proxy = {
       method: 'GET',
       app: app,
