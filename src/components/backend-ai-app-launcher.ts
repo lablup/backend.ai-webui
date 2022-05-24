@@ -329,7 +329,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if (sessionUuid) {
       const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
-      url += `${wsproxyVersion}/`;
+      if (wsproxyVersion !== 'v1') {
+        url += `${wsproxyVersion}/`;
+      }
     }
     return url;
   }
