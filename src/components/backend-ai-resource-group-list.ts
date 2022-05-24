@@ -575,7 +575,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
     const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
-    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => fn.checkValidity());
+    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => !fn.checkValidity());
 
     if (validityCheckResult.length > 0) {
       return false;
@@ -757,6 +757,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 type="url"
                 label="${_t('resourceGroup.WsproxyAddress')}"
                 placeholder="http://localhost:10200"
+                value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
               ></mwc-textfield>
             ` : html``}
           ${this.enableSchedulerOpts ? html`
