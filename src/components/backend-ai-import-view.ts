@@ -120,9 +120,14 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 300px;
+          --mdc-menu-min-width: 300px;
         }
-        mwc-select.fixed-position > mwc-list-item {
+        mwc-select.fixed-position {
           width: 200px; // default width
+          --mdc-menu-max-width: 200px;
+          --mdc-menu-min-width: 200px;
         }
         mwc-select.github-select {
           margin: inherit;
@@ -134,9 +139,9 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
-        }
-        mwc-select.github-select > mwc-list-item {
-          width: 440px; // default width
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 440px;
+          --mdc-menu-min-width: 440px;
         }
 
         @media screen and (max-width: 1015px) {

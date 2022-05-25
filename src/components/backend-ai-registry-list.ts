@@ -116,18 +116,12 @@ class BackendAIRegistryList extends BackendAIPage {
           --label-font-size: 11px;
         }
 
-        mwc-select.full-width {
-          width: 100%;
-        }
-
-        mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 330px; // default width
-        }
-
         mwc-select#select-registry-type {
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-menu-max-width: 210px;
+          --mdc-menu-min-width: 210px;
         }
 
         mwc-list-item {

@@ -199,6 +199,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 150px;
+          --mdc-menu-min-width: 150px;
         }
 
         mwc-textfield#num-retries {
@@ -258,7 +261,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <mwc-select id="ui-image-pulling-behavior"
                             required
                             outlined
-                            style="width:120px;"
+                            style="width:150px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
                 ${this.imagePullingBehavior.map((item) => html`
                   <mwc-list-item value="${item.behavior}"

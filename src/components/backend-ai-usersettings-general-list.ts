@@ -184,6 +184,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-theme-surface: white;
           --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 400px;
+          --mdc-menu-min-width: 400px;
         }
 
         mwc-select#select-rcfile-type {

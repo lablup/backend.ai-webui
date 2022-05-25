@@ -95,6 +95,9 @@ export default class BackendAIUsageList extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 150px;
+          --mdc-menu-min-width: 150px;
         }
       `
     ];
@@ -290,7 +293,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
         <h3 class="horizontal center layout">
           <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              id="period-selector" style="width:150px; border:1px solid #ccc;"
               @change="${(e) => {
     this.pulldownChange(e);
   }}">

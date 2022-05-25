@@ -322,6 +322,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 320px;
+          --mdc-menu-min-width: 300px;
         }
 
         div.mdc-select__anchor {
