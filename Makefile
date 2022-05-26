@@ -92,12 +92,20 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-x64-$(BUILD_VERSION)-$(site).zip
 endif
-linux: dep
+linux: linux_intel linux_arm64
+linux_arm64: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	node ./app-packager.js linux arm64
+	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
+ifeq ($(site),main)
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
+else
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-arm64-$(BUILD_VERSION)-$(site).zip
+endif
+linux_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux x64
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
-	#cd app;mkdir dist;cp -Rp "./Backend.AI Desktop-linux-x64" "./dist/backend.ai-webui"
-	#./node_modules/electron-installer-debian/src/cli.js --config packager-config.json
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
 else

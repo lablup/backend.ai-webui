@@ -2756,14 +2756,21 @@ class ComputeSession {
     return this.client.query(q, v);
   }
 
-  async startService(session: string, app: string, port: number | null = null, envs: Record<string, unknown> | null = null, args: Record<string, unknown> | null = null) {
+  async startService(
+    loginSessionToken: string,
+    session: string,
+    app: string,
+    port: number | null = null,
+    envs: Record<string, unknown> | null = null,
+    args: Record<string, unknown> | null = null
+  ) {
     let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+      login_session_token: loginSessionToken,
       app,
       port: port || undefined,
       envs: envs || undefined,
       arguments: JSON.stringify(args) || undefined,
     });
-
     return this.client._wrapWithPromise(rqst);
   }
 }
