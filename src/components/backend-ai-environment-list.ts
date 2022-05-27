@@ -385,7 +385,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.selectedImages.forEach( async (image: any) => {
       // make image installing status visible
-      const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      const selectedImageLabel = '[id=\"' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-') + '\"]';
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
