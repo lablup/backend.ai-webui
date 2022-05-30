@@ -1010,7 +1010,7 @@ export default class PipelineView extends BackendAIPage {
           </mwc-select>
             <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition value="${this.defaultLanguage}">
                 ${this.languages.map((item) => html`
-                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === (this.selectedNode?.environment?.kernel ?? this.defaultLanguage)}">
+                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === (this.selectedNode?.data?.environment?.kernel ?? this.defaultLanguage)}">
                     <div class="horizontal justified center flex layout" style="width:325px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="horizontal layout end-justified center flex">
