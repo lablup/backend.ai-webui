@@ -3417,7 +3417,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-list-item hasMeta class="resource-type">
                     <div>CPU</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
-                                     @click="${(e) => this._showResourceDescription(e, 'cpu')}}"></mwc-icon-button>
+                                     @click="${(e) => this._showResourceDescription(e, 'cpu')}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
@@ -3480,7 +3480,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <mwc-list-item hasMeta class="resource-type">
                   <div>${_t('webui.menu.Sessions')}</div>
                   <mwc-icon-button slot="meta" icon="info" class="fg info"
-                    @click="${(e) => this._showResourceDescription(e, 'session')}}"></mwc-icon-button>
+                    @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
                   </mwc-list-item>   
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
