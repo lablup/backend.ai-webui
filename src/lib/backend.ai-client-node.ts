@@ -4075,6 +4075,17 @@ class PipelineJob {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Stop running pipeline job with given its id
+   * 
+   * @param {string} id - pipeline id
+   */
+  async stop(id) {
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
 }
 
 class PipelineTaskInstance {

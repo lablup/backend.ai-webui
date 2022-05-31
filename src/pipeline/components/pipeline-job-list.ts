@@ -156,7 +156,7 @@ export default class PipelineJobList extends BackendAIPage {
   }
 
   /**
-   * Get Pipelin Job list from pipeline server
+   * Get Pipeline Job list from pipeline server
    *
    */
   async _loadPipelineJobList() {
@@ -266,7 +266,19 @@ export default class PipelineJobList extends BackendAIPage {
 
   _togglePipelineJobExecution(pipelineJob) {
     this.pipelineJobInfo = pipelineJob;
-    // this._toggleRunningIcon(e);
+  }
+
+  _stopPipelineJobExecution(pipelineJob) {
+    this.pipelineJobInfo = pipelineJob;
+    /**
+     * TODO: update the status of selected pipelineJob
+     * 
+     */
+    return globalThis.backendaiclient.pipelineJob.stop(this.pipelineJobInfo.id).then((res) => {
+      console.log(res);
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   _loadPipelineJobView(pipelineJob) {
@@ -314,21 +326,26 @@ export default class PipelineJobList extends BackendAIPage {
     columns[4].renderer = (root, column, rowData) => { // control
       const isFinished = ['SUCCESS', 'FAILURE'].includes(rowData.item.result);
       const isActive = ['PENDING', 'RUNNING', 'WAITING'].includes(rowData.item.status);
+      const isRunning = rowData.item.status === 'RUNNING';
       const icon = isActive ? 'pause' : 'play_arrow';
       render(html`
         <div id="controls" class="layout horizontal flex center" pipeline-id="${rowData.item.id}">
           <mwc-icon-button class="fg green info"
             icon="assignment"
-            @click="${() => {
-    this._launchPipelineJobDetailDialog(rowData.item);
-  }}"></mwc-icon-button>
+            @click="${() => { this._launchPipelineJobDetailDialog(rowData.item);}}"></mwc-icon-button>
           <!--<mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>-->
           ${!isFinished ? html`
             <mwc-icon-button class="fg green start"
               icon="${icon}"
-              @click="${() => {
-    this._togglePipelineJobExecution(rowData.item);
-  }}"></mwc-icon-button>` : html``}
+              @click="${(e) => {
+                this._togglePipelineJobExecution(rowData.item);
+                this._toggleRunningIcon(e);
+              }}"></mwc-icon-button>
+              ` : html``}
+          ${isRunning ? html`
+          <mwc-icon-button class="fg green start"
+              icon="stop" @click="${() => {this._stopPipelineJobExecution(rowData.item)}}"></mwc-icon-button>
+          ` : html``}
         </div>
       `, root);
     };
@@ -405,9 +422,7 @@ export default class PipelineJobList extends BackendAIPage {
               <span><strong>View Workflow File</strong></span>
               <mwc-button id="view-workflow-button" unelevated slot="secondary" 
                 icon="assignment" label="View workflow file"
-                @click="${() => {
-    this._launchWorkFlowDialog();
-  }}">
+                @click="${() => { this._launchWorkFlowDialog(); }}">
               </mwc-button>
             </mwc-list-item>
           </mwc-list>
