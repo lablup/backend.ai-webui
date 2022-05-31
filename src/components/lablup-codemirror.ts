@@ -40,6 +40,7 @@ export default class LablupCodemirror extends LitElement {
   @property({type: String}) theme = 'monokai';
   @property({type: String}) src = '';
   @property({type: Boolean}) readonly = false;
+  @property({type: Boolean}) useLineWrapping = false;
 
   constructor() {
     super();
@@ -73,6 +74,7 @@ export default class LablupCodemirror extends LitElement {
     }
     this.editor = cm.editor;
     Object.assign(this.editor.options, this.config);
+    this.editor.setOption('lineWrapping', this.useLineWrapping); // works only in here
     this.refresh();
   }
 
