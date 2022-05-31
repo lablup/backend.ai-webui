@@ -536,7 +536,7 @@ export default class PipelineJobView extends BackendAIPage {
       <backend-ai-dialog id="workflow-dialog">
         <span id="workflow-dialog-title" slot="title">Workflow file</span>
         <div slot="content">
-          <lablup-codemirror id="workflow-editor" mode="yaml"></lablup-codemirror>
+          <lablup-codemirror id="workflow-editor" mode="yaml" useLineWrapping readonly></lablup-codemirror>
         </div>
       </backend-ai-dialog>
     `;

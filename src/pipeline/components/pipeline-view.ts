@@ -999,7 +999,7 @@ export default class PipelineView extends BackendAIPage {
             `}
             <div class="vertical layout start-justified flex">
               <span style="padding-left:15px;">Command</span>
-              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+              <lablup-codemirror id="command-editor" mode="shell" useLineWrapping></lablup-codemirror>
             </div>
           </div>
           <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">

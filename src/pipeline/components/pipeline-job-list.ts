@@ -431,7 +431,7 @@ export default class PipelineJobList extends BackendAIPage {
       <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
         <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
         <div slot="content">
-          <lablup-codemirror id="workflow-editor" mode="yaml" readonly></lablup-codemirror>
+          <lablup-codemirror id="workflow-editor" mode="yaml" readonly useLineWrapping></lablup-codemirror>
         </div>
       </backend-ai-dialog>
     `;

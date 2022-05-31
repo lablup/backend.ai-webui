@@ -1055,7 +1055,7 @@ export default class PipelineList extends BackendAIPage {
     <backend-ai-dialog class="yaml" id="pipeline-yaml" fixed backdrop blockscrolling>
       <span slot="title">${`Pipeline Data (YAML)`}</span>
       <div slot="content">
-        <lablup-codemirror id="yaml-data" mode="yaml" readonly></lablup-codemirror>
+        <lablup-codemirror id="yaml-data" mode="yaml" readonly useLineWrapping></lablup-codemirror>
       </div>
     </backend-ai-dialog>
     `;
