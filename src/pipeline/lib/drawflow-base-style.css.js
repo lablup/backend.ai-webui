@@ -55,7 +55,7 @@ export const DrawflowBaseStyle = css`
     --dfInputBackgroundColor: rgba(205, 205, 205, 1);
     --dfInputBorderSize: 3px;
     --dfInputBorderColor: rgba(255, 255, 255, 1);
-    --dfInputBorderRadius: 15px;
+    --dfInputBorderRadius: 0px; // 15px; 
     --dfInputLeft: -27px;
     --dfInputHeight: 15px;
     --dfInputWidth: 15px;
@@ -63,7 +63,7 @@ export const DrawflowBaseStyle = css`
     --dfInputHoverBackgroundColor: #ffffff;
     --dfInputHoverBorderSize: 3px;
     --dfInputHoverBorderColor: #000000;
-    --dfInputHoverBorderRadius: 15px;
+    --dfInputHoverBorderRadius: 0px; // 15px;
   
     --dfOutputBackgroundColor: rgba(205, 205, 205, 1);
     --dfOutputBorderSize: 3px;
