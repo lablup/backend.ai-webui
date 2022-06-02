@@ -54,6 +54,8 @@ export default class PipelineJobList extends BackendAIPage {
   @property({type: Object}) pipelineJobInfo = Object();
   @property({type: Object}) tasks;
   @property({type: Object}) options;
+  @property({type: Boolean}) refreshing = false;
+  @property({type: Object}) refreshTimer = Object();
 
   constructor() {
     super();
@@ -146,11 +148,11 @@ export default class PipelineJobList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        await this._loadPipelineJobList();
+        await this._refreshPipelineJobList();
         this._createTaskProgressChart();
       }, true);
     } else { // already connected
-      await this._loadPipelineJobList();
+      await this._refreshPipelineJobList();
       this._createTaskProgressChart();
     }
   }
@@ -160,14 +162,35 @@ export default class PipelineJobList extends BackendAIPage {
    *
    */
   async _loadPipelineJobList() {
+   await this._refreshPipelineJobList();
+   this.requestUpdate();
+  }
+
+  async _refreshPipelineJobList(repeat = true) {
+    await this.updateComplete;
+    if (this.active !== true) {
+      return;
+    }
+    if (this.refreshing === true) {
+      return;
+    }
     try {
+      this.refreshing = true;
+
       const pipelineJobList = await globalThis.backendaiclient.pipelineJob.list();
       this.pipelineJobs = pipelineJobList.map((pipelineJob) => {
         // data transformation on yaml
         pipelineJob.yaml = JSON.parse(pipelineJob.yaml);
         return pipelineJob;
       });
-      this.requestUpdate();
+      const refreshTime = 5000; // refresh
+      this.refreshing = false;
+      if (this.active === true && repeat === true) {
+        this.refreshTimer = setTimeout(async () => {
+          await this._refreshPipelineJobList();
+        }, refreshTime);
+      } else {
+      }
     } catch (err) {
       console.log(err);
       this.notification.text = err.message;
