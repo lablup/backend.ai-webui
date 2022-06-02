@@ -840,14 +840,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
-      } else {
-        prefix = '';
-        for (let i = 1; i < specs.length -1; i++) {
-          prefix += specs[i];
-          if (i != (specs.length-2)) {
-            prefix += '/';
-          }
-        }
+      } else if (specs.length > 2) {
+        prefix = specs.slice(1, specs.length-1).join('/');
         kernelName = specs[specs.length - 1];
       }
       let alias = this.aliases[item];
