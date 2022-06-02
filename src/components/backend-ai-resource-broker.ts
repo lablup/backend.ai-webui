@@ -813,7 +813,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _cap(text) {
-    text = text.replace(/^./, text[0].toUpperCase());
+    if (!text.includes('/')) {
+      text = text.replace(/^./, text[0].toUpperCase());
+    }
     return text;
   }
 
@@ -838,9 +840,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
-      } else {
-        prefix = specs[1];
-        kernelName = specs[2];
+      } else if (specs.length > 2) {
+        prefix = specs.slice(1, specs.length-1).join('/');
+        kernelName = specs[specs.length - 1];
       }
       let alias = this.aliases[item];
       let basename;

@@ -769,6 +769,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (imageParts.length === 3) {
         namespace = imageParts[1];
         langName = imageParts[2];
+      } else if (imageParts.length > 3) {
+        namespace = imageParts.slice(2, imageParts.length-1).join('/');
+        langName = imageParts[imageParts.length-1];
       } else {
         namespace = '';
         langName = imageParts[1];
