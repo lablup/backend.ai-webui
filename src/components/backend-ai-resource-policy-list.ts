@@ -479,8 +479,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       // language=HTML
       html`
       <div class="layout horizontal center flex">
-        <div class="vertical start layout">
-          ${rowData.item.allowed_vfolder_hosts}
+        <div class="vertical start layout around-justified">
+          ${rowData.item.allowed_vfolder_hosts.map((host) => html`
+            <lablup-shields app="" color="darkgreen" ui="round" description="${host}" style="margin-bottom:3px;"></lablup-shields>`
+          )}
         </div>
       </div>
       `, root
