@@ -125,11 +125,17 @@ export default class BackendAIMultiSelect extends LitElement {
     ];
   }
 
+  /**
+   * Show Dropdown Menu
+   */
   _showMenu() {
     this._modifyListPosition(this.items.length);
     this.shadowRoot.querySelector('#menu').style.display = '';
   }
 
+  /**
+   * Hide Dropdown Mneu
+   */
   _hideMenu() {
     const dropdownIcon = this.shadowRoot.querySelector('#dropdown-icon');
     dropdownIcon.on = false;
@@ -137,6 +143,11 @@ export default class BackendAIMultiSelect extends LitElement {
     this.shadowRoot.querySelector('#menu').style.display = 'none';
   }
 
+  /**
+   * Toggle visibility of dropdown menu
+   * 
+   * @param {Event} e - Click from expand/shrink icon in right-side of selected-area
+   */
   _toggleMenuVisibility(e) {
     const dropdownIcon = this.shadowRoot.querySelector('#dropdown-icon');
     dropdownIcon.classList.toggle('expand');
@@ -147,6 +158,11 @@ export default class BackendAIMultiSelect extends LitElement {
     }
   }
 
+  /**
+   * Set the position of Dropdown menu
+   * 
+   * @param {number} listCount - unit for heights to go up or down
+   */
   _modifyListPosition(listCount = 0) {
     const itemHeight = 56;
     const extraMargin = (listCount === this.items.length) ? 25 : 0;
@@ -158,6 +174,11 @@ export default class BackendAIMultiSelect extends LitElement {
     }
   }
 
+  /**
+   * Update selected items(buttons) according to selected items in dropdown
+   * 
+   * @param {Event} e - Click from list item in dropdown menu
+   */
   _updateSelection(e) {
     const selectedItemIndices = [...e.detail.index];
     const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map(item => item.value);
@@ -165,6 +186,11 @@ export default class BackendAIMultiSelect extends LitElement {
     this._hideMenu();
   }
 
+  /**
+   * Deselect items(buttons) and reflect the changes in dropdown.
+   * 
+   * @param {Event} e - Click from selected item button in selected-area
+   */
   _deselectItem(e) {
     const itemToDeselect = e.target;
     this.comboBox.selected.forEach((item, index, array) => {
@@ -176,10 +202,15 @@ export default class BackendAIMultiSelect extends LitElement {
     this.selectedItemList = this.selectedItemList.filter((item) => item !== itemToDeselect.label);
   }
 
+  /**
+   * Deselect all selected items(buttons) and reflects the changes in selected-area
+   * 
+   */
   _deselectAllItems() {
     this.comboBox.selected.forEach((item, index, array) => {
       this.comboBox.toggle(index);
     });
+    this.selectedItemList = [];
   }
 
   firstUpdated() {
