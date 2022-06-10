@@ -146,7 +146,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           background-image: none;
           --mdc-button-outline-width: 2px;
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-textarea {
