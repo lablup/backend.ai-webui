@@ -31,9 +31,9 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
-class BigNumber {
+class FourByteMaxInteger {
   static getValue() {
-    return 1000000;
+    return 2147483647;
   }
 }
 @customElement('backend-ai-resource-policy-list')
@@ -270,7 +270,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="horizontal layout justified distancing wrap">
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
               <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-              <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+              <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
                   @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -279,7 +279,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
               <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
-              <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="15552000"
+              <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max=${Number.MAX_SAFE_INTEGER}
                   @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -288,7 +288,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
               <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-              <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+              <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
                   @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -298,7 +298,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}"
                 style="${this.enableSessionLifetime ? '' : 'display:none;'}">
               <wl-label>${_t('resourcePolicy.MaxSessionLifeTime')}</wl-label>
-              <mwc-textfield class="discrete" id="session-lifetime" type="number" min="0" max="100"
+              <mwc-textfield class="discrete" id="session-lifetime" type="number" min="0" max=${FourByteMaxInteger.getValue()}
                   @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -322,7 +322,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
+                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max=${Number.MAX_SAFE_INTEGER / Math.pow(2, 20)} step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -331,7 +331,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               </div>
               <div class="vertical layout flex popup-left-margin">
                 <wl-label class="folders">${_t('credential.Max#')}</wl-label>
-                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
@@ -431,7 +431,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   concurrencyRenderer(root, column?, rowData?) {
     render(
       html`
-        <div>${[0, BigNumber.getValue()].includes(rowData.item.max_concurrent_sessions) ? '∞' : rowData.item.max_concurrent_sessions}</div>
+        <div>${[0, FourByteMaxInteger.getValue()].includes(rowData.item.max_concurrent_sessions) ? '∞' : rowData.item.max_concurrent_sessions}</div>
     `, root
     );
   }
@@ -469,7 +469,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div>${[0, BigNumber.getValue()].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
+      <div>${[0, FourByteMaxInteger.getValue()].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
       `, root
     );
   }
@@ -641,21 +641,27 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
     this._validateUserInput(this.fgpu_resource);
+
+    // Integer (4byte)
     this._validateUserInput(this.concurrency_limit);
-    this._validateUserInput(this.idle_timeout);
     this._validateUserInput(this.container_per_session_limit);
-    this._validateUserInput(this.vfolder_capacity);
     this._validateUserInput(this.vfolder_max_limit);
+
+    // BigInt
+    this._validateUserInput(this.idle_timeout);
+    this._validateUserInput(this.vfolder_capacity);
 
     total_resource_slots['cpu'] = this.cpu_resource['value'];
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
-    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? BigNumber.getValue() : parseInt(this.concurrency_limit['value']);
-    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
-    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? BigNumber.getValue() : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseFloat(this.vfolder_capacity['value']);
-    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
+
+    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? FourByteMaxInteger.getValue() : parseInt(this.concurrency_limit['value']);
+    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? FourByteMaxInteger.getValue() : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? FourByteMaxInteger.getValue() : parseInt(this.vfolder_max_limit['value']);
+
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? Number.MAX_SAFE_INTEGER : parseInt(this.idle_timeout['value']);
+    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? Number.MAX_SAFE_INTEGER : this._gBToByte(parseFloat(this.vfolder_capacity['value']));
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -670,13 +676,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
+      'max_vfolder_size': this.vfolder_capacity['value'],
       'allowed_vfolder_hosts': vfolder_hosts
     };
 
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? 0 : parseInt(this.session_lifetime['value']);
+      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? FourByteMaxInteger.getValue() : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
 
@@ -785,7 +791,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _updateUnlimitedValue(value) {
-    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity', BigNumber.getValue()].includes(value) ? '' : value;
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity', FourByteMaxInteger.getValue(), Number.MAX_SAFE_INTEGER].includes(value) ? '' : value;
   }
 
   /**
@@ -809,7 +815,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (textfield.value === '' || textfield.value === 0) {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BigNumber.getValue()) {
+    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === FourByteMaxInteger.getValue()) {
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
@@ -826,7 +832,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    * @return if number then returns number, else if then string
    */
   _markIfUnlimited(value, enableUnitConvert = false) {
-    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+    if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity', FourByteMaxInteger.getValue(), Number.MAX_SAFE_INTEGER].includes(value)) {
       return '∞';
     } else if (['NaN', NaN].includes(value)) {
       return '-';
