@@ -574,11 +574,11 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="vertical layout" id="modify-quota-controls"
                style="display:${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
             <div class="horizontal layout center justified">
-                <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
+                <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize?.value}"
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
                 <mwc-select class="fixed-position" id="modify-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}" fixedMenuPosition>
                 ${Object.keys(this.quotaUnit).map((unit, idx) => html`
-                      <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
+                      <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize?.unit}">${unit}</mwc-list-item>
                     `)}
                 </mwc-select>
             </div>
@@ -711,8 +711,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
                   ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
-                  ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size >= 0 ? html`
+                  ${_t('data.folders.FolderQuota')}: ${(this.folderInfo.max_size !== null && this.folderInfo.max_size > 0) ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
+                  ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size > 0 ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
                 </span>
@@ -1090,7 +1090,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
+      const maxSize = rowData.item.max_size === Number.MAX_SAFE_INTEGER ? rowData.item.max_size : rowData.item.max_size * this.quotaUnit.MiB;
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(maxSize * this.quotaUnit['MiB']);
     }
     render(
       // language=HTML
@@ -1667,7 +1668,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
         const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
+        const maxSize = (this.folderInfo.max_size === null) ? Number.MAX_SAFE_INTEGER : (this.folderInfo.max_size * this.quotaUnit['MiB']);
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(maxSize).split(' ');
         quotaEl.value = this.quota.value;
         quotaUnitEl.value = this.quota.unit;
       }
@@ -1916,14 +1918,14 @@ export default class BackendAiStorageList extends BackendAIPage {
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     const policyName = res.keypair.resource_policy;
     const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count', 'max_vfolder_size']);
-    const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
+    const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
     // default unit starts with MB.
     [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size).split(' ');
     if (['Bytes', 'KiB', 'MiB'].includes(this.maxSize.unit)) {
       this.maxSize.value = this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
       this.maxSize.unit = 'MiB';
     } else {
-      this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
+      this.maxSize.value = (this.maxSize.value === Number.MAX_SAFE_INTEGER) ? Number.MAX_SAFE_INTEGER : Math.round(this.maxSize.value * 10) / 10;
     }
   }
 
