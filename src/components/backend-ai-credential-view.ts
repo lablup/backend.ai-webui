@@ -49,13 +49,6 @@ import {
 
 @group Backend.AI Web UI
  */
-
-class FourByteMaxInteger {
-  static getValue() {
-    return 2147483647;
-  }
-}
-
 @customElement('backend-ai-credential-view')
 export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Object}) cpu_resource = {};
@@ -84,6 +77,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+
+  static readonly MAX_INT32 = 0x7FFFFFFF;
 
   constructor() {
     super();
@@ -529,12 +524,13 @@ export default class BackendAICredentialView extends BackendAIPage {
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
 
-    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? FourByteMaxInteger.getValue() : parseInt(this.concurrency_limit['value']);
-    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? FourByteMaxInteger.getValue() : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? FourByteMaxInteger.getValue() : parseFloat(this.vfolder_capacity['value']);
+    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 0 : parseInt(this.concurrency_limit['value']);
+    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
 
-    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? Number.MAX_SAFE_INTEGER : parseInt(this.idle_timeout['value']);
-    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? Number.MAX_SAFE_INTEGER : parseInt(this.vfolder_max_limit['value']);
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    console.log((this.vfolder_capacity['value'] === ''))
+    this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -555,7 +551,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? FourByteMaxInteger.getValue() : parseInt(this.session_lifetime['value']);
+      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? 0 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
 
@@ -765,6 +761,10 @@ export default class BackendAICredentialView extends BackendAIPage {
       return value % 1 ? value.toString().split('.')[1].length : 0;
     };
 
+    if (textfield.value === '') {
+      textfield.value = textfield.min ?? 0;
+    }
+
     if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
@@ -774,10 +774,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       textfield.value = ['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) ? 1 : 0;
     }
 
-    if (!textfield.valid) {
-      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
-      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
-    }
     // automatically check when textfield is min
     if (checkbox) {
       textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
@@ -785,7 +781,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _updateUnlimitedValue(value) {
-    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity', FourByteMaxInteger.getValue(), Number.MAX_SAFE_INTEGER].includes(value) ? '' : value;
+    return ['-', 0, '0', 'Unlimited', Infinity, 'Infinity', BackendAICredentialView.MAX_INT32, Number.MAX_SAFE_INTEGER].includes(value) ? '' : value;
   }
 
   /**
@@ -860,7 +856,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (textfield.value === '' || textfield.value === '0' ) {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === FourByteMaxInteger.getValue()) {
+    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BackendAICredentialView.MAX_INT32) {
       textfield.disabled = true;
       checkbox.checked = true;
     }else {
@@ -1225,7 +1221,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           <div class="horizontal justified layout distancing wrap">
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
                 <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
+                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max=${BackendAICredentialView.MAX_INT32}
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1243,7 +1239,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
                   <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
+                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max=${BackendAICredentialView.MAX_INT32}
                       @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1253,7 +1249,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}"
                 style="${this.enableSessionLifetime ? '' : 'display:none;'}">
                 <wl-label>${_t('resourcePolicy.MaxSessionLifeTime')}</wl-label>
-                <mwc-textfield class="discrete" id="session-lifetime" type="number" min="0" max=${FourByteMaxInteger.getValue()}
+                <mwc-textfield class="discrete" id="session-lifetime" type="number" min="0" max=${BackendAICredentialView.MAX_INT32}
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1277,7 +1273,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max=${Number.MAX_SAFE_INTEGER / Math.pow(2, 20)} step="0.1"
+                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max=${BackendAICredentialView.MAX_INT32} step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1286,7 +1282,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical layout flex popup-left-margin">
                 <wl-label class="folders">${_t('credential.Max#')}</wl-label>
-                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max=${FourByteMaxInteger.getValue()}
+                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max=${BackendAICredentialView.MAX_INT32}
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
