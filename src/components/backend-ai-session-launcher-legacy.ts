@@ -525,7 +525,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         mwc-button[disabled] {
           background-image: none;
           --mdc-theme-primary: #ddd;
-          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+          --mdc-theme-on-primary: var(--general-sidebar-topbar-background-color);
         }
 
         #environment {
