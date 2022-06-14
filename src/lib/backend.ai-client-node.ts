@@ -1221,6 +1221,10 @@ class Client {
     } else {
       hdrs.set('Content-Type', content_type);
     }
+    // Add secure tag if payload is encoded.
+    if (true) {
+      hdrs.set('X-BackendAI-Encoded', 'true');
+    }
     let requestInfo = {
       method: method,
       headers: hdrs,
