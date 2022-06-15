@@ -1482,7 +1482,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} refreshOnly
    * @param {string} source
    */
-  _refreshFolderList(refreshOnly = false, source = 'unknown') {
+  async _refreshFolderList(refreshOnly = false, source = 'unknown') {
     // Skip if it is already refreshing OR is not on the page.
     if (this._folderRefreshing || !this.active) {
       return;
@@ -1492,7 +1492,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
-    this._getMaxSize();
+    await this._getMaxSize();
     this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
