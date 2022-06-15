@@ -50,7 +50,7 @@ import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
-import '../lib/backend.ai-client-es6';
+import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
 import {

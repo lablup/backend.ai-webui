@@ -1,4 +1,3 @@
-'use babel';
 /*
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
@@ -10,15 +9,11 @@ Licensed under MIT
 //const fetch = require('node-fetch'); /* Exclude for ES6 */
 //const Headers = fetch.Headers; /* Exclude for ES6 */
 
-const crypto_node = require('crypto');
-//const FormData = require('form-data');
-//import crypto from 'crypto-browserify';
+import CryptoES from 'crypto-es';
 
-const querystring = require('querystring');
-
-interface Window {
-  backendaiclient: any;
-}
+//interface Window {
+//  backendaiclient: any;
+//}
 
 class ClientConfig {
   public _apiVersionMajor: string;
@@ -769,11 +764,11 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
-   * @param {string} architecture - image architecture
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
-   */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = undefined) {
+   * @param {string} architecture - image architecture
+  */
+  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -1098,7 +1093,7 @@ class Client {
     let params = {
       'service_name': service_name
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1115,7 +1110,7 @@ class Client {
     let params = {
       'files': files
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1124,7 +1119,7 @@ class Client {
     let params = {
       'file': file
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1217,17 +1212,15 @@ class Client {
       if (body instanceof FormData) {
       } else {
         hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+        hdrs.set('Content-Length', (new TextEncoder().encode(authBody)).length);
       }
     } else {
       hdrs.set('Content-Type', content_type);
     }
     // Add secure tag if payload is encoded.
     if (false) {
-      console.log("test");
       if (typeof requestBody == 'string') {
         hdrs.set('X-BackendAI-Encoded', 'true');
-        console.log(typeof requestBody);
         requestBody = this.getEncodedPayload(requestBody);
       }
     }
@@ -1283,8 +1276,9 @@ class Client {
   }
 
   getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-    let bodyHash = crypto_node.createHash(this._config.hashType)
-      .update(bodyValue).digest('hex');
+    let bodyHash = CryptoES.SHA256(bodyValue);
+    // let bodyHash = crypto.createHash(this._config.hashType)
+    //  .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
       + 'host:' + this._config.endpointHost + '\n'
       + 'content-type:' + content_type + '\n'
@@ -1301,31 +1295,24 @@ class Client {
   }
 
   getEncodedPayload(body) {
-    const iv = crypto_node.randomBytes(16);
-    console.log(iv);
-    try {
-      const cipher = crypto_node.createCipheriv(
-        'aes-256-cbc',
-        Buffer.from('bf3c199c2470cb477d907b1e0917c17b'),
-        iv
-      );
-      console.log(cipher);
-      const encrypted = cipher.update(body);
-      return (
-        iv.toString('hex') +
-        ':' +
-        Buffer.concat([encrypted, cipher.final()]).toString('hex')
-      )
-    } catch (error) {
-      console.error(error);
-    }
+    let ivs = this.generateRandomStr(22);
+    let iv = CryptoES.enc.Hex.parse(ivs); 
+    let key = CryptoES.enc.Hex.parse(this._config.api_endpoint + ivs);
+    let result = CryptoES.AES.encrypt(body, key, { iv: iv });
+    //console.log((iv + ':' + result.ciphertext);
+    return (iv + ':' + result.ciphertext);
   }
 
+  //let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
+
   sign(key, key_encoding, msg, digest_type) {
-    let kbuf = new Buffer(key, key_encoding);
-    let hmac = crypto_node.createHmac(this._config.hashType, kbuf);
+    const hashDigest = CryptoES.SHA256(msg);
+    const hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key));
+    return hmacDigest;
+    /*let kbuf = new Buffer(key, key_encoding);
+    let hmac = crypto.createHmac(this._config.hashType, kbuf);
     hmac.update(msg, 'utf8');
-    return hmac.digest(digest_type);
+    return hmac.digest(digest_type);*/
   }
 
   getSignKey(secret_key, now) {
@@ -1594,7 +1581,7 @@ class VFolder {
     if (userEmail) {
       params['owner_user_email'] = userEmail;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
@@ -1609,7 +1596,7 @@ class VFolder {
     if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
       params['group_id'] = groupId;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
@@ -1807,8 +1794,8 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = {file, archive};
-    const q = querystring.stringify(params);
+    const params = {'file':file, 'archive': (archive ? 'true': 'false')};
+    const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
       const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
       return this.client._wrapWithPromise(rqst, true);
@@ -1850,7 +1837,7 @@ class VFolder {
     let params = {
       'token': token
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
     return this.client._wrapWithPromise(rqst, true);
   }
@@ -1862,7 +1849,7 @@ class VFolder {
    */
   get_download_url_with_token(token: string = '') {
     const params = {token};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
     } else {
@@ -1883,7 +1870,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2006,7 +1993,7 @@ class VFolder {
    */
   async get_quota(host, vfolder_id) {
     const params = {folder_host: host, id: vfolder_id};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2842,13 +2829,13 @@ class SessionTemplate {
   async list(listall=false, groupId=null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = {all: listall};
-      const q = querystring.stringify(params);
+      const params = {'all': (listall ?  'true': 'false')};
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     if (groupId) {
       const params = {group_id: groupId};
-      const q = querystring.stringify(params);
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
@@ -3340,7 +3327,7 @@ class User {
    * };
    */
   async create(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
+    // let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
@@ -4072,7 +4059,7 @@ const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
 };
-
+/*
 // for use like "ai.backend.Client"
 module.exports.backend = backend;
 // for classical uses
@@ -4081,3 +4068,6 @@ module.exports.ClientConfig = ClientConfig;
 // legacy aliases
 module.exports.BackendAIClient = Client;
 module.exports.BackendAIClientConfig = ClientConfig;
+*/
+export {backend, Client, ClientConfig}
+export default backend;

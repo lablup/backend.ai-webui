@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v21.3.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
 
-(C) Copyright 2016-2021 Lablup Inc.
+(C) Copyright 2016-2022 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -11,6 +11,7 @@ Licensed under MIT
 //const Headers = fetch.Headers; /* Exclude for ES6 */
 const crypto_node = require('crypto');
 //const FormData = require('form-data');
+//import crypto from 'crypto-browserify';
 const querystring = require('querystring');
 class ClientConfig {
     /**
@@ -1126,6 +1127,15 @@ class Client {
         else {
             hdrs.set('Content-Type', content_type);
         }
+        // Add secure tag if payload is encoded.
+        if (false) {
+            console.log("test");
+            if (typeof requestBody == 'string') {
+                hdrs.set('X-BackendAI-Encoded', 'true');
+                console.log(typeof requestBody);
+                requestBody = this.getEncodedPayload(requestBody);
+            }
+        }
         let requestInfo = {
             method: method,
             headers: hdrs,
@@ -1191,6 +1201,21 @@ class Client {
         let t = year + month + day;
         return t;
     }
+    getEncodedPayload(body) {
+        const iv = crypto_node.randomBytes(16);
+        console.log(iv);
+        try {
+            const cipher = crypto_node.createCipheriv('aes-256-cbc', Buffer.from('bf3c199c2470cb477d907b1e0917c17b'), iv);
+            console.log(cipher);
+            const encrypted = cipher.update(body);
+            return (iv.toString('hex') +
+                ':' +
+                Buffer.concat([encrypted, cipher.final()]).toString('hex'));
+        }
+        catch (error) {
+            console.error(error);
+        }
+    }
     sign(key, key_encoding, msg, digest_type) {
         let kbuf = new Buffer(key, key_encoding);
         let hmac = crypto_node.createHmac(this._config.hashType, kbuf);
@@ -1202,11 +1227,16 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId(length = 8, nosuffix = false) {
+    generateRandomStr(length) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < length; i++)
+        for (var i = 0; i < length; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
+    generateSessionId(length = 8, nosuffix = false) {
+        var text = this.generateRandomStr(length);
         return nosuffix ? text : text + "-jsSDK";
     }
     slugify(text) {
