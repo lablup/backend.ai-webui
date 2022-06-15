@@ -1670,7 +1670,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
         const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-        const maxSize = (this.folderInfo.max_size === null) ? Number.MAX_SAFE_INTEGER : (this.folderInfo.max_size * this.quotaUnit['MiB']);
+        const maxSize = (this.folderInfo.max_size === null) ? (this.maxSize.value * this.quotaUnit[this.maxSize.unit]) : (this.folderInfo.max_size * this.quotaUnit['MiB']);
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(maxSize).split(' ');
         quotaEl.value = this.quota.value;
         quotaUnitEl.value = this.quota.unit;
