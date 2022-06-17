@@ -6,14 +6,7 @@ Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 Licensed under MIT
 */
 /*jshint esnext: true */
-//const fetch = require('node-fetch'); /* Exclude for ES6 */
-//const Headers = fetch.Headers; /* Exclude for ES6 */
-
 import CryptoES from 'crypto-es';
-
-//interface Window {
-//  backendaiclient: any;
-//}
 
 class ClientConfig {
   public _apiVersionMajor: string;
@@ -617,7 +610,7 @@ class Client {
       'username': this._config.userId,
       'password': this._config.password
     };
-    let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    let rqst = this.newSignedRequest('POST', `/server/login`, body, true);
     let result;
     try {
       result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
@@ -1154,8 +1147,9 @@ class Client {
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any) {
+  newSignedRequest(method: string, queryString, body: any, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1218,7 +1212,7 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     // Add secure tag if payload is encoded.
-    if (false) {
+    if (secure) {
       if (typeof requestBody == 'string') {
         hdrs.set('X-BackendAI-Encoded', 'true');
         requestBody = this.getEncodedPayload(requestBody);
@@ -1295,12 +1289,19 @@ class Client {
   }
 
   getEncodedPayload(body) {
-    let ivs = this.generateRandomStr(22);
-    let iv = CryptoES.enc.Hex.parse(ivs); 
-    let key = CryptoES.enc.Hex.parse(this._config.api_endpoint + ivs);
-    let result = CryptoES.AES.encrypt(body, key, { iv: iv });
-    //console.log((iv + ':' + result.ciphertext);
-    return (iv + ':' + result.ciphertext);
+    let iv = this.generateRandomStr(16);
+    let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
+    //console.log(this._config.endpoint);
+    //console.log(key);
+    let result = CryptoES.AES.encrypt(body,
+      CryptoES.enc.Utf8.parse(key),
+      { iv: CryptoES.enc.Utf8.parse(iv),
+        padding: CryptoES.pad.Pkcs7,
+        mode: CryptoES.mode.CBC});
+    //console.log(key);
+    //console.log(CryptoES.enc.Utf8.parse(key).toString());
+    //console.log(iv + ':' + result.toString());
+    return (iv + ':' + result.toString());
   }
 
   //let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
