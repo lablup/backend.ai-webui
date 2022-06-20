@@ -554,6 +554,9 @@ class Client {
       this._features['scheduler-opts'] = true;
       this._features['session-lifetime'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20220615')) {
+      this._features['secure-payload'] = true;
+    }
   }
 
   /**
@@ -1212,7 +1215,7 @@ class Client {
       hdrs.set('Content-Type', content_type);
     }
     // Add secure tag if payload is encoded.
-    if (secure) {
+    if (secure && this.supports('secure-payload')) {
       if (typeof requestBody == 'string') {
         hdrs.set('X-BackendAI-Encoded', 'true');
         requestBody = this.getEncodedPayload(requestBody);
