@@ -1299,11 +1299,21 @@ class Client {
     return (iv + ':' + result.toString());
   }
 
-  //let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
-
   sign(key, key_encoding, msg, digest_type) {
-    const hashDigest = CryptoES.SHA256(msg);
-    const hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key));
+    const hashDigest = CryptoES.enc.Utf8.parse(msg);
+    let hmacDigest;
+    if (key_encoding == 'utf8') {
+      key = CryptoES.enc.Utf8.parse(key);
+    } else if (key_encoding == 'binary') {
+      key = CryptoES.enc.Hex.parse(key);
+    } else {
+      key = CryptoES.enc.Utf8.parse(key);
+    }
+    if (['binary', 'hex'].includes(digest_type)) {
+      hmacDigest = CryptoES.enc.Hex.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    } else {
+      hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    }
     return hmacDigest;
     /*let kbuf = new Buffer(key, key_encoding);
     let hmac = crypto.createHmac(this._config.hashType, kbuf);
@@ -1314,7 +1324,6 @@ class Client {
   getSignKey(secret_key, now) {
     let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
     let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
-    console.log(k2);
     return k2;
   }
 
