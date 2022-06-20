@@ -1130,13 +1130,14 @@ class Client {
    * @param {string} v - variable string for GraphQL
    * @param {number} timeout - Timeout to force terminate request
    * @param {number} retry - The number of retry when request is failed
+   * @param {number} secure - Decide to encode the payload or not
    */
-  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0, secure: boolean = false) {
     let query = {
       'query': q,
       'variables': v
     };
-    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
@@ -3344,7 +3345,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3378,7 +3379,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3399,7 +3400,7 @@ class User {
       let v = {
         'email': email
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
