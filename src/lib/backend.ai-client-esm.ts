@@ -1291,16 +1291,11 @@ class Client {
   getEncodedPayload(body) {
     let iv = this.generateRandomStr(16);
     let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
-    //console.log(this._config.endpoint);
-    //console.log(key);
     let result = CryptoES.AES.encrypt(body,
       CryptoES.enc.Utf8.parse(key),
       { iv: CryptoES.enc.Utf8.parse(iv),
         padding: CryptoES.pad.Pkcs7,
         mode: CryptoES.mode.CBC});
-    //console.log(key);
-    //console.log(CryptoES.enc.Utf8.parse(key).toString());
-    //console.log(iv + ':' + result.toString());
     return (iv + ':' + result.toString());
   }
 
@@ -1319,6 +1314,7 @@ class Client {
   getSignKey(secret_key, now) {
     let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
     let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
+    console.log(k2);
     return k2;
   }
 
