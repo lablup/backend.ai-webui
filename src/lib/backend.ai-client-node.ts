@@ -1188,7 +1188,6 @@ class Client {
         "X-BackendAI-Version": this._config.apiVersion,
         "X-BackendAI-Date": d.toISOString(),
       });
-      //console.log(queryString.startsWith('/server') ===true);
       if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + queryString;
       } else { // Force request to use Public when session mode is enabled
@@ -1221,15 +1220,6 @@ class Client {
       }
     } else {
       hdrs.set('Content-Type', content_type);
-    }
-    // Add secure tag if payload is encoded.
-    if (false) {
-      console.log("test");
-      if (typeof requestBody == 'string') {
-        hdrs.set('X-BackendAI-Encoded', 'true');
-        console.log(typeof requestBody);
-        requestBody = this.getEncodedPayload(requestBody);
-      }
     }
 
     let requestInfo = {
@@ -1298,27 +1288,6 @@ class Client {
     let day = (`0${now.getUTCDate()}`).slice(-2);
     let t = year + month + day;
     return t;
-  }
-
-  getEncodedPayload(body) {
-    const iv = crypto_node.randomBytes(16);
-    console.log(iv);
-    try {
-      const cipher = crypto_node.createCipheriv(
-        'aes-256-cbc',
-        Buffer.from('bf3c199c2470cb477d907b1e0917c17b'),
-        iv
-      );
-      console.log(cipher);
-      const encrypted = cipher.update(body);
-      return (
-        iv.toString('hex') +
-        ':' +
-        Buffer.concat([encrypted, cipher.final()]).toString('hex')
-      )
-    } catch (error) {
-      console.error(error);
-    }
   }
 
   sign(key, key_encoding, msg, digest_type) {
@@ -2766,7 +2735,6 @@ class ComputeSession {
         v.group_id = group;
       }
       const session = await this.client.query(q, v, null, timeout);
-      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
           break;
