@@ -737,7 +737,7 @@ class Client {
       'new_password': newPassword,
       'new_password2': newPassword2
     };
-    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, true);
     return this._wrapWithPromise(rqst);
   }
 
