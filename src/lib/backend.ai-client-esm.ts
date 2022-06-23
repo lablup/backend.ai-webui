@@ -1217,8 +1217,8 @@ class Client {
     // Add secure tag if payload is encoded.
     if (secure && this.supports('secure-payload')) {
       if (typeof requestBody == 'string') {
-        hdrs.set('X-BackendAI-Encoded', 'true');
-        requestBody = this.getEncodedPayload(requestBody);
+        hdrs.set('X-BackendAI-Encrypted', 'true');
+        requestBody = this.getEncryptedPayload(requestBody);
       }
     }
 
@@ -1291,7 +1291,7 @@ class Client {
     return t;
   }
 
-  getEncodedPayload(body) {
+  getEncryptedPayload(body) {
     let iv = this.generateRandomStr(16);
     let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
     let result = CryptoES.AES.encrypt(body,
