@@ -1708,14 +1708,19 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
 
     const modifyFolderJobQueue = [] as any;
+    const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
+    const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
     if (Object.keys(input).length > 0) {
       const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
       modifyFolderJobQueue.push(updateFolderConfig);
     }
-    if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-      const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
-      const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-      const quota = quotaEl.value ? BigInt(Math.round(quotaEl.value * this.quotaUnit[quotaUnitEl.value])): 0;
+    if (this._checkFolderSupportSizeQuota(this.folderInfo.host) && quotaEl.value) {
+      let quota;
+      if (quotaEl.value * this.quotaUnit[quotaUnitEl.value] === (BackendAiStorageList.MAX_INT32 + 1) * this.quotaUnit.MiB) { // unit starts with MBytes
+        quota = BackendAiStorageList.MAX_INT32 * this.quotaUnit.MiB;
+      } else {
+        quota = BigInt(Math.round(quotaEl.value * this.quotaUnit[quotaUnitEl.value])); 
+      }
       if ((this.quota.value != quotaEl.value) || (this.quota.unit != quotaUnitEl.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
         modifyFolderJobQueue.push(updateFolderQuota);
