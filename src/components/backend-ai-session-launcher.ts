@@ -1044,6 +1044,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.selectedVfolders = [];
   }
 
+  _checkSelectedItems() {
+    if (this._grid && this._grid.selectedItems) {
+      const selectedFolderItems = this._grid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        this._grid.selectedItems = [];
+        selectedFolders = selectedFolderItems.map((item) => item?.name);
+        this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
+          if (selectedFolders.includes(checkbox.__item?.name)) {
+            checkbox.checked = true;
+          }
+        });
+      }
+    }
+  }
+
   /**
    * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
    *
@@ -1585,10 +1601,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateVersions(kernel) {
     if (kernel in this.resourceBroker.supports) {
       this.version_selector.disabled = true;
-      let versions: {version: string, architecture: string}[] = []
+      const versions: {version: string, architecture: string}[] = [];
       for (const version of this.resourceBroker.supports[kernel]) {
         for (const architecture of this.resourceBroker.imageArchitectures[kernel + ':' + version]) {
-          versions.push({ version, architecture })
+          versions.push({version, architecture});
         }
       }
       versions.sort((a, b) => a.version > b.version ? 1 : -1);
@@ -2946,6 +2962,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._grid?.clearCache();
     if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
+      this._checkSelectedItems();
     }
   }
 
