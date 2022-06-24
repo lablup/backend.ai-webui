@@ -24,7 +24,9 @@ import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import * as aiSDK from '../lib/backend.ai-client-es6';
+// import * as aiSDK from '../lib/backend.ai-client-es6';
+import * as ai from '../lib/backend.ai-client-esm';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -35,7 +37,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
 declare global {
-  const ai: typeof aiSDK;
+  const ai: any;
 }
 
 /**
@@ -168,7 +170,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-button {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[unelevated] {
@@ -182,7 +184,7 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-button-background-color);
           --mdc-button-disabled-ink-color: var(--general-button-background-color);
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         h3 small {
@@ -604,7 +606,8 @@ export default class BackendAILogin extends BackendAIPage {
           'general.apiEndpoint',
           'general.apiEndpointText',
           'general.siteDescription',
-        ]
+          'wsproxy',
+        ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
         webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
           fieldsToExclude.forEach((key) => {
@@ -632,7 +635,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      this._loadConfigFromWebServer();
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
       this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
@@ -651,7 +656,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      this._loadConfigFromWebServer();
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === 'API') {
       return Promise.resolve(false);

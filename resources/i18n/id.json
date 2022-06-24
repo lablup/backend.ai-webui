@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -568,7 +569,8 @@
       "FileBrowserSessionRunningAlready": "Sesi dengan filebrowser sudah berjalan. Harap unggah folder menggunakan sesi itu.",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
-      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser."
+      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",
@@ -596,7 +598,8 @@
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
-      "LetsDouble-Check": "Mari Periksa Kembali"
+      "LetsDouble-Check": "Mari Periksa Kembali",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {
@@ -671,7 +674,8 @@
     "MinimumMemUnit": "Memori dimulai dengan 1 GB",
     "MinimumShmemUnit": "Unit minimum untuk memori bersama adalah 0,01 GB.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Memori bersama (GB)"
+    "SharedMemory": "Memori bersama (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Umum",
@@ -770,7 +774,8 @@
     "SuccessfullyUpdated": "Kebijakan sumber daya berhasil diperbarui.",
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
-    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:"
+    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nama host",
@@ -833,7 +838,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Setel Opsi Penjadwal",
     "TimeoutSeconds": "Detik",
-    "ResourceGroupDetail": "Detail Grup Sumber Daya"
+    "ResourceGroupDetail": "Detail Grup Sumber Daya",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

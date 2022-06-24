@@ -90,14 +90,17 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {Object} obj - target object
    * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
    * @param {String} sep - separator of the `nestedKey`
-   */
-  deleteNestedKeyFromObject(obj: Object, nestedKey: String, sep: String = '.') {
+   * @return {Object} - Object without nested key
+  */
+  deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
     if (!obj || obj.constructor !== Object || !nestedKey) {
       return obj;
     }
-    const keys = nestedKey.split(sep)
+    const keys = nestedKey.split(sep);
     const lastKey = keys.pop();
-    delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    if (lastKey) {
+      delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    }
     return obj;
   }
 
@@ -106,17 +109,18 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    *
    * @param {Object} obj1 - source object
    * @param {Object} obj2 - the objects that will override obj1
+   * @return {Object} - Merged object
    */
   mergeNestedObjects(obj1: Object, obj2: Object) {
     if (!obj1 || !obj2) {
-      return obj1 || obj2 || {}
+      return obj1 || obj2 || {};
     }
     function _merge(a, b) {
       return Object.entries(b).reduce((o, [k, v]) => {
-          o[k] = v && v.constructor === Object
-              ? _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v)
-              : v;
-          return o;
+        o[k] = v && (v as any).constructor === Object ?
+          _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
+          v;
+        return o;
       }, a);
     }
     return [obj1, obj2].reduce(_merge, {});

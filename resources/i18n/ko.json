@@ -304,7 +304,8 @@
       "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "취소",
@@ -567,7 +568,8 @@
       "FileBrowserSessionRunningAlready": "파일브라우저용 세션이 이미 실행중입니다. 해당 세션에서 폴더를 업로드 할 수 있습니다.",
       "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오.",
       "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
-      "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요."
+      "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요.",
+      "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
@@ -595,7 +597,8 @@
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
     },
     "title": {
-      "LetsDouble-Check": "한 번 더 확인합시다"
+      "LetsDouble-Check": "한 번 더 확인합시다",
+      "Notice": "안내"
     },
     "ErrorOccurred": "문제가 발생했습니다",
     "error": {
@@ -670,7 +673,8 @@
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
-    "SharedMemory": "공유메모리 (GB)"
+    "SharedMemory": "공유메모리 (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "일반",
@@ -769,7 +773,8 @@
     "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다.",
     "SuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
-    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: "
+    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
+    "MaxSessionLifeTime": "세션 최대 실행시간"
   },
   "registry": {
     "Hostname": "호스트명",
@@ -832,7 +837,8 @@
     "WsproxyAddress": "WSProxy 서버 주소",
     "SetSchedulerOptions": "스케쥴러 옵션 설정",
     "TimeoutSeconds": "초",
-    "ResourceGroupDetail": "자원 그룹 세부 정보"
+    "ResourceGroupDetail": "자원 그룹 세부 정보",
+    "RetriesToSkip": "회"
   },
   "maintenance": {
     "General": "일반",

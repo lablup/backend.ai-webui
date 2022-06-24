@@ -59,7 +59,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
           margin: auto 10px;
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
       `
     ];

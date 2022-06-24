@@ -305,7 +305,8 @@
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -568,7 +569,8 @@
       "FileBrowserSessionRunningAlready": "Filebrowser-ийг дэмждэг Session аль хэдийн ажиллаж байна. Энэ хуралдааныг ашиглан фолдер (ууд) байршуулна уу.",
       "NotEnoughResourceForFileBrowserSession": "Filebrowser-д зориулж Session үүсгэх хангалттай нөөц байхгүй (cpu: 1 Core, mem: 0.5GB). боломжтой нөөцийг шалгана уу.",
       "NoImagesSupportingFileBrowser": "Файл хөтөчийг дэмжих зураг хараахан алга байна. Фолдер хөтөчийг дэмждэг дор хаяж нэг буюу түүнээс дээш дүрс оруулах шаардлагатай.",
-      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу."
+      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",
@@ -596,7 +598,8 @@
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
-      "LetsDouble-Check": "Давхар шалгуулъя"
+      "LetsDouble-Check": "Давхар шалгуулъя",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {
@@ -671,7 +674,8 @@
     "MinimumMemUnit": "Санах ой нь 1 ГБ-аас эхэлдэг",
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Хуваалцсан санах ой (GB)"
+    "SharedMemory": "Хуваалцсан санах ой (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -770,7 +774,8 @@
     "SuccessfullyUpdated": "Нөөцийн бодлогыг амжилттай шинэчилсэн.",
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
-    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:"
+    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -833,7 +838,8 @@
     "WsproxyAddress": "__NOT_TRANSLATED__",
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
-    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй"
+    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",

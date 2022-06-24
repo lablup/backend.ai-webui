@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v21.3.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
 
-(C) Copyright 2016-2021 Lablup Inc.
+(C) Copyright 2016-2022 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -11,6 +11,7 @@ Licensed under MIT
 //const Headers = fetch.Headers; /* Exclude for ES6 */
 const crypto_node = require('crypto');
 //const FormData = require('form-data');
+//import crypto from 'crypto-browserify';
 const querystring = require('querystring');
 class ClientConfig {
     /**
@@ -479,6 +480,7 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('22.03')) {
             this._features['scheduler-opts'] = true;
+            this._features['session-lifetime'] = true;
         }
     }
     /**
@@ -1086,7 +1088,6 @@ class Client {
                 "X-BackendAI-Version": this._config.apiVersion,
                 "X-BackendAI-Date": d.toISOString(),
             });
-            //console.log(queryString.startsWith('/server') ===true);
             if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
                 uri = this._config.endpoint + queryString;
             }
@@ -1201,11 +1202,16 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId(length = 8, nosuffix = false) {
+    generateRandomStr(length) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < length; i++)
+        for (var i = 0; i < length; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
+    generateSessionId(length = 8, nosuffix = false) {
+        var text = this.generateRandomStr(length);
         return nosuffix ? text : text + "-jsSDK";
     }
     slugify(text) {
@@ -2182,6 +2188,9 @@ class ResourcePolicy {
         'max_vfolder_size',
         'allowed_vfolder_hosts',
         'idle_timeout']) {
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         let q, v;
         if (name === null) {
             q = `query {` +
@@ -2210,7 +2219,8 @@ class ResourcePolicy {
      *   'idle_timeout': idle_timeout,
      *   'max_vfolder_count': vfolder_count_limit,
      *   'max_vfolder_size': vfolder_capacity_limit,
-     *   'allowed_vfolder_hosts': vfolder_hosts
+     *   'allowed_vfolder_hosts': vfolder_hosts,
+     *   'max_session_lifetime': max_session_lifetime
      * };
      */
     async add(name = null, input) {
@@ -2224,6 +2234,9 @@ class ResourcePolicy {
             'max_vfolder_size',
             'allowed_vfolder_hosts',
             'idle_timeout'];
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
                 `  create_keypair_resource_policy(name: $name, props: $input) {` +
@@ -2253,7 +2266,8 @@ class ResourcePolicy {
      *   {bigint} 'idle_timeout': idle_timeout,
      *   {int} 'max_vfolder_count': vfolder_count_limit,
      *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
-     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts
+     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
+     *   {int} 'max_session_lifetime': max_session_lifetime
      * };
      */
     async mutate(name = null, input) {
@@ -2536,7 +2550,6 @@ class ComputeSession {
                 v.group_id = group;
             }
             const session = await this.client.query(q, v, null, timeout);
-            console.log(session.compute_session_list.total_count);
             sessions.push(...session.compute_session_list.items);
             if (offset >= session.compute_session_list.total_count) {
                 break;
@@ -2561,8 +2574,9 @@ class ComputeSession {
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
     }
-    async startService(session, app, port = null, envs = null, args = null) {
+    async startService(loginSessionToken, session, app, port = null, envs = null, args = null) {
         let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+            login_session_token: loginSessionToken,
             app,
             port: port || undefined,
             envs: envs || undefined,
