@@ -1050,9 +1050,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       let selectedFolders: string[] = [];
       if (selectedFolderItems.length > 0) {
         this._grid.selectedItems = [];
-        selectedFolders = selectedFolderItems.map((item) => item?.name);
+        selectedFolders = selectedFolderItems.map((item) => item?.id);
         this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
-          if (selectedFolders.includes(checkbox.__item?.name)) {
+          if (selectedFolders.includes(checkbox.__item?.id)) {
             checkbox.checked = true;
           }
         });
