@@ -146,7 +146,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           background-image: none;
           --mdc-button-outline-width: 2px;
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-textarea {
@@ -900,6 +900,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <div><strong># retries to skip pending session</strong></div>
         <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
       </vaadin-item>`;
+      } else {
+        return '';
       }
     } else {
       return '';

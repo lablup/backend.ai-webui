@@ -1,4 +1,3 @@
-'use babel';
 /*
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
@@ -7,18 +6,7 @@ Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 Licensed under MIT
 */
 /*jshint esnext: true */
-//const fetch = require('node-fetch'); /* Exclude for ES6 */
-//const Headers = fetch.Headers; /* Exclude for ES6 */
-
-const crypto_node = require('crypto');
-//const FormData = require('form-data');
-//import crypto from 'crypto-browserify';
-
-const querystring = require('querystring');
-
-interface Window {
-  backendaiclient: any;
-}
+import CryptoES from 'crypto-es';
 
 class ClientConfig {
   public _apiVersionMajor: string;
@@ -566,6 +554,9 @@ class Client {
       this._features['scheduler-opts'] = true;
       this._features['session-lifetime'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20220615')) {
+      this._features['secure-payload'] = true;
+    }
   }
 
   /**
@@ -622,7 +613,7 @@ class Client {
       'username': this._config.userId,
       'password': this._config.password
     };
-    let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    let rqst = this.newSignedRequest('POST', `/server/login`, body, true);
     let result;
     try {
       result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
@@ -746,7 +737,7 @@ class Client {
       'new_password': newPassword,
       'new_password2': newPassword2
     };
-    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, true);
     return this._wrapWithPromise(rqst);
   }
 
@@ -769,11 +760,11 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
-   * @param {string} architecture - image architecture
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
-   */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = undefined) {
+   * @param {string} architecture - image architecture
+  */
+  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -1098,7 +1089,7 @@ class Client {
     let params = {
       'service_name': service_name
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1115,7 +1106,7 @@ class Client {
     let params = {
       'files': files
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1124,7 +1115,7 @@ class Client {
     let params = {
       'file': file
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1142,13 +1133,14 @@ class Client {
    * @param {string} v - variable string for GraphQL
    * @param {number} timeout - Timeout to force terminate request
    * @param {number} retry - The number of retry when request is failed
+   * @param {number} secure - Decide to encode the payload or not
    */
-  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0, secure: boolean = false) {
     let query = {
       'query': q,
       'variables': v
     };
-    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
@@ -1159,8 +1151,9 @@ class Client {
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any) {
+  newSignedRequest(method: string, queryString, body: any, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1216,10 +1209,17 @@ class Client {
       if (body instanceof FormData) {
       } else {
         hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+        hdrs.set('Content-Length', (new TextEncoder().encode(authBody)).length);
       }
     } else {
       hdrs.set('Content-Type', content_type);
+    }
+    // Add secure tag if payload is encoded.
+    if (secure && this.supports('secure-payload')) {
+      if (typeof requestBody == 'string') {
+        hdrs.set('X-BackendAI-Encoded', 'true');
+        requestBody = this.getEncodedPayload(requestBody);
+      }
     }
 
     let requestInfo = {
@@ -1273,8 +1273,9 @@ class Client {
   }
 
   getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-    let bodyHash = crypto_node.createHash(this._config.hashType)
-      .update(bodyValue).digest('hex');
+    let bodyHash = CryptoES.SHA256(bodyValue);
+    // let bodyHash = crypto.createHash(this._config.hashType)
+    //  .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
       + 'host:' + this._config.endpointHost + '\n'
       + 'content-type:' + content_type + '\n'
@@ -1290,11 +1291,37 @@ class Client {
     return t;
   }
 
+  getEncodedPayload(body) {
+    let iv = this.generateRandomStr(16);
+    let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
+    let result = CryptoES.AES.encrypt(body,
+      CryptoES.enc.Utf8.parse(key),
+      { iv: CryptoES.enc.Utf8.parse(iv),
+        padding: CryptoES.pad.Pkcs7,
+        mode: CryptoES.mode.CBC});
+    return (iv + ':' + result.toString());
+  }
+
   sign(key, key_encoding, msg, digest_type) {
-    let kbuf = new Buffer(key, key_encoding);
-    let hmac = crypto_node.createHmac(this._config.hashType, kbuf);
+    const hashDigest = CryptoES.enc.Utf8.parse(msg);
+    let hmacDigest;
+    if (key_encoding == 'utf8') {
+      key = CryptoES.enc.Utf8.parse(key);
+    } else if (key_encoding == 'binary') {
+      key = CryptoES.enc.Hex.parse(key);
+    } else {
+      key = CryptoES.enc.Utf8.parse(key);
+    }
+    if (['binary', 'hex'].includes(digest_type)) {
+      hmacDigest = CryptoES.enc.Hex.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    } else {
+      hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    }
+    return hmacDigest;
+    /*let kbuf = new Buffer(key, key_encoding);
+    let hmac = crypto.createHmac(this._config.hashType, kbuf);
     hmac.update(msg, 'utf8');
-    return hmac.digest(digest_type);
+    return hmac.digest(digest_type);*/
   }
 
   getSignKey(secret_key, now) {
@@ -1540,8 +1567,7 @@ class VFolder {
   }
 
   /**
-   * Update Information of virtual folder
-   * 
+   *
    * @param {json} input - parameters for updating folder options of Vfolder
    * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
    * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
@@ -1564,7 +1590,7 @@ class VFolder {
     if (userEmail) {
       params['owner_user_email'] = userEmail;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
@@ -1572,31 +1598,17 @@ class VFolder {
 
   /**
    * List Virtual folder hosts that requested accessKey has permission to.
-   * 
-   * @param {string} groupId - project(group) id
    */
   async list_hosts(groupId = null) {
-    // let reqUrl = `${this.urlPrefix}/_/all-hosts`;
     let reqUrl = `${this.urlPrefix}/_/hosts`;
     let params = {};
     if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
       params['group_id'] = groupId;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
-  }
-
-/**
- * List all storage hosts connected to storage-proxy server
- */
-  async list_all_hosts() {
-    if (this.client.is_superadmin === true) {
-      let reqUrl = `${this.urlPrefix}/_/all-hosts`;
-      let rqst = this.client.newSignedRequest('GET', reqUrl, null);
-      return this.client._wrapWithPromise(rqst);
-    }
   }
 
   /**
@@ -1791,8 +1803,8 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = {file, archive};
-    const q = querystring.stringify(params);
+    const params = {'file':file, 'archive': (archive ? 'true': 'false')};
+    const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
       const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
       return this.client._wrapWithPromise(rqst, true);
@@ -1834,7 +1846,7 @@ class VFolder {
     let params = {
       'token': token
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
     return this.client._wrapWithPromise(rqst, true);
   }
@@ -1846,7 +1858,7 @@ class VFolder {
    */
   get_download_url_with_token(token: string = '') {
     const params = {token};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
     } else {
@@ -1867,7 +1879,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1990,7 +2002,7 @@ class VFolder {
    */
   async get_quota(host, vfolder_id) {
     const params = {folder_host: host, id: vfolder_id};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2750,6 +2762,7 @@ class ComputeSession {
         v.group_id = group;
       }
       const session = await this.client.query(q, v, null, timeout);
+      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
           break;
@@ -2825,13 +2838,13 @@ class SessionTemplate {
   async list(listall=false, groupId=null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = {all: listall};
-      const q = querystring.stringify(params);
+      const params = {'all': (listall ?  'true': 'false')};
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     if (groupId) {
       const params = {group_id: groupId};
-      const q = querystring.stringify(params);
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
@@ -3101,7 +3114,7 @@ class Domain {
    *   'is_active': Boolean,    // Whether the group is active or not.
    *   'created_at': String,    // Created date of group.
    *   'modified_at': String,   // Modified date of group.
-   *   'total_resource_slots': JSONString,   // Total resource slots
+   *   'total_resource_slots': JSOONString,   // Total resource slots
    *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
    *   'allowed_docker_registries': [String],   // Allowed docker registry lists
    *   'integration_id': [String],   // Integration ids
@@ -3323,7 +3336,7 @@ class User {
    * };
    */
   async create(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
+    // let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
@@ -3334,7 +3347,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3368,7 +3381,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3389,7 +3402,7 @@ class User {
       let v = {
         'email': email
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -4055,7 +4068,7 @@ const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
 };
-
+/*
 // for use like "ai.backend.Client"
 module.exports.backend = backend;
 // for classical uses
@@ -4064,3 +4077,6 @@ module.exports.ClientConfig = ClientConfig;
 // legacy aliases
 module.exports.BackendAIClient = Client;
 module.exports.BackendAIClientConfig = ClientConfig;
+*/
+export {backend, Client, ClientConfig}
+export default backend;

@@ -227,13 +227,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-sidebar-color);
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[disabled] {

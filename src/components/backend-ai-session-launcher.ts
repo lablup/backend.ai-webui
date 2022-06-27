@@ -595,7 +595,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         mwc-button[disabled] {
           background-image: none;
           --mdc-theme-primary: #ddd;
-          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+          --mdc-theme-on-primary: var(--general-sidebar-topbar-background-color);
         }
 
         mwc-checkbox {
@@ -1042,6 +1042,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._grid.selectedItems = [];
     }
     this.selectedVfolders = [];
+  }
+
+  _checkSelectedItems() {
+    if (this._grid && this._grid.selectedItems) {
+      const selectedFolderItems = this._grid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        this._grid.selectedItems = [];
+        selectedFolders = selectedFolderItems.map((item) => item?.id);
+        this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
+          if (selectedFolders.includes(checkbox.__item?.id)) {
+            checkbox.checked = true;
+          }
+        });
+      }
+    }
   }
 
   /**
@@ -2946,6 +2962,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._grid?.clearCache();
     if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
+      this._checkSelectedItems();
     }
   }
 
