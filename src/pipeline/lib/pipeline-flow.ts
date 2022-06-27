@@ -299,7 +299,10 @@ export default class PipelineFlow extends LitElement {
               }
             });
           }
-          this.editor.import(drawflowData);
+          // FIXME: workaround for instant missing of edges between inter-node
+          setTimeout(() => {
+            this.editor.import(drawflowData);
+          }, 0);
         } else {
           // clear editor when saved data is empty
           this.editor.clear();
