@@ -90,7 +90,8 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * @param {Object} obj - target object
    * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
    * @param {String} sep - separator of the `nestedKey`
-   */
+   * @return {Object} - Object without nested key
+  */
   deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
     if (!obj || obj.constructor !== Object || !nestedKey) {
       return obj;
@@ -108,6 +109,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    *
    * @param {Object} obj1 - source object
    * @param {Object} obj2 - the objects that will override obj1
+   * @return {Object} - Merged object
    */
   mergeNestedObjects(obj1: Object, obj2: Object) {
     if (!obj1 || !obj2) {
@@ -115,7 +117,7 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     }
     function _merge(a, b) {
       return Object.entries(b).reduce((o, [k, v]) => {
-        o[k] = v && v.constructor === Object ?
+        o[k] = v && (v as any).constructor === Object ?
           _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
           v;
         return o;
