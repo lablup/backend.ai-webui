@@ -492,11 +492,11 @@ export default class PipelineJobView extends BackendAIPage {
             <h4 class="horizontal flex center center-justified layout">
               <mwc-select id="pipeline-list" label="Pipeline">
                 ${this.pipelineJobs?.map((job) => {
-    return html`
-                <mwc-list-item value="${job.name}" 
-                  ?selected="${job.name === this.pipelineJobInfo.name}"
-                  @click="${(e) => this._changePipelineJob(e)}">${job.name}</mwc-list-item>`;
-  })}
+                  return html`
+                    <mwc-list-item value="${job.name}" ?selected="${job.name === this.pipelineJobInfo.name}"
+                        @click="${(e) => this._changePipelineJob(e)}">${job.name}</mwc-list-item>`;
+                      }
+                )}
               </mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
@@ -505,14 +505,12 @@ export default class PipelineJobView extends BackendAIPage {
               <span class="flex"></span>
               ${['WAITING', 'RUNNING', 'STOPPED'].includes(this.pipelineJobInfo.status) ? html`
                 <mwc-button label="Start" icon="play_arrow" @click="${(e) => this._toggleRunning(e)}"></mwc-button>
-              ` : html``}
+                ` : html``}
               <div id="dropdown-menu-container">
                 <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}"></mwc-icon-button>
                 <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
                   <mwc-list-item class="horizontal layout center"
-                    @click="${() => {
-    this._launchWorkFlowDialog();
-  }}">
+                    @click="${() => {this._launchWorkFlowDialog();}}">
                     <mwc-icon>assignment</mwc-icon>
                     <span>View workflow file</span>
                   </mwc-list-item>

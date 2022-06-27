@@ -3,7 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
 import '../lib/pipeline-login';
