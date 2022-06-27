@@ -2877,7 +2877,7 @@ class Domain {
      *   'is_active': Boolean,    // Whether the group is active or not.
      *   'created_at': String,    // Created date of group.
      *   'modified_at': String,   // Modified date of group.
-     *   'total_resource_slots': JSOONString,   // Total resource slots
+     *   'total_resource_slots': JSONString,   // Total resource slots
      *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
      *   'allowed_docker_registries': [String],   // Allowed docker registry lists
      *   'integration_id': [String],   // Integration ids

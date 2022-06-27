@@ -1541,7 +1541,7 @@ class VFolder {
 
   /**
    * Update Information of virtual folder
-   * 
+   *
    * @param {json} input - parameters for updating folder options of Vfolder
    * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
    * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
@@ -1572,7 +1572,7 @@ class VFolder {
 
   /**
    * List Virtual folder hosts that requested accessKey has permission to.
-   * 
+   *
    * @param {string} groupId - project(group) id
    */
   async list_hosts(groupId = null) {
@@ -1588,9 +1588,9 @@ class VFolder {
     return this.client._wrapWithPromise(rqst);
   }
 
-/**
- * List all storage hosts connected to storage-proxy server
- */
+  /**
+   * List all storage hosts connected to storage-proxy server
+   */
   async list_all_hosts() {
     if (this.client.is_superadmin === true) {
       let reqUrl = `${this.urlPrefix}/_/all-hosts`;
