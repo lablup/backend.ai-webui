@@ -54,7 +54,9 @@
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
       "UserName": "Хэрэглэгчийн нэр",
-      "PipelineJob": "__NOT_TRANSLATED__"
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -230,7 +232,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -296,7 +299,15 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -345,7 +356,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "цөм",
@@ -558,7 +570,8 @@
       "FileBrowserSessionRunningAlready": "Filebrowser-ийг дэмждэг Session аль хэдийн ажиллаж байна. Энэ хуралдааныг ашиглан фолдер (ууд) байршуулна уу.",
       "NotEnoughResourceForFileBrowserSession": "Filebrowser-д зориулж Session үүсгэх хангалттай нөөц байхгүй (cpu: 1 Core, mem: 0.5GB). боломжтой нөөцийг шалгана уу.",
       "NoImagesSupportingFileBrowser": "Файл хөтөчийг дэмжих зураг хараахан алга байна. Фолдер хөтөчийг дэмждэг дор хаяж нэг буюу түүнээс дээш дүрс оруулах шаардлагатай.",
-      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу."
+      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",
@@ -586,7 +599,8 @@
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
-      "LetsDouble-Check": "Давхар шалгуулъя"
+      "LetsDouble-Check": "Давхар шалгуулъя",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {
@@ -640,7 +654,8 @@
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "ProblemOccurred": "Асуудал гарсан",
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
-    "NoChangeMade": "Өөрчлөлт ороогүй"
+    "NoChangeMade": "Өөрчлөлт ороогүй",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -660,7 +675,8 @@
     "MinimumMemUnit": "Санах ой нь 1 ГБ-аас эхэлдэг",
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Хуваалцсан санах ой (GB)"
+    "SharedMemory": "Хуваалцсан санах ой (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -759,7 +775,8 @@
     "SuccessfullyUpdated": "Нөөцийн бодлогыг амжилттай шинэчилсэн.",
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
-    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:"
+    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -819,7 +836,11 @@
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
+    "TimeoutSeconds": "Секунд",
+    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",
@@ -1122,7 +1143,11 @@
     "Installed": "Суулгасан",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
@@ -1181,6 +1206,7 @@
     "20chars": "(хамгийн ихдээ 20 тэмдэгт)",
     "40chars": "(хамгийн ихдээ 40 тэмдэгт)",
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
+    "200chars": "(хамгийн ихдээ 200 тэмдэгт)",
     "255chars": "(хамгийн ихдээ 255 тэмдэгт)",
     "500chars": "(хамгийн ихдээ 500 тэмдэгт)",
     "512chars": "(хамгийн ихдээ 512 тэмдэгт)",

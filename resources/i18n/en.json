@@ -54,7 +54,9 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "UserName": "User Name"
+      "UserName": "User Name",
+      "PleaseChangeYourPassword": "Please change your password.",
+      "PasswordChangePlace": "Click the person icon on the top bar and go to the \"My Account\" menu."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -229,7 +231,8 @@
       "(Automatic)": "(Automatic)",
       "NumOpenMPthreads": "Number of OpenMP threads",
       "NumOpenBLASthreads": "Number of OpenBLAS threads",
-      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization"
+      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
+      "Architecture": "Architecture"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -252,6 +255,7 @@
     "Starts": "Starts",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
     "AllowedClientIps": "Allowed client IPs",
@@ -278,6 +282,7 @@
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
     "DefaultTensorboardPath": "/home/work/logs",
+    "AlreadyTerminatingSession": "Already terminating the session.",
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
     "NoSession": "No session.",
@@ -293,9 +298,13 @@
     "OnlyOneFolderAttached": "Only one folder is attached.",
     "NoLogMsgAvailable": "No log message available on current state",
     "SessionRenamed": "Session renamed",
-    "SessionNameRequired": "Session name is required",
-    "EnterValidSessionName": "Enter valid session name",
-    "SessionNameAlreadyExist": "Session name already exists"
+    "Validation": {
+      "SessionNameRequired": "Session name is required",
+      "SluggedStrings": "Slugged strings (>3 chars)",
+      "EnterValidSessionName": "Enter valid session name",
+      "SessionNameAlreadyExist": "Session name already exists"
+    },
+    "EnterValidSessionName": "EnterValidSessionName"
   },
   "button": {
     "Cancel": "Cancel",
@@ -330,6 +339,7 @@
   "agent": {
     "Endpoint": "Endpoint",
     "Region": "Region",
+    "Architecture": "Architecture",
     "Starts": "Starts",
     "Resources": "Resources",
     "Connected": "Connected",
@@ -556,7 +566,8 @@
       "ExecuteFileBrowser": "Execute filebrowser",
       "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
       "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
-      "NoImagesSupportingFileBrowser": "There is no images supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "NoImagesSupportingFileBrowser": "There is no image supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "ReadOnlyFolderOnFileBrowser": "Opening read-only folder in filebrowser, only downloading file(s)/folder(s) are allowed.",
       "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
     },
     "invitation": {
@@ -585,6 +596,7 @@
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
+      "Notice": "Notice",
       "LetsDouble-Check": "Let's Double-check"
     },
     "ErrorOccurred": "Error Occurred",
@@ -599,6 +611,7 @@
     "DescProblemOccurred": "Problem occurred during installation",
     "DescServicePortModified": "Service port successfully modified",
     "Registry": "Registry",
+    "Architecture": "Architecture",
     "Namespace": "Namespace",
     "Language": "Language",
     "Version": "Version",
@@ -655,6 +668,7 @@
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
+    "Deleted": "Resource preset is successfully deleted.",
     "MinimumCPUUnit": "CPU starts with 1 core",
     "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
@@ -748,6 +762,7 @@
     "ContainerPerSession": "Container Per Session",
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "ConcurrentJobs": "Concurrent Jobs",
+    "MaxSessionLifeTime": "Session Lifetime (sec.)",
     "Capacity": "Capacity",
     "Folders": "Folders",
     "Name": "Name",
@@ -807,7 +822,7 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName",
+    "ResourceGroupName": "Resource Group Name",
     "Active": "Active",
     "SelectScheduler": "Select Scheduler",
     "NochangesMade": "No changes made",
@@ -818,7 +833,11 @@
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
-    "WsproxyAddress": "WSProxy Server Address"
+    "WsproxyAddress": "WSProxy Server Address",
+    "SetSchedulerOptions": "Set Scheduler Options",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Resource Group Detail",
+    "RetriesToSkip": "Times"
   },
   "maintenance": {
     "General": "General",
@@ -1120,7 +1139,11 @@
     "Installed": "Installed",
     "GithubInternalError": "Github Internal Error.",
     "GithubAPILimitError": "Github API Limitation Error.",
-    "GithubAPIEtcError": "Github Server Issue."
+    "GithubAPIEtcError": "Github Server Issue.",
+    "ImportGitlabRepo": "Import Gitlab Repository",
+    "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
+    "GitlabURL": "Gitlab URL",
+    "GitlabDefaultBranch": "Gitlab Branch Name"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
@@ -1180,6 +1203,7 @@
     "20chars": "(maximum 20 chars)",
     "40chars": "(maximum 40 chars)",
     "64chars": "(maximum 64 chars)",
+    "200chars": "(maximum 200 chars)",
     "255chars": "(maximum 255 chars)",
     "500chars": "(maximum 500 chars)",
     "512chars": "(maximum 512 chars)",

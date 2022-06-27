@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -16,7 +16,8 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import '../lib/backend.ai-client-es6';
+// import '../lib/backend.ai-client-es6';
+import '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -105,7 +106,7 @@ export default class BackendAiSignup extends BackendAIPage {
           mwc-button {
             background-image: none;
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-button[unelevated] {
@@ -119,7 +120,7 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-button-disabled-outline-color: var(--general-button-background-color);
             --mdc-button-disabled-ink-color: var(--general-button-background-color);
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-checkbox {

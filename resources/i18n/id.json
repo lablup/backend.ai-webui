@@ -54,7 +54,9 @@
       "Menu": "Menu",
       "Run": "Jalankan",
       "UserName": "Nama Pengguna",
-      "PipelineJob": "__NOT_TRANSLATED__"
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -230,7 +232,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -296,7 +299,15 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -345,7 +356,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -558,7 +570,8 @@
       "FileBrowserSessionRunningAlready": "Sesi dengan filebrowser sudah berjalan. Harap unggah folder menggunakan sesi itu.",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
-      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser."
+      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",
@@ -586,7 +599,8 @@
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
-      "LetsDouble-Check": "Mari Periksa Kembali"
+      "LetsDouble-Check": "Mari Periksa Kembali",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {
@@ -640,7 +654,8 @@
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "ProblemOccurred": "Masalah terjadi",
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
-    "NoChangeMade": "Tidak ada perubahan yang dibuat"
+    "NoChangeMade": "Tidak ada perubahan yang dibuat",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -660,7 +675,8 @@
     "MinimumMemUnit": "Memori dimulai dengan 1 GB",
     "MinimumShmemUnit": "Unit minimum untuk memori bersama adalah 0,01 GB.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Memori bersama (GB)"
+    "SharedMemory": "Memori bersama (GB)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Umum",
@@ -759,7 +775,8 @@
     "SuccessfullyUpdated": "Kebijakan sumber daya berhasil diperbarui.",
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
-    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:"
+    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nama host",
@@ -819,7 +836,11 @@
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Setel Opsi Penjadwal",
+    "TimeoutSeconds": "Detik",
+    "ResourceGroupDetail": "Detail Grup Sumber Daya",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",
@@ -1122,7 +1143,11 @@
     "Installed": "Terinstalasi",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik Bulan Ini",
@@ -1181,6 +1206,7 @@
     "20chars": "(maksimum 20 karakter)",
     "40chars": "(maksimum 40 karakter)",
     "64chars": "(maksimum 64 karakter)",
+    "200chars": "(maksimum 200 karakter)",
     "255chars": "(maksimum 255 karakter)",
     "500chars": "(maksimum 500 karakter)",
     "512chars": "(maksimum 512 karakter)",

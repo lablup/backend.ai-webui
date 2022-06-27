@@ -54,7 +54,9 @@
       "Menu": "Menu",
       "Run": "Exécuter",
       "UserName": "Nom d'utilisateur",
-      "PipelineJob": "__NOT_TRANSLATED__"
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -230,7 +232,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -296,7 +299,15 @@
     "NoLogMsgAvailable": "__NOT_TRANSLATED__",
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
-    "Batch": "__NOT_TRANSLATED__"
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -345,7 +356,8 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -558,7 +570,8 @@
       "FileBrowserSessionRunningAlready": "La session prenant en charge le navigateur de fichiers est déjà en cours d'exécution. Veuillez télécharger le(s) dossier(s) en utilisant cette session.",
       "NotEnoughResourceForFileBrowserSession": "Pas assez de ressources (cpu : 1 Core, mem : 0,5 Go) pour créer la session pour le navigateur de fichiers. veuillez vérifier les ressources disponibles.",
       "NoImagesSupportingFileBrowser": "Il n'y a pas encore d'images prenant en charge le navigateur de fichiers. Au moins une ou plusieurs images prenant en charge le navigateur de fichiers sont requises pour télécharger le(s) dossier(s).",
-      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers."
+      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Entrer l'adresse e-mail",
@@ -586,7 +599,8 @@
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
-      "LetsDouble-Check": "Vérifions deux fois"
+      "LetsDouble-Check": "Vérifions deux fois",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {
@@ -640,7 +654,8 @@
     "SuccessfullyModified": "Modifié avec succès",
     "ProblemOccurred": "Un problème est survenu",
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
-    "NoChangeMade": "__NOT_TRANSLATED__"
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -660,7 +675,8 @@
     "MinimumMemUnit": "La mémoire commence avec 1 Go",
     "MinimumShmemUnit": "L'unité minimale pour la mémoire partagée est de 0,01 Go.",
     "RAM": "RAM (Go)",
-    "SharedMemory": "Mémoire partagée (Go)"
+    "SharedMemory": "Mémoire partagée (Go)",
+    "Deleted": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Général",
@@ -759,7 +775,8 @@
     "SuccessfullyUpdated": "Stratégie de ressources mise à jour avec succès.",
     "SuccessfullyDeleted": "La stratégie de ressources a bien été supprimée.",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
-    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :"
+    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nom d'hôte",
@@ -819,7 +836,11 @@
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Définir les options du planificateur",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Détail du groupe de ressources",
+    "RetriesToSkip": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",
@@ -1122,7 +1143,11 @@
     "Installed": "installée",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiques pour ce mois",
@@ -1181,6 +1206,7 @@
     "20chars": "(maximum 20 caractères)",
     "40chars": "(maximum 40 caractères)",
     "64chars": "(maximum 64 caractères)",
+    "200chars": "(maximum 200 caractères)",
     "255chars": "(maximum 255 caractères)",
     "500chars": "(maximum 500 caractères)",
     "512chars": "(maximum 512 caractères)",

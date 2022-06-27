@@ -1,4 +1,3 @@
-'use babel';
 /*
 Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
@@ -7,18 +6,7 @@ Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 Licensed under MIT
 */
 /*jshint esnext: true */
-//const fetch = require('node-fetch'); /* Exclude for ES6 */
-//const Headers = fetch.Headers; /* Exclude for ES6 */
-
-const crypto_node = require('crypto');
-//const FormData = require('form-data');
-//import crypto from 'crypto-browserify';
-
-const querystring = require('querystring');
-
-interface Window {
-  backendaiclient: any;
-}
+import CryptoES from 'crypto-es';
 
 class ClientConfig {
   public _apiVersionMajor: string;
@@ -172,9 +160,6 @@ class Client {
   public eduApp: EduApp;
   public service: Service;
   public enterprise: Enterprise;
-  public pipeline: Pipeline;
-  public pipelineJob: PipelineJob;
-  public pipelineTaskInstance: PipelineTaskInstance;
   public _features: any;
   public ready: boolean = false;
   public abortController: any;
@@ -234,9 +219,7 @@ class Client {
     this.enterprise = new Enterprise(this);
     this.cloud = new Cloud(this);
     this.eduApp = new EduApp(this);
-    this.pipeline = new Pipeline(this);
-    this.pipelineJob = new PipelineJob(this);
-    this.pipelineTaskInstance = new PipelineTaskInstance(this);
+
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
@@ -571,6 +554,9 @@ class Client {
       this._features['scheduler-opts'] = true;
       this._features['session-lifetime'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20220615')) {
+      this._features['secure-payload'] = true;
+    }
   }
 
   /**
@@ -627,10 +613,10 @@ class Client {
       'username': this._config.userId,
       'password': this._config.password
     };
-    let rqst = this.newSignedRequest('POST', `/server/login`, body);
+    let rqst = this.newSignedRequest('POST', `/server/login`, body, true);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
+      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
         'username': this._config.userId,
         'password': '********'
       })});
@@ -751,7 +737,7 @@ class Client {
       'new_password': newPassword,
       'new_password2': newPassword2
     };
-    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, true);
     return this._wrapWithPromise(rqst);
   }
 
@@ -774,11 +760,11 @@ class Client {
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
    * @param {string} sessionId - user-defined session ID
-   * @param {string} architecture - image architecture
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
-   */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = undefined) {
+   * @param {string} architecture - image architecture
+  */
+  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -1103,7 +1089,7 @@ class Client {
     let params = {
       'service_name': service_name
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1120,7 +1106,7 @@ class Client {
     let params = {
       'files': files
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1129,7 +1115,7 @@ class Client {
     let params = {
       'file': file
     };
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
     return this._wrapWithPromise(rqst, true);
   }
@@ -1147,13 +1133,14 @@ class Client {
    * @param {string} v - variable string for GraphQL
    * @param {number} timeout - Timeout to force terminate request
    * @param {number} retry - The number of retry when request is failed
+   * @param {number} secure - Decide to encode the payload or not
    */
-  async query(q, v, signal = null, timeout: number = 0, retry: number = 0) {
+  async query(q, v, signal = null, timeout: number = 0, retry: number = 0, secure: boolean = false) {
     let query = {
       'query': q,
       'variables': v
     };
-    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query);
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
@@ -1164,8 +1151,9 @@ class Client {
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any, serviceName='') {
+  newSignedRequest(method: string, queryString, body: any, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1185,7 +1173,8 @@ class Client {
     //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
     let hdrs;
-    let uri = '';
+    let uri;
+    uri = '';
     if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
       hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
@@ -1213,22 +1202,6 @@ class Client {
       });
       uri = this._config.endpoint + queryString;
     }
-
-    if (serviceName === 'pipeline') {
-      uri = this._config.endpoint + '/flow' + queryString;
-      hdrs = new Headers({
-        "Accept": content_type,
-        "Allow-Control-Allow-Origin": "*"
-      });
-      const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
-
-      // Append Authorization token for every API request to pipeline
-      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) { 
-        const token = this.pipeline.getPipelineToken();
-        hdrs.set("Authorization", `Token ${token}`);
-      }
-    }
-
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
@@ -1236,10 +1209,17 @@ class Client {
       if (body instanceof FormData) {
       } else {
         hdrs.set('Content-Type', content_type);
-        hdrs.set('Content-Length', Buffer.byteLength(authBody));
+        hdrs.set('Content-Length', (new TextEncoder().encode(authBody)).length);
       }
     } else {
       hdrs.set('Content-Type', content_type);
+    }
+    // Add secure tag if payload is encoded.
+    if (secure && this.supports('secure-payload')) {
+      if (typeof requestBody == 'string') {
+        hdrs.set('X-BackendAI-Encoded', 'true');
+        requestBody = this.getEncodedPayload(requestBody);
+      }
     }
 
     let requestInfo = {
@@ -1293,8 +1273,9 @@ class Client {
   }
 
   getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
-    let bodyHash = crypto_node.createHash(this._config.hashType)
-      .update(bodyValue).digest('hex');
+    let bodyHash = CryptoES.SHA256(bodyValue);
+    // let bodyHash = crypto.createHash(this._config.hashType)
+    //  .update(bodyValue).digest('hex');
     return (method + '\n' + queryString + '\n' + dateValue + '\n'
       + 'host:' + this._config.endpointHost + '\n'
       + 'content-type:' + content_type + '\n'
@@ -1310,11 +1291,37 @@ class Client {
     return t;
   }
 
+  getEncodedPayload(body) {
+    let iv = this.generateRandomStr(16);
+    let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
+    let result = CryptoES.AES.encrypt(body,
+      CryptoES.enc.Utf8.parse(key),
+      { iv: CryptoES.enc.Utf8.parse(iv),
+        padding: CryptoES.pad.Pkcs7,
+        mode: CryptoES.mode.CBC});
+    return (iv + ':' + result.toString());
+  }
+
   sign(key, key_encoding, msg, digest_type) {
-    let kbuf = new Buffer(key, key_encoding);
-    let hmac = crypto_node.createHmac(this._config.hashType, kbuf);
+    const hashDigest = CryptoES.enc.Utf8.parse(msg);
+    let hmacDigest;
+    if (key_encoding == 'utf8') {
+      key = CryptoES.enc.Utf8.parse(key);
+    } else if (key_encoding == 'binary') {
+      key = CryptoES.enc.Hex.parse(key);
+    } else {
+      key = CryptoES.enc.Utf8.parse(key);
+    }
+    if (['binary', 'hex'].includes(digest_type)) {
+      hmacDigest = CryptoES.enc.Hex.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    } else {
+      hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key))
+    }
+    return hmacDigest;
+    /*let kbuf = new Buffer(key, key_encoding);
+    let hmac = crypto.createHmac(this._config.hashType, kbuf);
     hmac.update(msg, 'utf8');
-    return hmac.digest(digest_type);
+    return hmac.digest(digest_type);*/
   }
 
   getSignKey(secret_key, now) {
@@ -1583,7 +1590,7 @@ class VFolder {
     if (userEmail) {
       params['owner_user_email'] = userEmail;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
@@ -1598,7 +1605,7 @@ class VFolder {
     if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
       params['group_id'] = groupId;
     }
-    const q = querystring.stringify(params);
+    const q = new URLSearchParams(params).toString();
     reqUrl += `?${q}`;
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
     return this.client._wrapWithPromise(rqst);
@@ -1796,8 +1803,8 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = {file, archive};
-    const q = querystring.stringify(params);
+    const params = {'file':file, 'archive': (archive ? 'true': 'false')};
+    const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
       const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
       return this.client._wrapWithPromise(rqst, true);
@@ -1839,7 +1846,7 @@ class VFolder {
     let params = {
       'token': token
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/download_with_token?${q}`, null);
     return this.client._wrapWithPromise(rqst, true);
   }
@@ -1851,7 +1858,7 @@ class VFolder {
    */
   get_download_url_with_token(token: string = '') {
     const params = {token};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
     } else {
@@ -1872,7 +1879,7 @@ class VFolder {
     let params = {
       'path': path
     };
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/files?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1995,7 +2002,7 @@ class VFolder {
    */
   async get_quota(host, vfolder_id) {
     const params = {folder_host: host, id: vfolder_id};
-    let q = querystring.stringify(params);
+    let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2755,6 +2762,7 @@ class ComputeSession {
         v.group_id = group;
       }
       const session = await this.client.query(q, v, null, timeout);
+      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
           break;
@@ -2830,13 +2838,13 @@ class SessionTemplate {
   async list(listall=false, groupId=null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = {all: listall};
-      const q = querystring.stringify(params);
+      const params = {'all': (listall ?  'true': 'false')};
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     if (groupId) {
       const params = {group_id: groupId};
-      const q = querystring.stringify(params);
+      const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     let rqst = this.client.newSignedRequest('GET', reqUrl, null);
@@ -3328,7 +3336,7 @@ class User {
    * };
    */
   async create(email = null, input) {
-    let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
+    // let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
         `  create_user(email: $email, props: $input) {` +
@@ -3339,7 +3347,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3373,7 +3381,7 @@ class User {
         'email': email,
         'input': input
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3394,7 +3402,7 @@ class User {
       let v = {
         'email': email
       };
-      return this.client.query(q, v);
+      return this.client.query(q, v, null, 0, 0, true);
     } else {
       return Promise.resolve(false);
     }
@@ -3888,307 +3896,6 @@ class Cloud {
   }
 }
 
-class Pipeline {
-  public client: any;
-  public tokenName: string;
-  public urlPrefix: string;
-
-  /**
-   * Setting API wrapper.
-   *
-   * @param {Client} client - the Client API wrapper object to bind
-   */
-  constructor(client: Client) {
-    this.client = client;
-    this.tokenName = 'pipeline-token';
-    this.urlPrefix = `/api/pipelines`;
-  }
-
-  /**
-   * 
-   * @param {json} input - pipeline specification and data. Required fields are:
-   * {
-   *    'username': string,
-   *    'password': string,
-   *    'access_key': string,
-   *    'secret_key': string,
-   * }
-   */
-  async login(input) {
-    const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
-    let result;
-    try {
-      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
-        'username': input.username,
-        'password': '********'
-      })});
-      // if there's no token, then user account is invalid
-      if (result.hasOwnProperty('token') === false) {
-        return Promise.resolve(false);
-      } else {
-        const token = result.token;
-        document.cookie = `${this.tokenName}=${token}; path=/`;
-      }
-    } catch (err) {
-      console.log(err);
-      throw {
-        "title": "No Pipeline Server found at API Endpoint.",
-        "message": "Authentication failed. Check information and pipeline server status."
-      }
-    }
-  }
-
-  async logout() {
-    const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
-    let result;
-    try {
-      result = await this.client._wrapWithPromise(rqst);
-      this._removeCookieByName(this.tokenName); 
-    } catch (err) {
-      console.log(err);
-      throw {
-        "title": "Pipeline Logout Failed.",
-        "message": "Pipeline Loout failed. Check information and pipeline server status."
-      }
-    }
-  }
-
-  async check_login() {
-    let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  getPipelineToken() {
-    return this._getCookieByName(this.tokenName);
-  }
-
-  /**
-   * List all pipelines
-   */
-  async list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Get pipeline with given its id
-   * 
-   * @param {string} id - pipeline id
-   */
-  async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Create a pipeline with input
-   * 
-   * @param {json} input - pipeline specification and data. Required fields are:
-   * {
-   *    'name': string,
-   *    'description' : string,
-   *    'yaml': string,
-   *    'dataflow': object,
-   *    'is_active': boolean
-   * }
-   */
-  async create(input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Update the pipeline based on input value
-   * 
-   * @param {string} id - pipeline id
-   * @param {json} input - pipeline specification and data. Required fields are:
-   * {
-   *    'name': string,
-   *    'description': string, // TODO
-   *    'yaml': string,
-   *    'dataflow': {},
-   *    'is_active': boolean, // TODO
-   * }
-   */
-  async update(id, input) {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Delete the pipeline
-   * 
-   * @param {string} id - pipeline id 
-   */
-  async delete(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Instantiate(Run) pipeline to pipeline-job
-   * 
-   * @param {string} id - pipeline id 
-   * @param {json} input - piepline specification and data. Required fields are:
-   * {
-   *    'name': string,
-   *    'description': string,
-   *    'yaml': string,
-   *    'dataflow': {},
-   *    'is_active': boolean,
-   * }
-   */
-  async run(id, input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
- 
-  /**
-   * Get Cookie By its name if exists
-   * 
-   * @param {string} name - cookie name
-   * @returns {string} cookieValue
-   */
-  _getCookieByName(name = '') {
-    let cookieValue: string = '';
-    if (document.cookie && document.cookie !== '') {
-      const cookies = document.cookie.split(';');
-      for (let i = 0; i < cookies.length; i++) {
-        const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length+1) === (name +'=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length+1));
-          break;
-        }
-      }
-    }
-    return cookieValue;
-  }
-
-  /**
-   * Remove Cooke By its name if exists
-   * 
-   * @param {string} name - cookie name 
-   */
-  _removeCookieByName(name = '') {
-    if (name !== '') {
-      document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    }
-  }
-}
-
-class PipelineJob {
-  public client: any;
-  public urlPrefix: string;
-
-  /**
-   * Setting API wrapper.
-   *
-   * @param {Client} client - the Client API wrapper object to bind
-   */
-   constructor(client: Client) {
-    this.client = client;
-    this.urlPrefix =  `/api/pipeline-jobs`;
-  }
-
-  /**
-   * List all pipeline jobs
-   */
-  async list() {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Get pipeline job with given its id
-   * 
-   * @param {string} id - pipeline id
-   */
-  async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Stop running pipeline job with given its id
-   * 
-   * @param {string} id - pipeline id
-   */
-  async stop(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-}
-
-class PipelineTaskInstance {
-  public client: any;
-  public urlPrefix: string;
-
-  /**
-   * Setting API wrapper.
-   *
-   * @param {Client} client - the Client API wrapper object to bind
-   */
-   constructor(client: Client) {
-    this.client = client;
-    this.urlPrefix = `/api/task-instances`;
-  }
-
-  /**
-   * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
-   * if not, then bring all task instances that pipeline server user created via every pipeline job
-   * 
-   * @param {stirng} pipelineJobId - pipeline job id
-   */
-  async list(pipelineJobId = '') {
-    let queryString = `${this.urlPrefix}`;
-    queryString += (pipelineJobId) ? `?pipeline_job=${pipelineJobId}` : `/`;
-    let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Get task instance with given its id
-   * 
-   * @param {string} id - task instance id
-   */
-  async info(id) {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Create custom task instance with input
-   * 
-   * @param {json} input 
-   */
-  async create(input) {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  } 
-
-  /**
-   * Update the task instance based on input value
-   * 
-   * @param {string} id - task instance id
-   * @param {json} input - task-instance specification and data.
-   */
-  async update(id, input) {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-
-  /**
-   * Delete the task-instance
-   * 
-   * @param {string} id - task instance id 
-   */
-  async delete(id) {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
-    return this.client._wrapWithPromise(rqst);
-  }
-}
-
 class EduApp {
   public client: any;
   public config: any;
@@ -4361,7 +4068,7 @@ const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
 };
-
+/*
 // for use like "ai.backend.Client"
 module.exports.backend = backend;
 // for classical uses
@@ -4370,3 +4077,6 @@ module.exports.ClientConfig = ClientConfig;
 // legacy aliases
 module.exports.BackendAIClient = Client;
 module.exports.BackendAIClientConfig = ClientConfig;
+*/
+export {backend, Client, ClientConfig}
+export default backend;

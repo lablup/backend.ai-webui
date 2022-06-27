@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -82,6 +82,48 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     // clamp mask length
     maskLength = (startFrom + maskLength > value.length) ? value.length : maskLength;
     return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
+  }
+
+  /**
+   * Delete a nested key from an object.
+   *
+   * @param {Object} obj - target object
+   * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
+   * @param {String} sep - separator of the `nestedKey`
+   * @return {Object} - Object without nested key
+  */
+  deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
+    if (!obj || obj.constructor !== Object || !nestedKey) {
+      return obj;
+    }
+    const keys = nestedKey.split(sep);
+    const lastKey = keys.pop();
+    if (lastKey) {
+      delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    }
+    return obj;
+  }
+
+  /**
+   * Merge two nested objects into one.
+   *
+   * @param {Object} obj1 - source object
+   * @param {Object} obj2 - the objects that will override obj1
+   * @return {Object} - Merged object
+   */
+  mergeNestedObjects(obj1: Object, obj2: Object) {
+    if (!obj1 || !obj2) {
+      return obj1 || obj2 || {};
+    }
+    function _merge(a, b) {
+      return Object.entries(b).reduce((o, [k, v]) => {
+        o[k] = v && (v as any).constructor === Object ?
+          _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
+          v;
+        return o;
+      }, a);
+    }
+    return [obj1, obj2].reduce(_merge, {});
   }
 
   render() {

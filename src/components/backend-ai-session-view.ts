@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -215,6 +215,11 @@ export default class BackendAiSessionView extends BackendAIPage {
     dateTo.disabled = checkbox.checked;
   }
 
+  _triggerClearTimeout() {
+    const event = new CustomEvent('backend-ai-clear-timeout');
+    document.dispatchEvent(event);
+  }
+
   _showTab(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (let x = 0; x < els.length; x++) {
@@ -224,6 +229,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     for (let x = 0; x < this._lists.length; x++) {
       this._lists[x].removeAttribute('active');
     }
+    this._triggerClearTimeout();
     this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
   }
 
@@ -517,9 +523,9 @@ export default class BackendAiSessionView extends BackendAIPage {
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button unelevated 
+          <mwc-button unelevated
                       fullwidth
-                      icon="get_app" 
+                      icon="get_app"
                       label="${_t('session.ExportCSVFile')}"
                       @click="${this._exportToCSV}"></mwc-button>
         </div>

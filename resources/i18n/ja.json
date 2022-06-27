@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "リソースグループが正常に削除されました",
     "EnterValidResourceGroupName": "有効なリソースグループ名を入力してください",
     "ResourceGroupNameRequired": "リソースグループ名が必要です。",
-    "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。"
+    "ResourceGroupAlreadyExist": "同じ名前のリソースグループがすでに存在します。",
+    "SetSchedulerOptions": "スケジューラオプションの設定",
+    "TimeoutSeconds": "秒",
+    "ResourceGroupDetail": "リソースグループの詳細"
   },
   "maintenance": {
     "General": "一般",
@@ -1057,7 +1060,11 @@
     "Installed": "インストール済み",
     "GithubInternalError": "__NOT_TRANSLATED__",
     "GithubAPILimitError": "__NOT_TRANSLATED__",
-    "GithubAPIEtcError": "__NOT_TRANSLATED__"
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "今月の統計",
@@ -1116,6 +1123,7 @@
     "20chars": "（最大20文字）",
     "40chars": "（最大40文字）",
     "64chars": "（最大64文字）",
+    "200chars": "（最大200文字）",
     "255chars": "（最大255文字）",
     "500chars": "（最大500文字）",
     "512chars": "（最大512文字）",

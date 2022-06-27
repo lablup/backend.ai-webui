@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -74,6 +74,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
   @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
+  @property({type: Object}) _boundArchitectureRenderer = this.architectureRenderer.bind(this);
   @property({type: Object}) _boundCheckboxRenderer = this.checkboxRenderer.bind(this);
   @property({type: Object}) _boundUserInfoRenderer = this.userInfoRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
@@ -294,6 +295,20 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-weight: bold;
         }
 
+        mwc-list-item.predicate-check {
+          height: 100%;
+          margin-bottom: 5px;
+        }
+
+        .predicate-check-comment {
+          white-space: pre-wrap;
+        }
+
+        .error-description {
+          font-size: 0.8rem;
+          word-break: break-word;
+        }
+
         wl-button.multiple-action-button {
           --button-color: var(--paper-red-600);
           --button-color-active: red;
@@ -400,6 +415,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.sessionStatusInfoDialog = this.shadowRoot.querySelector('#status-detail-dialog');
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
+    document.addEventListener('backend-ai-clear-timeout', () => {
+      clearTimeout(this.refreshTimer);
+    });
     this._refreshWorkDialogUI({'detail': {'mini-ui': globalThis.mini_ui}});
   }
 
@@ -505,7 +523,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     const fields = [
-      'id', 'session_id', 'name', 'image',
+      'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
       'occupied_slots', 'access_key', 'starts_at', 'type'
@@ -751,6 +769,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (imageParts.length === 3) {
         namespace = imageParts[1];
         langName = imageParts[2];
+      } else if (imageParts.length > 3) {
+        namespace = imageParts.slice(2, imageParts.length-1).join('/');
+        langName = imageParts[imageParts.length-1];
       } else {
         namespace = '';
         langName = imageParts[1];
@@ -885,11 +906,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionId) {
+  async _terminateApp(sessionId) {
     const token = globalThis.backendaiclient._config.accessKey;
+    const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+      uri: proxyURL + `proxy/${token}/${sessionId}`
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -897,7 +919,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
             credentials: 'include',
             mode: 'cors'
           };
@@ -912,16 +934,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-  }
-
-  _getProxyURL() {
-    let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
-    } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
-      url = globalThis.backendaiclient._config.proxyURL;
-    }
-    return url;
   }
 
   _getProxyToken() {
@@ -1020,7 +1032,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const accessKey = controls['access-key'];
 
     if (this.terminationQueue.includes(sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
@@ -1029,7 +1041,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
@@ -1258,13 +1270,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
           <div class="vertical layout flex" style="width:100%;">
             <mwc-list>
-              <mwc-list-item twoline noninteractiv>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading"><strong>Kernel Exit Code</strong></span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
               </mwc-list-item>
-              <mwc-list-item twoline noninteractive>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading">Session Status</span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.session?.status}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.session?.status}</span>
               </mwc-list-item>
             </mwc-list>
           </div>
@@ -1279,13 +1291,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractiv>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
-                  <span class="monospace" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
                 </mwc-list-item>
-                <mwc-list-item twoline noninteractive>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.LastTry')}</span>
-                  <span class="monospace" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
                 </mwc-list-item>
               </mwc-list>
             </div>
@@ -1307,14 +1319,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return `
           ${item.name === 'reserved_time' ? `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>` : `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>`}
               <li divider role="separator"></li>
@@ -1335,7 +1347,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     `;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
-        return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
+        return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
+      };
+      // FIXME: stopgap for handling html entities in msg
+      const encodedStr = (str) => {
+        return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
+          return '&#' + i.charCodeAt(0) + ';';
+        })
       };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
@@ -1357,7 +1375,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 `: ``}
                 <div class="vertical layout start">
                   <span class="subheading">Message</span>
-                  <span style="font-size:0.8rem;">${sanitizeErrMsg(item.repr)}</span>
+                  <span class="error-description">${sanitizeErrMsg(item.repr)}</span>
                 </div>
               </div>
               `;
@@ -1393,13 +1411,19 @@ export default class BackendAiSessionList extends BackendAIPage {
     renameField.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          renameField.validationMessage = _text('session.SessionNameRequired');
+          renameField.validationMessage = _text('session.Validation.SessionNameRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
+        } else if (nativeValidity.patternMismatch) {
+          renameField.validationMessage = _text('session.Validation.SluggedStrings');
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
         } else {
-          renameField.validationMessage = _text('session.EnterValidSessionName');
+          renameField.validationMessage = _text('session.Validation.EnterValidSessionName');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -1408,7 +1432,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       } else {
         const isValid = (!sessionNames.includes(value) || value === currentName);
         if (!isValid) {
-          renameField.validationMessage = _text('session.SessionNameAlreadyExist');
+          renameField.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
         }
         return {
           valid: isValid,
@@ -1439,7 +1463,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.text = _text('session.SessionRenamed');
           this.notification.show();
         }).catch((err) => {
-          renameField.value = nameField.value;
+          renameField.value = nameField.innerText;
           if (err && err.message) {
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
@@ -1505,11 +1529,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           #session-rename-field {
             display: none;
+            white-space: normal;
+            word-break: break-word;
+            font-family: var(--general-monospace-font-family);
+            --mdc-ripple-color: transparent;
             --mdc-text-field-fill-color: transparent;
             --mdc-text-field-disabled-fill-color: transparent;
-            --mdc-ripple-color: transparent;
-            width: min-content;
-            font-family: var(--general-monospace-font-family);
             --mdc-typography-font-family: var(--general-monospace-font-family);
             --mdc-typography-subtitle1-font-family: var(--general-monospace-font-family);
           }
@@ -1520,11 +1545,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         <div class="layout vertical start">
           <div class="horizontal center center-justified layout">
             <pre id="session-name-field">${rowData.item[this.sessionNameField]}</pre>
-            ${(this._isRunning && !this._isPreparing(rowData.item.status)) ? html`
-            <mwc-textfield id="session-rename-field" required
-                             pattern="[a-zA-Z0-9_-]{4,}" maxLength="64"
-                             helper="${_t('maxLength.64chars')}" autoValidate
-                             validationMessage="${_t('session.EnterValidSessionName')}"
+            ${(this._isRunning && !this._isPreparing(rowData.item.status) && globalThis.backendaiclient.email == rowData.item.user_email) ? html`
+            <mwc-textfield id="session-rename-field" required autoValidate
+                             pattern="^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$" maxLength="64"
+                             validationMessage="${_text('session.Validation.EnterValidSessionName')}"
                              value="${rowData.item[this.sessionNameField]}"
                              @input="${(e) => this._validateSessionName(e)}"></mwc-textfield>
               <mwc-icon-button-toggle id="session-rename-icon" onIcon="done" offIcon="edit"
@@ -1581,6 +1605,24 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </div>
         </div>
+      `, root
+    );
+  }
+
+  /**
+   * Render architecture column
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  architectureRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <lablup-shields app=""
+                        color="lightgreen"
+                        description="${rowData.item.architecture}"
+                        ui="round"></lablup-shields>
       `, root
     );
   }
@@ -2012,24 +2054,20 @@ export default class BackendAiSessionList extends BackendAIPage {
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}" height-by-rows>
         ${this._isRunning ? html`
-          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+          <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
           </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+          <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
                                      header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
                                      .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
+        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
         <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
@@ -2042,6 +2080,13 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
                                  path="created_at" .renderer="${this._boundReservationRenderer}">
         </vaadin-grid-sort-column>
+        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                   .renderer="${this._boundArchitectureRenderer}">
+        </vaadin-grid-filter-column>
+        ${this._isIntegratedCondition ? html`
+          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+        ` :
+    html``}
         ${this.is_superadmin ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                               .renderer="${this._boundAgentRenderer}">

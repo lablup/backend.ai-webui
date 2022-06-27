@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr, use as setLanguage} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -205,19 +205,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-button-background-color);
           --mdc-button-disabled-ink-color: var(--general-button-background-color);
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button {
           margin: auto 10px;
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[unelevated] {
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button.shell-button {

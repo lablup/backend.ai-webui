@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -24,7 +24,9 @@ import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import * as aiSDK from '../lib/backend.ai-client-es6';
+// import * as aiSDK from '../lib/backend.ai-client-es6';
+import * as ai from '../lib/backend.ai-client-esm';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -35,7 +37,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
 declare global {
-  const ai: typeof aiSDK;
+  const ai: any;
 }
 
 /**
@@ -168,7 +170,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-button {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[unelevated] {
@@ -182,7 +184,7 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-button-background-color);
           --mdc-button-disabled-ink-color: var(--general-button-background-color);
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         h3 small {
@@ -592,6 +594,34 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   /**
+   * Load configuration file from the WebServer when using Session mode.
+   *
+   * */
+  _loadConfigFromWebServer() {
+    if (!window.location.href.startsWith(this.api_endpoint)) {
+      // Override configs with Webserver's config.
+      const webuiEl = document.querySelector('backend-ai-webui');
+      if (webuiEl) {
+        const fieldsToExclude = [
+          'general.apiEndpoint',
+          'general.apiEndpointText',
+          'general.siteDescription',
+          'wsproxy',
+        ];
+        const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
+        webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+          fieldsToExclude.forEach((key) => {
+            globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
+          });
+          const mergedConfig = globalThis.backendaiutils.mergeNestedObjects(webuiEl.config, config);
+          webuiEl.config = mergedConfig;
+          this.refreshWithConfig(mergedConfig);
+        });
+      }
+    }
+  }
+
+  /**
    * Login according to connection_mode and api_endpoint.
    *
    * @param {boolean} showError
@@ -605,8 +635,10 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      await this._connectUsingSession(showError);
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
+      this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       await this._connectUsingAPI(showError);
@@ -624,6 +656,9 @@ export default class BackendAILogin extends BackendAIPage {
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === 'API') {
       return Promise.resolve(false);
@@ -966,7 +1001,7 @@ export default class BackendAILogin extends BackendAIPage {
       const resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}'];
+      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}', 'need_password_change'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
 
@@ -999,6 +1034,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient.full_name = response['user'].full_name;
       globalThis.backendaiclient.is_admin = false;
       globalThis.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.need_password_change = response['user'].need_password_change;
 
       if (['superadmin', 'admin'].includes(role)) {
         globalThis.backendaiclient.is_admin = true;

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -50,7 +50,7 @@ import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
-import '../lib/backend.ai-client-es6';
+import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
 import {
@@ -96,6 +96,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) needPasswordChange = false;
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
@@ -387,6 +388,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+    this.needPasswordChange = globalThis.backendaiclient.need_password_change;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -440,7 +442,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName): Promise<void> {
+  _parseConfig(fileName, returning = false): Promise<void> {
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -449,7 +451,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         return '';
       })
       .then((res) => {
-        this.config = toml(res);
+        const tomlConfig = toml(res);
+        if (returning) {
+          return tomlConfig;
+        } else {
+          this.config = toml(res);
+        }
       }).catch((err) => {
         console.log('Configuration file missing.');
       });
@@ -545,6 +552,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.appBody.type = 'modal';
       this.appBody.open = false;
       // this.contentBody.style.width = 'calc('+width+'px - 190px)';
+      this.contentBody.style.width = width + 'px';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -1276,6 +1284,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
   }
 
+  _hidePasswordChangeRequest() {
+    const passwordChangeRequest = this.shadowRoot.querySelector('#password-change-request');
+    passwordChangeRequest.style.display = 'none';
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1405,7 +1418,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1429,7 +1442,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.09.4.220202</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1475,11 +1488,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                               <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
@@ -1520,6 +1533,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         </mwc-icon-button>
                       </div>
                     </div>
+                  </div>
+                  <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
+                    <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t('webui.menu.PasswordChangePlace')})</span>
+                    <mwc-icon-button @click="${() => this._hidePasswordChangeRequest()}">
+                      <i class="fa fa-times"></i>
+                    </mwc-icon-button>
                   </div>
                 </div>
               </mwc-top-app-bar-fixed>

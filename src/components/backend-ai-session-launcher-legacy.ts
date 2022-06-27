@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {html, css, CSSResultArray, CSSResultOrNative} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
@@ -525,7 +525,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         mwc-button[disabled] {
           background-image: none;
           --mdc-theme-primary: #ddd;
-          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+          --mdc-theme-on-primary: var(--general-sidebar-topbar-background-color);
         }
 
         #environment {
@@ -1259,7 +1259,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000, undefined);
     task.catch((err) => {
       // console.log(err);
       if (err && err.message) {
