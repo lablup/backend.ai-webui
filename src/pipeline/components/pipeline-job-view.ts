@@ -517,7 +517,7 @@ export default class PipelineJobView extends BackendAIPage {
                 </mwc-menu>
               </div>
             </h4>
-            <pipeline-flow id="pipeline-job-flow" isEditable="false"></pipeline-flow>
+            <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
             <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact"
               aria-label="Pipeline Task List" .items="${this.taskInstanceList}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>

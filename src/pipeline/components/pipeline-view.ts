@@ -949,7 +949,7 @@ export default class PipelineView extends BackendAIPage {
               `}
             </div>
           </div>
-          <pipeline-flow isEditable="true"></pipeline-flow>
+          <pipeline-flow isEditable></pipeline-flow>
         </div>
       </lablup-activity-panel>
       <backend-ai-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
