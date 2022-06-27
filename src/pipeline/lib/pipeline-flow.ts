@@ -3,7 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property} from 'lit/decorators.js';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -39,13 +39,13 @@ export default class PipelineFlow extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) editor;
   @property({type: Object}) data;
-  @property({type: Boolean}) isEditable = false;
+  @property({type: Boolean, reflect: true}) isEditable = false;
   @property({type: Object}) paneSize = {
     width: 0,
     height: 0
   };
 
-  static get styles() {
+  static get styles(): CSSResultGroup | undefined {
     return [
       style,
       DrawflowBaseStyle,
@@ -247,6 +247,11 @@ export default class PipelineFlow extends LitElement {
     this.editor = new Drawflow(parentDrawflowElement);
     this.editor.start();
     this.data = {};
+    // modify cursor
+    this.shadowRoot.querySelector('#drawflow').style.cursor = this.isEditable ? 'grab' : 'not-allowed';
+    if (!this.editor.isEditable) {
+      this.editor.editor_mode = 'view';
+    }
 
     document.addEventListener('add-task', (e: any) => {
       const isEditorMode = this.editor.editor_mode === 'edit';
@@ -269,8 +274,7 @@ export default class PipelineFlow extends LitElement {
     });
 
     document.addEventListener('update-task-status', (e: any) => {
-      const isFixedMode = this.editor.editor_mode === 'fixed';
-      if (e.detail && !isFixedMode) { // only update in read-only mode.
+      if (e.detail && !this.isEditable) { // only update in read-only mode.
         this._updateNodeStatus(e.detail.nodeId, e.detail.status);
       }
     });
@@ -279,25 +283,25 @@ export default class PipelineFlow extends LitElement {
       if (e.detail) {
         const drawflowData = e.detail;
         if (Object.keys(drawflowData).length > 0) {
-          // force-rearrangement only in "fixed" mode
           if (!this.isEditable) {
-            const moduleName = this.editor.module;
-            const maxWidth = globalThis.backendaiclient.utils.clamp(this.editor.precanvas.clientWidth, 0, (this.editor.precanvas.clientWidth - 200) * 0.9);
-            const maxHeight = globalThis.backendaiclient.utils.clamp(this.editor.precanvas.clientHeight, 0, (this.editor.precanvas.clientHeight - 100) * 0.9);
+            const zoom = 0.6;
 
-            Object.keys(drawflowData.drawflow[moduleName].data).map(([key, value]) => {
-              if (drawflowData.drawflow[moduleName].data[key].pos_x > maxWidth) {
-                drawflowData.drawflow[moduleName].data[key].pos_x = globalThis.backendaiclient.utils.clamp(drawflowData.drawflow[moduleName].data[key].pos_x, 0, maxWidth);
-              } else if (drawflowData.drawflow[moduleName].data[key].pos_x <= 0) {
-                drawflowData.drawflow[moduleName].data[key].pos_x = 200;
-              }
+            // Get Translate:
+            const x = this.editor.canvas_x;
+            const y = this.editor.canvas_y;
 
-              if (drawflowData.drawflow[moduleName].data[key].pos_y > maxHeight) {
-                drawflowData.drawflow[moduleName].data[key].pos_y = globalThis.backendaiclient.utils.clamp(drawflowData.drawflow[moduleName].data[key].pos_y, 0, maxHeight);
-              } else if (drawflowData.drawflow[moduleName].data[key].pos_y <= 0) {
-                drawflowData.drawflow[moduleName].data[key].pos_y = 100;
-              }
-            });
+            // Add zoom to function
+            this.editor.translate_to = function (x,y, zoom) {
+            this.canvas_x = x;
+            this.canvas_y = y;
+            let storedZoom = zoom;
+            this.zoom = 1;
+            this.precanvas.style.transform = "translate("+this.canvas_x+"px, "+this.canvas_y+"px) scale("+this.zoom+")";
+            this.zoom = storedZoom;
+            this.zoom_last_value = 1;
+            this.zoom_refresh();
+            }
+            this.editor.translate_to(x, y, zoom);
           }
           // FIXME: workaround for instant missing of edges between inter-node
           setTimeout(() => {
