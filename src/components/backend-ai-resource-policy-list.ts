@@ -683,9 +683,31 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return input;
   }
 
+  _checkResourcePolicyInputValidity() {
+    let isValid = true;
+    const resourceIds = ['cpu-resource', 'ram-resource', 'gpu-resource', 'fgpu-resource', 'container-per-session-limit',
+      'idle-timeout', 'concurrency-limit', 'session-lifetime', 'vfolder-capacity-limit', 'vfolder-count-limit'];
+    for (let i = 0; i < resourceIds.length; i++) {
+      const textfield = this.shadowRoot.querySelector('#' + resourceIds[i]);
+      const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
+      const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
+      if (!textfield.checkValidity()) {
+        if (checkbox && checkbox.checked) {
+          continue;
+        }
+        isValid = false;
+        break;
+      }
+    }
+    return isValid;
+  }
+
   _modifyResourcePolicy() {
     try {
       const input = this._readResourcePolicyInput();
+      if (!this._checkResourcePolicyInputValidity()) {
+        return;
+      }
       globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
@@ -741,18 +763,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-   * Set a TextEl value according to toggle checkbox checked state.
+   * Set a textEl value according to toggle checkbox checked state.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
-    TextEl.disabled = checked;
-    if (!TextEl.disabled) {
-      if (TextEl.value === '') {
-        TextEl.value = TextEl.min ?? 0;
+    const textEl = checkEl.closest('div').querySelector('mwc-textfield');
+    textEl.disabled = checked;
+    if (!textEl.disabled) {
+      if (textEl.value === '') {
+        textEl.value = textEl.min ?? 0;
       }
     }
   }
@@ -764,8 +786,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    */
   _validateResourceInput(e) {
     const textfield = e.target.closest('mwc-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
-    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
+    const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
     const countDecimals = (value: number) => {
       return value % 1 ? value.toString().split('.')[1].length : 0;
     };
