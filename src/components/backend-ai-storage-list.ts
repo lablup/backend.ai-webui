@@ -2546,15 +2546,15 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Toggle notification of filebrowser execution on read-only folder
-   * 
+   *
    */
-   _toggleShowFilebrowserNotification(e) {
-     const checkbox = e.target;
-     if (checkbox) {
-       const isHidden = (!checkbox.checked).toString();
-       localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
-     }
-   }
+  _toggleShowFilebrowserNotification(e) {
+    const checkbox = e.target;
+    if (checkbox) {
+      const isHidden = (!checkbox.checked).toString();
+      localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
+    }
+  }
 
   /**
    * Open the session launcher dialog to execute filebrowser app.
