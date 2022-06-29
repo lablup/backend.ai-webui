@@ -550,6 +550,25 @@ export default class BackendAICredentialView extends BackendAIPage {
     return input;
   }
 
+  _checkResourcePolicyInputValidity() {
+    let isValid = true;
+    const resourceIds = ['cpu-resource', 'ram-resource', 'gpu-resource', 'fgpu-resource', 'container-per-session-limit',
+      'idle-timeout', 'concurrency-limit', 'session-lifetime', 'vfolder-capacity-limit', 'vfolder-count-limit'];
+    for (let i = 0; i < resourceIds.length; i++) {
+      const textfield = this.shadowRoot.querySelector('#' + resourceIds[i]);
+      const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
+      const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
+      if (!textfield.checkValidity()) {
+        if (checkbox && checkbox.checked) {
+          continue;
+        }
+        isValid = false;
+        break;
+      }
+    }
+    return isValid;
+  }
+
   /**
    * Add a new resource policy.
    */
@@ -567,6 +586,9 @@ export default class BackendAICredentialView extends BackendAIPage {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
       const input = this._readResourcePolicyInput();
+      if (!this._checkResourcePolicyInputValidity()) {
+        return;
+      }
       globalThis.backendaiclient.resourcePolicy.add(name, input).then((response) => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = _text('resourcePolicy.SuccessfullyCreated');
