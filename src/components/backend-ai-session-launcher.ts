@@ -1044,6 +1044,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.selectedVfolders = [];
   }
 
+  _checkSelectedItems() {
+    if (this._grid && this._grid.selectedItems) {
+      const selectedFolderItems = this._grid.selectedItems;
+      let selectedFolders: string[] = [];
+      if (selectedFolderItems.length > 0) {
+        this._grid.selectedItems = [];
+        selectedFolders = selectedFolderItems.map((item) => item?.id);
+        this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
+          if (selectedFolders.includes(checkbox.__item?.id)) {
+            checkbox.checked = true;
+          }
+        });
+      }
+    }
+  }
+
   /**
    * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
    *
@@ -2946,6 +2962,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._grid?.clearCache();
     if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
+      this._checkSelectedItems();
     }
   }
 

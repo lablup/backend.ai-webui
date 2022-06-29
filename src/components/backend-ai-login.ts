@@ -24,7 +24,9 @@ import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import * as aiSDK from '../lib/backend.ai-client-es6';
+// import * as aiSDK from '../lib/backend.ai-client-es6';
+import * as ai from '../lib/backend.ai-client-esm';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -35,7 +37,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
 declare global {
-  const ai: typeof aiSDK;
+  const ai: any;
 }
 
 /**

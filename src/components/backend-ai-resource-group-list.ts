@@ -900,6 +900,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <div><strong># retries to skip pending session</strong></div>
         <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
       </vaadin-item>`;
+      } else {
+        return '';
       }
     } else {
       return '';

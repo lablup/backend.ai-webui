@@ -16,7 +16,8 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import '../lib/backend.ai-client-es6';
+// import '../lib/backend.ai-client-es6';
+import '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
