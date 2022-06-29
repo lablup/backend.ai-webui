@@ -529,7 +529,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
 
     this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
-    console.log((this.vfolder_capacity['value'] === ''))
     this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
@@ -859,7 +858,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BackendAICredentialView.MAX_INT32) {
       textfield.disabled = true;
       checkbox.checked = true;
-    }else {
+    } else {
       textfield.disabled = false;
       checkbox.checked = false;
     }

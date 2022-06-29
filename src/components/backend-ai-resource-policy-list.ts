@@ -824,9 +824,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   /**
    * Returns human-readable value according to certain conditions
    *
-   * @param value - raw value
-   * @param enableUnitConvert - if true it enable unit conversion
-   * @return if number then returns number, else if then string
+   * @param {string | number} value - raw value
+   * @param {boolean} enableUnitConvert - if true it enable unit conversion
+   * @return {string} if number then returns number, else if then string
    */
   _markIfUnlimited(value, enableUnitConvert = false) {
     if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity', BackendAIResourcePolicyList.MAX_INT32, Number.MAX_SAFE_INTEGER].includes(value)) {
