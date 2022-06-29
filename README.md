@@ -424,6 +424,21 @@ $ make mac_intel
 $ make mac_apple
 ```
 
+##### Building app with Code Signing (all platforms)
+1. Export keychain from Keychain Access. Exported p12 should contain:
+- Certificate for Developer ID Application
+- Corresponding Private Key
+- Apple Developer ID CA Certificate. Version of signing certificate (G1 or G2) matters, so be careful to check appropriate version!
+To export multiple items at once, just select all items (Cmd-Click), right click one of the selected item and then click "Export n item(s)...".
+2. Set following environment variables when running `make mac_*`.
+- `BAI_APP_SIGN=1`
+- `BAI_APP_SIGN_APPLE_ID="<Apple ID which has access to created signing certificate>"`
+- `BAI_APP_SIGN_APPLE_ID_PASSWORD="<App-specific password of target Apple ID>"`
+- `BAI_APP_SIGN_IDENTITY="<Signing Identity>"`
+- `BAI_APP_SIGN_KEYCHAIN_B64="<Base64 encoded version of exported p12 file>"`
+- `BAI_APP_SIGN_KEYCHAIN_PASSWORD="<Import password of exported p12 file>"`
+Signing Identity is equivalent to the name of signing certificate added on Keychain Access.
+
 #### Linux x86-64 version
 
 ```
