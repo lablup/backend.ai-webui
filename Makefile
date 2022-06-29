@@ -7,6 +7,10 @@ site := $(or $(site),main)
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
 
+KEYCHAIN_NAME := bai-build-$(shell uuidgen).keychain
+BAI_APP_SIGN_KEYCHAIN_FILE := $(shell mktemp -d)/keychain.p12
+BAI_APP_SIGN_KEYCHAIN =
+
 test_web:
 	npm run server:d
 test_electron:
@@ -60,11 +64,30 @@ web:
 	if [ -f "./configs/$(site).css" ];then \
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
+mac_load_keychain:
+ifdef BAI_APP_SIGN_KEYCHAIN_B64
+ifndef BAI_APP_SIGN_KEYCHAIN_PASSWORD
+	$(error BAI_APP_SIGN_KEYCHAIN_PASSWORD is not defined)
+endif
+	security create-keychain -p "" "${KEYCHAIN_NAME}"
+	security set-keychain-settings -lut 21600 "${KEYCHAIN_NAME}"
+	security unlock-keychain -p "" "${KEYCHAIN_NAME}"
+	$(shell echo "${BAI_APP_SIGN_KEYCHAIN_B64}" | base64 -d -o "${BAI_APP_SIGN_KEYCHAIN_FILE}")
+	security import "${BAI_APP_SIGN_KEYCHAIN_FILE}" -A -P "${BAI_APP_SIGN_KEYCHAIN_PASSWORD}" -k "${KEYCHAIN_NAME}"
+	security list-keychain -d user -s login.keychain
+	security list-keychain -d user -s "${KEYCHAIN_NAME}"
+	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
+	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
+	echo Keychain ${KEYCHAIN_NAME} created for build
+endif
 mac: mac_intel mac_apple
-mac_intel: dep
+mac_intel: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	node ./app-packager.js mac x64
-	rm -rf ./app/backend.ai-desktop-macos-x64
+	BAI_APP_SIGN_KEYCHAIN="${BAI_APP_SIGN_KEYCHAIN}" node ./app-packager.js darwin x64
+ifdef BAI_APP_SIGN_KEYCHAIN
+	security default-keychain -s login.keychain
+endif
+	rm -rf ./app/backend.ai-desktop-macos-intel
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
@@ -72,10 +95,13 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-macos-intel.dmg
 endif
-mac_apple: dep
+mac_apple: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	node ./app-packager.js mac arm64
-	rm -rf ./app/backend.ai-desktop-macos-arm64
+	BAI_APP_SIGN_KEYCHAIN="${BAI_APP_SIGN_KEYCHAIN}" node ./app-packager.js darwin arm64
+ifdef BAI_APP_SIGN_KEYCHAIN
+	security default-keychain -s login.keychain
+endif
+	rm -rf ./app/backend.ai-desktop-macos-apple
 	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
