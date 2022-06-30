@@ -98,7 +98,7 @@ Backend.AI Web UI uses `config.toml` located in app root directory. You can prep
 
 These are options in `config.toml`.
 
-```
+```toml
 [general]
 apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
 apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
@@ -106,14 +106,14 @@ defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically f
 defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
 siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
 connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
-allowChangeSigninMode = false # Allows user to change signin mode between `API` and `SESSION`
-signupSupport = false # Enable / disable signup feature support. Manager plugin is required.
-allowSignout = false # Let users signout from service. Signup plugin is required.
-allowAnonymousChangePassword = false # Enable / disable anonymous user can send change password email. Manager plugin is required.
-allowProjectResourceMonitor = true # Allow users to look up its group monitor statistics
-autoLogout = false # If true, user will be automatically logout when they close all Backend.AI tab / window.
-allowManualImageNameForSession = false # If true, user will be able to use the specific environment image by typing the exact name.
-debug = false # Debug flag. Enable this flag will bypass every error messages from manager to app notification.
+allowChangeSigninMode = false           # Allows user to change signin mode between `API` and `SESSION`
+signupSupport = false                   # Enable/disable signup feature support. Manager plugin is required.
+allowSignout = false                    # Let users signout from service. Signup plugin is required.
+allowAnonymousChangePassword = false    # Enable/disable anonymous user can send change password email. Manager plugin is required.
+allowProjectResourceMonitor = true      # Allow users to look up its group monitor statistics
+autoLogout = false                      # If true, user will be automatically logout when they close all Backend.AI tab / window.
+allowManualImageNameForSession = false  # If true, user will be able to use the specific environment image by typing the exact name.
+debug = false                           # If true, it will pass-through every error message from manager to app notification.
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
@@ -121,13 +121,13 @@ proxyBaseURL = "[Base URL of websocket proxy,]"
 proxyListenIP = "[Websocket proxy configuration IP.]"
 
 [resources]
-openPortToPublic = true # Show option to open app proxy port to anyone.
-maxCPUCoresPerContainer = 256 # Maximum CPU per container.
-maxMemoryPerContainer = 64 # Maximum memory per container.
+openPortToPublic = true          # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256    # Maximum CPU per container.
+maxMemoryPerContainer = 64       # Maximum memory per container.
 maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
-maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
-maxShmPerContainer = 1 # Maximum shared memory per container.
-maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
+maxCUDASharesPerContainer = 8    # Maximum CUDA shares per container.
+maxShmPerContainer = 1           # Maximum shared memory per container.
+maxFileUploadSize = 4294967296   # Maximum size of single file upload. Set to -1 for unlimited upload.
 
 [environments]
 #allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
@@ -142,7 +142,6 @@ webServerURL = "[Web server website URL. App will use the site instead of local 
 # Reserved to load plugins
 #login = "signup-cloud.js"
 #page = "test-plugin1,test-plugin2"
-
 ```
 
 
@@ -167,19 +166,19 @@ View [Code of conduct](https://github.com/lablup/backend.ai-webui/blob/main/CODE
 
 ### Initializing
 
-```
+```console
 $ npm i
 ```
 
 If this is not your first-time compilation, please clean the temporary directories with this command:
 
-```
+```console
 $ make clean
 ```
 
 You must perform first-time compilation for testing. Some additional mandatory packages should be copied to proper location.
 
-```
+```console
 $ make compile_wsproxy
 ```
 
@@ -187,15 +186,22 @@ Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
 
 ### Developing / testing without bundling
 
+On a terminal:
+```console
+$ npm run build:d   # To watch source changes
 ```
-$ npm run server:d # To run dev. web server
-$ npm run build:d # To watch source changes
-$ npm run wsproxy # To run websocket proxy
+On another terminal:
+```console
+$ npm run server:d  # To run dev. web server
+```
+On yet another terminal:
+```console
+$ npm run wsproxy  # To run websocket proxy
 ```
 
 ### Lint Checking
-```
-$ npm run lint # To check lints
+```console
+$ npm run lint  # To check lints
 ```
 
 ### Unit Testing
@@ -203,33 +209,38 @@ $ npm run lint # To check lints
 The project uses `testcafe` as testing framework.
 To perform functional tests, you must run complete Backend.AI cluster before starting test.
 
+On a terminal:
+```console
+$ npm run server:d  # To run dev. web server
 ```
-$ npm run server:d # To run dev. web server
-$ npm run test # Run tests (tests are located in `tests` directory)
+On another terminal:
+```console
+$ npm run test      # Run tests (tests are located in `tests` directory)
 ```
 
 ### Electron (app mode) development / testing
 
 #### Live testing
 
-Terminal 1:
-```
-$ npm run server:d # To run test server
+On a terminal:
+```console
+$ npm run server:d    # To run test server
 ```
 OR
+```console
+$ npm run server:p    # To run compiled source
 ```
-$ npm run server:p # To run compiled source
-```
-Terminal 2:
-```
-$ npm run electron:d # Run Electron as dev mode.
+
+On another terminal:
+```console
+$ npm run electron:d  # Run Electron as dev mode.
 ```
 
 ## Serving Guide
 
 ### Preparing bundled source
 
-```
+```console
 $ make compile
 ```
 
@@ -241,7 +252,7 @@ If you need to serve with nginx, please install and setup `backend.ai-wsproxy` p
 
 This is nginx server configuration example. [APP PATH] should be changed to your source path.
 
-```
+```nginx
 server {
     listen      443 ssl http2;
     listen [::]:443 ssl http2;
@@ -269,7 +280,7 @@ Make sure that you compile the Web UI.
 
 e.g. You will download the `backend.ai-webserver` package.
 
-```
+```console
 $ make compile
 ```
 
@@ -280,10 +291,10 @@ Note: This command will use Web UI source in `build/rollup` directory. No certif
 
 Copy `webserver.example.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
-```
-$ docker-compose build webui-dev // build only
-$ docker-compose up webui-dev    // for testing
-$ docker-compose up -d webui-dev // as a daemon
+```console
+$ docker-compose build webui-dev  # build only
+$ docker-compose up webui-dev     # for testing
+$ docker-compose up -d webui-dev  # as a daemon
 ```
 
 Visit `http://127.0.0.1:8080` to test web server.
@@ -295,22 +306,22 @@ Note: You have to enter the certificates (`chain.pem` and `priv.pem`) into `cert
 
 Copy `webserver.example.ssl.conf` in `docker_build` directory into current directory as `webserver.conf` and modify configuration files for your needs.
 
-```
-$ docker-compose build webui  // build only
-$ docker-compose up webui     // for testing
-$ docker-compose up -d webui  // as a daemon
+```console
+$ docker-compose build webui  # build only
+$ docker-compose up webui     # for testing
+$ docker-compose up -d webui  # as a daemon
 ```
 
 Visit `https://127.0.0.1:443` to test web server serving. Change `127.0.0.1` to your production domain.
 
 #### Removing
 
-```
+```console
 $ docker-compose down
 ```
 
 #### Manual image build
-```
+```console
 $ make compile
 $ docker build -t backendai-webui .
 ```
@@ -319,7 +330,7 @@ Testing / Running example
 
 Check your image name is `backendai-webui_webui` or `backendai-webui_webui-ssl`. Otherwise, change the image name in the script below.
 
-```
+```console
 $ docker run --name backendai-webui -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -p 80:80 backendai-webui_webui /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 $ docker run --name backendai-webui-ssl -v $(pwd)/config.toml:/usr/share/nginx/html/config.toml -v $(pwd)/certificates:/etc/certificates -p 443:443 backendai-webui_webui-ssl /bin/bash -c "envsubst '$$NGINX_HOST' < /etc/nginx/conf.d/default-ssl.template > /etc/nginx/conf.d/default.conf && nginx -g 'daemon off;'"
 ```
@@ -328,15 +339,10 @@ $ docker run --name backendai-webui-ssl -v $(pwd)/config.toml:/usr/share/nginx/h
 
 If you need to serve as webserver (ID/password support) without compiling anything, you can use pre-built code through webserver submodule.
 
-To download and deploy web UI from pre-built source, do the following in `backend.ai-webserver` repository:
+To download and deploy web UI from pre-built source, do the following in `backend.ai` repository:
 
 ```console
-git submodule init
-git submodule update
-cd src/ai/backend/web/static
-git checkout master
-git fetch
-git pull
+$ git submodule update --init --checkout --recursive
 ```
 
 
@@ -344,7 +350,7 @@ git pull
 
 This is only needed with pure ES6 dev. environment / browser. Websocket proxy is embedded in Electron and automatically starts.
 
-```
+```console
 $ npm run wsproxy
 ```
 
@@ -356,8 +362,8 @@ proxy. The address should include the protocol, host, and/or port (if exists).
 For example,
 
 ```console
-export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
-set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
+$ export EXT_HTTP_PROXY=http://10.20.30.40:3128 (Linux)
+$ set EXT_HTTP_PROXY=http://10.20.30.40:3128 (Windows)
 ```
 
 Even if you are using Electron embedded websocket proxy, you have to set the
@@ -370,14 +376,14 @@ You can prepare site-specific configuration as `ini` format. Also, you can build
 
 Note: Default setup will build `es6-bundled` version. If you want to use `es6-unbundled`, make sure that your webserver supports HTTP/2 and setup as HTTPS with proper certification.
 
-```
+```console
 $ make web site=[SITE CONFIG FILE POSTFIX]
 ```
 If no prefix is given, default configuration file will be used.
 
 Example:
 
-```
+```console
 $ make web site=beta
 ```
 
@@ -388,19 +394,19 @@ You can manually modify config.toml for your need.
 
 Electron building is automated using `Makefile`.
 
-```
-$ make clean  # clean prebuilt codes
-$ make mac # build macOS app (both Intel/Apple)
-$ make mac_intel # build macOS app (Intel x64)
-$ make mac_apple # build macOS app (Apple Silicon)
-$ make win # build win64 app
-$ make linux # build linux app
-$ make all # build win64/macos/linux app
+```console
+$ make clean      # clean prebuilt codes
+$ make mac        # build macOS app (both Intel/Apple)
+$ make mac_intel  # build macOS app (Intel x64)
+$ make mac_apple  # build macOS app (Apple Silicon)
+$ make win        # build win64 app
+$ make linux      # build linux app
+$ make all        # build win64/macos/linux app
 ```
 
 #### Windows x86-64 version
 
-```
+```console
 $ make win
 ```
 Note: Building Windows x86-64 on other than Windows requires Wine > 3.0
@@ -409,24 +415,24 @@ Note: Now the `make win` command support only Windows x64 app, therefore you do 
 
 #### macOS version
 ##### All versions (Intel/Apple)
-```
+```console
 $ make mac
 ```
 NOTE: Sometimes Apple silicon version compiled on Intel machine does not work.
 
 ##### Intel x64
-```
+```console
 $ make mac_intel
 ```
 
 ##### Apple Silicon (Apple M1 and above)
-```
+```console
 $ make mac_apple
 ```
 
 #### Linux x86-64 version
 
-```
+```console
 $ make linux
 ```
 
@@ -459,8 +465,8 @@ Currently WebUI supports these languages:
 #### Extracting i18n resources
 
 Run
-```
-make i18n
+```console
+$ make i18n
 ```
 to update / extract i18n resources.
 
@@ -473,15 +479,15 @@ to update / extract i18n resources.
 #### Example
 
 In lit-html template:
-```
+```html
 <div>${_t('general.helloworld')}</div>
 ```
 
 In i18n resource (en.json):
-```
+```json
 {
-   'general':{
-      'helloworld': 'Hello World'
+   "general":{
+      "helloworld": "Hello World"
    }
 }
 ```
