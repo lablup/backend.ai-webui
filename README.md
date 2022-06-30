@@ -334,7 +334,7 @@ To download and deploy web UI from pre-built source, do the following in `backen
 git submodule init
 git submodule update
 cd src/ai/backend/web/static
-git checkout master
+git checkout main
 git fetch
 git pull
 ```
