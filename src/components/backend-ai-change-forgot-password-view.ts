@@ -19,6 +19,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+import * as ai from '../lib/backend.ai-client-esm';
+
 /**
  Backend.AI Change Forgot Password View
 
