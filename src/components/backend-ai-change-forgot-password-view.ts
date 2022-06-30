@@ -19,7 +19,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import * as ai from '../lib/backend.ai-client-esm';
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Change Forgot Password View
@@ -79,8 +79,8 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     this.passwordChangeDialog = this.shadowRoot.querySelector('#update-password-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    this.client = new Client(
       this.clientConfig,
       'Backend.AI Web UI.',
     );
