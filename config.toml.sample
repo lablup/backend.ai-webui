@@ -26,6 +26,9 @@ proxyURL = "http://127.0.0.1:5050/"
 autoPortSelection = true
 disableCertCheck = true
 
+[menu]
+#blocklist = "summary,import,statistics" # Separated by comma.
+
 [resources]
 openPortToPublic = false # Show option to open app proxy port to anyone.
 maxCPUCoresPerContainer = 256 # Maximum CPU per container.
@@ -35,14 +38,11 @@ maxCUDASharesPerContainer = 8  # Maximum CUDA shares per container.
 maxShmPerContainer = 4 # Maximum shared memory per container.
 maxFileUploadSize = 4294967296 # Maximum size of single file upload. Set to -1 for unlimited upload.
 
-[menu]
-#blocklist = "summary,import,statistics" # Separated by comma.
+[environments]
+#allowlist = ""
 
 [server]
 webServerURL =
-
-[environments]
-#allowlist = ""
 
 [plugin]
 # Reserved to load plugins
