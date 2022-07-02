@@ -683,31 +683,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return input;
   }
 
-  _checkResourcePolicyInputValidity() {
-    let isValid = true;
-    const resourceIds = ['cpu-resource', 'ram-resource', 'gpu-resource', 'fgpu-resource', 'container-per-session-limit',
-      'idle-timeout', 'concurrency-limit', 'session-lifetime', 'vfolder-capacity-limit', 'vfolder-count-limit'];
-    for (let i = 0; i < resourceIds.length; i++) {
-      const textfield = this.shadowRoot.querySelector('#' + resourceIds[i]);
-      const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
-      const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
-      if (!textfield.checkValidity()) {
-        if (checkbox && checkbox.checked) {
-          continue;
-        }
-        isValid = false;
-        break;
-      }
-    }
-    return isValid;
-  }
-
   _modifyResourcePolicy() {
     try {
       const input = this._readResourcePolicyInput();
-      if (!this._checkResourcePolicyInputValidity()) {
-        return;
-      }
       globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
@@ -796,9 +774,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       textfield.value = Math.round(textfield.value);
     }
 
+    if (textfield.value <= 0) {
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
+    }
+
     if (!textfield.valid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
-      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      if (decimal_point > 0) {
+        textfield.value = Math.min(textfield.value, (textfield.value < 0) ? textfield.min : textfield.max).toFixed(decimal_point);
+      } else {
+        textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      }
     }
     // automatically check when textfield is min
     if (checkbox) {

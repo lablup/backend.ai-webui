@@ -550,25 +550,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     return input;
   }
 
-  _checkResourcePolicyInputValidity() {
-    let isValid = true;
-    const resourceIds = ['cpu-resource', 'ram-resource', 'gpu-resource', 'fgpu-resource', 'container-per-session-limit',
-      'idle-timeout', 'concurrency-limit', 'session-lifetime', 'vfolder-capacity-limit', 'vfolder-count-limit'];
-    for (let i = 0; i < resourceIds.length; i++) {
-      const textfield = this.shadowRoot.querySelector('#' + resourceIds[i]);
-      const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
-      const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
-      if (!textfield.checkValidity()) {
-        if (checkbox && checkbox.checked) {
-          continue;
-        }
-        isValid = false;
-        break;
-      }
-    }
-    return isValid;
-  }
-
   /**
    * Add a new resource policy.
    */
@@ -586,9 +567,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
       const input = this._readResourcePolicyInput();
-      if (!this._checkResourcePolicyInputValidity()) {
-        return;
-      }
       globalThis.backendaiclient.resourcePolicy.add(name, input).then((response) => {
         this.shadowRoot.querySelector('#new-policy-dialog').hide();
         this.notification.text = _text('resourcePolicy.SuccessfullyCreated');
@@ -786,7 +764,11 @@ export default class BackendAICredentialView extends BackendAIPage {
 
     if (!textfield.valid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
-      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      if (decimal_point > 0) {
+        textfield.value = Math.min(textfield.value, textfield.value < 0 ? textfield.min : textfield.max).toFixed(decimal_point);
+      } else {
+        textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      }
     }
     // automatically check when textfield is min
     if (checkbox) {
