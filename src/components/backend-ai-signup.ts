@@ -16,8 +16,7 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-// import '../lib/backend.ai-client-es6';
-import '../lib/backend.ai-client-esm';
+import {Client} from '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -202,7 +201,7 @@ export default class BackendAiSignup extends BackendAIPage {
           _apiVersion: 'v4.20190615',
           endpoint: this.endpoint
         };
-        this.client = new ai.backend.Client(
+        this.client = new Client(
           clientConfig,
           `Backend.AI Console.`,
         );
