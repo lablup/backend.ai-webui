@@ -17,6 +17,8 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-button/mwc-button';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
@@ -33,7 +35,6 @@ import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
@@ -420,6 +421,10 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
           width: 88px; // default width
+        }
+
+        mwc-radio {
+          --mdc-theme-secondary: var(--general-textfield-selected-color);
         }
 
         #textfields wl-textfield,
@@ -860,18 +865,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
           <div style="margin: 10px 0px">${_t('data.explorer.Permissions')}</div>
           <div style="display: flex; justify-content: space-evenly;">
-            <wl-label>
-              <wl-radio name="share-folder-permission" checked value="ro"></wl-radio>
-              ${_t('data.folders.View')}
-            </wl-label>
-            <wl-label>
-              <wl-radio name="share-folder-permission" value="rw"></wl-radio>
-              ${_t('data.folders.Edit')}
-            </wl-label>
-            <wl-label>
-              <wl-radio name="share-folder-permission" value="wd"></wl-radio>
-              ${_t('data.folders.EditDelete')}
-            </wl-label>
+            <mwc-formfield label="${_t('data.folders.View')}">
+              <mwc-radio name="share-folder-permission" checked value="ro"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.Edit')}">
+              <mwc-radio name="share-folder-permission" value="rw"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.EditDelete')}">
+              <mwc-radio name="share-folder-permission" value="wd"></mwc-radio>
+            </mwc-formfield>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -2843,7 +2845,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '').map((e) => e.value.trim());
-    const permission = this.shadowRoot.querySelector('[name=share-folder-permission]:checked').value;
+    const permission = this.shadowRoot.querySelector('mwc-radio[name=share-folder-permission][checked]').value;
 
     if (emailArray.length === 0) {
       this.notification.text = _text('data.invitation.NoValidEmails');
