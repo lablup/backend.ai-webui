@@ -19,6 +19,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
+
 /**
  Backend.AI Email Verification View
 
@@ -72,8 +74,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    this.client = new Client(
       this.clientConfig,
       'Backend.AI Web UI.',
     );
