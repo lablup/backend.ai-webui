@@ -33,6 +33,7 @@ import 'weightless/dialog';
 import 'weightless/divider';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/radio';
 import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
@@ -860,12 +861,16 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div style="margin: 10px 0px">${_t('data.explorer.Permissions')}</div>
           <div style="display: flex; justify-content: space-evenly;">
             <wl-label>
-              <wl-checkbox checked disabled></wl-checkbox>
-              ${_t('button.View')}
+              <wl-radio name="share-folder-permission" checked value="ro"></wl-radio>
+              ${_t('data.folders.View')}
             </wl-label>
             <wl-label>
-              <wl-checkbox id="share-folder-write"></wl-checkbox>
-              ${_t('button.Edit')}
+              <wl-radio name="share-folder-permission" value="rw"></wl-radio>
+              ${_t('data.folders.Edit')}
+            </wl-label>
+            <wl-label>
+              <wl-radio name="share-folder-permission" value="wd"></wl-radio>
+              ${_t('data.folders.EditDelete')}
             </wl-label>
           </div>
         </div>
@@ -2546,7 +2551,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Toggle notification of filebrowser execution on read-only folder
-   * 
+   *
    */
    _toggleShowFilebrowserNotification(e) {
      const checkbox = e.target;
@@ -2838,7 +2843,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '').map((e) => e.value.trim());
-    const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
+    const permission = this.shadowRoot.querySelector('[name=share-folder-permission]:checked').value;
 
     if (emailArray.length === 0) {
       this.notification.text = _text('data.invitation.NoValidEmails');
