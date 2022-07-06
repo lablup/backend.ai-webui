@@ -866,7 +866,7 @@ class Client {
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
       rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params, null);
     } else {
-      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params.architecture, null);
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params, null);
     }
     //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -1156,6 +1156,7 @@ class Client {
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {string | null} serviceName - serviceName for sending up requests to other services
    * @param {boolean} secure - encrypt payload if secure is true.
    */
   newSignedRequest(method: string, queryString, body: any, serviceName: string | null, secure: boolean = false) {
@@ -1212,7 +1213,7 @@ class Client {
       uri = this._config.endpoint + '/flow' + queryString;
       hdrs = new Headers({
         "Accept": content_type,
-        "Allow-Control-Allow-Origin": "*"
+        // "Allow-Control-Allow-Origin": "*"
       });
       const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
 
@@ -1386,7 +1387,7 @@ class Client {
    * only ssh_public_key will be received.
    */
   async fetchSSHKeypair() {
-    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null);
+    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null)
     return this._wrapWithPromise(rqst, false);
   }
 
@@ -3461,7 +3462,7 @@ class ScalingGroup {
 
   async list(group = 'default') {
     const queryString = `/scaling-groups?group=${group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    const rqst = this.client.newSignedRequest("GET", queryString, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3477,7 +3478,7 @@ class ScalingGroup {
       return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
     }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
-    const rqst = this.client.newSignedRequest("GET", url, null);
+    const rqst = this.client.newSignedRequest("GET", url, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
