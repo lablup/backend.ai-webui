@@ -15,14 +15,13 @@ allowManualImageNameForSession = false
 #autoLogout = false
 #loginAttemptLimit = 5
 #loginBlockTime = 180
-debug = true
+debug = false
 #maskUserInfo = false
 
 [wsproxy]
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
 #proxyListenIP = ""
-#autoPortSelection = true
 disableCertCheck = false
 
 [menu]

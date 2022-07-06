@@ -22,7 +22,6 @@ debug = false
 proxyURL = "https://wsproxy.onprem.backend.ai:9443/"
 #proxyBaseURL = ""
 #proxyListenIP = ""
-#autoPortSelection = true
 disableCertCheck = false
 
 [menu]
