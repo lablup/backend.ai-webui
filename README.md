@@ -145,6 +145,15 @@ webServerURL = "[Web server website URL. App will use the site instead of local 
 
 ```
 
+## Debug mode
+When enabling debug mode, It will show certain features used for debugging in both web and app respectively.
+### Debugging in web browser
+   - Show raw error messages
+   - Enable creating session with manual image name
+
+### Debugging in app(electron)
+🚧 WIP 🚧
+
 
 ## Branches
 
