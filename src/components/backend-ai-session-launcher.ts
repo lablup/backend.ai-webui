@@ -2225,6 +2225,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _setClusterMode(e) {
     this.cluster_mode = e.target.value;
+    this.updateResourceAllocationPane();
   }
 
   /**
@@ -3498,7 +3499,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div>${_t('webui.menu.Sessions')}</div>
                   <mwc-icon-button slot="meta" icon="info" class="fg info"
                     @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
-                  </mwc-list-item>   
+                  </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
