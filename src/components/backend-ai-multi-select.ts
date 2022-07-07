@@ -232,7 +232,7 @@ export default class BackendAIMultiSelect extends LitElement {
     return html`
     <span class="title">${this.label}</span>
     <div class="layout ${this.openUp ? `vertical-reverse` : `vertical`}">
-      <div class="horizontal layout justified start selected-area">
+      <div class="horizontal layout justified start selected-area center">
         <div class="horizontal layout start-justified wrap">
           ${this.selectedItemList.map((item) => html`
             <mwc-button unelevated trailingIcon label=${item} icon="close"
