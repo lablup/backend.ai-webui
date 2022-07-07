@@ -96,8 +96,11 @@ Backend.AI Web UI focuses to
 
 Backend.AI Web UI uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
 
+> NOTE: Update only `config.toml.sample` when you update configurations.
+> Any files in `configs` directory are auto-created via [`Makefile`](Makefile).
+
 These are options in `config.toml`.
-You can refer the role of each key in [config.toml.sample](config.toml.sample)
+You can refer the role of each key in [`config.toml.sample`](config.toml.sample)
 
 ## Debug mode
 When enabling debug mode, It will show certain features used for debugging in both web and app respectively.
