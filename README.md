@@ -96,53 +96,21 @@ Backend.AI Web UI focuses to
 
 Backend.AI Web UI uses `config.toml` located in app root directory. You can prepare many `config.toml.[POSTFIX]` in `configs` directory to switch various configurations.
 
+> NOTE: Update only `config.toml.sample` when you update configurations.
+> Any files in `configs` directory are auto-created via [`Makefile`](Makefile).
+
 These are options in `config.toml`.
+You can refer the role of each key in [`config.toml.sample`](config.toml.sample)
 
-```toml
-[general]
-apiEndpoint = "[Default API Endpoint. If blank, user input field will be shown.]"
-apiEndpointText = "[Placeholder text instead of API endpoint input field.]"
-defaultSessionEnvironment = "[Default session kernel. If blank, alphabetically first kernel will be default.]"
-defaultImportEnvironment = "[Default kernel to use import features. If blank, index.docker.io/lablup/python:3.8-ubuntu18.04 will be used.]"
-siteDescription = "[Site description placeholder. It will be at the bottom of 'Backend.AI' at the top left corner.]"
-connectionMode = "[Connection mode. Default is API. Currenly supports API and SESSION]"
-allowChangeSigninMode = false           # Allows user to change signin mode between `API` and `SESSION`
-signupSupport = false                   # Enable/disable signup feature support. Manager plugin is required.
-allowSignout = false                    # Let users signout from service. Signup plugin is required.
-allowAnonymousChangePassword = false    # Enable/disable anonymous user can send change password email. Manager plugin is required.
-allowProjectResourceMonitor = true      # Allow users to look up its group monitor statistics
-autoLogout = false                      # If true, user will be automatically logout when they close all Backend.AI tab / window.
-allowManualImageNameForSession = false  # If true, user will be able to use the specific environment image by typing the exact name.
-debug = false                           # If true, it will pass-through every error message from manager to app notification.
 
-[wsproxy]
-proxyURL = "[Proxy URL]"
-proxyBaseURL = "[Base URL of websocket proxy,]"
-proxyListenIP = "[Websocket proxy configuration IP.]"
+## Debug mode
+When enabling debug mode, It will show certain features used for debugging in both web and app respectively.
+### Debugging in web browser
+   - Show raw error messages
+   - Enable creating session with manual image name
 
-[resources]
-openPortToPublic = true          # Show option to open app proxy port to anyone.
-maxCPUCoresPerContainer = 256    # Maximum CPU per container.
-maxMemoryPerContainer = 64       # Maximum memory per container.
-maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
-maxCUDASharesPerContainer = 8    # Maximum CUDA shares per container.
-maxShmPerContainer = 1           # Maximum shared memory per container.
-maxFileUploadSize = 4294967296   # Maximum size of single file upload. Set to -1 for unlimited upload.
-
-[environments]
-#allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
-# e.g. cr.backend.ai/stable/python
-# You should pick default_environment in general section too.
-
-[server]
-webServerURL = "[Web server website URL. App will use the site instead of local app.]"
-                   # Uses websocket proxy in the app
-
-[plugin]
-# Reserved to load plugins
-#login = "signup-cloud.js"
-#page = "test-plugin1,test-plugin2"
-```
+### Debugging in app(electron)
+🚧 WIP 🚧
 
 
 ## Branches
@@ -372,7 +340,7 @@ environment variable manually to pass through a http proxy.
 
 ## Build web server with specific configuration
 
-You can prepare site-specific configuration as `ini` format. Also, you can build site-specific web bundle refering in `configs` directory.
+You can prepare site-specific configuration as `toml` format. Also, you can build site-specific web bundle refering in `configs` directory.
 
 Note: Default setup will build `es6-bundled` version. If you want to use `es6-unbundled`, make sure that your webserver supports HTTP/2 and setup as HTTPS with proper certification.
 
