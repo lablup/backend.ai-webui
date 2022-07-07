@@ -443,6 +443,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+    
     if (this.active) {
       if (this.direction === 'vertical') {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
@@ -752,7 +753,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       </div>
       ` : html``}
       <div class="layout ${this.direction}-card flex wrap">
-        <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
+        <div id="resource-gauges" class="layout horizontal ${this.direction}-panel resources flex wrap">
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <div class="gauge-name">CPU</div>
