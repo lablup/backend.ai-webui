@@ -219,7 +219,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           --select-title-font-size: 10px;
           --selected-area-border-radius: 5px;
           --selected-area-border: none;
-          --selected-area-padding: 10px;
+          --selected-area-padding: 5px;
           --selected-area-min-height: 24px;
           --selected-area-height: 100%;
 
