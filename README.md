@@ -332,7 +332,7 @@ environment variable manually to pass through a http proxy.
 
 ## Build web server with specific configuration
 
-You can prepare site-specific configuration as `ini` format. Also, you can build site-specific web bundle refering in `configs` directory.
+You can prepare site-specific configuration as `toml` format. Also, you can build site-specific web bundle refering in `configs` directory.
 
 Note: Default setup will build `es6-bundled` version. If you want to use `es6-unbundled`, make sure that your webserver supports HTTP/2 and setup as HTTPS with proper certification.
 
