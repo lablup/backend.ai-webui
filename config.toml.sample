@@ -28,13 +28,13 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 #blocklist = "summary,import,statistics" # Disable menus on the list which are separated by comma.
 
 [resources]
-openPortToPublic = true          # Show option to open app proxy port to anyone.
-maxCPUCoresPerContainer = 256    # Maximum CPU per container.
-maxMemoryPerContainer = 64       # Maximum memory per container.
-maxCUDADevicesPerContainer = 16  # Maximum CUDA devices per container.
-maxCUDASharesPerContainer = 16   # Maximum CUDA shares per container.
-maxShmPerContainer = 16          # Maximum shared memory per container.
-maxFileUploadSize = 4294967296   # Maximum size of single file upload. Set to -1 for unlimited upload.
+openPortToPublic = false            # Show option to open app proxy port to anyone.
+maxCPUCoresPerContainer = 256       # Maximum CPU per container.
+maxMemoryPerContainer = 64          # Maximum memory per container.
+maxCUDADevicesPerContainer = 8      # Maximum CUDA devices per container.
+maxCUDASharesPerContainer = 8       # Maximum CUDA shares per container.
+maxShmPerContainer = 16             # Maximum shared memory per container.
+maxFileUploadSize = 4294967296      # Maximum size of single file upload. Set to -1 for unlimited upload.
 
 [environments]
 #allowlist = "" # Comma-separated image name. Image name should contain the repository (registry path and image name) part of the full image URL, excluding the protocol and tag
