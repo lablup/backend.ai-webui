@@ -807,7 +807,7 @@
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
     "RegistrySuccessfullyModified": "Registry successfully modified.",
-    "PleaseSelectOption": "PleaseSelectOption"
+    "PleaseSelectOption": "Please Select Option"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",

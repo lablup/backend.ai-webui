@@ -306,7 +306,7 @@
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "이미 종료중인 세션입니다"
   },
   "button": {
     "Cancel": "취소",
@@ -675,7 +675,7 @@
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
     "SharedMemory": "공유메모리 (GB)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "자원 프리셋을 성공적으로 삭제하였습니다"
   },
   "usersettings": {
     "General": "일반",
@@ -809,7 +809,7 @@
     "RescanImages": "이미지 리스캔중...",
     "RescanFailed": "리스캔 작업이 실패하였습니다.",
     "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
-    "PleaseSelectOption": "__NOT_TRANSLATED__"
+    "PleaseSelectOption": "옵션을 선택하세요"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
