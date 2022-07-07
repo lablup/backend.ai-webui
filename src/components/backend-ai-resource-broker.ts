@@ -376,7 +376,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
-        if (allowedHosts.includes(item.host)) {
+        if (allowedHosts.includes(item.host) || !item.is_owner) { // folder within allowed host or shared folder
           if (item.name.startsWith('.')) {
             item.disabled = true;
             item.name = item.name + ' (Automount folder)';
