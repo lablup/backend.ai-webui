@@ -41,8 +41,6 @@ class Task {
  */
 @customElement('backend-ai-tasker')
 export default class BackendAiTasker extends LitElement {
-  public shadowRoot: any;
-
   @property({type: Object}) indicator;
   @property({type: Array}) taskstore;
   @property({type: Array}) finished;

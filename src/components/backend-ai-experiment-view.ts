@@ -73,7 +73,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
   public concurrency_max: any;
   public _status: any;
   public notification: any;
-  public shadowRoot: any;
   public vgpu_metric: any;
   public $: any;
 

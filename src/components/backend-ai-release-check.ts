@@ -22,7 +22,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 @customElement('backend-ai-release-check')
 export default class BackendAiReleaseCheck extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-webui/release/version.json';
   @property({type: String}) localVersion = '';
   @property({type: String}) localBuild = '';

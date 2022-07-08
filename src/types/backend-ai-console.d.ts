@@ -46,7 +46,6 @@ declare const BackendAIWebUI_base: (new (...args: any[]) => {
  @element backend-ai-webui
  */
 export default class BackendAIWebUI extends BackendAIWebUI_base {
-    shadowRoot: any;
     hasLoadedStrings: boolean;
     menuTitle: string;
     siteDescription: string;
