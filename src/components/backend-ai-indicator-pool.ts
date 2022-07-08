@@ -28,7 +28,6 @@ import './backend-ai-indicator';
  */
 @customElement('backend-ai-indicator-pool')
 export default class BackendAIIndicatorPool extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: Number}) step = 0;
 
@@ -42,12 +41,12 @@ export default class BackendAIIndicatorPool extends LitElement {
     this.pool = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [];
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#app-progress-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {

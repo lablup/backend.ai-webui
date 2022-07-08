@@ -19,7 +19,6 @@ import 'weightless/title';
 
 @customElement('backend-ai-indicator')
 export default class BackendAIIndicator extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: Number}) delay = 1000;
   @property({type: String}) text = '';
@@ -30,7 +29,7 @@ export default class BackendAIIndicator extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -47,7 +46,7 @@ export default class BackendAIIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#app-progress-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {
