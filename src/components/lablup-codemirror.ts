@@ -31,7 +31,6 @@ declare const window: any;
 
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   public editor: any;
 
   @property({type: Object}) config = Object();
@@ -64,7 +63,7 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot.querySelector('#codemirror-editor');
+    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as any;
     if (!cm.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;

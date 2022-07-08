@@ -203,3 +203,9 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     `;
   }
 }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-change-forgot-password-view': BackendAIChangeForgotPasswordView;
+  }
+}

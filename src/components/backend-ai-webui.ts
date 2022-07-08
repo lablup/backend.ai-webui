@@ -23,9 +23,11 @@ import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-circular-progress';
+import {Drawer} from '@material/mwc-drawer';
+import {Menu} from '@material/mwc-menu';
+import {TextField} from '@material/mwc-textfield';
 
 import toml from 'markty-toml';
 
@@ -34,22 +36,22 @@ import 'weightless/popover-card';
 
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
-import './backend-ai-dialog';
 import './backend-ai-help-button';
 import './backend-ai-indicator-pool';
 import './backend-ai-login';
 import './backend-ai-offline-indicator';
 import './backend-ai-resource-broker';
-import BackendAiSettingsStore from './backend-ai-settings-store';
-import BackendAiCommonUtils from './backend-ai-common-utils';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
+import './backend-ai-splash';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import BackendAiDialog from './backend-ai-dialog';
+import BackendAiSettingsStore from './backend-ai-settings-store';
 import BackendAiTasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
-import './backend-ai-splash';
+
 import './lablup-notification';
 import './lablup-terms-of-service';
-
 import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
@@ -85,7 +87,6 @@ globalThis.backendaiutils = new BackendAiCommonUtils;
 
 @customElement('backend-ai-webui')
 export default class BackendAIWebUI extends connect(store)(LitElement) {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) menuTitle = 'LOGIN REQUIRED';
   @property({type: String}) siteDescription = '';
@@ -152,7 +153,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.blockedMenuitem = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAIWebUIStyles,
       IronFlex,
@@ -163,26 +164,26 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   firstUpdated() {
-    globalThis.lablupNotification = this.shadowRoot.querySelector('#notification');
-    globalThis.lablupIndicator = this.shadowRoot.querySelector('#indicator');
-    globalThis.appLauncher = this.shadowRoot.querySelector('#app-launcher');
-    globalThis.resourceBroker = this.shadowRoot.querySelector('#resource-broker');
+    globalThis.lablupNotification = this.shadowRoot?.querySelector('#notification');
+    globalThis.lablupIndicator = this.shadowRoot?.querySelector('#indicator');
+    globalThis.appLauncher = this.shadowRoot?.querySelector('#app-launcher');
+    globalThis.resourceBroker = this.shadowRoot?.querySelector('#resource-broker');
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    this.appBody = this.shadowRoot.querySelector('#app-body');
-    this.appPage = this.shadowRoot.querySelector('#app-page');
-    this.contentBody = this.shadowRoot.querySelector('#content-body');
+    this.appBody = this.shadowRoot?.querySelector('#app-body');
+    this.appPage = this.shadowRoot?.querySelector('#app-page');
+    this.contentBody = this.shadowRoot?.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
-    this.mainToolbar = this.shadowRoot.querySelector('#main-toolbar');
-    this.drawerToggleButton = this.shadowRoot.querySelector('#drawer-toggle-button');
-    this.sidebarMenu = this.shadowRoot.getElementById('sidebar-menu');
-    this.splash = this.shadowRoot.querySelector('#about-backendai-panel');
-    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
-    this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
-    this._dropdownMenuIcon = this.shadowRoot.querySelector('#dropdown-button');
+    this.mainToolbar = this.shadowRoot?.querySelector('#main-toolbar');
+    this.drawerToggleButton = this.shadowRoot?.querySelector('#drawer-toggle-button');
+    this.sidebarMenu = this.shadowRoot?.getElementById('sidebar-menu');
+    this.splash = this.shadowRoot?.querySelector('#about-backendai-panel');
+    this.loginPanel = this.shadowRoot?.querySelector('#login-panel');
+    this.TOSdialog = this.shadowRoot?.querySelector('#terms-of-service');
+    this._dropdownMenuIcon = this.shadowRoot?.querySelector('#dropdown-button');
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
-      (this.shadowRoot.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
+      (this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
     installRouter((location) => store.dispatch(navigate(decodeURIComponent(location.pathname))));
     installOfflineWatcher((offline) => store.dispatch(updateOffline(offline)));
@@ -204,19 +205,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       // If disconnected
       if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         if (this._page === 'verify-email') {
-          const emailVerifyView = this.shadowRoot.querySelector('backend-ai-email-verification-view');
+          const emailVerifyView = this.shadowRoot?.querySelector('backend-ai-email-verification-view');
           window.setTimeout(() => {
-            emailVerifyView.verify(this.loginPanel.api_endpoint);
+            emailVerifyView?.verify(this.loginPanel.api_endpoint);
           }, 1000);
         } else if (this._page === 'change-password') {
-          const changePasswordView = this.shadowRoot.querySelector('backend-ai-change-forgot-password-view');
+          const changePasswordView = this.shadowRoot?.querySelector('backend-ai-change-forgot-password-view');
           window.setTimeout(() => {
-            changePasswordView.open(this.loginPanel.api_endpoint);
+            changePasswordView?.open(this.loginPanel.api_endpoint);
           }, 1000);
         } else if (this._page === 'edu-applauncher') {
-          const eduApplauncherView = this.shadowRoot.querySelector('backend-ai-edu-applauncher');
+          const eduApplauncherView = this.shadowRoot?.querySelector('backend-ai-edu-applauncher');
           window.setTimeout(() => {
-            eduApplauncherView.launch(this.loginPanel.api_endpoint);
+            eduApplauncherView?.launch(this.loginPanel.api_endpoint);
           }, 1000);
         } else {
           const tabcount = new TabCount();
@@ -344,7 +345,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.plugins['menuitem-user'] = [];
         this.plugins['menuitem-admin'] = [];
         this.plugins['menuitem-superadmin'] = [];
-        const pluginLoaderQueue = [] as any;
+        const pluginLoaderQueue = [] as any[];
         for (const page of config.plugin.page.split(',')) {
           pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
             const pageItem = document.createElement(page) as any;
@@ -385,7 +386,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   refreshPage(): void {
-    (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
+    // TODO need more clear type for mwc-list-item
+    (this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
@@ -407,10 +409,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
 
-    const curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
-    curtain.classList.add('visuallyhidden');
-    curtain.addEventListener('transitionend', () => {
-      curtain.classList.add('hidden');
+    const curtain = this.shadowRoot?.getElementById('loading-curtain');
+    curtain?.classList.add('visuallyhidden');
+    curtain?.addEventListener('transitionend', () => {
+      curtain?.classList.add('hidden');
       this.is_connected = true;
     }, {
       capture: false,
@@ -437,7 +439,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   showUpdateNotifier(): void {
-    const indicator = <any> this.shadowRoot.getElementById('backend-ai-indicator');
+    const indicator = <any> this.shadowRoot?.getElementById('backend-ai-indicator');
     indicator.innerHTML = 'New Web UI is available. Please <a onclick="globalThis.location.reload()">reload</a> to update.';
     indicator.show();
   }
@@ -599,17 +601,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._showRole();
     globalThis.backendaiclient.current_group = this.current_group;
     this.groups = globalThis.backendaiclient.groups;
-    const groupSelectionBox: HTMLElement = this.shadowRoot.getElementById('group-select-box');
+    const groupSelectionBox = this.shadowRoot?.getElementById('group-select-box');
     // Detached from template to support live-update after creating new group (will need it)
-    if (groupSelectionBox.hasChildNodes()) {
-      groupSelectionBox.removeChild(groupSelectionBox.firstChild as ChildNode);
+    if (groupSelectionBox?.hasChildNodes()) {
+      groupSelectionBox?.removeChild(groupSelectionBox.firstChild as ChildNode);
     }
-    const div = document.createElement('div') as any;
+    const div = document.createElement('div');
     div.className = 'horizontal center center-justified layout';
-    const select = document.createElement('mwc-select') as any;
+    const select = document.createElement('mwc-select');
     select.id = 'group-select';
     select.value = this.current_group;
-    select.style = 'width: auto;max-width: 200px;';
+    // select.style = 'width: auto;max-width: 200px;';
+    select.style.width = 'auto';
+    select.style.maxWidth = '200px';
     select.addEventListener('selected', (e) => this.changeGroup(e));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
@@ -629,7 +633,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
     // select.updateOptions();
     div.appendChild(select);
-    groupSelectionBox.appendChild(div);
+    groupSelectionBox?.appendChild(div);
   }
 
   /**
@@ -647,15 +651,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
-    dialog.show();
+    const dialog = this.shadowRoot?.querySelector<BackendAiDialog>('#user-preference-dialog');
+    dialog?.show();
   }
 
   /**
    * Hide the user preference dialog.
    */
   _hideUserPrefDialog() {
-    this.shadowRoot.querySelector('#user-preference-dialog').hide();
+    this.shadowRoot?.querySelector<BackendAiDialog>('#user-preference-dialog')?.hide();
   }
 
   _togglePasswordVisibility(element) {
@@ -665,8 +669,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _validatePassword1() {
-    const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
-    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    // TODO define type for custom property
+    const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as any;
+    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
     password2Input.reportValidity();
     passwordInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
@@ -693,7 +698,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _validatePassword2() {
-    const password2Input = this.shadowRoot.querySelector('#pref-new-password2');
+    // TODO define type for custom property
+    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
     password2Input.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
@@ -711,7 +717,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       } else {
         // custom validation for password input match
-        const passwordInput = this.shadowRoot.querySelector('#pref-new-password');
+        const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as TextField;
         const isMatched = (passwordInput.value === password2Input.value);
         if (!isMatched) {
           password2Input.validationMessage = _text('signup.PasswordNotMatched');
@@ -748,7 +754,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} newFullname - Name to be modified
    */
   async _updateFullname(newFullname = '') {
-    newFullname = newFullname === '' ? this.shadowRoot.querySelector('#pref-original-name').value : newFullname;
+    newFullname = newFullname === '' ? (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value : newFullname;
     if (newFullname.length > 64) {
       this.notification.text = _text('webui.menu.FullNameInvalid');
       this.notification.show();
@@ -761,7 +767,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
-          this.shadowRoot.querySelector('#pref-original-name').value = this.full_name;
+          (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.full_name;
         }).catch((err) => {
           if (err && err.message) {
             this.notification.text = err.message;
@@ -786,10 +792,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Update the user password.
    */
   async _updateUserPassword() {
-    const dialog = this.shadowRoot.querySelector('#user-preference-dialog');
-    const oldPassword = dialog.querySelector('#pref-original-password').value;
-    const newPassword1El = dialog.querySelector('#pref-new-password');
-    const newPassword2El = dialog.querySelector('#pref-new-password2');
+    const dialog = this.shadowRoot?.querySelector('#user-preference-dialog');
+    const oldPassword = (dialog?.querySelector('#pref-original-password') as TextField).value;
+    const newPassword1El = dialog?.querySelector('#pref-new-password') as TextField;
+    const newPassword2El = dialog?.querySelector('#pref-new-password2') as TextField;
 
     // no update in user's password
     if (!oldPassword && !newPassword1El.value && !newPassword2El.value) {
@@ -802,7 +808,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.notification.show();
       return;
     }
-    if (!newPassword1El.value || !newPassword1El.validity.valid) {
+    // TODO define type for custom property
+    if (!newPassword1El.value || !(newPassword1El as any).validity.valid) {
       this.notification.text = _text('webui.menu.InvalidPasswordMessage');
       this.notification.show();
       return;
@@ -830,9 +837,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         return;
       }
     }).finally(() => { // remove input value again
-      this.shadowRoot.querySelector('#pref-original-password').value = '';
-      this.shadowRoot.querySelector('#pref-new-password').value = '';
-      this.shadowRoot.querySelector('#pref-new-password2').value = '';
+      (this.shadowRoot?.querySelector('#pref-original-password') as TextField).value = '';
+      (this.shadowRoot?.querySelector('#pref-new-password') as TextField).value = '';
+      (this.shadowRoot?.querySelector('#pref-new-password2') as TextField).value = '';
     });
   }
 
@@ -926,7 +933,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             this._page = 'error';
           }
           if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
-            const component = this.shadowRoot.querySelector(this._page);
+            // TODO specify type for web components from variable
+            const component = this.shadowRoot?.querySelector(this._page) as any;
             component.active = true;
             component.setAttribute('active', true);
             component.render();
@@ -934,7 +942,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         });
         break;
       }
-      console.log('set to error');
+      // console.log('set to error');
       this._page = 'error';
       this.menuTitle = _text('webui.NOTFOUND');
     }
@@ -1005,9 +1013,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         // globalThis.location.reload();
         document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
         this.appBody.style.visibility = 'hidden';
-        const curtain: HTMLElement = this.shadowRoot.getElementById('loading-curtain');
-        curtain.classList.remove('visuallyhidden');
-        curtain.addEventListener('transitionend', () => {
+        const curtain = this.shadowRoot?.getElementById('loading-curtain');
+        curtain?.classList.remove('visuallyhidden');
+        curtain?.addEventListener('transitionend', () => {
           curtain.classList.remove('hidden');
         }, {
           capture: false,
@@ -1028,8 +1036,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} colorVal
    */
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
-    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
-    (this.shadowRoot.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
+    (this.shadowRoot?.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
+    (this.shadowRoot?.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
   }
 
   /**
@@ -1049,7 +1057,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Control the mwc-drawer.
    */
   toggleDrawer() {
-    const drawer = this.shadowRoot.querySelector('mwc-drawer');
+    const drawer = this.shadowRoot?.querySelector<Drawer>('mwc-drawer')!;
     if (drawer.open === true) {
       drawer.open = false;
     } else {
@@ -1061,7 +1069,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Control the dropdown menu.
    */
   _toggleDropdown() {
-    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const menu = this.shadowRoot?.querySelector<Menu>('#dropdown-menu')!;
     const menu_icon = this._dropdownMenuIcon;
     menu.anchor = menu_icon;
     menu.open = !menu.open;
@@ -1106,13 +1114,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if ('menuitem' in this.plugins) {
       for (const item of this.plugins.menuitem) {
         if (item !== this._page) {
-          const component = this.shadowRoot.querySelector(item);
+          // TODO specify type for web components from variable
+          const component = this.shadowRoot?.querySelector(item) as any;
           component.active = false;
           component.removeAttribute('active');
         }
       }
       if (this.plugins['menuitem'].includes(this._page)) {
-        const component = this.shadowRoot.querySelector(this._page);
+        // TODO specify type for web components ffrom variable
+        const component = this.shadowRoot?.querySelector(this._page) as any;
         component.active = true;
         component.setAttribute('active', true);
         component.render();
@@ -1194,7 +1204,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     carddiv.innerText = title;
     card.appendChild(carddiv);
     popover.appendChild(card);
-    const tooltipBox = this.shadowRoot.querySelector('#mini-tooltips');
+    const tooltipBox = this.shadowRoot?.querySelector('#mini-tooltips')!;
     tooltipBox.appendChild(popover);
   }
 
@@ -1270,7 +1280,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   async _showSecretKey(e) {
-    const secret_key = this.shadowRoot.querySelector('#secretkey');
+    const secret_key = this.shadowRoot?.querySelector<TextField>('#secretkey')!;
     for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
       if (e.target.selected.value == this.keyPairInfo.keypairs[i].access_key) {
         secret_key.value = this.keyPairInfo.keypairs[i].secret_key;
@@ -1280,7 +1290,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _hidePasswordChangeRequest() {
-    const passwordChangeRequest = this.shadowRoot.querySelector('#password-change-request');
+    const passwordChangeRequest = this.shadowRoot?.querySelector<HTMLDivElement>('#password-change-request')!;
     passwordChangeRequest.style.display = 'none';
   }
 

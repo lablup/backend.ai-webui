@@ -23,7 +23,6 @@ import 'weightless/progress-spinner';
 
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) spinner;
   @property({type: Boolean}) active = false;
 
@@ -59,7 +58,7 @@ export default class LablupLoadingSpinner extends LitElement {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#spinner');
+    this.spinner = this.shadowRoot?.querySelector('#spinner');
     this.active = true;
   }
 

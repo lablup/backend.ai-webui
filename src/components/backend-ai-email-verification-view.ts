@@ -183,3 +183,9 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     `;
   }
 }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-email-verification-view': BackendAIEmailVerificationView;
+  }
+}
