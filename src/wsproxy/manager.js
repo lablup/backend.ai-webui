@@ -129,7 +129,7 @@ class Manager extends EventEmitter {
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       let gateway;
-      let ip = "127.0.0.1"; //FIXME: Update needed
+      let ip = this.listen_ip;
       //let port = undefined;
       if (this.proxies.hasOwnProperty(p)) {
         gateway = this.proxies[p];
@@ -172,7 +172,7 @@ class Manager extends EventEmitter {
         }
       }
 
-      let proxy_target = "http://localhost:" + port;
+      let proxy_target = "http://" + this.proxyBaseHost + ":" + port;
       if (app == 'sftp') {
         logger.debug('proxy target: ' + proxy_target);
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
@@ -248,8 +248,11 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url = "sftp://upload@127.0.0.1:" + port;
-      res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
+      let url = "sftp://upload@" + this.proxyBaseHost + ":" + port;
+      res.send(htmldeco(
+        "Connect with your own SFTP",
+        "host: " + this.proxyBaseHost + "<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"
+      ));
     });
 
     this.app.get('/redirect', (req, res) => {

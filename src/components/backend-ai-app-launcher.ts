@@ -497,7 +497,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: proxyURL + 'conf'
+      uri: new URL('conf', proxyURL).href;
     };
     this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     const response = await this.sendRequest(rqst);
