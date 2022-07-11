@@ -1351,7 +1351,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       const encodedStr = (str) => {
         return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
           return '&#' + i.charCodeAt(0) + ';';
-        })
+        });
       };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
