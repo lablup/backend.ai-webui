@@ -444,7 +444,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     return html`
       <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
         <div slot="message">
-          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
+          <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}" direction="horizontal"></backend-ai-resource-monitor>
         </div>
       </lablup-activity-panel>
       <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">

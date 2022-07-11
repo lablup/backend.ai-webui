@@ -302,6 +302,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 10px;
         }
 
+        .resources.horizontal .monitor {
+          margin-bottom: 30px;
+        }
+
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -359,6 +363,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .horizontal-card > #resource-gauges > .monitor {
+          margin-top: 20px;
           width: 250px;
         }
 
@@ -501,7 +506,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateScalingGroupSelector() {
-    if (this.direction === 'vertical') {
       const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
       // Detached from template to support live-update after creating new group (will need it)
       if (scaling_group_selection_box.hasChildNodes()) {
@@ -535,7 +539,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
       // scaling_select.updateOptions();
       scaling_group_selection_box.appendChild(scaling_select);
-    }
   }
 
   /**
@@ -748,12 +751,9 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      ${this.direction === 'vertical' ? html`
-      <div id="scaling-group-select-box" class="layout horizontal start-justified">
-      </div>
-      ` : html``}
+      <div id="scaling-group-select-box" class="layout horizontal start-justified"></div>
       <div class="layout ${this.direction}-card flex wrap">
-        <div id="resource-gauges" class="layout horizontal ${this.direction}-panel resources flex wrap">
+        <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <div class="gauge-name">CPU</div>
@@ -771,7 +771,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cpu, '%')}</span>
             </div>
           </div>
-          <div class="layout horizontal center-justified monitor" style="margin-right: 50px;">
+          <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">RAM</span>
             </div>
@@ -903,7 +903,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </mwc-switch>
         </div>
       </div>
-      ${this.direction === 'vertical' ? html`
+      
       <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
         <div class="layout horizontal center start-justified resource-legend-stack">
           <div class="resource-legend-icon start"></div>
@@ -914,7 +914,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>
-      ` : html``}
+    
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />
