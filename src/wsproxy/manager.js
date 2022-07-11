@@ -255,9 +255,9 @@ class Manager extends EventEmitter {
     this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
       let path = req.query.redirect || "";
-      path.replace("<proxy-host>", this.listen_ip);
+      path.replace("<proxy-host>", this.proxyBaseHost);
       path.replace("<port-number>", port);
-      res.redirect("http://" + this.listen_ip + ":" + port + path)
+      res.redirect("http://" + this.proxyBaseHost + ":" + port + path)
     });
   }
 
