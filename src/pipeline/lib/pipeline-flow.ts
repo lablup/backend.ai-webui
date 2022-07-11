@@ -225,6 +225,7 @@ export default class PipelineFlow extends LitElement {
         mwc-icon-button-toggle {
           color: white;
           --mdc-icon-size: 36px;
+          --mdc-theme-text-disabled-on-light: var(--paper-grey-500);
         }
 
         .pane-options {
@@ -249,7 +250,7 @@ export default class PipelineFlow extends LitElement {
     this.data = {};
     // modify cursor
     this.shadowRoot.querySelector('#drawflow').style.cursor = this.isEditable ? 'grab' : 'not-allowed';
-    if (!this.editor.isEditable) {
+    if (!this.isEditable) {
       this.editor.editor_mode = 'view';
     }
 
@@ -357,7 +358,7 @@ export default class PipelineFlow extends LitElement {
       </div>
       <div class="horizontal layout center end-justified flex">
         <div class="pane-options">
-          <mwc-icon-button-toggle ?on="${this.isEditable}" onIcon="lock_open" offIcon="lock" @click="${this._togglePaneMode}"></mwc-icon-button-toggle>
+          <mwc-icon-button-toggle ?on="${this.isEditable}" ?disabled="${!this.isEditable}" onIcon="lock_open" offIcon="lock" @click="${() => this._togglePaneMode()}"></mwc-icon-button-toggle>
         </div>
         <div class="pane-options">
           <mwc-icon-button icon="zoom_out" @click="${this._zoomOutPane}"></mwc-icon-button>
