@@ -771,7 +771,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cpu, '%')}</span>
             </div>
           </div>
-          <div class="layout horizontal center-justified monitor">
+          <div class="layout horizontal center-justified monitor" style="margin-right: 50px;">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">RAM</span>
             </div>
@@ -881,6 +881,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
+
             </div>
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
