@@ -123,3 +123,12 @@ tags
 #plugins
 src/plugins
 src/plugins/*
+
+# Yarn
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
