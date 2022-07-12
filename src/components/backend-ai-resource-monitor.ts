@@ -367,7 +367,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 250px;
         }
   
-
         @media screen and (min-width: 750px) {
           div#resource-gauges {
             display: flex !important;
