@@ -119,6 +119,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-top: 20px;
           padding-left: 20px;
           background-color: #F6F6F6;
+          margin-bottom: 15px;
         }
 
         .vertical-panel #resource-gauges {
@@ -303,7 +304,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .resources.horizontal .monitor {
-          margin-bottom: 30px;
+          margin-bottom: 10px;
         }
 
         mwc-select {
@@ -361,11 +362,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .vertical-card > #resource-gauges > .monitor > .resource-name {
           width: 60px;
         }
-
-        .horizontal-card > #resource-gauges > .monitor {
-          margin-top: 20px;
+        
+        .horizontal-card > #resource-gauges > .monitor > .resource-name {
           width: 250px;
         }
+  
 
         @media screen and (min-width: 750px) {
           div#resource-gauges {
