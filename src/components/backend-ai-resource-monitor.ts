@@ -448,7 +448,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
-    
     if (this.active) {
       if (this.direction === 'vertical') {
         const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box');
@@ -881,7 +880,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
               <span class="gauge-name">${_t('session.launcher.Sessions')}</span>
-
             </div>
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="concurrency-usage-bar" class="start"
@@ -903,7 +901,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </mwc-switch>
         </div>
       </div>
-      
       <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
         <div class="layout horizontal center start-justified resource-legend-stack">
           <div class="resource-legend-icon start"></div>
@@ -914,7 +911,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
       </div>
-    
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />
