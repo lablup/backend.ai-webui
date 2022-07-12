@@ -47,11 +47,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) noheader = false;
   @property({type: Boolean}) scrollableY = false;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       IronFlex,
       IronFlexAlignment,
@@ -196,10 +192,6 @@ export default class LablupActivityPanel extends LitElement {
     if (this.scrollableY) {
       card.style.overflowY = 'auto';
     }
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   _removePanel() {
