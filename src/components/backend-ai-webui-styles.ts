@@ -444,6 +444,10 @@ export const BackendAIWebUIStyles = [
       --mdc-ripple-focus-opacity: 0;
     }
 
+    mwc-icon-button#mini-ui-toggle-button {
+      --mdc-ripple-focus-opacity: 0;
+    }
+
     #sidebar-navbar-footer mwc-icon-button {
       --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
     }
