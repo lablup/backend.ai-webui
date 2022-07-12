@@ -446,7 +446,7 @@ $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 
 The electron app reads the configuration from `./build/electron-app/app/config.toml`, which is copied from the root `config.toml` file during `make clean && make dep`.
 
-If you configure `[server].webServerURL`, the electron app will replace the web contents (including `config.toml`) with the server-provided ones.
+If you configure `[server].webServerURL`, the electron app will load the web contents (including `config.toml`) from the designated server.
 The server may be either a `npm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
 This is known as the "web shell" mode and allows live edits of the web UI while running it inside the electron app.
 
