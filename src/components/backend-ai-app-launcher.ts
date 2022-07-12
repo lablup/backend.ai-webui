@@ -4,16 +4,16 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button';
-import '@material/mwc-checkbox';
+import {Checkbox} from '@material/mwc-checkbox';
 import '@material/mwc-icon-button';
-import '@material/mwc-textfield';
+import {TextField} from '@material/mwc-textfield';
 import 'macro-carousel';
 
 import './lablup-loading-spinner';
-import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -32,6 +32,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
@@ -58,6 +60,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
+  @query('#app-dialog') dialog!: BackendAIDialog;
+  @query('#app-port') appPort!: TextField;
+  @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
+  @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
+  @query('#app-launch-confirmation-dialog') appLaunchConfirmationDialog!: BackendAIDialog;
+  @query('#ssh-dialog') sshDialog!: BackendAIDialog;
+  @query('#tensorboard-dialog') tensorboardDialog!: BackendAIDialog;
+  @query('#terminal-guide') terminalGuideDialog!: BackendAIDialog;
+  @query('#vnc-dialog') vncDialog!: BackendAIDialog;
+  @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -65,7 +77,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.appSupportOption = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -245,9 +257,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     // add DonotShowOption dynamically
     this._createDonotShowOption();
     this.notification = globalThis.lablupNotification;
-    const checkbox = this.shadowRoot.querySelector('#hide-guide');
-    checkbox.addEventListener('change', (event) => {
-      if (!event.target.checked) {
+    const checkbox = this.shadowRoot?.querySelector('#hide-guide');
+    checkbox?.addEventListener('change', (event) => {
+      if (!(event.target as Checkbox).checked) {
         localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
@@ -454,10 +466,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
     this._toggleChkOpenToPublic();
-    const dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-uuid', sessionUuid);
-    dialog.setAttribute('access-key', accessKey);
-    this.shadowRoot.querySelector('#app-dialog').show();
+    this.dialog.setAttribute('session-uuid', sessionUuid);
+    this.dialog.setAttribute('access-key', accessKey);
+    this.dialog.show();
     return;
   }
 
@@ -465,7 +476,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Hide the app launcher.
    */
   _hideAppLauncher() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
+    this.dialog.hide();
   }
 
   async _resolveV1ProxyUri(sessionUuid: string, app: string): Promise<string | undefined> {
@@ -562,14 +573,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (!uri) {
       return Promise.resolve(false);
     }
-    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedClientIps = this.shadowRoot.querySelector('#allowed-client-ips')?.value;
-    let openToPublic = false;
-    if (openToPublicCheckBox == null) { // Null or undefined
-    } else {
-      openToPublic = openToPublicCheckBox.checked;
-      openToPublicCheckBox.checked = false;
-    }
+    const allowedClientIps = (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField).value;
+    const openToPublic = this.checkOpenToPublic.checked;
+    this.checkOpenToPublic.checked = false;
 
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
@@ -766,9 +772,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
-      const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
-      if (usePreferredPort && userPort) {
+      const userPort = parseInt(this.appPort.value);
+      if (this.checkPreferredPort && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
@@ -808,7 +813,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readSSHKey(sessionUuid) {
-    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
+    const downloadLinkEl = this.shadowRoot?.querySelector('#sshkey-download-link') as HTMLAnchorElement;
     const file = '/home/work/id_container';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     // TODO: This blob has additional leading letters in front of key texts.
@@ -854,48 +859,42 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param{Event} e
    */
   _openAppLaunchConfirmationDialog(e) {
-    const dialog = this.shadowRoot.querySelector('#app-launch-confirmation-dialog');
-    dialog.show();
+    this.appLaunchConfirmationDialog.show();
   }
 
   /**
    * Open a SSH dialog.
    */
   _openSSHDialog() {
-    const dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    dialog.show();
+    this.sshDialog.show();
   }
 
   /**
    * Open a VNC dialog.
    */
   _openVNCDialog() {
-    const dialog = this.shadowRoot.querySelector('#vnc-dialog');
-    dialog.show();
+    this.vncDialog.show();
   }
 
   /**
    * Open a XRDP dialog.
    */
   _openXRDPDialog() {
-    const dialog = this.shadowRoot.querySelector('#xrdp-dialog');
-    dialog.show();
+    this.xrdpDialog.show();
   }
 
   /**
    * Open a Tensorboard dialog for path input.
    */
   _openTensorboardDialog() {
-    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
-    dialog.show();
+    this.tensorboardDialog.show();
   }
 
   /**
    * Close a Tensorboard dialog.
    */
   _hideTensorboardDialog() {
-    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
-    dialog.hide();
+    this.tensorboardDialog.hide();
   }
 
   /**
@@ -903,7 +902,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
 
   async _addTensorboardPath(e) {
-    this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
+    this.tensorboardPath = (this.shadowRoot?.querySelector('#tensorboard-path') as TextField).value;
     const button = e.target;
     button.setAttribute('disabled', true);
     try {
@@ -940,16 +939,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Open a guide for terminal
    */
   _openTerminalGuideDialog() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    dialog.show();
+    this.terminalGuideDialog.show();
   }
 
   /**
    * Dynamically add Do not show Option
    */
   _createDonotShowOption() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    const lastChild = dialog.children[dialog.children.length - 1];
+    const lastChild = this.terminalGuideDialog.children[this.terminalGuideDialog.children.length - 1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'horizontal layout flex center');
 
@@ -975,10 +972,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const maxPortNumber = 65534;
     if (preferredPortNumber) {
       if (preferredPortNumber < minPortNumber || preferredPortNumber > maxPortNumber) {
-        this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+        this.appPort.value = defaultPreferredPortNumber.toString();
       }
     } else {
-      this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+      this.appPort.value = defaultPreferredPortNumber.toString();
     }
   }
 
@@ -986,8 +983,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Dynamically add Web Terminal Guide Carousel
    */
   _createTerminalGuide() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    const content = dialog.children[1];
+    const content = this.terminalGuideDialog.children[1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
@@ -1032,10 +1028,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   _toggleChkOpenToPublic() {
-    const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedClientIpsContainer = this.shadowRoot.querySelector('#allowed-client-ips-container');
-    if (!checkbox || !allowedClientIpsContainer) return;
-    if (checkbox.checked) {
+    const allowedClientIpsContainer = this.shadowRoot?.querySelector('#allowed-client-ips-container') as HTMLDivElement;
+    if (!this.checkOpenToPublic || !allowedClientIpsContainer) return;
+    if (this.checkOpenToPublic.checked) {
       allowedClientIpsContainer.style.display = 'block';
     } else {
       allowedClientIpsContainer.style.display = 'none';
