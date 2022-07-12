@@ -366,7 +366,12 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .horizontal-card > #resource-gauges > .monitor > .resource-name {
           width: 250px;
         }
-  
+        .horizontal-card > #resource-gauges {
+          display: grid !important;
+            grid-auto-flow: row;
+            grid-template-columns: repeat(auto-fill, 420px);
+        }
+
         @media screen and (min-width: 750px) {
           div#resource-gauges {
             display: flex !important;
