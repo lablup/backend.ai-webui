@@ -34,12 +34,11 @@ export default class BackendAISplash extends LitElement {
   @property({type: String}) version = '';
   @property({type: String}) managerVersion = '';
 
-
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -128,7 +127,7 @@ export default class BackendAISplash extends LitElement {
       <wl-dialog id="splash-panel" fixed backdrop blockscrolling persistent>
         <div class="splash-header">
           <img src="manifest/backend.ai-text.svg" style="height: 50px; padding: 35px 20px;" alt="backend.ai" />
-          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${() => this.hide()}">
+          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${this.hide}">
             <wl-icon>close</wl-icon>
           </wl-button>
         </div>

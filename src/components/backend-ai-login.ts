@@ -1338,6 +1338,7 @@ export default class BackendAILogin extends BackendAIPage {
     `;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'backend-ai-login': BackendAILogin;

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from 'lit-translate';
 
@@ -15,17 +15,16 @@ import {store} from '../store';
 
 import {navigate, updateOffline} from '../backend-ai-app';
 
-import '../plastics/mwc/mwc-drawer';
+import {Drawer} from '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-button';
 import '@material/mwc-icon';
-import '@material/mwc-icon-button';
+import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
-import '@material/mwc-list';
+import {List} from '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select';
 import '@material/mwc-circular-progress';
-import {Drawer} from '@material/mwc-drawer';
 import {Menu} from '@material/mwc-menu';
 import {TextField} from '@material/mwc-textfield';
 
@@ -44,14 +43,14 @@ import './backend-ai-resource-broker';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
-import BackendAiCommonUtils from './backend-ai-common-utils';
-import BackendAiDialog from './backend-ai-dialog';
-import BackendAiSettingsStore from './backend-ai-settings-store';
-import BackendAiTasker from './backend-ai-tasker';
+import BackendAICommonUtils from './backend-ai-common-utils';
+import BackendAIDialog from './backend-ai-dialog';
+import BackendAISettingsStore from './backend-ai-settings-store';
+import BackendAITasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 import './lablup-notification';
-import './lablup-terms-of-service';
+import LablupTermsOfService from './lablup-terms-of-service';
 import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
@@ -66,9 +65,9 @@ import '../plastics/mwc/mwc-multi-select';
 registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
-globalThis.backendaioptions = new BackendAiSettingsStore;
-globalThis.tasker = new BackendAiTasker;
-globalThis.backendaiutils = new BackendAiCommonUtils;
+globalThis.backendaioptions = new BackendAISettingsStore;
+globalThis.tasker = new BackendAITasker;
+globalThis.backendaiutils = new BackendAICommonUtils;
 
 /**
  Backend.AI Web UI
@@ -106,25 +105,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) groups = [];
   @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
-  @property({type: Object}) splash = Object();
-  @property({type: Object}) loginPanel = Object();
   @property({type: String}) _page = '';
   @property({type: String}) _lazyPage = '';
   @property({type: Object}) _pageParams = {};
-  @property({type: String}) _sidepanel = '';
+  @property({type: String}) _sidepanel: '' | 'feedback' | 'notification' | 'task' = '';
   @property({type: Boolean}) _drawerOpened = false;
   @property({type: Boolean}) _offlineIndicatorOpened = false;
   @property({type: Boolean}) _offline = false;
-  @property({type: Object}) _dropdownMenuIcon = Object();
   @property({type: Object}) config = Object();
   @property({type: Object}) notification;
-  @property({type: Object}) appBody;
-  @property({type: Object}) appPage;
-  @property({type: Object}) contentBody;
-  @property({type: Object}) mainToolbar;
-  @property({type: Object}) drawerToggleButton;
-  @property({type: Object}) sidebarMenu;
-  @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
@@ -147,6 +136,18 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
+  @query('#app-body') appBody!: Drawer;
+  @query('#app-page') appPage!: HTMLDivElement;
+  @query('#content-body') contentBody!: Drawer;
+  @query('#drawer-toggle-button') drawerToggleButton!: HTMLDivElement;
+  // TODO need investigation about class method undefined issue
+  // This issue occurred when importing exported class
+  @query('#login-panel') loginPanel: any;
+  @query('#main-toolbar') mainToolbar: any;
+  @query('#sidebar-menu') sidebarMenu!: List;
+  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
+  @query('backend-ai-splash') splash: any;
+  @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
 
   constructor() {
     super();
@@ -171,17 +172,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     globalThis.currentPage = this._page;
     globalThis.currentPageParams = this._pageParams;
     this.notification = globalThis.lablupNotification;
-    this.appBody = this.shadowRoot?.querySelector('#app-body');
-    this.appPage = this.shadowRoot?.querySelector('#app-page');
-    this.contentBody = this.shadowRoot?.querySelector('#content-body');
     this.contentBody.type = 'dismissible';
-    this.mainToolbar = this.shadowRoot?.querySelector('#main-toolbar');
-    this.drawerToggleButton = this.shadowRoot?.querySelector('#drawer-toggle-button');
-    this.sidebarMenu = this.shadowRoot?.getElementById('sidebar-menu');
-    this.splash = this.shadowRoot?.querySelector('#about-backendai-panel');
-    this.loginPanel = this.shadowRoot?.querySelector('#login-panel');
-    this.TOSdialog = this.shadowRoot?.querySelector('#terms-of-service');
-    this._dropdownMenuIcon = this.shadowRoot?.querySelector('#dropdown-button');
     if (globalThis.isElectron && navigator.platform.indexOf('Mac') >= 0) { // For macOS
       (this.shadowRoot?.querySelector('.portrait-canvas') as HTMLElement).style.visibility = 'hidden';
     }
@@ -192,7 +183,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       configPath = './config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(true));
       document.addEventListener('backend-ai-app-close', () => this.close_app_window(true));
-      document.addEventListener('backend-ai-show-splash', () => this.splash.show());
+      document.addEventListener('backend-ai-show-splash', () => this._showSplash());
     } else {
       configPath = '../../config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
@@ -444,7 +435,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName, returning = false): Promise<void> {
+  _parseConfig(fileName: string, returning = false): Promise<void> {
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -510,9 +501,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   toggleSidePanelType() {
     if (this.contentBody.type === 'dismissible') {
-      this.contentBody.type === 'modal';
+      this.contentBody.type = 'modal';
     } else {
-      this.contentBody.type === 'dismissible';
+      this.contentBody.type = 'dismissible';
     }
   }
 
@@ -521,7 +512,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    *
    * @param {string} panel
    */
-  _openSidePanel(panel): void {
+  _openSidePanel(panel: 'feedback' | 'notification' | 'task'): void {
     if (document.body.clientWidth < 750) {
       this.mini_ui = true;
       this._changeDrawerLayout(document.body.clientWidth, document.body.clientHeight, true);
@@ -651,7 +642,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    const dialog = this.shadowRoot?.querySelector<BackendAiDialog>('#user-preference-dialog');
+    const dialog = this.shadowRoot?.querySelector<BackendAIDialog>('#user-preference-dialog');
     dialog?.show();
   }
 
@@ -659,7 +650,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Hide the user preference dialog.
    */
   _hideUserPrefDialog() {
-    this.shadowRoot?.querySelector<BackendAiDialog>('#user-preference-dialog')?.hide();
+    this.shadowRoot?.querySelector<BackendAIDialog>('#user-preference-dialog')?.hide();
   }
 
   _togglePasswordVisibility(element) {
@@ -1289,6 +1280,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
   }
 
+  // @eventOptions({})
+  _showSplash() {
+    console.dir(this.splash);
+    console.dir(typeof this.splash);
+    this.splash.show();
+  }
+
   _hidePasswordChangeRequest() {
     const passwordChangeRequest = this.shadowRoot?.querySelector<HTMLDivElement>('#password-change-request')!;
     passwordChangeRequest.style.display = 'none';
@@ -1406,7 +1404,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   ·
                   <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t('webui.menu.PrivacyPolicy')}</a>
                   ·
-                  <a @click="${() => this.splash.show()}">${_t('webui.menu.AboutBackendAI')}</a>
+                  <a @click="${this._showSplash}">${_t('webui.menu.AboutBackendAI')}</a>
                   ${this.allow_signout === true ? html`
                   ·
                   <a @click="${() => this.loginPanel.signout()}">${_t('webui.menu.LeaveService')}</a>
@@ -1430,7 +1428,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 ·
                 <a style="color:forestgreen;" @click="${() => this.showPPAgreement()}">${_t('webui.menu.PrivacyPolicy')}</a>
                 ·
-                <a @click="${() => this.splash.show()}">${_t('webui.menu.AboutBackendAI')}</a>
+                <a @click="${this._showSplash}">${_t('webui.menu.AboutBackendAI')}</a>
                 ${this.allow_signout === true ? html`
                 ·
                 <a @click="${() => this.loginPanel.signout()}">${_t('webui.menu.LeaveService')}</a>
@@ -1492,7 +1490,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                               <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
+                          <mwc-list-item class="horizontal layout start center" @click="${this._showSplash}">
                               <mwc-icon class="dropdown-menu">info</mwc-icon>
                               <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
                           </mwc-list-item>
