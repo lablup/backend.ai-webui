@@ -68,7 +68,7 @@ web:
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
 mac_load_keychain:
-ifndef BAI_APP_SIGN_KEYCHAIN
+ifeq ($(BAI_APP_SIGN_KEYCHAIN),)
 ifdef BAI_APP_SIGN_KEYCHAIN_B64
 ifndef BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	$(error BAI_APP_SIGN_KEYCHAIN_PASSWORD is not defined)
