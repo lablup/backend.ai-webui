@@ -1,0 +1,31 @@
+# This workflow will triage pull requests and apply a label based on the
+# paths that are modified in the pull request.
+#
+# To use this workflow, you will need to set up a .github/labeler.yml
+# file with configuration.  For more information, see:
+# https://github.com/actions/labeler/blob/master/README.md
+
+name: Build macOS Desktop Application
+on: [push, release]
+
+jobs:
+  build_mac:
+    runs-on: [self-hosted, macOS, ARM64]
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v1
+      - name: Install Node.js and NPM
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16
+      - name: Install Dependencies
+        run: npm install
+      - name: Package Applications
+        env:
+          BAI_APP_SIGN: 1
+          BAI_APP_SIGN_APPLE_ID: ${{ secrets.BAI_APP_SIGN_APPLE_ID }}
+          BAI_APP_SIGN_APPLE_ID_PASSWORD: ${{ secrets.BAI_APP_SIGN_APPLE_ID_PASSWORD }}
+          BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
+          BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
+          BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
+        run: make mac
