@@ -34,6 +34,9 @@ compile_wsproxy:
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
+	if [ ! -f "./config.toml" ]; then \
+		cp config.toml.sample config.toml; \
+	fi
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \

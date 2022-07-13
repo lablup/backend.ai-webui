@@ -20,8 +20,6 @@ jobs:
           node-version: 16
       - name: Install Dependencies
         run: npm install
-      - name: Compile essential codes
-        run: make compile && make compile_wsproxy
       - name: Package Applications
         env:
           BAI_APP_SIGN: 1
@@ -30,4 +28,4 @@ jobs:
           BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
           BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
           BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
-        run: make web && make mac
+        run: make mac
