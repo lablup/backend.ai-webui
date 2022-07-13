@@ -11,6 +11,7 @@ on: [push, release]
 jobs:
   build_mac:
     runs-on: [self-hosted, macOS, ARM64]
+    environment: app-packaging
     steps:
       - name: Check out Git repository
         uses: actions/checkout@v1
@@ -21,5 +22,4 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Package Applications
-        environment: app-packaging
         run: make mac
