@@ -1210,7 +1210,7 @@ class Client {
     }
 
     if (serviceName === 'pipeline') {
-      uri = this._config.endpoint + '/flow' + queryString;
+      uri = this._config.endpoint + `/${serviceName}` + queryString;
       hdrs = new Headers({
         "Accept": content_type,
         // "Allow-Control-Allow-Origin": "*"
