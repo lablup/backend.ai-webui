@@ -65,10 +65,11 @@ web:
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
 mac_load_keychain:
+ifndef KEYCHAIN_NAME
 ifdef BAI_APP_SIGN_KEYCHAIN_B64
 ifndef BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	$(error BAI_APP_SIGN_KEYCHAIN_PASSWORD is not defined)
-endif
+endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	security create-keychain -p "" "${KEYCHAIN_NAME}"
 	security set-keychain-settings -lut 21600 "${KEYCHAIN_NAME}"
 	security unlock-keychain -p "" "${KEYCHAIN_NAME}"
@@ -79,7 +80,8 @@ endif
 	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
 	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
 	echo Keychain ${KEYCHAIN_NAME} created for build
-endif
+endif  # BAI_APP_SIGN_KEYCHAIN_B64
+endif  # KEYCHAIN_NAME
 mac: mac_intel mac_apple
 mac_intel: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
