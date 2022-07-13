@@ -68,7 +68,7 @@ web:
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
 mac_load_keychain:
-ifndef KEYCHAIN_NAME
+ifndef BAI_APP_SIGN_KEYCHAIN
 ifdef BAI_APP_SIGN_KEYCHAIN_B64
 ifndef BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	$(error BAI_APP_SIGN_KEYCHAIN_PASSWORD is not defined)
@@ -84,7 +84,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
-endif  # KEYCHAIN_NAME
+endif  # BAI_APP_SIGN_KEYCHAIN
 mac: mac_intel mac_apple
 mac_intel: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
