@@ -209,6 +209,10 @@ export default class BackendAIUserList extends BackendAIPage {
     });
   }
 
+  attributeChangedCallback(name: string, oldval: string | null, newval: string | null): void {
+    super.attributeChangedCallback(name, oldval, newval);
+  }
+
   /**
    * If active is true, change view state
    *
@@ -217,6 +221,7 @@ export default class BackendAIUserList extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
+      console.log('active false');
       return;
     }
     // If disconnected

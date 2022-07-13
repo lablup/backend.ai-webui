@@ -53,14 +53,6 @@ export class BackendAIPage extends LitElement {
     return this.active;
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-  }
-
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
@@ -71,6 +63,7 @@ export class BackendAIPage extends LitElement {
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
+
   /**
    * Hide the backend.ai dialog.
    *
