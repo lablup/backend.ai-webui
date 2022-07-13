@@ -21,11 +21,5 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Package Applications
-        env:
-          BAI_APP_SIGN: 1
-          BAI_APP_SIGN_APPLE_ID: ${{ app-packaging.BAI_APP_SIGN_APPLE_ID }}
-          BAI_APP_SIGN_APPLE_ID_PASSWORD: ${{ app-packaging.BAI_APP_SIGN_APPLE_ID_PASSWORD }}
-          BAI_APP_SIGN_IDENTITY: ${{ app-packaging.BAI_APP_SIGN_IDENTITY }}
-          BAI_APP_SIGN_KEYCHAIN_B64: ${{ app-packaging.BAI_APP_SIGN_KEYCHAIN_B64 }}
-          BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ app-packaging.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
+        environment: app-packaging
         run: make mac
