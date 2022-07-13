@@ -366,7 +366,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         .horizontal-card > #resource-gauges {
           display: grid !important;
           grid-auto-flow: row;
-          grid-template-columns: repeat(auto-fill, 420px);
+          grid-template-columns: repeat(auto-fill, 320px);
           justify-content: center;
         }
 
