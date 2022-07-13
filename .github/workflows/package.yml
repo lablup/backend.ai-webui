@@ -20,6 +20,8 @@ jobs:
           node-version: 16
       - name: Install Dependencies
         run: npm install
+      - name: Compile essential codes
+        run: make compile && make compile_wsproxy
       - name: Package Applications
         env:
           BAI_APP_SIGN: 1
