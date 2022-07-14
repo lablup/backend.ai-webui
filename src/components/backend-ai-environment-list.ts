@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -17,7 +17,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-spinner';
-import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -30,7 +30,7 @@ import 'weightless/select';
 import 'weightless/textfield';
 import 'weightless/label';
 
-import '@material/mwc-button/mwc-button';
+import {Button} from '@material/mwc-button/mwc-button';
 import '@material/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -46,6 +46,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Array}) images;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) servicePorts;
@@ -56,10 +58,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Object}) installImageDialog = Object();
-  @property({type: Object}) deleteImageDialog = Object();
   @property({type: Array}) installImageNameList;
   @property({type: Array}) deleteImageNameList;
   @property({type: Object}) deleteAppInfo = Object();
@@ -83,6 +82,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundBaseImageRenderer = this.baseImageRenderer.bind(this);
   @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
   @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
+  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#modify-image-cpu') modifyImageCpu!: Button;
+  @query('#modify-image-mem') modifyImageMemory!: Button;
+  @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
+  @query('#modify-image-cuda-fgpu') modifyImageCudaFGpu!: Button;
+  @query('#modify-image-rocm-gpu') modifyImageRocmGpu!: Button;
+  @query('#modify-image-tpu') modifyImageTpu!: Button;
+  @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
+  @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
+  @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -93,7 +102,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.servicePorts = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     // noinspection CssInvalidPropertyValue
     return [
       BackendAiStyles,
@@ -286,8 +295,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {string} id - Dialog component ID
    * @return {void}
    */
-  _hideDialogById(id) {
-    return this.shadowRoot.querySelector(id).hide();
+  _hideDialogById(id: string) {
+    return (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
   }
 
   /**
@@ -296,20 +305,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {string} id - Dialog component ID
    * @return {void}
    */
-  _launchDialogById(id) {
-    return this.shadowRoot.querySelector(id).show();
+  _launchDialogById(id: string) {
+    return (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
   /**
    * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
    */
   modifyImage() {
-    const cpu = this.shadowRoot.querySelector('#modify-image-cpu').label;
-    const mem = this.shadowRoot.querySelector('#modify-image-mem').label;
-    const gpu = this.shadowRoot.querySelector('#modify-image-cuda-gpu').label;
-    const fgpu = this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label;
-    const rocm_gpu = this.shadowRoot.querySelector('#modify-image-rocm-gpu').label;
-    const tpu = this.shadowRoot.querySelector('#modify-image-tpu').value;
+    const cpu = this.modifyImageCpu.label;
+    const mem = this.modifyImageMemory.label;
+    const gpu = this.modifyImageCudaGpu.label;
+    const fgpu = this.modifyImageCudaFGpu.label;
+    const rocm_gpu = this.modifyImageRocmGpu.label;
+    const tpu = this.modifyImageTpu.label;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
@@ -575,51 +584,51 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter((e) => e.key === 'cuda_shares').length === 0;
     this._rocm_gpu_disabled = resource_limits.filter((e) => e.key === 'rocm_device').length === 0;
     this._tpu_disabled = resource_limits.filter((e) => e.key === 'tpu_device').length === 0;
-    this.shadowRoot.querySelector('#modify-image-cpu').label = resource_limits[0].min;
+    this.modifyImageCpu.label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
-      this.shadowRoot.querySelector('#modify-image-cuda-gpu').label = resource_limits[1].min;
-      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
+      this.modifyImageCudaGpu.label = resource_limits[1].min;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
-      this.shadowRoot.querySelector('#modify-image-cuda-gpu').label = _t('environment.Disabled');
-      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = 0;
+      this.modifyImageCudaGpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
-      this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label = resource_limits[2].min;
-      this.shadowRoot.querySelector('mwc-slider#cuda-fgpu').value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
+      this.modifyImageCudaFGpu.label = resource_limits[2].min;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-fgpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
-      this.shadowRoot.querySelector('#modify-image-cuda-fgpu').label = _t('environment.Disabled');
-      this.shadowRoot.querySelector('mwc-slider#cuda-gpu').value = 0;
+      this.modifyImageCudaFGpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
     }
     if (!this._rocm_gpu_disabled) {
-      this.shadowRoot.querySelector('#modify-image-rocm-gpu').label = resource_limits[3].min;
-      this.shadowRoot.querySelector('mwc-slider#rocm-gpu').value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
+      this.modifyImageRocmGpu.label = resource_limits[3].min;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
-      this.shadowRoot.querySelector('#modify-image-rocm-gpu').label = _t('environment.Disabled');
-      this.shadowRoot.querySelector('mwc-slider#rocm-gpu').value = 0;
+      this.modifyImageRocmGpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
     }
     if (!this._tpu_disabled) {
-      this.shadowRoot.querySelector('#modify-image-tpu').label = resource_limits[4].min;
-      this.shadowRoot.querySelector('mwc-slider#tpu').value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
+      this.modifyImageTpu.label = resource_limits[4].min;
+      (this.shadowRoot?.querySelector('mwc-slider#tpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
-      this.shadowRoot.querySelector('#modify-image-tpu').label = _t('environment.Disabled');
-      this.shadowRoot.querySelector('mwc-slider#tpu').value = 0;
+      this.modifyImageTpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#tpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    this.shadowRoot.querySelector('#modify-image-mem').label = this._addUnit(resource_limits[mem_idx].min);
+    this.modifyImageMemory.label = this._addUnit(resource_limits[mem_idx].min);
 
-    this.shadowRoot.querySelector('mwc-slider#cpu').value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
+    (this.shadowRoot?.querySelector('mwc-slider#cpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
       return value === resource_limits[0].min;
     })[0]);
-    this.shadowRoot.querySelector('mwc-slider#mem').value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
+    (this.shadowRoot?.querySelector('mwc-slider#mem') as HTMLElementTagNameMap['mwc-slider']).value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
       return value === this._addUnit(resource_limits[mem_idx].min);
     })[0]);
 
@@ -627,8 +636,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _updateSliderLayout() {
-    this.shadowRoot.querySelectorAll('mwc-slider').forEach( (el) => {
-      el.layout();
+    console.log(this.shadowRoot?.querySelectorAll('mwc-slider'));
+    this.shadowRoot?.querySelectorAll('mwc-slider').forEach((el) => {
+      console.dir(el);
+      // el.layout();
     });
   }
 
@@ -659,10 +670,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @return {boolean} Whether the port is valid or not
    */
   _isServicePortValid() {
-    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
     const ports = new Set();
-    for (const row of rows) {
+    for (const row of rows as any) {
       const textFields = row.querySelectorAll('wl-textfield');
       if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
         continue;
@@ -700,7 +711,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @return {string} Service ports separated with comma
    */
   _parseServicePort() {
-    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
     const nonempty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
@@ -1129,7 +1140,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    */
   _removeRow() {
     this.deleteAppRow.remove();
-    this.shadowRoot.querySelector('#delete-app-info-dialog').hide();
+    this.deleteAppInfoDialog.hide();
     this.notification.text = _text('environment.AppInfoDeleted');
     this.notification.show();
   }
@@ -1138,7 +1149,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Add a row to the environment list.
    */
   _addRow() {
-    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const lastChild = container.children[container.children.length - 1];
     const div = this._createRow();
     container.insertBefore(div, lastChild);
@@ -1196,7 +1207,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this._removeRow();
     } else {
       this.deleteAppInfo = appInfo;
-      this.shadowRoot.querySelector('#delete-app-info-dialog').show();
+      this.deleteAppInfoDialog.show();
     }
   }
 
@@ -1204,7 +1215,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Clear rows from the environment list.
    */
   _clearRows() {
-    const container = this.shadowRoot.querySelector('#modify-app-container');
+    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row');
     const lastRow = rows[rows.length - 1];
 
@@ -1225,11 +1236,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
-    this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
-    this.deleteImageDialog = this.shadowRoot.querySelector('#delete-image-dialog');
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -1238,16 +1246,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else { // already connected
       this._getImages();
     }
-    this._grid = this.shadowRoot.querySelector('#testgrid');
+    this._grid = this.shadowRoot?.querySelector('#testgrid');
     this._grid.addEventListener('sorter-changed', (e) => {
       this._refreshSorter(e);
     });
 
     // uncheck every checked rows when dialog is closed
-    this.shadowRoot.querySelector('#install-image-dialog').addEventListener('didHide', () => {
+    this.installImageDialog.addEventListener('didHide', () => {
       this._uncheckSelectedRow();
     });
-    this.shadowRoot.querySelector('#delete-image-dialog').addEventListener('didHide', () => {
+    this.deleteImageDialog.addEventListener('didHide', () => {
       this._uncheckSelectedRow();
     });
   }
@@ -1521,8 +1529,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const currentVal= this._range[el.id].filter((value, index) => {
       return index === el.value;
     });
-    this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
-    this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];
+    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as Button).label = currentVal[0];
+    // TODO button does not have value property
+    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
   }
 }
 
