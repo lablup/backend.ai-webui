@@ -272,7 +272,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -762,18 +762,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-  * Set a TextEl value according to toggle checkbox checked state.
-  *
-  * @param {Event} e - Dispatches from the native input event each time the input changes.
-  */
+   * Set a textEl value according to toggle checkbox checked state.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
-    TextEl.disabled = checked;
-    if (!TextEl.disabled) {
-      if (TextEl.value === '') {
-        TextEl.value = TextEl.min ?? 0;
+    const textEl = checkEl.closest('div').querySelector('mwc-textfield');
+    textEl.disabled = checked;
+    if (!textEl.disabled) {
+      if (textEl.value === '') {
+        textEl.value = textEl.min ?? 0;
       }
     }
   }
@@ -785,8 +785,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   */
   _validateResourceInput(e) {
     const textfield = e.target.closest('mwc-textfield');
-    const checkbox_el = textfield.closest('div').querySelector('wl-label.unlimited');
-    const checkbox = checkbox_el ? checkbox_el.querySelector('wl-checkbox') : null;
+    const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
+    const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
     const countDecimals = (value: number) => {
       return value % 1 ? value.toString().split('.')[1].length : 0;
     };
@@ -795,9 +795,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       textfield.value = Math.round(textfield.value);
     }
 
+    if (textfield.value <= 0) {
+      // concurrency job and container-per-session limit must be upper than 0.
+      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
+    }
+
     if (!textfield.valid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
-      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      if (decimal_point > 0) {
+        textfield.value = Math.min(textfield.value, (textfield.value < 0) ? textfield.min : textfield.max).toFixed(decimal_point);
+      } else {
+        textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      }
     }
     // automatically check when textfield is min
     if (checkbox) {
