@@ -1,5 +1,4 @@
-
-# backend.ai-webui
+# Backend.AI Web UI
 
 [![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui)
 
@@ -414,10 +413,16 @@ Note: Packaging macOS disk image requires electron-installer-dmg to make macOS d
 
 Note: There are two Electron configuration files, `main.js` and `main.electron-packager.js`. Local Electron run uses `main.js`, not `main.electron-packager.js` that is used for real Electron app.
 
-```
-$ make dep # Compile with app dependencies
+```console
+$ make dep            # Compile with app dependencies
 $ npm run electron:d  # OR, ./node_modules/electron/cli.js .
 ```
+
+The electron app reads the configuration from `./build/electron-app/app/config.toml`, which is copied from the root `config.toml` file during `make clean && make dep`.
+
+If you configure `[server].webServerURL`, the electron app will load the web contents (including `config.toml`) from the designated server.
+The server may be either a `npm run server:d` instance or a `./py -m ai.backend.web.server` daemon from the mono-repo.
+This is known as the "web shell" mode and allows live edits of the web UI while running it inside the electron app.
 
 ### Localization
 Locale resources are JSON files located in `resources/i18n`.
