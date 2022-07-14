@@ -26,13 +26,11 @@ import {
 
 @customElement('backend-ai-error-log-view')
 export default class BackendAIErrorLogView extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Object}) _lists = Object();
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -51,7 +49,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._lists = this.shadowRoot.querySelectorAll('backend-ai-session-list');
+    this._lists = this.shadowRoot?.querySelectorAll('backend-ai-session-list');
   }
 
   render() {

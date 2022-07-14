@@ -5,7 +5,7 @@
 
 import {translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -40,6 +40,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-error-log-list')
 export default class BackendAiErrorLogList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) timestamp = '';
   @property({type: String}) errorType = '';
   @property({type: String}) requestUrl = '';
@@ -49,7 +51,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;
@@ -63,13 +64,9 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) boundMethodRenderer = this.methodRenderer.bind(this);
   @property({type: Object}) boundReqUrlRenderer = this.reqUrlRender.bind(this);
   @property({type: Object}) boundParamRenderer = this.paramRenderer.bind(this);
+  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
 
-
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -124,11 +121,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._updatePageItemSize();
-    this._grid = this.shadowRoot.querySelector('#list-grid');
+    this._grid = this.shadowRoot?.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 275px)!important';
+      (this.shadowRoot?.querySelector('vaadin-grid') as HTMLElementTagNameMap['vaadin-grid']).style.height = 'calc(100vh - 275px)!important';
     }
     this.notification = globalThis.lablupNotification;
     document.addEventListener('log-message-refresh', () => this._refreshLogData());
