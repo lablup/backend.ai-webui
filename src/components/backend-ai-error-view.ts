@@ -28,13 +28,11 @@ import {navigate} from '../backend-ai-app';
 
 @customElement('backend-ai-error-view')
 export default class BackendAIErrorView extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Number}) error_code = 404;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

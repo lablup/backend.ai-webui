@@ -46,6 +46,8 @@ import {
 
 @customElement('backend-ai-experiment-view')
 export default class BackendAIExperimentView extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   public supports: any;
   public resourceLimits: any;
   public userResourceLimit: any;
@@ -133,7 +135,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     return 'backend-ai-experiment-view';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -246,11 +248,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
    * @param {HTMLElement} tab - tab element
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.value) as HTMLElement).style.display = 'block';
   }
 
   /**
