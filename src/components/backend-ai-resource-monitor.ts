@@ -716,7 +716,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _toggleResourceGauge(e) {
     const legend = this.shadowRoot.querySelector('#resource-legend');
     if (e.target.selected) {
-      this.resourceGauge.style.display = 'flex';
+      this.resourceGauge.style.visibility = 'visible';
       if (legend) {
         legend.style.display = 'flex';
       }
@@ -725,7 +725,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resourceGauge.style.right = '20px';
       }
     } else {
-      this.resourceGauge.style.display = 'none';
+      this.resourceGauge.style.visibility = 'collapse';
       if (legend) {
         legend.style.display = 'none';
       }
