@@ -221,7 +221,6 @@ export default class BackendAIUserList extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      console.log('active false');
       return;
     }
     // If disconnected

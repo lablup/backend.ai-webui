@@ -411,7 +411,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    * @param {Boolean} is_active
    */
-  _mutateKey(e, is_active) {
+  _mutateKey(e, is_active: boolean) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     const original: any = this.keypairs.find(this._findKeyItem, accessKey);
