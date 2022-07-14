@@ -40,15 +40,13 @@ import './backend-ai-registry-list';
 
 @customElement('backend-ai-environment-view')
 export default class BackendAIEnvironmentView extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) images = Object();
   @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _activeTab = 'image-lists';
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -128,7 +126,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
    *
    * @param {Boolean} active
    */
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return true;
@@ -150,12 +148,12 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
    * @param {any} tab - tab webcomponent that has 'title' property
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
   }
 
   render() {
