@@ -904,6 +904,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </mwc-switch>
         </div>
       </div>
+      ${this.direction === 'vertical' ? html`
       <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
         <div class="layout horizontal center start-justified resource-legend-stack">
           <div class="resource-legend-icon start"></div>
@@ -913,7 +914,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="resource-legend-icon end"></div>
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
-      </div>
+      </div>` : html`
+      <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
+        <div class="layout horizontal center end-justified resource-legend-stack">
+          <div class="resource-legend-icon start"></div>
+          <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
+        </div>
+        <div class="layout horizontal center end-justified">
+          <div class="resource-legend-icon end"></div>
+          <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
+        </div>
+      </div>`}
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />
