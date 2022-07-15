@@ -414,8 +414,8 @@ export default class BackendAICredentialView extends BackendAIPage {
     await this._getResourcePolicies();
     this._readVFolderHostInfo();
     // TODO refactor component internal access
-    this.newPolicyNameInput.mdcFoundation.setValid(true);
-    this.newPolicyNameInput.isUiValid = true;
+    (this.newPolicyNameInput as any).mdcFoundation.setValid(true);
+    (this.newPolicyNameInput as any).isUiValid = true;
     this.newPolicyNameInput.value = '';
     this.newPolicyDialog.show();
   }
