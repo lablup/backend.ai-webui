@@ -19,15 +19,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Dump current env
-        run: /bin/sh -c "env > /tmp/env_result"
-        env:
-          BAI_APP_SIGN: 1
-          BAI_APP_SIGN_APPLE_ID: ${{ secrets.BAI_APP_SIGN_APPLE_ID }}
-          BAI_APP_SIGN_APPLE_ID_PASSWORD: ${{ secrets.BAI_APP_SIGN_APPLE_ID_PASSWORD }}
-          BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
-          BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
-          BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
       - name: Install Dependencies
         run: npm install
       - name: Package Applications
