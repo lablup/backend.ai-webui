@@ -9,17 +9,17 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import '@material/mwc-button';
-import '@material/mwc-checkbox/mwc-checkbox';
-import '@material/mwc-icon-button';
+import {Button} from '@material/mwc-button';
+import {Checkbox} from '@material/mwc-checkbox/mwc-checkbox';
+import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
-import '@material/mwc-select';
-import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-slider';
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -28,7 +28,7 @@ import '@vaadin/vaadin-text-field/vaadin-text-field';
 import '@vaadin/vaadin-date-time-picker/vaadin-date-time-picker';
 
 import 'weightless/checkbox';
-import 'weightless/expansion';
+import {Expansion} from 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
 
@@ -61,7 +61,8 @@ import {
 
 @customElement('backend-ai-session-launcher')
 export default class BackendAiSessionLauncher extends BackendAIPage {
-  @query('#image-name') manualImageName;
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
@@ -165,7 +166,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) ownerGroups;
   @property({type: Array}) ownerScalingGroups;
   @property({type: Boolean}) project_resource_monitor = false;
-  @property({type: Object}) version_selector = Object();
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
   @property({type: String}) _helpDescription = '';
@@ -198,6 +198,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'environment': '',
     'version': ['']
   };
+  @query('#image-name') manualImageName;
+  @query('#version') version_selector!: Select;
+  @query('#environment') environment!: Select;
+  @query('#owner-group') ownerGroupSelect!: Select;
+  @query('#scaling-groups') scalingGroups!: Select;
+  @query('#resource-templates') resourceTemplatesSelect!: Select;
+  @query('#owner-scaling-group') ownerScalingGroupSelect!: Select;
+  @query('#owner-accesskey') ownerAccesskeySelect!: Select;
+  @query('#owner-email') ownerEmailInput!: TextField;
+  @query('#vfolder-mount-preview') vfolderMountPreview!: Expansion;
+  @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
+  @query('#launch-button') launchButton!: Button;
+  @query('#prev-button') prevButton!: IconButton;
+  @query('#next-button') nextButton!: IconButton;
+  @query('#OpenMPSwitch') openMPSwitch!: Switch;
+  @query('#cpu-resource') cpuResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#gpu-resource') gpuResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#mem-resource') memoryResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#shmem-resource') sharedMemoryResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#session-resource') sessionResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#cluster-size') clusterSizeSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
+  @query('vaadin-date-time-picker') dateTimePicker!: HTMLElementTagNameMap['vaadin-date-time-picker'];
+  @query('#new-session-dialog') newSessionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#modify-env-dialog') modifyEnvDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#launch-confirmation-dialog') launchConfirmationDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#help-description') helpDescriptionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
 
   constructor() {
     super();
@@ -215,7 +242,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return 'backend-ai-session-launcher';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -829,19 +856,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.shadowRoot.querySelector('#environment').addEventListener('selected', this.updateLanguage.bind(this));
-    this.version_selector = this.shadowRoot.querySelector('#version');
+    this.environment.addEventListener('selected', this.updateLanguage.bind(this));
     this.version_selector.addEventListener('selected', () => {
       this.updateResourceAllocationPane();
     });
 
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
     });
 
-    this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
+    this.resourceGauge = this.shadowRoot?.querySelector('#resource-gauges');
     document.addEventListener('backend-ai-group-changed', (e) => {
       this._updatePageVariables(true);
     });
@@ -849,7 +875,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // Fires when broker is updated.
     });
     if (this.hideLaunchButton === true) {
-      this.shadowRoot.querySelector('#launch-session').style.display = 'none';
+      (this.shadowRoot?.querySelector('#launch-session') as HTMLElement).style.display = 'none';
     }
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -893,11 +919,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
-    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
-    modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+    this.modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const currentEnv = {};
-      const container = this.shadowRoot.querySelector('#modify-env-container');
-      const rows = container.querySelectorAll('.row:not(.header)');
+      const container = this.shadowRoot?.querySelector('#modify-env-container');
+      const rows = container?.querySelectorAll('.row:not(.header)');
 
       // allow any input in variable or value
       const nonempty = (row) => Array.prototype.filter.call(
@@ -934,13 +959,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (!isEquivalent(currentEnv, this.environ_values)) {
         this.openDialog('env-config-confirmation');
       } else {
-        modifyEnvDialog.closeWithConfirmation = false;
+        this.modifyEnvDialog.closeWithConfirmation = false;
         this.closeDialog('modify-env-dialog');
       }
     });
     this.currentIndex = 1;
-    this.progressLength = this.shadowRoot.querySelectorAll('.progress').length;
-    this._grid = this.shadowRoot.querySelector('#vfolder-grid');
+    this.progressLength = this.shadowRoot?.querySelectorAll('.progress').length;
+    this._grid = this.shadowRoot?.querySelector('#vfolder-grid');
     // Tricks to close expansion if window size changes
     globalThis.addEventListener('resize', () => {
       document.body.dispatchEvent(new Event('click'));
@@ -965,20 +990,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * An element should update based on some state not triggered by setting a property.
    * */
   _updateSelectedScalingGroup() {
-    const Sgroups = this.shadowRoot.querySelector('#scaling-groups');
     this.scaling_groups = this.resourceBroker.scaling_groups;
-    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
+    const selectedSgroup = this.scalingGroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
     if (this.resourceBroker.scaling_group === '' || typeof selectedSgroup == 'undefined') {
       setTimeout(() => {
         this._updateSelectedScalingGroup();
       }, 500);
       return;
     }
-    const idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(-1);
-    Sgroups.select(idx);
-    Sgroups.value = selectedSgroup.value;
-    Sgroups.requestUpdate();
+    const idx = this.scalingGroups.items.indexOf(selectedSgroup);
+    this.scalingGroups.select(-1);
+    this.scalingGroups.select(idx);
+    this.scalingGroups.value = selectedSgroup.value;
+    this.scalingGroups.requestUpdate();
   }
 
   /**
@@ -1021,8 +1045,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       for (const folder of this.selectedVfolders) {
         if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
           delete this.folderMapping[folder];
-          this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
-          await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+          (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+          await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
           return Promise.resolve(true);
         }
       }
@@ -1073,9 +1097,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       environmentString = nameFragments[0];
       versionArray = nameFragments.slice(-1)[0].split('-');
-    } else if (this.kernel !== undefined && this.version_selector.disabled === false) {
+    } else if (this.kernel !== undefined && this.version_selector?.disabled === false) {
       environmentString = this.kernel;
-      versionArray = this.version_selector.selectedText.split('/');
+      // TODO remove protected field access
+      versionArray = (this.version_selector as any).selectedText.split('/');
     } else {
       return false;
     }
@@ -1163,7 +1188,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
-      const ownershipPanel = this.shadowRoot.querySelector('wl-expansion[name="ownership"]');
+      const ownershipPanel = this.shadowRoot?.querySelector('wl-expansion[name="ownership"]') as Expansion;
       if (globalThis.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
@@ -1174,7 +1199,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._refreshResourcePolicy();
       this.requestUpdate();
       this._toggleScheduleTime(!this.useScheduledTime);
-      this.shadowRoot.querySelector('#new-session-dialog').show();
+      this.newSessionDialog.show();
     }
   }
 
@@ -1203,8 +1228,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (vfoldersCount !== undefined && vfoldersCount > 0) {
         return this._newSession();
       } else {
-        const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
-        confirmationDialog.show();
+        this.launchConfirmationDialog.show();
       }
     } else {
       this._moveToLastProgress();
@@ -1215,11 +1239,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Make a new session.
    * */
   _newSession() {
-    const confirmationDialog = this.shadowRoot.querySelector('#launch-confirmation-dialog');
-    confirmationDialog.hide();
+    this.launchConfirmationDialog.hide();
     let kernel;
     let version;
-    let architecture = undefined;
+    let architecture: string | undefined;
     if (this.manualImageName && this.manualImageName.value) {
       const nameFragments = this.manualImageName.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
@@ -1229,20 +1252,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // When the "Environment" dropdown is disabled after typing the image name manually,
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
       // That's why we need if-else block here.
-      const selectedItem = this.shadowRoot.querySelector('#environment').selected;
-      kernel = selectedItem.id;
-      version = this.shadowRoot.querySelector('#version').selected.value;
-      architecture = this.shadowRoot.querySelector('#version').selected.getAttribute('architecture');
+      const selectedItem = this.environment.selected;
+      kernel = selectedItem?.id;
+      version = this.version_selector.selected?.value;
+      architecture = this.version_selector.selected?.getAttribute('architecture') ?? undefined;
     }
-    this.sessionType = this.shadowRoot.querySelector('#session-type').value;
-    let sessionName = this.shadowRoot.querySelector('#session-name').value;
-    const isSessionNameValid = this.shadowRoot.querySelector('#session-name').checkValidity();
+    this.sessionType = (this.shadowRoot?.querySelector('#session-type') as Select).value;
+    let sessionName = (this.shadowRoot?.querySelector('#session-name') as TextField).value;
+    const isSessionNameValid = (this.shadowRoot?.querySelector('#session-name') as TextField).checkValidity();
     const vfolder = this.selectedVfolders;
-    this.cpu_request = parseInt(this.shadowRoot.querySelector('#cpu-resource').value);
-    this.mem_request = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
-    this.shmem_request = parseFloat(this.shadowRoot.querySelector('#shmem-resource').value);
-    this.gpu_request = parseFloat(this.shadowRoot.querySelector('#gpu-resource').value);
-    this.session_request = parseInt(this.shadowRoot.querySelector('#session-resource').value);
+    this.cpu_request = parseInt(this.cpuResouceSlider.value);
+    this.mem_request = parseFloat(this.memoryResouceSlider.value);
+    this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
+    this.gpu_request = parseFloat(this.gpuResouceSlider.value);
+    this.session_request = parseInt(this.sessionResouceSlider.value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = _text('session.launcher.DuplicatedSessionName');
@@ -1260,7 +1283,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.scaling_group = this.shadowRoot.querySelector('#scaling-groups').value;
+    this.scaling_group = this.scalingGroups.value;
     const config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
@@ -1271,12 +1294,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['cluster_size'] = this.cluster_size;
     }
     config['maxWaitSeconds'] = 15;
-    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    const ownerEnabled = this.shadowRoot?.querySelector('#owner-enabled') as Checkbox;
     if (ownerEnabled && ownerEnabled.checked) {
-      config['group_name'] = this.shadowRoot.querySelector('#owner-group').value;
+      config['group_name'] = this.ownerGroupSelect.value;
       config['domain'] = this.ownerDomain;
-      config['scaling_group'] = this.shadowRoot.querySelector('#owner-scaling-group').value;
-      config['owner_access_key'] = this.shadowRoot.querySelector('#owner-accesskey').value;
+      config['scaling_group'] = this.ownerScalingGroupSelect.value;
+      config['owner_access_key'] = this.ownerAccesskeySelect.value;
       if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
         this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
         this.notification.show();
@@ -1303,8 +1326,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config[this.gpu_mode] = this.gpu_request;
       }
     }
-    if (String(this.shadowRoot.querySelector('#mem-resource').value) === 'Infinity') {
-      config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
+    if (String(this.memoryResouceSlider.value) === 'Infinity') {
+      config['mem'] = String(this.memoryResouceSlider.value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
@@ -1340,11 +1363,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['bootstrap_script'] = this.importScript;
     }
     if (this.sessionType === 'batch') {
-      const editor = this.shadowRoot.querySelector('lablup-codemirror#command-editor');
+      const editor = this.shadowRoot?.querySelector('#command-editor') as HTMLElementTagNameMap['lablup-codemirror'];
       config['startupCommand'] = editor.getValue();
 
-      const scheduledTime = this.shadowRoot.querySelector('vaadin-date-time-picker').value;
-      const useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
+      const scheduledTime = this.dateTimePicker.value;
+      const useScheduledTime = this.useScheduledTimeSwitch.selected;
       if (scheduledTime && useScheduledTime) {
         // modify client timezone offset
         const getClientTimezoneOffset = () => {
@@ -1359,9 +1382,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.environ_values !== {}) {
       config['env'] = this.environ_values;
     }
-    if (this.shadowRoot.querySelector('#OpenMPswitch').selected === false) {
-      const openMPCoreValue = this.shadowRoot.querySelector('#OpenMPCore').value;
-      const openBLASCoreValue = this.shadowRoot.querySelector('#OpenBLASCore').value;
+    if (this.openMPSwitch.selected === false) {
+      const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
+      const openBLASCoreValue = (this.shadowRoot?.querySelector('#OpenBLASCore') as TextField).value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
@@ -1371,8 +1394,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
-    this.shadowRoot.querySelector('#launch-button').disabled = true;
-    this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.Preparing');
+    this.launchButton.disabled = true;
+    this.launchButtonMessage.textContent = _text('session.Preparing');
     this.notification.text = _text('session.PreparingSession');
     this.notification.show();
 
@@ -1396,9 +1419,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.architecture, item.config), '', 'session');
     });
     Promise.all(createSessionQueue).then((res: any) => {
-      this.shadowRoot.querySelector('#new-session-dialog').hide();
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.newSessionDialog.hide();
+      this.launchButton.disabled = false;
+      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
       this._resetProgress();
       setTimeout(() => {
         this.metadata_updating = true;
@@ -1460,8 +1483,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.launchButton.disabled = false;
+      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
     });
   }
 
@@ -1508,7 +1531,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _hideSessionDialog() {
-    this.shadowRoot.querySelector('#new-session-dialog').hide();
+    this.newSessionDialog.hide();
   }
 
   _aliasName(value) {
@@ -1622,9 +1645,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         // there are available resources for the selected image.
         this.version_selector.select(1);
         this.version_selector.value = this.versions[0].version;
-        this.version_selector.architecture = this.versions[0].architecture;
+        // TODO define extended type for custom property
+        (this.version_selector as any).architecture = this.versions[0].architecture;
         // this.version_selector.selectedText = this.version_selector.value;
-        this._updateVersionSelectorText(this.version_selector.value, this.version_selector.architecture);
+        // TODO define extended type for custom property
+        this._updateVersionSelectorText(this.version_selector.value, (this.version_selector as any).architecture);
         this.version_selector.disabled = false;
         this.environ_values = {};
         this.updateResourceAllocationPane('update versions');
@@ -1635,7 +1660,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   /**
    * Update version_selector's selectedText.
    *
-   * @param {any} text - version
+   * @param {any} version
+   * @param {any} architecture
    * */
   _updateVersionSelectorText(version, architecture) {
     const res = this._getVersionInfo(version, architecture);
@@ -1643,7 +1669,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     res.forEach((item) => {
       resultArray.push(item.tag);
     });
-    this.version_selector.selectedText = resultArray.join(' / ');
+    // TODO remove protected field access
+    (this.version_selector as any).selectedText = resultArray.join(' / ');
   }
 
   /**
@@ -1742,7 +1769,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         return this.updateResourceAllocationPane('after refresh resource policy');
       });
     }
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+    const selectedItem = this.environment.selected;
     const selectedVersionItem = this.version_selector.selected;
     // Pulldown is not ready yet.
     if (selectedVersionItem === null) {
@@ -1799,16 +1826,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
-      this.shadowRoot.querySelector('#cpu-resource').disabled = false;
-      this.shadowRoot.querySelector('#mem-resource').disabled = false;
-      this.shadowRoot.querySelector('#gpu-resource').disabled = false;
+      this.cpuResouceSlider.disabled = false;
+      this.memoryResouceSlider.disabled = false;
+      this.gpuResouceSlider.disabled = false;
       if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
         this.cluster_size = 1;
-        this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+        this.clusterSizeSlider.value = this.cluster_size;
       }
-      this.shadowRoot.querySelector('#session-resource').disabled = false;
-      this.shadowRoot.querySelector('#launch-button').disabled = false;
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.sessionResouceSlider.disabled = false;
+      this.launchButton.disabled = false;
+      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
@@ -1841,7 +1868,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cpu_metric.min = cpu_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#cpu-resource').disabled = true;
+            this.cpuResouceSlider.disabled = true;
           }
           this.cpu_metric = cpu_metric;
           // monkeypatch for cluster_metric max size
@@ -1875,7 +1902,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+            this.gpuResouceSlider.disabled = true;
           }
           this.cuda_device_metric = cuda_device_metric;
         }
@@ -1900,7 +1927,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+            this.gpuResouceSlider.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
@@ -1955,7 +1982,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               mem_metric.min = mem_metric.max;
               disableLaunch = true;
             }
-            this.shadowRoot.querySelector('#mem-resource').disabled = true;
+            this.memoryResouceSlider.disabled = true;
           }
           mem_metric.min = Number(mem_metric.min.toFixed(2));
           mem_metric.max = Number(mem_metric.max.toFixed(2));
@@ -1978,7 +2005,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           shmem_metric.min = shmem_metric.max;
           disableLaunch = true;
         }
-        this.shadowRoot.querySelector('#shmem-resource').disabled = true;
+        this.sharedMemoryResouceSlider.disabled = true;
       }
       shmem_metric.min = Number(shmem_metric.min.toFixed(2));
       shmem_metric.max = Number(shmem_metric.max.toFixed(2));
@@ -1986,8 +2013,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       // GPU metric
       if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
-        this.shadowRoot.querySelector('#gpu-resource').value = 0;
+        this.gpuResouceSlider.disabled = true;
+        this.gpuResouceSlider.value = 0;
         if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
@@ -2007,69 +2034,69 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.resource_templates_filtered = this.resource_templates;
         }
       } else {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        this.shadowRoot.querySelector('#gpu-resource').value = this.cuda_device_metric.max;
+        this.gpuResouceSlider.disabled = false;
+        this.gpuResouceSlider.value = this.cuda_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
       if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
         const resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
-        this.shadowRoot.querySelector('#resource-templates').layout(true).then(() => {
-          return this.shadowRoot.querySelector('#resource-templates').layoutOptions();
+        this.resourceTemplatesSelect.layout(true).then(() => {
+          return this.resourceTemplatesSelect.layoutOptions();
         }).then(() => {
-          this.shadowRoot.querySelector('#resource-templates').select(1);
+          this.resourceTemplatesSelect.select(1);
         });
       } else {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
       if (disableLaunch) {
-        this.shadowRoot.querySelector('#cpu-resource').disabled = true; // Not enough CPU. so no session.
-        this.shadowRoot.querySelector('#mem-resource').disabled = true;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
-        this.shadowRoot.querySelector('#session-resource').disabled = true;
-        this.shadowRoot.querySelector('#shmem-resource').disabled = true;
-        this.shadowRoot.querySelector('#launch-button').disabled = true;
-        this.shadowRoot.querySelector('.allocation-check').display = 'none';
+        this.cpuResouceSlider.disabled = true; // Not enough CPU. so no session.
+        this.memoryResouceSlider.disabled = true;
+        this.gpuResouceSlider.disabled = true;
+        this.sessionResouceSlider.disabled = true;
+        this.sharedMemoryResouceSlider.disabled = true;
+        this.launchButton.disabled = true;
+        (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'none';
         if (this.cluster_support) {
-          this.shadowRoot.querySelector('#cluster-size').disabled = true;
+          this.clusterSizeSlider.disabled = true;
         }
-        this.shadowRoot.querySelector('#launch-button-msg').textContent = _text('session.launcher.NotEnoughResource');
+        this.launchButtonMessage.textContent = _text('session.launcher.NotEnoughResource');
       } else {
-        this.shadowRoot.querySelector('#cpu-resource').disabled = false;
-        this.shadowRoot.querySelector('#mem-resource').disabled = false;
-        this.shadowRoot.querySelector('#gpu-resource').disabled = false;
-        this.shadowRoot.querySelector('#session-resource').disabled = false;
-        this.shadowRoot.querySelector('#shmem-resource').disabled = false;
-        this.shadowRoot.querySelector('#launch-button').disabled = false;
-        this.shadowRoot.querySelector('.allocation-check').display = 'block';
+        this.cpuResouceSlider.disabled = false;
+        this.memoryResouceSlider.disabled = false;
+        this.gpuResouceSlider.disabled = false;
+        this.sessionResouceSlider.disabled = false;
+        this.sharedMemoryResouceSlider.disabled = false;
+        this.launchButton.disabled = false;
+        (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'block';
         if (this.cluster_support) {
-          this.shadowRoot.querySelector('#cluster-size').disabled = false;
+          this.clusterSizeSlider.disabled = false;
         }
       }
       if (this.cuda_device_metric.min == this.cuda_device_metric.max &&
           this.cuda_device_metric.max < 1) {
-        this.shadowRoot.querySelector('#gpu-resource').disabled = true;
+        this.gpuResouceSlider.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         // this.shadowRoot.querySelector('#cluster-size').disabled = true;
-        this.shadowRoot.querySelector('#session-resource').min = 1;
-        this.shadowRoot.querySelector('#session-resource').max = 2;
-        this.shadowRoot.querySelector('#session-resource').value = 1;
-        this.shadowRoot.querySelector('#session-resource').disabled = true;
+        this.sessionResouceSlider.min = 1;
+        this.sessionResouceSlider.max = 2;
+        this.sessionResouceSlider.value = 1;
+        this.sessionResouceSlider.disabled = true;
       }
       if (this.max_containers_per_session <= 1 && this.cluster_mode === 'single-node') {
-        this.shadowRoot.querySelector('#cluster-size').min = 1;
-        this.shadowRoot.querySelector('#cluster-size').max = 2;
-        this.shadowRoot.querySelector('#cluster-size').value = 1;
-        this.shadowRoot.querySelector('#cluster-size').disabled = true;
+        this.clusterSizeSlider.min = 1;
+        this.clusterSizeSlider.max = 2;
+        this.clusterSizeSlider.value = 1;
+        this.clusterSizeSlider.disabled = true;
       }
       this.metric_updating = false;
     }
   }
 
   updateLanguage() {
-    const selectedItem = this.shadowRoot.querySelector('#environment').selected;
+    const selectedItem = this.environment.selected;
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
@@ -2123,9 +2150,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._helpDescriptionTitle = _text('session.launcher.FolderAlias');
     this._helpDescription = _text('session.launcher.DescFolderAlias');
     this._helpDescriptionIcon = '';
-    const pathDialog = this.shadowRoot.querySelector('#help-description');
     // setTimeout(() => this.setPathContent(pathDialog, this.helpDescTagCount(this._helpDescription)));
-    pathDialog.show();
+    this.helpDescriptionDialog.show();
   }
 
   helpDescTagCount(helpDescription) {
@@ -2152,8 +2178,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       div.appendChild(pathCheckbox);
       div.appendChild(checkboxMsg);
       pathContentLastChild.appendChild(div);
-      const eventCheckbox = this.shadowRoot.querySelector('#hide-guide');
-      eventCheckbox.addEventListener('change', (event) => {
+      const eventCheckbox = this.shadowRoot?.querySelector('#hide-guide');
+      eventCheckbox?.addEventListener('change', (event) => {
         if (event.target !== null) {
           event.stopPropagation();
           const eventTarget = event.target as HTMLInputElement;
@@ -2172,7 +2198,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (folder in this.folderMapping) {
         delete this.folderMapping[folder];
       }
-      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
       return Promise.resolve(true);
     }
     if (folder !== alias) {
@@ -2180,8 +2206,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
         delete this.folderMapping[folder];
-        this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
-        await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+        (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+        await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
         return Promise.resolve(false);
       }
       for (const f in this.folderMapping) { // Prevent alias overlapping
@@ -2190,14 +2216,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             this.notification.text = _text('session.launcher.FolderAliasOverlapping');
             this.notification.show();
             delete this.folderMapping[folder];
-            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
-            await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+            (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+            await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
             return Promise.resolve(false);
           }
         }
       }
       this.folderMapping[folder] = alias;
-      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
       return Promise.resolve(true);
     }
     return Promise.resolve(true);
@@ -2214,8 +2240,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return false;
   }
 
+  /**
+   * @deprecated it does not used now
+   */
   _toggleAdvancedSettings() {
-    this.shadowRoot.querySelector('#advanced-resource-settings').toggle();
+    (this.shadowRoot?.querySelector('#advanced-resource-settings') as any).toggle();
   }
 
   /**
@@ -2234,7 +2263,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _setClusterSize(e) {
     this.cluster_size = e.target.value > 0 ? Math.round(e.target.value) : 0;
-    this.shadowRoot.querySelector('#cluster-size').value = this.cluster_size;
+    this.clusterSizeSlider.value = this.cluster_size;
     let maxSessionCount = 1;
     if (globalThis.backendaiclient.supports('multi-container')) {
       if (this.cluster_size > 1) {
@@ -2255,14 +2284,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _setSessionLimit(maxValue = 1) {
-    const sessionSlider = this.shadowRoot.querySelector('#session-resource');
     if (maxValue > 0) {
-      sessionSlider.value = maxValue;
+      this.sessionResouceSlider.value = maxValue;
       this.session_request = maxValue;
-      sessionSlider.disabled = true;
+      this.sessionResouceSlider.disabled = true;
     } else {
-      sessionSlider.max = this.concurrency_limit;
-      sessionSlider.disabled = false;
+      this.sessionResouceSlider.max = this.concurrency_limit;
+      this.sessionResouceSlider.disabled = false;
     }
   }
 
@@ -2317,10 +2345,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
-    this.shadowRoot.querySelector('#cpu-resource').value = cpu;
-    this.shadowRoot.querySelector('#mem-resource').value = mem;
-    this.shadowRoot.querySelector('#gpu-resource').value = gpu_value;
-    this.shadowRoot.querySelector('#shmem-resource').value = this.shmem_request;
+    this.cpuResouceSlider.value = cpu;
+    this.memoryResouceSlider.value = mem;
+    this.gpuResouceSlider.value = gpu_value;
+    this.sharedMemoryResouceSlider.value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;
@@ -2350,9 +2378,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
-    const environment = this.shadowRoot.querySelector('#environment');
     // await environment.updateComplete; async way.
-    const obj = environment.items.find((o) => o.value === this.default_language);
+    const obj = this.environment.items.find((o) => o.value === this.default_language);
     if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
@@ -2360,8 +2387,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 500);
       return Promise.resolve(true);
     }
-    const idx = environment.items.indexOf(obj);
-    environment.select(idx);
+    const idx = this.environment.items.indexOf(obj!);
+    this.environment.select(idx);
     this._default_language_updated = true;
     return Promise.resolve(true);
   }
@@ -2376,12 +2403,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _fetchSessionOwnerGroups() {
     if (!this.ownerFeatureInitialized) {
-      this.shadowRoot.querySelector('#owner-group').addEventListener('selected', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.ownerGroupSelect.addEventListener('selected', this._fetchSessionOwnerScalingGroups.bind(this));
       this.ownerFeatureInitialized = true;
     }
-    const ownerEmail = this.shadowRoot.querySelector('#owner-email');
-    const email = ownerEmail.value;
-    if (!ownerEmail.checkValidity()) {
+    const email = this.ownerEmailInput.value;
+    if (!this.ownerEmailInput.checkValidity()) {
       this.notification.text = _text('credential.validation.InvalidEmailAddress');
       this.notification.show();
       this.ownerKeypairs = [];
@@ -2391,7 +2417,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     /* Fetch keypair */
     const keypairs = await globalThis.backendaiclient.keypair.list(email, ['access_key']);
-    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
+    const ownerEnabled = this.shadowRoot?.querySelector('#owner-enabled') as Checkbox;
     this.ownerKeypairs = keypairs.keypairs;
     if (this.ownerKeypairs.length < 1) {
       this.notification.text = _text('session.launcher.NoActiveKeypair');
@@ -2402,9 +2428,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.ownerGroups = [];
       return;
     }
-    this.shadowRoot.querySelector('#owner-accesskey').layout(true).then(()=>{
-      this.shadowRoot.querySelector('#owner-accesskey').select(0);
-      this.shadowRoot.querySelector('#owner-accesskey').createAdapter().setSelectedText(this.ownerKeypairs[0]['access_key']);
+    this.ownerAccesskeySelect.layout(true).then(()=>{
+      this.ownerAccesskeySelect.select(0);
+      (this.ownerAccesskeySelect as any).createAdapter().setSelectedText(this.ownerKeypairs[0]['access_key']);
     });
 
     /* Fetch domain / group information */
@@ -2412,16 +2438,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerDomain = userInfo.user.domain_name;
     this.ownerGroups = userInfo.user.groups;
     if (this.ownerGroups) {
-      this.shadowRoot.querySelector('#owner-group').layout(true).then(()=>{
-        this.shadowRoot.querySelector('#owner-group').select(0);
-        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerGroups[0]['name']);
+      this.ownerGroupSelect.layout(true).then(()=>{
+        this.ownerGroupSelect.select(0);
+        // remove protected property usage
+        (this.ownerGroupSelect as any).createAdapter().setSelectedText(this.ownerGroups[0]['name']);
       });
     }
     ownerEnabled.disabled = false;
   }
 
   async _fetchSessionOwnerScalingGroups() {
-    const group = this.shadowRoot.querySelector('#owner-group').value;
+    const group = this.ownerGroupSelect.value;
     if (!group) {
       this.ownerScalingGroups = [];
       return;
@@ -2429,16 +2456,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sgroupInfo = await globalThis.backendaiclient.scalingGroup.list(group);
     this.ownerScalingGroups = sgroupInfo.scaling_groups;
     if (this.ownerScalingGroups) {
-      this.shadowRoot.querySelector('#owner-scaling-group').layout(true).then(()=>{
-        this.shadowRoot.querySelector('#owner-scaling-group').select(0);
-        this.shadowRoot.querySelector('#owner-group').createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
+      this.ownerScalingGroupSelect.layout(true).then(()=>{
+        this.ownerScalingGroupSelect.select(0);
+        // TODO remove protected field usage
+        (this.ownerGroupSelect as any).createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
       });
     }
   }
 
   async _fetchDelegatedSessionVfolder() {
-    const ownerEnabled = this.shadowRoot.querySelector('#owner-enabled');
-    const userEmail = this.shadowRoot.querySelector('#owner-email').value;
+    const ownerEnabled = this.shadowRoot?.querySelector('#owner-enabled') as Checkbox;
+    const userEmail = this.ownerEmailInput.value;
     if (this.ownerKeypairs.length > 0 && ownerEnabled && ownerEnabled.checked) {
       await this.resourceBroker.updateVirtualFolderList(userEmail);
       this.vfolders = this.resourceBroker.vfolders;
@@ -2468,11 +2496,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     e.stopPropagation();
     const name = item.kernelname;
     if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
-      const desc = this.shadowRoot.querySelector('#help-description');
-      this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
-      this._helpDescription = this.resourceBroker.imageInfo[name].description;
-      this._helpDescriptionIcon = item.icon;
-      desc.show();
+      // TODO define extended type for custom properties
+      (this.helpDescriptionDialog as any)._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
+      (this.helpDescriptionDialog as any)._helpDescription = this.resourceBroker.imageInfo[name].description;
+      (this.helpDescriptionDialog as any)._helpDescriptionIcon = item.icon;
+      this.helpDescriptionDialog.show();
     } else {
       if (name in this.imageInfo) {
         this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
@@ -2523,8 +2551,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._helpDescriptionTitle = resource_description[item].name;
       this._helpDescription = resource_description[item].desc;
       this._helpDescriptionIcon = '';
-      const desc = this.shadowRoot.querySelector('#help-description');
-      desc.show();
+      this.helpDescriptionDialog.show();
     }
   }
 
@@ -2532,12 +2559,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     e.stopPropagation();
     this._helpDescriptionTitle = _text('session.launcher.EnvironmentVariableTitle');
     this._helpDescription = _text('session.launcher.DescSetEnv');
-    const desc = this.shadowRoot.querySelector('#help-description');
-    desc.show();
+    this.helpDescriptionDialog.show();
   }
 
   _resourceTemplateToCustom() {
-    this.shadowRoot.querySelector('#resource-templates').selectedText = _text('session.launcher.CustomResourceApplied');
+    // TODO remove protected property assignment
+    (this.resourceTemplatesSelect as any).selectedText = _text('session.launcher.CustomResourceApplied');
   }
 
   /**
@@ -2580,9 +2607,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _changeTotalAllocationPane() {
     this._deleteAllocationPaneShadow();
-    const cluster_size = this.shadowRoot.querySelector('#cluster-size').value;
+    const cluster_size = this.clusterSizeSlider.value;
     if (cluster_size > 1) {
-      const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+      const container = this.shadowRoot?.querySelector('#resource-allocated-box-shadow') as HTMLDivElement;
       for (let i = 0; i < Math.min(6, cluster_size-1); i = i + 1) {
         const item = document.createElement('div');
         item.classList.add('horizontal', 'layout', 'center', 'center-justified', 'resource-allocated-box', 'allocation-shadow');
@@ -2595,31 +2622,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
-      this.shadowRoot.querySelector('#total-allocation-pane').appendChild(container);
+      this.shadowRoot?.querySelector('#total-allocation-pane')?.appendChild(container);
     }
   }
 
   _deleteAllocationPaneShadow() {
-    const container = this.shadowRoot.querySelector('#resource-allocated-box-shadow');
+    const container = this.shadowRoot?.querySelector('#resource-allocated-box-shadow') as HTMLDivElement;
     container.innerHTML = '';
   }
 
   _updateShmemLimit() {
-    const shmemEl = this.shadowRoot.querySelector('#shmem-resource');
-    const currentMemLimit = parseFloat(this.shadowRoot.querySelector('#mem-resource').value);
-    let shmemValue = shmemEl.value;
+    const currentMemLimit = parseFloat(this.memoryResouceSlider.value);
+    let shmemValue = this.sharedMemoryResouceSlider.value;
     // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     // shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmemValue) > currentMemLimit) {
       shmemValue = currentMemLimit;
       this.shmem_request = shmemValue;
-      shmemEl.value = shmemValue;
-      shmemEl.max = shmemValue;
+      this.sharedMemoryResouceSlider.value = shmemValue;
+      this.sharedMemoryResouceSlider.max = shmemValue;
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     } else if (this.max_shm_per_container > shmemValue) {
-      shmemEl.max = currentMemLimit > this.max_shm_per_container ? this.max_shm_per_container : currentMemLimit;
+      this.sharedMemoryResouceSlider.max = currentMemLimit > this.max_shm_per_container ? this.max_shm_per_container : currentMemLimit;
     }
   }
 
@@ -2664,6 +2690,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version
+   * @param {any} architecture
    * @return {Record<string, unknown>} Array containing information object
    * */
   _getVersionInfo(version, architecture) {
@@ -2716,8 +2743,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
-      element.onKeyDown = (e) => {
+    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
+      // TODO remove protected property assignment
+      (element as any).onKeyDown = (e) => {
         const enterKey = 13;
         if (e.keyCode === enterKey) {
           e.preventDefault();
@@ -2746,10 +2774,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {string} value - environment variable value
    */
   _appendEnvRow(name = '', value = '') {
-    const container = this.shadowRoot.querySelector('#modify-env-container');
-    const lastChild = container.children[container.children.length - 1];
+    const container = this.shadowRoot?.querySelector('#modify-env-container');
+    const lastChild = container?.children[container.children.length - 1];
     const div = this._createEnvRow(name, value);
-    container.insertBefore(div, lastChild.nextSibling);
+    container?.insertBefore(div, lastChild?.nextSibling as ChildNode);
   }
   /**
    * Create a row in the environment variable list.
@@ -2802,8 +2830,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Remove empty env input fields
    */
   _removeEmptyEnv() {
-    const container = this.shadowRoot.querySelector('#modify-env-container');
-    const rows = container.querySelectorAll('.row.extra');
+    const container = this.shadowRoot?.querySelector('#modify-env-container');
+    const rows = container?.querySelectorAll('.row.extra');
     const empty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
     ).length === 2;
@@ -2816,9 +2844,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   modifyEnv() {
     this._parseEnvVariableList();
     this._saveEnvVariableList();
-    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
-    modifyEnvDialog.closeWithConfirmation = false;
-    modifyEnvDialog.hide();
+    this.modifyEnvDialog.closeWithConfirmation = false;
+    this.modifyEnvDialog.hide();
     this.notification.text = _text('session.launcher.EnvironmentVariableConfigurationDone');
     this.notification.show();
   }
@@ -2830,9 +2857,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.environ.forEach((item: any, index) => {
       const firstIndex = 0;
       if (index === firstIndex) {
-        const container = this.shadowRoot.querySelector('#modify-env-container');
-        const firstRow = container.querySelector('.row:not(.header)');
-        const envFields = firstRow.querySelectorAll('wl-textfield');
+        const container = this.shadowRoot?.querySelector('#modify-env-container');
+        const firstRow = container?.querySelector('.row:not(.header)');
+        const envFields = firstRow?.querySelectorAll('wl-textfield');
         Array.prototype.forEach.call(envFields, (elem: any, index) => {
           elem.value = (index === firstIndex) ? item.name : item.value;
         });
@@ -2847,9 +2874,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _showEnvDialog() {
     this._removeEmptyEnv();
-    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
-    modifyEnvDialog.closeWithConfirmation = true;
-    modifyEnvDialog.show();
+    this.modifyEnvDialog.closeWithConfirmation = true;
+    this.modifyEnvDialog.show();
   }
 
   /**
@@ -2860,9 +2886,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._clearRows();
     this._loadEnv();
     this.closeDialog('env-config-confirmation');
-    const modifyEnvDialog = this.shadowRoot.querySelector('#modify-env-dialog');
-    modifyEnvDialog.closeWithConfirmation = false;
-    modifyEnvDialog.hide();
+    this.modifyEnvDialog.closeWithConfirmation = false;
+    this.modifyEnvDialog.hide();
   }
 
   /**
@@ -2870,8 +2895,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _parseEnvVariableList() {
     this.environ_values = {};
-    const container = this.shadowRoot.querySelector('#modify-env-container');
-    const rows = container.querySelectorAll('.row:not(.header)');
+    const container = this.shadowRoot?.querySelector('#modify-env-container');
+    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
     ).length === 0;
@@ -2893,8 +2918,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _resetEnvironmentVariables() {
     this.environ = [];
     this.environ_values = {};
-    const dialog = this.shadowRoot.querySelector('#modify-env-dialog');
-    if (dialog !== null) {
+    if (this.modifyEnvDialog !== null) {
       this._clearRows();
     }
   }
@@ -2903,8 +2927,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Clear rows from the environment variable.
    */
   _clearRows() {
-    const container = this.shadowRoot.querySelector('#modify-env-container');
-    const rows = container.querySelectorAll('.row:not(.header)');
+    const container = this.shadowRoot?.querySelector('#modify-env-container');
+    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const firstRow = rows[0];
 
     // remain first row element and clear values
@@ -2913,17 +2937,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     // delete extra rows
-    container.querySelectorAll('.row.extra').forEach((e) => {
+    container?.querySelectorAll('.row.extra').forEach((e) => {
       e.remove();
     });
   }
 
   openDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
   closeDialog(id) {
-    this.shadowRoot.querySelector('#' + id).hide();
+    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
   }
 
   /**
@@ -2932,23 +2956,21 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
   async moveProgress(n) {
-    const currentProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
+    const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
     // limit the range of progress number
     if (this.currentIndex > this.progressLength) {
       this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, this.progressLength, 1);
     }
-    const movedProgressEl = this.shadowRoot.querySelector('#progress-0' + this.currentIndex);
-    const prevButton = this.shadowRoot.querySelector('#prev-button');
-    const nextButton = this.shadowRoot.querySelector('#next-button');
+    const movedProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
 
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
 
-    prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
-    nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
-    if (!this.shadowRoot.querySelector('#launch-button').disabled) {
-      this.shadowRoot.querySelector('#launch-button-msg').textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
+    this.prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
+    this.nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
+    if (!this.launchButton.disabled) {
+      this.launchButtonMessage.textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
     }
 
     // if (this.currentIndex == 2) {
@@ -2991,22 +3013,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _toggleEnvironmentSelectUI() {
-    const SelectedEnvironment = this.shadowRoot.querySelector('mwc-select#environment');
-    const SelectedVersions = this.shadowRoot.querySelector('mwc-select#version');
     const isManualImageEnabled = this.manualImageName?.value ? true : false;
-    SelectedEnvironment.disabled = SelectedVersions.disabled = isManualImageEnabled;
+    this.environment.disabled = this.version_selector.disabled = isManualImageEnabled;
     // select none(-1) when manual image is enabled
     const selectedIndex = isManualImageEnabled ? -1 : 1;
-    SelectedEnvironment.select(selectedIndex);
-    SelectedVersions.select(selectedIndex);
+    this.environment.select(selectedIndex);
+    this.version_selector.select(selectedIndex);
   }
 
   /**
    * Show HPC optimization options only if OpenMPswitch is not checked.
    */
   _toggleHPCOptimization() {
-    const isOpenMPChecked = this.shadowRoot.querySelector('#OpenMPswitch').selected;
-    this.shadowRoot.querySelector('#HPCOptimizationOptions').style.display = isOpenMPChecked ? 'none' : 'block';
+    const isOpenMPChecked = this.openMPSwitch.selected;
+    (this.shadowRoot?.querySelector('#HPCOptimizationOptions') as HTMLDivElement).style.display = isOpenMPChecked ? 'none' : 'block';
   }
 
   /**
@@ -3017,10 +3037,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _toggleStartUpCommandEditor(e) {
     this.sessionType = e.target.value;
     const isBatchmode: boolean = (this.sessionType === 'batch');
-    const startUpCommandEditor = this.shadowRoot.querySelector('#batch-mode-config-section');
+    const startUpCommandEditor = this.shadowRoot?.querySelector('#batch-mode-config-section') as HTMLDivElement;
     startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
     if (isBatchmode) {
-      const editor = this.shadowRoot.querySelector('#command-editor');
+      const editor = this.shadowRoot?.querySelector('#command-editor') as HTMLElementTagNameMap['lablup-codemirror'];
       editor.refresh();
       editor.focus();
     }
@@ -3031,8 +3051,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _toggleScheduleTimeDisplay() {
-    this.useScheduledTime = this.shadowRoot.querySelector('#use-scheduled-time').selected;
-    this.shadowRoot.querySelector('vaadin-date-time-picker').style.display = this.useScheduledTime ? 'block': 'none';
+    this.useScheduledTime = this.useScheduledTimeSwitch.selected;
+    this.dateTimePicker.style.display = this.useScheduledTime ? 'block': 'none';
     this._toggleScheduleTime(!this.useScheduledTime);
   }
 
@@ -3064,24 +3084,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return date.getFullYear() + '-' + (date.getMonth()+1) + '-' + date.getDate() +
             'T' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
     };
-    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
     let currentTime = new Date();
     const extraMinutes = 60 * 2 * 1000;
     // add 2min
     let futureTime = new Date(currentTime.getTime() + extraMinutes);
     // disable scheduling in past
-    schedulerEl.min = getFormattedTime(currentTime);
+    this.dateTimePicker.min = getFormattedTime(currentTime);
     // schedulerEl.value = getFormattedTime(futureTime);
 
-    if (schedulerEl.value && schedulerEl.value !== '') {
-      const scheduledTime = new Date(schedulerEl.value).getTime();
+    if (this.dateTimePicker.value && this.dateTimePicker.value !== '') {
+      const scheduledTime = new Date(this.dateTimePicker.value).getTime();
       currentTime = new Date();
       if (scheduledTime <= currentTime.getTime()) {
         futureTime = new Date(currentTime.getTime() + extraMinutes);
-        schedulerEl.value = getFormattedTime(futureTime);
+        this.dateTimePicker.value = getFormattedTime(futureTime);
       }
     } else {
-      schedulerEl.value = getFormattedTime(futureTime);
+      this.dateTimePicker.value = getFormattedTime(futureTime);
     }
     this._setRelativeTimeStamp();
   }
@@ -3111,11 +3130,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       return _text('session.launcher.InfiniteTime');
     };
-    const schedulerEl = this.shadowRoot.querySelector('vaadin-date-time-picker');
-    if (schedulerEl.invalid) {
-      schedulerEl.helperText = _text('session.launcher.ResetStartTime');
+    if (this.dateTimePicker?.invalid) {
+      this.dateTimePicker.helperText = _text('session.launcher.ResetStartTime');
     } else {
-      schedulerEl.helperText = _text('session.launcher.SessionStartTime') + getRelativeTime(+new Date(schedulerEl.value));
+      this.dateTimePicker.helperText = _text('session.launcher.SessionStartTime') + getRelativeTime(+new Date(this.dateTimePicker.value));
     }
   }
 
@@ -3295,8 +3313,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </mwc-select>
                 </div>
                 <div class="horizontal layout start-justified center">
-                <mwc-checkbox id="owner-enabled">
-                </mwc-checkbox>
+                <mwc-checkbox id="owner-enabled"></mwc-checkbox>
                 <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
@@ -3498,7 +3515,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div>${_t('webui.menu.Sessions')}</div>
                   <mwc-icon-button slot="meta" icon="info" class="fg info"
                     @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
-                  </mwc-list-item>   
+                  </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
