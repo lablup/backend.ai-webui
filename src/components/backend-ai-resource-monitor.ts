@@ -724,8 +724,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         this.resourceGauge.style.left = '20px';
         this.resourceGauge.style.right = '20px';
       }
+      [...this.resourceGauge.children].forEach((elem) => {
+        elem.style.display = '';
+      });
     } else {
       this.resourceGauge.style.visibility = 'collapse';
+      [...this.resourceGauge.children].forEach((elem) => {
+        elem.style.display = 'none';
+      });
       if (legend) {
         legend.style.display = 'none';
       }
