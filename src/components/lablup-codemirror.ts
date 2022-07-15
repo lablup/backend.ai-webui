@@ -136,3 +136,9 @@ export default class LablupCodemirror extends LitElement {
     `;
   }
 }
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'lablup-codemirror': LablupCodemirror;
+  }
+}
