@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -40,6 +40,8 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 
 @customElement('backend-ai-resource-panel')
 export default class BackendAIResourcePanel extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
   @property({type: Number}) agents = 0;
@@ -69,17 +71,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Number}) height = 0;
+  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -194,7 +192,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
