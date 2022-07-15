@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -25,12 +25,12 @@ import 'weightless/textfield';
 import 'weightless/title';
 import 'weightless/expansion';
 
-import '@material/mwc-switch/mwc-switch';
+import {Switch} from '@material/mwc-switch/mwc-switch';
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
+import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-textarea/mwc-textarea';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
+import {TextArea} from '@material/mwc-textarea/mwc-textarea';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -52,6 +52,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-resource-group-list')
 export default class BackendAIResourceGroupList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Array}) domains;
   @property({type: Object}) resourceGroupInfo;
@@ -66,6 +68,16 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @property({type: Boolean}) enableSchedulerOpts = false;
   @property({type: Boolean}) enableWSProxyAddr = false;
   @property({type: Number}) functionCount = 0;
+  @query('#resource-group-name') resourceGroupNameInput!: TextField;
+  @query('#resource-group-description') resourceGroupDescriptionInput!: TextArea;
+  @query('#resource-group-domain') resourceGroupDomainSelect!: Select;
+  @query('#resource-group-scheduler') resourceGroupSchedulerSelect!: Select;
+  @query('#resource-group-active') resourceGroupActiveSwitch!: Switch;
+  @query('#resource-group-wsproxy-address') resourceGroupWSProxyaddressInput!: TextField;
+  @query('#allowed-session-types') allowedSessionTypesSelect!: Select;
+  @query('#num-retries-to-skip') numberOfRetriesToSkip!: TextField;
+  @query('#pending-timeout') timeoutInput!: TextField;
+  @query('#delete-resource-group') deleteResourceGroupInput!: TextField;
 
   constructor() {
     super();
@@ -76,7 +88,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -224,10 +236,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
@@ -306,12 +314,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     );
   }
 
-  _launchDialogById(id) {
-    this.shadowRoot.querySelector(id).show();
+  _launchDialogById(id: string) {
+    (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
-  _hideDialogById(id) {
-    this.shadowRoot.querySelector(id).hide();
+  _hideDialogById(id: string) {
+    (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
   }
 
   /**
@@ -344,17 +352,16 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
   _validateResourceGroupName() {
     const resourceGroupNames = this.resourceGroups.map((resourceGroup) => resourceGroup['name']);
-    const resourceGroupInfo = this.shadowRoot.querySelector('#resource-group-name');
-    resourceGroupInfo.validityTransform = (value, nativeValidity) => {
+    this.resourceGroupNameInput.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          resourceGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupNameRequired');
+          this.resourceGroupNameInput.validationMessage = _text('resourceGroup.ResourceGroupNameRequired');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
         } else {
-          resourceGroupInfo.validationMessage = _text('resourceGroup.EnterValidResourceGroupName');
+          this.resourceGroupNameInput.validationMessage = _text('resourceGroup.EnterValidResourceGroupName');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -363,7 +370,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       } else {
         const isValid = !resourceGroupNames.includes(value);
         if (!isValid) {
-          resourceGroupInfo.validationMessage = _text('resourceGroup.ResourceGroupAlreadyExist');
+          this.resourceGroupNameInput.validationMessage = _text('resourceGroup.ResourceGroupAlreadyExist');
         }
         return {
           valid: isValid,
@@ -377,12 +384,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * Create resource group(scaling group) and associate resource group(scaling group) with domain.
    * */
   _createResourceGroup() {
-    const ResourceGroupNameEl = this.shadowRoot.querySelector('#resource-group-name');
-    if (ResourceGroupNameEl.checkValidity() && this._verifyCreateSchedulerOpts()) {
+    if (this.resourceGroupNameInput.checkValidity() && this._verifyCreateSchedulerOpts()) {
       this._saveSchedulerOpts();
-      const resourceGroupName = ResourceGroupNameEl.value;
-      const description = this.shadowRoot.querySelector('#resource-group-description').value;
-      const domain = this.shadowRoot.querySelector('#resource-group-domain').value;
+      const resourceGroupName = this.resourceGroupNameInput.value;
+      const description = this.resourceGroupDescriptionInput.value;
+      const domain = this.resourceGroupDomainSelect.value;
       const input = {
         description: description,
         is_active: true,
@@ -395,7 +401,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         input['scheduler_opts'] = JSON.stringify(this.schedulerOpts);
       }
       if (this.enableWSProxyAddr) {
-        const wsproxyAddress = this.shadowRoot.querySelector('#resource-group-wsproxy-address').value;
+        const wsproxyAddress = this.resourceGroupWSProxyaddressInput.value;
         input['wsproxy_addr'] = wsproxyAddress;
       }
       globalThis.backendaiclient.scalingGroup.create(resourceGroupName, input)
@@ -414,8 +420,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           if (res.ok) {
             this.notification.text = _text('resourceGroup.ResourceGroupCreated');
             this._refreshList();
-            this.shadowRoot.querySelector('#resource-group-name').value = '';
-            this.shadowRoot.querySelector('#resource-group-description').value = '';
+            this.resourceGroupNameInput.value = '';
+            this.resourceGroupDescriptionInput.value = '';
           } else {
             this.notification.text = PainKiller.relieve(res.title);
             this.notification.detail = res.msg;
@@ -443,18 +449,17 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       return;
     }
     this._saveSchedulerOpts();
-    const description = this.shadowRoot.querySelector('#resource-group-description').value;
-    const scheduler = this.shadowRoot.querySelector('#resource-group-scheduler').value;
-    const is_active = this.shadowRoot.querySelector('#resource-group-active').checked;
+    const scheduler = this.resourceGroupSchedulerSelect.value;
+    const is_active = this.resourceGroupActiveSwitch.selected;
     const schedulerOptions = this.schedulerOpts;
     const name = this.resourceGroupInfo.name;
 
     const input = {};
-    if (description !== this.resourceGroupInfo.description) input['description'] = description;
+    if (this.resourceGroupDescriptionInput !== this.resourceGroupInfo.description) input['description'] = this.resourceGroupDescriptionInput;
     if (scheduler !== this.resourceGroupInfo.scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.resourceGroupInfo.is_active) input['is_active'] = is_active;
     if (this.enableWSProxyAddr) {
-      let wsproxy_addr: string = this.shadowRoot.querySelector('#resource-group-wsproxy-address').value;
+      let wsproxy_addr: string = this.resourceGroupWSProxyaddressInput.value;
       if (wsproxy_addr.endsWith('/')) {
         wsproxy_addr = wsproxy_addr.slice(0, wsproxy_addr.length - 1);
       }
@@ -489,7 +494,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
 
   _deleteResourceGroup() {
     const name = this.resourceGroupInfo.name;
-    if (this.shadowRoot.querySelector('#delete-resource-group').value !== name) {
+    if (this.deleteResourceGroupInput.value !== name) {
       this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
       this._hideDialogById('#delete-resource-group-dialog');
       this.notification.show();
@@ -501,7 +506,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         if (delete_scaling_group.ok) {
           this.notification.text = _text('resourceGroup.ResourceGroupDeleted');
           this._refreshList();
-          this.shadowRoot.querySelector('#delete-resource-group').value = '';
+          this.deleteResourceGroupInput.value = '';
         } else {
           this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
           this.notification.detail = delete_scaling_group.msg;
@@ -524,18 +529,15 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
-    const schedulerOptsInputForms = this.shadowRoot.querySelector('#scheduler-options-input-form');
+    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as HTMLElementTagNameMap['wl-expansion'];
 
-    allowedSessionTypes.value= 'both';
+    this.allowedSessionTypesSelect.value= 'both';
     schedulerOptsInputForms.checked = false;
-    if (pendingTimeout?.value) {
-      pendingTimeout.value = '';
+    if (this.timeoutInput?.value) {
+      this.timeoutInput.value = '';
     }
-    if (numRetriesToSkip?.value) {
-      numRetriesToSkip.value = '';
+    if (this.numberOfRetriesToSkip?.value) {
+      this.numberOfRetriesToSkip.value = '';
     }
   }
 
@@ -546,20 +548,16 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * @param {Any} value - scheduler option value in selected resource group(scaling group)
    * */
   _initializeModifySchedulerOpts(name = '', value: any) {
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
-
     if ('allowed_session_types' === name) {
       if (value.includes('interactive') && value.includes('batch')) {
-        allowedSessionTypes.value = 'both';
+        this.allowedSessionTypesSelect.value = 'both';
       } else {
-        allowedSessionTypes.value = value[0];
+        this.allowedSessionTypesSelect.value = value[0];
       }
     } else if ('pending_timeout' === name) {
-      pendingTimeout.value = value;
+      this.timeoutInput.value = value;
     } else if ('config' === name) {
-      numRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
+      this,this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
     } else {
       // other scheduler options
     }
@@ -571,11 +569,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifyCreateSchedulerOpts() {
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
-
-    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => !fn.checkValidity());
+    const validityCheckResult = [
+      this.allowedSessionTypesSelect,
+      this.timeoutInput,
+      this.numberOfRetriesToSkip
+    ].filter((fn) => !fn.checkValidity());
 
     if (validityCheckResult.length > 0) {
       return false;
@@ -589,11 +587,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * @return {Boolean} key-value is valid => true, key-value is invalid => false
    * */
   _verifyModifySchedulerOpts() {
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
-
-    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => !fn.checkValidity());
+    const validityCheckResult = [
+      this.allowedSessionTypesSelect,
+      this.timeoutInput,
+      this.numberOfRetriesToSkip
+    ].filter((fn) => !fn.checkValidity());
 
     if (validityCheckResult.length > 0) {
       return false;
@@ -606,22 +604,19 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _saveSchedulerOpts() {
     this.schedulerOpts = {};
-    const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
-    const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
-    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
-    if (allowedSessionTypes.value === 'both') {
+    if (this.allowedSessionTypesSelect.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
-      this.schedulerOpts['allowed_session_types'] = [allowedSessionTypes.value];
+      this.schedulerOpts['allowed_session_types'] = [this.allowedSessionTypesSelect.value];
     }
-    if (pendingTimeout.value !== '') {
-      this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
+    if (this.timeoutInput.value !== '') {
+      this.schedulerOpts['pending_timeout'] = this.timeoutInput.value;
     }
-    if (numRetriesToSkip.value !== '') {
+    if (this.numberOfRetriesToSkip.value !== '') {
       Object.assign(this.schedulerOpts, {
         config: {
-          num_retries_to_skip: numRetriesToSkip.value
+          num_retries_to_skip: this.numberOfRetriesToSkip.value
         }
       });
     }
@@ -640,7 +635,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    *
    * @param {Object} resourceGroup - resource group object selected by delete icon click event trigger
    */
-  _launchDeleteDialog(resourceGroup: Object) {
+  _launchDeleteDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
     this._launchDialogById('#delete-resource-group-dialog');
   }
@@ -650,7 +645,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    *
    * @param {Object} resourceGroup - resource group object selected by detail icon click event trigger
    */
-  _launchDetailDialog(resourceGroup: Object) {
+  _launchDetailDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
     this._launchDialogById('#resource-group-detail-dialog');
   }
@@ -660,7 +655,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    *
    * @param {Object} resourceGroup - resource group object selected by edit icon click event trigger
    */
-  _launchModifyDialog(resourceGroup: Object) {
+  _launchModifyDialog(resourceGroup: object) {
     this.resourceGroupInfo = resourceGroup;
     if (this.enableSchedulerOpts) {
       const schedulerOpts= JSON.parse(this.resourceGroupInfo.scheduler_opts);

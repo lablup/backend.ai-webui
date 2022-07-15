@@ -33,11 +33,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   @property({type: String}) updateURL = '';
   @property({type: Object}) notification;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [];
   }
 

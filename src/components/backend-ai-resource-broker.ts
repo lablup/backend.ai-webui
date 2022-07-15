@@ -9,6 +9,8 @@ import {BackendAIPage} from './backend-ai-page';
 
 @customElement('backend-ai-resource-broker')
 export default class BackendAiResourceBroker extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Object}) supports = Object();
   // Environment-image information
   @property({type: Object}) images;
@@ -108,7 +110,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return 'backend-ai-resource-broker';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [];
   }
 
@@ -716,7 +718,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supportImages = {};
       this.imageRequirements = {};
       this.imageArchitectures = {};
-      const privateImages: Object = {};
+      const privateImages: object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
