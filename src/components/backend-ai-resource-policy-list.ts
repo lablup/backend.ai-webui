@@ -44,7 +44,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) is_superadmin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Object}) cpu_resource = {};
@@ -463,11 +463,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       html`
         <div id="controls" class="layout horizontal flex center"
             .policy-name="${rowData.item.name}">
-        ${this.is_admin ? html`
+        ${this.is_superadmin ? html`
               <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
                                 ` : html``}
-        ${this.is_admin ? html`
+        ${this.is_superadmin ? html`
               <wl-button fab flat inverted class="fg red controls-running" icon="delete"
                                 @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
                                 ` : html``}
@@ -525,21 +525,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-        this.is_admin = globalThis.backendaiclient.is_admin;
-        this._getAllStorageHostsInfo();
+        this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
         this._getResourceInfo();
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-      this.is_admin = globalThis.backendaiclient.is_admin;
-      this._getAllStorageHostsInfo();
+      this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
       this._getResourceInfo();
     }
   }
 
   _launchResourcePolicyDialog(e) {
+    this._getAllStorageHostsInfo();
     this.updateCurrentPolicyToDialog(e);
     this.shadowRoot.querySelector('#allowed-vfolder-hosts').items = this.all_vfolder_hosts;
     this.shadowRoot.querySelector('#allowed-vfolder-hosts').selectedItemList = this.allowed_vfolder_hosts;
@@ -887,7 +886,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
       this.all_vfolder_hosts = res.allowed;
     }).catch((err) => {
-      console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;

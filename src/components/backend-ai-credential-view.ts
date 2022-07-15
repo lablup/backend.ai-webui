@@ -379,12 +379,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._status = 'active';
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._getAllStorageHostsInfo();
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
         this._preparePage();
       });
     } else { // already connected
-      this._getAllStorageHostsInfo();
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
       this._preparePage();
     }
@@ -409,7 +407,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.all_vfolder_hosts = res.allowed;
       this.default_vfolder_host = res.default;
     }).catch((err) => {
-      console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -422,6 +419,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Launch a resouce policy dialog.
    */
   async _launchResourcePolicyDialog() {
+    this._getAllStorageHostsInfo();
     await this._getResourcePolicies();
     this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
     this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
