@@ -5,13 +5,13 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-menu/mwc-menu';
 import '@material/mwc-select/mwc-select';
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -35,8 +35,8 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-component-create')
 export default class BackendAIPipelineComponentCreate extends BackendAIPipelineCommon {
+  shadowRoot!: ShadowRoot | null;
   // Elements
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
@@ -44,6 +44,15 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   @property({type: Array}) componentNodes;
   @property({type: Array}) componentEdges;
   @property({type: Array}) selectedNodes; // List of IDs of components
+  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#component-add-dialog') addComponentDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#component-delete-dialog') deleteComponentDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#component-name') componentNameInput!: TextField;
+  @query('#component-description') componentDescriptionInput!: TextField;
+  @query('#component-path') componentPathInput!: TextField;
+  @query('#component-cpu') componentCpuInput!: TextField;
+  @query('#component-mem') componentMemoryInput!: TextField;
+  @query('#component-gpu') componentGpuInput!: TextField;
 
   constructor() {
     super();
@@ -53,7 +62,6 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -89,7 +97,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.componentNodes = nodes;
     this.componentEdges = edges;
     this.selectedNodes = selectedNodes;
-    this.shadowRoot.querySelector('#component-add-dialog').show();
+    this.addComponentDialog.show();
   }
 
   /**
@@ -117,7 +125,7 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.componentEdges = edges;
     this.selectedNodes = [cinfo.id];
     this._fillComponentAddDialogFields(cinfo);
-    this.shadowRoot.querySelector('#component-add-dialog').show();
+    this.addComponentDialog.show();
   }
 
   /**
@@ -143,15 +151,15 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     this.componentNodes = nodes;
     this.componentEdges = edges;
     this.selectedNodes = selectedNodes;
-    this.shadowRoot.querySelector('#component-delete-dialog').show();
+    this.deleteComponentDialog.show();
   }
 
   _hideComponentAddDialog() {
-    this.shadowRoot.querySelector('#component-add-dialog').hide();
+    this.addComponentDialog.hide();
   }
 
   _hideComponentDeleteDialog() {
-    this.shadowRoot.querySelector('#component-delete-dialog').hide();
+    this.deleteComponentDialog.hide();
   }
 
   /**
@@ -198,28 +206,27 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
     if (!info) {
       info = {};
     }
-    const dialog = this.shadowRoot.querySelector('#component-add-dialog');
-    dialog.querySelector('#component-name').value = info.title || '';
-    dialog.querySelector('#component-description').value = info.description || '';
-    dialog.querySelector('#component-path').value = info.path || '';
-    dialog.querySelector('#component-cpu').value = info.cpu || '1';
-    dialog.querySelector('#component-mem').value = info.mem || '1';
-    dialog.querySelector('#component-gpu').value = info.gpu || '0';
+    this.componentNameInput.value = info.title || '';
+    this.componentDescriptionInput.value = info.description || '';
+    this.componentPathInput.value = info.path || '';
+    this.componentCpuInput.value = info.cpu || '1';
+    this.componentMemoryInput.value = info.mem || '1';
+    this.componentGpuInput.value = info.gpu || '0';
   }
 
   async _addComponent() {
-    const title = this.shadowRoot.querySelector('#component-name').value;
-    const description = this.shadowRoot.querySelector('#component-description').value;
-    const path = this.shadowRoot.querySelector('#component-path').value;
+    const title = this.componentNameInput.value;
+    const description = this.componentDescriptionInput.value;
+    const path = this.componentPathInput.value;
     if (!title || !path) {
       this.notification.text = _text('pipeline.ComponentDialog.NamePathRequired');
       this.notification.show();
       return;
     }
     const sluggedPath = window.backendaiclient.slugify(path);
-    const cpu = this.shadowRoot.querySelector('#component-cpu').value;
-    const mem = this.shadowRoot.querySelector('#component-mem').value;
-    let gpu = this.shadowRoot.querySelector('#component-gpu').value;
+    const cpu = Number(this.componentCpuInput.value);
+    const mem = Number(this.componentMemoryInput.value);
+    let gpu = Number(this.componentGpuInput.value);
     if (cpu < 1) {
       this.notification.text = _text('pipeline.ComponentDialog.CPUNotEnough');
       this.notification.show();
