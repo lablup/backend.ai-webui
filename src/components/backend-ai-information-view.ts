@@ -40,6 +40,8 @@ import './lablup-loading-spinner';
 
 @customElement('backend-ai-information-view')
 export default class BackendAiInformationView extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Object}) notification = Object();
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';
@@ -57,11 +59,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

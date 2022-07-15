@@ -25,10 +25,6 @@ export default class BackendAIIndicator extends LitElement {
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
 
-  constructor() {
-    super();
-  }
-
   static get styles(): CSSResultGroup {
     return [
       // language=CSS
