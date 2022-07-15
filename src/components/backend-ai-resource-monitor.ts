@@ -899,7 +899,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <p style="font-size:12px;color:#242424;margin-right:10px;">
             ${_t('session.launcher.ResourceMonitorToggle')}
           </p>
-          <mwc-switch class="fg blue ${this.direction}" id="resource-gauge-switch-button"
+          <mwc-switch selected class="fg blue ${this.direction}" id="resource-gauge-switch-button"
             @click="${(e) => this._toggleResourceGauge(e)}">
           </mwc-switch>
         </div>
