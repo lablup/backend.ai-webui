@@ -23,3 +23,5 @@ jobs:
         run: npm install
       - name: Package Applications
         run: make mac
+        env:
+          BAI_APP_SIGN: 1
