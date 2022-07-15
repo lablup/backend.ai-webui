@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -13,7 +13,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
@@ -28,6 +28,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Array}) resourcePolicy = {};
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
@@ -38,11 +40,23 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Object}) resourcePresets;
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
-  constructor() {
-    super();
-  }
+  @query('#create-preset-name') createPresetNameInput!: TextField;
+  @query('#create-cpu-resource') createCpuResourceInput!: TextField;
+  @query('#create-ram-resource') createRamResourceInput!: TextField;
+  @query('#create-gpu-resource') createGpuResourceInput!: TextField;
+  @query('#create-fgpu-resource') createFGpuResourceInput!: TextField;
+  @query('#create-shmem-resource') createSharedMemoryResourceInput!: TextField;
+  @query('#cpu-resource') cpuResourceInput!: TextField;
+  @query('#ram-resource') ramResourceInput!: TextField;
+  @query('#gpu-resource') gpuResourceInput!: TextField;
+  @query('#fgpu-resource') fgpuResourceInput!: TextField;
+  @query('#shmem-resource') sharedMemoryResourceInput!: TextField;
+  @query('#id-preset-name') presetNameInput!: TextField;
+  @query('#create-preset-dialog') createPresetDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#modify-template-dialog') modifyTemplateDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -196,7 +210,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   _launchPresetAddDialog(e) {
-    this.shadowRoot.querySelector('#create-preset-dialog').show();
+    this.createPresetDialog.show();
   }
 
   render() {
@@ -331,10 +345,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
-    for (const textfield of textfields) {
+    const textfields = this.shadowRoot?.querySelectorAll('mwc-textfield');
+    textfields?.forEach((textfield) => {
       this._addInputValidator(textfield);
-    }
+    });
   }
 
   async _viewStateChanged(active) {
@@ -364,26 +378,26 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _launchResourcePresetDialog(e) {
     this.updateCurrentPresetToDialog(e);
-    this.shadowRoot.querySelector('#modify-template-dialog').show();
+    this.modifyTemplateDialog.show();
   }
 
   _launchDeleteResourcePresetDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
     this.presetName = preset_name;
-    this.shadowRoot.querySelector('#delete-resource-preset-dialog').show();
+    this.deleteResourcePresetDialog.show();
   }
 
   _deleteResourcePresetWithCheck(e) {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
-      this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+      this.deleteResourcePresetDialog.hide();
       this.notification.text = _text('resourcePreset.Deleted');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+        this.deleteResourcePresetDialog.hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -397,12 +411,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     const resourcePreset = resourcePresets[preset_name];
     // resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.shadowRoot.querySelector('#id-preset-name').value = preset_name;
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
-    this.shadowRoot.querySelector('#fgpu-resource').value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
-    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
-    this.shadowRoot.querySelector('#shmem-resource').value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
+    this.presetNameInput.value = preset_name;
+    this.cpuResourceInput.value = resourcePreset.resource_slots.cpu;
+    this.gpuResourceInput.value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
+    this.fgpuResourceInput.value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
+    this.ramResourceInput.value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g')).toString();
+    this.sharedMemoryResourceInput.value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
   }
 
   _refreshTemplateData() {
@@ -441,11 +455,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _readResourcePresetInput() {
     const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value);
-    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
-    const gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value);
-    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
-    let sharedMemory = this.shadowRoot.querySelector('#shmem-resource').value;
+    const cpu = wrapper(this.cpuResourceInput.value);
+    const mem = wrapper(this.ramResourceInput.value + 'g');
+    const gpu_resource = wrapper(this.gpuResourceInput.value);
+    const fgpu_resource = wrapper(this.fgpuResourceInput.value);
+    let sharedMemory = this.sharedMemoryResourceInput.value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
 
     const resource_slots = {cpu, mem};
@@ -469,9 +483,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
     if (!this._checkFieldValidity('modify')) {
       return;
     }
-    const name = this.shadowRoot.querySelector('#id-preset-name').value;
+    const name = this.presetNameInput.value;
     const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
+    const mem = wrapper(this.ramResourceInput.value + 'g');
     if (!name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
       this.notification.show();
@@ -484,14 +498,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     globalThis.backendaiclient.resourcePreset.mutate(name, input).then((response) => {
-      this.shadowRoot.querySelector('#modify-template-dialog').hide();
+      this.modifyTemplateDialog.hide();
       this.notification.text = _text('resourcePreset.Updated');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#modify-template-dialog').hide();
+        this.modifyTemplateDialog.hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -557,9 +571,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
    */
   _checkFieldValidity(prefix = '') {
     const query = 'mwc-textfield[class^="'.concat(prefix).concat('"]');
-    const createDialogTextfields = this.shadowRoot.querySelectorAll(query);
+    const createDialogTextfields = this.shadowRoot?.querySelectorAll<TextField>(query) as NodeListOf<TextField>;
     let isValid = true;
-    for (const textfield of createDialogTextfields) {
+    for (const textfield of Array.from(createDialogTextfields)) {
       isValid = textfield.checkValidity();
       if (!isValid) {
         return textfield.checkValidity();
@@ -577,12 +591,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
       v = v.toString();
       return typeof (v) !== 'undefined' && v.includes('Unlimited') ? 'Infinity' : v;
     };
-    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value);
-    const cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value);
-    const mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g');
-    const gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value);
-    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
-    let sharedMemory = this.shadowRoot.querySelector('#create-shmem-resource').value;
+    const preset_name = wrapper(this.createPresetNameInput.value);
+    const cpu = wrapper(this.createCpuResourceInput.value);
+    const mem = wrapper(this.createRamResourceInput.value + 'g');
+    const gpu_resource = wrapper(this.createGpuResourceInput.value);
+    const fgpu_resource = wrapper(this.createFGpuResourceInput.value);
+    let sharedMemory = this.createSharedMemoryResourceInput.value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
@@ -610,18 +624,18 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
     globalThis.backendaiclient.resourcePreset.add(preset_name, input)
       .then((res) => {
-        this.shadowRoot.querySelector('#create-preset-dialog').hide();
+        this.createPresetDialog.hide();
         if (res.create_resource_preset.ok) {
           this.notification.text = _text('resourcePreset.Created');
           this.refresh();
 
           // reset values
-          this.shadowRoot.querySelector('#create-preset-name').value = '';
-          this.shadowRoot.querySelector('#create-cpu-resource').value = 1;
-          this.shadowRoot.querySelector('#create-ram-resource').value = 1;
-          this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
-          this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
-          this.shadowRoot.querySelector('#create-shmem-resource').value = '';
+          this.createPresetNameInput.value = '';
+          this.createCpuResourceInput.value = '1';
+          this.createRamResourceInput.value = '1';
+          this.createGpuResourceInput.value = '0';
+          this.createFGpuResourceInput.value = '0';
+          this.createSharedMemoryResourceInput.value = '';
         } else {
           this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
         }
