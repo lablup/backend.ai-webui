@@ -19,6 +19,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 16
+      - name: Dump current env
+        run: /bin/sh -c "env > /tmp/env_result"
       - name: Install Dependencies
         run: npm install
       - name: Package Applications
