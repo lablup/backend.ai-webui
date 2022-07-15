@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -16,10 +16,10 @@ import 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 import 'weightless/label';
-import 'weightless/textfield';
+import {Textfield} from 'weightless/textfield';
 
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
+import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
@@ -39,7 +39,9 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
   public registryList: any;
+
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = -1;
   @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
@@ -50,6 +52,13 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: Array}) hostnames;
   @property({type: String}) registryType = 'docker';
   @property({type: Boolean}) editMode;
+  @query('#add-registry-hostname') hostnameInput!: Textfield;
+  @query('#add-registry-url') urlInput!: Textfield;
+  @query('#add-registry-username') usernameInput!: Textfield;
+  @query('#add-registry-password') passwordInput!: Textfield;
+  @query('#select-registry-type') typeSelect!: Select;
+  @query('#add-project-name') projectNameInput!: Textfield;
+  @query('#delete-registry') deleteRegistryInput!: Textfield;
 
   constructor() {
     super();
@@ -60,7 +69,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.editMode = false;
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -227,23 +236,23 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const hostname = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-hostname')).value;
-    const url = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-url')).value;
-    const username = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-username')).value;
-    const password = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-password')).value;
-    const registerType = this.shadowRoot.querySelector('#select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#add-project-name').value.replace(/\s/g, '');
+    const hostname = this.hostnameInput.value;
+    const url = this.urlInput.value;
+    const username = this.usernameInput.value;
+    const password = this.passwordInput.value;
+    const registerType = this.typeSelect.value;
+    const projectName = this.projectNameInput.value.replace(/\s/g, '');
 
-    if (!this.shadowRoot.querySelector('#add-registry-hostname').valid) {
-      const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
+    if (!this.hostnameInput.valid) {
+      const validationMessage = this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement;
       if (validationMessage) {
         validationMessage.style.display = 'block';
       }
       return;
     }
 
-    if (!this.shadowRoot.querySelector('#add-registry-url').valid) {
-      const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
+    if (!this.urlInput.valid) {
+      const validationMessage = this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement;
       if (validationMessage) {
         validationMessage.style.display = 'block';
       }
@@ -298,7 +307,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * Delete registry
    * */
   _deleteRegistry() {
-    const name = (<HTMLInputElement> this.shadowRoot.querySelector('#delete-registry')).value;
+    const name = this.deleteRegistryInput.value;
     if (this.registryList[this.selectedIndex].hostname === name) {
       globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
@@ -320,7 +329,7 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.show();
     }
     // remove written hostname
-    this.shadowRoot.querySelector('#delete-registry').value = '';
+    this.deleteRegistryInput.value = '';
   }
 
   /**
@@ -372,11 +381,11 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _launchDialogById(id) {
-    this.shadowRoot.querySelector(id).show();
+    this.shadowRoot?.querySelector(id).show();
   }
 
   _hideDialogById(id) {
-    this.shadowRoot.querySelector(id).hide();
+    this.shadowRoot?.querySelector(id).hide();
   }
 
   _openCreateRegistryDialog() {
@@ -387,9 +396,9 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _hideValidationMessage() {
-    this.shadowRoot.querySelector('#registry-hostname-validation').style.display = 'none';
-    this.shadowRoot.querySelector('#registry-url-validation').style.display = 'none';
-    this.shadowRoot.querySelector('#project-name-validation').style.display = 'none';
+    (this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement).style.display = 'none';
+    (this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement).style.display = 'none';
+    (this.shadowRoot?.querySelector('#project-name-validation') as HTMLElement).style.display = 'none';
   }
 
   _openEditRegistryDialog(registry) {
@@ -411,19 +420,18 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _toggleProjectNameInput() {
-    this.registryType = this.shadowRoot.querySelector('#select-registry-type').value;
+    this.registryType = this.typeSelect.value;
     this._validateProjectName();
   }
 
   _validateUrl() {
-    const url = this.shadowRoot.querySelector('#add-registry-url');
-    const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-    validationMessage.style.display = url.valid ? 'none' : 'block';
+    const validationMessage = this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement;
+    validationMessage.style.display = this.urlInput.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
-    const hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
-    const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
+    const hostname = this.hostnameInput.value;
+    const validationMessage = this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement;
     if (hostname && hostname !== '') {
       validationMessage.style.display = 'none';
     } else {
@@ -432,37 +440,29 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this.shadowRoot.querySelector('#add-project-name');
-    const validationEl = this.shadowRoot.querySelector('#project-name-validation');
-    projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
+    const validationEl = this.shadowRoot?.querySelector('#project-name-validation') as HTMLElement;
+    this.projectNameInput.value = this.projectNameInput.value.replace(/\s/g, '');
     validationEl.style.display = 'block';
     if (['harbor', 'harbor2'].includes(this.registryType)) {
-      if (!projectTextEl.value) {
+      if (!this.projectNameInput.value) {
         validationEl.textContent = _text('registry.ProjectNameIsRequired');
       } else {
         validationEl.style.display = 'none';
       }
-      projectTextEl.disabled = false;
+      this.projectNameInput.disabled = false;
     } else {
       validationEl.textContent = _text('registry.ForHarborOnly');
-      projectTextEl.disabled = true;
+      this.projectNameInput.disabled = true;
     }
   }
 
   _resetRegistryField() {
-    const registryHostname = this.shadowRoot.querySelector('#add-registry-hostname');
-    const registryURL = this.shadowRoot.querySelector('#add-registry-url');
-    const registryUsername = this.shadowRoot.querySelector('#add-registry-username');
-    const registryPassword = this.shadowRoot.querySelector('#add-registry-password');
-    const registrySelect = this.shadowRoot.querySelector('#select-registry-type');
-    const registryProjectName = this.shadowRoot.querySelector('#add-project-name');
-
-    registryHostname.value = '';
-    registryURL.value = '';
-    registryUsername.value = '';
-    registryPassword.value = '';
-    registrySelect.value = '';
-    registryProjectName.value = '';
+    this.hostnameInput.value = '';
+    this.urlInput.value = '';
+    this.usernameInput.value = '';
+    this.passwordInput.value = '';
+    this.typeSelect.value = '';
+    this.projectNameInput.value = '';
   }
 
   toggleRegistry(e, hostname) {
