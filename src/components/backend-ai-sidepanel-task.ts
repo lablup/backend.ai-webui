@@ -42,7 +42,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAIWebUIStyles,
       IronFlex,
@@ -127,19 +127,12 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     document.addEventListener('backend-ai-task-changed', () => this.refresh());
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
-  async refresh() {
+  refresh() {
     this.tasks = globalThis.tasker.taskstore;
-    await this.requestUpdate();
+    this.requestUpdate();
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'backend-ai-task-view': BackendAiSidepanelTask;
