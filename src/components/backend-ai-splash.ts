@@ -4,7 +4,7 @@
  */
 import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import 'weightless/button';
 import {Dialog} from 'weightless/dialog';
@@ -27,16 +27,12 @@ import 'weightless/icon';
  */
 @customElement('backend-ai-splash')
 export default class BackendAISplash extends LitElement {
-  @property({type: Object}) dialog = Object();
   @property({type: String}) edition = 'Open Source';
   @property({type: String}) license = 'Subscription';
   @property({type: String}) validUntil = '';
   @property({type: String}) version = '';
   @property({type: String}) managerVersion = '';
-
-  constructor() {
-    super();
-  }
+  @query('wl-dialog') dialog!: Dialog;
 
   static get styles(): CSSResultGroup {
     return [
@@ -90,14 +86,6 @@ export default class BackendAISplash extends LitElement {
         }
 
       `];
-  }
-
-  firstUpdated() {
-    this.dialog = this.shadowRoot?.querySelector('wl-dialog') as Dialog;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   show() {
