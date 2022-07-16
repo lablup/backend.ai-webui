@@ -412,7 +412,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   firstUpdated() {
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    this._updateToggleResourceMonitorDisplay();
+    const resourceGaugeResizeObserver = new ResizeObserver(() => {
+      this._updateToggleResourceMonitorDisplay();
+    });
+    resourceGaugeResizeObserver.observe(this.resourceGauge);
     document.addEventListener('backend-ai-group-changed', (e) => {
       this.scaling_group = '';
       this._updatePageVariables(true);
@@ -480,7 +483,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
-    this._updateToggleResourceMonitorDisplay();
   }
 
   async _updatePageVariables(isChanged) {
@@ -500,11 +502,33 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateToggleResourceMonitorDisplay() {
-    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.display = 'none';
-      this.shadowRoot.querySelector('#resource-gauge-switch-button').checked = false;
+    const legend = this.shadowRoot.querySelector('#resource-legend');
+    const toggleButton = this.shadowRoot.querySelector('#resource-gauge-toggle-button');
+    if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
+      this.resourceGauge.style.visibility = 'visible';
+      legend.style.display = 'flex';
+      [...this.resourceGauge.children].forEach((elem) => {
+        elem.style.display = '';
+      });
+    } else {
+      if (toggleButton.selected) {
+        this.resourceGauge.style.visibility = 'visible';
+        legend.style.display = 'flex';
+        if (document.body.clientWidth < 750) {
+          this.resourceGauge.style.left = '20px';
+          this.resourceGauge.style.right = '20px';
+        }
+        [...this.resourceGauge.children].forEach((elem) => {
+          elem.style.display = '';
+        });
+      } else {
+        this.resourceGauge.style.visibility = 'collapse';
+        [...this.resourceGauge.children].forEach((elem) => {
+          elem.style.display = 'none';
+        });
+        legend.style.display = 'none';
+      }
     }
-    this.shadowRoot.querySelector('#resource-gauge-switch-button').checked = this.direction === 'vertical';
   }
 
   _updateScalingGroupSelector() {
@@ -714,28 +738,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    * @param {event} e - EventEmitter
    */
   _toggleResourceGauge(e) {
-    const legend = this.shadowRoot.querySelector('#resource-legend');
-    if (e.target.selected) {
-      this.resourceGauge.style.visibility = 'visible';
-      if (legend) {
-        legend.style.display = 'flex';
-      }
-      if (document.body.clientWidth < 750) {
-        this.resourceGauge.style.left = '20px';
-        this.resourceGauge.style.right = '20px';
-      }
-      [...this.resourceGauge.children].forEach((elem) => {
-        elem.style.display = '';
-      });
-    } else {
-      this.resourceGauge.style.visibility = 'collapse';
-      [...this.resourceGauge.children].forEach((elem) => {
-        elem.style.display = 'none';
-      });
-      if (legend) {
-        legend.style.display = 'none';
-      }
-    }
+
   }
 
   _disableEnterKey() {
@@ -905,8 +908,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <p style="font-size:12px;color:#242424;margin-right:10px;">
             ${_t('session.launcher.ResourceMonitorToggle')}
           </p>
-          <mwc-switch selected class="${this.direction}" id="resource-gauge-switch-button"
-            @click="${(e) => this._toggleResourceGauge(e)}">
+          <mwc-switch selected class="${this.direction}" id="resource-gauge-toggle-button" @click="${() => this._updateToggleResourceMonitorDisplay()}">
           </mwc-switch>
         </div>
       </div>
