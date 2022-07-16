@@ -15,8 +15,9 @@ import {BackendAIPage} from './backend-ai-page';
  */
 @customElement('backend-ai-settings-store')
 export default class BackendAiSettingsStore extends BackendAIPage {
-  @property({type: Object}) options = Object();
+  shadowRoot!: ShadowRoot | null;
 
+  @property({type: Object}) options = Object();
 
   constructor() {
     super();

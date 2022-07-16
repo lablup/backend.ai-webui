@@ -49,6 +49,8 @@ import {
 
 @customElement('backend-ai-session-view')
 export default class BackendAiSessionView extends BackendAIPage {
+  shaodwRoot!: ShadowRoot | null;
+
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Object}) _lists = Object();
