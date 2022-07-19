@@ -26,10 +26,6 @@ export default class LablupLoadingSpinner extends LitElement {
   @property({type: Object}) spinner;
   @property({type: Boolean}) active = false;
 
-  constructor() {
-    super();
-  }
-
   static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS

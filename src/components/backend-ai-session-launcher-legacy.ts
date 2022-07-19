@@ -51,6 +51,7 @@ import {
 
 @customElement('backend-ai-session-launcher-legacy')
 export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
+  shadowRoot: any;
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
