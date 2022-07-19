@@ -131,7 +131,7 @@ export default class BackendAIImport extends BackendAIPage {
         }
         mwc-select.github-select {
           margin: inherit;
-          width: 68%;
+          width: 440px;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;

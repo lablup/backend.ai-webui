@@ -168,7 +168,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-select {
-          width: 140px;
+          width: 160px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-size: 11px;
@@ -185,8 +185,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
           --mdc-list-side-padding: 25px;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 400px;
-          --mdc-menu-min-width: 400px;
+          --mdc-menu-max-width: 160px;
+          --mdc-menu-min-width: 160px;
         }
 
         mwc-select#select-rcfile-type {
@@ -278,7 +278,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           }
 
           #language-setting {
-            width: 150px;
+            width: 160px;
           }
         }
       `];

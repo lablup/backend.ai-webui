@@ -231,14 +231,14 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-list-vertical-padding: 5px;
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 340px;
-          --mdc-menu-min-width: 340px;
+          --mdc-menu-min-width: 170px;
         }
 
         mwc-select.full-width.fixed-position {
           width: 100%;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 345px;
-          --mdc-menu-min-width: 345px;
+          --mdc-menu-max-width: 340px;
+          --mdc-menu-min-width: 340px;
         }
 
         mwc-select.fixed-position {

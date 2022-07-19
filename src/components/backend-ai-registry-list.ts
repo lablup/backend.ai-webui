@@ -120,8 +120,8 @@ class BackendAIRegistryList extends BackendAIPage {
           padding-right: 10px;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-menu-max-width: 210px;
-          --mdc-menu-min-width: 210px;
+          --mdc-menu-max-width: 200px;
+          --mdc-menu-min-width: 200px;
         }
 
         mwc-list-item {
