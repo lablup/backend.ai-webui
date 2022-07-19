@@ -52,7 +52,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-usersettings-general-list')
 export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
   public lastSavedBootstrapScript = '';
 
   @property({type: Object}) notification;

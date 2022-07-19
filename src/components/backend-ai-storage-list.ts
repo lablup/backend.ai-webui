@@ -63,7 +63,6 @@ type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 @customElement('backend-ai-storage-list')
 export default class BackendAiStorageList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
   @property({type: Array}) folders = [];

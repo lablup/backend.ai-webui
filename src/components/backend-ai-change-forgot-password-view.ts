@@ -36,8 +36,6 @@ import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 @customElement('backend-ai-change-forgot-password-view')
 export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();

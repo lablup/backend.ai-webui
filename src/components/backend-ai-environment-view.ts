@@ -40,8 +40,6 @@ import './backend-ai-registry-list';
 
 @customElement('backend-ai-environment-view')
 export default class BackendAIEnvironmentView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) images = Object();
   @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _activeTab = 'image-lists';

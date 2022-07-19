@@ -9,8 +9,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 @customElement('backend-ai-resource-broker')
 export default class BackendAiResourceBroker extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) supports = Object();
   // Environment-image information
   @property({type: Object}) images;

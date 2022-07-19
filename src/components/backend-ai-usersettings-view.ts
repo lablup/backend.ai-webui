@@ -55,8 +55,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-usersettings-view')
 export default class BackendAiUserSettingsView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) _activeTab = Object();

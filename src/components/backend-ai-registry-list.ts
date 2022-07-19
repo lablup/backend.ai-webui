@@ -39,7 +39,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
   public registryList: any;
 
   @property({type: Object}) indicator = Object();

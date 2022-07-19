@@ -40,8 +40,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 
 @customElement('backend-ai-resource-panel')
 export default class BackendAIResourcePanel extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) condition = 'running';
   @property({type: Number}) sessions = 0;
   @property({type: Number}) agents = 0;

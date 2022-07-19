@@ -41,8 +41,6 @@ import {
 
 @customElement('backend-ai-statistics-view')
 export default class BackendAIStatisticsView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) _status = 'inactive';
 
   static get styles(): CSSResultGroup {

@@ -42,8 +42,6 @@ import './lablup-progress-bar';
 
 @customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];

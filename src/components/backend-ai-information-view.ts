@@ -40,8 +40,6 @@ import './lablup-loading-spinner';
 
 @customElement('backend-ai-information-view')
 export default class BackendAiInformationView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) notification = Object();
   @property({type: String}) manager_version = '';
   @property({type: String}) manager_version_latest = '';

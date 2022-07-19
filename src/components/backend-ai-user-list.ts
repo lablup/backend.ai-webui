@@ -66,8 +66,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-user-list')
 export default class BackendAIUserList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Array}) users = [];

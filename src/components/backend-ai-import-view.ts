@@ -41,8 +41,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-import-view')
 export default class BackendAIImport extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) authenticated = false;
   @property({type: Object}) indicator = Object();

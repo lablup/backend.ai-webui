@@ -28,8 +28,6 @@ import {navigate} from '../backend-ai-app';
 
 @customElement('backend-ai-permission-denied-view')
 export default class BackendAIPermissionDeniedView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Number}) error_code = 401;
 
   static get styles(): CSSResultGroup {

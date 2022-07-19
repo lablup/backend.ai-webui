@@ -58,8 +58,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) apiMajorVersion = '';
   @property({type: Object}) folders = Object();
   @property({type: Object}) folderInfo = Object();

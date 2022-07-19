@@ -39,8 +39,6 @@ import {
 
 @customElement('backend-ai-usage-list')
 export default class BackendAIUsageList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) _map = {
     'num_sessions': 'Sessions',
     'cpu_allocated': 'CPU',

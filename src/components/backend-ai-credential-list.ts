@@ -50,8 +50,6 @@ class UnableToDeleteKeypairException extends Error {
 
 @customElement('backend-ai-credential-list')
 export default class BackendAICredentialList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) notification;
   @property({type: Object}) keypairInfo = {
     user_id: '1',

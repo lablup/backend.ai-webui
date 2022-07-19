@@ -55,8 +55,6 @@ declare global {
  */
 @customElement('backend-ai-login')
 export default class BackendAILogin extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';

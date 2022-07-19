@@ -42,8 +42,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-storage-proxy-list')
 export default class BackendAIStorageProxyList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
   @property({type: Object}) storagesObject = Object();

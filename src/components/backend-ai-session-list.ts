@@ -55,8 +55,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();

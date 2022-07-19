@@ -39,8 +39,6 @@ import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 @customElement('backend-ai-edu-applauncher')
 export default class BackendAiEduApplauncher extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) webUIShell = Object();
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();

@@ -34,8 +34,6 @@ import './lablup-loading-spinner';
 
 @customElement('backend-ai-pipeline-view')
 export default class BackendAIPipelineView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-  // Elements
   @property({type: Object}) notification = Object();
 
   @property({type: String}) _status = 'inactive';

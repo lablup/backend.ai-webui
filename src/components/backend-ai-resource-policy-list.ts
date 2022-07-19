@@ -39,8 +39,6 @@ class BigNumber {
 
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Boolean}) visible = false;
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];

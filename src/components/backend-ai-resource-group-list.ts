@@ -52,8 +52,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-resource-group-list')
 export default class BackendAIResourceGroupList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Array}) domains;
   @property({type: Object}) resourceGroupInfo;

@@ -28,8 +28,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Array}) resourcePolicy = {};
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;

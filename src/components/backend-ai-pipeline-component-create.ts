@@ -35,8 +35,6 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-component-create')
 export default class BackendAIPipelineComponentCreate extends BackendAIPipelineCommon {
-  shadowRoot!: ShadowRoot | null;
-  // Elements
   @property({type: Object}) notification = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';

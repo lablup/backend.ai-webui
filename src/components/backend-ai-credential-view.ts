@@ -51,8 +51,6 @@ import {
  */
 @customElement('backend-ai-credential-view')
 export default class BackendAICredentialView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) cpu_resource!: TextField;
   @property({type: Object}) ram_resource!: TextField;
   @property({type: Object}) gpu_resource!: TextField;

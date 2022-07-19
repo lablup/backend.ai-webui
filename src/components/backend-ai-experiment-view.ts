@@ -46,8 +46,6 @@ import {
 
 @customElement('backend-ai-experiment-view')
 export default class BackendAIExperimentView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   public supports: any;
   public resourceLimits: any;
   public userResourceLimit: any;

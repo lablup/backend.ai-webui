@@ -67,8 +67,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-session-launcher')
 export default class BackendAiSessionLauncher extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;

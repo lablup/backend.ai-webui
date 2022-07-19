@@ -46,8 +46,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Array}) images;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) servicePorts;

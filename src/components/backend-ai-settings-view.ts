@@ -63,8 +63,6 @@ interface Options {
 
 @customElement('backend-ai-settings-view')
 export default class BackendAiSettingsView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) images = Object();
   @property({type: Object}) options: Options;
   @property({type: Object}) schedulerOptions = Object();

@@ -36,8 +36,6 @@ type Tab = 'running-lists' | 'terminated-lists' | 'storage-proxy-lists' | 'scali
 
 @customElement('backend-ai-agent-view')
 export default class BackendAIAgentView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @state() _status: Status = 'inactive';
   @state() _tab: Tab = 'running-lists';
   @state() enableStorageProxy = false;

@@ -23,8 +23,6 @@ import {BackendAIPage} from './backend-ai-page';
  */
 @customElement('backend-ai-help-button')
 export default class BackendAiHelpButton extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) lang = 'default';
   @property({type: String}) manualURL = '';
   @property({type: String}) page;

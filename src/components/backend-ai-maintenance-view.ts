@@ -41,8 +41,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-maintenance-view')
 export default class BackendAiMaintenanceView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) images = Object();
   @property({type: Boolean}) scanning = false;
   @property({type: Boolean}) recalculating = false;

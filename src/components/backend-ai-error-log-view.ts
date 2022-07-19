@@ -26,8 +26,6 @@ import {
 
 @customElement('backend-ai-error-log-view')
 export default class BackendAIErrorLogView extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: Object}) _lists = Object();
 
   static get styles(): CSSResultGroup {

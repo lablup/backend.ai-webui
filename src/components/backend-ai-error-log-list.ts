@@ -40,8 +40,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-error-log-list')
 export default class BackendAiErrorLogList extends BackendAIPage {
-  shadowRoot!: ShadowRoot | null;
-
   @property({type: String}) timestamp = '';
   @property({type: String}) errorType = '';
   @property({type: String}) requestUrl = '';
