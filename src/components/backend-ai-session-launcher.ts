@@ -48,6 +48,12 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
+type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
+type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
+type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend AI Session Launcher Carousel
 
@@ -213,18 +219,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
   @query('#OpenMPSwitch') openMPSwitch!: Switch;
-  @query('#cpu-resource') cpuResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
-  @query('#gpu-resource') gpuResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
-  @query('#mem-resource') memoryResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
-  @query('#shmem-resource') sharedMemoryResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
-  @query('#session-resource') sessionResouceSlider!: HTMLElementTagNameMap['lablup-slider'];
-  @query('#cluster-size') clusterSizeSlider!: HTMLElementTagNameMap['lablup-slider'];
+  @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
+  @query('#gpu-resource') gpuResouceSlider!: LablupSlider;
+  @query('#mem-resource') memoryResouceSlider!: LablupSlider;
+  @query('#shmem-resource') sharedMemoryResouceSlider!: LablupSlider;
+  @query('#session-resource') sessionResouceSlider!: LablupSlider;
+  @query('#cluster-size') clusterSizeSlider!: LablupSlider;
   @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
-  @query('vaadin-date-time-picker') dateTimePicker!: HTMLElementTagNameMap['vaadin-date-time-picker'];
-  @query('#new-session-dialog') newSessionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#modify-env-dialog') modifyEnvDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#launch-confirmation-dialog') launchConfirmationDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#help-description') helpDescriptionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
+  @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
+  @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
+  @query('#launch-confirmation-dialog') launchConfirmationDialog!: BackendAIDialog;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -1045,7 +1051,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       for (const folder of this.selectedVfolders) {
         if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
           delete this.folderMapping[folder];
-          (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+          (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value = '';
           await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
           return Promise.resolve(true);
         }
@@ -1363,7 +1369,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['bootstrap_script'] = this.importScript;
     }
     if (this.sessionType === 'batch') {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as HTMLElementTagNameMap['lablup-codemirror'];
+      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
       config['startupCommand'] = editor.getValue();
 
       const scheduledTime = this.dateTimePicker.value;
@@ -1621,7 +1627,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
-  _updateVersions(kernel) {
+  // TODO refactor method to return consistent type
+  _updateVersions(kernel): any {
     if (kernel in this.resourceBroker.supports) {
       this.version_selector.disabled = true;
       const versions: {version: string, architecture: string}[] = [];
@@ -2206,7 +2213,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.notification.text = _text('session.launcher.FolderAliasOverlapping');
         this.notification.show();
         delete this.folderMapping[folder];
-        (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+        (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value = '';
         await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
         return Promise.resolve(false);
       }
@@ -2216,7 +2223,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             this.notification.text = _text('session.launcher.FolderAliasOverlapping');
             this.notification.show();
             delete this.folderMapping[folder];
-            (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as HTMLElementTagNameMap['vaadin-text-field']).value = '';
+            (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value = '';
             await this.vfolderMountPreview.updateComplete.then(() => this.requestUpdate());
             return Promise.resolve(false);
           }
@@ -2943,11 +2950,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   openDialog(id) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
   closeDialog(id) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**
