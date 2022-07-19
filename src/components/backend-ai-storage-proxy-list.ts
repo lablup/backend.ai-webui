@@ -5,7 +5,7 @@
 
 import {translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -25,6 +25,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend.AI Storage Proxy List
 
@@ -40,25 +42,27 @@ import './lablup-progress-bar';
 
 @customElement('backend-ai-storage-proxy-list')
 export default class BackendAIStorageProxyList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) storageProxyDetailDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundTypeRenderer = this.typeRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#storage-proxy-detail') storageProxyDetailDialog!: BackendAIDialog;
 
   constructor() {
     super();
     this.storages = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -132,17 +136,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         .resource-indicator {
           width: 100px !important;
         }
-
       `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**

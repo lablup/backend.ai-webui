@@ -19,7 +19,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import {TextField} from '@material/mwc-textfield';
 
-
 import 'weightless/button';
 import 'weightless/card';
 import 'weightless/divider';
