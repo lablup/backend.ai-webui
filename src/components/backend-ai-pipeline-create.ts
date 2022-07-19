@@ -5,10 +5,11 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select/mwc-select';
+import '@material/mwc-list';
+import {Select} from '@material/mwc-select';
+import {TextField} from '@material/mwc-textfield';
 
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -22,6 +23,9 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend AI Pipeline Create Element
 
@@ -32,8 +36,6 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-create')
 export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   // Environments
   @property({type: Object}) tags = Object();
@@ -54,6 +56,15 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   @property({type: String}) pipelineCreateMode = 'create';
   @property({type: String}) pipelineFolderName = '';
   // Pipeline prpoerties
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#pipeline-environment') pipelineEnvSelect!: Select;
+  @query('#pipeline-environment-tag') pipelineEnvTagSelect!: Select;
+  @query('#pipeline-folder-host') pipelineFolderHostSelect!: Select;
+  @query('#pipeline-title') pipelineTitleInput!: TextField;
+  @query('#pipeline-description') pipelineDescriptionInput!: TextField;
+  @query('#pipeline-scaling-group') pipelineScalingGroup!: Select;
+  @query('#pipeline-create-dialog', true) pipelineCreateDialog!: BackendAIDialog;
+  @query('#pipeline-delete-dialog', true) pipelineDeleteDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -69,7 +80,6 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
 
     fetch('resources/image_metadata.json')
@@ -95,20 +105,20 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
           }
         }
       });
-    this.shadowRoot.querySelector('#pipeline-environment').addEventListener(
+    this.pipelineEnvSelect.addEventListener(
       'selected', this.updateLanguage.bind(this));
     this._refreshImageList();
   }
 
   updateLanguage() {
-    const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
+    const selectedItem = this.pipelineEnvSelect.selected;
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
   }
 
   _updateVersions(kernel) {
-    const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
+    const tagEl = this.pipelineEnvTagSelect;
     if (kernel in this.supports) {
       const versions = this.supports[kernel];
       versions.sort();
@@ -117,7 +127,8 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     }
     if (this.versions !== undefined) {
       tagEl.value = this.versions[0];
-      tagEl.selectedText = tagEl.value;
+      // TODO remove protected property assignment
+      (tagEl as any).selectedText = tagEl.value;
       // this.updateMetric('update versions');
     }
   }
@@ -285,7 +296,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this.pipelineCreateMode = 'create';
     window.backendaiclient.vfolder.list_hosts()
       .then((resp) => {
-        const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
+        const folderHostEl = this.pipelineFolderHostSelect;
         this.vhosts = resp.allowed.slice();
         this.vhost = resp.default;
         folderHostEl.value = this.vhost;
@@ -298,7 +309,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
           this.notification.show(true);
         }
       });
-    this.shadowRoot.querySelector('#pipeline-create-dialog').show();
+    this.pipelineCreateDialog.show();
   }
 
   /**
@@ -318,7 +329,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
     this.pipelineCreateMode = 'update';
     window.backendaiclient.vfolder.list_hosts()
       .then((resp) => {
-        const folderHostEl = this.shadowRoot.querySelector('#pipeline-folder-host');
+        const folderHostEl = this.pipelineFolderHostSelect;
         this.vhosts = resp.allowed.slice();
         this.vhost = config.folder_host;
         folderHostEl.value = this.vhost;
@@ -334,7 +345,7 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
         }
       });
     this._fillPipelineCreateDialogFields(config);
-    this.shadowRoot.querySelector('#pipeline-create-dialog').show();
+    this.pipelineCreateDialog.show();
   }
 
   /**
@@ -349,41 +360,40 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
       this.notification.show();
       return;
     }
-    this.shadowRoot.querySelector('#pipeline-delete-dialog').show();
+    this.pipelineDeleteDialog.show();
   }
 
   /**
    * Hide pipeline create dialog.
    * */
   _hidePipelineCreateDialog() {
-    this.shadowRoot.querySelector('#pipeline-create-dialog').hide();
+    this.pipelineCreateDialog.hide();
   }
 
   /**
    * Hide pipeline delete dialog.
    * */
   _hidePipelineDeleteDialog() {
-    this.shadowRoot.querySelector('#pipeline-delete-dialog').hide();
+    this.pipelineDeleteDialog.hide();
   }
 
   _fillPipelineCreateDialogFields(config) {
     if (!config) {
       config = {};
     }
-    const dialog = this.shadowRoot.querySelector('#pipeline-create-dialog');
-    dialog.querySelector('#pipeline-title').value = config.title || '';
-    dialog.querySelector('#pipeline-description').value = config.description || '';
+    this.pipelineTitleInput.value = config.title || '';
+    this.pipelineDescriptionInput.value = config.description || '';
     if (config.environment) {
-      dialog.querySelector('#pipeline-environment').value = config.environment;
+      this.pipelineEnvSelect.value = config.environment;
     }
     if (config.version) {
-      dialog.querySelector('#pipeline-environment-tag').value = config.version;
+      this.pipelineEnvTagSelect.value = config.version;
     }
     if (config.scaling_group) {
-      dialog.querySelector('#pipeline-scaling-group').value = config.scaling_group;
+      this.pipelineScalingGroup.value = config.scaling_group;
     }
     if (config.folder_host) {
-      dialog.querySelector('#pipeline-folder-host').value = config.folder_host;
+      this.pipelineFolderHostSelect.value = config.folder_host;
     }
   }
 
@@ -391,12 +401,12 @@ export default class BackendAIPipelineCreate extends BackendAIPipelineCommon {
    * Create a pipeline.
    * */
   async _createPipeline() {
-    const title = this.shadowRoot.querySelector('#pipeline-title').value;
-    const description = this.shadowRoot.querySelector('#pipeline-description').value;
-    const environment = this.shadowRoot.querySelector('#pipeline-environment').value;
-    const version = this.shadowRoot.querySelector('#pipeline-environment-tag').value;
-    const scaling_group = this.shadowRoot.querySelector('#pipeline-scaling-group').value;
-    const folder_host = this.shadowRoot.querySelector('#pipeline-folder-host').value;
+    const title = this.pipelineTitleInput.value;
+    const description = this.pipelineDescriptionInput.value;
+    const environment = this.pipelineEnvSelect.value;
+    const version = this.pipelineEnvTagSelect.value;
+    const scaling_group = this.pipelineScalingGroup.value;
+    const folder_host = this.pipelineFolderHostSelect.value;
     const sluggedTitle = `pipeline-${window.backendaiclient.slugify(title)}-${window.backendaiclient.generateSessionId(8, true)}`;
     if (!title || !environment || !version || !scaling_group || !folder_host) {
       this.notification.text = _text('pipeline.PipelineDialog.FillAllInputFields');
