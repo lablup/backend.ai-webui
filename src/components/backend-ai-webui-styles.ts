@@ -203,12 +203,12 @@ export const BackendAIWebUIStyles = [
       margin: auto 10px;
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primary] {
+    mwc-button[unelevated] {
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
     .page {

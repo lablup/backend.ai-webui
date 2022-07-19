@@ -138,7 +138,7 @@ class BackendAIRegistryList extends BackendAIPage {
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
       `];

@@ -769,6 +769,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (imageParts.length === 3) {
         namespace = imageParts[1];
         langName = imageParts[2];
+      } else if (imageParts.length > 3) {
+        namespace = imageParts.slice(2, imageParts.length-1).join('/');
+        langName = imageParts[imageParts.length-1];
       } else {
         namespace = '';
         langName = imageParts[1];
@@ -903,11 +906,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionId) {
+  async _terminateApp(sessionId) {
     const token = globalThis.backendaiclient._config.accessKey;
+    const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+      uri: proxyURL + `proxy/${token}/${sessionId}`
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -915,7 +919,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
             credentials: 'include',
             mode: 'cors'
           };
@@ -930,16 +934,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-  }
-
-  _getProxyURL() {
-    let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
-    } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
-      url = globalThis.backendaiclient._config.proxyURL;
-    }
-    return url;
   }
 
   _getProxyToken() {
@@ -1359,7 +1353,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       const encodedStr = (str) => {
         return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
           return '&#' + i.charCodeAt(0) + ';';
-        })
+        });
       };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
@@ -2131,11 +2125,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
-              ${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+            ${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
@@ -2147,11 +2140,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat
-                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat
+                      @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}

@@ -18,6 +18,8 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
 
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
+
 /**
  Backend.AI Education App Launcher.
 
@@ -108,8 +110,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       }
     }
     apiEndpoint = apiEndpoint.trim();
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    globalThis.backendaiclient = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    globalThis.backendaiclient = new Client(
       this.clientConfig,
       'Backend.AI Web UI.'
     );

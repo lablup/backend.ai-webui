@@ -90,7 +90,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
