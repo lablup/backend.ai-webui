@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -27,6 +27,10 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 import './backend-ai-pipeline-component-create';
 import './backend-ai-pipeline-runner';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIPipelineComponentCreate = HTMLElementTagNameMap['backend-ai-pipeline-component-create'];
+type BackendAIPipelineRunner = HTMLElementTagNameMap['backend-ai-pipeline-runner'];
+
 /**
  Backend AI Pipeline Component View
 
@@ -37,21 +41,20 @@ import './backend-ai-pipeline-runner';
  */
 @customElement('backend-ai-pipeline-component-view')
 export default class BackendAIPipelineComponentView extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) componentCreate = Object();
-  @property({type: Object}) pipelineRunner = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: Object}) pipelineSelectedConfig = Object();
   @property({type: Array}) network = Object();
   @property({type: Array}) networkOptions = Object();
-  @property({type: Object}) networkContainer = Object();
+  @query('#component-network') networkContainer!: HTMLDivElement;
   @property({type: Array}) nodes = [];
   @property({type: Array}) edges = [];
   @property({type: Object}) nodeInfo = Object();
   @property({type: Array}) componentsSelected = [];
+  @query('#loading-spinner', true) spinner!: LablupLoadingSpinner;
+  @query('backend-ai-pipeline-component-create') componentCreate!: BackendAIPipelineComponentCreate;
+  @query('backend-ai-pipeline-runner') pipelineRunner!: BackendAIPipelineRunner;
 
   constructor() {
     super();
@@ -104,10 +107,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.componentCreate = this.shadowRoot.querySelector('backend-ai-pipeline-component-create');
-    this.pipelineRunner = this.shadowRoot.querySelector('backend-ai-pipeline-runner');
     this._initEventHandlers();
     this._initNetwork();
   }
@@ -148,7 +148,6 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
 
   _initNetwork() {
     const data = {nodes: this.nodes, edges: this.edges};
-    this.networkContainer = this.shadowRoot.querySelector('#component-network');
     this.network = new Network(this.networkContainer, data, this.networkOptions);
 
     // Event handling

@@ -5,10 +5,10 @@
 
 import {translate as _t} from 'lit-translate';
 import {css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select/mwc-select';
+import '@material/mwc-list';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -22,6 +22,8 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+
 /**
  Backend AI Pipeline List
 
@@ -32,12 +34,12 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-list')
 export default class BackendAIPipelineList extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   // Pipeline prpoerties
   @property({type: Array}) pipelineFolders = Object();
   @property({type: String}) pipelineSelectedName;
   @property({type: Object}) pipelineSelectedConfig;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('pipeline-selector') pipelineSelect!: Select;
 
   constructor() {
     super();
@@ -50,10 +52,6 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
       localStorage.removeItem('backendaiconsole.pipeline.selectedName');
       localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
     }
-  }
-
-  firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
   }
 
   async _viewStateChanged(active) {
@@ -79,7 +77,8 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     await this._fetchPipelineFolders();
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
-    this.shadowRoot.querySelector('#pipeline-selector').selectedText = this.pipelineSelectedConfig.title;
+    // TODO remove protected property assignment
+    (this.pipelineSelect as any).selectedText = this.pipelineSelectedConfig.title;
     localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
     localStorage.setItem('backendaiconsole.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
   }
@@ -91,7 +90,7 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     await this._fetchPipelineFolders();
     this.pipelineSelectedName = '';
     this.pipelineSelectedConfig = {};
-    this.shadowRoot.querySelector('#pipeline-selector').select(-1);
+    this.pipelineSelect.select(-1);
     localStorage.removeItem('backendaiconsole.pipeline.selectedName');
     localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
   }
