@@ -2128,11 +2128,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
-              ${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+            ${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
@@ -2144,11 +2143,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat
-                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat
+                      @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
