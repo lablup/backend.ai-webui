@@ -5,19 +5,19 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import '@material/mwc-textfield';
-import '@material/mwc-select';
+import {Select} from '@material/mwc-select';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-radio';
+import {Button} from '@material/mwc-button';
+import {Radio} from '@material/mwc-radio';
 import '@material/mwc-formfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -46,6 +46,7 @@ import tus from '../lib/tus';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 /**
  Backend AI Storage List
@@ -62,6 +63,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 
 @customElement('backend-ai-storage-list')
 export default class BackendAiStorageList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: String}) storageType = 'general';
   @property({type: Array}) folders = [];
@@ -86,14 +88,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Array}) allowedGroups = [];
-  @property({type: Object}) fileListGrid = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) renameFileDialog = Object();
-  @property({type: Object}) deleteFileDialog = Object();
-  @property({type: Object}) downloadFileDialog = Object();
-  @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) spinner = Object();
+  // TODO delete - not used in this file
+  // @property({type: Object}) sessionLauncher = Object();
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -147,6 +145,25 @@ export default class BackendAiStorageList extends BackendAIPage {
     value: 0,
     unit: 'MiB'
   };
+  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#modify-folder-quota') modifyFolderQuotaInput!: TextField;
+  @query('#modify-folder-quota-unit') modifyFolderQuotaUnitSelect!: Select;
+  @query('#fileList-grid') fileListGrid!: HTMLElementTagNameMap['vaadin-grid'];
+  @query('#mkdir-name') mkdirNameInput!: TextField;
+  @query('#delete-folder-name') deleteFolderNameInput!: TextField;
+  @query('#new-folder-name') newFolderNameInput!: TextField;
+  @query('#new-file-name') newFileNameInput!: TextField;
+  @query('#leave-folder-name') leaveFolderNameInput!: TextField;
+  @query('#update-folder-permission') updateFolderPermissionSelect!: Select;
+  @query('#update-folder-cloneable') updateFolderCloneableSwitch!: HTMLElementTagNameMap['mwc-switch'];
+  @query('#rename-file-dialog') renameFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#delete-file-dialog') deleteFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#filebrowser-notification-dialog') fileBrowserNotificationDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#file-extension-change-dialog') fileExtensionChangeDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#folder-explorer-dialog') folderExplorerDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#download-file-dialog') downloadFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#modify-permission-dialog') modifyPermissionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#share-folder-dialog') shareFolderDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
 
   constructor() {
     super();
@@ -168,7 +185,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundIDRenderer = this.iDRenderer.bind(this);
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -508,7 +525,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _toggleFileListCheckbox() {
-    const buttons = this.shadowRoot.querySelectorAll('.multiple-action-buttons');
+    const buttons = this.shadowRoot?.querySelectorAll<Button>('.multiple-action-buttons') as NodeListOf<Button>;
     if (this.fileListGrid.selectedItems.length > 0) {
       [].forEach.call(buttons, (e: HTMLElement) => {
         e.style.display = 'block';
@@ -524,30 +541,28 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update Quota Input to human readable value with proper unit
    */
   _updateQuotaInputHumanReadableValue() {
-    const currentQuotaInput = this.shadowRoot.querySelector('#modify-folder-quota');
-    const currentQuotaUnit = this.shadowRoot.querySelector('#modify-folder-quota-unit');
     let unit = 'MiB'; // default unit starts with MiB.
-    const convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value]);
+    const convertedCurrentQuota = Number(this.modifyFolderQuotaInput.value) * (this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]);
     const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
-    [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
+    [this.modifyFolderQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
     if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
       if (unit === 'MiB') {
-        currentQuotaInput.value = currentQuotaInput.value < 1 ? 1 : Math.round(currentQuotaInput.value);
+        this.modifyFolderQuotaInput.value = Number(this.modifyFolderQuotaInput.value) < 1 ? '1' : Math.round(Number(this.modifyFolderQuotaInput.value)).toString();
       } else {
-        currentQuotaInput.value = 1;
+        this.modifyFolderQuotaInput.value = '1';
       }
       unit = 'MiB';
     } else {
-      currentQuotaInput.value = parseFloat(currentQuotaInput.value).toFixed(1);
+      this.modifyFolderQuotaInput.value = parseFloat(this.modifyFolderQuotaInput.value).toFixed(1);
       if (convertedQuota < convertedCurrentQuota) {
-        currentQuotaInput.value = this.maxSize.value;
+        this.modifyFolderQuotaInput.value = this.maxSize.value.toString();
         unit = this.maxSize.unit;
       }
     }
     // apply step only when the unit is bigger than MB
-    currentQuotaInput.step = (currentQuotaUnit.value === 'MiB')? 0 : 0.1;
-    const idx = currentQuotaUnit.items.findIndex((item) => item.value === unit);
-    currentQuotaUnit.select(idx);
+    this.modifyFolderQuotaInput.step = (this.modifyFolderQuotaUnitSelect.value === 'MiB')? 0 : 0.1;
+    const idx = this.modifyFolderQuotaUnitSelect.items.findIndex((item) => item.value === unit);
+    this.modifyFolderQuotaUnitSelect.select(idx);
   }
 
   render() {
@@ -999,25 +1014,21 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
 
-    this.renameFileDialog = this.shadowRoot.querySelector('#rename-file-dialog');
-    this.deleteFileDialog = this.shadowRoot.querySelector('#delete-file-dialog');
-    this.downloadFileDialog = this.shadowRoot.querySelector('#download-file-dialog');
-    this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
-    this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
+    // TODO delete - not used in this file
+    // this.sessionLauncher = this.shadowRoot?.querySelector('#session-launcher');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
-    const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
-    for (const textfield of textfields) {
+    const textfields = this.shadowRoot?.querySelectorAll('mwc-textfield') as NodeListOf<TextField>;
+    for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
     if (this.storageType === 'automount') {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 230px)';
+      (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 230px)';
     } else {
-      this.shadowRoot.querySelector('vaadin-grid.folderlist').style.height = 'calc(100vh - 185px)';
+      (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 185px)';
     }
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
@@ -1034,7 +1045,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot.querySelectorAll('#modify-permission-dialog wl-select');
+    const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog wl-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -1049,7 +1060,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.text = _text('data.permission.PermissionModified');
       }
       this.notification.show();
-      this.shadowRoot.querySelector('#modify-permission-dialog').hide();
+      this.modifyPermissionDialog.hide();
     });
   }
 
@@ -1071,7 +1082,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <option value="kickout">${_t('data.folders.KickOut')}</option>
         </wl-select>
       </div>`, root);
-    this.shadowRoot.querySelector('wl-select').requestUpdate().then(()=>{
+    this.shadowRoot?.querySelector('wl-select')?.requestUpdate().then(() => {
       render(
         html`
         <div class="vertical layout">
@@ -1172,7 +1183,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     newTextField.className = 'share-email';
     newTextField.style.width = 'auto';
     newTextField.style.marginRight = '83px';
-    this.shadowRoot.querySelector('#textfields').appendChild(newTextField);
+    this.shadowRoot?.querySelector('#textfields')?.appendChild(newTextField);
   }
 
   /**
@@ -1180,8 +1191,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   _removeTextField() {
-    const textfields = this.shadowRoot.querySelector('#textfields');
-    if (textfields.children.length > 1) {
+    const textfields = this.shadowRoot?.querySelector('#textfields') as HTMLDivElement;
+    if (textfields.children.length > 1 && textfields.lastChild) {
       textfields.removeChild(textfields.lastChild);
     }
   }
@@ -1382,7 +1393,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         ${this._hasPermission(rowData.item, 'd') ? html`
             <lablup-shields app="" color="red"
                             description="D" ui="flat"></lablup-shields>` : html``}
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -1401,7 +1413,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="horizontal center-justified center layout">
             <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
           </div>`: html``}
-        `, root
+      `, root
     );
   }
 
@@ -1420,7 +1432,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <div class="horizontal center-justified center layout">
             <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
           </div>`: html``}
-        `, root
+      `, root
     );
   }
 
@@ -1437,7 +1449,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       html`
         <div class="layout vertical">
             <span>${this._humanReadableTime(rowData.item.ctime)}</span>
-        </div>`, root
+        </div>
+      `, root
     );
   }
 
@@ -1453,12 +1466,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout vertical center-justified">
-        ${rowData.item.type == 'user' ? html`
-          <wl-icon>person</wl-icon>
-        ` : html`
-          <wl-icon class="fg green">group</wl-icon>
-        `}
-        </div>`, root
+        ${rowData.item.type == 'user' ? html`<wl-icon>person</wl-icon>` : html`<wl-icon class="fg green">group</wl-icon>`}
+        </div>
+      `, root
     );
   }
 
@@ -1525,11 +1535,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _refreshFolderUI(e) {
-    const folder_explorer = this.shadowRoot.querySelector('#folder-explorer-dialog');
     if (Object.prototype.hasOwnProperty.call(e.detail, 'mini-ui') && e.detail['mini-ui'] === true) {
-      folder_explorer.classList.add('mini_ui');
+      this.folderExplorerDialog.classList.add('mini_ui');
     } else {
-      folder_explorer.classList.remove('mini_ui');
+      this.folderExplorerDialog.classList.remove('mini_ui');
     }
   }
 
@@ -1575,18 +1584,18 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _mkdirDialog() {
-    this.shadowRoot.querySelector('#mkdir-name').value = '';
+    this.mkdirNameInput.value = '';
     this.openDialog('mkdir-dialog');
   }
 
   openDialog(id) {
     // var body = document.querySelector('body');
     // body.appendChild(this.$[id]);
-    this.shadowRoot.querySelector('#' + id).show();
+    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
   closeDialog(id) {
-    this.shadowRoot.querySelector('#' + id).hide();
+    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
   }
 
   _indexFrom1(index) {
@@ -1665,18 +1674,15 @@ export default class BackendAiStorageList extends BackendAIPage {
       const permission = this.folderInfo.permission;
       let idx = Object.keys(this.permissions).indexOf(permission);
       idx = idx > 0 ? idx : 0;
-      this.shadowRoot.querySelector('#update-folder-permission').select(idx);
-      const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
-      if (cloneableEl) {
-        cloneableEl.checked = this.folderInfo.cloneable;
+      this.updateFolderPermissionSelect.select(idx);
+      if (this.updateFolderCloneableSwitch) {
+        this.updateFolderCloneableSwitch.selected = this.folderInfo.cloneable;
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
-        const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
-        quotaEl.value = this.quota.value;
-        quotaUnitEl.value = this.quota.unit;
+        this.modifyFolderQuotaInput.value = this.quota.value.toString();
+        this.modifyFolderQuotaUnitSelect.value = this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
@@ -1693,20 +1699,18 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update the folder options such as "permission" and "cloneable"
    **/
   async _updateFolder() {
-    const permissionEl = this.shadowRoot.querySelector('#update-folder-permission');
-    const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
     let isErrorOccurred = false;
     let cloneable = false;
     const input = {};
-    if (permissionEl) {
-      let permission = permissionEl.value;
-      permission = Object.keys(this.permissions).find((key) => this.permissions[key] === permission);
+    if (this.updateFolderPermissionSelect) {
+      let permission = this.updateFolderPermissionSelect.value;
+      permission = Object.keys(this.permissions).find((key) => this.permissions[key] === permission) ?? '';
       if (permission && this.folderInfo.permission !== permission) {
         input['permission'] = permission;
       }
     }
-    if (cloneableEl) {
-      cloneable = cloneableEl.checked;
+    if (this.updateFolderCloneableSwitch) {
+      cloneable = this.updateFolderCloneableSwitch.selected;
       input['cloneable'] = cloneable;
     }
 
@@ -1716,10 +1720,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       modifyFolderJobQueue.push(updateFolderConfig);
     }
     if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-      const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
-      const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-      const quota = quotaEl.value ? BigInt(quotaEl.value * this.quotaUnit[quotaUnitEl.value]): 0;
-      if ((this.quota.value != quotaEl.value) || (this.quota.unit != quotaUnitEl.value)) {
+      const quota = this.modifyFolderQuotaInput.value ? BigInt(Number(this.modifyFolderQuotaInput.value) * this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]).toString: '0';
+      if ((this.quota.value != Number(this.modifyFolderQuotaInput.value)) || (this.quota.unit != this.modifyFolderQuotaUnitSelect.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
         modifyFolderJobQueue.push(updateFolderQuota);
       }
@@ -1749,11 +1751,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   async _updateFolderName() {
     globalThis.backendaiclient.vfolder.name = this.renameFolderName;
-    const newNameEl = this.shadowRoot.querySelector('#new-folder-name');
-    const newName = newNameEl.value;
-    newNameEl.reportValidity();
+    const newName = this.newFolderNameInput.value;
+    this.newFolderNameInput.reportValidity();
     if (newName) {
-      if (newNameEl.checkValidity()) {
+      if (this.newFolderNameInput.checkValidity()) {
         try {
           await globalThis.backendaiclient.vfolder.rename(newName);
           this.notification.text = _text('data.folders.FolderRenamed');
@@ -1777,7 +1778,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _renameFolderDialog(e) {
     this.renameFolderName = this._getControlName(e);
-    this.shadowRoot.querySelector('#new-folder-name').value = '';
+    this.newFolderNameInput.value = '';
     this.openDialog('modify-folder-name-dialog');
   }
 
@@ -1789,7 +1790,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   async _deleteFolderDialog(e) {
     this.deleteFolderName = this._getControlName(e);
     // const deleteFolderId = this._getControlId(e);
-    this.shadowRoot.querySelector('#delete-folder-name').value = '';
+    this.deleteFolderNameInput.value = '';
     // let isDelible = await this._checkVfolderMounted(deleteFolderId);
     // if (isDelible) {
     this.openDialog('delete-folder-dialog');
@@ -1803,7 +1804,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Check folder name to delete folder.
    * */
   _deleteFolderWithCheck() {
-    const typedDeleteFolderName = this.shadowRoot.querySelector('#delete-folder-name').value;
+    const typedDeleteFolderName = this.deleteFolderNameInput.value;
     if (typedDeleteFolderName !== this.deleteFolderName) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
@@ -1873,7 +1874,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _leaveInvitedFolderDialog(e) {
     this.leaveFolderName = this._getControlName(e);
-    this.shadowRoot.querySelector('#leave-folder-name').value = '';
+    this.leaveFolderNameInput.value = '';
     this.openDialog('leave-folder-dialog');
   }
 
@@ -1882,7 +1883,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * */
   _leaveFolderWithCheck() {
-    const typedDeleteFolderName = this.shadowRoot.querySelector('#leave-folder-name').value;
+    const typedDeleteFolderName = this.leaveFolderNameInput.value;
     if (typedDeleteFolderName !== this.leaveFolderName) {
       this.notification.text = _text('data.folders.FolderNameMismatched');
       this.notification.show();
@@ -1947,17 +1948,16 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Validate file/subfolder name.
    */
   _validateExistingFileName() {
-    const filename = this.shadowRoot.querySelector('#new-file-name');
-    filename.validityTransform = (newValue, nativeValidity) => {
+    this.newFileNameInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          filename.validationMessage = _text('data.FileandFoldernameRequired');
+          this.newFileNameInput.validationMessage = _text('data.FileandFoldernameRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.newFileNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -1967,8 +1967,8 @@ export default class BackendAiStorageList extends BackendAIPage {
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/]/gi;
         let isValid: boolean;
         // compare old name and new name.
-        if (filename.value === this.renameFileDialog.querySelector('#old-file-name').textContent) {
-          filename.validationMessage = _text('data.EnterDifferentValue');
+        if (this.newFileNameInput.value === (this.renameFileDialog.querySelector('#old-file-name') as HTMLDivElement).textContent) {
+          this.newFileNameInput.validationMessage = _text('data.EnterDifferentValue');
           isValid = false;
           return {
             valid: isValid,
@@ -1978,9 +1978,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           isValid = true;
         }
         // custom validation for folder name using regex
-        isValid = !regex.test(filename.value);
+        isValid = !regex.test(this.newFileNameInput.value);
         if (!isValid) {
-          filename.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.newFileNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
         }
         return {
           valid: isValid,
@@ -1996,7 +1996,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isModifying
    */
   _validateFolderName(isModifying = false) {
-    const folderName = isModifying ? this.shadowRoot.querySelector('#new-folder-name') : this.shadowRoot.querySelector('#add-folder-name');
+    const folderName = isModifying ? this.newFolderNameInput : this.shadowRoot?.querySelector('#add-folder-name') as TextField;
 
     folderName.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
@@ -2054,7 +2054,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     id = this.explorer.id,
     dialog = false) {
     const job = await globalThis.backendaiclient.vfolder.list_files(path, id);
-    this.shadowRoot.querySelector('#fileList-grid').selectedItems = [];
+    this.fileListGrid.selectedItems = [];
     if (this._APIMajorVersion < 6) {
       this.explorer.files = JSON.parse(job.files);
     } else { // to support dedicated storage vendors such as FlashBlade
@@ -2092,8 +2092,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _toggleFilebrowserButton() {
     const isfilebrowserSupported = (this.filebrowserSupportedImages.length > 0 && this._isResourceEnough()) ? true : false;
-    const filebrowserIcon = this.shadowRoot.querySelector('#filebrowser-img');
-    const filebrowserBtn = this.shadowRoot.querySelector('#filebrowser-btn');
+    const filebrowserIcon = this.shadowRoot?.querySelector('#filebrowser-img');
+    const filebrowserBtn = this.shadowRoot?.querySelector('#filebrowser-btn') as Button;
     if (filebrowserIcon && filebrowserBtn) {
       filebrowserBtn.disabled = !isfilebrowserSupported;
       const filterClass = isfilebrowserSupported ? '' : 'apply-grayscale';
@@ -2157,11 +2157,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _mkdir(e) {
-    const newfolderEl = this.shadowRoot.querySelector('#mkdir-name');
-    const newfolder = newfolderEl.value;
+    const newfolder = this.mkdirNameInput.value;
     const explorer = this.explorer;
-    newfolderEl.reportValidity();
-    if (newfolderEl.checkValidity()) {
+    this.mkdirNameInput.reportValidity();
+    if (this.mkdirNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
         // console.log(err);
         if (err & err.message) {
@@ -2204,13 +2203,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Add eventListener to the dropzone - dragleave, dragover, drop.
    * */
   _addEventListenerDropZone() {
-    const dndZoneEl = this.shadowRoot.querySelector('#folder-explorer-dialog');
-    const dndZonePlaceholderEl = this.shadowRoot.querySelector('#dropzone');
+    const dndZonePlaceholderEl = this.shadowRoot?.querySelector('#dropzone') as HTMLDivElement;
     dndZonePlaceholderEl.addEventListener('dragleave', () => {
       dndZonePlaceholderEl.style.display = 'none';
     });
 
-    dndZoneEl.addEventListener('dragover', (e) => {
+    // TODO specify custom event type
+    this.folderExplorerDialog.addEventListener('dragover', (e: any) => {
       e.stopPropagation();
       e.preventDefault();
       if (this.isWritable) {
@@ -2222,7 +2221,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     });
 
-    dndZoneEl.addEventListener('drop', (e) => {
+    // TODO specify custom event type
+    this.folderExplorerDialog.addEventListener('drop', (e: any) => {
       let isNotificationDisplayed = false;
       e.stopPropagation();
       e.preventDefault();
@@ -2294,7 +2294,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the cloud_upload button
    * */
   _uploadFileBtnClick(e) {
-    const elem = this.shadowRoot.querySelector('#fileInput');
+    const elem = this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     if (elem && document.createEvent) { // sanity check
       const evt = document.createEvent('MouseEvents');
       evt.initEvent('click', true, false);
@@ -2349,7 +2349,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-    this.shadowRoot.querySelector('#fileInput').value = '';
+    (this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement).value = '';
   }
 
   /**
@@ -2495,15 +2495,25 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   _compareFileExtension() {
-    const newFilename = this.shadowRoot.querySelector('#new-file-name').value;
-    const oldFilename = this.renameFileDialog.querySelector('#old-file-name').textContent;
+    const newFilename = this.newFileNameInput.value;
+    const oldFilename = (this.renameFileDialog.querySelector('#old-file-name') as HTMLDivElement).textContent ?? '';
     const regex = /\.([0-9a-z]+)$/i;
-    this.newFileExtension = (newFilename.includes('.') && newFilename.match(regex)) ? newFilename.match(regex)[1].toLowerCase() : '';
-    this.oldFileExtension = (oldFilename.includes('.') && oldFilename.match(regex)) ? oldFilename.match(regex)[1].toLowerCase() : '';
+    const newFileExtension = newFilename.match(regex);
+    const oldFileExtension = oldFilename.match(regex);
+    if (newFilename.includes('.') && newFileExtension) {
+      this.newFileExtension = newFileExtension[1].toLowerCase();
+    } else {
+      this.newFileExtension = '';
+    }
+    if (oldFilename.includes('.') && oldFileExtension) {
+      this.oldFileExtension = oldFileExtension[1].toLowerCase();
+    } else {
+      this.oldFileExtension = '';
+    }
 
     if (newFilename) {
       if (this.newFileExtension !== this.oldFileExtension) {
-        this.shadowRoot.querySelector('#file-extension-change-dialog').show();
+        this.fileExtensionChangeDialog.show();
       } else if (this.oldFileExtension) {
         this._keepFileExtension();
       } else {
@@ -2519,13 +2529,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   _keepFileExtension() {
-    let newFilename = this.renameFileDialog.querySelector('#new-file-name').value;
+    let newFilename = this.newFileNameInput.value;
     if (this.newFileExtension) {
       newFilename = newFilename.replace(new RegExp(this.newFileExtension + '$'), this.oldFileExtension);
     } else {
       newFilename = newFilename + '.' + this.oldFileExtension;
     }
-    this.renameFileDialog.querySelector('#new-file-name').value = newFilename;
+    this.newFileNameInput.value = newFilename;
     this._renameFile();
   }
 
@@ -2537,7 +2547,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this.filebrowserSupportedImages.length > 0) {
         const isNotificationVisible = localStorage.getItem('backendaiwebui.filebrowserNotification');
         if ((isNotificationVisible == null || isNotificationVisible === 'true') && !this.isWritable) {
-          this.shadowRoot.querySelector('#filebrowser-notification-dialog').show();
+          this.fileBrowserNotificationDialog.show();
         }
         this._launchSession();
         this._toggleFilebrowserButton();
@@ -2554,6 +2564,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Toggle notification of filebrowser execution on read-only folder
    *
+   * @param {any} e
    */
   _toggleShowFilebrowserNotification(e) {
     const checkbox = e.target;
@@ -2602,8 +2613,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (service_info.length > 0 && service_info.filter((el) => el.name === 'filebrowser').length > 0) {
         globalThis.appLauncher.showLauncher(appOptions);
       }
-      const folderExplorerDialog = this.shadowRoot.querySelector('#folder-explorer-dialog');
-      if (folderExplorerDialog.open) {
+      if (this.folderExplorerDialog.open) {
         this.closeDialog('folder-explorer-dialog');
       }
       indicator.end(1000);
@@ -2623,18 +2633,18 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _openRenameFileDialog(e, is_dir = false) {
     const fn = e.target.getAttribute('filename');
-    this.renameFileDialog.querySelector('#old-file-name').textContent = fn;
-    this.renameFileDialog.querySelector('#new-file-name').value = fn;
-    this.renameFileDialog.filename = fn;
+    (this.renameFileDialog.querySelector('#old-file-name') as HTMLDivElement).textContent = fn;
+    this.newFileNameInput.value = fn;
+    // TODO define extended type for custom property
+    (this.renameFileDialog as any).filename = fn;
     this.renameFileDialog.show();
-    const currentFilename = this.renameFileDialog.querySelector('#new-file-name');
     this.is_dir = is_dir;
 
-    currentFilename.addEventListener('focus', (e) => {
+    this.newFileNameInput.addEventListener('focus', (e) => {
       const endOfExtensionLength = fn.replace(/\.([0-9a-z]+)$/i, '').length;
-      currentFilename.setSelectionRange(0, endOfExtensionLength);
+      this.newFileNameInput.setSelectionRange(0, endOfExtensionLength);
     });
-    currentFilename.focus();
+    this.newFileNameInput.focus();
   }
 
   /**
@@ -2642,16 +2652,15 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * */
   _renameFile() {
-    const fn = this.renameFileDialog.filename;
+    // TODO define extended type for custom property
+    const fn = (this.renameFileDialog as any).filename;
     const path = this.explorer.breadcrumb.concat(fn).join('/');
-    const newNameEl = this.renameFileDialog.querySelector('#new-file-name');
-    const newName = newNameEl.value;
-    const fileExtensionChangeDialog = this.shadowRoot.querySelector('#file-extension-change-dialog');
-    fileExtensionChangeDialog.hide();
-    newNameEl.reportValidity();
-    if (newNameEl.checkValidity()) {
+    const newName = this.newFileNameInput.value;
+    this.fileExtensionChangeDialog.hide();
+    this.newFileNameInput.reportValidity();
+    if (this.newFileNameInput.checkValidity()) {
       if (fn === newName) {
-        newNameEl.focus();
+        this.newFileNameInput.focus();
         this.notification.text = _text('data.folders.SameFileName');
         this.notification.show();
         return;
@@ -2683,8 +2692,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _openDeleteFileDialog(e) {
     const fn = e.target.getAttribute('filename');
-    this.deleteFileDialog.filename = fn;
-    this.deleteFileDialog.files = [];
+    // TODO define extended type for custom properties
+    (this.deleteFileDialog as any).filename = fn;
+    (this.deleteFileDialog as any).files = [];
     this.deleteFileDialog.show();
   }
 
@@ -2694,8 +2704,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the delete button
    * */
   _openDeleteMultipleFileDialog(e?) {
-    this.deleteFileDialog.files = this.fileListGrid.selectedItems;
-    this.deleteFileDialog.filename = '';
+    // TODO define extended type for custom property
+    (this.deleteFileDialog as any).files = this.fileListGrid.selectedItems;
+    (this.deleteFileDialog as any).filename = '';
     this.deleteFileDialog.show();
   }
 
@@ -2706,7 +2717,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
 
   _deleteFileWithCheck(e) {
-    const files = this.deleteFileDialog.files;
+    // TODO define extended type for custom property
+    const files = (this.deleteFileDialog as any).files;
     if (files.length > 0) {
       const filenames: string[] = [];
       files.forEach((file) => {
@@ -2721,8 +2733,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.deleteFileDialog.hide();
       });
     } else {
-      if (this.deleteFileDialog.filename != '') {
-        const path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join('/');
+      // TODO define extended type for custom property
+      if ((this.deleteFileDialog as any).filename != '') {
+        const path = this.explorer.breadcrumb.concat((this.deleteFileDialog as any).filename).join('/');
         const job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
         job.then((res) => {
           this.notification.text = _text('data.folders.FileDeleted');
@@ -2798,11 +2811,11 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   _initializeSharingFolderDialogLayout() {
-    const emailInputList = this.shadowRoot.querySelectorAll('#share-folder-dialog mwc-textfield.share-email');
+    const emailInputList = this.shadowRoot?.querySelectorAll<TextField>('#share-folder-dialog mwc-textfield.share-email') as NodeListOf<TextField>;
     if (emailInputList.length > 1) {
-      Array.prototype.forEach.call(emailInputList, (elem, index) => {
+      emailInputList.forEach((elem) => {
         if (elem.id !== 'first-email') {
-          elem.parentNode.removeChild(elem);
+          elem.parentNode?.removeChild(elem);
         }
       });
     }
@@ -2829,7 +2842,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list_invitees(vfolder_id)
       .then((res) => {
         this.invitees = res.shared;
-        this.shadowRoot.querySelector('#modify-permission-dialog').updateComplete.then(()=>{
+        this.modifyPermissionDialog.updateComplete.then(()=>{
           this.openDialog('modify-permission-dialog');
         });
       });
@@ -2841,17 +2854,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the share-button
    * */
   _shareFolder(e) {
-    const emailHtmlCollection = this.shadowRoot.querySelectorAll('mwc-textfield.share-email');
+    const emailHtmlCollection = this.shadowRoot?.querySelectorAll('mwc-textfield.share-email') as NodeListOf<TextField>;
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '').map((e) => e.value.trim());
-    const permission = this.shadowRoot.querySelector('mwc-radio[name=share-folder-permission][checked]').value;
+    const permission = (this.shadowRoot?.querySelector('mwc-radio[name=share-folder-permission][checked]') as Radio).value;
 
     if (emailArray.length === 0) {
       this.notification.text = _text('data.invitation.NoValidEmails');
       this.notification.show();
-      this.shadowRoot.querySelector('#share-folder-dialog').hide();
-      for (const element of emailHtmlCollection) {
+      this.shareFolderDialog.hide();
+      for (const element of Array.from(emailHtmlCollection)) {
         element.value = '';
       }
       return;
@@ -2881,10 +2894,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
         this.notification.text = msg;
         this.notification.show();
-        this.shadowRoot.querySelector('#share-folder-dialog').hide();
+        this.shareFolderDialog.hide();
         for (let i = emailHtmlCollection.length - 1; i > 0; i--) {
           const element = emailHtmlCollection[i];
-          element.parentElement.removeChild(element);
+          element.parentElement?.removeChild(element);
         }
       }).catch((err) => {
         if (this.selectedFolderType === 'user') {
@@ -2903,11 +2916,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Validate path name
    * */
   _validatePathName() {
-    const path_info = this.shadowRoot.querySelector('#mkdir-name');
-    path_info.validityTransform = (newValue, nativeValidity) => {
+    this.mkdirNameInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          path_info.validationMessage = _text('data.explorer.ValueRequired');
+          this.mkdirNameInput.validationMessage = _text('data.explorer.ValueRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -2921,9 +2933,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       } else {
         // custom validation for path name using regex
         const regex = /^([^`~!@#$%^&*()|+=?;:'",<>{}[\]\r\n/]{1,})+(\/[^`~!@#$%^&*()|+=?;:'",<>{}[\]\r\n/]{1,})*([/,\\]{0,1})$/gm;
-        let isValid = regex.test(path_info.value);
-        if (!isValid || path_info.value === './') {
-          path_info.validationMessage = _text('data.explorer.ValueShouldBeStarted');
+        let isValid = regex.test(this.mkdirNameInput.value);
+        if (!isValid || this.mkdirNameInput.value === './') {
+          this.mkdirNameInput.validationMessage = _text('data.explorer.ValueShouldBeStarted');
           isValid = false;
         }
         return {
