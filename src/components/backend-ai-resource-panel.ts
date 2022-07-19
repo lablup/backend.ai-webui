@@ -28,6 +28,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+
 /**
  `<backend-ai-resource-panel>` is a Summary panel of backend.ai web UI.
 
@@ -73,7 +75,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Number}) height = 0;
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
 
   static get styles(): CSSResultGroup {
     return [

@@ -34,6 +34,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
+
 /**
  `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
 
@@ -82,7 +84,7 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Object}) invitations = Object();
-  @query('#resource-monitor') resourceMonitor!: HTMLElementTagNameMap['backend-ai-resource-monitor'];
+  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
   constructor() {
     super();

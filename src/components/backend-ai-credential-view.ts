@@ -38,6 +38,11 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+type BackendAICredentialList = HTMLElementTagNameMap['backend-ai-credential-list'];
+type BackendAIUserList = HTMLElementTagNameMap['backend-ai-user-list'];
+type BackendAIResourcePolicyList = HTMLElementTagNameMap['backend-ai-resource-policy-list'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend.AI Credential view page
 
@@ -77,10 +82,10 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
-  @query('#active-credential-list') activeCredentialList!: HTMLElementTagNameMap['backend-ai-credential-list'];
-  @query('#inactive-credential-list') inactiveCredentialList!: HTMLElementTagNameMap['backend-ai-credential-list'];
-  @query('#active-user-list') activeUserList!: HTMLElementTagNameMap['backend-ai-user-list'];
-  @query('#resource-policy-list') resourcePolicyList!: HTMLElementTagNameMap['backend-ai-resource-policy-list'];
+  @query('#active-credential-list') activeCredentialList!: BackendAICredentialList;
+  @query('#inactive-credential-list') inactiveCredentialList!: BackendAICredentialList;
+  @query('#active-user-list') activeUserList!: BackendAIUserList;
+  @query('#resource-policy-list') resourcePolicyList!: BackendAIResourcePolicyList;
   @query('#allowed_vfolder-hosts') allowedVFolderHosts!: Select;
   @query('#dropdown-area') dropdownArea!: HTMLDivElement;
   @query('#rate-limit') rateLimit!: Select;
@@ -91,9 +96,9 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#id_user_confirm') userPasswordConfirmInput!: TextField;
   @query('#id_user_name') userNameInput!: TextField;
   @query('#id_user_password') userPasswordInput!: TextField;
-  @query('#new-keypair-dialog') newKeypairDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#new-policy-dialog') newPolicyDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#new-user-dialog') newUserDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#new-keypair-dialog') newKeypairDialog!: BackendAIDialog;
+  @query('#new-policy-dialog') newPolicyDialog!: BackendAIDialog;
+  @query('#new-user-dialog') newUserDialog!: BackendAIDialog;
 
   constructor() {
     super();

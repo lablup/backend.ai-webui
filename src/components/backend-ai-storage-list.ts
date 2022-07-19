@@ -46,6 +46,10 @@ import tus from '../lib/tus';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type Switch = HTMLElementTagNameMap['mwc-switch'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 /**
@@ -144,25 +148,25 @@ export default class BackendAiStorageList extends BackendAIPage {
     value: 0,
     unit: 'MiB'
   };
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#modify-folder-quota') modifyFolderQuotaInput!: TextField;
   @query('#modify-folder-quota-unit') modifyFolderQuotaUnitSelect!: Select;
-  @query('#fileList-grid') fileListGrid!: HTMLElementTagNameMap['vaadin-grid'];
+  @query('#fileList-grid') fileListGrid!: VaadinGrid;
   @query('#mkdir-name') mkdirNameInput!: TextField;
   @query('#delete-folder-name') deleteFolderNameInput!: TextField;
   @query('#new-folder-name') newFolderNameInput!: TextField;
   @query('#new-file-name') newFileNameInput!: TextField;
   @query('#leave-folder-name') leaveFolderNameInput!: TextField;
   @query('#update-folder-permission') updateFolderPermissionSelect!: Select;
-  @query('#update-folder-cloneable') updateFolderCloneableSwitch!: HTMLElementTagNameMap['mwc-switch'];
-  @query('#rename-file-dialog') renameFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#delete-file-dialog') deleteFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#filebrowser-notification-dialog') fileBrowserNotificationDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#file-extension-change-dialog') fileExtensionChangeDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#folder-explorer-dialog') folderExplorerDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#download-file-dialog') downloadFileDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#modify-permission-dialog') modifyPermissionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#share-folder-dialog') shareFolderDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#update-folder-cloneable') updateFolderCloneableSwitch!: Switch;
+  @query('#rename-file-dialog') renameFileDialog!: BackendAIDialog;
+  @query('#delete-file-dialog') deleteFileDialog!: BackendAIDialog;
+  @query('#filebrowser-notification-dialog') fileBrowserNotificationDialog!: BackendAIDialog;
+  @query('#file-extension-change-dialog') fileExtensionChangeDialog!: BackendAIDialog;
+  @query('#folder-explorer-dialog') folderExplorerDialog!: BackendAIDialog;
+  @query('#download-file-dialog') downloadFileDialog!: BackendAIDialog;
+  @query('#modify-permission-dialog') modifyPermissionDialog!: BackendAIDialog;
+  @query('#share-folder-dialog') shareFolderDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -1590,11 +1594,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   openDialog(id) {
     // var body = document.querySelector('body');
     // body.appendChild(this.$[id]);
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
   closeDialog(id) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   _indexFrom1(index) {

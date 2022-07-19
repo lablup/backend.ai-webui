@@ -42,6 +42,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend.AI Data View
 
@@ -700,11 +702,11 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   openDialog(id: string) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
   closeDialog(id: string) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**
@@ -724,7 +726,7 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
-    const desc = this.shadowRoot?.querySelector('#help-description') as HTMLElementTagNameMap['backend-ai-dialog'];
+    const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
   }
 

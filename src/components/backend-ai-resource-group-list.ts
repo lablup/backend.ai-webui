@@ -23,7 +23,7 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
-import 'weightless/expansion';
+import {Expansion} from 'weightless/expansion';
 
 import {Switch} from '@material/mwc-switch/mwc-switch';
 import '@material/mwc-button/mwc-button';
@@ -36,6 +36,8 @@ import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Resource Group List
@@ -313,11 +315,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   }
 
   _launchDialogById(id: string) {
-    (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector(id) as BackendAIDialog).show();
   }
 
   _hideDialogById(id: string) {
-    (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    (this.shadowRoot?.querySelector(id) as BackendAIDialog).hide();
   }
 
   /**
@@ -527,7 +529,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
-    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as HTMLElementTagNameMap['wl-expansion'];
+    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
 
     this.allowedSessionTypesSelect.value= 'both';
     schedulerOptsInputForms.checked = false;

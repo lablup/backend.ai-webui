@@ -29,6 +29,10 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
+type BackendAISessionLauncher = HTMLElementTagNameMap['backend-ai-session-launcher'];
+
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
 
@@ -60,9 +64,9 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) storageProxyInfo = Object();
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
-  @query('#resource-monitor') resourceMonitor!: HTMLElementTagNameMap['backend-ai-resource-monitor'];
-  @query('#session-launcher') sessionLauncher!: HTMLElementTagNameMap['backend-ai-session-launcher'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
+  @query('#session-launcher') sessionLauncher!: BackendAISessionLauncher;
   @query('#notebook-url') notebookUrlInput!: TextField;
 
   static get styles(): CSSResultGroup {

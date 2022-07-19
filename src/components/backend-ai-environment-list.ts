@@ -17,7 +17,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-spinner';
-import BackendAIDialog from './backend-ai-dialog';
+import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -36,6 +36,10 @@ import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from './backend-ai-painkiller';
+
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type Slider = HTMLElementTagNameMap['mwc-slider'];
 
 /**
  Backend.AI Environment List
@@ -80,7 +84,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundBaseImageRenderer = this.baseImageRenderer.bind(this);
   @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
   @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#modify-image-cpu') modifyImageCpu!: Button;
   @query('#modify-image-mem') modifyImageMemory!: Button;
   @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
@@ -294,7 +298,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @return {void}
    */
   _hideDialogById(id: string) {
-    return (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    return (this.shadowRoot?.querySelector(id) as BackendAIDialog).hide();
   }
 
   /**
@@ -304,7 +308,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @return {void}
    */
   _launchDialogById(id: string) {
-    return (this.shadowRoot?.querySelector(id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    return (this.shadowRoot?.querySelector(id) as BackendAIDialog).show();
   }
 
   /**
@@ -585,48 +589,48 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.modifyImageCpu.label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
       this.modifyImageCudaGpu.label = resource_limits[1].min;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
       this.modifyImageCudaGpu.label = _t('environment.Disabled') as string;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
       this.modifyImageCudaFGpu.label = resource_limits[2].min;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-fgpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-fgpu') as Slider).value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
       this.modifyImageCudaFGpu.label = _t('environment.Disabled') as string;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = 0;
     }
     if (!this._rocm_gpu_disabled) {
       this.modifyImageRocmGpu.label = resource_limits[3].min;
-      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
       this.modifyImageRocmGpu.label = _t('environment.Disabled') as string;
-      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value = 0;
     }
     if (!this._tpu_disabled) {
       this.modifyImageTpu.label = resource_limits[4].min;
-      (this.shadowRoot?.querySelector('mwc-slider#tpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
+      (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
         return value === resource_limits[0].min;
       })[0]);
     } else {
       this.modifyImageTpu.label = _t('environment.Disabled') as string;
-      (this.shadowRoot?.querySelector('mwc-slider#tpu') as HTMLElementTagNameMap['mwc-slider']).value = 0;
+      (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = 0;
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
     this.modifyImageMemory.label = this._addUnit(resource_limits[mem_idx].min);
 
-    (this.shadowRoot?.querySelector('mwc-slider#cpu') as HTMLElementTagNameMap['mwc-slider']).value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
+    (this.shadowRoot?.querySelector('mwc-slider#cpu') as Slider).value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
       return value === resource_limits[0].min;
     })[0]);
-    (this.shadowRoot?.querySelector('mwc-slider#mem') as HTMLElementTagNameMap['mwc-slider']).value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
+    (this.shadowRoot?.querySelector('mwc-slider#mem') as Slider).value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
       return value === this._addUnit(resource_limits[mem_idx].min);
     })[0]);
 

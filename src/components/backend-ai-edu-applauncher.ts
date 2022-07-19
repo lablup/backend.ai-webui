@@ -20,6 +20,8 @@ import './backend-ai-app-launcher';
 
 import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
+type BackendAIAppLauncher = HTMLElementTagNameMap['backend-ai-app-launcher'];
+
 /**
  Backend.AI Education App Launcher.
 
@@ -43,7 +45,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
-  @query('#app-launcher') appLauncher!: HTMLElementTagNameMap['backend-ai-app-launcher'];
+  @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
     return [

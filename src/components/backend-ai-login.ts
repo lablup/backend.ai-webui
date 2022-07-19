@@ -36,6 +36,9 @@ import {
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAISignup = HTMLElementTagNameMap['backend-ai-signup'];
+
 declare global {
   const ai: any;
 }
@@ -96,9 +99,9 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
-  @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#login-panel') loginPanel!: BackendAIDialog;
+  @query('#signout-panel') signoutPanel!: BackendAIDialog;
+  @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
   @query('#id_api_endpoint') apiEndpointInput!: TextField;
   @query('#id_api_endpoint_humanized') apiEndpointHumanizedInput!: TextField;
@@ -405,7 +408,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.signup_support = false;
     } else {
       this.signup_support = true;
-      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
+      (this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup).active = true;
     }
     if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword == false) {
       this.allowAnonymousChangePassword = false;
@@ -717,14 +720,14 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup'];
+    const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup;
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
     signupDialog.open();
   }
 
   _showChangePasswordEmailDialog() {
-    (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as BackendAIDialog).show();
   }
 
   async _sendChangePasswordEmail() {
@@ -739,7 +742,7 @@ export default class BackendAILogin extends BackendAIPage {
       );
 
       await client.cloud.send_password_change_email(emailEl.value);
-      (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+      (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as BackendAIDialog).hide();
       this.notification.text = _text('signup.EmailSent');
       this.notification.show();
     } catch (e) {

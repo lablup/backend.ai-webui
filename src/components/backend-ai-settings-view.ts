@@ -28,6 +28,8 @@ import '@material/mwc-list/mwc-list-item';
 import './lablup-activity-panel';
 import {default as PainKiller} from './backend-ai-painkiller';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 interface OptionAndId {
   option: string;
   id: string;
@@ -82,9 +84,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) optionRange = Object();
   @query('#scheduler-switch') schedulerSelect!: Select;
   @query('#num-retries') numberOfRetries!: TextField;
-  @query('#scheduler-env-dialog') schedulerEnvDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#overlay-network-env-dialog') overlayNetworkEnvDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#help-description') helpDescriptionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#scheduler-env-dialog') schedulerEnvDialog!: BackendAIDialog;
+  @query('#overlay-network-env-dialog') overlayNetworkEnvDialog!: BackendAIDialog;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -732,13 +734,13 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   _openDialogWithConfirmation(id) {
-    const envDialog = this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog'];
+    const envDialog = this.shadowRoot?.querySelector('#' + id) as BackendAIDialog;
     envDialog.closeWithConfirmation = true;
     envDialog?.show();
   }
 
   _closeDialogWithConfirmation(id) {
-    const envDialog = this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog'];
+    const envDialog = this.shadowRoot?.querySelector('#' + id) as BackendAIDialog;
     envDialog.closeWithConfirmation = false;
     envDialog.hide();
   }
@@ -747,7 +749,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * Close confirmation dialog and environment variable dialog and reset the option values.
    */
   closeAndResetEnvInput() {
-    const envDialogs = this.shadowRoot?.querySelectorAll<HTMLElementTagNameMap['backend-ai-dialog']>('.env-dialog') as NodeListOf<HTMLElementTagNameMap['backend-ai-dialog']>;
+    const envDialogs = this.shadowRoot?.querySelectorAll<BackendAIDialog>('.env-dialog') as NodeListOf<BackendAIDialog>;
     for (const envDialog of Array.from(envDialogs)) {
       if (envDialog.open) {
         const envContainer = envDialog.querySelector('.env-container');
@@ -791,11 +793,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   openDialog(id) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).show();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
   closeDialog(id) {
-    (this.shadowRoot?.querySelector('#' + id) as HTMLElementTagNameMap['backend-ai-dialog']).hide();
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**

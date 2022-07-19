@@ -31,6 +31,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 class BigNumber {
   static getValue() {
     return 1000000;
@@ -70,8 +72,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#idle-timeout') idleTimeout!: TextField;
   @query('#container-per-session-limit') containerPerSessionLimit!: TextField;
   @query('#session-lifetime') sessionLifetime!: TextField;
-  @query('#delete-policy-dialog') deletePolicyDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#modify-policy-dialog') modifyPolicyDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#delete-policy-dialog') deletePolicyDialog!: BackendAIDialog;
+  @query('#modify-policy-dialog') modifyPolicyDialog!: BackendAIDialog;
 
   constructor() {
     super();

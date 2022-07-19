@@ -3045,7 +3045,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const startUpCommandEditor = this.shadowRoot?.querySelector('#batch-mode-config-section') as HTMLDivElement;
     startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
     if (isBatchmode) {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as HTMLElementTagNameMap['lablup-codemirror'];
+      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
       editor.refresh();
       editor.focus();
     }

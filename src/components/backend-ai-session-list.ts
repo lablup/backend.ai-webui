@@ -38,6 +38,10 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+
 /**
  Backend AI Session List
 
@@ -108,15 +112,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
-  @query('#list-grid') _grid!: HTMLElementTagNameMap['vaadin-grid'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-grid') _grid!: VaadinGrid;
   @query('#access-key-filter') accessKeyFilterInput!: Textfield;
   @query('#multiple-action-buttons') multipleActionButtons!: HTMLDivElement;
   @query('#access-key-filter-helper-text') accessKeyFilterHelperText!: HTMLSpanElement;
-  @query('#terminate-session-dialog') terminateSessionDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#terminate-selected-sessions-dialog') terminateSelectedSessionsDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#status-detail-dialog') sessionStatusInfoDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#work-dialog') workDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;
+  @query('#terminate-selected-sessions-dialog') terminateSelectedSessionsDialog!: BackendAIDialog;
+  @query('#status-detail-dialog') sessionStatusInfoDialog!: BackendAIDialog;
+  @query('#work-dialog') workDialog!: BackendAIDialog;
 
   constructor() {
     super();

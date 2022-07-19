@@ -32,6 +32,13 @@ import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
+type BackendAIPipelineCreate = HTMLElementTagNameMap['backend-ai-pipeline-create'];
+type BackendAIPipelineList = HTMLElementTagNameMap['backend-ai-pipeline-list'];
+type BackendAIPipelineComponentView = HTMLElementTagNameMap['backend-ai-pipeline-component-view'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 @customElement('backend-ai-pipeline-view')
 export default class BackendAIPipelineView extends BackendAIPage {
   @property({type: Object}) notification = Object();
@@ -47,12 +54,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   @property({type: Object}) _dragSource = Object();
   @property({type: Object}) _dragTarget = Object();
-  @query('backend-ai-pipeline-create') pipelineCreate!: HTMLElementTagNameMap['backend-ai-pipeline-create'];
-  @query('backend-ai-pipeline-list') pipelineList!: HTMLElementTagNameMap['backend-ai-pipeline-list'];
-  @query('backend-ai-pipeline-component-view') pipelineComponent!: HTMLElementTagNameMap['backend-ai-pipeline-component-view'];
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
-  @query('#codemirror-dialog') codemirrorDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#codemirror-editor') codemirrorEditor!: HTMLElementTagNameMap['lablup-codemirror'];
+  @query('backend-ai-pipeline-create') pipelineCreate!: BackendAIPipelineCreate;
+  @query('backend-ai-pipeline-list') pipelineList!: BackendAIPipelineList;
+  @query('backend-ai-pipeline-component-view') pipelineComponent!: BackendAIPipelineComponentView;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#codemirror-dialog') codemirrorDialog!: BackendAIDialog;
+  @query('#codemirror-editor') codemirrorEditor!: LablupCodemirror;
 
   constructor() {
     super();

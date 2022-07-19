@@ -25,6 +25,9 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend AI Pipeline Component Create
 
@@ -42,9 +45,9 @@ export default class BackendAIPipelineComponentCreate extends BackendAIPipelineC
   @property({type: Array}) componentNodes;
   @property({type: Array}) componentEdges;
   @property({type: Array}) selectedNodes; // List of IDs of components
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
-  @query('#component-add-dialog') addComponentDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#component-delete-dialog') deleteComponentDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#component-add-dialog') addComponentDialog!: BackendAIDialog;
+  @query('#component-delete-dialog') deleteComponentDialog!: BackendAIDialog;
   @query('#component-name') componentNameInput!: TextField;
   @query('#component-description') componentDescriptionInput!: TextField;
   @query('#component-path') componentPathInput!: TextField;

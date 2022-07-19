@@ -31,6 +31,9 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+
 /**
  Backend.AI Error Log List
 
@@ -62,7 +65,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) boundMethodRenderer = this.methodRenderer.bind(this);
   @property({type: Object}) boundReqUrlRenderer = this.reqUrlRender.bind(this);
   @property({type: Object}) boundParamRenderer = this.paramRenderer.bind(this);
-  @query('#loading-spinner') spinner!: HTMLElementTagNameMap['lablup-loading-spinner'];
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
 
   static get styles(): CSSResultGroup {
     return [
@@ -122,7 +125,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     this._updatePageItemSize();
     this._grid = this.shadowRoot?.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
-      (this.shadowRoot?.querySelector('vaadin-grid') as HTMLElementTagNameMap['vaadin-grid']).style.height = 'calc(100vh - 275px)!important';
+      (this.shadowRoot?.querySelector('vaadin-grid') as VaadinGrid).style.height = 'calc(100vh - 275px)!important';
     }
     this.notification = globalThis.lablupNotification;
     document.addEventListener('log-message-refresh', () => this._refreshLogData());

@@ -26,6 +26,8 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Array}) resourcePolicy = {};
@@ -50,9 +52,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @query('#fgpu-resource') fgpuResourceInput!: TextField;
   @query('#shmem-resource') sharedMemoryResourceInput!: TextField;
   @query('#id-preset-name') presetNameInput!: TextField;
-  @query('#create-preset-dialog') createPresetDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#modify-template-dialog') modifyTemplateDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#create-preset-dialog') createPresetDialog!: BackendAIDialog;
+  @query('#modify-template-dialog') modifyTemplateDialog!: BackendAIDialog;
+  @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: BackendAIDialog;
 
   static get styles(): CSSResultGroup {
     return [

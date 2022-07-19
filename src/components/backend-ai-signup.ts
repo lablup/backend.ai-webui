@@ -26,6 +26,9 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {BackendAIPage} from './backend-ai-page';
 
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type LablupTermsOfService = HTMLElementTagNameMap['lablup-terms-of-service'];
+
 /**
  Backend.AI Signup feature for GUI Console
 
@@ -57,10 +60,10 @@ export default class BackendAiSignup extends BackendAIPage {
   @query('#id_password1') passwordInput!: TextField;
   @query('#id_password2') passwordConfirmInput!: TextField;
   @query('#signup-button') signupButton!: Button;
-  @query('#signup-panel') signupPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#email-sent-dialog') emailSentDialog!: HTMLElementTagNameMap['backend-ai-dialog'];
-  @query('#block-panel') TOSdialog!: HTMLElementTagNameMap['lablup-terms-of-service'];
+  @query('#signup-panel') signupPanel!: BackendAIDialog;
+  @query('#block-panel') blockPanel!: BackendAIDialog;
+  @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
+  @query('#block-panel') TOSdialog!: LablupTermsOfService;
 
   static get styles(): CSSResultGroup {
     return [
