@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -26,10 +26,11 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-textarea/mwc-textarea';
-import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-button';
+import '@material/mwc-textfield';
+import '@material/mwc-textarea';
+import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -39,6 +40,13 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+type TextArea = HTMLElementTagNameMap['mwc-textarea'];
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
+type Switch = HTMLElementTagNameMap['mwc-switch'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI User List
@@ -58,6 +66,8 @@ import {
 
 @customElement('backend-ai-user-list')
 export default class BackendAIUserList extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
   @property({type: Array}) users = [];
@@ -68,12 +78,9 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
-  @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
-  @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) userGrid = Object();
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @property({type: Object}) userStatus = {
@@ -82,12 +89,19 @@ export default class BackendAIUserList extends BackendAIPage {
     'before-verification': 'Before Verification',
     'deleted': 'Deleted',
   };
+  @query('#user-grid') userGrid!: VaadinGrid;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#password') passwordInput!: TextField;
+  @query('#confirm') confirmInput!: TextField;
+  @query('#username') usernameInput!: TextField;
+  @query('#full_name') fullNameInput!: TextField;
+  @query('#description') descriptionInput!: TextArea;
+  @query('#need_password_change') needPasswordChangeSwitch!: Switch;
+  @query('#status') statusSelect!: Select;
+  @query('#signout-user-dialog') signoutUserDialog!: BackendAIDialog;
+  @query('#user-info-dialog') userInfoDialog!: BackendAIDialog;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -201,16 +215,10 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
-  }
-
-  attributeChangedCallback(name: string, oldval: string | null, newval: string | null): void {
-    super.attributeChangedCallback(name, oldval, newval);
   }
 
   /**
@@ -229,13 +237,11 @@ export default class BackendAIUserList extends BackendAIPage {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-        this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
 
@@ -290,7 +296,7 @@ export default class BackendAIUserList extends BackendAIPage {
         return item.name;
       });
       this.userInfoGroups = groupNames;
-      this.shadowRoot.querySelector('#user-info-dialog').show();
+      this.userInfoDialog.show();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -475,9 +481,9 @@ export default class BackendAIUserList extends BackendAIPage {
    * - before-verification
    * - deleted
    *
-   * @param root
-   * @param column
-   * @param rowData
+   * @param {any} root
+   * @param {any} column
+   * @param {any} rowData
    */
   userStatusRenderer(root, column?, rowData?) {
     const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
@@ -504,14 +510,12 @@ export default class BackendAIUserList extends BackendAIPage {
    *
    */
   _togglePasswordInputRequired() {
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    passwordEl.required = (password === '' && confirm !== '') ? true : false;
-    confirmEl.required = (password !== '' && confirm === '') ? true : false;
-    passwordEl.reportValidity();
-    confirmEl.reportValidity();
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    this.passwordInput.required = (password === '' && confirm !== '') ? true : false;
+    this.confirmInput.required = (password !== '' && confirm === '') ? true : false;
+    this.passwordInput.reportValidity();
+    this.confirmInput.reportValidity();
   }
 
   /**
@@ -520,19 +524,17 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Event} event - click SaveChanges button
    * */
   _saveChanges(event) {
-    const username = this.shadowRoot.querySelector('#username').value;
-    const full_name = this.shadowRoot.querySelector('#full_name').value;
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    const description = this.shadowRoot.querySelector('#description').value;
-    const status = this.shadowRoot.querySelector('#status').value;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
+    const username = this.usernameInput.value;
+    const full_name = this.fullNameInput.value;
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    const description = this.descriptionInput.value;
+    const status = this.statusSelect.value;
+    const need_password_change = this.needPasswordChangeSwitch.selected;
 
     this._togglePasswordInputRequired();
 
-    if (!passwordEl.checkValidity() || !confirmEl.checkValidity()) {
+    if (!this.passwordInput.checkValidity() || !this.confirmInput.checkValidity()) {
       return;
     }
 
@@ -581,17 +583,17 @@ export default class BackendAIUserList extends BackendAIPage {
     globalThis.backendaiclient.user.update(this.userInfo.email, input)
       .then((res) => {
         if (res.modify_user.ok) {
-          this.shadowRoot.querySelector('#user-info-dialog').hide();
+          this.userInfoDialog.hide();
 
           this.notification.text = _text('environment.SuccessfullyModified');
           this.userInfo = {...this.userInfo, ...input, password: null};
           this._refreshUserData();
-          this.shadowRoot.querySelector('#password').value = '';
-          this.shadowRoot.querySelector('#confirm').value = '';
+          this.passwordInput.value = '';
+          this.confirmInput.value = '';
         } else {
           this.notification.text = PainKiller.relieve(res.modify_user.msg);
-          this.shadowRoot.querySelector('#username').value = this.userInfo.username;
-          this.shadowRoot.querySelector('#description').value = this.userInfo.description;
+          this.usernameInput.value = this.userInfo.username;
+          this.descriptionInput.value = this.userInfo.description;
         }
         this.notification.show();
         this.refresh();
