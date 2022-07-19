@@ -39,7 +39,7 @@ export default class BackendAIIndicator extends LitElement {
           right: 20px;
           bottom: 20px;
           z-index: 9000;
-          --dialog-height: 80px;
+          --dialog-height: 100px;
           --dialog-width: 250px;
           --dialog-content-padding: 15px;
         }
