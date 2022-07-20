@@ -182,7 +182,6 @@ export default class BackendAIMultiSelect extends LitElement {
     const selectedItemIndices = [...e.detail.index];
     const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map(item => item.value);
     this.selectedItemList = selectedItems;
-    this._hideMenu();
   }
 
   /**
