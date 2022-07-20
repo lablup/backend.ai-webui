@@ -36,6 +36,9 @@ import {
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type BackendAISignup = HTMLElementTagNameMap['backend-ai-signup'];
 

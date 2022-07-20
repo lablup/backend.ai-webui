@@ -37,6 +37,9 @@ import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type Slider = HTMLElementTagNameMap['mwc-slider'];

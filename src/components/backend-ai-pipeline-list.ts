@@ -22,6 +22,9 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 
 /**

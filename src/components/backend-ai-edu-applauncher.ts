@@ -20,6 +20,9 @@ import './backend-ai-app-launcher';
 
 import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAIAppLauncher = HTMLElementTagNameMap['backend-ai-app-launcher'];
 
 /**

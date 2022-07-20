@@ -34,6 +34,9 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAISessionList = HTMLElementTagNameMap['backend-ai-session-list'];
 type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor']
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];

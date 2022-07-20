@@ -38,6 +38,9 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAICredentialList = HTMLElementTagNameMap['backend-ai-credential-list'];
 type BackendAIUserList = HTMLElementTagNameMap['backend-ai-user-list'];
 type BackendAIResourcePolicyList = HTMLElementTagNameMap['backend-ai-resource-policy-list'];
@@ -644,7 +647,7 @@ export default class BackendAICredentialView extends BackendAIPage {
         if (res['create_user'].ok) {
           this.notification.text = _text('credential.UserAccountCreated');
 
-          (this.activeUserList as any).refresh();
+          this.activeUserList.refresh();
         } else {
           // console.error(res['create_user'].msg);
           this.notification.text = _text('credential.UserAccountCreatedError');

@@ -27,6 +27,9 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 import './backend-ai-pipeline-component-create';
 import './backend-ai-pipeline-runner';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIPipelineComponentCreate = HTMLElementTagNameMap['backend-ai-pipeline-component-create'];
 type BackendAIPipelineRunner = HTMLElementTagNameMap['backend-ai-pipeline-runner'];

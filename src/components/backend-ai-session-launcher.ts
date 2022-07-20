@@ -48,6 +48,9 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
 type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];

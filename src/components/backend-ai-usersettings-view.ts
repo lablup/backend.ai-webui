@@ -37,6 +37,9 @@ import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 

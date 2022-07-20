@@ -33,6 +33,9 @@ import './lablup-loading-spinner';
 import './lablup-codemirror';
 import './backend-ai-dialog';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];

@@ -355,7 +355,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   async _getWSProxyVersion(sessionUuid) {
     const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
     const scalingGroupId = kInfo.compute_session.scaling_group;
-    // TODO does it exist?
     const groupId = globalThis.backendaiclient.current_group_id();
     const wsproxyVersion = (globalThis.isElectron) ?
       'v1' :

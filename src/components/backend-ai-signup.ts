@@ -26,6 +26,9 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {BackendAIPage} from './backend-ai-page';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type LablupTermsOfService = HTMLElementTagNameMap['lablup-terms-of-service'];
 

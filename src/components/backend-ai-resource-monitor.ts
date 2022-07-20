@@ -36,6 +36,9 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 
 @customElement('backend-ai-resource-monitor')

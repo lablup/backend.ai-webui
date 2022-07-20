@@ -25,6 +25,9 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
