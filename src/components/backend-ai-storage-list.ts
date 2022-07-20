@@ -562,10 +562,10 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
         ${this.enableStorageProxy ? html`
-          <!--<vaadin-grid-column
+          <vaadin-grid-column
               auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
               .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
-        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
+        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>
       </vaadin-grid>
 
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
@@ -591,13 +591,13 @@ export default class BackendAiStorageList extends BackendAIPage {
                   `)}
           </mwc-select>
           ${this.enableStorageProxy ? html`
-          <!--<div class="horizontal layout flex wrap center justified">
+          <div class="horizontal layout flex wrap center justified">
             <p style="color:rgba(0, 0, 0, 0.6);">
               ${_t('data.folders.Cloneable')}
             </p>
             <mwc-switch id="update-folder-cloneable" style="margin-right:10px;">
             </mwc-switch>
-          </div>-->
+          </div>
           ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -1661,7 +1661,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.shadowRoot.querySelector('#update-folder-permission').select(idx);
       const cloneableEl = this.shadowRoot.querySelector('#update-folder-cloneable');
       if (cloneableEl) {
-        cloneableEl.checked = this.folderInfo.cloneable;
+        cloneableEl.selected = this.folderInfo.cloneable;
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
@@ -1699,7 +1699,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     if (cloneableEl) {
-      cloneable = cloneableEl.checked;
+      cloneable = cloneableEl.selected;
       input['cloneable'] = cloneable;
     }
 
@@ -2546,15 +2546,15 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Toggle notification of filebrowser execution on read-only folder
-   * 
+   *
    */
-   _toggleShowFilebrowserNotification(e) {
-     const checkbox = e.target;
-     if (checkbox) {
-       const isHidden = (!checkbox.checked).toString();
-       localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
-     }
-   }
+  _toggleShowFilebrowserNotification(e) {
+    const checkbox = e.target;
+    if (checkbox) {
+      const isHidden = (!checkbox.checked).toString();
+      localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
+    }
+  }
 
   /**
    * Open the session launcher dialog to execute filebrowser app.
