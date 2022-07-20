@@ -227,13 +227,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-sidebar-color);
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[disabled] {
@@ -385,7 +385,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.selectedImages.forEach( async (image: any) => {
       // make image installing status visible
-      const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      const selectedImageLabel = '[id=\"' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-') + '\"]';
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
@@ -421,10 +421,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       if (isGPURequired) {
         if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
-          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
-          this.notification.show();
-          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
-          return;
+          delete imageResource['gpu'];
+          delete imageResource['fgpu'];
+          delete imageResource['cuda.shares'];
+          delete imageResource['cuda.device'];
         }
       }
 
@@ -1522,8 +1522,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _changeSliderValue(el) {
-    const currentVal= this._range[el.id].filter( (value, index) => {
-      return index === el._value;
+    const currentVal= this._range[el.id].filter((value, index) => {
+      return index === el.value;
     });
     this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
     this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];

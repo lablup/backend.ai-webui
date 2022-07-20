@@ -295,6 +295,20 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-weight: bold;
         }
 
+        mwc-list-item.predicate-check {
+          height: 100%;
+          margin-bottom: 5px;
+        }
+
+        .predicate-check-comment {
+          white-space: pre-wrap;
+        }
+
+        .error-description {
+          font-size: 0.8rem;
+          word-break: break-word;
+        }
+
         wl-button.multiple-action-button {
           --button-color: var(--paper-red-600);
           --button-color-active: red;
@@ -755,6 +769,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       if (imageParts.length === 3) {
         namespace = imageParts[1];
         langName = imageParts[2];
+      } else if (imageParts.length > 3) {
+        namespace = imageParts.slice(2, imageParts.length-1).join('/');
+        langName = imageParts[imageParts.length-1];
       } else {
         namespace = '';
         langName = imageParts[1];
@@ -889,11 +906,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return body;
   }
 
-  _terminateApp(sessionId) {
+  async _terminateApp(sessionId) {
     const token = globalThis.backendaiclient._config.accessKey;
+    const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId
+      uri: proxyURL + `proxy/${token}/${sessionId}`
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -901,7 +919,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: this._getProxyURL() + 'proxy/' + token + '/' + sessionId + '/delete',
+            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
             credentials: 'include',
             mode: 'cors'
           };
@@ -916,16 +934,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           this.notification.show(true, err);
         }
       });
-  }
-
-  _getProxyURL() {
-    let url = 'http://127.0.0.1:5050/';
-    if (globalThis.__local_proxy !== undefined) {
-      url = globalThis.__local_proxy;
-    } else if (globalThis.backendaiclient._config.proxyURL !== undefined) {
-      url = globalThis.backendaiclient._config.proxyURL;
-    }
-    return url;
   }
 
   _getProxyToken() {
@@ -1024,7 +1032,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const accessKey = controls['access-key'];
 
     if (this.terminationQueue.includes(sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
@@ -1033,7 +1041,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
-      this.notification.text = 'Already terminating the session.';
+      this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
@@ -1262,13 +1270,13 @@ export default class BackendAiSessionList extends BackendAIPage {
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
           <div class="vertical layout flex" style="width:100%;">
             <mwc-list>
-              <mwc-list-item twoline noninteractiv>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading"><strong>Kernel Exit Code</strong></span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.kernel?.exit_code ?? 'null'}</span>
               </mwc-list-item>
-              <mwc-list-item twoline noninteractive>
+              <mwc-list-item twoline noninteractive class="predicate-check">
                 <span class="subheading">Session Status</span>
-                <span class="monospace" slot="secondary">${tmpSessionStatus.session?.status}</span>
+                <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.session?.status}</span>
               </mwc-list-item>
             </mwc-list>
           </div>
@@ -1283,13 +1291,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
-                <mwc-list-item twoline noninteractiv>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
-                  <span class="monospace" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
                 </mwc-list-item>
-                <mwc-list-item twoline noninteractive>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.LastTry')}</span>
-                  <span class="monospace" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${this._humanReadableTime(tmpSessionStatus.scheduler.last_try)}</span>
                 </mwc-list-item>
               </mwc-list>
             </div>
@@ -1311,14 +1319,14 @@ export default class BackendAiSessionList extends BackendAIPage {
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return `
           ${item.name === 'reserved_time' ? `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>` : `
-              <mwc-list-item twoline graphic="icon" noninteractive>
+              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
-                <span slot="secondary" style="white-space:pre-wrap;">${item.msg}</span>
+                <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>`}
               <li divider role="separator"></li>
@@ -1339,7 +1347,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     `;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
-        return msg ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : '';
+        return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
+      };
+      // FIXME: stopgap for handling html entities in msg
+      const encodedStr = (str) => {
+        return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
+          return '&#' + i.charCodeAt(0) + ';';
+        });
       };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDetailEl.innerHTML += `
@@ -1361,7 +1375,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                 `: ``}
                 <div class="vertical layout start">
                   <span class="subheading">Message</span>
-                  <span style="font-size:0.8rem;">${sanitizeErrMsg(item.repr)}</span>
+                  <span class="error-description">${sanitizeErrMsg(item.repr)}</span>
                 </div>
               </div>
               `;
@@ -2040,27 +2054,20 @@ export default class BackendAiSessionList extends BackendAIPage {
       <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
          .items="${this.compute_sessions}" height-by-rows>
         ${this._isRunning ? html`
-          <vaadin-grid-column width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+          <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
           </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+        <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         ${this.is_admin ? html`
-          <vaadin-grid-filter-column path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+          <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
                                      header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
                                      .renderer="${this._boundUserInfoRenderer}">
           </vaadin-grid-filter-column>
         ` : html``}
-        <vaadin-grid-filter-column path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                   .renderer="${this._boundArchitectureRenderer}">
-        </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        <vaadin-grid-filter-column path="status" auto-width header="${_t('session.Status')}" resizable
+        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
         <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
@@ -2073,6 +2080,13 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
                                  path="created_at" .renderer="${this._boundReservationRenderer}">
         </vaadin-grid-sort-column>
+        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                   .renderer="${this._boundArchitectureRenderer}">
+        </vaadin-grid-filter-column>
+        ${this._isIntegratedCondition ? html`
+          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+        ` :
+    html``}
         ${this.is_superadmin ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                               .renderer="${this._boundAgentRenderer}">
@@ -2111,11 +2125,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
-              ${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+            ${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
@@ -2127,11 +2140,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          ${this.is_admin ? html`
-            <wl-button class="warning fg red" inverted flat
-                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
-            </wl-button>
-            <span class="flex"></span>` : html``}
+          <wl-button class="warning fg red" inverted flat
+                      @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
+          </wl-button>
+          <span class="flex"></span>
           <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </wl-button>
           <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}

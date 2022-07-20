@@ -146,7 +146,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           background-image: none;
           --mdc-button-outline-width: 2px;
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-textarea {
@@ -526,12 +526,16 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _initializeCreateSchedulerOpts() {
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
     const schedulerOptsInputForms = this.shadowRoot.querySelector('#scheduler-options-input-form');
 
     allowedSessionTypes.value= 'both';
     schedulerOptsInputForms.checked = false;
     if (pendingTimeout?.value) {
       pendingTimeout.value = '';
+    }
+    if (numRetriesToSkip?.value) {
+      numRetriesToSkip.value = '';
     }
   }
 
@@ -544,6 +548,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _initializeModifySchedulerOpts(name = '', value: any) {
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
     if ('allowed_session_types' === name) {
       if (value.includes('interactive') && value.includes('batch')) {
@@ -553,6 +558,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       }
     } else if ('pending_timeout' === name) {
       pendingTimeout.value = value;
+    } else if ('config' === name) {
+      numRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
     } else {
       // other scheduler options
     }
@@ -566,8 +573,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _verifyCreateSchedulerOpts() {
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
-    if (allowedSessionTypes.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => !fn.checkValidity());
+
+    if (validityCheckResult.length > 0) {
       return false;
     }
     return true;
@@ -581,8 +591,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _verifyModifySchedulerOpts() {
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
-    if (allowedSessionTypes.checkValidity() === false || pendingTimeout.checkValidity() === false) {
+    const validityCheckResult = [allowedSessionTypes, pendingTimeout, numRetriesToSkip].filter((fn) => !fn.checkValidity());
+
+    if (validityCheckResult.length > 0) {
       return false;
     }
     return true;
@@ -595,6 +608,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     this.schedulerOpts = {};
     const allowedSessionTypes = this.shadowRoot.querySelector('#allowed-session-types');
     const pendingTimeout = this.shadowRoot.querySelector('#pending-timeout');
+    const numRetriesToSkip = this.shadowRoot.querySelector('#num-retries-to-skip');
 
     if (allowedSessionTypes.value === 'both') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
@@ -603,6 +617,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     }
     if (pendingTimeout.value !== '') {
       this.schedulerOpts['pending_timeout'] = pendingTimeout.value;
+    }
+    if (numRetriesToSkip.value !== '') {
+      Object.assign(this.schedulerOpts, {
+        config: {
+          num_retries_to_skip: numRetriesToSkip.value
+        }
+      });
     }
   }
 
@@ -703,9 +724,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               `)}
             </mwc-select>
           ` : html`
-          <mwc-select id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
-            ${this.domains.map( (domain) => html`
-              <mwc-list-item value="${domain.name}">
+          <mwc-select required id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
+            ${this.domains.map((domain, idx) => html`
+              <mwc-list-item value="${domain.name}" ?selected=${idx === 0}>
                 ${domain.name}
               </mwc-list-item>
             `)}
@@ -736,6 +757,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 type="url"
                 label="${_t('resourceGroup.WsproxyAddress')}"
                 placeholder="http://localhost:10200"
+                value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
               ></mwc-textfield>
             ` : html``}
           ${this.enableSchedulerOpts ? html`
@@ -759,6 +781,18 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 min="0"
                 value="${this.resourceGroupInfo?.scheduler_opts?.pending_timeout ?? ''}"
               ></mwc-textfield>
+              <mwc-textfield
+                  type="number"
+                  value="0"
+                  id="num-retries-to-skip"
+                  label="# retries to skip pending session"
+                  placeholder="0"
+                  suffix="${_t('resourceGroup.RetriesToSkip')}"
+                  validationMessage="${_t('settings.InvalidValue')}"
+                  autoValidate
+                  min="0"
+                  value="${this.resourceGroupInfo?.scheduler_opts?.config?.num_retries_to_skip ?? ''}"
+                ></mwc-textfield>
             </wl-expansion>
             ` : html``}
         </div>
@@ -855,10 +889,20 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                                   </vaadin-item>`;
     } else if (key === 'pending_timeout') {
       return html`
-                                  <vaadin-item>
-                                    <div><strong>pending timeout</strong></div>
-                                    <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
-                                  </vaadin-item>`;
+      <vaadin-item>
+      <div><strong>pending timeout</strong></div>
+      <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+    </vaadin-item>`;
+    } else if (key === 'config') {
+      if (value['num_retries_to_skip']) {
+        return html`
+        <vaadin-item>
+        <div><strong># retries to skip pending session</strong></div>
+        <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
+      </vaadin-item>`;
+      } else {
+        return '';
+      }
     } else {
       return '';
     }

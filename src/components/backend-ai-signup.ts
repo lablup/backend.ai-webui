@@ -16,7 +16,7 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import '../lib/backend.ai-client-es6';
+import {Client} from '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -105,7 +105,7 @@ export default class BackendAiSignup extends BackendAIPage {
           mwc-button {
             background-image: none;
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-button[unelevated] {
@@ -119,7 +119,7 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-button-disabled-outline-color: var(--general-button-background-color);
             --mdc-button-disabled-ink-color: var(--general-button-background-color);
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-checkbox {
@@ -201,7 +201,7 @@ export default class BackendAiSignup extends BackendAIPage {
           _apiVersion: 'v4.20190615',
           endpoint: this.endpoint
         };
-        this.client = new ai.backend.Client(
+        this.client = new Client(
           clientConfig,
           `Backend.AI Console.`,
         );
