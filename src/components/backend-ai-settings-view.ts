@@ -33,7 +33,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
-interface OptionAndId {
+interface SettingOption {
   option: string;
   id: string;
 }
@@ -72,7 +72,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) options: Options;
   @property({type: Object}) schedulerOptions = Object();
   @property({type: Object}) networkOptions = Object();
-  @property({type: Object}) optionsAndId: OptionAndId[];
+  @property({type: Object}) optionsAndId: SettingOption[];
   @property({type: Object}) notification = Object();
   @property({type: Array}) imagePullingBehavior = [
     {name: _text('settings.image.digest'), behavior: 'digest'},
