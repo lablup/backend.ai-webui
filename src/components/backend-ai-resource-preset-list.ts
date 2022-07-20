@@ -13,7 +13,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
@@ -26,6 +26,10 @@ import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-resource-preset-list')
