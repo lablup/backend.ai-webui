@@ -4,7 +4,7 @@
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {
   IronFlex,
@@ -37,7 +37,9 @@ import '../plastics/lablup-shields/lablup-shields';
 @customElement('backend-ai-multi-select')
 export default class BackendAIMultiSelect extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) comboBox;
+  @query('#list') private comboBox;
+  @query('#menu', true) private menu;
+  @query('#dropdown-icon', true) private dropdownIcon;
   @property({type: Array}) selectedItemList;
   @property({type: String, attribute: 'label'}) label = '';
   @property({type: Array}) items;
@@ -120,7 +122,6 @@ export default class BackendAIMultiSelect extends LitElement {
         .expand {
           transform:rotateX(180deg) !important;
         }
-
       `
     ];
   }
@@ -130,17 +131,16 @@ export default class BackendAIMultiSelect extends LitElement {
    */
   _showMenu() {
     this._modifyListPosition(this.items.length);
-    this.shadowRoot.querySelector('#menu').style.display = '';
+    this.menu.style.display = '';
   }
 
   /**
    * Hide Dropdown Mneu
    */
   _hideMenu() {
-    const dropdownIcon = this.shadowRoot.querySelector('#dropdown-icon');
-    dropdownIcon.on = false;
-    dropdownIcon.classList.remove('expand');
-    this.shadowRoot.querySelector('#menu').style.display = 'none';
+    this.dropdownIcon.on = false;
+    this.dropdownIcon.classList.remove('expand');
+    this.menu.style.display = 'none';
   }
 
   /**
@@ -149,8 +149,7 @@ export default class BackendAIMultiSelect extends LitElement {
    * @param {Event} e - Click from expand/shrink icon in right-side of selected-area
    */
   _toggleMenuVisibility(e) {
-    const dropdownIcon = this.shadowRoot.querySelector('#dropdown-icon');
-    dropdownIcon.classList.toggle('expand');
+    this.dropdownIcon.classList.toggle('expand');
     if (e.detail.isOn) {
       this._showMenu();
     } else {
@@ -214,7 +213,6 @@ export default class BackendAIMultiSelect extends LitElement {
   }
 
   firstUpdated() {
-    this.comboBox = this.shadowRoot.querySelector('mwc-list');
     this.openUp = (this.getAttribute('open-up') !== null);
     this.label = this.getAttribute('label') ?? '';
   }
