@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
@@ -80,6 +80,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           width: 100%;
           border: 0;
           font-size: 12px;
+          height: calc(100vh - 305px);
         }
 
         vaadin-grid-cell {

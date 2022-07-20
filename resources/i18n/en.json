@@ -847,7 +847,8 @@
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
     "ResourceGroupDetail": "Resource Group Detail",
-    "RetriesToSkip": "Times"
+    "RetriesToSkip": "Times",
+    "NoGroupToDisplay": "NoGroupToDisplay"
   },
   "maintenance": {
     "General": "General",

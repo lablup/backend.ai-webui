@@ -306,7 +306,8 @@
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -356,7 +357,8 @@
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
     "AgentSetting": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -450,7 +452,9 @@
     "UserNotFound": "Pembuatan kredensial gagal, karena ID pengguna berikut tidak dapat ditemukan : ",
     "UserIDRequired": "ID pengguna diperlukan.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",
@@ -525,7 +529,8 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -654,7 +659,8 @@
     "ProblemOccurred": "Masalah terjadi",
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
     "NoChangeMade": "Tidak ada perubahan yang dibuat",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -675,7 +681,8 @@
     "MinimumShmemUnit": "Unit minimum untuk memori bersama adalah 0,01 GB.",
     "RAM": "RAM (GB)",
     "SharedMemory": "Memori bersama (GB)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Umum",
@@ -749,7 +756,8 @@
     "RequestUrl": "Request URL",
     "Parameters": "Parameter",
     "ErrorType": "Jenis Galat",
-    "LogMessageRemoved": "Pesan Log telah dihapus."
+    "LogMessageRemoved": "Pesan Log telah dihapus.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Sumber daya",
@@ -775,7 +783,8 @@
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
     "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
-    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nama host",
@@ -809,7 +818,8 @@
     "RescanFailed": "Pemindaian Ulang Gagal.",
     "PleaseSelectOption": "Silakan pilih salah satu opsi.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",
@@ -839,7 +849,8 @@
     "SetSchedulerOptions": "Setel Opsi Penjadwal",
     "TimeoutSeconds": "Detik",
     "ResourceGroupDetail": "Detail Grup Sumber Daya",
-    "RetriesToSkip": "__NOT_TRANSLATED__"
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",

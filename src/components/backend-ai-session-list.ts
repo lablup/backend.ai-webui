@@ -2099,8 +2099,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             </vaadin-grid-column>
                 ` : html``}
           </vaadin-grid>
+          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
         </div>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
       </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <mwc-icon-button

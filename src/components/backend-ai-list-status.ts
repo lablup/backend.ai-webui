@@ -3,7 +3,10 @@
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -24,7 +27,7 @@ import './lablup-loading-dots';
  */
 
 @customElement('backend-ai-list-status')
-export default class BackendAIListStatus extends LitElement {
+export default class BackendAIListStatus extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object}) list_status = Object();
   @property({type: String}) message = 'There is nothing to display';
@@ -36,7 +39,7 @@ export default class BackendAIListStatus extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -45,7 +48,7 @@ export default class BackendAIListStatus extends LitElement {
       css`
         #status {
           position: absolute;
-          top: 50%;
+          top: 55%;
           left: 50%;
           transform: translate(-50%, -50%);
         }

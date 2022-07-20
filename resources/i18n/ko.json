@@ -849,7 +849,8 @@
     "SetSchedulerOptions": "스케쥴러 옵션 설정",
     "TimeoutSeconds": "초",
     "ResourceGroupDetail": "자원 그룹 세부 정보",
-    "RetriesToSkip": "회"
+    "RetriesToSkip": "회",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "일반",
