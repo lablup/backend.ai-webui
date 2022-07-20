@@ -102,9 +102,6 @@ export default class LablupTermsOfService extends LitElement {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
-          /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 135px;
-          --mdc-menu-min-width: 135px;
         }
 
         #terms-of-service-dialog-content h1 {

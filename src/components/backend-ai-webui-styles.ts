@@ -334,16 +334,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: #747474;
-      /* Need to be set when fixedMenuPosition attribute is enabled */
-      --mdc-menu-max-width: 200px;
-      --mdc-menu-min-width: 200px;
-    }
-
-    mwc-select.fixed-position {
-      width: 255px;
-      /* Need to be set when fixedMenuPosition attribute is enabled */
-      --mdc-menu-max-width: 250px;
-      --mdc-menu-min-width: 250px;
     }
 
     mwc-multi-select {

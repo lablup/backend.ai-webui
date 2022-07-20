@@ -199,9 +199,6 @@ export default class BackendAiSettingsView extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
-          /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 150px;
-          --mdc-menu-min-width: 150px;
         }
 
         mwc-textfield#num-retries {
