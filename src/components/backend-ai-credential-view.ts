@@ -773,6 +773,14 @@ export default class BackendAICredentialView extends BackendAIPage {
       textfield.value = ['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) ? 1 : 0;
     }
 
+    if (!textfield.valid) {
+      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+      if (decimal_point > 0) {
+        textfield.value = Math.min(textfield.value, textfield.value < 0 ? textfield.min : textfield.max).toFixed(decimal_point);
+      } else {
+        textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      }
+    }
     // automatically check when textfield is min
     if (checkbox) {
       textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
@@ -1190,7 +1198,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>

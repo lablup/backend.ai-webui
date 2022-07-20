@@ -17,6 +17,8 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-button/mwc-button';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
@@ -415,12 +417,22 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 288px; // default width
         }
 
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 320px;
+          --mdc-menu-min-width: 320px;
+        }
+
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
         }
 
         mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
           width: 88px; // default width
+        }
+
+        mwc-radio {
+          --mdc-theme-secondary: var(--general-textfield-selected-color);
         }
 
         #textfields wl-textfield,
@@ -861,14 +873,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
           <div style="margin: 10px 0px">${_t('data.explorer.Permissions')}</div>
           <div style="display: flex; justify-content: space-evenly;">
-            <wl-label>
-              <wl-checkbox checked disabled></wl-checkbox>
-              ${_t('button.View')}
-            </wl-label>
-            <wl-label>
-              <wl-checkbox id="share-folder-write"></wl-checkbox>
-              ${_t('button.Edit')}
-            </wl-label>
+            <mwc-formfield label="${_t('data.folders.View')}">
+              <mwc-radio name="share-folder-permission" checked value="ro"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.Edit')}">
+              <mwc-radio name="share-folder-permission" value="rw"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.EditDelete')}">
+              <mwc-radio name="share-folder-permission" value="wd"></mwc-radio>
+            </mwc-formfield>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -2555,15 +2568,15 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   /**
    * Toggle notification of filebrowser execution on read-only folder
-   * 
+   *
    */
-   _toggleShowFilebrowserNotification(e) {
-     const checkbox = e.target;
-     if (checkbox) {
-       const isHidden = (!checkbox.checked).toString();
-       localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
-     }
-   }
+  _toggleShowFilebrowserNotification(e) {
+    const checkbox = e.target;
+    if (checkbox) {
+      const isHidden = (!checkbox.checked).toString();
+      localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
+    }
+  }
 
   /**
    * Open the session launcher dialog to execute filebrowser app.
@@ -2847,7 +2860,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '').map((e) => e.value.trim());
-    const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
+    const permission = this.shadowRoot.querySelector('mwc-radio[name=share-folder-permission][checked]').value;
 
     if (emailArray.length === 0) {
       this.notification.text = _text('data.invitation.NoValidEmails');
