@@ -415,6 +415,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 288px; // default width
         }
 
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 320px;
+          --mdc-menu-min-width: 320px;
+        }
+
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
         }
@@ -2555,13 +2561,13 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Toggle notification of filebrowser execution on read-only folder
    *
    */
-   _toggleShowFilebrowserNotification(e) {
-     const checkbox = e.target;
-     if (checkbox) {
-       const isHidden = (!checkbox.checked).toString();
-       localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
-     }
-   }
+  _toggleShowFilebrowserNotification(e) {
+    const checkbox = e.target;
+    if (checkbox) {
+      const isHidden = (!checkbox.checked).toString();
+      localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
+    }
+  }
 
   /**
    * Open the session launcher dialog to execute filebrowser app.

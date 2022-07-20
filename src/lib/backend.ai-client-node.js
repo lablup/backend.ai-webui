@@ -1432,6 +1432,7 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Update Information of virtual folder
      *
      * @param {json} input - parameters for updating folder options of Vfolder
      * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
@@ -1461,8 +1462,11 @@ class VFolder {
     }
     /**
      * List Virtual folder hosts that requested accessKey has permission to.
+     *
+     * @param {string} groupId - project(group) id
      */
     async list_hosts(groupId = null) {
+        // let reqUrl = `${this.urlPrefix}/_/all-hosts`;
         let reqUrl = `${this.urlPrefix}/_/hosts`;
         let params = {};
         if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
@@ -1472,6 +1476,16 @@ class VFolder {
         reqUrl += `?${q}`;
         let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * List all storage hosts connected to storage-proxy server
+     */
+    async list_all_hosts() {
+        if (this.client.is_superadmin === true) {
+            let reqUrl = `${this.urlPrefix}/_/all-hosts`;
+            let rqst = this.client.newSignedRequest('GET', reqUrl, null);
+            return this.client._wrapWithPromise(rqst);
+        }
     }
     /**
      * Information about specific virtual folder.
@@ -2878,7 +2892,7 @@ class Domain {
      *   'is_active': Boolean,    // Whether the group is active or not.
      *   'created_at': String,    // Created date of group.
      *   'modified_at': String,   // Modified date of group.
-     *   'total_resource_slots': JSOONString,   // Total resource slots
+     *   'total_resource_slots': JSONString,   // Total resource slots
      *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
      *   'allowed_docker_registries': [String],   // Allowed docker registry lists
      *   'integration_id': [String],   // Integration ids

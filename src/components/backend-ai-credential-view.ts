@@ -4,7 +4,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
@@ -24,6 +24,7 @@ import 'weightless/label';
 import './lablup-activity-panel';
 import './backend-ai-credential-list';
 import './backend-ai-dialog';
+import './backend-ai-multi-select';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -67,8 +68,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) isSuperAdmin = false;
   @property({type: String}) _status = 'inactive';
-  @property({type: Array}) allowed_vfolder_hosts = [];
-  @property({type: String}) default_vfolder_host = '';
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
@@ -77,9 +76,14 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @state() private all_vfolder_hosts;
+  @state() private default_vfolder_host = '';
+  @query('#id_new_policy_name') newPolicyName;
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
 
   constructor() {
     super();
+    this.all_vfolder_hosts = [];
     this.resource_policy_names = [];
   }
 
@@ -368,43 +372,35 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-   * Read the vfolder host information.
-   */
-  _readVFolderHostInfo() {
-    globalThis.backendaiclient.vfolder.list_hosts().then((response) => {
-      this.allowed_vfolder_hosts = response.allowed;
-      this.default_vfolder_host = response.default;
-      this.shadowRoot.querySelector('#allowed_vfolder-hosts').layout(true).then(()=>{
-        this.shadowRoot.querySelector('#allowed_vfolder-hosts').select(0);
-      });
+  * Get All Storage host information (superadmin-only)
+  */
+  _getAllStorageHostsInfo() {
+    return globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
+      this.all_vfolder_hosts = res.allowed;
+      this.default_vfolder_host = res.default;
     }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
+      throw err;
     });
   }
 
   /**
    * Launch a resouce policy dialog.
    */
-  async _launchResourcePolicyDialog() {
-    await this._getResourcePolicies();
-    this._readVFolderHostInfo();
-    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
-    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
-    this.shadowRoot.querySelector('#id_new_policy_name').value = '';
-    this.shadowRoot.querySelector('#new-policy-dialog').show();
-  }
-
-  /**
-   * Launch a modify resource policy dialog.
-   */
-  _launchModifyResourcePolicyDialog() {
-    this._readVFolderHostInfo();
-    this.shadowRoot.querySelector('#new-policy-dialog').show();
+  _launchResourcePolicyDialog() {
+    Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
+      this.newPolicyName.mdcFoundation.setValid(true);
+      this.newPolicyName.isUiValid = true;
+      this.newPolicyName.value = '';
+      this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
+      this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
+      this.shadowRoot.querySelector('#new-policy-dialog').show();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
   }
 
   /**
@@ -501,8 +497,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts: Array<string|null> = [];
-    vfolder_hosts.push(this.shadowRoot.querySelector('#allowed_vfolder-hosts').value);
+    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -529,7 +524,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         delete total_resource_slots[resource];
       }
     });
-
     const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
@@ -540,13 +534,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts
     };
-
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
       this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? 0 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
-
     return input;
   }
 
@@ -554,15 +546,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    const policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    if (!policy_info.checkValidity()) {
-      policy_info.reportValidity();
+    if (!this.newPolicyName.checkValidity()) {
+      this.newPolicyName.reportValidity();
       return;
     }
     try {
-      const name_field = this.shadowRoot.querySelector('#id_new_policy_name');
-      name_field.checkValidity();
-      const name = name_field.value;
+      this.newPolicyName.checkValidity();
+      const name = this.newPolicyName.value;
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
@@ -640,34 +630,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.shadowRoot.querySelector('#id_user_password').value = '';
         this.shadowRoot.querySelector('#id_user_confirm').value = '';
       });
-  }
-
-  /**
-   * Modify a resouce policy.
-   */
-  _modifyResourcePolicy() {
-    const name = this.shadowRoot.querySelector('#id_new_policy_name').value;
-    try {
-      const input = this._readResourcePolicyInput();
-
-      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then((response) => {
-        this.shadowRoot.querySelector('#new-policy-dialog').close();
-        this.notification.text = _text('resourcePolicy.SuccessfullyUpdated');
-        this.notification.show();
-        this.shadowRoot.querySelector('#resource-policy-list').refresh();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.shadowRoot.querySelector('#new-policy-dialog').close();
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-    } catch (err) {
-      this.notification.text = err.message;
-      this.notification.show();
-    }
   }
 
   /**
@@ -764,7 +726,11 @@ export default class BackendAICredentialView extends BackendAIPage {
 
     if (!textfield.valid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
-      textfield.value = (decimal_point > 0) ? parseFloat(textfield.value).toFixed(decimal_point) : Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      if (decimal_point > 0) {
+        textfield.value = Math.min(textfield.value, textfield.value < 0 ? textfield.min : textfield.max).toFixed(decimal_point);
+      } else {
+        textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
+      }
     }
     // automatically check when textfield is min
     if (checkbox) {
@@ -1013,24 +979,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
-  /**
-   *
-   * Expand or Shrink the dialog height by the number of items in the dropdown.
-   *
-   * @param {boolean} isOpened - notify whether the dialog is opened or not.
-   */
-  _controlHeightByVfolderHostCount(isOpened = false) {
-    if (!isOpened) {
-      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
-      return;
-    }
-    const itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
-    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
-    if (itemCount > 0) {
-      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
-    }
-  }
-
   _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
@@ -1180,7 +1128,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="1024" step="0.01"
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1248,17 +1196,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
           <h4 style="margin-bottom:0px;">${_t('resourcePolicy.Folders')}</h4>
           <div class="vertical center layout distancing" id="dropdown-area">
-            <mwc-select id="allowed_vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"
-              @opened="${() => this._controlHeightByVfolderHostCount(true)}"
-              @closed="${() => this._controlHeightByVfolderHostCount()}">
-              ${this.allowed_vfolder_hosts.map((item) => html`
-                <mwc-list-item class="owner-group-dropdown"
-                               id="${item}"
-                               value="${item}">
-                  ${item}
-                </mwc-list-item>
-              `)}
-            </mwc-select>
+            <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"></backend-ai-multi-select>
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>

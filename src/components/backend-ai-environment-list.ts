@@ -421,10 +421,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       if (isGPURequired) {
         if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
-          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
-          this.notification.show();
-          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
-          return;
+          delete imageResource['gpu'];
+          delete imageResource['fgpu'];
+          delete imageResource['cuda.shares'];
+          delete imageResource['cuda.device'];
         }
       }
 
@@ -1243,6 +1243,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this._refreshSorter(e);
     });
 
+    document.addEventListener('image-rescanned', () => {
+      this._getImages();
+    });
+
     // uncheck every checked rows when dialog is closed
     this.shadowRoot.querySelector('#install-image-dialog').addEventListener('didHide', () => {
       this._uncheckSelectedRow();
@@ -1518,8 +1522,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _changeSliderValue(el) {
-    const currentVal= this._range[el.id].filter( (value, index) => {
-      return index === el._value;
+    const currentVal= this._range[el.id].filter((value, index) => {
+      return index === el.value;
     });
     this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
     this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];
