@@ -5,7 +5,7 @@ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -57,9 +57,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) vfolder_capacity = {};
   @property({type: Object}) vfolder_max_limit= {};
   @property({type: Object}) container_per_session_limit = {};
-  @property({type: Array}) allowed_vfolder_hosts;
-  @property({type: Array}) all_vfolder_hosts;
-  @property({type: String}) default_vfolder_host = '';
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
@@ -70,6 +67,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) _boundPolicyNameRenderer = this.policyNameRenderer.bind(this);
   @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
   @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @state() private all_vfolder_hosts;
+  @state() private allowed_vfolder_hosts;
+  @state() private default_vfolder_host = '';
 
   constructor() {
     super();
@@ -538,11 +539,18 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _launchResourcePolicyDialog(e) {
-    this._getAllStorageHostsInfo();
     this.updateCurrentPolicyToDialog(e);
-    this.shadowRoot.querySelector('#allowed-vfolder-hosts').items = this.all_vfolder_hosts;
-    this.shadowRoot.querySelector('#allowed-vfolder-hosts').selectedItemList = this.allowed_vfolder_hosts;
-    this.shadowRoot.querySelector('#modify-policy-dialog').show();
+    this._getAllStorageHostsInfo().then(() => {
+      this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
+      this.allowedVfolderHostsSelect.selectedItemList = this.allowed_vfolder_hosts;
+      this.shadowRoot.querySelector('#modify-policy-dialog').show();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
   }
 
   _openDeleteResourcePolicyListDialog(e) {
@@ -883,15 +891,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   * Get All Storage host information (superadmin-only)
   */
   _getAllStorageHostsInfo() {
-    globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
+    return globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
       this.all_vfolder_hosts = res.allowed;
     }).catch((err) => {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    })
+      throw err;
+    });
   }
 }
 

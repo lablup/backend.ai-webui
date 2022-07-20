@@ -4,7 +4,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
@@ -68,9 +68,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) isSuperAdmin = false;
   @property({type: String}) _status = 'inactive';
-  @property({type: Array}) all_vfolder_hosts;
-  @property({type: Array}) allowed_vfolder_hosts;
-  @property({type: String}) default_vfolder_host = '';
   @property({type: String}) new_access_key = '';
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
@@ -79,6 +76,11 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @state() private all_vfolder_hosts;
+  @state() private allowed_vfolder_hosts;
+  @state() private default_vfolder_host = '';
+  @query('#id_new_policy_name') newPolicyName;
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
 
   constructor() {
     super();
@@ -403,9 +405,25 @@ export default class BackendAICredentialView extends BackendAIPage {
   * Get All Storage host information (superadmin-only)
   */
   _getAllStorageHostsInfo() {
-    globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
+    return globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
       this.all_vfolder_hosts = res.allowed;
       this.default_vfolder_host = res.default;
+    }).catch((err) => {
+      throw err;
+    });
+  }
+
+  /**
+   * Launch a resouce policy dialog.
+   */
+  _launchResourcePolicyDialog() {
+    Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
+      this.newPolicyName.mdcFoundation.setValid(true);
+      this.newPolicyName.isUiValid = true;
+      this.newPolicyName.value = '';
+      this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
+      this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
+      this.shadowRoot.querySelector('#new-policy-dialog').show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -413,20 +431,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
-  }
-
-  /**
-   * Launch a resouce policy dialog.
-   */
-  async _launchResourcePolicyDialog() {
-    this._getAllStorageHostsInfo();
-    await this._getResourcePolicies();
-    this.shadowRoot.querySelector('#id_new_policy_name').mdcFoundation.setValid(true);
-    this.shadowRoot.querySelector('#id_new_policy_name').isUiValid = true;
-    this.shadowRoot.querySelector('#id_new_policy_name').value = '';
-    this.shadowRoot.querySelector('#allowed-vfolder-hosts').items = this.all_vfolder_hosts;
-    this.shadowRoot.querySelector('#allowed-vfolder-hosts').selectedItemList = [this.default_vfolder_host];
-    this.shadowRoot.querySelector('#new-policy-dialog').show();
   }
 
   /**
@@ -523,7 +527,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.shadowRoot.querySelector('#allowed-vfolder-hosts').selectedItemList;
+    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -550,7 +554,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         delete total_resource_slots[resource];
       }
     });
-
     const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
@@ -561,13 +564,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts
     };
-
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
       this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? 0 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
-
     return input;
   }
 
@@ -575,15 +576,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    const policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    if (!policy_info.checkValidity()) {
-      policy_info.reportValidity();
+    if (!this.newPolicyName.checkValidity()) {
+      this.newPolicyName.reportValidity();
       return;
     }
     try {
-      const name_field = this.shadowRoot.querySelector('#id_new_policy_name');
-      name_field.checkValidity();
-      const name = name_field.value;
+      this.newPolicyName.checkValidity();
+      const name = this.newPolicyName.value;
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
