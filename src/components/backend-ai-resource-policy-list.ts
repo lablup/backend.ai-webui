@@ -70,7 +70,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
-  @state() private default_vfolder_host = '';
 
   constructor() {
     super();
