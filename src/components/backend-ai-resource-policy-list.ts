@@ -636,7 +636,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.shadowRoot.querySelector('#allowed-vfolder-hosts').selectedItemList;
+    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
