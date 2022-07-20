@@ -227,18 +227,22 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 172.5px;
         }
 
-        mwc-select.full-width {
+        mwc-select.full-width.fixed-position {
           width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 345px;
         }
 
-        mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 314px; // default width
-        }
-
-        mwc-select.fixed-position > mwc-list-item {
-          width: 140px; // default width
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 172.5px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {

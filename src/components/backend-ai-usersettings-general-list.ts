@@ -168,7 +168,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         }
 
         mwc-select {
-          width: 140px;
+          width: 160px;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-size: 11px;
@@ -189,6 +189,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         mwc-select#select-rcfile-type {
           width: 300px;
           margin-bottom: 10px;
+        }
+        
+        mwc-select#select-rcfile-type > mwc-list-item {
+          width: 250px;
         }
 
         mwc-textarea {
@@ -270,12 +274,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             width: 250px;
           }
 
+          mwc-select#select-rcfile-type > mwc-list-item {
+            width: 200px;
+          }
+
           .setting-desc {
             width: 200px;
           }
 
           #language-setting {
-            width: 150px;
+            width: 160px;
           }
         }
       `];
@@ -1065,6 +1073,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                   label="${_t('usersettings.ConfigFilename')}"
                   required
                   outlined
+                  fixedMenuPosition
                   validationMessage="${_t('credential.validation.PleaseSelectOption')}"
                   @selected="${() => this._toggleRcFileName()}"
                   helper=${_t('dialog.warning.WillBeAppliedToNewSessions')}>
