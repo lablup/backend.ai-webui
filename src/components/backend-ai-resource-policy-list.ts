@@ -66,7 +66,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
 
-  static readonly MAX_INT32 = 0x7FFFFFFF;
+  private static readonly MAX_INT32 = 0x7FFFFFFF;
 
   constructor() {
     super();
@@ -406,7 +406,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size, true)}</span>
+            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
@@ -530,8 +530,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const controls = e.target.closest('#controls');
     const policyName = controls['policy-name'];
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
-    this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
+
+    this.resource_policy_names = Object.keys(resourcePolicies);
     this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
     this.current_policy_name = policyName;
     this.cpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
@@ -556,9 +557,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._updateInputStatus(this.idle_timeout);
     this._updateInputStatus(this.container_per_session_limit);
     this._updateInputStatus(this.vfolder_capacity);
-
     this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
-    this.shadowRoot.querySelector('#vfolder-capacity-limit').value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
     this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
   }
 
@@ -652,7 +651,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.vfolder_max_limit['value'] = (this.vfolder_max_limit['value'] === '') ? 0 : parseInt(this.vfolder_max_limit['value']);
 
     this.idle_timeout['value'] = (this.idle_timeout['value'] === '') ? Number.MAX_SAFE_INTEGER : parseInt(this.idle_timeout['value']);
-    this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : globalThis.backendaiclient.utils.changeBinaryUnit(parseFloat(this.vfolder_capacity['value']), 'm', 'g');
+    this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -771,12 +770,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be greater than 0.
-      textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
-    }
-
-    if (!textfield.valid) {
+    if (!textfield.isUiValid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
       if (decimal_point > 0) {
         textfield.value = Math.min(textfield.value, (textfield.value < 0) ? textfield.min : textfield.max).toFixed(decimal_point);
@@ -785,9 +779,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       }
     }
 
-    // automatically check when textfield is min
+    // automatically check when textfield is min or max
     if (checkbox) {
-      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
+      textfield.disabled = checkbox.checked = ((textfield.value == parseFloat(textfield.min)) || (textfield.value == parseFloat(textfield.max)));
+      textfield.value = textfield.disabled ? textfield.min : textfield.value;
     }
   }
 
@@ -812,11 +807,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _updateInputStatus(resource) {
     const textfield = resource;
+    const maxIntUsingResources: string[] = ['concurrency-limit', 'container-per-session-limit', 'session-lifetime', 'vfolder-capacity-limit'];
+    const maxBigIntUsingResources: string = 'idle-timeout';
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
     if (textfield.value === '' || textfield.value === 0) {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BackendAIResourcePolicyList.MAX_INT32) {
+    } else if (
+      (maxIntUsingResources.includes(textfield.id) && textfield.value === BackendAIResourcePolicyList.MAX_INT32) ||
+      (maxBigIntUsingResources.includes(textfield.id) && textfield.value === Number.MAX_SAFE_INTEGER)) {
+      textfield.value = '';
       textfield.disabled = true;
       checkbox.checked = true;
     } else {

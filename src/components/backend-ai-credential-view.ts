@@ -730,12 +730,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be greater than 0.
-      textfield.value = ['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) ? 1 : 0;
-    }
-
-    if (!textfield.valid) {
+    if (!textfield.isUiValid) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
       if (decimal_point > 0) {
         textfield.value = Math.min(textfield.value, textfield.value < 0 ? textfield.min : textfield.max).toFixed(decimal_point);
@@ -743,9 +738,10 @@ export default class BackendAICredentialView extends BackendAIPage {
         textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
       }
     }
-    // automatically check when textfield is min
+    // automatically check when textfield is min or max
     if (checkbox) {
-      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min));
+      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min) || textfield.value == parseFloat(textfield.max));
+      textfield.value = textfield.disabled ? textfield.min : textfield.value;
     }
   }
 
