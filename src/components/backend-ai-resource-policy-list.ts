@@ -371,6 +371,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   resourceRenderer(root, column?, rowData?) {
+    let maxVfolderSizeUnit = 'GiB';
+    let maxVfolderSize = this._markIfUnlimited(rowData.item.max_vfolder_size);
+    if (typeof maxVfolderSize === 'number') { // FIXME: need better idea to branch number and infinity character
+      [maxVfolderSize, maxVfolderSizeUnit] = globalThis.backendaiutils._humanReadableFileSize(this._giBToByte(maxVfolderSize)).split(' ');
+    }
     render(
       html`
         <div class="layout horizontal wrap center">
@@ -406,8 +411,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size)}</span>
-            <span class="indicator">GB</span>
+            <span>${maxVfolderSize}</span>
+            <span class="indicator">${maxVfolderSizeUnit}</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder</wl-icon>
@@ -618,10 +623,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
-  _byteToGB(value: number, decimals=0) {
+  _byteToGiB(value: number, decimals=0) {
     const gigabyte = Math.pow(2, 30);
     const unitToFix = Math.pow(10, decimals);
     return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
+  }
+
+  _giBToByte(value: number, decimals = 0) {
+    const gigabyte = Math.pow(2, 30);
+    return Math.round(value * gigabyte);
   }
 
   _readResourcePolicyInput() {
@@ -838,7 +848,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else if (['NaN', NaN].includes(value)) {
       return '-';
     } else {
-      return enableUnitConvert ? this._byteToGB(value, 1) : value;
+      return enableUnitConvert ? this._byteToGiB(value, 1) : value;
     }
   }
 
