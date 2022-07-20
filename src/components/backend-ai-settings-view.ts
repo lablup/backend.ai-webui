@@ -258,7 +258,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <mwc-select id="ui-image-pulling-behavior"
                             required
                             outlined
-                            style="width:120px;"
+                            style="width:150px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
                 ${this.imagePullingBehavior.map((item) => html`
                   <mwc-list-item value="${item.behavior}"
