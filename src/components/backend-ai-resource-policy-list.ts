@@ -830,8 +830,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   /**
   * Returns human-readable value according to certain conditions
   *
-  * @param {String} value - raw value
-  * @param {Boolean} enableUnitConvert - if true it enable unit conversion
+  * @param {string} value - raw value
+  * @param {boolean} enableUnitConvert - if true it enable unit conversion
   * @return if number then returns number, else if then string
   */
   _markIfUnlimited(value, enableUnitConvert = false) {
