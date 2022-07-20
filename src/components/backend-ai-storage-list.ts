@@ -401,9 +401,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-typography-label-font-size: 12px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 320px;
-          --mdc-menu-min-width: 320px;
         }
 
         mwc-select#modify-folder-quota-unit {
@@ -416,6 +413,12 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select.full-width.fixed-position > mwc-list-item {
           width: 288px; // default width
+        }
+
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 320px;
+          --mdc-menu-min-width: 320px;
         }
 
         mwc-select.fixed-position > mwc-list-item {

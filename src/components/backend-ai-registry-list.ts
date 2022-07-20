@@ -117,11 +117,11 @@ class BackendAIRegistryList extends BackendAIPage {
         }
 
         mwc-select#select-registry-type {
-          padding-right: 10px;
+          width: 100%;
           --mdc-select-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-menu-max-width: 200px;
-          --mdc-menu-min-width: 200px;
+          --mdc-menu-max-width: 362px;
+          --mdc-menu-min-width: 362px;
         }
 
         mwc-list-item {
@@ -676,14 +676,17 @@ class BackendAIRegistryList extends BackendAIPage {
             value="${this.registryList[this.selectedIndex]?.password || ''}"
           ></wl-textfield>
          </div>
+         <div class="horizontal layout flex">
          <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
                       @change=${this._toggleProjectNameInput} required
                       validationMessage="${_t('registry.PleaseSelectOption')}"
-                      value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
+                      value="${this.registryList[this.selectedIndex]?.type || this.registryType}"
+                      fixedMenuPosition>
             ${this._registryTypes.map((item) => html`
               <mwc-list-item value="${item}" ?selected="${item === 'docker'}">${item}</mwc-list-item>
             `)}
           </mwc-select>
+          </div>
           <div class="vertical layout end-justified">
             <wl-textfield
               id="add-project-name"

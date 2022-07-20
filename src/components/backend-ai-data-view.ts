@@ -230,21 +230,21 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 340px;
-          --mdc-menu-min-width: 170px;
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select.full-width.fixed-position {
           width: 100%;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 340px;
-          --mdc-menu-min-width: 340px;
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 345px;
         }
 
         mwc-select.fixed-position {
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 170px;
-          --mdc-menu-min-width: 170px;
+          --mdc-menu-max-width: 172.5px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
