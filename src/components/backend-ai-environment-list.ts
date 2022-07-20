@@ -1243,6 +1243,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this._refreshSorter(e);
     });
 
+    document.addEventListener('image-rescanned', () => {
+      this._getImages();
+    });
+
     // uncheck every checked rows when dialog is closed
     this.shadowRoot.querySelector('#install-image-dialog').addEventListener('didHide', () => {
       this._uncheckSelectedRow();
