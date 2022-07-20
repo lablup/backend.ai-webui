@@ -129,6 +129,7 @@
       "Environments": "Ambienti",
       "Start": "Inizio",
       "FolderToMount": "Cartella da montare",
+      "FolderToMountList": "Cartella da montare",
       "ResourceAllocation": "Assegnazione delle risorse",
       "NoSuitablePreset": "Nessun preset adatto",
       "Advanced": "Avanzate",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Gruppo di risorse eliminato con successo",
     "EnterValidResourceGroupName": "Inserisci un nome del gruppo di risorse valido",
     "ResourceGroupNameRequired": "Il nome del gruppo di risorse è obbligatorio.",
-    "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome."
+    "ResourceGroupAlreadyExist": "Esiste già un gruppo di risorse con lo stesso nome.",
+    "SetSchedulerOptions": "Imposta le opzioni di pianificazione",
+    "TimeoutSeconds": "Secondi",
+    "ResourceGroupDetail": "Dettagli del gruppo di risorse"
   },
   "maintenance": {
     "General": "Generale",
@@ -1053,7 +1057,14 @@
     "FolderName": "Nome della cartella importata:",
     "NotebookBadgeCodeHTML": "Codice badge per notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Codice badge per notebook (markdown)",
-    "Installed": "Installato"
+    "Installed": "Installato",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistiche per questo mese",
@@ -1112,6 +1123,7 @@
     "20chars": "(massimo 20 caratteri)",
     "40chars": "(massimo 40 caratteri)",
     "64chars": "(massimo 64 caratteri)",
+    "200chars": "(massimo 200 caratteri)",
     "255chars": "(massimo 255 caratteri)",
     "500chars": "(massimo 500 caratteri)",
     "512chars": "(massimo 512 caratteri)",

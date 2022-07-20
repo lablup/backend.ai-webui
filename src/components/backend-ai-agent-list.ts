@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -109,7 +109,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         backend-ai-dialog#agent-detail {
           --component-max-width: 90%;
-          --component-min-width: 350px;
+          --component-min-width: 400px;
         }
 
         backend-ai-dialog {
@@ -118,27 +118,27 @@ export default class BackendAIAgentList extends BackendAIPage {
 
 
         lablup-progress-bar {
-          --progress-bar-width: 100px;
+          --progress-bar-width: 70px;
           border-radius: 3px;
           height: 10px;
           --mdc-theme-primary: #3677eb;
           --mdc-linear-progress-buffer-color: #98be5a;
-        }
-
-        lablup-progress-bar.cpu {
-          --progress-bar-height: 5px;
           margin-bottom: 0;
         }
 
+        lablup-progress-bar.cpu {
+          --progress-bar-height: 7px;
+        }
+
         lablup-progress-bar.cuda {
+          --progress-bar-width: 80px;
           --progress-bar-height: 15px;
           margin-bottom: 5px;
         }
 
         lablup-progress-bar.mem {
+          --progress-bar-width: 100px;
           --progress-bar-height: 15px;
-          --progress-bar-width: 100%;
-          margin-bottom: 0;
         }
 
         lablup-shields {
@@ -149,7 +149,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           width: 100px !important;
         }
 
-      `];
+        .agent-detail-title {
+          font-size: 8px;
+          width: 35px;
+        }
+    `];
   }
 
   firstUpdated() {
@@ -199,18 +203,18 @@ export default class BackendAIAgentList extends BackendAIPage {
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
@@ -628,7 +632,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     } else {
@@ -640,7 +643,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     }
@@ -876,11 +878,13 @@ export default class BackendAIAgentList extends BackendAIPage {
                    .items="${this.agents}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                             .renderer="${this._boundRegionRenderer}">
         </vaadin-grid-column>
+        <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
+        </vaadin-grid-sort-column>
         <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
         </vaadin-grid-column>
         <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
@@ -900,121 +904,111 @@ export default class BackendAIAgentList extends BackendAIPage {
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
-          <div class="horizontal start start-justified layout">
-            ${this.agentDetail?.cpu_util_live ?
-    html`
+          <div class="horizontal start around-justified layout flex">
+            ${this.agentDetail?.cpu_util_live ? html`
+              <div class="vertical layout start-justified flex">
+                <h3>CPU</h3>
+                ${this.agentDetail.cpu_util_live.map((item) => html`
+                  <div class="horizontal start-justified center layout" style="padding:0 5px;">
+                    <div class="agent-detail-title">CPU${item.num}</div>
+                    <lablup-progress-bar class="cpu"
+                                          progress="${item.pct / 100.0}"
+                    ></lablup-progress-bar>
+                  </div>`)}
+              </div>` : html``}
+              <div class="vertical layout start-justified flex">
+                <h3>Memory</h3>
                 <div>
-                  <h3>CPU</h3>
-                  <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.agentDetail.cpu_util_live.map((item) => html`
-                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                        <lablup-progress-bar class="cpu"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
-                        ></lablup-progress-bar>
-                      </div>`)}
+                  <lablup-progress-bar class="mem"
+                                      progress="${this.agentDetail.mem_current_usage_ratio}"
+                                      description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                  ></lablup-progress-bar>
+                </div>
+                <h3>Network</h3>
+                ${this.agentDetail?.live_stat?.node ? html`
+                  <div class="horizontal layout justified" style="width:100px;">
+                    <span>TX: </span>
+                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</span>
                   </div>
-                </div>` : html``}
-            <div>
-              <h3>Memory</h3>
-              <div>
-                <lablup-progress-bar class="mem"
-                                     progress="${this.agentDetail.mem_current_usage_ratio}"
-                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
-                ></lablup-progress-bar>
+                  <div class="horizontal layout justified flex" style="width:100px;">
+                    <span>RX: </span>
+                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</span>
+                  </div>
+                ` : html`
+                  <p>${_t('agent.NoNetworkSignal')}</p>
+                `}
               </div>
-              <h3>Network</h3>
-              ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
-              ` : html`
-                <p>${_t('agent.NoNetworkSignal')}</p>
-              `}
-            </div>
-            ${this.agentDetail?.cuda_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.cuda_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>CUDA Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.cuda_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.cuda_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.rocm_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.rocm_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>ROCm Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.rocm_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.rocm_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.tpu_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.tpu_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>TPU Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.tpu_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.tpu_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
           </div>
         </div>

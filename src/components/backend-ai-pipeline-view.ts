@@ -89,12 +89,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-sidebar-color);
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
           --mdc-theme-primary: var(--paper-light-blue-800, #efefef);
-          --mdc-on-theme-primary: var(--paper-light-blue-800, #efefef);
+          --mdc-theme-on-primary: var(--paper-light-blue-800, #efefef);
         }
 
         h3 mwc-button[outlined] {
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         #edit-pipeline {

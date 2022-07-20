@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -90,7 +90,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {

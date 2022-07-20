@@ -129,6 +129,7 @@
       "Environments": "Persekitaran",
       "Start": "Mulakan",
       "FolderToMount": "Folder untuk dipasang",
+      "FolderToMountList": "Folder untuk dipasang",
       "ResourceAllocation": "Peruntukan sumber",
       "NoSuitablePreset": "Tiada pratetap yang sesuai",
       "Advanced": "Mahir",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Kumpulan sumber berjaya dipadamkan",
     "EnterValidResourceGroupName": "Masukkan nama kumpulan Sumber yang sah",
     "ResourceGroupNameRequired": "Nama kumpulan sumber diperlukan.",
-    "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada."
+    "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",
+    "SetSchedulerOptions": "Tetapkan Pilihan Penjadual",
+    "TimeoutSeconds": "Detik",
+    "ResourceGroupDetail": "Perincian Kumpulan Sumber"
   },
   "maintenance": {
     "General": "Am",
@@ -1053,7 +1057,14 @@
     "FolderName": "Nama folder yang diimport:",
     "NotebookBadgeCodeHTML": "Kod Lencana Notebook (HTML)",
     "NotebookBadgeCodeMarkdown": "Kod Lencana Notebook (Markdown)",
-    "Installed": "Dipasang"
+    "Installed": "Dipasang",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistik untuk Bulan Ini",
@@ -1112,6 +1123,7 @@
     "20chars": "(maksimum 20 watak)",
     "40chars": "(maksimum 40 watak)",
     "64chars": "(maksimum 64 watak)",
+    "200chars": "(maksimum 200 watak)",
     "255chars": "(maksimum 255 watak)",
     "500chars": "(maksimum 500 watak)",
     "512chars": "(maksimum 512 watak)",

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -18,6 +18,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Email Verification View
@@ -72,8 +74,8 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
     this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
 
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    this.client = new Client(
       this.clientConfig,
       'Backend.AI Web UI.',
     );

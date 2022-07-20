@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -43,6 +43,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) open = false;
   @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
+  @property({type: String}) escapeKeyAction = 'close';
 
   @query('#dialog') protected dialog;
 
@@ -194,6 +195,7 @@ export default class BackendAiDialog extends LitElement {
                     ?backdrop="${this.backdrop}"
                     ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
+                    escapeKeyAction="${this.escapeKeyAction}"
                     blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
                     style="padding:0;" class="${this.type}">

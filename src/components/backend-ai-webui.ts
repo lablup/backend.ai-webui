@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -50,7 +50,7 @@ import './backend-ai-splash';
 import './lablup-notification';
 import './lablup-terms-of-service';
 
-import '../lib/backend.ai-client-es6';
+import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
 import {
@@ -96,6 +96,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: Boolean}) allow_signout = false;
+  @property({type: Boolean}) needPasswordChange = false;
   @property({type: String}) proxy_url = '';
   @property({type: String}) connection_mode = 'API';
   @property({type: String}) connection_server = '';
@@ -125,6 +126,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
+  @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -226,7 +228,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 .includes('reload')
           );
           tabcount.tabsCount(true);
-          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded && globalThis.backendaioptions.get('auto_logout', false) === true) {
+          if (this.auto_logout === true && tabcount.tabsCounter === 1 && !isPageReloaded) {
             this.loginPanel.check_login().then((result) => {
               const current_time: number = new Date().getTime() / 1000;
               if (result === true && (current_time - globalThis.backendaioptions.get('last_window_close_time', current_time) > 3.0)) { // currently login.
@@ -306,12 +308,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.connection_server = config.general.connectionServer;
       // console.log(this.connection_server);
     }
-    this.auto_logout = (typeof config.general !== 'undefined' && 'autoLogout' in config.general) ? config.general.autoLogout : globalThis.backendaioptions.get('auto_logout', false);
+    if ((typeof config.general !== 'undefined' && 'autoLogout' in config.general) && globalThis.backendaioptions.get('auto_logout') === null) {
+      this.auto_logout = config.general.autoLogout;
+    } else {
+      this.auto_logout = globalThis.backendaioptions.get('auto_logout', false);
+    }
     if (typeof config.license !== 'undefined' && 'edition' in config.license) {
       this.edition = config.license.edition;
     }
     if (typeof config.menu !== 'undefined' && 'blocklist' in config.menu) {
       this.blockedMenuitem = config.menu.blocklist.split(',');
+    }
+    if ((typeof config.general !== 'undefined' && 'maskUserInfo' in config.general)) {
+      this.isUserInfoMaskEnabled = config.general.maskUserInfo;
     }
 
     globalThis.packageEdition = this.edition;
@@ -377,8 +386,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     (this.shadowRoot.getElementById('sign-button') as any).icon = 'exit_to_app';
-
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
+    this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+    this.needPasswordChange = globalThis.backendaiclient.need_password_change;
     globalThis.backendaiclient.proxyURL = this.proxy_url;
     if (typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient != null &&
       typeof globalThis.backendaiclient.is_admin !== 'undefined' && globalThis.backendaiclient.is_admin === true) {
@@ -432,7 +442,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName): Promise<void> {
+  _parseConfig(fileName, returning = false): Promise<void> {
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -441,7 +451,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         return '';
       })
       .then((res) => {
-        this.config = toml(res);
+        const tomlConfig = toml(res);
+        if (returning) {
+          return tomlConfig;
+        } else {
+          this.config = toml(res);
+        }
       }).catch((err) => {
         console.log('Configuration file missing.');
       });
@@ -537,6 +552,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.appBody.type = 'modal';
       this.appBody.open = false;
       // this.contentBody.style.width = 'calc('+width+'px - 190px)';
+      this.contentBody.style.width = width + 'px';
       this.mainToolbar.style.setProperty('--mdc-drawer-width', '0px');
       this.drawerToggleButton.style.display = 'block';
       if (this.mini_ui) {
@@ -1203,8 +1219,32 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    const name = this.full_name ? this.full_name : this.user_id;
+    let name = this.full_name ? this.full_name : this.user_id;
+    // mask username only when the configuration is enabled
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(name);
+      const maskLength = isEmail ? name.split('@')[0].length - maskStartIdx : name.length - maskStartIdx;
+      name = globalThis.backendaiutils._maskString(name, '*', maskStartIdx, maskLength);
+    }
     return name;
+  }
+
+  /**
+   *  Get user id according to configuration
+   *
+   *  @return {string} userId
+   */
+  _getUserId() {
+    let userId = this.user_id;
+    // mask user id(email) only when the configuration is enabled
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
 
   _getRole(user_id) {
@@ -1237,6 +1277,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         break;
       }
     }
+  }
+
+  _hidePasswordChangeRequest() {
+    const passwordChangeRequest = this.shadowRoot.querySelector('#password-change-request');
+    passwordChangeRequest.style.display = 'none';
   }
 
   protected render() {
@@ -1360,7 +1405,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">21.09.3.220113</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1384,7 +1429,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">21.09.3.220113</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1430,11 +1475,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                           ` : html``}
                           <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon> 
-                              <span class="dropdown-menu-name">${this.user_id}</span>
+                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
+                              <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon> 
+                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                               <span class="dropdown-menu-name">${this.roleInfo.role}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" @click="${() => this.splash.show()}">
@@ -1460,7 +1505,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         </mwc-menu>
                       </div>
                       <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
-                        ${this.full_name}
+                        ${this._getUsername()}
                       </span>
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
                         <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
@@ -1475,6 +1520,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                         </mwc-icon-button>
                       </div>
                     </div>
+                  </div>
+                  <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
+                    <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t('webui.menu.PasswordChangePlace')})</span>
+                    <mwc-icon-button @click="${() => this._hidePasswordChangeRequest()}">
+                      <i class="fa fa-times"></i>
+                    </mwc-icon-button>
                   </div>
                 </div>
               </mwc-top-app-bar-fixed>

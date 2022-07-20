@@ -203,12 +203,12 @@ export const BackendAIWebUIStyles = [
       margin: auto 10px;
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primary] {
+    mwc-button[unelevated] {
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
     .page {
@@ -546,6 +546,20 @@ export const BackendAIWebUIStyles = [
       height: 100px;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
+    }
+
+    #password-change-request {
+      background-color: var(--paper-orange-400);
+      color: white;
+      font-size: 14px;
+      height: 28px;
+      position: absolute;
+      right: 0;
+      width: 100vw;
+    }
+
+    #password-change-request > mwc-icon-button > i {
+      font-size: 14px;
     }
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {

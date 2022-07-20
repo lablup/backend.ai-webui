@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -97,7 +97,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
 
@@ -377,7 +377,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _deleteResourcePresetWithCheck(e) {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
       this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
-      this.notification.text = 'Resource preset is successfully deleted.';
+      this.notification.text = _text('resourcePreset.Deleted');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {

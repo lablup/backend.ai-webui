@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -227,13 +227,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-sidebar-color);
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[disabled] {
@@ -385,7 +385,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.selectedImages.forEach( async (image: any) => {
       // make image installing status visible
-      const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      const selectedImageLabel = '[id=\"' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-') + '\"]';
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
@@ -421,10 +421,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       if (isGPURequired) {
         if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
-          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
-          this.notification.show();
-          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
-          return;
+          delete imageResource['gpu'];
+          delete imageResource['fgpu'];
+          delete imageResource['cuda.shares'];
+          delete imageResource['cuda.device'];
         }
       }
 
@@ -446,7 +446,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
 
-      globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
+      globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
         indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
@@ -880,6 +880,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </vaadin-grid-sort-column>
         <vaadin-grid-filter-column path="registry" width="80px" resizable
             header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column path="architecture" width="80px" resizable
+            header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="namespace" width="60px" resizable
             header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
         <vaadin-grid-filter-column path="lang" resizable
@@ -1286,7 +1288,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
     }).then((response) => {
       const images = response.images;
       const domainImages: any = [];
@@ -1349,8 +1351,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'tpu.device') {
               resource.key = 'tpu_device';
             }
-            image[resource.key + '_limit_min'] = this._addUnit(resource.min);
-            image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            if (resource.min !== null && resource.min !== undefined) {
+              image[resource.key + '_limit_min'] = this._addUnit(resource.min);
+            }
+            if (resource.max !== null && resource.max !== undefined) {
+              image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            }
           });
 
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
@@ -1512,8 +1518,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _changeSliderValue(el) {
-    const currentVal= this._range[el.id].filter( (value, index) => {
-      return index === el._value;
+    const currentVal= this._range[el.id].filter((value, index) => {
+      return index === el.value;
     });
     this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
     this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];

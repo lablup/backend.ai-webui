@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -17,6 +17,8 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button';
 import '@material/mwc-button/mwc-button';
+import '@material/mwc-radio';
+import '@material/mwc-formfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
@@ -130,7 +132,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   };
   @property({type: Array}) filebrowserSupportedImages = [];
   @property({type: Object}) storageProxyInfo = Object();
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) quotaUnit = {
     MiB: Math.pow(2, 20),
     GiB: Math.pow(2, 30),
@@ -256,6 +258,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           font-weight: 100;
         }
 
+        mwc-checkbox {
+          --mdc-theme-secondary: var(--general-checkbox-color);
+        }
+
         #folder-explorer-dialog {
           width: calc(100% - 250px); /* 250px is width for drawer menu */
           --component-height: calc(100vh - 200px); /* calc(100vh - 170px); */
@@ -277,6 +283,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-icon-button-size: 28px;
         }
 
+        #filebrowser-notification-dialog {
+          --component-width: 350px;
+        }
+
         vaadin-text-field {
           --vaadin-text-field-default-width: auto;
         }
@@ -285,6 +295,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           color: #637282;
           font-size: 1em;
           margin-bottom: 10px;
+          margin-left: 20px;
         }
 
         div.breadcrumb span:first-child {
@@ -412,6 +423,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 88px; // default width
         }
 
+        mwc-radio {
+          --mdc-theme-secondary: var(--general-textfield-selected-color);
+        }
+
         #textfields wl-textfield,
         wl-label {
           margin-bottom: 20px;
@@ -492,7 +507,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       `];
   }
 
-  _toggleCheckbox() {
+  _toggleFileListCheckbox() {
     const buttons = this.shadowRoot.querySelectorAll('.multiple-action-buttons');
     if (this.fileListGrid.selectedItems.length > 0) {
       [].forEach.call(buttons, (e: HTMLElement) => {
@@ -714,7 +729,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
-        <div slot="action" class="horizontal layout space-between folder-action-buttons">
+        <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
           ${this.isWritable ? html`
             <mwc-button
@@ -725,18 +740,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                 style="display:none;">
                 <span>${_t('data.explorer.Delete')}</span>
             </mwc-button>
-            <div id="filebrowser-btn-cover">
-              <mwc-button
-                  id="filebrowser-btn"
-                  ?disabled=${!this.isWritable}
-                  @click="${() => this._executeFileBrowser()}">
-                  <img class=${!this.isWritable}
-                       id="filebrowser-img"
-                       alt="File Browser"
-                       src="./resources/icons/filebrowser.svg"></img>
-                  <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
-              </mwc-button>
-            </div>
             <div id="add-btn-cover">
               <mwc-button
                   id="add-btn"
@@ -763,6 +766,17 @@ export default class BackendAiStorageList extends BackendAIPage {
             <span>${_t('data.explorer.ReadonlyFolder')}</span>
           </mwc-button>
           `}
+          <div id="filebrowser-btn-cover">
+            <mwc-button
+                id="filebrowser-btn"
+                @click="${() => this._executeFileBrowser()}">
+                <img
+                  id="filebrowser-img"
+                  alt="File Browser"
+                  src="./resources/icons/filebrowser.svg"></img>
+                <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
+            </mwc-button>
+          </div>
         </div>
         <div slot="content">
             <div class="breadcrumb">
@@ -851,14 +865,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
           <div style="margin: 10px 0px">${_t('data.explorer.Permissions')}</div>
           <div style="display: flex; justify-content: space-evenly;">
-            <wl-label>
-              <wl-checkbox checked disabled></wl-checkbox>
-              ${_t('button.View')}
-            </wl-label>
-            <wl-label>
-              <wl-checkbox id="share-folder-write"></wl-checkbox>
-              ${_t('button.Edit')}
-            </wl-label>
+            <mwc-formfield label="${_t('data.folders.View')}">
+              <mwc-radio name="share-folder-permission" checked value="ro"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.Edit')}">
+              <mwc-radio name="share-folder-permission" value="rw"></mwc-radio>
+            </mwc-formfield>
+            <mwc-formfield label="${_t('data.folders.EditDelete')}">
+              <mwc-radio name="share-folder-permission" value="wd"></mwc-radio>
+            </mwc-formfield>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -964,6 +979,19 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="filebrowser-notification-dialog" fixed backdrop narrowLayout>
+        <span slot="title">${_t('dialog.title.Notice')}</span>
+        <div slot="content" style="margin: 15px;">
+          <span>${_t('data.explorer.ReadOnlyFolderOnFileBrowser')}</span>
+        </div>
+        <div slot="footer" class="flex horizontal layout center justified" style="margin: 15px 15px 15px 0px;">
+          <div class="horizontal layout start-justified center">
+            <mwc-checkbox @change="${(e) => this._toggleShowFilebrowserNotification(e)}"></mwc-checkbox>
+            <span style="font-size:0.8rem;">${_text('dialog.hide.DonotShowThisAgain')}</span>
+          </div>
+          <mwc-button unelevated @click="${(e) => this._hideDialog(e)}">${_t('button.Confirm')}</mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 
@@ -977,7 +1005,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.fileListGrid = this.shadowRoot.querySelector('#fileList-grid');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
-      this._toggleCheckbox();
+      this._toggleFileListCheckbox();
     });
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.indicator = globalThis.lablupIndicator;
@@ -1117,7 +1145,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${rowData.shared_to.email}</div>
+        <div>${rowData.item.shared_to.email}</div>
       `, root
     );
   }
@@ -1127,7 +1155,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
       <div class="layout vertical">
-        <span class="indicator monospace">${rowData.id}</span>
+        <span class="indicator monospace">${rowData.item.id}</span>
       </div>
       `, root
     );
@@ -2507,6 +2535,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   _executeFileBrowser() {
     if (this._isResourceEnough()) {
       if (this.filebrowserSupportedImages.length > 0) {
+        const isNotificationVisible = localStorage.getItem('backendaiwebui.filebrowserNotification');
+        if ((isNotificationVisible == null || isNotificationVisible === 'true') && !this.isWritable) {
+          this.shadowRoot.querySelector('#filebrowser-notification-dialog').show();
+        }
         this._launchSession();
         this._toggleFilebrowserButton();
       } else {
@@ -2516,6 +2548,18 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.notification.text = _text('data.explorer.NotEnoughResourceForFileBrowserSession');
       this.notification.show();
+    }
+  }
+
+  /**
+   * Toggle notification of filebrowser execution on read-only folder
+   *
+   */
+  _toggleShowFilebrowserNotification(e) {
+    const checkbox = e.target;
+    if (checkbox) {
+      const isHidden = (!checkbox.checked).toString();
+      localStorage.setItem('backendaiwebui.filebrowserNotification', isHidden);
     }
   }
 
@@ -2544,7 +2588,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
       indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000);
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
     }).then(async (res) => {
       const service_info = res.servicePorts;
       appOptions = {
@@ -2801,7 +2845,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     // filter invalid and empty fields
     const emailArray = Array.prototype.filter.call(emailHtmlCollection, (e) => e.isUiValid && e.value !== '').map((e) => e.value.trim());
-    const permission = 'r' + (this.shadowRoot.querySelector('#share-folder-write').checked ? 'w' : 'o');
+    const permission = this.shadowRoot.querySelector('mwc-radio[name=share-folder-permission][checked]').value;
 
     if (emailArray.length === 0) {
       this.notification.text = _text('data.invitation.NoValidEmails');
