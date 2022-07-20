@@ -421,7 +421,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const resourceGaugeResizeObserver = new ResizeObserver(() => {
       this._updateToggleResourceMonitorDisplay();
     });
-    console.dir(this.resourceGauge);
     resourceGaugeResizeObserver.observe(this.resourceGauge);
     document.addEventListener('backend-ai-group-changed', (e) => {
       this.scaling_group = '';
@@ -452,8 +451,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return Promise.resolve(false);
   }
 
+  /**
+   * @deprecated it does not used now
+   */
   _updateSelectedScalingGroup() {
-    // TODO mark this any because this method not used currently
     const Sgroups = this.shadowRoot?.querySelector('#scaling-groups') as any;
     const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
     const idx = Sgroups.items.indexOf(selectedSgroup);

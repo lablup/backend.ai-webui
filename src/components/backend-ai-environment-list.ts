@@ -641,10 +641,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _updateSliderLayout() {
-    console.log(this.shadowRoot?.querySelectorAll('mwc-slider'));
     this.shadowRoot?.querySelectorAll('mwc-slider').forEach((el) => {
-      console.dir(el);
-      // el.layout();
+      el.layout();
     });
   }
 
@@ -678,7 +676,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
     const ports = new Set();
-    for (const row of rows as any) {
+    for (const row of Array.from(rows)) {
       const textFields = row.querySelectorAll('wl-textfield');
       if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
         continue;

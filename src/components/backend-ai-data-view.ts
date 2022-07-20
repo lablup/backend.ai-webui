@@ -747,7 +747,6 @@ export default class BackendAIData extends BackendAIPage {
     let group;
     const usageModeEl = this.shadowRoot?.querySelector('#add-folder-usage-mode') as Select;
     const permissionEl = this.shadowRoot?.querySelector('#add-folder-permission') as Select;
-    // TODO does it used now?
     const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as any;
     let usageMode = '';
     let permission = '';

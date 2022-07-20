@@ -319,8 +319,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     this._addInputValidator(this.userIdInput);
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
-
-    console.dir(this.activeUserList);
   }
 
   /**
