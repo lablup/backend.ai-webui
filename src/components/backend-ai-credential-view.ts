@@ -77,7 +77,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
   @state() private all_vfolder_hosts;
-  @state() private allowed_vfolder_hosts;
   @state() private default_vfolder_host = '';
   @query('#id_new_policy_name') newPolicyName;
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
@@ -85,7 +84,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   constructor() {
     super();
     this.all_vfolder_hosts = [];
-    this.allowed_vfolder_hosts = [];
     this.resource_policy_names = [];
   }
 
