@@ -262,34 +262,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           border-bottom: 1px solid #DDD;
         }
 
-        backend-ai-multi-select {
-          /* override for mwc-list */
-          --select-primary-theme: var(--general-sidebar-color);
-          --select-secondary-theme: var(--general-checkbox-color);
-          --select-background-color: var(#E7EBEE, #efefef);
-          --select-background-border-radius: 5px;
-          --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
-
-          /* override for selected-area */
-          --select-title-font-size: 10px;
-          --selected-area-border-radius: 5px;
-          --selected-area-border: none;
-          --selected-area-padding: 5px;
-          --selected-area-min-height: 24px;
-          --selected-area-height: 100%;
-
-          /* override for selected-item */
-          --selected-item-font-family: var(--general-font-family);
-          --selected-item-theme-color: #C8CED7;
-          --selected-item-theme-font-color: #182739;
-          --selected-item-unelevated-theme-color: #C8CED7;
-          --selected-item-unelevated-theme-color: #C8CED7;
-          --selected-item-outlined-theme-font-color: black;
-          --selected-item-unelevated-theme-font-color: black;
-          --selected-item-font-size: 14px;
-          --selected-item-text-transform: none;
-        }
-
         div.popup-right-margin {
           margin-right: 5px;
         }
