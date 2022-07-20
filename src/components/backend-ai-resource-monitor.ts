@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-select';
@@ -78,7 +80,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return 'backend-ai-resource-monitor';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -117,6 +119,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-top: 20px;
           padding-left: 20px;
           background-color: #F6F6F6;
+          margin-bottom: 15px;
         }
 
         .vertical-panel #resource-gauges {
@@ -300,6 +303,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 10px;
         }
 
+        .resources.horizontal .monitor {
+          margin-bottom: 10px;
+        }
+
         mwc-select {
           width: 100%;
           font-family: var(--general-font-family);
@@ -356,8 +363,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 60px;
         }
 
-        .horizontal-card > #resource-gauges > .monitor {
-          width: 250px;
+        .horizontal-card > #resource-gauges {
+          display: grid !important;
+          grid-auto-flow: row;
+          grid-template-columns: repeat(auto-fill, 320px);
+          justify-content: center;
         }
 
         @media screen and (min-width: 750px) {
@@ -402,7 +412,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
 
   firstUpdated() {
     this.resourceGauge = this.shadowRoot.querySelector('#resource-gauges');
-    this._updateToggleResourceMonitorDisplay();
+    const resourceGaugeResizeObserver = new ResizeObserver(() => {
+      this._updateToggleResourceMonitorDisplay();
+    });
+    resourceGaugeResizeObserver.observe(this.resourceGauge);
     document.addEventListener('backend-ai-group-changed', (e) => {
       this.scaling_group = '';
       this._updatePageVariables(true);
@@ -470,7 +483,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       await this._updatePageVariables(true);
       this._disableEnterKey();
     }
-    this._updateToggleResourceMonitorDisplay();
   }
 
   async _updatePageVariables(isChanged) {
@@ -490,15 +502,36 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateToggleResourceMonitorDisplay() {
-    if (document.body.clientWidth < 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.display = 'none';
-      this.shadowRoot.querySelector('#resource-gauge-switch-button').checked = false;
+    const legend = this.shadowRoot.querySelector('#resource-legend');
+    const toggleButton = this.shadowRoot.querySelector('#resource-gauge-toggle-button');
+    if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
+      this.resourceGauge.style.visibility = 'visible';
+      legend.style.display = 'flex';
+      [...this.resourceGauge.children].forEach((elem) => {
+        elem.style.display = '';
+      });
+    } else {
+      if (toggleButton.selected) {
+        this.resourceGauge.style.visibility = 'visible';
+        legend.style.display = 'flex';
+        if (document.body.clientWidth < 750) {
+          this.resourceGauge.style.left = '20px';
+          this.resourceGauge.style.right = '20px';
+        }
+        [...this.resourceGauge.children].forEach((elem) => {
+          elem.style.display = '';
+        });
+      } else {
+        this.resourceGauge.style.visibility = 'collapse';
+        [...this.resourceGauge.children].forEach((elem) => {
+          elem.style.display = 'none';
+        });
+        legend.style.display = 'none';
+      }
     }
-    this.shadowRoot.querySelector('#resource-gauge-switch-button').checked = this.direction === 'vertical';
   }
 
   _updateScalingGroupSelector() {
-    if (this.direction === 'vertical') {
       const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
       // Detached from template to support live-update after creating new group (will need it)
       if (scaling_group_selection_box.hasChildNodes()) {
@@ -532,7 +565,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       });
       // scaling_select.updateOptions();
       scaling_group_selection_box.appendChild(scaling_select);
-    }
   }
 
   /**
@@ -706,22 +738,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    * @param {event} e - EventEmitter
    */
   _toggleResourceGauge(e) {
-    const legend = this.shadowRoot.querySelector('#resource-legend');
-    if (e.target.checked) {
-      this.resourceGauge.style.display = 'flex';
-      if (legend) {
-        legend.style.display = 'flex';
-      }
-      if (document.body.clientWidth < 750) {
-        this.resourceGauge.style.left = '20px';
-        this.resourceGauge.style.right = '20px';
-      }
-    } else {
-      this.resourceGauge.style.display = 'none';
-      if (legend) {
-        legend.style.display = 'none';
-      }
-    }
+
   }
 
   _disableEnterKey() {
@@ -745,10 +762,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      ${this.direction === 'vertical' ? html`
-      <div id="scaling-group-select-box" class="layout horizontal start-justified">
-      </div>
-      ` : html``}
+      <div id="scaling-group-select-box" class="layout horizontal start-justified"></div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
           <div class="layout horizontal center-justified monitor">
@@ -894,8 +908,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <p style="font-size:12px;color:#242424;margin-right:10px;">
             ${_t('session.launcher.ResourceMonitorToggle')}
           </p>
-          <mwc-switch class="fg blue ${this.direction}" id="resource-gauge-switch-button"
-            @change="${(e) => this._toggleResourceGauge(e)}">
+          <mwc-switch selected class="${this.direction}" id="resource-gauge-toggle-button" @click="${() => this._updateToggleResourceMonitorDisplay()}">
           </mwc-switch>
         </div>
       </div>
@@ -909,8 +922,17 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           <div class="resource-legend-icon end"></div>
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
-      </div>
-      ` : html``}
+      </div>` : html`
+      <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
+        <div class="layout horizontal center end-justified resource-legend-stack">
+          <div class="resource-legend-icon start"></div>
+          <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
+        </div>
+        <div class="layout horizontal center end-justified">
+          <div class="resource-legend-icon end"></div>
+          <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
+        </div>
+      </div>`}
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />

@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {translate as _t} from 'lit-translate';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -61,7 +61,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     this.storages = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -447,7 +447,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" 
+          <mwc-icon-button class="fg blue controls-running" icon="assignment"
                           ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
@@ -462,11 +462,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     // language=HTML
     return html`
     <div class="list-wrapper">
-        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                     .items="${this.storages}">
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                    .items="${this.storages}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+          <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
                               .renderer="${this._boundTypeRenderer}">
@@ -481,7 +481,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         </vaadin-grid>
         <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
       </div>
-
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">

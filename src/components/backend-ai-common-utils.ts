@@ -1,8 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from 'lit-element';
+import {html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 /**
@@ -55,6 +57,73 @@ export default class BackendAiCommonUtils extends BackendAIPage {
   _deleteRecentProjectGroupInfo() {
     const endpointId = globalThis.backendaiclient._config.endpointHost.replace(/\./g, '_'); // dot is used for namespace divider
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
+  }
+
+  _humanReadableFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = Math.pow(2, 10);
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+    let i = Math.floor(Math.log(bytes) / Math.log(k));
+    i = i < 0 ? 0 : i; // avoid negative value
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+  }
+
+  /**
+   * Mask String with range
+   *
+   * @param {string} value - string to mask
+   * @param {string} maskChar - character used for masking (default: '*')
+   * @param {number} startFrom - exclusive index masking starts
+   * @param {number} maskLength - range length to mask
+   * @return {string} maskedString
+   */
+  _maskString(value = '', maskChar = '*', startFrom = 0, maskLength = 0) {
+    // clamp mask length
+    maskLength = (startFrom + maskLength > value.length) ? value.length : maskLength;
+    return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
+  }
+
+  /**
+   * Delete a nested key from an object.
+   *
+   * @param {Object} obj - target object
+   * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
+   * @param {String} sep - separator of the `nestedKey`
+   * @return {Object} - Object without nested key
+  */
+  deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
+    if (!obj || obj.constructor !== Object || !nestedKey) {
+      return obj;
+    }
+    const keys = nestedKey.split(sep);
+    const lastKey = keys.pop();
+    if (lastKey) {
+      delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    }
+    return obj;
+  }
+
+  /**
+   * Merge two nested objects into one.
+   *
+   * @param {Object} obj1 - source object
+   * @param {Object} obj2 - the objects that will override obj1
+   * @return {Object} - Merged object
+   */
+  mergeNestedObjects(obj1: Object, obj2: Object) {
+    if (!obj1 || !obj2) {
+      return obj1 || obj2 || {};
+    }
+    function _merge(a, b) {
+      return Object.entries(b).reduce((o, [k, v]) => {
+        o[k] = v && (v as any).constructor === Object ?
+          _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
+          v;
+        return o;
+      }, a);
+    }
+    return [obj1, obj2].reduce(_merge, {});
   }
 
   render() {

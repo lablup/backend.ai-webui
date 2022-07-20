@@ -1,8 +1,9 @@
 /*
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import Chart from '../lib/Chart.min';
+//import Chart from '../lib/Chart.min';
+import Chart from 'chart.js/auto';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
@@ -10,7 +11,7 @@ export default class ChartJs extends LitElement {
   @property({type: Object}) data = {};
   @property({type: Object}) options = {};
   @property({type: Object}) chart;
-  @property({type: String}) type = '';
+  @property({type: String}) type = 'line';
   @property({type: Number}) height = 0;
   @property({type: Number}) width = 0;
 
@@ -41,8 +42,8 @@ export default class ChartJs extends LitElement {
       .querySelector('canvas')
       .getContext('2d');
     this.chart = new Chart(ctx, {
-      type: this.type,
-      data: this.data,
+      type: this.type as any,
+      data: this.data as any,
       options: this.options
     });
   }

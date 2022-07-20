@@ -1,12 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {BackendAIPage} from './backend-ai-page';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
-import {render} from 'lit-html';
+import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
 import './backend-ai-dialog';
@@ -60,24 +60,36 @@ import {
 export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isAdmin = false;
   @property({type: Boolean}) editMode = false;
-  @property({type: Object}) users = Object();
+  @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
-  @property({type: String}) condition = 'active';
+  @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) list_status = Object();
+  @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
+  @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
+  @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
+  @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
   @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
   @property({type: String}) list_condition = 'loading';
+  @property({type: Number}) _totalUserCount = 0;
+  @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @property({type: Object}) userStatus = {
+    'active': 'Active',
+    'inactive': 'Inactive',
+    'before-verification': 'Before Verification',
+    'deleted': 'Deleted',
+  };
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -160,8 +172,15 @@ export default class BackendAIUserList extends BackendAIPage {
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        mwc-select.full-width {
+          width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 330px;
+          --mdc-menu-min-width: 330px;
         }
 
         mwc-textfield, mwc-textarea {
@@ -206,11 +225,13 @@ export default class BackendAIUserList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
+        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
+      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
@@ -226,7 +247,7 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     this.list_condition = 'loading';
     this.list_status.show();
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -307,14 +328,14 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}'];
+    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
   refresh() {
     this._refreshUserData();
     // update current grid to new data
-    this.shadowRoot.querySelector('#user-grid').render();
+    this.userGrid.clearCache();
   }
 
   _isActive() {
@@ -421,6 +442,56 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * Render UserId according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userIdRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUserId(rowData.item.email)}</span>
+      `, root
+    );
+  }
+
+  /**
+   * Render Username according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userNameRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUsername(rowData.item.username)}</span>
+      `, root
+    );
+  }
+
+  /**
+   * Render current status of user
+   * - active
+   * - inactive
+   * - before-verification
+   * - deleted
+   *
+   * @param root
+   * @param column
+   * @param rowData
+   */
+  userStatusRenderer(root, column?, rowData?) {
+    const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
+    render(
+      html`
+        <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
+      `, root
+    );
+  }
+
+  /**
    * Toggle password visible/invisible mode.
    *
    * @param {HTMLElement} element - password visibility toggle component
@@ -459,8 +530,8 @@ export default class BackendAIUserList extends BackendAIPage {
     const confirmEl = this.shadowRoot.querySelector('#confirm');
     const confirm = confirmEl.value;
     const description = this.shadowRoot.querySelector('#description').value;
-    const is_active = this.shadowRoot.querySelector('#is_active').checked;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').checked;
+    const status = this.shadowRoot.querySelector('#status').value;
+    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
 
     this._togglePasswordInputRequired();
 
@@ -496,11 +567,9 @@ export default class BackendAIUserList extends BackendAIPage {
       input.need_password_change = need_password_change;
     }
 
-    if (is_active !== this.userInfo.is_active) {
-      input.is_active = is_active;
+    if (status !== this.userInfo.status) {
+      input.status = status;
     }
-
-    this.refresh();
 
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
@@ -528,6 +597,14 @@ export default class BackendAIUserList extends BackendAIPage {
           this.shadowRoot.querySelector('#description').value = this.userInfo.description;
         }
         this.notification.show();
+        this.refresh();
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
       });
 
     // if updated user info is current user, then apply it right away
@@ -537,17 +614,48 @@ export default class BackendAIUserList extends BackendAIPage {
     }
   }
 
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  _getUsername(username = '') {
+    if (username && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = username.length - maskStartIdx;
+      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
+    }
+    return username;
+  }
+
   render() {
     // language=HTML
     return html`
+      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="list-wrapper">
-        <vaadin-grid theme="row-stripes column-borders compact" height-by-rows
-                      aria-label="User list" id="user-grid" .items="${this.users}">
-          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-          <vaadin-grid-filter-column path="email" header="${_t('credential.UserID')}" resizable></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column resizable header="${_t('credential.Name')}" path="username"></vaadin-grid-filter-column>
+        <vaadin-grid theme="row-stripes column-borders compact"
+                    aria-label="User list" id="user-grid" .items="${this.users}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
+                              .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
+                              .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
+          ${this.condition !== 'active' ? html`
+            <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
+                              .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
           <vaadin-grid-column resizable header="${_t('general.Control')}"
-                .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
       </div>
@@ -634,22 +742,21 @@ export default class BackendAIUserList extends BackendAIPage {
                     value="${this.userInfo.description}"
                     id="description"></mwc-textfield>`: html``}
               ${this.editMode ? html`
-                <div class="horizontal layout center" style="margin:10px;">
-                  <p class="label">${_text('credential.DescActiveUser')}</p>
-                  <mwc-switch
-                      id="is_active"
-                      ?checked="${this.userInfo.is_active}"></mwc-switch>
-                </div>
+                <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
+                  ${Object.keys(this.userStatus).map((item) => html`
+                    <mwc-list-item value="${item}" ?selected="${item === this.userInfo.status}">${this.userStatus[item]}</mwc-list-item>
+                  `)}
+                </mwc-select>
                 <div class="horizontal layout center" style="margin:10px;">
                   <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
                   <mwc-switch
                       id="need_password_change"
-                      ?checked=${this.userInfo.need_password_change}></mwc-switch>
+                      ?selected=${this.userInfo.need_password_change}></mwc-switch>
                 </div>` : html`
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescActiveUser')}"
-                        value="${this.userInfo.is_active ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
                     <mwc-textfield
                         disabled
                         label="${_text('credential.DescRequirePasswordChange')}"

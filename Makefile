@@ -32,7 +32,8 @@ compile_wsproxy:
 all: dep mac win linux
 dep:
 	#cp -u ./scripts/pre-commit ./.git/hooks/pre-commit && chmod 755 ./.git/hooks/pre-commit
-	cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
+	#cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
+	#cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js # Temporary fix for lit-2 rc stage.
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -95,12 +96,20 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-x64-$(BUILD_VERSION)-$(site).zip
 endif
-linux: dep
+linux: linux_intel linux_arm64
+linux_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=linux --icon=manifest/backend-ai.ico
+	$(EP) --platform=linux --arch=arm64 --icon=manifest/backend-ai.ico
+	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
+ifeq ($(site),main)
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
+else
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-arm64-$(BUILD_VERSION)-$(site).zip
+endif
+linux_intel: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	$(EP) --platform=linux --arch=x64 --icon=manifest/backend-ai.ico
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
-	#cd app;mkdir dist;cp -Rp "./Backend.AI Desktop-linux-x64" "./dist/backend.ai-webui"
-	#./node_modules/electron-installer-debian/src/cli.js --config packager-config.json
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
 else

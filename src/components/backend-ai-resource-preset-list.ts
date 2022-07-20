@@ -1,21 +1,16 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
-
-import {render} from 'lit-html';
-
-import './backend-ai-list-status';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
-import '@vaadin/vaadin-template-renderer';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -25,6 +20,7 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import './backend-ai-dialog';
+import './backend-ai-list-status';
 import {default as PainKiller} from './backend-ai-painkiller';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -44,12 +40,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) list_condition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
-
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -103,7 +98,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
 
@@ -218,21 +213,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-
-            <vaadin-grid-column resizable>
-              <template class="header">
-                <vaadin-grid-sorter path="name">${_t('resourcePreset.Name')}</vaadin-grid-sorter>
-              </template>
-              <template>
-                <div class="layout horizontal center flex">
-                  <div>[[item.name]]</div>
-                </div>
-              </template>
-            </vaadin-grid-column>
-
+            <vaadin-grid-sort-column resizable path="name" header="${_t('resourcePreset.Name')}">
+            </vaadin-grid-sort-column>
             <vaadin-grid-column width="150px" resizable header="${_t('resourcePreset.Resources')}" .renderer="${this._boundResourceRenderer}">
             </vaadin-grid-column>
-
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
@@ -396,7 +380,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   _deleteResourcePresetWithCheck(e) {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
       this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
-      this.notification.text = 'Resource preset is successfully deleted.';
+      this.notification.text = _text('resourcePreset.Deleted');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {

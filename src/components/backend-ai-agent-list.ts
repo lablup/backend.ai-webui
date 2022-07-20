@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -15,9 +15,11 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
+import '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
+
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -49,12 +51,15 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
+  @property({type: Object}) agentSettingDialog = Object();
+  @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
   @property({type: String}) list_condition = 'loading';
 
@@ -62,7 +67,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -76,6 +81,10 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         mwc-icon {
           --mdc-icon-size: 16px;
+        }
+
+        mwc-icon.schedulable {
+          --mdc-icon-size: 24px;
         }
 
         img.indicator-icon {
@@ -102,31 +111,36 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         backend-ai-dialog#agent-detail {
           --component-max-width: 90%;
-          --component-min-width: 350px;
+          --component-min-width: 400px;
         }
 
+        backend-ai-dialog {
+          --component-width: 350px;
+        }
+
+
         lablup-progress-bar {
-          --progress-bar-width: 100px;
+          --progress-bar-width: 70px;
           border-radius: 3px;
           height: 10px;
           --mdc-theme-primary: #3677eb;
           --mdc-linear-progress-buffer-color: #98be5a;
-        }
-
-        lablup-progress-bar.cpu {
-          --progress-bar-height: 5px;
           margin-bottom: 0;
         }
 
+        lablup-progress-bar.cpu {
+          --progress-bar-height: 7px;
+        }
+
         lablup-progress-bar.cuda {
+          --progress-bar-width: 80px;
           --progress-bar-height: 15px;
           margin-bottom: 5px;
         }
 
         lablup-progress-bar.mem {
+          --progress-bar-width: 100px;
           --progress-bar-height: 15px;
-          --progress-bar-width: 100%;
-          margin-bottom: 0;
         }
 
         lablup-shields {
@@ -137,13 +151,18 @@ export default class BackendAIAgentList extends BackendAIPage {
           width: 100px !important;
         }
 
-      `];
+        .agent-detail-title {
+          font-size: 8px;
+          width: 35px;
+        }
+    `];
   }
 
   firstUpdated() {
     this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
   }
 
   connectedCallback() {
@@ -163,10 +182,12 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
         const status = 'ALIVE';
         this._loadAgentList(status);
       }, true);
     } else { // already connected
+      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
       const status = 'ALIVE';
       this._loadAgentList(status);
     }
@@ -187,22 +208,26 @@ export default class BackendAIAgentList extends BackendAIPage {
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
       fields.push('hardware_metadata');
+    }
+
+    if (globalThis.backendaiclient.supports('schedulable')) {
+      fields.push('schedulable');
     }
 
     globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
@@ -351,6 +376,9 @@ export default class BackendAIAgentList extends BackendAIPage {
             }
             if ('hardware_metadata' in agent) {
               agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
+            }
+            if ('schedulable' in agent) {
+              agents[objectKey].schedulable = agent.schedulable;
             }
             this.agentsObject[agents[objectKey]['id']] = agents[objectKey];
           }
@@ -615,7 +643,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     } else {
@@ -627,7 +654,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     }
@@ -722,6 +748,27 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render whether the agent is schedulable or not
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  schedulableRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.schedulable ? html`
+            <mwc-icon class="fg green schedulable">check_circle</mwc-icon>
+          ` : html`
+            <mwc-icon class="fg red schedulable">block</mwc-icon>
+          `}
+        </div>`, root
+    );
+  }
+
+  /**
    * Render a heartbeat status.
    *
    * @param {DOMelement} root
@@ -775,9 +822,13 @@ export default class BackendAIAgentList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+          <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
+            ${this.enableAgentSchedulable ? html`
+              <mwc-icon-button class="fg blue controls-running" icon="settings"
+                               @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+            ` : html``}
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>
             <mwc-icon-button class="temporarily-hide fg controls-running" disabled
@@ -793,33 +844,73 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  /**
+   * Show configuration field of agent in dialog form.
+   *
+   * @param {string} agentId - ID of agent to configure
+   */
+  _showConfigDialog(agentId) {
+    this.agentDetail = this.agentsObject[agentId];
+    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
+    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
+    this.agentSettingDialog.show();
+    return;
+  }
+
+
   _bytesToMB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  _modifyAgentSetting() {
+    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
+    if (this.agentDetail?.schedulable !== schedulable) {
+      globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
+        this.notification.text = _text('agent.AgentSettingUpdated');
+        this.notification.show();
+        this.agentSettingDialog.hide();
+        this._loadAgentList();
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      });
+    } else {
+      this.notification.text = _text('agent.NoChanges');
+      this.notification.show();
+      this.agentSettingDialog.hide();
+    }
   }
 
   render() {
     // language=HTML
     return html`
       <div class="list-wrapper">
-        <vaadin-grid class="${this.condition}" height-by-rows theme="row-stripes column-borders compact" aria-label="Job list"
-                     .items="${this.agents}">
+        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                    .items="${this.agents}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+          <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
                               .renderer="${this._boundRegionRenderer}">
           </vaadin-grid-column>
+          <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
+          </vaadin-grid-sort-column>
           <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
-                                   header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
+                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
                               .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column resizable header="${_t('general.Control')}"¸
+          ${this.enableAgentSchedulable ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                            .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
@@ -827,121 +918,111 @@ export default class BackendAIAgentList extends BackendAIPage {
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
-          <div class="horizontal start start-justified layout">
-            ${this.agentDetail?.cpu_util_live ?
-    html`
+          <div class="horizontal start around-justified layout flex">
+            ${this.agentDetail?.cpu_util_live ? html`
+              <div class="vertical layout start-justified flex">
+                <h3>CPU</h3>
+                ${this.agentDetail.cpu_util_live.map((item) => html`
+                  <div class="horizontal start-justified center layout" style="padding:0 5px;">
+                    <div class="agent-detail-title">CPU${item.num}</div>
+                    <lablup-progress-bar class="cpu"
+                                          progress="${item.pct / 100.0}"
+                    ></lablup-progress-bar>
+                  </div>`)}
+              </div>` : html``}
+              <div class="vertical layout start-justified flex">
+                <h3>Memory</h3>
                 <div>
-                  <h3>CPU</h3>
-                  <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.agentDetail.cpu_util_live.map((item) => html`
-                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                        <lablup-progress-bar class="cpu"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
-                        ></lablup-progress-bar>
-                      </div>`)}
+                  <lablup-progress-bar class="mem"
+                                      progress="${this.agentDetail.mem_current_usage_ratio}"
+                                      description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                  ></lablup-progress-bar>
+                </div>
+                <h3>Network</h3>
+                ${this.agentDetail?.live_stat?.node ? html`
+                  <div class="horizontal layout justified" style="width:100px;">
+                    <span>TX: </span>
+                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</span>
                   </div>
-                </div>` : html``}
-            <div>
-              <h3>Memory</h3>
-              <div>
-                <lablup-progress-bar class="mem"
-                                     progress="${this.agentDetail.mem_current_usage_ratio}"
-                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
-                ></lablup-progress-bar>
+                  <div class="horizontal layout justified flex" style="width:100px;">
+                    <span>RX: </span>
+                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</span>
+                  </div>
+                ` : html`
+                  <p>${_t('agent.NoNetworkSignal')}</p>
+                `}
               </div>
-              <h3>Network</h3>
-              ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
-              ` : html`
-                <p>${_t('agent.NoNetworkSignal')}</p>
-              `}
-            </div>
-            ${this.agentDetail?.cuda_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.cuda_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>CUDA Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.cuda_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.cuda_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.rocm_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.rocm_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>ROCm Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.rocm_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.rocm_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.tpu_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.tpu_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>TPU Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.tpu_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.tpu_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
                         <lablup-progress-bar class="cuda"
                                              progress="${item.pct / 100.0}"
-                                             description=""
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
           </div>
         </div>
@@ -952,6 +1033,21 @@ export default class BackendAIAgentList extends BackendAIPage {
             icon="check"
             label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
+        <span slot="title">${_t('agent.AgentSetting')}</span>
+        <div slot="content" class="horizontal layout justified center">
+          <span>${_t('agent.Schedulable')}</span>
+          <mwc-switch id="schedulable-switch" ?selected="${this.agentDetail?.schedulable}"></mwc-switch>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button
+          unelevated
+          id="update-agent-setting-button"
+          icon="check"
+          label="${_t('button.Update')}"
+          @click="${() => this._modifyAgentSetting()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

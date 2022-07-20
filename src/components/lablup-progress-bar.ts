@@ -1,9 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import {
   IronFlex,
@@ -33,9 +34,9 @@ export default class LablupProgressBar extends LitElement {
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
   @property({type: String}) progress = '';
-  @property({type: String}) description = ''
+  @property({type: String}) description = '';
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,

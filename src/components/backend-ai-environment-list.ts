@@ -1,11 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
-import {render} from 'lit-html';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -15,13 +16,14 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
+import './lablup-loading-spinner';
+import './backend-ai-dialog';
+import './backend-ai-list-status';
+
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
-import '@vaadin/vaadin-template-renderer';
-import './backend-ai-dialog';
-import './backend-ai-list-status';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -30,7 +32,7 @@ import 'weightless/textfield';
 import 'weightless/label';
 
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-slider/mwc-slider';
+import '@material/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
@@ -47,9 +49,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) images;
   @property({type: Array}) allowed_registries;
-  @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
-  @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
-  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
   @property({type: Array}) servicePorts;
   @property({type: Number}) selectedIndex = 0;
   @property({type: Array}) selectedImages = [];
@@ -80,6 +79,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Number}) cpuValue = 0;
   @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
+  @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
+  @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
+  @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
+  @property({type: Object}) _boundBaseImageRenderer = this.baseImageRenderer.bind(this);
+  @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
+  @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
 
   constructor() {
     super();
@@ -90,7 +95,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.servicePorts = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     // noinspection CssInvalidPropertyValue
     return [
       BackendAiStyles,
@@ -153,7 +158,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         span.resource-limit-title {
           font-size: 14px;
           font-family: var(--general-font-family);
-          font-align: left;
+          text-align: left;
           width: 70px;
         }
 
@@ -224,13 +229,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-sidebar-color);
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
           --mdc-theme-primary: #38bd73;
-          --mdc-on-theme-primary: #38bd73;
+          --mdc-theme-on-primary: #38bd73;
         }
 
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[disabled] {
@@ -381,7 +386,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.installImageDialog.hide();
     this.selectedImages.forEach( async (image: any) => {
       // make image installing status visible
-      const selectedImageLabel = '#' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-');
+      const selectedImageLabel = '[id=\"' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-') + '\"]';
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
@@ -417,10 +422,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
       if (isGPURequired) {
         if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
-          this.notification.text = _text('environment.NoResourcesForImage') + imageName;
-          this.notification.show();
-          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
-          return;
+          delete imageResource['gpu'];
+          delete imageResource['fgpu'];
+          delete imageResource['cuda.shares'];
+          delete imageResource['cuda.device'];
         }
       }
 
@@ -442,7 +447,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
 
-      globalThis.backendaiclient.image.install(imageName, imageResource).then((response) => {
+      globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
         indicator.set(100, _text('import.Installed'));
         indicator.end(1000);
 
@@ -737,7 +742,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-  controlsRenderer(root, column, rowData) {
+  controlsRenderer(root, column?, rowData?) {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
@@ -804,6 +809,63 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       , root);
   }
 
+
+  /**
+   *
+   * Render an base image label for each image
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  baseImageRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        ${rowData.item.baseimage.map((image) =>
+    html`
+            <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
+        `)}
+        `, root);
+  }
+
+  /**
+   *
+   * Render an constraint for each image
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  constraintRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+        ${rowData.item.additional_req ? html`
+          <lablup-shields app="" color="green" ui="round" description="${rowData.item.additional_req}"></lablup-shields>
+        ` : html``}
+      `, root);
+  }
+
+  /**
+   *
+   * Render digest information for each image
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  digestRenderer(root, column?, rowData?) {
+    render(
+      // language=HTML
+      html`
+      <div class="layout vertical">
+        <span class="indicator monospace">${rowData.item.digest}</span>
+      </div>
+      `
+      , root);
+  }
+
   render() {
     // language=HTML
     return html`
@@ -812,48 +874,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
       <div class="list-wrappert">
-        <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Environments" id="testgrid" .items="${this.images}">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
           <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
-          <vaadin-grid-column path="installed" flex-grow="0" .renderer="${this._boundInstallRenderer}">
-              <template class="header">
-                <vaadin-grid-sorter path="installed">${_t('environment.Status')}</vaadin-grid-sorter>
-              </template>
-            </vaadin-grid-column>
+          <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
+          </vaadin-grid-sort-column>
           <vaadin-grid-filter-column path="registry" width="80px" resizable
               header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="architecture" width="80px" resizable
+              header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
           <vaadin-grid-filter-column path="namespace" width="60px" resizable
               header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
           <vaadin-grid-filter-column path="lang" resizable
               header="${_t('environment.Language')}"></vaadin-grid-filter-column>
           <vaadin-grid-filter-column path="baseversion" resizable
               header="${_t('environment.Version')}"></vaadin-grid-filter-column>
-
-          <vaadin-grid-column width="60px" resizable>
-            <template class="header">${_t('environment.Base')}</template>
-            <template>
-              <template is="dom-repeat" items="[[ item.baseimage ]]">
-                <lablup-shields app="" color="blue" ui="round" description="[[item]]"></lablup-shields>
-              </template>
-            </template>
+          <vaadin-grid-column resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column width="50px" resizable>
-            <template class="header">${_t('environment.Constraint')}</template>
-            <template>
-              <template is="dom-if" if="[[item.additional_req]]">
-                <lablup-shields app="" color="green" ui="round" description="[[item.additional_req]]"></lablup-shields>
-              </template>
-            </template>
+          <vaadin-grid-column width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-filter-column path="digest" resizable
-              header="${_t('environment.Digest')}">
-            <template>
-              <div class="layout vertical">
-                <span class="indicator monospace">[[item.digest]]</span>
-              </div>
-            </template>
+          <vaadin-grid-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
           </vaadin-grid-filter-column>
-
           <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
@@ -1250,7 +1291,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
     }).then((response) => {
       const images = response.images;
       const domainImages: any = [];
@@ -1313,8 +1354,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'tpu.device') {
               resource.key = 'tpu_device';
             }
-            image[resource.key + '_limit_min'] = this._addUnit(resource.min);
-            image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            if (resource.min !== null && resource.min !== undefined) {
+              image[resource.key + '_limit_min'] = this._addUnit(resource.min);
+            }
+            if (resource.max !== null && resource.max !== undefined) {
+              image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            }
           });
 
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
@@ -1480,8 +1525,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _changeSliderValue(el) {
-    const currentVal= this._range[el.id].filter( (value, index) => {
-      return index === el._value;
+    const currentVal= this._range[el.id].filter((value, index) => {
+      return index === el.value;
     });
     this.shadowRoot.querySelector('#modify-image-'+el.id).label = currentVal[0];
     this.shadowRoot.querySelector('#modify-image-'+el.id).value = currentVal[0];

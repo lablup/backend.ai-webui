@@ -1,9 +1,10 @@
 /**
 @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -16,6 +17,8 @@ import {
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
+
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Education App Launcher.
@@ -41,7 +44,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -68,6 +71,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   detectIE() {
     try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const isIE = /* @cc_on!@*/false || !!document.documentMode;
       if (! isIE) {
@@ -99,8 +103,15 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     const webUIShell: any = document.querySelector('#webui-shell');
     // webUIShell.appBody.style.visibility = 'visible';
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    globalThis.backendaiclient = new ai.backend.Client(
+    if (apiEndpoint === '') {
+      const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (api_endpoint != null) {
+        apiEndpoint = api_endpoint.replace(/^"+|"+$/g, '');
+      }
+    }
+    apiEndpoint = apiEndpoint.trim();
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    globalThis.backendaiclient = new Client(
       this.clientConfig,
       'Backend.AI Web UI.'
     );
@@ -207,7 +218,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       console.log('Reusing an existing session ...');
       const sessionStatus = sessions.compute_session_list.items[0].status;
       if (sessionStatus !== 'RUNNING') {
-        this.notification.text = _text('eduapi.sessionStatusIs') + `${sessionStatus}. ` + _text('eduapi.PleaseReload');
+        this.notification.text = _text('eduapi.sessionStatusIs') + ` ${sessionStatus}. ` + _text('eduapi.PleaseReload');
         this.notification.show(true);
         return;
       }
@@ -235,6 +246,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         // return;
         launchNewSession = true; // no existing session can launch the requested app
       }
+      if (sess !== null && 'session_id' in sess) {
+        sessionId = sess.session_id;
+      } else {
+        sessionId = null;
+      }
+    } else { // no existing compute session. create one.
     }
 
     if (launchNewSession) { // no existing compute session. create one.
@@ -273,7 +290,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         let response;
         try {
           appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
-          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources);
+          response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources, 20000);
         } catch (err) {
           console.error(err);
           if (err && err.message) {
