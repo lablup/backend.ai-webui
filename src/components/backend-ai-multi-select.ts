@@ -36,6 +36,13 @@ import '../plastics/lablup-shields/lablup-shields';
 
 @customElement('backend-ai-multi-select')
 export default class BackendAIMultiSelect extends LitElement {
+
+  /**
+   * NOTE: number used for setting size of the list items of dropdown dynamically
+   */
+  private static readonly DEFAULT_ITEM_HEIGHT: number = 56;
+  private static readonly DEFAULT_ITEM_MARGIN: number = 25;
+
   public shadowRoot: any; // ShadowRoot
   @query('#list') private comboBox;
   @query('#menu', true) private menu;
@@ -159,12 +166,13 @@ export default class BackendAIMultiSelect extends LitElement {
 
   /**
    * Set the position of Dropdown menu
+   * Used for setting the size of dropdown menu by the number of items
    * 
    * @param {number} listCount - unit for heights to go up or down
    */
   _modifyListPosition(listCount = 0) {
-    const itemHeight = 56;
-    const extraMargin = (listCount === this.items.length) ? 25 : 0;
+    const itemHeight = BackendAIMultiSelect.DEFAULT_ITEM_HEIGHT;
+    const extraMargin = (listCount === this.items.length) ? BackendAIMultiSelect.DEFAULT_ITEM_MARGIN : 0;
     const totalHeight = `-${(itemHeight * listCount + extraMargin)}px`;
     if (this.openUp) {
       this.comboBox.style.top = totalHeight;
