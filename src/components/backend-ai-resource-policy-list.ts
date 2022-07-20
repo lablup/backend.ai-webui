@@ -773,7 +773,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
 
     if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be upper than 0.
+      // concurrency job and container-per-session limit must be greater than 0.
       textfield.value = ((textfield.id === 'concurrency-limit') || (textfield.id === 'container-per-session-limit')) ? 1 : 0;
     }
 

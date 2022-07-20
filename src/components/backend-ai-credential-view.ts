@@ -769,7 +769,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
 
     if (textfield.value <= 0) {
-      // concurrency job and container-per-session limit must be upper than 0.
+      // concurrency job and container-per-session limit must be greater than 0.
       textfield.value = ['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) ? 1 : 0;
     }
 
