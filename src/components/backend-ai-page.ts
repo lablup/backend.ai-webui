@@ -28,6 +28,10 @@ export class BackendAIPage extends LitElement {
   public tasker: any; // Global Background tasker
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
+  
+  // Used for setting the maximum value of resources in resource policy
+  protected static readonly MAX_INT32 = 0x7FFFFFFF;
+  protected static readonly MAX_INT_CONVERTED_TO_GIB = Math.round(Number.MAX_SAFE_INTEGER / Math.pow(2, 30));
 
   constructor() {
     super();

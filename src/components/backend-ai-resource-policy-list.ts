@@ -66,9 +66,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
 
-  private static readonly MAX_INT32 = 0x7FFFFFFF;
-  private static readonly MAX_INT_CONVERTED_TO_GIB = Math.round(Number.MAX_SAFE_INTEGER / Math.pow(2, 30));
-
   constructor() {
     super();
     this.all_vfolder_hosts = [];
@@ -209,6 +206,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   render() {
     // language=HTML
+    // FIXME: Need a proper reason to limit cpu/mem/gpu resources, leaving MAX_INT32 for now...
     return html`
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
                   .items="${this.resourcePolicy}">
@@ -233,7 +231,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <div class="horizontal justified layout distancing">
             <div class="vertical layout popup-right-margin">
               <wl-label>CPU</wl-label>
-              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT32}
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -242,7 +240,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT32} step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -251,7 +249,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>GPU</wl-label>
-              <mwc-textfield class="discrete resource-input" id="gpu-resource" type="number" min="0" max="64"
+              <mwc-textfield class="discrete resource-input" id="gpu-resource" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT32}
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -260,7 +258,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             </div>
             <div class="vertical layout popup-left-margin">
               <wl-label>fGPU</wl-label>
-              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT32} step="0.1"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
