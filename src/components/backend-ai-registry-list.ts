@@ -283,13 +283,13 @@ class BackendAIRegistryList extends BackendAIPage {
             this.notification.text = _text('registry.RegistrySuccessfullyAdded');
             // add
             this.hostnames.push(hostname);
+            this._resetRegistryField();
           }
           this._refreshRegistryList();
         } else {
           this.notification.text = _text('dialog.ErrorOccurred');
         }
         this._hideDialogById('#add-registry-dialog');
-        this._resetRegistryField();
         this.notification.show();
       });
   }
