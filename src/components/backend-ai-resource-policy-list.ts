@@ -679,7 +679,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this.vfolder_capacity['value'],
+      'max_vfolder_size': this._giBToByte(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts
     };
 
