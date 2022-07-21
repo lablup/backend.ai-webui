@@ -408,6 +408,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
     this.registryList[this.selectedIndex] = registryInfo;
+    this.registryType = this.registryList[this.selectedIndex]?.type;
     this._hideValidationMessage();
     this._launchDialogById('#add-registry-dialog');
   }
