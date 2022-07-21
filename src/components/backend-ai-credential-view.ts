@@ -538,12 +538,12 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
+      'max_vfolder_size': this.vfolder_capacity['value'],
       'allowed_vfolder_hosts': vfolder_hosts
     };
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? 0 : parseInt(this.session_lifetime['value']);
+      this.session_lifetime['value'] = (!!this.session_lifetime['value']) ? 0 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
     return input;
@@ -553,12 +553,8 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    if (!this.newPolicyName.checkValidity()) {
-      this.newPolicyName.reportValidity();
-      return;
-    }
     try {
-      this.newPolicyName.checkValidity();
+      this.newPolicyName.reportValidity();
       const name = this.newPolicyName.value;
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
@@ -700,11 +696,11 @@ export default class BackendAICredentialView extends BackendAIPage {
   _toggleCheckbox(e) {
     const checkEl = e.target;
     const checked = checkEl.checked;
-    const TextEl = checkEl.closest('div').querySelector('mwc-textfield');
-    TextEl.disabled = checked;
-    if (!TextEl.disabled) {
-      if (TextEl.value === '') {
-        TextEl.value = 0;
+    const textEl = checkEl.closest('div').querySelector('mwc-textfield');
+    textEl.disabled = checked;
+    if (!textEl.disabled) {
+      if (textEl.value === '') {
+        textEl.value = textEl.min ?? 0;
       }
     }
   }
@@ -722,15 +718,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       return value % 1 ? value.toString().split('.')[1].length : 0;
     };
 
-    if (textfield.value === '') {
-      textfield.value = textfield.min ?? 0;
-    }
-
     if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (!textfield.isUiValid) {
+    if (!textfield.checkValidity()) {
       const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
       if (decimal_point > 0) {
         textfield.value = Math.min(textfield.value, textfield.value < 0 ? textfield.min : textfield.max).toFixed(decimal_point);
@@ -738,9 +730,10 @@ export default class BackendAICredentialView extends BackendAIPage {
         textfield.value = Math.min(Math.round(textfield.value), (textfield.value < 0) ? textfield.min : textfield.max);
       }
     }
+
     // automatically check when textfield is min or max
     if (checkbox) {
-      textfield.disabled = checkbox.checked = (textfield.value == parseFloat(textfield.min) || textfield.value == parseFloat(textfield.max));
+      textfield.disabled = checkbox.checked = (textfield.value <= parseFloat(textfield.min)) || (textfield.value >= parseFloat(textfield.max));
       textfield.value = textfield.disabled ? textfield.min : textfield.value;
     }
   }
@@ -817,11 +810,16 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _updateInputStatus(resource) {
     const textfield = resource;
+    const maxIntUsingResources: string[] = ['concurrency-limit', 'container-per-session-limit', 'session-lifetime', 'vfolder-capacity-limit'];
+    const maxBigIntUsingResources: string = 'idle-timeout';
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value === '' || textfield.value === '0' ) {
+    if (Number(textfield.value) === 0) {
       textfield.disabled = true;
       checkbox.checked = true;
-    } else if (['concurrency-limit', 'container-per-session-limit'].includes(textfield.id) && textfield.value === BackendAICredentialView.MAX_INT32) {
+    } else if (
+      (maxIntUsingResources.includes(textfield.id) && textfield.value === BackendAICredentialView.MAX_INT32) ||
+      (maxBigIntUsingResources.includes(textfield.id) && textfield.value === Number.MAX_SAFE_INTEGER)) {
+      textfield.value = '';
       textfield.disabled = true;
       checkbox.checked = true;
     } else {
@@ -989,7 +987,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
-  _gBToByte(value = 0) {
+  _giBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
   }

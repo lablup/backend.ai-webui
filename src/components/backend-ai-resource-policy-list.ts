@@ -67,6 +67,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private allowed_vfolder_hosts;
 
   private static readonly MAX_INT32 = 0x7FFFFFFF;
+  private static readonly MAX_INT_CONVERTED_TO_GIB = Math.round(Number.MAX_SAFE_INTEGER / Math.pow(2, 30));
 
   constructor() {
     super();
@@ -312,8 +313,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
             <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"></backend-ai-multi-select>
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
-                <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT32} step="0.1"
+                <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GiB)</wl-label>
+                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max=${BackendAIResourcePolicyList.MAX_INT_CONVERTED_TO_GIB} step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -374,7 +375,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     let maxVfolderSizeUnit = 'GiB';
     let maxVfolderSize = this._markIfUnlimited(rowData.item.max_vfolder_size);
     if (typeof maxVfolderSize === 'number') { // FIXME: need better idea to branch number and infinity character
-      [maxVfolderSize, maxVfolderSizeUnit] = globalThis.backendaiutils._humanReadableFileSize(this._giBToByte(maxVfolderSize)).split(' ');
+      [maxVfolderSize, maxVfolderSizeUnit] = globalThis.backendaiutils._humanReadableFileSize(maxVfolderSize).split(' ');
     }
     render(
       html`
@@ -547,7 +548,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.concurrency_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
     this.idle_timeout['value'] = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
     this.container_per_session_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
-    this.vfolder_capacity['value'] = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
+    this.vfolder_capacity['value'] = this._byteToGiB(this._updateUnlimitedValue(resourcePolicy.max_vfolder_size), this._countDecimals(this.vfolder_capacity['step'])); // starts from GiB
 
     if (this.enableSessionLifetime) {
       this.session_lifetime['value'] = this._updateUnlimitedValue(resourcePolicy.max_session_lifetime);
@@ -637,19 +638,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   _readResourcePolicyInput() {
     const total_resource_slots = {};
     const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
-    this._validateUserInput(this.cpu_resource);
-    this._validateUserInput(this.ram_resource);
-    this._validateUserInput(this.gpu_resource);
-    this._validateUserInput(this.fgpu_resource);
+    try {
+      this._validateUserInput(this.cpu_resource);
+      this._validateUserInput(this.ram_resource);
+      this._validateUserInput(this.gpu_resource);
+      this._validateUserInput(this.fgpu_resource);
 
-    // Integer (4byte)
-    this._validateUserInput(this.concurrency_limit);
-    this._validateUserInput(this.container_per_session_limit);
-    this._validateUserInput(this.vfolder_max_limit);
+      // Integer (4byte)
+      this._validateUserInput(this.concurrency_limit);
+      this._validateUserInput(this.container_per_session_limit);
+      this._validateUserInput(this.vfolder_max_limit);
 
-    // BigInt
-    this._validateUserInput(this.vfolder_capacity);
-    this._validateUserInput(this.idle_timeout);
+      // BigInt
+      this._validateUserInput(this.vfolder_capacity);
+      this._validateUserInput(this.idle_timeout);
+    } catch (err) {
+      throw err;
+    }
 
     total_resource_slots['cpu'] = this.cpu_resource['value'];
     total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
@@ -682,7 +687,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = this.session_lifetime['value'] === '' ? BackendAIResourcePolicyList.MAX_INT32 : parseInt(this.session_lifetime['value']);
+      this.session_lifetime['value'] = !!this.session_lifetime['value'] ? BackendAIResourcePolicyList.MAX_INT32 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
 
@@ -764,6 +769,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
+   * Returns the number of decimal places of input value
+   * 
+   * @param {number} value 
+   * @returns {number}
+   */
+  _countDecimals(value: number) {
+    return value % 1 ? value.toString().split('.')[1].length : 0;
+  }
+
+  /**
   * Check validation of resource input.
   *
   * @param {Event} e - Dispatches from the native input event each time the input changes.
@@ -772,16 +787,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const textfield = e.target.closest('mwc-textfield');
     const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
     const checkbox = checkboxEl ? checkboxEl.querySelector('wl-checkbox') : null;
-    const countDecimals = (value: number) => {
-      return value % 1 ? value.toString().split('.')[1].length : 0;
-    };
 
     if (textfield.classList.contains('discrete')) {
       textfield.value = Math.round(textfield.value);
     }
 
-    if (!textfield.isUiValid) {
-      const decimal_point: number = (textfield.step) ? countDecimals(textfield.step) : 0;
+    if (!textfield.checkValidity()) {
+      const decimal_point: number = (textfield.step) ? this._countDecimals(textfield.step) : 0;
       if (decimal_point > 0) {
         textfield.value = Math.min(textfield.value, (textfield.value < 0) ? textfield.min : textfield.max).toFixed(decimal_point);
       } else {
@@ -791,7 +803,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     // automatically check when textfield is min or max
     if (checkbox) {
-      textfield.disabled = checkbox.checked = ((textfield.value == parseFloat(textfield.min)) || (textfield.value == parseFloat(textfield.max)));
+      textfield.disabled = checkbox.checked = (textfield.value <= parseFloat(textfield.min)) || (textfield.value >= parseFloat(textfield.max));
       textfield.value = textfield.disabled ? textfield.min : textfield.value;
     }
   }
@@ -810,6 +822,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       resource.value = '';
     } else {
       if (resource.value === '') {
+        resource.reportValidity();
         throw new Error(_text('resourcePolicy.CannotCreateResourcePolicy'));
       }
     }
@@ -820,7 +833,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const maxIntUsingResources: string[] = ['concurrency-limit', 'container-per-session-limit', 'session-lifetime', 'vfolder-capacity-limit'];
     const maxBigIntUsingResources: string = 'idle-timeout';
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
-    if (textfield.value === '' || textfield.value === 0) {
+    if (Number(textfield.value) === 0) {
       textfield.disabled = true;
       checkbox.checked = true;
     } else if (
