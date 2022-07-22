@@ -685,29 +685,14 @@ class BackendAIRegistryList extends BackendAIPage {
             value="${this.registryList[this.selectedIndex]?.password || ''}"
           ></wl-textfield>
          </div>
-         ${this.editMode ? html`
-          <mwc-select 
-             id="select-registry-type" 
-             label="${_t('registry.RegistryType')}"
-             @change=${this._toggleProjectNameInput} 
-             required
-             validationMessage="${_t('registry.PleaseSelectOption')}"
-             value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
-             ${this._registryTypes.map((item) => html`
-               <mwc-list-item value="${item}" ?selected="${item === (this.registryType)}">${item}</mwc-list-item>
-             `)}
-           </mwc-select>` : html`
-           <mwc-select 
-             id="select-registry-type" 
-             label="${_t('registry.RegistryType')}"
-             @change=${this._toggleProjectNameInput} 
-             required
-             validationMessage="${_t('registry.PleaseSelectOption')}"
-             value="${this.registryList[this.selectedIndex]?.type || this.registryType} ">
-             ${this._registryTypes.map((item) => html`
-               <mwc-list-item value="${item}" ?selected=${item === 'docker'}>${item}</mwc-list-item>
-             `)}
-           </mwc-select>`}
+         <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
+                      @change=${this._toggleProjectNameInput} required
+                      validationMessage="${_t('registry.PleaseSelectOption')}"
+                      value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
+            ${this._registryTypes.map((item) => html`
+              <mwc-list-item value="${item}" ?selected="${this.editMode ? item === this.registryList[this.selectedIndex]?.type : item === 'docker'}">${item}</mwc-list-item>
+            `)}
+          </mwc-select>
           <div class="vertical layout end-justified">
             <wl-textfield
               id="add-project-name"
@@ -734,7 +719,6 @@ class BackendAIRegistryList extends BackendAIPage {
           `}
         </div>
       </backend-ai-dialog>
-
       <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
