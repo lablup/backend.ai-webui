@@ -2,8 +2,9 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
 import '../lib/pipeline-login';
@@ -60,7 +61,7 @@ export default class PipelineList extends BackendAIPage {
   @property({type: Object}) pipelineInfo = Object();
   @property({type: Array}) pipelines = [];
   @property({type: Object}) userInfo;
-  @property({type: Array}) pipelineGrid;
+  @query('vaadin-grid#pipeline-list') pipelineGrid;
   @property({type: String}) _activeTab = 'pipeline-general';
   @property({type: String}) pipelineUserId = '';
   @property({type: String}) pipelineUserPassword = '';
@@ -70,9 +71,7 @@ export default class PipelineList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   // Environments
   @property({type: Object}) tags = Object();
-  @property({type: Array}) languages;
   @property({type: String}) defaultLanguage = '';
-  @property({type: Array}) versions = [];
   @property({type: Boolean}) _defaultLanguageUpdated = false;
   @property({type: Boolean}) _defaultVersionUpdated = false;
   @property({type: String}) scalingGroup = '';
@@ -82,13 +81,24 @@ export default class PipelineList extends BackendAIPage {
   @property({type: Object}) images = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: Object}) imageRequirements = Object();
+  @property({type: String}) kernel = '';
+  @property({type: Array}) languages;
+  @property({type: Array}) versions;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) supports = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) resourceBroker;
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
-  @property({type: Object}) vfolderGrid = Object();
+  @query('#vfolder-grid') vfolderGrid;
+  @property({type: Boolean}) metricUpdating;
+  @query('#pipeline-environment') private _environment;
+  @query('#pipeline-environment-tag') private _versionSelector;
+  @state() private _enableLaunchButton = false;
 
   @property({type: Object}) _boundNameRenderer = this.nameRenderer.bind(this);
   @property({type: Object}) _boundIndexRenderer = this.indexRenderer.bind(this);
@@ -98,18 +108,7 @@ export default class PipelineList extends BackendAIPage {
 
   constructor() {
     super();
-    this.pipelines = [];
-    this.aliases = {
-      'TensorFlow': 'python-tensorflow',
-      'NGC-TensorFlow': 'ngc-tensorflow',
-      'PyTorch': 'python-pytorch',
-      'NGC-PyTorch': 'ngc-pytorch',
-      'Lablup Research Env.': 'python-ff',
-      'Python': 'python',
-    };
-    this.languages = [];
-    this.vfolders = [];
-    this.selectedVfolders = [];
+    this._initResource();
     this.notification = globalThis.lablupNotification;
     this.resourceBroker = globalThis.resourceBroker;
   }
@@ -203,8 +202,8 @@ export default class PipelineList extends BackendAIPage {
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;
           /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 360px;
-          --mdc-menu-min-width: 360px;
+          --mdc-menu-max-width: 390px;
+          --mdc-menu-min-width: 390px;
         }
 
         mwc-tab-bar {
@@ -252,7 +251,25 @@ export default class PipelineList extends BackendAIPage {
     ];
   }
 
+  _initResource() {
+    this.aliases = {
+      'TensorFlow': 'python-tensorflow',
+      'NGC-TensorFlow': 'ngc-tensorflow',
+      'PyTorch': 'python-pytorch',
+      'NGC-PyTorch': 'ngc-pytorch',
+      'Lablup Research Env.': 'python-ff',
+      'Python': 'python',
+    };
+    this.languages = [];
+    this.pipelines = [];
+    this.vfolders = [];
+    this.versions = ['Not Selected'];
+    this.selectedVfolders = [];
+  }
+
   firstUpdated() {
+    console.log(this._versionSelector);
+    console.log(this.shadowRoot.querySelector('#pipeline-environment-tag'));
     fetch('resources/image_metadata.json')
       .then(
         (resp) => resp.json()
@@ -276,10 +293,42 @@ export default class PipelineList extends BackendAIPage {
           }
         }
       });
-    this.shadowRoot.querySelector('#pipeline-environment').addEventListener(
+    this._environment.addEventListener(
       'selected', this.updateLanguage.bind(this));
-    this.vfolderGrid = this.shadowRoot.querySelector('#vfolder-grid');
-    this.pipelineGrid = this.shadowRoot.querySelector('vaadin-grid#pipeline-list');
+    this._versionSelector.addEventListener('selected', () => {
+      this.updateEnvironmentSetting();
+    });
+  }
+
+  /**
+   * Update environment setting
+   *
+   */
+  async updateEnvironmentSetting() {
+    if (this.metricUpdating == true) {
+      // console.log('update metric blocked');
+      return;
+    }
+    const selectedItem = this._environment.selected;
+    const selectedVersionItem = this._versionSelector.selected;
+    // Pulldown is not ready yet.
+    if (selectedVersionItem === null) {
+      this.metricUpdating = false;
+      return;
+    }
+    const selectedVersionValue = selectedVersionItem.value;
+    const selectedVersionArchitecture = selectedVersionItem.getAttribute('architecture');
+    this._update_versionSelectorText(selectedVersionValue, selectedVersionArchitecture);
+    // Environment is not selected yet.
+    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute('disabled')) {
+      this.metricUpdating = false;
+      return;
+    }
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this.updateEnvironmentSetting();
+      }, true);
+    }
   }
 
   async _viewStateChanged(active) {
@@ -290,109 +339,26 @@ export default class PipelineList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        await this._fetchUserInfo();
+        this._fetchUserInfo();
         this._loadPipelineList();
-        this._refreshImageList();
-        this.selectDefaultLanguage();
-      }, true);
+        this.__enableLaunchButton();
+      }, {once: true});
     } else { // already connected
-      await this._fetchUserInfo();
+      this._fetchUserInfo();
       this._loadPipelineList();
-      this._refreshImageList();
-      this.selectDefaultLanguage();
+      this.__enableLaunchButton();
     }
   }
 
-  _refreshImageList() {
-    const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
-      'resource_limits { key min max }'
-    ];
-    globalThis.backendaiclient.image.list(fields, true).then((response) => {
-      const images: Array<Record<string, unknown>> = [];
-      Object.keys(response.images).map((objectKey, index) => {
-        const item = response.images[objectKey];
-        if (item.installed === true) {
-          images.push(item);
-        }
-      });
-      if (images.length === 0) {
-        return;
-      }
-      this.images = images;
-      this.supports = {};
-      Object.keys(this.images).map((objectKey, index) => {
-        const item = this.images[objectKey];
-        const supportsKey = `${item.registry}/${item.name}`;
-        if (!(supportsKey in this.supports)) {
-          this.supports[supportsKey] = [];
-        }
-        this.supports[supportsKey].push(item.tag);
-        this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
-      });
-      this._updateEnvironment();
-    }).catch((err) => {
-      // this.metadata_updating = false;
-      console.error(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true);
-      }
-    });
-  }
-
-  _updateEnvironment() {
-    // this.languages = Object.keys(this.supports);
-    // this.languages.sort();
-    const langs = Object.keys(this.supports);
-    if (langs === undefined) return;
-    langs.sort();
-    this.languages = [];
-    langs.forEach((item, index) => {
-      if (!(Object.keys(this.aliases).includes(item))) {
-        const humanizedName = this._guessHumanizedNames(item);
-        if (humanizedName !== null) {
-          this.aliases[item] = humanizedName;
-        } else {
-          this.aliases[item] = item;
-        }
-      }
-      const specs = item.split('/');
-      const registry = specs[0];
-      let prefix; let kernelName;
-      if (specs.length == 2) {
-        prefix = '';
-        kernelName = specs[1];
-      } else {
-        prefix = specs[1];
-        kernelName = specs[2];
-      }
-      const alias = this.aliases[item];
-      let basename;
-      if (alias !== undefined) {
-        basename = alias.split(' (')[0];
-      } else {
-        basename = kernelName;
-      }
-      let tags: string[] = [];
-      if (kernelName in this.tags) {
-        tags = tags.concat(this.tags[kernelName]);
-      }
-      if (prefix != '') {
-        tags.push(prefix);
-      }
-      this.languages.push({
-        name: item,
-        registry: registry,
-        prefix: prefix,
-        kernelname: kernelName,
-        alias: alias,
-        basename: basename,
-        tags: tags
-      });
-    });
-    this._initAliases();
+  async __enableLaunchButton() {
+    if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
+      this.languages = this.resourceBroker.languages;
+      this._enableLaunchButton = true;
+    } else {
+      setTimeout(() => {
+        this.__enableLaunchButton();
+      }, 500);
+    }
   }
 
   /**
@@ -418,9 +384,8 @@ export default class PipelineList extends BackendAIPage {
     } else {
       this.defaultLanguage = 'cr.backend.ai/stable/python';
     }
-    const environment = this.shadowRoot.querySelector('#pipeline-environment');
     // await environment.updateComplete; async way.
-    const obj = environment.items.find((o) => o.value === this.defaultLanguage);
+    const obj = this._environment.items.find((o) => o.value === this.defaultLanguage);
     if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
@@ -428,8 +393,8 @@ export default class PipelineList extends BackendAIPage {
       }, 500);
       return Promise.resolve(true);
     }
-    const idx = environment.items.indexOf(obj);
-    environment.select(idx);
+    const idx = this._environment.items.indexOf(obj);
+    this._environment.select(idx);
     this._defaultLanguageUpdated = true;
     return Promise.resolve(true);
   }
@@ -464,18 +429,6 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Copy forward aliases to backward aliases.
-   *
-   */
-  _initAliases() {
-    for (const item in this.aliases) {
-      if ({}.hasOwnProperty.call(this.aliases, item)) {
-        this.aliases[this.aliases[item]] = item;
-      }
-    }
-  }
-
-  /**
    * Combine kernel and version
    *
    * @param {string} kernel - kernel name
@@ -493,8 +446,8 @@ export default class PipelineList extends BackendAIPage {
     const name = this.shadowRoot.querySelector('#pipeline-name').value;
     const description = this.shadowRoot.querySelector('#pipeline-description').value;
     const scalingGroup = this.shadowRoot.querySelector('#scaling-group').value;
-    const kernel = this.shadowRoot.querySelector('#pipeline-environment').value;
-    const version = this.shadowRoot.querySelector('#pipeline-environment-tag').value;
+    const kernel = this._environment.value;
+    const version = this._environment.value;
     const cpuRequest = parseInt(this.shadowRoot.querySelector('#pipeline-cpu').value);
     const memRequest = parseFloat(this.shadowRoot.querySelector('#pipeline-mem').value);
     const shmemRequest = parseFloat(this.shadowRoot.querySelector('#pipeline-shmem').value);
@@ -571,8 +524,8 @@ export default class PipelineList extends BackendAIPage {
   /**
    * Initialize user info
    */
-  async _fetchUserInfo() {
-    globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, ['full_name', 'username', 'domain_name', 'id']).then((res) => {
+  _fetchUserInfo() {
+    return globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, ['full_name', 'username', 'domain_name', 'id']).then((res) => {
       const userInfo = res.user;
       this.userInfo = {
         // username: userInfo.full_name ? userInfo.full_name : userInfo.username,
@@ -838,7 +791,7 @@ export default class PipelineList extends BackendAIPage {
    * Invoke updating available versions corresponding to installed environment
    */
   updateLanguage() {
-    const selectedItem = this.shadowRoot.querySelector('#pipeline-environment').selected;
+    const selectedItem = this._environment.selected;
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
@@ -850,19 +803,50 @@ export default class PipelineList extends BackendAIPage {
    * @param {string} kernel - environment image name
    */
   _updateVersions(kernel) {
-    const tagEl = this.shadowRoot.querySelector('#pipeline-environment-tag');
-    if (kernel in this.supports) {
-      const versions = this.supports[kernel];
-      versions.sort();
+    if (kernel in this.resourceBroker.supports) {
+      this._versionSelector.disabled = true;
+      const versions: {version: string, architecture: string}[] = [];
+      for (const version of this.resourceBroker.supports[kernel]) {
+        for (const architecture of this.resourceBroker.imageArchitectures[kernel + ':' + version]) {
+          versions.push({version, architecture});
+        }
+      }
+      versions.sort((a, b) => a.version > b.version ? 1 : -1);
       versions.reverse(); // New version comes first.
       this.versions = versions;
+      this.kernel = kernel;
+    } else {
+      return;
     }
     if (this.versions !== undefined) {
-      tagEl.value = this.versions[0];
-      tagEl.selectedText = tagEl.value;
-      // this.updateMetric('update versions');
+      return this._versionSelector.layout(true).then(() => {
+        // Set version selector's value beforehand to update resources in
+        // updateEnvironmentSetting method. Without this, LAUNCH button's disabled state is not
+        // updated, so in some cases, user cannot launch a session even though
+        // there are available resources for the selected image.
+        this._versionSelector.select(1);
+        this._versionSelector.value = this.versions[0].version;
+        this._versionSelector.architecture = this.versions[0].architecture;
+        // this._versionSelector.selectedText = this._versionSelector.value;
+        this._update_versionSelectorText(this._versionSelector.value, this._versionSelector.architecture);
+        this._versionSelector.disabled = false;
+      });
     }
   }
+
+    /**
+   * Update _versionSelector's selectedText.
+   *
+   * @param {any} text - version
+   * */
+     _update_versionSelectorText(version, architecture) {
+      const res = this._getVersionInfo(version, architecture);
+      const resultArray: string[] = [];
+      res.forEach((item) => {
+        resultArray.push(item.tag);
+      });
+      this._versionSelector.selectedText = resultArray.join(' / ');
+    }
 
   /**
    * Update selected folders.
@@ -899,11 +883,172 @@ export default class PipelineList extends BackendAIPage {
     this.selectedVfolders = [];
   }
 
+  _aliasName(value) {
+    const alias = {
+      'python': 'Python',
+      'tensorflow': 'TensorFlow',
+      'pytorch': 'PyTorch',
+      'lua': 'Lua',
+      'r': 'R',
+      'r-base': 'R',
+      'julia': 'Julia',
+      'rust': 'Rust',
+      'cpp': 'C++',
+      'gcc': 'GCC',
+      'go': 'Go',
+      'tester': 'Tester',
+      'haskell': 'Haskell',
+      'matlab': 'MATLAB',
+      'sagemath': 'Sage',
+      'texlive': 'TeXLive',
+      'java': 'Java',
+      'php': 'PHP',
+      'octave': 'Octave',
+      'nodejs': 'Node',
+      'caffe': 'Caffe',
+      'scheme': 'Scheme',
+      'scala': 'Scala',
+      'base': 'Base',
+      'cntk': 'CNTK',
+      'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
+      'digits': 'DIGITS',
+      'ubuntu-linux': 'Ubuntu Linux',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
+      'py3': 'Python 3',
+      'py2': 'Python 2',
+      'py27': 'Python 2.7',
+      'py35': 'Python 3.5',
+      'py36': 'Python 3.6',
+      'py37': 'Python 3.7',
+      'py38': 'Python 3.8',
+      'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
+      'ji15': 'Julia 1.5',
+      'ji16': 'Julia 1.6',
+      'ji17': 'Julia 1.7',
+      'lxde': 'LXDE',
+      'lxqt': 'LXQt',
+      'xfce': 'XFCE',
+      'gnome': 'GNOME',
+      'kde': 'KDE',
+      'ubuntu16.04': 'Ubuntu 16.04',
+      'ubuntu18.04': 'Ubuntu 18.04',
+      'ubuntu20.04': 'Ubuntu 20.04',
+      'intel': 'Intel MKL',
+      '2018': '2018',
+      '2019': '2019',
+      '2020': '2020',
+      '2021': '2021',
+      '2022': '2022',
+      'tpu': 'TPU:TPUv3',
+      'rocm': 'GPU:ROCm',
+      'cuda9': 'GPU:CUDA9',
+      'cuda10': 'GPU:CUDA10',
+      'cuda10.0': 'GPU:CUDA10',
+      'cuda10.1': 'GPU:CUDA10.1',
+      'cuda10.2': 'GPU:CUDA10.2',
+      'cuda10.3': 'GPU:CUDA10.3',
+      'cuda11': 'GPU:CUDA11',
+      'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.3': 'GPU:CUDA11.3',
+      'miniconda': 'Miniconda',
+      'anaconda2018.12': 'Anaconda 2018.12',
+      'anaconda2019.12': 'Anaconda 2019.12',
+      'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
+      'ngc': 'Nvidia GPU Cloud',
+      'ff': 'Research Env.',
+    };
+    if (value in alias) {
+      return alias[value];
+    } else {
+      return value;
+    }
+  }
+
+    /**
+   * Get version information - Version, Language, Additional information.
+   *
+   * @param {any} version
+   * @return {Record<string, unknown>} Array containing information object
+   * */
+     _getVersionInfo(version, architecture) {
+      const info: any = [];
+      const fragment = version.split('-');
+      info.push({ // Version
+        tag: this._aliasName(fragment[0]),
+        color: 'blue',
+        size: '60px'
+      });
+      if (fragment.length > 1) {
+        // Image requirement overrides language information.
+        if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
+          info.push({ // Language
+            tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
+            color: 'red',
+            size: '110px'
+          });
+        } else {
+          info.push({ // Language
+            tag: this._aliasName(fragment[1]),
+            color: 'red',
+            size: '110px'
+          });
+        }
+      }
+      info.push({
+        tag: architecture,
+        color: 'lightgreen',
+        size: '90px',
+      });
+      if (fragment.length > 2) {
+        const requirements = this._aliasName(fragment[2]).split(':');
+        if (requirements.length > 1) {
+          info.push({ // Additional information
+            tag: requirements[1],
+            app: requirements[0],
+            color: 'green',
+            size: '90px'
+          });
+        } else {
+          info.push({ // Additional information
+            tag: requirements[0],
+            color: 'green',
+            size: '90px'
+          });
+        }
+      }
+      return info;
+    }
+
+  _showKernelDescription(e, item) {
+    e.stopPropagation();
+    const name = item.kernelname;
+    if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
+      const desc = this.shadowRoot.querySelector('#help-description');
+      this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
+      this._helpDescription = this.resourceBroker.imageInfo[name].description;
+      this._helpDescriptionIcon = item.icon;
+      desc.show();
+    } else {
+      if (name in this.imageInfo) {
+        this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
+      } else {
+        this._helpDescriptionTitle = name;
+      }
+      this._helpDescription = _text('session.launcher.NoDescriptionFound');
+    }
+  }
+
   render() {
     // language=HTML
     return html`
     <div class="horizontal layout flex center end-justified">
-      <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchPipelineDialog()}"></mwc-button>
+      <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchPipelineDialog()}" ?disabled="${!this._enableLaunchButton}"></mwc-button>
     </div>
     <vaadin-grid id="pipeline-list" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Pipeline List" .items="${this.pipelines}">
       <vaadin-grid-column auto-width flex-grow="0" header="#" text-align="center" .renderer="${this._boundIndexRenderer}"></vaadin-grid-column>
@@ -913,7 +1058,7 @@ export default class PipelineList extends BackendAIPage {
       <vaadin-grid-column id="created-at" header="Created At" resizable .renderer="${this._boundCreateAtRenderer}"></vaadin-grid-column>
       <vaadin-grid-column id="modified-at" header="Last Modified" resizable .renderer="${this._boundModifiedAtRenderer}"></vaadin-grid-column>
     </vaadin-grid>
-    <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent>
+    <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
       <span slot="title">New Pipeline</span>
       <div slot="content" class="vertical layout flex">
         <mwc-tab-bar class="pipeline-tab">
@@ -923,23 +1068,23 @@ export default class PipelineList extends BackendAIPage {
         </mwc-tab-bar>
         <div id="pipeline-general" class="vertical layout center flex tab-content">
           <mwc-textfield id="pipeline-name" label="Pipeline Name" required></mwc-textfield>
-          <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
+          <!--<mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
             <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
             ${this.pipelineTypes.map((item) => {
-    return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
-  })} 
+              return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
+            })} 
           </mwc-select>
           <mwc-textarea id="pipeline-description" label="Pipeline Description"></mwc-textarea>
         </div>
         <div id="pipeline-resources" class="vertical layout center flex tab-content" style="display:none;">
           <mwc-select class="full-width" id="scaling-group" label="Scaling Group" fixedMenuPosition>
             ${this.scalingGroups.map((item, idx) => {
-    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
-  })}
+              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+            })}
           </mwc-select>
           <mwc-select class="full-width" id="pipeline-environment" label="Default Environment" required fixedMenuPosition value="${this.defaultLanguage}">
                 ${this.languages.map((item) => html`
-                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === this.defaultLanguage }">
+                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === this.defaultLanguage}">
                     <div class="horizontal justified center flex layout" style="width:325px;">
                       <div style="padding-right:5px;">${item.basename}</div>
                       <div class="horizontal layout end-justified center flex">
@@ -956,6 +1101,60 @@ export default class PipelineList extends BackendAIPage {
               ${this.versions.map((item, idx) => html`
                     <mwc-list-item id="${item}" value="${item}"
                         ?selected="${idx === 0}">${item}</mwc-list-item>
+              `)}
+            </mwc-select>-->
+            <mwc-select class="full-width" id="pipeline-environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
+                        value="${this.defaultLanguage}">
+              <mwc-list-item selected graphic="icon" style="display:none!important;">
+                ${_t('session.launcher.ChooseEnvironment')}
+              </mwc-list-item>
+              ${this.languages.map((item) => html`
+                ${item.clickable === false ? html`
+                  <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                      role="separator" disabled="true">${item.basename}</h5>
+                  ` : html`
+                  <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+                  <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
+                      style="width:24px;height:24px;"/>
+                  <div class="horizontal justified center flex layout" style="width:325px;">
+                    <div style="padding-right:5px;">${item.basename}</div>
+                    <div class="horizontal layout end-justified center flex">
+                      ${item.tags ? item.tags.map((item) => html`
+                        <lablup-shields style="margin-right:5px;" color="${item.color}"
+                                        description="${item.tag}"></lablup-shields>
+                      `) : ''}
+                      <mwc-icon-button icon="info"
+                                      class="fg blue info"
+                                      @click="${(e) => this._showKernelDescription(e, item)}">
+                      </mwc-icon-button>
+                    </div>
+                  </div>
+                </mwc-list-item>
+                `}
+              `)}
+            </mwc-select>
+            <mwc-select class="full-width" id="pipeline-environment-tag" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
+              <mwc-list-item selected style="display:none!important"></mwc-list-item>
+              <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                  role="separator" disabled="true" class="horizontal layout">
+                  <div style="width:60px;">${_t('session.launcher.Version')}</div>
+                  <div style="width:110px;">${_t('session.launcher.Base')}</div>
+                  <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
+                <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+              </h5>
+              ${this.versions.map(({version, architecture}) => html`
+                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                    <span style="display:none">${version}</span>
+                    <div class="horizontal layout end-justified">
+                    ${this._getVersionInfo(version || '', architecture).map((item) => html`
+                      <lablup-shields style="width:${item.size}!important;"
+                                      color="${item.color}"
+                                      app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                      description="${item.tag}">
+                      </lablup-shields>
+                    `)}
+                  </div>
+                </mwc-list-item>
               `)}
             </mwc-select>
             <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core"></mwc-textfield>
