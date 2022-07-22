@@ -1223,16 +1223,15 @@ export default class BackendAiStorageList extends BackendAIPage {
             ` :
     html``
 }
-          <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
+          ${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
     html`
             <mwc-icon-button
               class="fg blue controls-running"
               icon="content_copy"
-              disabled
               @click="${() => {
     this._requestCloneFolder(rowData.item);
   }}"></mwc-icon-button>
-            ` : html``}-->
+            ` : html``}
           ${rowData.item.is_owner ?
     html`
               <mwc-icon-button
@@ -1855,8 +1854,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _requestCloneFolder(selectedItem) {
     // temporary diable cloning folder until the logic of cloning large size of virtual folder is optimized
-    /* const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
-    document.dispatchEvent(event); */
+    const event = new CustomEvent('backend-ai-vfolder-cloning', {'detail': selectedItem});
+    document.dispatchEvent(event);
   }
 
   /**
