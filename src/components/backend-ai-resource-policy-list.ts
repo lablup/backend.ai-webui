@@ -659,11 +659,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
 
-    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? BackendAIResourcePolicyList.MAX_INT32 : parseInt(this.concurrency_limit['value']);
-    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? BackendAIResourcePolicyList.MAX_INT32 : parseInt(this.container_per_session_limit['value']);
+    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? 0 : parseInt(this.concurrency_limit['value']);
+    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? 0 : parseInt(this.container_per_session_limit['value']);
     this.vfolder_max_limit['value'] = (this.vfolder_max_limit['value'] === '') ? 0 : parseInt(this.vfolder_max_limit['value']);
 
-    this.idle_timeout['value'] = (this.idle_timeout['value'] === '') ? Number.MAX_SAFE_INTEGER : parseInt(this.idle_timeout['value']);
+    this.idle_timeout['value'] = (this.idle_timeout['value'] === '') ? 0 : parseInt(this.idle_timeout['value']);
     this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
@@ -671,7 +671,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         delete total_resource_slots[resource];
       }
     });
-
     const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
@@ -682,10 +681,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'max_vfolder_size': this._giBToByte(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts
     };
-
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = !!this.session_lifetime['value'] ? BackendAIResourcePolicyList.MAX_INT32 : parseInt(this.session_lifetime['value']);
+      this.session_lifetime['value'] = (this.session_lifetime['value'] === '') ? 0 : parseInt(this.session_lifetime['value']);
       input['max_session_lifetime'] = this.session_lifetime['value'];
     }
 

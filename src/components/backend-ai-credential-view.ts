@@ -517,11 +517,11 @@ export default class BackendAICredentialView extends BackendAIPage {
     total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
     total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
 
-    this.concurrency_limit['value'] = this.concurrency_limit['value'] === '' ? 0 : parseInt(this.concurrency_limit['value']);
-    this.container_per_session_limit['value'] = this.container_per_session_limit['value'] === '' ? 0 : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
+    this.concurrency_limit['value'] = (this.concurrency_limit['value'] === '') ? 0 : parseInt(this.concurrency_limit['value']);
+    this.container_per_session_limit['value'] = (this.container_per_session_limit['value'] === '') ? 0 : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_max_limit['value'] = (this.vfolder_max_limit['value'] === '') ? 0 : parseInt(this.vfolder_max_limit['value']);
 
-    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    this.idle_timeout['value'] = (this.idle_timeout['value'] === '') ? 0 : parseInt(this.idle_timeout['value']);
     this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
 
     Object.keys(total_resource_slots).map((resource) => {
@@ -1135,7 +1135,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             </div>
             <div class="vertical layout popup-both-margin">
               <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0"max=${BackendAICredentialView.MAX_INT32} step="0.01"
+              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max=${BackendAICredentialView.MAX_INT32} step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
