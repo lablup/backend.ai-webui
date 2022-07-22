@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -51,6 +51,13 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: String}) registryType = 'docker';
   @property({type: Boolean}) editMode;
 
+  @query('#configure-registry-hostname') private hostname;
+  @query('#configure-registry-url') private url;
+  @query('#configure-registry-username') private username;
+  @query('#configure-registry-password') private password;
+  @query('#select-registry-type') private registerType;
+  @query('#configure-project-name') private projectName;
+  
   constructor() {
     super();
     this.registryList = [];
@@ -227,12 +234,12 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const hostname = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-hostname')).value;
-    const url = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-url')).value;
-    const username = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-username')).value;
-    const password = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-password')).value;
-    const registerType = this.shadowRoot.querySelector('#select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#configure-project-name').value.replace(/\s/g, '');
+    const hostname = this.hostname.value;
+    const url = this.url.value;
+    const username = this.username.value;
+    const password = this.password.value;
+    const registerType = this.registerType.value;
+    const projectName = this.projectName.value.replace(/\s/g, '');
 
     if (!this.shadowRoot.querySelector('#configure-registry-hostname').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
@@ -414,18 +421,18 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _toggleProjectNameInput() {
-    this.registryType = this.shadowRoot.querySelector('#select-registry-type').value;
+    this.registryType = this.registerType.value;
     this._validateProjectName();
   }
 
   _validateUrl() {
-    const url = this.shadowRoot.querySelector('#configure-registry-url');
+    const url = this.url;
     const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
     validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
-    const hostname = this.shadowRoot.querySelector('#configure-registry-hostname').value;
+    const hostname = this.hostname.value;
     const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
     if (hostname && hostname !== '') {
       validationMessage.style.display = 'none';
@@ -435,7 +442,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this.shadowRoot.querySelector('#configure-project-name');
+    const projectTextEl = this.projectName;
     const validationEl = this.shadowRoot.querySelector('#project-name-validation');
     projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
     validationEl.style.display = 'block';
@@ -453,12 +460,12 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _resetRegistryField() {
-    const registryHostname = this.shadowRoot.querySelector('#configure-registry-hostname');
-    const registryURL = this.shadowRoot.querySelector('#configure-registry-url');
-    const registryUsername = this.shadowRoot.querySelector('#configure-registry-username');
-    const registryPassword = this.shadowRoot.querySelector('#configure-registry-password');
-    const registrySelect = this.shadowRoot.querySelector('#select-registry-type');
-    const registryProjectName = this.shadowRoot.querySelector('#configure-project-name');
+    const registryHostname = this.hostname;
+    const registryURL = this.url;
+    const registryUsername = this.username;
+    const registryPassword = this.password;
+    const registrySelect = this.registerType;
+    const registryProjectName = this.projectName;
 
     registryHostname.value = '';
     registryURL.value = '';
