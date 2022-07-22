@@ -106,7 +106,7 @@ class BackendAIRegistryList extends BackendAIPage {
           margin-bottom: 0px;
         }
 
-        wl-textfield#add-project-name {
+        wl-textfield#configure-project-name {
           --input-label-space: 20px;
         }
 
@@ -227,14 +227,14 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const hostname = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-hostname')).value;
-    const url = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-url')).value;
-    const username = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-username')).value;
-    const password = (<HTMLInputElement> this.shadowRoot.querySelector('#add-registry-password')).value;
+    const hostname = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-hostname')).value;
+    const url = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-url')).value;
+    const username = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-username')).value;
+    const password = (<HTMLInputElement> this.shadowRoot.querySelector('#configure-registry-password')).value;
     const registerType = this.shadowRoot.querySelector('#select-registry-type').value;
-    const projectName = this.shadowRoot.querySelector('#add-project-name').value.replace(/\s/g, '');
+    const projectName = this.shadowRoot.querySelector('#configure-project-name').value.replace(/\s/g, '');
 
-    if (!this.shadowRoot.querySelector('#add-registry-hostname').valid) {
+    if (!this.shadowRoot.querySelector('#configure-registry-hostname').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
       if (validationMessage) {
         validationMessage.style.display = 'block';
@@ -242,7 +242,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
 
-    if (!this.shadowRoot.querySelector('#add-registry-url').valid) {
+    if (!this.shadowRoot.querySelector('#configure-registry-url').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
       if (validationMessage) {
         validationMessage.style.display = 'block';
@@ -419,13 +419,13 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateUrl() {
-    const url = this.shadowRoot.querySelector('#add-registry-url');
+    const url = this.shadowRoot.querySelector('#configure-registry-url');
     const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
     validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
-    const hostname = this.shadowRoot.querySelector('#add-registry-hostname').value;
+    const hostname = this.shadowRoot.querySelector('#configure-registry-hostname').value;
     const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
     if (hostname && hostname !== '') {
       validationMessage.style.display = 'none';
@@ -435,7 +435,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this.shadowRoot.querySelector('#add-project-name');
+    const projectTextEl = this.shadowRoot.querySelector('#configure-project-name');
     const validationEl = this.shadowRoot.querySelector('#project-name-validation');
     projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
     validationEl.style.display = 'block';
@@ -453,12 +453,12 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _resetRegistryField() {
-    const registryHostname = this.shadowRoot.querySelector('#add-registry-hostname');
-    const registryURL = this.shadowRoot.querySelector('#add-registry-url');
-    const registryUsername = this.shadowRoot.querySelector('#add-registry-username');
-    const registryPassword = this.shadowRoot.querySelector('#add-registry-password');
+    const registryHostname = this.shadowRoot.querySelector('#configure-registry-hostname');
+    const registryURL = this.shadowRoot.querySelector('#configure-registry-url');
+    const registryUsername = this.shadowRoot.querySelector('#configure-registry-username');
+    const registryPassword = this.shadowRoot.querySelector('#configure-registry-password');
     const registrySelect = this.shadowRoot.querySelector('#select-registry-type');
-    const registryProjectName = this.shadowRoot.querySelector('#add-project-name');
+    const registryProjectName = this.shadowRoot.querySelector('#configure-project-name');
 
     registryHostname.value = '';
     registryURL.value = '';
@@ -647,7 +647,7 @@ class BackendAIRegistryList extends BackendAIPage {
       `}
         <div slot="content" class="login-panel intro centered">
           <wl-textfield
-            id="add-registry-hostname"
+            id="configure-registry-hostname"
             class="helper-text"
             type="text"
             label="${_t('registry.RegistryHostname')}"
@@ -659,7 +659,7 @@ class BackendAIRegistryList extends BackendAIPage {
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t('registry.DescHostnameIsEmpty')}</wl-label>
           <wl-textfield
-            id="add-registry-url"
+            id="configure-registry-url"
             class="helper-text"
             label="${_t('registry.RegistryURL')}"
             required
@@ -671,14 +671,14 @@ class BackendAIRegistryList extends BackendAIPage {
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t('registry.DescURLStartString')}</wl-label>
          <div class="horizontal layout flex">
           <wl-textfield
-            id="add-registry-username"
+            id="configure-registry-username"
             type="text"
             label="${_t('registry.UsernameOptional')}"
             style="padding-right:10px;"
             value="${this.registryList[this.selectedIndex]?.username || ''}"
           ></wl-textfield>
           <wl-textfield
-            id="add-registry-password"
+            id="configure-registry-password"
             type="password"
             label="${_t('registry.PasswordOptional')}"
             style="padding-left:10px;"
@@ -699,7 +699,7 @@ class BackendAIRegistryList extends BackendAIPage {
           </mwc-select>
           <div class="vertical layout end-justified">
             <wl-textfield
-              id="add-project-name"
+              id="configure-project-name"
               class="helper-text"
               type="text"
               label="${_t('registry.ProjectName')}"
