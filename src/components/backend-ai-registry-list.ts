@@ -289,7 +289,7 @@ class BackendAIRegistryList extends BackendAIPage {
         } else {
           this.notification.text = _text('dialog.ErrorOccurred');
         }
-        this._hideDialogById('#add-registry-dialog');
+        this._hideDialogById('#configure-registry-dialog');
         this.notification.show();
       });
   }
@@ -385,7 +385,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.editMode = false;
     this.selectedIndex = -1;
     this.registryType = 'docker';
-    this._launchDialogById('#add-registry-dialog');
+    this._launchDialogById('#configure-registry-dialog');
   }
 
   _hideValidationMessage() {
@@ -410,7 +410,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.registryList[this.selectedIndex] = registryInfo;
     this.registryType = this.registryList[this.selectedIndex]?.type;
     this._hideValidationMessage();
-    this._launchDialogById('#add-registry-dialog');
+    this._launchDialogById('#configure-registry-dialog');
   }
 
   _toggleProjectNameInput() {
@@ -639,7 +639,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
-      <backend-ai-dialog id="add-registry-dialog" fixed backdrop blockscrolling>
+      <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
       ${this.editMode ? html`
         <span slot="title">${_t('registry.ModifyRegistry')}</span>
       ` : html`
@@ -690,7 +690,11 @@ class BackendAIRegistryList extends BackendAIPage {
                       validationMessage="${_t('registry.PleaseSelectOption')}"
                       value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
             ${this._registryTypes.map((item) => html`
-              <mwc-list-item value="${item}" ?selected="${this.editMode ? item === this.registryList[this.selectedIndex]?.type : item === 'docker'}">${item}</mwc-list-item>
+              <mwc-list-item 
+                value="${item}" 
+                ?selected="${this.editMode ? item === this.registryList[this.selectedIndex]?.type : item === 'docker'}">
+                ${item}
+              </mwc-list-item>
             `)}
           </mwc-select>
           <div class="vertical layout end-justified">
