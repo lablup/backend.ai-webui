@@ -148,8 +148,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     unit: 'MiB'
   };
 
-  static readonly MAX_INT32 = 0x7FFFFFFF;
-
   constructor() {
     super();
     this._boundIndexRenderer = this.indexRenderer.bind(this);
