@@ -424,9 +424,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   concurrencyRenderer(root, column?, rowData?) {
+    // FIXME: need to distinguish zero and infinity not only in client-side but also server-side.
     render(
       html`
-        <div>${[0, BackendAIResourcePolicyList.MAX_INT32].includes(rowData.item.max_concurrent_sessions) ? '∞' : rowData.item.max_concurrent_sessions}</div>
+        <div>${(rowData.item.max_concurrent_sessions <= 0) ? '∞' : rowData.item.max_concurrent_sessions}</div>
     `, root
     );
   }
@@ -461,10 +462,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   clusterSizeRenderer(root, column?, rowData?) {
+    // FIXME: need to distinguish zero and infinity not only in client-side but also server-side.
     render(
       // language=HTML
       html`
-      <div>${[0, BackendAIResourcePolicyList.MAX_INT32].includes(rowData.item.max_containers_per_session) ? '∞' : rowData.item.max_containers_per_session}</div>
+      <div>${(rowData.item.max_containers_per_session <= 0) ? '∞' : rowData.item.max_containers_per_session}</div>
       `, root
     );
   }
