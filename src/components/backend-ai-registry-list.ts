@@ -40,12 +40,12 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
   public registryList: any;
+  private registryTypes:Array<any>;
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = -1;
   @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this._controlsRenderer.bind(this);
   @property({type: Object}) _boundPasswordRenderer = this._passwordRenderer.bind(this);
-  @property({type: Array}) _registryTypes;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) hostnames;
   @property({type: String}) registryType = 'docker';
@@ -61,7 +61,7 @@ class BackendAIRegistryList extends BackendAIPage {
   constructor() {
     super();
     this.registryList = [];
-    this._registryTypes = [];
+    this.registryTypes = [];
     this.allowed_registries = [];
     this.hostnames = [];
     this.editMode = false;
@@ -209,11 +209,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._registryTypes = ['docker', 'harbor', 'harbor2'];
+        this.registryTypes = ['docker', 'harbor', 'harbor2'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this._registryTypes = ['docker', 'harbor', 'harbor2'];
+      this.registryTypes = ['docker', 'harbor', 'harbor2'];
     }
   }
 
@@ -696,7 +696,7 @@ class BackendAIRegistryList extends BackendAIPage {
                       @change=${this._toggleProjectNameInput} required
                       validationMessage="${_t('registry.PleaseSelectOption')}"
                       value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
-            ${this._registryTypes.map((item) => html`
+            ${this.registryTypes.map((item) => html`
               <mwc-list-item 
                 value="${item}" 
                 ?selected="${this.editMode ? item === this.registryList[this.selectedIndex]?.type : item === 'docker'}">
