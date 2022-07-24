@@ -193,6 +193,9 @@ class BackendAIRegistryList extends BackendAIPage {
         });
   }
 
+  /**
+   * Request and Retrieve registry lists from server allowed in the current domain
+   */
   _refreshRegistryList() {
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this._allowed_registries = response.domain.allowed_docker_registries;
@@ -313,7 +316,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Delete registry
+   * Delete registry from allowed registry list corresponding to the current domain by user input on delete registry dialog
    * */
   private _deleteRegistry() {
     const deleteRegistryInputField: WlTextfield = (this.shadowRoot.querySelector('#delete-registry') as WlTextfield);
@@ -392,14 +395,28 @@ class BackendAIRegistryList extends BackendAIPage {
       });
   }
 
+  /**
+   * Open dialog by element id
+   * 
+   * @param {string} id - element id starts from `#`
+   */
   private _launchDialogById(id) {
     this.shadowRoot.querySelector(id).show();
   }
 
+  /**
+   * Hide dialog by element id
+   * 
+   * @param {string} id - element id starts from `#`
+   */
   private _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Open create registry dialog with initial value
+   * NOTE: Initial registry type is `docker`.
+   */
   private _openCreateRegistryDialog() {
     this._editMode = false;
     this._selectedIndex = -1;
@@ -408,7 +425,10 @@ class BackendAIRegistryList extends BackendAIPage {
     this._launchDialogById('#configure-registry-dialog');
   }
 
-  private _hideValidationMessage() {
+  /**
+   * Reset validation message in registry configuation dialog
+   */
+  private _resetValidationMessage() {
     /**
      * FIXME: need to change repetitive value manipulation in future.
      */
@@ -417,41 +437,51 @@ class BackendAIRegistryList extends BackendAIPage {
     this._projectNameValidationMsg.style.display = 'none';
   }
 
-  private _openEditRegistryDialog(registry) {
+  /**
+   * Open registry configuration dialog by hostname
+   * 
+   * @param hostname 
+   */
+  private _openEditRegistryDialog(hostname) {
     this._editMode = true;
     let registryInfo;
     for (let i = 0; i < this._registryList.length; i++) {
-      if (this._registryList[i].hostname === registry) {
+      if (this._registryList[i].hostname === hostname) {
         registryInfo = this._registryList[i];
         break;
       }
     }
     if (!registryInfo) {
-      globalThis.notification.show(`No such registry: ${registry}`);
+      globalThis.notification.show(`No such registry hostname: ${hostname}`);
       return;
     }
     this._registryList[this._selectedIndex] = registryInfo;
     this._registryType = this._registryList[this._selectedIndex]?.type as string;
     this.requestUpdate();  // call for explicit update
-    this._hideValidationMessage();
+    this._resetValidationMessage();
     this._launchDialogById('#configure-registry-dialog');
   }
 
-  private _toggleProjectNameInput() {
-    this._registryType = this._selectedRegistryTypeInput.value;
-    this._validateProjectName();
-  }
-
-  private _validateUrl() {
+  /**
+   * Hide/Show validation msg on url input field in registry configuration dialog
+   */
+  private _toggleValidationMsgOnUrlInput() {
     this._registryUrlValidationMsg.style.display = this._urlInput.valid ? 'none' : 'block';
   }
 
-  private _validateHostname() {
+  /**
+   * Hide/Show validation msg on hostname input in registry configuration dialog
+   */
+  private _toggleValidationMsgOnHostnameInput() {
     const hostname = this._hostnameInput.value;
     this._registryHostnameValidationMsg.style.display = (hostname && hostname !== '') ? 'none' : 'block';
   }
 
-  private _validateProjectName() {
+  /**
+   * Hide/Show validation msg on project name input in registry configuration dialog
+   * Hide when registry is "docker", Show and validate when registry is "harbor" or "harbor2"
+   */
+  private _toggleValidationMsgOnProjectNameInput() {
     this._projectNameInput.value = this._projectNameInput.value.replace(/\s/g, '');
     this._projectNameValidationMsg.style.display = 'block';
     if (['harbor', 'harbor2'].includes(this._registryType)) {
@@ -467,7 +497,32 @@ class BackendAIRegistryList extends BackendAIPage {
     }
   }
 
-  private _resetRegistryField() {
+  /**
+   * Toggle registry enabled/disabled triggered by switch on/off
+   * 
+   * @param {Event} e - click the switch button
+   * @param {string} hostname - hostname of current registry row
+   */
+  private _toggleRegistryEnabled(e, hostname) {
+    if (!e.target.selected) {
+      this._changeRegistryState(hostname, false);
+    } else {
+      this._changeRegistryState(hostname, true);
+    }
+  }
+
+  /**
+   * Toggle display of validation msg and the content of validation msg by the type of registry
+   */
+  private _toggleProjectNameInput() {
+    this._registryType = this._selectedRegistryTypeInput.value;
+    this._toggleValidationMsgOnProjectNameInput();
+  }
+
+  /**
+   * Reset registry input fields in registry configuration dialog
+   */
+   private _resetRegistryField() {
     /**
      * FIXME: need to change repetitive value manipulation in future.
      */
@@ -480,17 +535,9 @@ class BackendAIRegistryList extends BackendAIPage {
     this.requestUpdate();  // call for explicit update
   }
 
-  private _toggleRegistry(e, hostname) {
-    if (!e.target.selected) {
-      this._changeRegistryState(hostname, false);
-    } else {
-      this._changeRegistryState(hostname, true);
-    }
-  }
-
   /**
-   * If state is true, turn on the registry.
-   * If state is false, turn off the registry.
+   * Add/Remove registry as an element of list to refresh(update) when state is true. 
+   * Disabled when state is false.
    *
    * @param {string} hostname
    * @param {boolean} state
@@ -511,6 +558,13 @@ class BackendAIRegistryList extends BackendAIPage {
     });
   }
 
+  /**
+   * Render index of each row corresponding to element in registry list. Starts from 1.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
   private _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
     render(
@@ -521,7 +575,14 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  private _hostRenderer(root, column, rowData) {
+  /**
+   * Render hostname (string) usually represented by string without protocol of registry url.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item 
+   */
+  private _hostNameRenderer(root, column, rowData) {
     render(
       html`
         <div>
@@ -532,7 +593,17 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  private _registryRenderer(root, column, rowData) {
+  /**
+   * Render registry url (string) starts from http or https protocol.
+   * 
+   * For now, the key itself represents registry url received from server-side is ''(empty string).
+   * Therefore to extract from the rowData, we need to use 'empty string'.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  private _registryUrlRenderer(root, column, rowData) {
     render(
       html`
         <div>
@@ -543,6 +614,13 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render string to special character used for password handling
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
   private _passwordRenderer(root, column?, rowData?) {
     render(
       html`
@@ -557,16 +635,16 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Render a switch to check that registry is turned on or off.
    *
-   * @param {element} root - the row details content DOM element
-   * @param {element} column - the column element that controls the state of the host element
-   * @param {object} rowData - the object with the properties related with the rendered item
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   private _isEnabledRenderer(root, column, rowData) {
     render(
       html`
         <div>
           <mwc-switch
-              @click="${(e) => this._toggleRegistry(e, rowData.item['hostname'])}"
+              @click="${(e) => this._toggleRegistryEnabled(e, rowData.item['hostname'])}"
               ?selected="${this._allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
         </div>
       `,
@@ -622,7 +700,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * any value renderable by lit-html's `ChildPart` - typically a
    * `TemplateResult`. Setting properties inside this method will *not* trigger
    * the element to update.
-   * @returns {TemplateResult<1>} html
+   * @returns {TemplateResult<1>} - html
    * */
   protected override render() {
     // language=HTML
@@ -637,9 +715,9 @@ class BackendAIRegistryList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostRenderer}>
+        <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryRenderer}>
+        <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
         </vaadin-grid-column>
@@ -664,8 +742,8 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             ?disabled="${this._editMode}"
             value="${this._registryList[this._selectedIndex]?.hostname || ''}"
-            @click=${this._validateHostname}
-            @change=${this._validateHostname}
+            @click=${this._toggleValidationMsgOnHostnameInput}
+            @change=${this._toggleValidationMsgOnHostnameInput}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t('registry.DescHostnameIsEmpty')}</wl-label>
           <wl-textfield
@@ -675,8 +753,8 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
             value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-            @click=${this._validateUrl}
-            @change=${this._validateUrl}
+            @click=${this._toggleValidationMsgOnUrlInput}
+            @change=${this._toggleValidationMsgOnUrlInput}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t('registry.DescURLStartString')}</wl-label>
          <div class="horizontal layout flex">
@@ -716,7 +794,7 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             value="${this._registryList[this._selectedIndex]?.project || ''}"
             ?disabled="${this._registryType === 'docker'}"
-            @change=${this._validateProjectName}
+            @change=${this._toggleValidationMsgOnProjectNameInput}
           ></wl-textfield>
           <wl-label class="helper-text" id="project-name-validation">
             ${this._editMode ? html`` : _t('registry.ForHarborOnly')}
