@@ -241,7 +241,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const registryType = this._selectedRegistryType.value;
     const projectName = this._projectName.value.replace(/\s/g, '');
 
-    if (!this.shadowRoot.querySelector('#configure-registry-hostname').valid) {
+    if (!this._hostname.valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
       if (validationMessage) {
         validationMessage.style.display = 'block';
@@ -249,7 +249,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
 
-    if (!this.shadowRoot.querySelector('#configure-registry-url').valid) {
+    if (!this._url.valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
       if (validationMessage) {
         validationMessage.style.display = 'block';
@@ -426,9 +426,8 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateUrl() {
-    const url = this._url;
     const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-    validationMessage.style.display = url.valid ? 'none' : 'block';
+    validationMessage.style.display = this._url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
@@ -442,20 +441,19 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this._projectName;
     const validationEl = this.shadowRoot.querySelector('#project-name-validation');
-    projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
+    this._projectName.value = this._projectName.value.replace(/\s/g, '');
     validationEl.style.display = 'block';
     if (['harbor', 'harbor2'].includes(this.registryType)) {
-      if (!projectTextEl.value) {
+      if (!this._projectName.value) {
         validationEl.textContent = _text('registry.ProjectNameIsRequired');
       } else {
         validationEl.style.display = 'none';
       }
-      projectTextEl.disabled = false;
+      this._projectName.disabled = false;
     } else {
       validationEl.textContent = _text('registry.ForHarborOnly');
-      projectTextEl.disabled = true;
+      this._projectName.disabled = true;
     }
   }
 
