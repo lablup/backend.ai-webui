@@ -55,7 +55,7 @@ class BackendAIRegistryList extends BackendAIPage {
   @query('#configure-registry-url') private url;
   @query('#configure-registry-username') private username;
   @query('#configure-registry-password') private password;
-  @query('#select-registry-type') private registerType;
+  @query('#select-registry-type') private selectedRegistryType;
   @query('#configure-project-name') private projectName;
   
   constructor() {
@@ -238,7 +238,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const url = this.url.value;
     const username = this.username.value;
     const password = this.password.value;
-    const registerType = this.registerType.value;
+    const registryType = this.selectedRegistryType.value;
     const projectName = this.projectName.value.replace(/\s/g, '');
 
     if (!this.shadowRoot.querySelector('#configure-registry-hostname').valid) {
@@ -263,8 +263,8 @@ class BackendAIRegistryList extends BackendAIPage {
     input['username'] = username;
     input['password'] = password;
 
-    input['type'] = registerType;
-    if (['harbor', 'harbor2'].includes(registerType)) {
+    input['type'] = registryType;
+    if (['harbor', 'harbor2'].includes(registryType)) {
       if (projectName && projectName !== '') {
         input['project'] = projectName;
       } else {
@@ -421,7 +421,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _toggleProjectNameInput() {
-    this.registryType = this.registerType.value;
+    this.registryType = this.selectedRegistryType.value;
     this._validateProjectName();
   }
 
@@ -464,7 +464,7 @@ class BackendAIRegistryList extends BackendAIPage {
     const registryURL = this.url;
     const registryUsername = this.username;
     const registryPassword = this.password;
-    const registrySelect = this.registerType;
+    const registrySelect = this.selectedRegistryType;
     const registryProjectName = this.projectName;
 
     registryHostname.value = '';
