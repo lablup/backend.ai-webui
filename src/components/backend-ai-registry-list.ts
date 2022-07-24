@@ -1,73 +1,80 @@
 /**
  @license
- Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-
-import '@vaadin/vaadin-grid/vaadin-grid';
-
-import '../plastics/lablup-shields/lablup-shields';
-
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-switch/mwc-switch';
+import BackendAIIndicator from './backend-ai-indicator';
+import BackendAIIndicatorPool from './backend-ai-indicator-pool';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+import '../plastics/lablup-shields/lablup-shields';
+
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-switch/mwc-switch';
+
+import '@vaadin/vaadin-grid/vaadin-grid';
+
+import 'weightless/button';
+import 'weightless/card';
+import 'weightless/icon';
+import {Label as WlLabel} from 'weightless/label';
+import {Textfield as WlTextfield} from 'weightless/textfield';
+
 /**
  Backend AI Registry List
 
  `backend-ai-registry-list` manages registries.
 
-@group Backend.AI Web UI
- @element backend-ai-release-check
- */
+  @group Backend.AI Web UI
+  @element backend-ai-release-check
+*/
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  private _registryList: any;
-  private _registryTypes:Array<any>;
-  @property({type: Object}) indicator = Object();
-  @property({type: Number}) selectedIndex = -1;
-  @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
-  @property({type: Object}) _boundControlsRenderer = this._controlsRenderer.bind(this);
-  @property({type: Object}) _boundPasswordRenderer = this._passwordRenderer.bind(this);
-  @property({type: Array}) allowed_registries;
-  @property({type: Array}) hostnames;
-  @property({type: String}) registryType = 'docker';
-  @property({type: Boolean}) editMode;
-
-  @query('#configure-registry-hostname') private _hostname;
-  @query('#configure-registry-url') private _url;
-  @query('#configure-registry-username') private _username;
-  @query('#configure-registry-password') private _password;
-  @query('#select-registry-type') private _selectedRegistryType;
-  @query('#configure-project-name') private _projectName;
+  private _allowed_registries: Array<object>;
+  private _editMode: boolean = false;
+  private _hostnames: Array<string>;
+  private _indicator!: BackendAIIndicatorPool;
+  private _registryList: Array<Record<string, unknown>>;
+  private _registryType: string = 'docker';
+  private static _registryTypes: Array<string> = ['docker', 'harbor', 'harbor2'];
+  private _selectedIndex: number = -1;
   
+  /* Renderer function for grid table */
+  private _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
+  private _boundControlsRenderer = this._controlsRenderer.bind(this);
+  private _boundPasswordRenderer = this._passwordRenderer.bind(this);
+
+  @query('#configure-registry-hostname') private _hostnameInput!: WlTextfield;
+  @query('#configure-registry-password') private _passwordInput!: WlTextfield;
+  @query('#configure-project-name') private _projectNameInput!: WlTextfield;
+  @query('#select-registry-type') private _selectedRegistryTypeInput!: WlTextfield;
+  @query('#configure-registry-url') private _urlInput!: WlTextfield;
+  @query('#configure-registry-username') private _usernameInput!: WlTextfield;
+  @query('#registry-url-validation') private _registryUrlValidationMsg!: WlLabel;
+  @query('#registry-hostname-validation') private _registryHostnameValidationMsg!: WlLabel;
+  @query('#project-name-validation') private _projectNameValidationMsg!: WlLabel;
+
   constructor() {
     super();
+    this._allowed_registries = [];
+    this._editMode = false;
+    this._hostnames = [];
     this._registryList = [];
-    this._registryTypes = [];
-    this.allowed_registries = [];
-    this.hostnames = [];
-    this.editMode = false;
+    this._registryList = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  public static override get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -157,9 +164,13 @@ class BackendAIRegistryList extends BackendAIPage {
       `];
   }
 
-  firstUpdated() {
+  /**
+   * Invoked when the element is first updated. Implement to perform one time
+   * work on the element after update.
+   */
+  protected override firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.indicator = globalThis.lablupIndicator;
+    this._indicator = globalThis.lablupIndicator as BackendAIIndicatorPool;
   }
 
   /**
@@ -184,13 +195,13 @@ class BackendAIRegistryList extends BackendAIPage {
 
   _refreshRegistryList() {
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
-      this.allowed_registries = response.domain.allowed_docker_registries;
+      this._allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this._registryList = this._parseRegistryList(result);
-      this.hostnames = this._registryList.map((value) => {
+      this._hostnames = this._registryList.map((value) => {
         return value.hostname;
-      });
+      }) as string[];
       this.requestUpdate();
     });
   }
@@ -200,7 +211,7 @@ class BackendAIRegistryList extends BackendAIPage {
    *
    * @param {Boolean} active - whether view state change or not
    * */
-  async _viewStateChanged(active) {
+  public override async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -209,21 +220,20 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._registryTypes = ['docker', 'harbor', 'harbor2'];
+        this._refreshRegistryList();
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this._registryTypes = ['docker', 'harbor', 'harbor2'];
     }
   }
 
   /**
    * Get host name from url
-   *
+   * @deprecated
    * @param {string} url - URL containing hostname
    * @return {string} hostname of URL
    * */
-  _getHostname(url) {
+  private _getHostname(url) {
     const anchor = document.createElement('a');
     anchor.href = url;
     return anchor.hostname;
@@ -231,28 +241,29 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Add registry with validation
+   * 
+   * For now, both add and modify operations for registry result in "add(put)" operation on server-side eventually.
+   * Therefore the name of function will be maintained as "_addRegistry"
    * */
-  _addRegistry() {
+  private _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const hostname = this._hostname.value;
-    const url = this._url.value;
-    const username = this._username.value;
-    const password = this._password.value;
-    const registryType = this._selectedRegistryType.value;
-    const projectName = this._projectName.value.replace(/\s/g, '');
+    const hostname = this._hostnameInput.value;
+    const url = this._urlInput.value;
+    const username = this._usernameInput.value;
+    const password = this._passwordInput.value;
+    const registryType = this._selectedRegistryTypeInput.value;
+    const projectName = this._projectNameInput.value.replace(/\s/g, '');
 
-    if (!this._hostname.valid) {
-      const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
-      if (validationMessage) {
-        validationMessage.style.display = 'block';
+    if (!this._hostnameInput.valid) {
+      if (this._registryHostnameValidationMsg) {
+        this._registryHostnameValidationMsg.style.display = 'block';
       }
       return;
     }
 
-    if (!this._url.valid) {
-      const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-      if (validationMessage) {
-        validationMessage.style.display = 'block';
+    if (!this._urlInput.valid) {
+      if (this._registryUrlValidationMsg) {
+        this._registryUrlValidationMsg.style.display = 'block';
       }
       return;
     }
@@ -275,7 +286,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
 
     // if hostname already exists
-    if (!this.editMode && this.hostnames.includes(hostname)) {
+    if (!this._editMode && this._hostnames.includes(hostname)) {
       this.notification.text = _text('registry.RegistryHostnameAlreadyExists');
       this.notification.show();
       return;
@@ -284,12 +295,12 @@ class BackendAIRegistryList extends BackendAIPage {
     globalThis.backendaiclient.registry.set(hostname, input)
       .then(({result}) => {
         if (result === 'ok') {
-          if (this.editMode) {
+          if (this._editMode) {
             this.notification.text = _text('registry.RegistrySuccessfullyModified');
           } else {
             this.notification.text = _text('registry.RegistrySuccessfullyAdded');
             // add
-            this.hostnames.push(hostname);
+            this._hostnames.push(hostname);
             this._resetRegistryField();
           }
           this._refreshRegistryList();
@@ -304,16 +315,17 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Delete registry
    * */
-  _deleteRegistry() {
-    const name = (<HTMLInputElement> this.shadowRoot.querySelector('#delete-registry')).value;
-    if (this._registryList[this.selectedIndex].hostname === name) {
-      globalThis.backendaiclient.registry.delete(name)
+  private _deleteRegistry() {
+    const deleteRegistryInputField: WlTextfield = (this.shadowRoot.querySelector('#delete-registry') as WlTextfield);
+    const registryNameToDelete: string = deleteRegistryInputField.value;
+    if (this._registryList[this._selectedIndex].hostname === registryNameToDelete) {
+      globalThis.backendaiclient.registry.delete(deleteRegistryInputField.value)
         .then(({result}) => {
           if (result === 'ok') {
             this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
             // remove the hostname from allowed registries if it contains deleting registry.
-            if (this.hostnames.includes(name)) {
-              this.hostnames.splice(this.hostnames.indexOf(name));
+            if (this._hostnames.includes(registryNameToDelete)) {
+              this._hostnames.splice(this._hostnames.indexOf(registryNameToDelete));
             }
             this._refreshRegistryList();
           } else {
@@ -327,16 +339,16 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.show();
     }
     // remove written hostname
-    this.shadowRoot.querySelector('#delete-registry').value = '';
+    deleteRegistryInputField.value = '';
   }
 
   /**
    * Rescan the images if registry has been updated.
    * */
-  async _rescanImage() {
-    const indicator = await this.indicator.start('indeterminate');
+  private async _rescanImage() {
+    const indicator: BackendAIIndicator = await this._indicator.start('indeterminate');
     indicator.set(10, _text('registry.UpdatingRegistryInfo'));
-    globalThis.backendaiclient.maintenance.rescan_images(this._registryList[this.selectedIndex]['hostname'])
+    globalThis.backendaiclient.maintenance.rescan_images(this._registryList[this._selectedIndex]['hostname'])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
           indicator.set(0, _text('registry.RescanImages'));
@@ -380,29 +392,33 @@ class BackendAIRegistryList extends BackendAIPage {
       });
   }
 
-  _launchDialogById(id) {
+  private _launchDialogById(id) {
     this.shadowRoot.querySelector(id).show();
   }
 
-  _hideDialogById(id) {
+  private _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
   }
 
-  _openCreateRegistryDialog() {
-    this.editMode = false;
-    this.selectedIndex = -1;
-    this.registryType = 'docker';
+  private _openCreateRegistryDialog() {
+    this._editMode = false;
+    this._selectedIndex = -1;
+    this._registryType = 'docker';
+    this.requestUpdate();  // call for explicit update
     this._launchDialogById('#configure-registry-dialog');
   }
 
-  _hideValidationMessage() {
-    this.shadowRoot.querySelector('#registry-hostname-validation').style.display = 'none';
-    this.shadowRoot.querySelector('#registry-url-validation').style.display = 'none';
-    this.shadowRoot.querySelector('#project-name-validation').style.display = 'none';
+  private _hideValidationMessage() {
+    /**
+     * FIXME: need to change repetitive value manipulation in future.
+     */
+    this._registryHostnameValidationMsg.style.display = 'none';
+    this._registryUrlValidationMsg.style.display = 'none';
+    this._projectNameValidationMsg.style.display = 'none';
   }
 
-  _openEditRegistryDialog(registry) {
-    this.editMode = true;
+  private _openEditRegistryDialog(registry) {
+    this._editMode = true;
     let registryInfo;
     for (let i = 0; i < this._registryList.length; i++) {
       if (this._registryList[i].hostname === registry) {
@@ -414,66 +430,57 @@ class BackendAIRegistryList extends BackendAIPage {
       globalThis.notification.show(`No such registry: ${registry}`);
       return;
     }
-    this._registryList[this.selectedIndex] = registryInfo;
-    this.registryType = this._registryList[this.selectedIndex]?.type;
+    this._registryList[this._selectedIndex] = registryInfo;
+    this._registryType = this._registryList[this._selectedIndex]?.type as string;
+    this.requestUpdate();  // call for explicit update
     this._hideValidationMessage();
     this._launchDialogById('#configure-registry-dialog');
   }
 
-  _toggleProjectNameInput() {
-    this.registryType = this._selectedRegistryType.value;
+  private _toggleProjectNameInput() {
+    this._registryType = this._selectedRegistryTypeInput.value;
     this._validateProjectName();
   }
 
-  _validateUrl() {
-    const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-    validationMessage.style.display = this._url.valid ? 'none' : 'block';
+  private _validateUrl() {
+    this._registryUrlValidationMsg.style.display = this._urlInput.valid ? 'none' : 'block';
   }
 
-  _validateHostname() {
-    const hostname = this._hostname.value;
-    const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
-    if (hostname && hostname !== '') {
-      validationMessage.style.display = 'none';
-    } else {
-      validationMessage.style.display = 'block';
-    }
+  private _validateHostname() {
+    const hostname = this._hostnameInput.value;
+    this._registryHostnameValidationMsg.style.display = (hostname && hostname !== '') ? 'none' : 'block';
   }
 
-  _validateProjectName() {
-    const validationEl = this.shadowRoot.querySelector('#project-name-validation');
-    this._projectName.value = this._projectName.value.replace(/\s/g, '');
-    validationEl.style.display = 'block';
-    if (['harbor', 'harbor2'].includes(this.registryType)) {
-      if (!this._projectName.value) {
-        validationEl.textContent = _text('registry.ProjectNameIsRequired');
+  private _validateProjectName() {
+    this._projectNameInput.value = this._projectNameInput.value.replace(/\s/g, '');
+    this._projectNameValidationMsg.style.display = 'block';
+    if (['harbor', 'harbor2'].includes(this._registryType)) {
+      if (!this._projectNameInput.value) {
+        this._projectNameValidationMsg.textContent = _text('registry.ProjectNameIsRequired');
       } else {
-        validationEl.style.display = 'none';
+        this._projectNameValidationMsg.style.display = 'none';
       }
-      this._projectName.disabled = false;
+      this._projectNameInput.disabled = false;
     } else {
-      validationEl.textContent = _text('registry.ForHarborOnly');
-      this._projectName.disabled = true;
+      this._projectNameValidationMsg.textContent = _text('registry.ForHarborOnly');
+      this._projectNameInput.disabled = true;
     }
   }
 
-  _resetRegistryField() {
-    const registryHostname = this._hostname;
-    const registryURL = this._url;
-    const registryUsername = this._username;
-    const registryPassword = this._password;
-    const registrySelect = this._selectedRegistryType;
-    const registryProjectName = this._projectName;
-
-    registryHostname.value = '';
-    registryURL.value = '';
-    registryUsername.value = '';
-    registryPassword.value = '';
-    registrySelect.value = '';
-    registryProjectName.value = '';
+  private _resetRegistryField() {
+    /**
+     * FIXME: need to change repetitive value manipulation in future.
+     */
+    this._hostnameInput.value = '';
+    this._urlInput.value = '';
+    this._usernameInput.value = '';
+    this._passwordInput.value = '';
+    this._selectedRegistryTypeInput.value = '';
+    this._projectNameInput.value = '';
+    this.requestUpdate();  // call for explicit update
   }
 
-  toggleRegistry(e, hostname) {
+  private _toggleRegistry(e, hostname) {
     if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
@@ -488,24 +495,23 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {string} hostname
    * @param {boolean} state
    * */
-  _changeRegistryState(hostname, state) {
+  private _changeRegistryState(hostname, state) {
     if (state === true) {
-      this.allowed_registries.push(hostname);
+      this._allowed_registries.push(hostname);
       this.notification.text = _text('registry.RegistryTurnedOn');
     } else {
-      const index = this.allowed_registries.indexOf(hostname);
+      const index = this._allowed_registries.indexOf(hostname);
       if (index !== 1) {
-        this.allowed_registries.splice(index, 1);
+        this._allowed_registries.splice(index, 1);
       }
       this.notification.text = _text('registry.RegistryTurnedOff');
     }
-    // input.allowed_docker_registries = this.allowed_registries;
-    globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this.allowed_registries}).then((response) => {
+    globalThis.backendaiclient.domain.update(globalThis.backendaiclient._config.domainName, {'allowed_docker_registries': this._allowed_registries}).then((response) => {
       this.notification.show();
     });
   }
 
-  _indexRenderer(root, column, rowData) {
+  private _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
     render(
       html`
@@ -515,7 +521,7 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  _hostRenderer(root, column, rowData) {
+  private _hostRenderer(root, column, rowData) {
     render(
       html`
         <div>
@@ -526,7 +532,7 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  _registryRenderer(root, column, rowData) {
+  private _registryRenderer(root, column, rowData) {
     render(
       html`
         <div>
@@ -537,7 +543,7 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  _passwordRenderer(root, column?, rowData?) {
+  private _passwordRenderer(root, column?, rowData?) {
     render(
       html`
         <div>
@@ -551,17 +557,17 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Render a switch to check that registry is turned on or off.
    *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
+   * @param {element} root - the row details content DOM element
+   * @param {element} column - the column element that controls the state of the host element
+   * @param {object} rowData - the object with the properties related with the rendered item
    * */
-  _isEnabledRenderer(root, column, rowData) {
+  private _isEnabledRenderer(root, column, rowData) {
     render(
       html`
         <div>
           <mwc-switch
-              @click="${(e) => this.toggleRegistry(e, rowData.item['hostname'])}"
-              ?selected="${this.allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
+              @click="${(e) => this._toggleRegistry(e, rowData.item['hostname'])}"
+              ?selected="${this._allowed_registries.includes(rowData.item['hostname'])}"></mwc-switch>
         </div>
       `,
       root
@@ -571,42 +577,38 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Render control units - delete (delete registry), refresh (rescan image).
    *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
+   * @param {element} root - the row details content DOM element
+   * @param {element} column - the column element that controls the state of the host element
+   * @param {object} rowData - the object with the properties related with the rendered item
    * */
-  _controlsRenderer(root, column, rowData) {
+  private _controlsRenderer(root, column, rowData) {
     render(
       html`
-        <div
-          icon="settings"
-          id="controls"
-          class="layout horizontal flex center"
-        >
+        <div icon="settings" id="controls" class="layout horizontal flex center">
           <wl-button fab flat inverted
               class="fg blue"
               @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._openEditRegistryDialog(rowData.item.hostname);
-  }}>
+                this._selectedIndex = rowData.index;
+                this._openEditRegistryDialog(rowData.item.hostname);
+              }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             icon="delete"
             class="fg red"
             @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._launchDialogById('#delete-registry-dialog');
-  }}>
+              this._selectedIndex = rowData.index;
+              this._launchDialogById('#delete-registry-dialog');
+            }}>
             <wl-icon>delete</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             icon="refresh"
             class="fg green"
             @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._rescanImage();
-  }}>
+              this._selectedIndex = rowData.index;
+              this._rescanImage();
+            }}>
             <wl-icon>refresh</wl-icon>
           </wl-button>
         </div>
@@ -615,7 +617,14 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  render() {
+  /**
+   * Invoked on each update to perform rendering tasks. This method may return
+   * any value renderable by lit-html's `ChildPart` - typically a
+   * `TemplateResult`. Setting properties inside this method will *not* trigger
+   * the element to update.
+   * @returns {TemplateResult<1>} html
+   * */
+  protected override render() {
     // language=HTML
     return html`
       <h4 class="horizontal flex center center-justified layout">
@@ -645,11 +654,7 @@ class BackendAIRegistryList extends BackendAIPage {
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
-      ${this.editMode ? html`
-        <span slot="title">${_t('registry.ModifyRegistry')}</span>
-      ` : html`
-        <span slot="title">${_t('registry.AddRegistry')}</span>
-      `}
+        <span slot="title">${this._editMode ? _t('registry.ModifyRegistry') : _t('registry.AddRegistry')}</span>
         <div slot="content" class="login-panel intro centered">
           <wl-textfield
             id="configure-registry-hostname"
@@ -657,8 +662,8 @@ class BackendAIRegistryList extends BackendAIPage {
             type="text"
             label="${_t('registry.RegistryHostname')}"
             required
-            ?disabled="${this.editMode}"
-            value="${this._registryList[this.selectedIndex]?.hostname || ''}"
+            ?disabled="${this._editMode}"
+            value="${this._registryList[this._selectedIndex]?.hostname || ''}"
             @click=${this._validateHostname}
             @change=${this._validateHostname}
           ></wl-textfield>
@@ -669,7 +674,7 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t('registry.RegistryURL')}"
             required
             pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
-            value="${this._registryList[this.selectedIndex]?.[''] || ''}"
+            value="${this._registryList[this._selectedIndex]?.[''] || ''}"
             @click=${this._validateUrl}
             @change=${this._validateUrl}
           ></wl-textfield>
@@ -680,52 +685,48 @@ class BackendAIRegistryList extends BackendAIPage {
             type="text"
             label="${_t('registry.UsernameOptional')}"
             style="padding-right:10px;"
-            value="${this._registryList[this.selectedIndex]?.username || ''}"
+            value="${this._registryList[this._selectedIndex]?.username || ''}"
           ></wl-textfield>
           <wl-textfield
             id="configure-registry-password"
             type="password"
             label="${_t('registry.PasswordOptional')}"
             style="padding-left:10px;"
-            value="${this._registryList[this.selectedIndex]?.password || ''}"
+            value="${this._registryList[this._selectedIndex]?.password || ''}"
           ></wl-textfield>
-         </div>
-         <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
+        </div>
+        <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
                       @change=${this._toggleProjectNameInput} required
                       validationMessage="${_t('registry.PleaseSelectOption')}"
-                      value="${this._registryList[this.selectedIndex]?.type || this.registryType}">
-            ${this._registryTypes.map((item) => html`
-              <mwc-list-item 
-                value="${item}" 
-                ?selected="${this.editMode ? item === this._registryList[this.selectedIndex]?.type : item === 'docker'}">
-                ${item}
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <div class="vertical layout end-justified">
-            <wl-textfield
-              id="configure-project-name"
-              class="helper-text"
-              type="text"
-              label="${_t('registry.ProjectName')}"
-              required
-              value="${this._registryList[this.selectedIndex]?.project || ''}"
-              ?disabled="${this.registryType === 'docker'}"
-              @change=${this._validateProjectName}
-            ></wl-textfield>
-              <wl-label class="helper-text" id="project-name-validation">
-                ${this.editMode ? html`` : _t('registry.ForHarborOnly')}
-              </wl-label>
+                      value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
+          ${BackendAIRegistryList._registryTypes.map((item) => html`
+            <mwc-list-item
+              value="${item}"
+              ?selected="${this._editMode ? item === this._registryList[this._selectedIndex]?.type : item === 'docker'}">
+              ${item}
+            </mwc-list-item>
+          `)}
+        </mwc-select>
+        <div class="vertical layout end-justified">
+          <wl-textfield
+            id="configure-project-name"
+            class="helper-text"
+            type="text"
+            label="${_t('registry.ProjectName')}"
+            required
+            value="${this._registryList[this._selectedIndex]?.project || ''}"
+            ?disabled="${this._registryType === 'docker'}"
+            @change=${this._validateProjectName}
+          ></wl-textfield>
+          <wl-label class="helper-text" id="project-name-validation">
+            ${this._editMode ? html`` : _t('registry.ForHarborOnly')}
+          </wl-label>
          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          ${this.editMode ? html`
-            <mwc-button unelevated fullwidth icon="add" label="${_t('button.Save')}"
-            @click=${this._addRegistry}></mwc-button>
-          ` : html`
-            <mwc-button unelevated fullwidth icon="add" label="${_t('button.Add')}"
-            @click=${this._addRegistry}></mwc-button>
-          `}
+          <mwc-button unelevated fullwidth icon="add"
+            label=${this._editMode ? _t('button.Save') : _t('button.Add')}
+            @click=${() => {this._addRegistry}}></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
