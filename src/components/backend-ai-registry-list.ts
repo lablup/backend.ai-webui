@@ -39,8 +39,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  private registryList: any;
-  private registryTypes:Array<any>;
+  private _registryList: any;
+  private _registryTypes:Array<any>;
   @property({type: Object}) indicator = Object();
   @property({type: Number}) selectedIndex = -1;
   @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
@@ -51,17 +51,17 @@ class BackendAIRegistryList extends BackendAIPage {
   @property({type: String}) registryType = 'docker';
   @property({type: Boolean}) editMode;
 
-  @query('#configure-registry-hostname') private hostname;
-  @query('#configure-registry-url') private url;
-  @query('#configure-registry-username') private username;
-  @query('#configure-registry-password') private password;
-  @query('#select-registry-type') private selectedRegistryType;
-  @query('#configure-project-name') private projectName;
+  @query('#configure-registry-hostname') private _hostname;
+  @query('#configure-registry-url') private _url;
+  @query('#configure-registry-username') private _username;
+  @query('#configure-registry-password') private _password;
+  @query('#select-registry-type') private _selectedRegistryType;
+  @query('#configure-project-name') private _projectName;
   
   constructor() {
     super();
-    this.registryList = [];
-    this.registryTypes = [];
+    this._registryList = [];
+    this._registryTypes = [];
     this.allowed_registries = [];
     this.hostnames = [];
     this.editMode = false;
@@ -187,8 +187,8 @@ class BackendAIRegistryList extends BackendAIPage {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
-      this.registryList = this._parseRegistryList(result);
-      this.hostnames = this.registryList.map((value) => {
+      this._registryList = this._parseRegistryList(result);
+      this.hostnames = this._registryList.map((value) => {
         return value.hostname;
       });
       this.requestUpdate();
@@ -209,11 +209,11 @@ class BackendAIRegistryList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.registryTypes = ['docker', 'harbor', 'harbor2'];
+        this._registryTypes = ['docker', 'harbor', 'harbor2'];
       }, true);
     } else { // already connected
       this._refreshRegistryList();
-      this.registryTypes = ['docker', 'harbor', 'harbor2'];
+      this._registryTypes = ['docker', 'harbor', 'harbor2'];
     }
   }
 
@@ -234,12 +234,12 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-    const hostname = this.hostname.value;
-    const url = this.url.value;
-    const username = this.username.value;
-    const password = this.password.value;
-    const registryType = this.selectedRegistryType.value;
-    const projectName = this.projectName.value.replace(/\s/g, '');
+    const hostname = this._hostname.value;
+    const url = this._url.value;
+    const username = this._username.value;
+    const password = this._password.value;
+    const registryType = this._selectedRegistryType.value;
+    const projectName = this._projectName.value.replace(/\s/g, '');
 
     if (!this.shadowRoot.querySelector('#configure-registry-hostname').valid) {
       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
@@ -306,7 +306,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   _deleteRegistry() {
     const name = (<HTMLInputElement> this.shadowRoot.querySelector('#delete-registry')).value;
-    if (this.registryList[this.selectedIndex].hostname === name) {
+    if (this._registryList[this.selectedIndex].hostname === name) {
       globalThis.backendaiclient.registry.delete(name)
         .then(({result}) => {
           if (result === 'ok') {
@@ -336,7 +336,7 @@ class BackendAIRegistryList extends BackendAIPage {
   async _rescanImage() {
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('registry.UpdatingRegistryInfo'));
-    globalThis.backendaiclient.maintenance.rescan_images(this.registryList[this.selectedIndex]['hostname'])
+    globalThis.backendaiclient.maintenance.rescan_images(this._registryList[this.selectedIndex]['hostname'])
       .then(({rescan_images}) => {
         if (rescan_images.ok) {
           indicator.set(0, _text('registry.RescanImages'));
@@ -404,9 +404,9 @@ class BackendAIRegistryList extends BackendAIPage {
   _openEditRegistryDialog(registry) {
     this.editMode = true;
     let registryInfo;
-    for (let i = 0; i < this.registryList.length; i++) {
-      if (this.registryList[i].hostname === registry) {
-        registryInfo = this.registryList[i];
+    for (let i = 0; i < this._registryList.length; i++) {
+      if (this._registryList[i].hostname === registry) {
+        registryInfo = this._registryList[i];
         break;
       }
     }
@@ -414,25 +414,25 @@ class BackendAIRegistryList extends BackendAIPage {
       globalThis.notification.show(`No such registry: ${registry}`);
       return;
     }
-    this.registryList[this.selectedIndex] = registryInfo;
-    this.registryType = this.registryList[this.selectedIndex]?.type;
+    this._registryList[this.selectedIndex] = registryInfo;
+    this.registryType = this._registryList[this.selectedIndex]?.type;
     this._hideValidationMessage();
     this._launchDialogById('#configure-registry-dialog');
   }
 
   _toggleProjectNameInput() {
-    this.registryType = this.selectedRegistryType.value;
+    this.registryType = this._selectedRegistryType.value;
     this._validateProjectName();
   }
 
   _validateUrl() {
-    const url = this.url;
+    const url = this._url;
     const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
     validationMessage.style.display = url.valid ? 'none' : 'block';
   }
 
   _validateHostname() {
-    const hostname = this.hostname.value;
+    const hostname = this._hostname.value;
     const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
     if (hostname && hostname !== '') {
       validationMessage.style.display = 'none';
@@ -442,7 +442,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _validateProjectName() {
-    const projectTextEl = this.projectName;
+    const projectTextEl = this._projectName;
     const validationEl = this.shadowRoot.querySelector('#project-name-validation');
     projectTextEl.value = projectTextEl.value.replace(/\s/g, '');
     validationEl.style.display = 'block';
@@ -460,12 +460,12 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _resetRegistryField() {
-    const registryHostname = this.hostname;
-    const registryURL = this.url;
-    const registryUsername = this.username;
-    const registryPassword = this.password;
-    const registrySelect = this.selectedRegistryType;
-    const registryProjectName = this.projectName;
+    const registryHostname = this._hostname;
+    const registryURL = this._url;
+    const registryUsername = this._username;
+    const registryPassword = this._password;
+    const registrySelect = this._selectedRegistryType;
+    const registryProjectName = this._projectName;
 
     registryHostname.value = '';
     registryURL.value = '';
@@ -627,7 +627,7 @@ class BackendAIRegistryList extends BackendAIPage {
             @click=${this._openCreateRegistryDialog}></mwc-button>
       </h4>
 
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this.registryList}">
+      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostRenderer}>
@@ -660,7 +660,7 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t('registry.RegistryHostname')}"
             required
             ?disabled="${this.editMode}"
-            value="${this.registryList[this.selectedIndex]?.hostname || ''}"
+            value="${this._registryList[this.selectedIndex]?.hostname || ''}"
             @click=${this._validateHostname}
             @change=${this._validateHostname}
           ></wl-textfield>
@@ -671,7 +671,7 @@ class BackendAIRegistryList extends BackendAIPage {
             label="${_t('registry.RegistryURL')}"
             required
             pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
-            value="${this.registryList[this.selectedIndex]?.[''] || ''}"
+            value="${this._registryList[this.selectedIndex]?.[''] || ''}"
             @click=${this._validateUrl}
             @change=${this._validateUrl}
           ></wl-textfield>
@@ -682,24 +682,24 @@ class BackendAIRegistryList extends BackendAIPage {
             type="text"
             label="${_t('registry.UsernameOptional')}"
             style="padding-right:10px;"
-            value="${this.registryList[this.selectedIndex]?.username || ''}"
+            value="${this._registryList[this.selectedIndex]?.username || ''}"
           ></wl-textfield>
           <wl-textfield
             id="configure-registry-password"
             type="password"
             label="${_t('registry.PasswordOptional')}"
             style="padding-left:10px;"
-            value="${this.registryList[this.selectedIndex]?.password || ''}"
+            value="${this._registryList[this.selectedIndex]?.password || ''}"
           ></wl-textfield>
          </div>
          <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
                       @change=${this._toggleProjectNameInput} required
                       validationMessage="${_t('registry.PleaseSelectOption')}"
-                      value="${this.registryList[this.selectedIndex]?.type || this.registryType}">
-            ${this.registryTypes.map((item) => html`
+                      value="${this._registryList[this.selectedIndex]?.type || this.registryType}">
+            ${this._registryTypes.map((item) => html`
               <mwc-list-item 
                 value="${item}" 
-                ?selected="${this.editMode ? item === this.registryList[this.selectedIndex]?.type : item === 'docker'}">
+                ?selected="${this.editMode ? item === this._registryList[this.selectedIndex]?.type : item === 'docker'}">
                 ${item}
               </mwc-list-item>
             `)}
@@ -711,7 +711,7 @@ class BackendAIRegistryList extends BackendAIPage {
               type="text"
               label="${_t('registry.ProjectName')}"
               required
-              value="${this.registryList[this.selectedIndex]?.project || ''}"
+              value="${this._registryList[this.selectedIndex]?.project || ''}"
               ?disabled="${this.registryType === 'docker'}"
               @change=${this._validateProjectName}
             ></wl-textfield>
