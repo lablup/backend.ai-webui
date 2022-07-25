@@ -76,6 +76,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#delete-policy-dialog') deletePolicyDialog!: BackendAIDialog;
   @query('#modify-policy-dialog') modifyPolicyDialog!: BackendAIDialog;
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @query('#id_new_policy_name') newPolicyName!: TextField;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
@@ -523,7 +524,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._getAllStorageHostsInfo().then(() => {
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = this.allowed_vfolder_hosts;
-      this.shadowRoot.querySelector('#modify-policy-dialog').show();
+      this.modifyPolicyDialog.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -544,7 +545,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
-    (this.shadowRoot?.querySelector('#id_new_policy_name') as TextField).value = policyName;
+    this.newPolicyName.value = policyName;
     this.current_policy_name = policyName;
     this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
     this.ramResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
