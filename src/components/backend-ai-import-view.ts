@@ -17,15 +17,23 @@ import BackendAiSessionLauncher from './backend-ai-session-launcher';
  * FIXME: Is it okay to get rid of import statement for unused UI component?
  */
 import 'weightless/card';
+import './backend-ai-chart';
 
-// import '@material/mwc-icon-button';
+/**
+ * FIXME: Repeated import statement(s) is/are needed 
+ *        when using custom elements and type casting of the component at other components
+ */
+import '@material/mwc-icon-button';
+import '@material/mwc-textarea';
+import '@material/mwc-textfield';
+import '@material/mwc-select';
+import './backend-ai-resource-monitor';
+import './backend-ai-session-launcher';
+
 import {TextArea} from '@material/mwc-textarea';
 import {TextField} from '@material/mwc-textfield';
 import {Select} from '@material/mwc-select';
 
-import './backend-ai-chart';
-import './backend-ai-resource-monitor';
-import './backend-ai-session-launcher';
 import './lablup-activity-panel';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
