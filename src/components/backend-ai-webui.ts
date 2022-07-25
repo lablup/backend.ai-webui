@@ -18,14 +18,15 @@ import {navigate, updateOffline} from '../backend-ai-app';
 import {Drawer} from '../plastics/mwc/mwc-drawer';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
 import '@material/mwc-button';
+import '@material/mwc-circular-progress';
 import '@material/mwc-icon';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import {List} from '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
-import '@material/mwc-circular-progress';
 import {Menu} from '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-textarea';
 import {TextField} from '@material/mwc-textfield';
 
 import toml from 'markty-toml';
