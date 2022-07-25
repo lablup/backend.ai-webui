@@ -9,21 +9,24 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import LablupLoadingSpinner from './lablup-loading-spinner';
+import BackendAiResourceMonitor from './backend-ai-resource-monitor';
+import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
+/**
+ * FIXME: Is it okay to get rid of import statement for unused UI component?
+ */
 import 'weightless/card';
 
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-import {TextField} from '@material/mwc-textfield';
+// import '@material/mwc-icon-button';
 import {TextArea} from '@material/mwc-textarea';
-import '@material/mwc-button';
+import {TextField} from '@material/mwc-textfield';
 import {Select} from '@material/mwc-select';
 
-import './lablup-activity-panel';
 import './backend-ai-chart';
 import './backend-ai-resource-monitor';
 import './backend-ai-session-launcher';
+import './lablup-activity-panel';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
@@ -32,9 +35,9 @@ import {default as PainKiller} from './backend-ai-painkiller';
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
-type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
-type BackendAISessionLauncher = HTMLElementTagNameMap['backend-ai-session-launcher'];
+// type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+// type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
+// type BackendAISessionLauncher = HTMLElementTagNameMap['backend-ai-session-launcher'];
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
@@ -68,9 +71,11 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) storageProxyInfo = Object();
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
-  @query('#session-launcher') sessionLauncher!: BackendAISessionLauncher;
+  @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
+  @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   @query('#notebook-url') notebookUrlInput!: TextField;
+  @query('#notebook-badge-code') notebookBadgeCodeInput!: TextArea;
+  @query('#notebook-badge-code-markdown') notebookBadgeCodeMarkdownInput!: TextArea;
 
   static get styles(): CSSResultGroup {
     return [
@@ -172,11 +177,12 @@ export default class BackendAIImport extends BackendAIPage {
   firstUpdated() {
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
-    globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
-      this.allowed_folder_type = response;
-    });
-    this._getFolderList();
-    fetch('resources/storage_metadata.json').then(
+  }
+
+  async _initStorageInfo() {
+    this.allowed_folder_type = await globalThis.backendaiclient.vfolder.list_allowed_types();
+    await this._getFolderList();
+    await fetch('resources/storage_metadata.json').then(
       (response) => response.json()
     ).then(
       (json) => {
@@ -218,12 +224,14 @@ export default class BackendAIImport extends BackendAIPage {
     this.resourceMonitor.setAttribute('active', 'true');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._initStorageInfo();
         this.authenticated = true;
         if (this.activeConnected) {
           this.requestUpdate();
         }
       }, true);
     } else {
+      this._initStorageInfo();
       this.authenticated = true;
       this.requestUpdate();
     }
@@ -524,8 +532,8 @@ export default class BackendAIImport extends BackendAIPage {
     if (url === '') {
       this.notification.text = _text('import.NoNotebookCode');
       this.notification.show();
-      (this.shadowRoot?.querySelector('#notebook-badge-code') as TextArea).value = '';
-      (this.shadowRoot?.querySelector('#notebook-badge-code-markdown') as TextArea).value = '';
+      this.notebookBadgeCodeInput.value = '';
+      this.notebookBadgeCodeMarkdownInput.value = '';
     } else {
       if (globalThis.isElectron) {
         baseURL = 'https://cloud.backend.ai/github?';
@@ -536,10 +544,10 @@ export default class BackendAIImport extends BackendAIPage {
         }
         baseURL = baseURL + '/github?';
       }
-      const fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-      const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
-      (this.shadowRoot?.querySelector('#notebook-badge-code') as TextArea).value = fullText;
-      (this.shadowRoot?.querySelector('#notebook-badge-code-markdown') as TextArea).value = fullTextMarkdown;
+      const fullText: string = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      const fullTextMarkdown: string = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      this.notebookBadgeCodeInput.value = fullText;
+      this.notebookBadgeCodeMarkdownInput.value = fullTextMarkdown;
     }
   }
 
@@ -570,7 +578,6 @@ export default class BackendAIImport extends BackendAIPage {
           const tmpInputElement = document.createElement('input');
           tmpInputElement.type = 'text';
           tmpInputElement.value = copyText;
-
           document.body.appendChild(tmpInputElement);
           tmpInputElement.select();
           document.execCommand('copy'); // copy operation
