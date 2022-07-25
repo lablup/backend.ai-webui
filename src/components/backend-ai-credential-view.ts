@@ -4,11 +4,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-<<<<<<< HEAD
-import {customElement, property, query} from 'lit/decorators.js';
-=======
 import {customElement, property, query, state} from 'lit/decorators.js';
->>>>>>> main
 
 import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-list/mwc-list-item';
@@ -88,12 +84,10 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
-<<<<<<< HEAD
   @query('#active-credential-list') activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list') inactiveCredentialList!: BackendAICredentialList;
   @query('#active-user-list') activeUserList!: BackendAIUserList;
   @query('#resource-policy-list') resourcePolicyList!: BackendAIResourcePolicyList;
-  @query('#allowed_vfolder-hosts') allowedVFolderHosts!: Select;
   @query('#dropdown-area') dropdownArea!: HTMLDivElement;
   @query('#rate-limit') rateLimit!: Select;
   @query('#resource-policy') resourcePolicy!: Select;
@@ -106,12 +100,9 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#new-keypair-dialog') newKeypairDialog!: BackendAIDialog;
   @query('#new-policy-dialog') newPolicyDialog!: BackendAIDialog;
   @query('#new-user-dialog') newUserDialog!: BackendAIDialog;
-=======
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
-  @query('#id_new_policy_name') newPolicyName;
-  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
->>>>>>> main
 
   constructor() {
     super();
@@ -417,15 +408,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Launch a resouce policy dialog.
    */
-<<<<<<< HEAD
-  _readVFolderHostInfo() {
-    globalThis.backendaiclient.vfolder.list_hosts().then((response) => {
-      this.allowed_vfolder_hosts = response.allowed;
-      this.default_vfolder_host = response.default;
-      this.allowedVFolderHosts.layout(true).then(()=>{
-        this.allowedVFolderHosts.select(0);
-      });
-=======
   _launchResourcePolicyDialog() {
     Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
       this.newPolicyName.mdcFoundation.setValid(true);
@@ -434,7 +416,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
       this.shadowRoot.querySelector('#new-policy-dialog').show();
->>>>>>> main
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -445,30 +426,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-<<<<<<< HEAD
-   * Launch a resouce policy dialog.
-   */
-  async _launchResourcePolicyDialog() {
-    await this._getResourcePolicies();
-    this._readVFolderHostInfo();
-    // TODO refactor component internal access
-    (this.newPolicyNameInput as any).mdcFoundation.setValid(true);
-    (this.newPolicyNameInput as any).isUiValid = true;
-    this.newPolicyNameInput.value = '';
-    this.newPolicyDialog.show();
-  }
-
-  /**
-   * Launch a modify resource policy dialog.
-   */
-  _launchModifyResourcePolicyDialog() {
-    this._readVFolderHostInfo();
-    this.newPolicyDialog.show();
-  }
-
-  /**
-=======
->>>>>>> main
    * Launch an user add dialog.
    */
   _launchUserAddDialog() {
@@ -561,12 +518,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-<<<<<<< HEAD
-    const vfolder_hosts: Array<string|null> = [];
-    vfolder_hosts.push(this.allowedVFolderHosts.value);
-=======
     const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
->>>>>>> main
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -615,15 +567,6 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-<<<<<<< HEAD
-    if (!this.newPolicyNameInput.checkValidity()) {
-      this.newPolicyNameInput.reportValidity();
-      return;
-    }
-    try {
-      this.newPolicyNameInput.checkValidity();
-      const name = this.newPolicyNameInput.value;
-=======
     if (!this.newPolicyName.checkValidity()) {
       this.newPolicyName.reportValidity();
       return;
@@ -631,7 +574,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     try {
       this.newPolicyName.checkValidity();
       const name = this.newPolicyName.value;
->>>>>>> main
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
@@ -707,39 +649,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   /**
-<<<<<<< HEAD
-   * Modify a resouce policy.
-   */
-  _modifyResourcePolicy() {
-    const name = this.newPolicyNameInput.value;
-    try {
-      const input = this._readResourcePolicyInput();
-
-      globalThis.backendaiclient.resourcePolicy.mutate(name, input).then((response) => {
-        // this.newPolicyDialog.close();
-        this.newPolicyDialog.hide();
-        this.notification.text = _text('resourcePolicy.SuccessfullyUpdated');
-        this.notification.show();
-        this.resourcePolicyList.refresh();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          // this.newPolicyDialog.close();
-          this.newPolicyDialog.hide();
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-    } catch (err) {
-      this.notification.text = err.message;
-      this.notification.show();
-    }
-  }
-
-  /**
-=======
->>>>>>> main
    * Disable the page.
    */
   disablePage() {
@@ -1081,27 +990,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
-<<<<<<< HEAD
-  /**
-   *
-   * Expand or Shrink the dialog height by the number of items in the dropdown.
-   *
-   * @param {boolean} isOpened - notify whether the dialog is opened or not.
-   */
-  _controlHeightByVfolderHostCount(isOpened = false) {
-    if (!isOpened) {
-      this.dropdownArea.style.height = this.selectAreaHeight;
-      return;
-    }
-    const itemCount = this.allowedVFolderHosts.items.length;
-    const actualHeight = this.dropdownArea.offsetHeight;
-    if (itemCount > 0) {
-      this.dropdownArea.style.height = (actualHeight + itemCount * 14) +'px';
-    }
-  }
-
-=======
->>>>>>> main
   _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
