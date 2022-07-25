@@ -89,6 +89,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
+  @property({type: Boolean}) always_enqueue_compute_session = false;
   @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
@@ -433,7 +434,11 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.allow_manual_image_name_for_session = true;
     }
-
+    if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession == false) {
+      this.always_enqueue_compute_session = false;
+    } else {
+      this.always_enqueue_compute_session = true;
+    }
     if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
       this.openPortToPublic = false;
     } else {
@@ -1064,6 +1069,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
+      globalThis.backendaiclient._config.always_enqueue_compute_session = this.always_enqueue_compute_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;

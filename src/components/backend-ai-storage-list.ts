@@ -438,6 +438,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           width: 288px; // default width
         }
 
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 320px;
+          --mdc-menu-min-width: 320px;
+        }
+
         mwc-select.fixed-position > mwc-list-item {
           width: 147px; // default width
         }

@@ -1,17 +1,26 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
- */
+Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+*/
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
+<<<<<<< HEAD
 import {customElement, property, query} from 'lit/decorators.js';
+=======
+import {customElement, property, query, state} from 'lit/decorators.js';
+>>>>>>> main
 
 import {BackendAIPage} from './backend-ai-page';
 
 import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
+<<<<<<< HEAD
 import {Select} from '@material/mwc-select/mwc-select';
+=======
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-list/mwc-list';
+>>>>>>> main
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -25,6 +34,7 @@ import 'weightless/checkbox';
 import 'weightless/label';
 
 import './backend-ai-dialog';
+import './backend-ai-multi-select';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -48,11 +58,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
+<<<<<<< HEAD
   @property({type: Array}) allowed_vfolder_hosts;
   @property({type: String}) default_vfolder_host = '';
+=======
+  @property({type: Object}) cpu_resource = {};
+  @property({type: Object}) ram_resource = {};
+  @property({type: Object}) gpu_resource = {};
+  @property({type: Object}) fgpu_resource = {};
+  @property({type: Object}) concurrency_limit = {};
+  @property({type: Object}) idle_timeout = {};
+  @property({type: Object}) session_lifetime = {};
+  @property({type: Object}) vfolder_capacity = {};
+  @property({type: Object}) vfolder_max_limit= {};
+  @property({type: Object}) container_per_session_limit = {};
+>>>>>>> main
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
@@ -63,6 +85,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) _boundPolicyNameRenderer = this.policyNameRenderer.bind(this);
   @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
   @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
+<<<<<<< HEAD
   @query('#dropdown-area') dropdownArea!: HTMLDivElement;
   @query('#allowed_vfolder-hosts') allowedVFolderHostsSelect!: Select;
   @query('#vfolder-count-limit') vfolderCountLimitInput!: TextField;
@@ -77,9 +100,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#session-lifetime') sessionLifetime!: TextField;
   @query('#delete-policy-dialog') deletePolicyDialog!: BackendAIDialog;
   @query('#modify-policy-dialog') modifyPolicyDialog!: BackendAIDialog;
+=======
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @state() private all_vfolder_hosts;
+  @state() private allowed_vfolder_hosts;
+  @state() private is_super_admin = false;
+>>>>>>> main
 
   constructor() {
     super();
+    this.all_vfolder_hosts = [];
     this.allowed_vfolder_hosts = [];
     this.resource_policy_names = [];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
@@ -110,6 +140,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-button {
           --button-fab-size: 40px;
           margin-right: 5px;
+        }
+
+        wl-button[disabled].fg {
+          color: rgba(0,0,0,0.4) !important;
         }
 
         vaadin-item {
@@ -219,7 +253,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     // language=HTML
     return html`
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                   .items="${this.resourcePolicy}">
+                  .items="${this.resourcePolicy}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
         <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
         <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
@@ -318,17 +352,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </div>
           <h4 style="margin-bottom:0px;">${_t('resourcePolicy.Folders')}</h4>
           <div class="vertical center layout distancing" id="dropdown-area">
-            <mwc-select id="allowed_vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"
-              @opened="${() => this._controlHeightByVfolderHostCount(true)}"
-              @closed="${() => this._controlHeightByVfolderHostCount()}">
-              ${this.allowed_vfolder_hosts.map((item) => html`
-                <mwc-list-item class="owner-group-dropdown"
-                               id="${item}"
-                               value="${item}">
-                  ${item}
-                </mwc-list-item>
-              `)}
-            </mwc-select>
+            <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"></backend-ai-multi-select>
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
                 <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
@@ -449,18 +473,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-        <div id="controls" class="layout horizontal flex center"
-             .policy-name="${rowData.item.name}">
-        ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
-                                 @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
-                                 ` : html``}
-        ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg red controls-running" icon="delete"
-                                 @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
-                                 ` : html``}
-        </div>
-    `, root
+        <div id="controls" class="layout horizontal flex center" .policy-name="${rowData.item.name}">
+          <wl-button fab flat inverted class="fg blue controls-running" ?disabled=${!this.is_super_admin}
+                      @click="${(e) => this._launchResourcePolicyDialog(e)}">
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted class="fg red controls-running" ?disabled=${!this.is_super_admin}
+                      @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}">
+            <wl-icon>delete</wl-icon>
+          </wl-button>
+      `, root
     );
   }
 
@@ -489,8 +511,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       // language=HTML
       html`
       <div class="layout horizontal center flex">
-        <div class="vertical start layout">
-          ${rowData.item.allowed_vfolder_hosts}
+        <div class="vertical start layout around-justified">
+          ${rowData.item.allowed_vfolder_hosts.map((host) => html`
+            <lablup-shields app="" color="darkgreen" ui="round" description="${host}" style="margin-bottom:3px;"></lablup-shields>`
+          )}
         </div>
       </div>
       `, root
@@ -511,19 +535,33 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-        this.is_admin = globalThis.backendaiclient.is_admin;
+        this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-      this.is_admin = globalThis.backendaiclient.is_admin;
+      this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
     }
   }
 
   _launchResourcePolicyDialog(e) {
     this.updateCurrentPolicyToDialog(e);
+<<<<<<< HEAD
     this.modifyPolicyDialog.show();
+=======
+    this._getAllStorageHostsInfo().then(() => {
+      this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
+      this.allowedVfolderHostsSelect.selectedItemList = this.allowed_vfolder_hosts;
+      this.shadowRoot.querySelector('#modify-policy-dialog').show();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+>>>>>>> main
   }
 
   _openDeleteResourcePolicyListDialog(e) {
@@ -539,6 +577,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicy = resourcePolicies[policyName];
     (this.shadowRoot?.querySelector('#id_new_policy_name') as TextField).value = policyName;
     this.current_policy_name = policyName;
+<<<<<<< HEAD
     this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
     this.ramResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
     this.gpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
@@ -548,12 +587,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.containerPerSessionLimit.value = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
     this.vfolderCapacityLimit.value = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
     this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
+=======
+    this.cpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
+    this.ram_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
+    this.gpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
+    this.fgpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_shares']);
+    this.concurrency_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
+    this.idle_timeout['value'] = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
+    this.container_per_session_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
+    this.vfolder_capacity['value'] = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
+>>>>>>> main
 
     if (this.enableSessionLifetime) {
       this.sessionLifetime.value = this._updateUnlimitedValue(resourcePolicy.max_session_lifetime);
       this._updateInputStatus(this.sessionLifetime);
     }
 
+<<<<<<< HEAD
     this._updateInputStatus(this.cpuResource);
     this._updateInputStatus(this.ramResource);
     this._updateInputStatus(this.gpuResource);
@@ -570,6 +620,20 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       this.allowedVFolderHostsSelect.value = resourcePolicy.allowed_vfolder_hosts[0];
     });
     /* TODO: multiple vfolder hosts */
+=======
+    this._updateInputStatus(this.cpu_resource);
+    this._updateInputStatus(this.ram_resource);
+    this._updateInputStatus(this.gpu_resource);
+    this._updateInputStatus(this.fgpu_resource);
+    this._updateInputStatus(this.concurrency_limit);
+    this._updateInputStatus(this.idle_timeout);
+    this._updateInputStatus(this.container_per_session_limit);
+    this._updateInputStatus(this.vfolder_capacity);
+
+    this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
+    this.shadowRoot.querySelector('#vfolder-capacity-limit').value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
+    this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
+>>>>>>> main
   }
 
   _refreshPolicyData() {
@@ -642,6 +706,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _readResourcePolicyInput() {
     const total_resource_slots = {};
+<<<<<<< HEAD
     const vfolder_hosts: string[] | null = [];
     vfolder_hosts.push(this.allowedVFolderHostsSelect.value);
 
@@ -664,6 +729,28 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.containerPerSessionLimit.value = ['', 0].includes(this.containerPerSessionLimit.value) ? BigNumber.getValue().toString() : this.containerPerSessionLimit.value;
     this.vfolderCapacityLimit.value = this.vfolderCapacityLimit.value === '' ? '0' : this.vfolderCapacityLimit.value;
     this.vfolderCountLimitInput.value = this.vfolderCountLimitInput.value === '' ? '0' : this.vfolderCountLimitInput.value;
+=======
+    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    this._validateUserInput(this.cpu_resource);
+    this._validateUserInput(this.ram_resource);
+    this._validateUserInput(this.gpu_resource);
+    this._validateUserInput(this.fgpu_resource);
+    this._validateUserInput(this.concurrency_limit);
+    this._validateUserInput(this.idle_timeout);
+    this._validateUserInput(this.container_per_session_limit);
+    this._validateUserInput(this.vfolder_capacity);
+    this._validateUserInput(this.vfolder_max_limit);
+
+    total_resource_slots['cpu'] = this.cpu_resource['value'];
+    total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
+    total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
+    total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
+    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? BigNumber.getValue() : parseInt(this.concurrency_limit['value']);
+    this.idle_timeout['value'] = this.idle_timeout['value'] === '' ? 0 : parseInt(this.idle_timeout['value']);
+    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? BigNumber.getValue() : parseInt(this.container_per_session_limit['value']);
+    this.vfolder_capacity['value'] = this.vfolder_capacity['value'] === '' ? 0 : parseFloat(this.vfolder_capacity['value']);
+    this.vfolder_max_limit['value'] = this.vfolder_max_limit['value'] === '' ? 0 : parseInt(this.vfolder_max_limit['value']);
+>>>>>>> main
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -766,10 +853,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-   * Check validation of resource input.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
+  * Check validation of resource input.
+  *
+  * @param {Event} e - Dispatches from the native input event each time the input changes.
+  */
   _validateResourceInput(e) {
     const textfield = e.target.closest('mwc-textfield');
     const checkboxEl = textfield.closest('div').querySelector('wl-label.unlimited');
@@ -806,10 +893,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-   * Check validation of user input.
-   *
-   * @param {object} resource
-   */
+  * Check validation of user input.
+  *
+  * @param {object} resource
+  */
   _validateUserInput(resource) {
     if (resource.disabled) {
       resource.value = '';
@@ -836,12 +923,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
+<<<<<<< HEAD
    * Returns human-readable value according to certain conditions
    *
    * @param {string | number} value - raw value
    * @param {boolean} enableUnitConvert - if true it enable unit conversion
    * @return {string} if number then returns number, else if then string
    */
+=======
+  * Returns human-readable value according to certain conditions
+  *
+  * @param {string} value - raw value
+  * @param {boolean} enableUnitConvert - if true it enable unit conversion
+  * @return if number then returns number, else if then string
+  */
+>>>>>>> main
   _markIfUnlimited(value, enableUnitConvert = false) {
     if (['-', 0, '0', 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -853,6 +949,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
+<<<<<<< HEAD
    *
    * Expand or Shrink the dialog height by the number of items in the dropdown.
    *
@@ -868,6 +965,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (itemCount > 0) {
       this.dropdownArea.style.height = (actualHeight + itemCount * 14) +'px';
     }
+=======
+  * Get All Storage host information (superadmin-only)
+  */
+  _getAllStorageHostsInfo() {
+    return globalThis.backendaiclient.vfolder.list_all_hosts().then((res) => {
+      this.all_vfolder_hosts = res.allowed;
+    }).catch((err) => {
+      throw err;
+    });
+>>>>>>> main
   }
 }
 

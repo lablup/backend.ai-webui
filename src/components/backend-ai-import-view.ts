@@ -140,12 +140,9 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
         }
-        mwc-select.fixed-position > mwc-list-item {
-          width: 200px; // default width
-        }
         mwc-select.github-select {
           margin: inherit;
-          width: 68%;
+          width: 440px;
           margin-bottom: 10px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
@@ -153,9 +150,6 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
-        }
-        mwc-select.github-select > mwc-list-item {
-          width: 440px; // default width
         }
 
         @media screen and (max-width: 1015px) {
@@ -655,7 +649,7 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                     <span>${item}</span>
@@ -681,7 +675,7 @@ export default class BackendAIImport extends BackendAIPage {
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
-              <mwc-select class="fixed-position" id="gitlab-add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
+              <mwc-select id="gitlab-add-folder-host" label="${_t('data.Host')}">
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
                     <span>${item}</span>
