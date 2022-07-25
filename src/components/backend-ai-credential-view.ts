@@ -6,14 +6,14 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button/mwc-icon-button';
-import {Menu} from '@material/mwc-menu/mwc-menu';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-button/mwc-button';
-import {Select} from '@material/mwc-select/mwc-select';
+import {TextField} from '@material/mwc-textfield';
+import '@material/mwc-list';
+import '@material/mwc-icon-button';
+import {Menu} from '@material/mwc-menu';
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
+import '@material/mwc-button';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -410,12 +410,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _launchResourcePolicyDialog() {
     Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
-      this.newPolicyName.mdcFoundation.setValid(true);
-      this.newPolicyName.isUiValid = true;
-      this.newPolicyName.value = '';
+      // TODO remove protected properties usage
+      (this.newPolicyNameInput as any).mdcFoundation.setValid(true);
+      (this.newPolicyNameInput as any).isUiValid = true;
+      this.newPolicyNameInput.value = '';
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
-      this.shadowRoot.querySelector('#new-policy-dialog').show();
+      this.newPolicyDialog.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -567,13 +568,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    if (!this.newPolicyName.checkValidity()) {
-      this.newPolicyName.reportValidity();
+    if (!this.newPolicyNameInput.checkValidity()) {
+      this.newPolicyNameInput.reportValidity();
       return;
     }
     try {
-      this.newPolicyName.checkValidity();
-      const name = this.newPolicyName.value;
+      this.newPolicyNameInput.checkValidity();
+      const name = this.newPolicyNameInput.value;
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
