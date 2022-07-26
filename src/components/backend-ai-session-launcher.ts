@@ -220,7 +220,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
-  @query('#OpenMPSwitch') openMPSwitch!: Switch;
+  @query('#OpenMPswitch') openMPSwitch!: Switch;
   @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
   @query('#gpu-resource') gpuResouceSlider!: LablupSlider;
   @query('#mem-resource') memoryResouceSlider!: LablupSlider;
