@@ -444,10 +444,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _parseConfig(fileName, returning = false): Promise<void> {
     const _preprocessToml = (config) => {
-      if (config.general?.apiEndpointText) {
+      if (config?.general?.apiEndpointText) {
         config.general.apiEndpointText = JSON.parse(`"${config.general.apiEndpointText}"`);
       }
-      if (config.general?.siteDescription) {
+      if (config?.general?.siteDescription) {
         config.general.siteDescription = JSON.parse(`"${config.general.siteDescription}"`);
       }
     };
