@@ -1248,8 +1248,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _newSession() {
     this.launchConfirmationDialog.hide();
-    let kernel;
-    let version;
+    let kernel: string;
+    let version: string;
     let architecture: string | undefined;
     if (this.manualImageName && this.manualImageName.value) {
       const nameFragments = this.manualImageName.value.split(':');
@@ -1261,8 +1261,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
       // That's why we need if-else block here.
       const selectedItem = this.environment.selected;
-      kernel = selectedItem?.id;
-      version = this.version_selector.selected?.value;
+      kernel = selectedItem?.id ?? '';
+      version = this.version_selector.selected?.value ?? '';
       architecture = this.version_selector.selected?.getAttribute('architecture') ?? undefined;
     }
     this.sessionType = (this.shadowRoot?.querySelector('#session-type') as Select).value;
@@ -1407,7 +1407,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.notification.text = _text('session.PreparingSession');
     this.notification.show();
 
-    const sessions: any = [];
+    const sessions: any[] = [];
     const randStr = this._getRandomString();
 
     if (this.num_sessions > 1) {
@@ -1514,7 +1514,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return randstr;
   }
 
-  _createKernel(kernelName, sessionName, architecture, config) {
+  _createKernel(kernelName: string, sessionName: string, architecture: string, config) {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000, architecture);
     task.catch((err) => {
       // console.log(err);
