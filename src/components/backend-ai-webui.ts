@@ -468,6 +468,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       }).catch((err) => {
         console.log('Configuration file missing.');
+        console.error(err);
       });
   }
 
