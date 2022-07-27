@@ -210,18 +210,18 @@ export default class PipelineView extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshImageList();
-        this._selectDefaultLanguage();
-        this._updateVirtualFolderList();
+      document.addEventListener('backend-ai-connected', async () => {
+        await this._refreshImageList();
+        await this._selectDefaultLanguage();
+        await this._updateVirtualFolderList();
         if (this._activeTab === 'pipeline-view') {
           this._loadCurrentFlowData();
         }
       }, true);
     } else { // already connected
-      this._refreshImageList();
-      this._selectDefaultLanguage();
-      this._updateVirtualFolderList();
+      await this._refreshImageList();
+      await this._selectDefaultLanguage();
+      await this._updateVirtualFolderList();
       if (this._activeTab === 'pipeline-view') {
         this._loadCurrentFlowData();
       }
@@ -358,7 +358,7 @@ export default class PipelineView extends BackendAIPage {
       'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
       'resource_limits { key min max }'
     ];
-    globalThis.backendaiclient.image.list(fields, true).then((response) => {
+    return globalThis.backendaiclient.image.list(fields, true).then((response) => {
       const images: Array<Record<string, unknown>> = [];
       Object.keys(response.images).map((objectKey, index) => {
         const item = response.images[objectKey];
