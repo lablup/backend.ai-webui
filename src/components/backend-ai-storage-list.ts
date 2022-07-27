@@ -11,14 +11,13 @@ import {BackendAIPage} from './backend-ai-page';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
-import '@material/mwc-textfield';
-import {Select} from '@material/mwc-select';
-import '@material/mwc-list/mwc-list';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button';
 import {Button} from '@material/mwc-button';
-import {Radio} from '@material/mwc-radio';
 import '@material/mwc-formfield';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import '@material/mwc-radio';
+import {Select} from '@material/mwc-select';
+import '@material/mwc-textfield';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column-group';
@@ -52,6 +51,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type Radio = HTMLElementTagNameMap['mwc-radio'];
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
