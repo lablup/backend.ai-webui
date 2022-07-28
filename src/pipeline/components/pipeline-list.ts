@@ -96,11 +96,26 @@ export default class PipelineList extends BackendAIPage {
   @property({type: Array}) autoMountedVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
   @property({type: Object}) folderMapping = Object();
-  @query('#vfolder-grid') vfolderGrid;
   @property({type: Boolean}) metricUpdating;
   @query('#pipeline-environment') private _environment;
   @query('#pipeline-environment-tag') private _versionSelector;
-  @state() private _enableLaunchButton = false;
+  @query('mwc-tab[title="pipeline-general"]', true) private _pipelineGeneralTab;
+  @query('mwc-tab[title="pipeline-resources"]', true) private _pipelineResourcesTab;
+  @query('mwc-tab[title="pipeline-mounts"]', true) private _pipelineMountsTab;
+  @query('#vfolder-grid') vfolderGrid;
+
+  @query('#pipeline-name') private _pipelineNameInput;
+  @query('#pipeline-type') private _pipelineType;
+  @query('#pipeline-description') private _pipelineDescriptionInput;
+  @query('#pipeline-scaling-group') private _pipelineScalingGroupSelect;
+  @query('#pipeline-cpu') private _pipelineCpuInput;
+  @query('#pipeline-mem') private _pipelineMemInput;
+  @query('#pipeline-shmem') private _pipelineShmemInput;
+  @query('#pipeline-gpu') private _pipelineGpuInput;
+  @query('#pipeline-storage-mount') private _pipelineStorageMountSelect;
+  @query('#pipeline-mount-folder') private _pipelineMountFolderNameInput;
+
+  private _isLaunchable = false;
 
   @property({type: Object}) _boundNameRenderer = this.nameRenderer.bind(this);
   @property({type: Object}) _boundIndexRenderer = this.indexRenderer.bind(this);
@@ -391,25 +406,26 @@ export default class PipelineList extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
+      document.addEventListener('backend-ai-connected', () => {
         this._fetchUserInfo();
         this._loadPipelineList();
-        this.__enableLaunchButton();
+        this._enableLaunchButton();
       }, {once: true});
     } else { // already connected
       this._fetchUserInfo();
       this._loadPipelineList();
-      this.__enableLaunchButton();
+      this._enableLaunchButton();
     }
   }
 
-  async __enableLaunchButton() {
+  _enableLaunchButton() {
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
       this.languages = this.resourceBroker.languages;
-      this._enableLaunchButton = true;
+      this._isLaunchable = true;
     } else {
+      this._isLaunchable = false;
       setTimeout(() => {
-        this.__enableLaunchButton();
+        this._enableLaunchButton();
       }, 500);
     }
   }
@@ -492,78 +508,119 @@ export default class PipelineList extends BackendAIPage {
     return kernel + ':' + version;
   }
 
+  _validatePipelineConfigInput() {
+    const validityCheckByGroup = (inputGroup: Array<any>) => {
+      return inputGroup.some((elem) => {
+        return !elem.reportValidity();
+      });
+    };
+
+    // general tab inputs
+    if (validityCheckByGroup(
+      [this._pipelineNameInput, this._pipelineType, this._pipelineScalingGroupSelect, 
+      this._environment, this._versionSelector, this._pipelineDescriptionInput])) {
+        this._switchActiveTab(this._pipelineGeneralTab);
+        return false;
+    }
+
+    // resources tab inputs
+    if (validityCheckByGroup(
+      [this._pipelineCpuInput, this._pipelineMemInput, this._pipelineShmemInput, 
+       this._pipelineGpuInput])) {
+        this._switchActiveTab(this._pipelineResourcesTab);
+        return false;
+    }
+
+    // mounts tab inputs
+    if (validityCheckByGroup(
+      [this._pipelineStorageMountSelect, this._pipelineMountFolderNameInput])) {
+        this._switchActiveTab(this._pipelineMountsTab);
+        return false;
+    }
+
+    // all passed validation check
+    return true;
+  }
+
   /**
    * Create a pipeline
    */
   _createPipeline() {
-    const name = this.shadowRoot.querySelector('#pipeline-name').value;
-    const description = this.shadowRoot.querySelector('#pipeline-description').value;
-    const scalingGroup = this.shadowRoot.querySelector('#scaling-group').value;
-    const kernel = this._environment.value;
-    const version = this._environment.value;
-    const cpuRequest = parseInt(this.shadowRoot.querySelector('#pipeline-cpu').value);
-    const memRequest = parseFloat(this.shadowRoot.querySelector('#pipeline-mem').value);
-    const shmemRequest = parseFloat(this.shadowRoot.querySelector('#pipeline-shmem').value);
-    const gpuRequest = parseFloat(this.shadowRoot.querySelector('#pipeline-gpu').value);
-    const storageHost = this.shadowRoot.querySelector('#pipeline-storage-mount').value;
-    const storageHostMountFolderName = this.shadowRoot.querySelector('#pipeline-mount-folder').value;
-    const environment = {
-      scaling_group: scalingGroup,
-      image: this._generateKernelIndex(kernel, version),
-      envs: {},
-    };
-    const resources = {
-      cpu: cpuRequest,
-      mem: memRequest + 'g',
-      resource_opts: {
-        shmem: shmemRequest + 'g'
-      },
-      cuda: {
-        shares: gpuRequest,
-        device: ''
-      },
-    };
-    const storage = {
-      host: storageHost,
-      name: storageHostMountFolderName
+    if (!this._validatePipelineConfigInput()) {
+      return;
     }
-    const mounts = this.selectedVfolders;
-    const yaml = { // used for tasks
-      name: name,
-      description: description,
-      ownership: {
-        domain_name: this.userInfo.domain_name,
-        group_name: this.userInfo.group_name,
-      },
-      environment: environment,
-      resources: resources,
-      mounts: mounts,
-      tasks: [], // this will be handled in server-side
-    };
-
-    this.pipelineInfo = {
-      name: name,
-      description: description,
-      storage: storage,
-      yaml: JSON.stringify(yaml),
-      dataflow: {}, // used for graph visualization
-      is_active: true,
-    };
-    globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
-      this.pipelineInfo = res;
-      this.notification.text = `Pipeline ${this.pipelineInfo.name} created.`;
-      this.notification.show();
-      this._loadPipelineList();
-      // move to pipeline view page with current pipeline info
-      this.moveToViewTab();
-      this.pipelineInfo = {};
-    }).catch((err) => {
-      console.log(err);
-      this.notification.text = `Pipeline Creation failed. Check Input or server status.`;
-      this.notification.show(true);
-    }).finally(() => {
-      this._hideDialogById('#create-pipeline');
-    });
+    
+    // FIXME: for now, we only support custom type pipeline creation.
+    if (this._pipelineType === 'Custom') {
+      const name = this._pipelineNameInput.value;
+      const description = this._pipelineDescriptionInput.value;
+      const scalingGroup = this._pipelineScalingGroupSelect.value;
+      const kernel = this._environment.value;
+      const version = this._versionSelector.value;
+      const cpuRequest = parseInt(this._pipelineCpuInput.value);
+      const memRequest = parseFloat(this._pipelineMemInput.value);
+      const shmemRequest = parseFloat(this._pipelineShmemInput.value);
+      const gpuRequest = parseFloat(this._pipelineGpuInput.value);
+      const storageHost = this._pipelineStorageMountSelect.value;
+      const storageHostMountFolderName = this._pipelineMountFolderNameInput.value;
+      const environment = {
+        scaling_group: scalingGroup,
+        image: this._generateKernelIndex(kernel, version),
+        envs: {},
+      };
+      const resources = {
+        cpu: cpuRequest,
+        mem: memRequest + 'g',
+        resource_opts: {
+          shmem: shmemRequest + 'g'
+        },
+        cuda: {
+          shares: gpuRequest,
+          device: ''
+        },
+      };
+      const storage = {
+        host: storageHost,
+        name: storageHostMountFolderName
+      }
+      const mounts = this.selectedVfolders;
+      const yaml = { // used for tasks
+        name: name,
+        description: description,
+        ownership: {
+          domain_name: this.userInfo.domain_name,
+          group_name: this.userInfo.group_name,
+        },
+        environment: environment,
+        resources: resources,
+        mounts: mounts,
+        tasks: [], // this will be handled in server-side
+      };
+  
+      this.pipelineInfo = {
+        name: name,
+        description: description,
+        storage: storage,
+        yaml: JSON.stringify(yaml),
+        dataflow: {}, // used for graph visualization
+        is_active: true,
+      };
+      globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
+        this.pipelineInfo = res;
+        this.notification.text = `Pipeline ${this.pipelineInfo.name} created.`;
+        this.notification.show();
+        this._loadPipelineList();
+        // move to pipeline view page with current pipeline info
+        this.moveToViewTab();
+        this.pipelineInfo = {};
+      }).catch((err) => {
+        console.log(err);
+        this.notification.text = `Pipeline Creation failed. Check Input or server status.`;
+        this.notification.show(true);
+      }).finally(() => {
+        this._hideDialogById('#create-pipeline');
+      });
+    }
   }
 
   /**
@@ -650,15 +707,15 @@ export default class PipelineList extends BackendAIPage {
   /**
    * Show pipeline dialog
    */
-  async _launchPipelineDialog() {
+  _launchPipelineDialog() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       setTimeout(() => {
         this._launchPipelineDialog();
       }, 1000);
     } else {
-      await this.selectDefaultLanguage();
-      await this._updateVirtualFolderList();
-      this.requestUpdate();
+      this.selectDefaultLanguage();
+      this._updateVirtualFolderList();
+      this._showTabContent(this._pipelineGeneralTab);
       this._launchDialogById('#create-pipeline');
     }
   }
@@ -840,11 +897,27 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Display the tab.
+   * Display inside the tab content.
    *
    * @param {HTMLElement} tab - mwc-tab element
    */
-  _showTab(tab) {
+  _switchActiveTab(tab) {
+    const els = this.shadowRoot.querySelectorAll('mwc-tab');
+    // deactivate all
+    for (const obj of els) {
+      obj.deactivate();
+    }
+    // activate tab argument
+    tab.activate();
+    this._showTabContent(tab);
+  }
+
+  /**
+   * Display inside the tab content.
+   *
+   * @param {HTMLElement} tab - mwc-tab element
+   */
+  _showTabContent(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
       obj.style.display = 'none';
@@ -1198,143 +1271,134 @@ export default class PipelineList extends BackendAIPage {
     );
   }
 
-  render() {
+  renderGeneralTabTemplate() {
     // language=HTML
     return html`
-    <div class="horizontal layout flex center end-justified">
-      <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchPipelineDialog()}" ?disabled="${!this._enableLaunchButton}"></mwc-button>
-    </div>
-    <vaadin-grid id="pipeline-list" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Pipeline List" .items="${this.pipelines}">
-      <vaadin-grid-column auto-width flex-grow="0" header="#" text-align="center" .renderer="${this._boundIndexRenderer}"></vaadin-grid-column>
-      <vaadin-grid-filter-column id="name" auto-width header="Name" resizable .renderer="${this._boundNameRenderer}"></vaadin-grid-filter-column>
-      <!--<vaadin-grid-column id="owner" header="Owner" resizable path="owner"></vaadin-grid-column>-->
-      <vaadin-grid-column id="control" header="Controls" resizable .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      <vaadin-grid-column id="created-at" header="Created At" resizable .renderer="${this._boundCreateAtRenderer}"></vaadin-grid-column>
-      <vaadin-grid-column id="modified-at" header="Last Modified" resizable .renderer="${this._boundModifiedAtRenderer}"></vaadin-grid-column>
-    </vaadin-grid>
-    <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
-      <span slot="title">New Pipeline</span>
-      <div slot="content" class="vertical layout flex">
-        <mwc-tab-bar class="pipeline-tab">
-          <mwc-tab title="pipeline-general" label="General" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-          <mwc-tab title="pipeline-resources" label="Resources" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-          <mwc-tab title="pipeline-mounts" label="Mounts" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-        </mwc-tab-bar>
-        <div id="pipeline-general" class="vertical layout center flex tab-content">
-          <mwc-textfield id="pipeline-name" label="Pipeline Name" required></mwc-textfield>
-          <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
-            <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
-            ${this.pipelineTypes.map((item) => {
-              return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
-            })} 
-          </mwc-select>
-          <mwc-select class="full-width" id="scaling-group" label="Scaling Group" fixedMenuPosition>
-            ${this.scalingGroups.map((item, idx) => {
-              return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
-            })}
-          </mwc-select>
-          <mwc-select class="full-width" id="pipeline-environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
-                      value="${this.defaultLanguage}">
-            <mwc-list-item selected graphic="icon" style="display:none!important;">
-              ${_t('session.launcher.ChooseEnvironment')}
+      <div id="pipeline-general" class="vertical layout center flex tab-content" style="display:none;">
+        <mwc-textfield id="pipeline-name" label="Pipeline Name" required></mwc-textfield>
+        <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
+          <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
+          ${this.pipelineTypes.map((item) => {
+            return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
+          })} 
+        </mwc-select>
+        <mwc-select class="full-width" id="pipeline-scaling-group" label="Scaling Group" fixedMenuPosition>
+          ${this.scalingGroups.map((item, idx) => {
+            return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+          })}
+        </mwc-select>
+        <mwc-select class="full-width" id="pipeline-environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
+                    value="${this.defaultLanguage}">
+          <mwc-list-item selected graphic="icon" style="display:none!important;">
+            ${_t('session.launcher.ChooseEnvironment')}
+          </mwc-list-item>
+          ${this.languages.map((item) => html`
+            ${item.clickable === false ? html`
+              <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                  role="separator" disabled="true">${item.basename}</h5>
+              ` : html`
+              <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
+              <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
+                  style="width:24px;height:24px;"/>
+              <div class="horizontal justified center flex layout" style="width:325px;">
+                <div style="padding-right:5px;">${item.basename}</div>
+                <div class="horizontal layout end-justified center flex">
+                  ${item.tags ? item.tags.map((item) => html`
+                    <lablup-shields style="margin-right:5px;" color="${item.color}"
+                                    description="${item.tag}"></lablup-shields>
+                  `) : ''}
+                  <mwc-icon-button icon="info"
+                                  class="fg blue info"
+                                  @click="${(e) => this._showKernelDescription(e, item)}">
+                  </mwc-icon-button>
+                </div>
+              </div>
             </mwc-list-item>
-            ${this.languages.map((item) => html`
-              ${item.clickable === false ? html`
-                <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
-                    role="separator" disabled="true">${item.basename}</h5>
-                ` : html`
-                <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-                <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
-                    style="width:24px;height:24px;"/>
-                <div class="horizontal justified center flex layout" style="width:325px;">
-                  <div style="padding-right:5px;">${item.basename}</div>
-                  <div class="horizontal layout end-justified center flex">
-                    ${item.tags ? item.tags.map((item) => html`
-                      <lablup-shields style="margin-right:5px;" color="${item.color}"
-                                      description="${item.tag}"></lablup-shields>
-                    `) : ''}
-                    <mwc-icon-button icon="info"
-                                    class="fg blue info"
-                                    @click="${(e) => this._showKernelDescription(e, item)}">
-                    </mwc-icon-button>
-                  </div>
-                </div>
-              </mwc-list-item>
-              `}
-            `)}
-          </mwc-select>
-          <mwc-select class="full-width" id="pipeline-environment-tag" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
-            <mwc-list-item selected style="display:none!important"></mwc-list-item>
-            <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-                role="separator" disabled="true" class="horizontal layout">
-                <div style="width:60px;">${_t('session.launcher.Version')}</div>
-                <div style="width:110px;">${_t('session.launcher.Base')}</div>
-                <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-              <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
-            </h5>
-            ${this.versions.map(({version, architecture}) => html`
-              <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
-                  <span style="display:none">${version}</span>
-                  <div class="horizontal layout end-justified">
-                  ${this._getVersionInfo(version || '', architecture).map((item) => html`
-                    <lablup-shields style="width:${item.size}!important;"
-                                    color="${item.color}"
-                                    app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                    description="${item.tag}">
-                    </lablup-shields>
-                  `)}
-                </div>
-              </mwc-list-item>
-            `)}
-          </mwc-select>
-          <mwc-textarea id="pipeline-description" label="Pipeline Description"></mwc-textarea>
+            `}
+          `)}
+        </mwc-select>
+        <mwc-select class="full-width" id="pipeline-environment-tag" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
+          <mwc-list-item selected style="display:none!important"></mwc-list-item>
+          <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+              role="separator" disabled="true" class="horizontal layout">
+              <div style="width:60px;">${_t('session.launcher.Version')}</div>
+              <div style="width:110px;">${_t('session.launcher.Base')}</div>
+              <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
+            <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+          </h5>
+          ${this.versions.map(({version, architecture}) => html`
+            <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                <span style="display:none">${version}</span>
+                <div class="horizontal layout end-justified">
+                ${this._getVersionInfo(version || '', architecture).map((item) => html`
+                  <lablup-shields style="width:${item.size}!important;"
+                                  color="${item.color}"
+                                  app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                  description="${item.tag}">
+                  </lablup-shields>
+                `)}
+              </div>
+            </mwc-list-item>
+          `)}
+        </mwc-select>
+        <mwc-textarea id="pipeline-description" label="Pipeline Description"></mwc-textarea>
+      </div>`;
+  }
+
+  renderResourcesTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="pipeline-resources" class="vertical layout center flex tab-content" style="display:none;">
+      <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core"></mwc-textfield>
+      <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0" suffix="GiB"></mwc-textfield>
+      <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB"></mwc-textfield>
+      <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0" suffix="Unit"></mwc-textfield>
+    </div>`;
+  }
+
+  renderMountsTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="pipeline-mounts" class="vertical layout center flex tab-content" style="display:none;">
+      <mwc-select class="full-width" id="pipeline-storage-mount" icon="storage" label="Storage hosts"
+                  ?required=${this.allowedStorageHostList.length > 0} style="z-index:10">
+        ${this.allowedStorageHostList.map((storageHost) => {
+          return html`
+            <mwc-list-item ?selected="${storageHost === this.selectedStorageHost}" value="${storageHost}">${storageHost}</mwc-list-item>
+          `}
+        )}
+      </mwc-select>
+      <mwc-textfield id="pipeline-mount-folder" label="Pipeline Folder Name (Optional)" type="text"
+                    maxLength="64" placeholder="" helper="${_text('maxLength.64chars')}"></mwc-textfield>
+      <wl-expansion class="vfolder" name="vfolder">
+        <span slot="title">Additional mount (Optional)</span>
+        <div class="vfolder-list">
+          <vaadin-grid
+              theme="row-stripes column-borders compact"
+              id="vfolder-grid"
+              aria-label="vfolder list"
+              all-rows-visible
+              .items="${this.nonAutoMountedVfolders}"
+              @selected-items-changed="${() => this._updateSelectedFolder()}">
+            <vaadin-grid-selection-column id="select-column"
+                                          flex-grow="0"
+                                          text-align="center"
+                                          auto-select></vaadin-grid-selection-column>
+            <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
+                                      path="name" resizable
+                                      .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
+            <vaadin-grid-column width="135px"
+                                path=" ${_t('session.launcher.FolderAlias')}"
+                                .renderer="${this._boundFolderMapRenderer}"
+                                .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
+          </vaadin-grid>
+          ${this.vfolders.length > 0 ? html`` : html`
+            <div class="vertical layout center flex blank-box-medium">
+              <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
+            </div>
+          `}
         </div>
-        <div id="pipeline-resources" class="vertical layout center flex tab-content" style="display:none;">
-          <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core"></mwc-textfield>
-          <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0" suffix="GiB"></mwc-textfield>
-          <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB"></mwc-textfield>
-          <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0" suffix="Unit"></mwc-textfield>
-        </div>
-        <div id="pipeline-mounts" class="vertical layout center flex tab-content" style="display:none;">
-          <mwc-select class="full-width" id="pipeline-storage-mount" icon="storage" label="Storage hosts"
-                      ?required=${this.allowedStorageHostList.length > 0} style="z-index:10">
-            ${this.allowedStorageHostList.map((storageHost) => {
-              return html`
-                <mwc-list-item ?selected="${storageHost === this.selectedStorageHost}" value="${storageHost}">${storageHost}</mwc-list-item>
-              `}
-            )}
-          </mwc-select>
-          <mwc-textfield id="pipeline-mount-folder" label="Folder Name (Optional)" type="text"
-                        maxLength="64" placeholder="" helper="${_text('maxLength.64chars')}"></mwc-textfield>
-          <wl-expansion class="vfolder" name="vfolder">
-            <span slot="title">Additional mount (Optional)</span>
-            <div class="vfolder-list">
-              <vaadin-grid
-                  theme="row-stripes column-borders compact"
-                  id="vfolder-grid"
-                  aria-label="vfolder list"
-                  all-rows-visible
-                  .items="${this.nonAutoMountedVfolders}"
-                  @selected-items-changed="${() => this._updateSelectedFolder()}">
-                <vaadin-grid-selection-column id="select-column"
-                                              flex-grow="0"
-                                              text-align="center"
-                                              auto-select></vaadin-grid-selection-column>
-                <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
-                                          path="name" resizable
-                                          .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
-                <vaadin-grid-column width="135px"
-                                    path=" ${_t('session.launcher.FolderAlias')}"
-                                    .renderer="${this._boundFolderMapRenderer}"
-                                    .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
-              </vaadin-grid>
-              ${this.vfolders.length > 0 ? html`` : html`
-                <div class="vertical layout center flex blank-box-medium">
-                  <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
-                </div>
-              `}
-          </div>
-          <div class="vfolder-mounted-list">
+        <div class="vfolder-mounted-list">
           ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
             <ul class="vfolder-list">
               ${this.selectedVfolders.map((item) => html`
@@ -1350,19 +1414,59 @@ export default class PipelineList extends BackendAIPage {
               ${this.autoMountedVfolders.map((item) => html`
                 <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
               `)}
-            </ul>
-          ` : html`
+            </ul>` : html`
             <div class="vertical layout center flex blank-box-large">
               <span>${_t('session.launcher.NoFolderMounted')}</span>
             </div>
           `}
-          </div>
-        </wl-expansion>
+        </div>
+      </wl-expansion>
+    </div>`;
+  }
+
+  renderCreatePipelineDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
+      <span slot="title">New Pipeline</span>
+      <div slot="content" class="vertical layout flex">
+        <mwc-tab-bar class="pipeline-tab">
+          <mwc-tab title="pipeline-general" label="General" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
+          <mwc-tab title="pipeline-resources" label="Resources" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
+          <mwc-tab title="pipeline-mounts" label="Mounts" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
+        </mwc-tab-bar>
+        ${this.renderGeneralTabTemplate()}
+        ${this.renderResourcesTabTemplate()}
+        ${this.renderMountsTabTemplate()}
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
         <mwc-button class="full-width" unelevated label="Create Pipeline" @click="${() => this._createPipeline()}"></mwc-button>
       </div>
-    </backend-ai-dialog>
+    </backend-ai-dialog>`;
+  }
+
+  renderDeletePipelineDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="delete-pipeline" fixed backdrop blockscrolling persistent>
+      <span slot="title">Delete Pipeline</span>
+      <div slot="content" class="vertical layout flex">
+        <span>
+          Are you sure you want to delete this pipeline?<br />
+          This process cannot be undone!
+        </span>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <div class="flex"></div>
+        <mwc-button label="Cancel" @click="${() => this._hideDialogById('#delete-pipeline')}"></mwc-button>
+        <mwc-button unelevated class="delete" label="Delete" @click="${() => this._deletePipeline()}"></mwc-button>
+      </div>
+    </backend-ai-dialog>`;
+  }
+
+  renderPipelineDetailDialogTemplate() {
+    // language=HTML
+    return html`
     <backend-ai-dialog id="pipeline-detail" fixed backdrop blockscrolling persistent>
       <span slot="title">Pipeline Detail</span>
       <div slot="content" class="vertical layout flex">
@@ -1409,27 +1513,38 @@ export default class PipelineList extends BackendAIPage {
           </div>
         </div>
       </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="delete-pipeline" fixed backdrop blockscrolling persistent>
-      <span slot="title">Delete Pipeline</span>
-      <div slot="content" class="vertical layout flex">
-        <span>
-          Are you sure you want to delete this pipeline?<br />
-          This process cannot be undone!
-        </span>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <div class="flex"></div>
-        <mwc-button label="Cancel" @click="${() => this._hideDialogById('#delete-pipeline')}"></mwc-button>
-        <mwc-button unelevated class="delete" label="Delete" @click="${() => this._deletePipeline()}"></mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog class="yaml" id="pipeline-yaml" fixed backdrop blockscrolling>
-      <span slot="title">${`Pipeline Data (YAML)`}</span>
-      <div slot="content">
-        <lablup-codemirror id="yaml-data" mode="yaml" readonly useLineWrapping></lablup-codemirror>
-      </div>
-    </backend-ai-dialog>
+    </backend-ai-dialog>`;
+  }
+
+  renderPipelineYAMLDialogTemplate() {
+    // language=HTML
+    return html`
+      <backend-ai-dialog class="yaml" id="pipeline-yaml" fixed backdrop blockscrolling>
+        <span slot="title">${`Pipeline Data (YAML)`}</span>
+        <div slot="content">
+          <lablup-codemirror id="yaml-data" mode="yaml" readonly useLineWrapping></lablup-codemirror>
+        </div>
+      </backend-ai-dialog>`;
+  }
+
+  render() {
+    // language=HTML
+    return html`
+    <div class="horizontal layout flex center end-justified">
+      <mwc-button unelevated icon="add" label="New Pipeline" @click="${() => this._launchPipelineDialog()}" ?disabled="${!this._isLaunchable}"></mwc-button>
+    </div>
+    <vaadin-grid id="pipeline-list" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Pipeline List" .items="${this.pipelines}">
+      <vaadin-grid-column auto-width flex-grow="0" header="#" text-align="center" .renderer="${this._boundIndexRenderer}"></vaadin-grid-column>
+      <vaadin-grid-filter-column id="name" auto-width header="Name" resizable .renderer="${this._boundNameRenderer}"></vaadin-grid-filter-column>
+      <!--<vaadin-grid-column id="owner" header="Owner" resizable path="owner"></vaadin-grid-column>-->
+      <vaadin-grid-column id="control" header="Controls" resizable .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+      <vaadin-grid-column id="created-at" header="Created At" resizable .renderer="${this._boundCreateAtRenderer}"></vaadin-grid-column>
+      <vaadin-grid-column id="modified-at" header="Last Modified" resizable .renderer="${this._boundModifiedAtRenderer}"></vaadin-grid-column>
+    </vaadin-grid>
+    ${this.renderCreatePipelineDialogTemplate()}
+    ${this.renderDeletePipelineDialogTemplate()}
+    ${this.renderPipelineDetailDialogTemplate()}
+    ${this.renderPipelineYAMLDialogTemplate()}
     `;
   }
 }
