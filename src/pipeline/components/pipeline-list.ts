@@ -1349,10 +1349,10 @@ export default class PipelineList extends BackendAIPage {
     // language=HTML
     return html`
     <div id="pipeline-resources" class="vertical layout center flex tab-content" style="display:none;">
-      <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core"></mwc-textfield>
-      <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0" suffix="GiB"></mwc-textfield>
-      <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB"></mwc-textfield>
-      <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0" suffix="Unit"></mwc-textfield>
+      <mwc-textfield id="pipeline-cpu" label="CPU" type="number" min="1" suffix="Core" required></mwc-textfield>
+      <mwc-textfield id="pipeline-mem" label="Memory (GiB)" type="number" min="0" suffix="GiB" required></mwc-textfield>
+      <mwc-textfield id="pipeline-shmem" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB" required></mwc-textfield>
+      <mwc-textfield id="pipeline-gpu" label="GPU" type="number" min="0" suffix="Unit" required></mwc-textfield>
     </div>`;
   }
 
