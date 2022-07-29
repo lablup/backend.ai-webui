@@ -17,8 +17,8 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-button';
+import {Tab} from '@material/mwc-tab';
 import './lablup-activity-panel';
 import './backend-ai-dialog';
 import './backend-ai-environment-list';
@@ -114,7 +114,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         type: Boolean
       },
       _activeTab: {
-        type: Boolean
+        type: String
       }
     };
   }
@@ -143,10 +143,10 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param {any} tab - tab webcomponent that has 'title' property
+   * @param {mwc-tab} tab - tab webcomponent that has 'title' property
    */
-  _showTab(tab) {
-    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
+  _showTab(tab: Tab) {
+    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -179,10 +179,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         </div>
       </lablup-activity-panel>
     `;
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
   }
 }
 
