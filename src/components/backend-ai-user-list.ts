@@ -377,23 +377,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
-   * Render index to root element.
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   * */
-  _indexRenderer(root, column, rowData) {
-    const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root
-    );
-  }
-
-  /**
    * If value includes unlimited contents, mark as unlimited.
    *
    * @param {string} value - string value
@@ -405,94 +388,6 @@ export default class BackendAIUserList extends BackendAIPage {
     } else {
       return value;
     }
-  }
-
-  /**
-   * Control rendering - showUserDetail, editUserDetail, signoutUserDialog.
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   */
-  controlRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <div
-          id="controls"
-          class="layout horizontal flex center"
-          .user-id="${rowData.item.email}">
-          <wl-button fab flat inverted
-            class="fg green"
-            icon="assignment"
-            @click="${(e) => this._showUserDetail(e)}">
-            <wl-icon>assignment</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            class="fg blue"
-            icon="settings"
-            @click="${(e) => this._editUserDetail(e)}">
-            <wl-icon>settings</wl-icon>
-          </wl-button>
-
-          ${globalThis.backendaiclient.is_superadmin && this._isActive() ? html`
-            <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._signoutUserDialog(e)}">
-                               <wl-icon>delete_forever</wl-icon>
-            </wl-button>
-          ` : html``}
-        </div>
-      `, root
-    );
-  }
-
-  /**
-   * Render UserId according to configuration
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   */
-  userIdRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <span>${this._getUserId(rowData.item.email)}</span>
-      `, root
-    );
-  }
-
-  /**
-   * Render Username according to configuration
-   *
-   * @param {Element} root - the row details content DOM element
-   * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item
-   */
-  userNameRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <span>${this._getUsername(rowData.item.username)}</span>
-      `, root
-    );
-  }
-
-  /**
-   * Render current status of user
-   * - active
-   * - inactive
-   * - before-verification
-   * - deleted
-   *
-   * @param {any} root
-   * @param {any} column
-   * @param {any} rowData
-   */
-  userStatusRenderer(root, column?, rowData?) {
-    const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
-    render(
-      html`
-        <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
-      `, root
-    );
   }
 
   /**
@@ -636,6 +531,111 @@ export default class BackendAIUserList extends BackendAIPage {
       username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
     }
     return username;
+  }
+
+  /**
+   * Render index to root element.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+   _indexRenderer(root, column, rowData) {
+    const idx = rowData.index + 1;
+    render(
+      html`
+        <div>${idx}</div>
+      `,
+      root
+    );
+  }
+
+  /**
+   * Control rendering - showUserDetail, editUserDetail, signoutUserDialog.
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+   controlRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div
+          id="controls"
+          class="layout horizontal flex center"
+          .user-id="${rowData.item.email}">
+          <wl-button fab flat inverted
+            class="fg green"
+            icon="assignment"
+            @click="${(e) => this._showUserDetail(e)}">
+            <wl-icon>assignment</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
+            class="fg blue"
+            icon="settings"
+            @click="${(e) => this._editUserDetail(e)}">
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+
+          ${globalThis.backendaiclient.is_superadmin && this._isActive() ? html`
+            <wl-button fab flat inverted class="fg red controls-running"
+                               @click="${(e) => this._signoutUserDialog(e)}">
+                               <wl-icon>delete_forever</wl-icon>
+            </wl-button>
+          ` : html``}
+        </div>
+      `, root
+    );
+  }
+
+  /**
+   * Render UserId according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userIdRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUserId(rowData.item.email)}</span>
+      `, root
+    );
+  }
+
+  /**
+   * Render Username according to configuration
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
+  userNameRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <span>${this._getUsername(rowData.item.username)}</span>
+      `, root
+    );
+  }
+
+  /**
+   * Render current status of user
+   * - active
+   * - inactive
+   * - before-verification
+   * - deleted
+   *
+   * @param {any} root
+   * @param {any} column
+   * @param {any} rowData
+   */
+  userStatusRenderer(root, column?, rowData?) {
+    const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
+    render(
+      html`
+        <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
+      `, root
+    );
   }
 
   render() {
