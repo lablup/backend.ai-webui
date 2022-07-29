@@ -625,9 +625,9 @@ export default class BackendAIUserList extends BackendAIPage {
    * - before-verification
    * - deleted
    *
-   * @param {any} root
-   * @param {any} column
-   * @param {any} rowData
+   * @param {Element} root
+   * @param {Element} column
+   * @param {Object} rowData
    */
   userStatusRenderer(root, column?, rowData?) {
     const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
@@ -737,7 +737,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     label="${_text('credential.Description')}"
                     placeholder="${_text('maxLength.500chars')}"
                     value="${this.userInfo.description}"
-                    id="description"></mwc-textfield>`: html``}
+                    id="description"></mwc-textarea>`: html``}
               ${this.editMode ? html`
                 <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
                   ${Object.keys(this.userStatus).map((item) => html`
