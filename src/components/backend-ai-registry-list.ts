@@ -164,7 +164,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @return {Record<string, unknown>} Parsed registry list
    * */
   _parseRegistryList(obj) {
-    const isString = (val) => typeof val === 'string' || val instanceof String;
+    const isString = (val): boolean => typeof val === 'string' || val instanceof String;
     return Object.keys(obj).map((hostname) =>
       isString(obj[hostname]) ?
         {
@@ -375,11 +375,11 @@ class BackendAIRegistryList extends BackendAIPage {
       });
   }
 
-  _launchDialogById(id) {
+  _launchDialogById(id: string) {
     this.shadowRoot?.querySelector(id).show();
   }
 
-  _hideDialogById(id) {
+  _hideDialogById(id: string) {
     this.shadowRoot?.querySelector(id).hide();
   }
 
@@ -396,7 +396,7 @@ class BackendAIRegistryList extends BackendAIPage {
     (this.shadowRoot?.querySelector('#project-name-validation') as HTMLElement).style.display = 'none';
   }
 
-  _openEditRegistryDialog(registry) {
+  _openEditRegistryDialog(registry: string) {
     this.editMode = true;
     let registryInfo;
     for (let i = 0; i < this.registryList.length; i++) {
@@ -460,7 +460,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this.projectNameInput.value = '';
   }
 
-  toggleRegistry(e, hostname) {
+  toggleRegistry(e: { target: { selected: boolean; }; }, hostname: string) {
     if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
@@ -492,7 +492,7 @@ class BackendAIRegistryList extends BackendAIPage {
     });
   }
 
-  _indexRenderer(root, column, rowData) {
+  _indexRenderer(root, column?, rowData?) {
     const idx = rowData.index + 1;
     render(
       html`
@@ -502,7 +502,7 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  _hostRenderer(root, column, rowData) {
+  _hostRenderer(root, column?, rowData?) {
     render(
       html`
         <div>
@@ -513,7 +513,7 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-  _registryRenderer(root, column, rowData) {
+  _registryRenderer(root, column?, rowData?) {
     render(
       html`
         <div>
@@ -542,7 +542,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  _isEnabledRenderer(root, column, rowData) {
+  _isEnabledRenderer(root, column?, rowData?) {
     render(
       html`
         <div>
@@ -562,7 +562,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  _controlsRenderer(root, column, rowData) {
+  _controlsRenderer(root, column?, rowData?) {
     render(
       html`
         <div

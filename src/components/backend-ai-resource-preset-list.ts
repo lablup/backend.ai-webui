@@ -21,8 +21,8 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import './backend-ai-dialog';
-import {default as PainKiller} from './backend-ai-painkiller';
 import '../plastics/lablup-shields/lablup-shields';
+import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -213,10 +213,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     );
   }
 
-  _launchPresetAddDialog(e) {
-    this.createPresetDialog.show();
-  }
-
   render() {
     // language=HTML
     return html`
@@ -380,6 +376,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
   }
 
+  _launchPresetAddDialog() {
+    this.createPresetDialog.show();
+  }
+
   _launchResourcePresetDialog(e) {
     this.updateCurrentPresetToDialog(e);
     this.modifyTemplateDialog.show();
@@ -392,7 +392,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
     this.deleteResourcePresetDialog.show();
   }
 
-  _deleteResourcePresetWithCheck(e) {
+  _deleteResourcePresetWithCheck() {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
       this.deleteResourcePresetDialog.hide();
       this.notification.text = _text('resourcePreset.Deleted');
