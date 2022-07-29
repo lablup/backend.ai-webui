@@ -97,6 +97,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
+  @query('#modify-app-container') modifyAppContainer!: HTMLDivElement;
 
   constructor() {
     super();
@@ -280,13 +281,415 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       `];
   }
 
+  firstUpdated() {
+    this.indicator = globalThis.lablupIndicator;
+    this.notification = globalThis.lablupNotification;
+
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getImages();
+      }, true);
+    } else { // already connected
+      this._getImages();
+    }
+    this._grid = this.shadowRoot?.querySelector('#testgrid');
+    this._grid.addEventListener('sorter-changed', (e) => {
+      this._refreshSorter(e);
+    });
+
+    document.addEventListener('image-rescanned', () => {
+      this._getImages();
+    });
+
+    // uncheck every checked rows when dialog is closed
+    this.installImageDialog.addEventListener('didHide', () => {
+      this._uncheckSelectedRow();
+    });
+    this.deleteImageDialog.addEventListener('didHide', () => {
+      this._uncheckSelectedRow();
+    });
+  }
+
+  /**
+   * Remove selected row in the environment list.
+   *
+   */
+  _removeRow() {
+    this.deleteAppRow.remove();
+    this.deleteAppInfoDialog.hide();
+    this.notification.text = _text('environment.AppInfoDeleted');
+    this.notification.show();
+  }
+
+  /**
+     * Add a row to the environment list.
+     */
+  _addRow() {
+    const lastChild = this.modifyAppContainer.children[this.modifyAppContainer.children.length - 1];
+    const div = this._createRow();
+    this.modifyAppContainer.insertBefore(div, lastChild);
+  }
+
+  /**
+     * Create a row in the environment list.
+     *
+     * @return {HTMLElement} Generated div element
+     */
+  _createRow() {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'row extra');
+
+    const app = document.createElement('wl-textfield');
+    app.setAttribute('type', 'text');
+
+    const protocol = document.createElement('wl-textfield');
+    app.setAttribute('type', 'text');
+
+    const port = document.createElement('wl-textfield');
+    app.setAttribute('type', 'number');
+
+    const button = document.createElement('wl-button');
+    button.setAttribute('class', 'fg pink');
+    button.setAttribute('fab', '');
+    button.setAttribute('flat', '');
+    button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
+
+    const icon = document.createElement('wl-icon');
+    icon.innerHTML = 'remove';
+    button.appendChild(icon);
+
+    div.appendChild(port);
+    div.appendChild(protocol);
+    div.appendChild(app);
+    div.appendChild(button);
+
+    return div;
+  }
+
+  /**
+     * Check whether delete operation will proceed or not.
+     *
+     * @param {any} e - Dispatches from the native input event each time the input changes.
+     */
+  _checkDeleteAppInfo(e) {
+    // htmlCollection should be converted to Array.
+    this.deleteAppRow = e.target.parentNode;
+    const childRow = this.deleteAppRow.children;
+    const textfieldsArray = [...childRow];
+    const appInfo = textfieldsArray.filter((item) => item.tagName === 'WL-TEXTFIELD').map((item) => item.value);
+    // if every value of the row is empty
+    if (appInfo.filter((item) => item === '')?.length === appInfo.length) {
+      this._removeRow();
+    } else {
+      this.deleteAppInfo = appInfo;
+      this.deleteAppInfoDialog.show();
+    }
+  }
+
+  /**
+     * Clear rows from the environment list.
+     */
+  _clearRows() {
+    const rows = this.modifyAppContainer.querySelectorAll('.row');
+    const lastRow = rows[rows.length - 1];
+
+    lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
+      tf.value = '';
+    });
+    this.modifyAppContainer.querySelectorAll('.row.extra').forEach((e) => {
+      e.remove();
+    });
+  }
+
+  /**
+     * Deselect the selected row from the environment list.
+     */
+  _uncheckSelectedRow() {
+    // empty out selectedItem
+    this._grid.selectedItems = [];
+  }
+
+  /**
+     * Refresh the sorter.
+     *
+     * @param {Event} e - Dispatches from the native input event each time the input changes.
+     */
+  _refreshSorter(e) {
+    const sorter = e.target;
+    const sorterPath = sorter.path.toString();
+    if (sorter.direction) {
+      if (sorter.direction === 'asc') {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] < b[sorterPath] ? -1 : a[sorterPath] > b[sorterPath] ? 1 : 0;
+        });
+      } else {
+        this._grid.items.sort((a, b) => {
+          return a[sorterPath] > b[sorterPath] ? -1 : a[sorterPath] < b[sorterPath] ? 1 : 0;
+        });
+      }
+    }
+  }
+
+  async _viewStateChanged(active: boolean) {
+    await this.updateComplete;
+    if (active === false) {
+
+    }
+  }
+
+  /**
+     * Get backend.ai client images.
+     */
+  _getImages() {
+    this.spinner.show();
+
+    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
+      this.allowed_registries = response.domain.allowed_docker_registries;
+      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+    }).then((response) => {
+      const images = response.images;
+      const domainImages: Array<object> = [];
+      images.forEach((image) => {
+        if ('registry' in image && this.allowed_registries.includes(image.registry)) {
+          const tags = image.tag.split('-');
+          if (tags[1] !== undefined) {
+            image.baseversion = tags[0];
+            image.baseimage = tags[1];
+            if (tags[2] !== undefined) {
+              image.additional_req = this._humanizeName(tags[2]);
+            }
+          } else if (image.tag !== undefined) {
+            image.baseversion = image.tag;
+          } else {
+            image.baseversion = '';
+          }
+          const names = image.name.split('/');
+          if (names[1] !== undefined) {
+            image.namespace = names[0];
+            image.lang = names.slice(1).join('');
+          } else {
+            image.namespace = '';
+            image.lang = names[0];
+          }
+          const langs = image.lang.split('-');
+          let baseimage: Array<string>;
+          if (image.baseimage !== undefined) {
+            baseimage = [this._humanizeName(image.baseimage)];
+          } else {
+            baseimage = [];
+          }
+          if (langs[1] !== undefined) {
+            if (langs[0] === 'r') { // Legacy handling for R images
+              image.lang = langs[0];
+              baseimage.push(this._humanizeName(langs[0]));
+            } else {
+              image.lang = langs[1];
+              baseimage.push(this._humanizeName(langs[0]));
+              // image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
+            }
+          }
+          image.baseimage = baseimage;// this._humanizeName(image.baseimage);
+          image.lang = this._humanizeName(image.lang);
+
+          const resource_limit = image.resource_limits;
+          resource_limit.forEach((resource) => {
+            if (resource.max == 0) {
+              resource.max = '∞';
+            }
+            if (resource.key == 'cuda.device') {
+              resource.key = 'cuda_device';
+            }
+            if (resource.key == 'cuda.shares') {
+              resource.key = 'cuda_shares';
+            }
+            if (resource.key == 'rocm.device') {
+              resource.key = 'rocm_device';
+            }
+            if (resource.key == 'tpu.device') {
+              resource.key = 'tpu_device';
+            }
+            if (resource.min !== null && resource.min !== undefined) {
+              image[resource.key + '_limit_min'] = this._addUnit(resource.min);
+            }
+            if (resource.max !== null && resource.max !== undefined) {
+              image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            }
+          });
+
+          image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
+          domainImages.push(image);
+        }
+      });
+      // let image_keys = Object.keys(domainImages);
+      // console.log(image_keys);
+      // let sorted_images = {};
+      // image_keys.sort();
+      this.images = domainImages;
+      this.spinner.hide();
+    }).catch((err) => {
+      console.log(err);
+      if (typeof err.message !== 'undefined') {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
+      }
+      this.notification.show(true, err);
+      this.spinner.hide();
+    });
+  }
+
+  /**
+     * Add unit to the value.
+     *
+     * @param {string} value
+     * @return {string} value with proper unit
+     */
+  _addUnit(value) {
+    const unit = value.substr(-1);
+    if (unit == 'm') {
+      return value.slice(0, -1) + 'MB';
+    }
+    if (unit == 'g') {
+      return value.slice(0, -1) + 'GB';
+    }
+    if (unit == 't') {
+      return value.slice(0, -1) + 'TB';
+    }
+    return value;
+  }
+
+  /**
+     * Change unit to symbol.
+     *
+     * @param {string} value
+     * @return {string} value with proper unit
+     */
+  _symbolicUnit(value) {
+    const unit = value.substr(-2);
+    if (unit == 'MB') {
+      return value.slice(0, -2) + 'm';
+    }
+    if (unit == 'GB') {
+      return value.slice(0, -2) + 'g';
+    }
+    if (unit == 'TB') {
+      return value.slice(0, -2) + 't';
+    }
+    return value;
+  }
+
+  /**
+     * Humanize the value.
+     *
+     * @param {string} value - Language name, version, environment or identifier
+     * @return {string} Humanized value for value
+     */
+  _humanizeName(value) {
+    this.alias = {
+      'python': 'Python',
+      'tensorflow': 'TensorFlow',
+      'pytorch': 'PyTorch',
+      'lua': 'Lua',
+      'r': 'R',
+      'r-base': 'R',
+      'julia': 'Julia',
+      'rust': 'Rust',
+      'cpp': 'C++',
+      'gcc': 'GCC',
+      'go': 'Go',
+      'tester': 'Tester',
+      'haskell': 'Haskell',
+      'matlab': 'MATLAB',
+      'sagemath': 'Sage',
+      'texlive': 'TeXLive',
+      'java': 'Java',
+      'php': 'PHP',
+      'octave': 'Octave',
+      'nodejs': 'Node',
+      'caffe': 'Caffe',
+      'scheme': 'Scheme',
+      'scala': 'Scala',
+      'base': 'Base',
+      'cntk': 'CNTK',
+      'h2o': 'H2O.AI',
+      'triton-server': 'Triton Server',
+      'digits': 'DIGITS',
+      'ubuntu-linux': 'Ubuntu Linux',
+      'tf1': 'TensorFlow 1',
+      'tf2': 'TensorFlow 2',
+      'py3': 'Python 3',
+      'py2': 'Python 2',
+      'py27': 'Python 2.7',
+      'py35': 'Python 3.5',
+      'py36': 'Python 3.6',
+      'py37': 'Python 3.7',
+      'py38': 'Python 3.8',
+      'py39': 'Python 3.9',
+      'py310': 'Python 3.10',
+      'ji15': 'Julia 1.5',
+      'ji16': 'Julia 1.6',
+      'ji17': 'Julia 1.7',
+      'lxde': 'LXDE',
+      'lxqt': 'LXQt',
+      'xfce': 'XFCE',
+      'xrdp': 'XRDP',
+      'gnome': 'GNOME',
+      'kde': 'KDE',
+      'ubuntu16.04': 'Ubuntu 16.04',
+      'ubuntu18.04': 'Ubuntu 18.04',
+      'ubuntu20.04': 'Ubuntu 20.04',
+      'intel': 'Intel MKL',
+      '2018': '2018',
+      '2019': '2019',
+      '2020': '2020',
+      '2021': '2021',
+      '2022': '2022',
+      'rocm': 'GPU:ROCm',
+      'cuda9': 'GPU:CUDA9',
+      'cuda10': 'GPU:CUDA10',
+      'cuda10.0': 'GPU:CUDA10',
+      'cuda10.1': 'GPU:CUDA10.1',
+      'cuda10.2': 'GPU:CUDA10.2',
+      'cuda10.3': 'GPU:CUDA10.3',
+      'cuda11': 'GPU:CUDA11',
+      'cuda11.0': 'GPU:CUDA11',
+      'cuda11.1': 'GPU:CUDA11.1',
+      'cuda11.2': 'GPU:CUDA11.2',
+      'cuda11.3': 'GPU:CUDA11.3',
+      'cuda12': 'GPU:CUDA12',
+      'cuda12.0': 'GPU:CUDA12.0',
+      'miniconda': 'Miniconda',
+      'anaconda2018.12': 'Anaconda 2018.12',
+      'anaconda2019.12': 'Anaconda 2019.12',
+      'alpine3.8': 'Alpine Linux 3.8',
+      'alpine3.12': 'Alpine Linux 3.12',
+      'ngc': 'NVidia GPU Cloud',
+      'ff': 'Research Env.',
+    };
+    if (value in this.alias) {
+      return this.alias[value];
+    } else {
+      return value;
+    }
+  }
+
+  _changeSliderValue(el: Slider) {
+    const currentVal= this._range[el.id].filter((value, index) => {
+      return index === el.value;
+    });
+    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as Button).label = currentVal[0];
+    // TODO button does not have value property
+    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
+  }
+
   /**
    * If value includes unlimited contents, mark as unlimited.
    *
    * @param {string} value - string value
    * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
    */
-  _markIfUnlimited(value) {
+  _markIfUnlimited(value: string) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
     } else {
@@ -372,10 +775,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    */
   openInstallImageDialog() {
     // select only uninstalled images
-    this.selectedImages = this._grid.selectedItems.filter((images) => {
+    this.selectedImages = this._grid.selectedItems.filter((images: any): boolean => {
       return !images.installed;
     });
-    this.installImageNameList = this.selectedImages.map( (image: any) => {
+    this.installImageNameList = this.selectedImages.map((image: object): string => {
       // remove whitespace
       Object.keys(image).map((elem) => {
         if (['registry', 'name', 'tag'].includes(elem) && elem in image) {
@@ -397,9 +800,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
   _installImage() {
     this.installImageDialog.hide();
-    this.selectedImages.forEach( async (image: any) => {
+    this.selectedImages.forEach(async (image: object): Promise<void> => {
       // make image installing status visible
-      const selectedImageLabel = '[id=\"' + image.registry.replace(/\./gi, '-') + '-' + image.name.replace('/', '-') + '-' + image.tag.replace(/\./gi, '-') + '\"]';
+      const selectedImageLabel = '[id="' + image['registry'].replace(/\./gi, '-') + '-' + image['name'].replace('/', '-') + '-' + image['tag'].replace(/\./gi, '-') + '"]';
       this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:block;');
       const imageName = image['registry'] + '/' + image['name'] + ':' + image['tag'];
       let isGPURequired = false;
@@ -488,10 +891,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    */
   openDeleteImageDialog() {
     // select only installed images
-    this.selectedImages = this._grid.selectedItems.filter((images) => {
+    this.selectedImages = this._grid.selectedItems.filter((images: any): object => {
       return images.installed;
     });
-    this.deleteImageNameList = this.selectedImages.map( (image) => {
+    this.deleteImageNameList = this.selectedImages.map((image: object): string => {
       return image['registry'] + '/' + image['name'] + ':' + image['tag'];
     });
     // show dialog only if selected image exists and installed
@@ -503,80 +906,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     }
   }
 
-
   _deleteImage() {
     /** TO DO: API function call to delete selected images */
-  }
-
-  /**
-   * Render requirments such as cpu limit, memoty limit
-   * cuda share limit, rocm device limit and tpu limit.
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
-  requirementsRenderer(root, column?, rowData?) {
-    render(
-      html`
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal configuration">
-              <wl-icon class="fg green">developer_board</wl-icon>
-              <span>${rowData.item.cpu_limit_min}</span> ~
-              <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
-              <span class="indicator">${_t('general.cores')}</span>
-            </div>
-          </div>
-          <div class="layout horizontal center flex">
-            <div class="layout horizontal configuration">
-              <wl-icon class="fg green">memory</wl-icon>
-              <span>${rowData.item.mem_limit_min}</span> ~
-              <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
-            </div>
-          </div>
-        ${rowData.item.cuda_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
-                <span>${rowData.item.cuda_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
-                <span class="indicator">CUDA GPU</span>
-              </div>
-            </div>
-            ` : html``}
-        ${rowData.item.cuda_shares_limit_min ? html`
-            <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <wl-icon class="fg green">apps</wl-icon>
-                <span>${rowData.item.cuda_shares_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                <span class="indicator">CUDA fGPU</span>
-              </div>
-            </div>
-            ` : html``}
-        ${rowData.item.rocm_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
-                <span>${rowData.item.rocm_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
-                <span class="indicator">ROCm GPU</span>
-              </div>
-            </div>
-            ` : html``}
-        ${rowData.item.tpu_device_limit_min ? html`
-           <div class="layout horizontal center flex">
-              <div class="layout horizontal configuration">
-                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
-                <span>${rowData.item.tpu_device_limit_min}</span> ~
-                <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
-                <span class="indicator">TPU</span>
-              </div>
-            </div>
-            ` : html``}
-
-      `, root
-    );
   }
 
   /**
@@ -641,7 +972,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   _updateSliderLayout() {
-    this.shadowRoot?.querySelectorAll('mwc-slider').forEach((el) => {
+    this.shadowRoot?.querySelectorAll('mwc-slider').forEach((el: Slider) => {
       el.layout();
     });
   }
@@ -656,12 +987,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       this.servicePorts =
         this.images[this.selectedIndex].labels['ai.backend.service-ports']
           .split(',')
-          .map((e) => {
+          .map((e): { app: string; protocol: string; port: number; } => {
             const sp = e.split(':');
             return {
               'app': sp[0],
               'protocol': sp[1],
-              'port': sp[2]
+              'port': sp[2],
             };
           });
     }
@@ -746,6 +1077,76 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           this._hideDialogById('#modify-app-dialog');
         });
     }
+  }
+
+  /**
+   * Render requirments such as cpu limit, memoty limit
+   * cuda share limit, rocm device limit and tpu limit.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  requirementsRenderer(root, column?, rowData?) {
+    render(
+      html`
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <wl-icon class="fg green">developer_board</wl-icon>
+                <span>${rowData.item.cpu_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
+                <span class="indicator">${_t('general.cores')}</span>
+              </div>
+            </div>
+            <div class="layout horizontal center flex">
+              <div class="layout horizontal configuration">
+                <wl-icon class="fg green">memory</wl-icon>
+                <span>${rowData.item.mem_limit_min}</span> ~
+                <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
+              </div>
+            </div>
+          ${rowData.item.cuda_device_limit_min ? html`
+             <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
+                  <span>${rowData.item.cuda_device_limit_min}</span> ~
+                  <span>${this._markIfUnlimited(rowData.item.cuda_device_limit_max)}</span>
+                  <span class="indicator">CUDA GPU</span>
+                </div>
+              </div>
+              ` : html``}
+          ${rowData.item.cuda_shares_limit_min ? html`
+              <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <wl-icon class="fg green">apps</wl-icon>
+                  <span>${rowData.item.cuda_shares_limit_min}</span> ~
+                  <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
+                  <span class="indicator">CUDA fGPU</span>
+                </div>
+              </div>
+              ` : html``}
+          ${rowData.item.rocm_device_limit_min ? html`
+             <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
+                  <span>${rowData.item.rocm_device_limit_min}</span> ~
+                  <span>${this._markIfUnlimited(rowData.item.rocm_device_limit_max)}</span>
+                  <span class="indicator">ROCm GPU</span>
+                </div>
+              </div>
+              ` : html``}
+          ${rowData.item.tpu_device_limit_min ? html`
+             <div class="layout horizontal center flex">
+                <div class="layout horizontal configuration">
+                  <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                  <span>${rowData.item.tpu_device_limit_min}</span> ~
+                  <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
+                  <span class="indicator">TPU</span>
+                </div>
+              </div>
+              ` : html``}
+        `, root
+    );
   }
 
   /**
@@ -1124,9 +1525,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           <mwc-button
               class="operation"
               label="${_t('button.Cancel')}"
-              @click="${(e) => {
-    this._hideDialog(e);
-  }}"></mwc-button>
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
           <mwc-button
               unelevated
               class="operation"
@@ -1135,410 +1534,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
     `;
-  }
-
-  /**
-   * Remove selected row in the environment list.
-   *
-   */
-  _removeRow() {
-    this.deleteAppRow.remove();
-    this.deleteAppInfoDialog.hide();
-    this.notification.text = _text('environment.AppInfoDeleted');
-    this.notification.show();
-  }
-
-  /**
-   * Add a row to the environment list.
-   */
-  _addRow() {
-    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
-    const lastChild = container.children[container.children.length - 1];
-    const div = this._createRow();
-    container.insertBefore(div, lastChild);
-  }
-
-  /**
-   * Create a row in the environment list.
-   *
-   * @return {HTMLElement} Generated div element
-   */
-  _createRow() {
-    const div = document.createElement('div');
-    div.setAttribute('class', 'row extra');
-
-    const app = document.createElement('wl-textfield');
-    app.setAttribute('type', 'text');
-
-    const protocol = document.createElement('wl-textfield');
-    app.setAttribute('type', 'text');
-
-    const port = document.createElement('wl-textfield');
-    app.setAttribute('type', 'number');
-
-    const button = document.createElement('wl-button');
-    button.setAttribute('class', 'fg pink');
-    button.setAttribute('fab', '');
-    button.setAttribute('flat', '');
-    button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
-
-    const icon = document.createElement('wl-icon');
-    icon.innerHTML = 'remove';
-    button.appendChild(icon);
-
-    div.appendChild(port);
-    div.appendChild(protocol);
-    div.appendChild(app);
-    div.appendChild(button);
-
-    return div;
-  }
-
-  /**
-   * Check whether delete operation will proceed or not.
-   *
-   * @param {any} e - Dispatches from the native input event each time the input changes.
-   */
-  _checkDeleteAppInfo(e) {
-    // htmlCollection should be converted to Array.
-    this.deleteAppRow = e.target.parentNode;
-    const childRow = this.deleteAppRow.children;
-    const textfieldsArray = [...childRow];
-    const appInfo = textfieldsArray.filter((item) => item.tagName === 'WL-TEXTFIELD').map((item) => item.value);
-    // if every value of the row is empty
-    if (appInfo.filter((item) => item === '')?.length === appInfo.length) {
-      this._removeRow();
-    } else {
-      this.deleteAppInfo = appInfo;
-      this.deleteAppInfoDialog.show();
-    }
-  }
-
-  /**
-   * Clear rows from the environment list.
-   */
-  _clearRows() {
-    const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
-    const rows = container.querySelectorAll('.row');
-    const lastRow = rows[rows.length - 1];
-
-    lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
-      tf.value = '';
-    });
-    container.querySelectorAll('.row.extra').forEach((e) => {
-      e.remove();
-    });
-  }
-
-  /**
-   * Deselect the selected row from the environment list.
-   */
-  _uncheckSelectedRow() {
-    // empty out selectedItem
-    this._grid.selectedItems = [];
-  }
-
-  firstUpdated() {
-    this.indicator = globalThis.lablupIndicator;
-    this.notification = globalThis.lablupNotification;
-
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._getImages();
-      }, true);
-    } else { // already connected
-      this._getImages();
-    }
-    this._grid = this.shadowRoot?.querySelector('#testgrid');
-    this._grid.addEventListener('sorter-changed', (e) => {
-      this._refreshSorter(e);
-    });
-
-    document.addEventListener('image-rescanned', () => {
-      this._getImages();
-    });
-
-    // uncheck every checked rows when dialog is closed
-    this.installImageDialog.addEventListener('didHide', () => {
-      this._uncheckSelectedRow();
-    });
-    this.deleteImageDialog.addEventListener('didHide', () => {
-      this._uncheckSelectedRow();
-    });
-  }
-
-  /**
-   * Refresh the sorter.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  _refreshSorter(e) {
-    const sorter = e.target;
-    const sorterPath = sorter.path.toString();
-    if (sorter.direction) {
-      if (sorter.direction === 'asc') {
-        this._grid.items.sort((a, b) => {
-          return a[sorterPath] < b[sorterPath] ? -1 : a[sorterPath] > b[sorterPath] ? 1 : 0;
-        });
-      } else {
-        this._grid.items.sort((a, b) => {
-          return a[sorterPath] > b[sorterPath] ? -1 : a[sorterPath] < b[sorterPath] ? 1 : 0;
-        });
-      }
-    }
-  }
-
-  async _viewStateChanged(active) {
-    await this.updateComplete;
-    if (active === false) {
-
-    }
-  }
-
-  /**
-   * Get backend.ai client images.
-   */
-  _getImages() {
-    this.spinner.show();
-
-    globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
-      this.allowed_registries = response.domain.allowed_docker_registries;
-      return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
-    }).then((response) => {
-      const images = response.images;
-      const domainImages: any = [];
-      images.forEach((image) => {
-        if ('registry' in image && this.allowed_registries.includes(image.registry)) {
-          const tags = image.tag.split('-');
-          if (tags[1] !== undefined) {
-            image.baseversion = tags[0];
-            image.baseimage = tags[1];
-            if (tags[2] !== undefined) {
-              image.additional_req = this._humanizeName(tags[2]);
-            }
-          } else if (image.tag !== undefined) {
-            image.baseversion = image.tag;
-          } else {
-            image.baseversion = '';
-          }
-          const names = image.name.split('/');
-          if (names[1] !== undefined) {
-            image.namespace = names[0];
-            image.lang = names.slice(1).join('');
-          } else {
-            image.namespace = '';
-            image.lang = names[0];
-          }
-          const langs = image.lang.split('-');
-          let baseimage: Array<string>;
-          if (image.baseimage !== undefined) {
-            baseimage = [this._humanizeName(image.baseimage)];
-          } else {
-            baseimage = [];
-          }
-          if (langs[1] !== undefined) {
-            if (langs[0] === 'r') { // Legacy handling for R images
-              image.lang = langs[0];
-              baseimage.push(this._humanizeName(langs[0]));
-            } else {
-              image.lang = langs[1];
-              baseimage.push(this._humanizeName(langs[0]));
-              // image.baseimage = this._humanizeName(image.baseimage) + ', ' + this._humanizeName(langs[0]);
-            }
-          }
-          image.baseimage = baseimage;// this._humanizeName(image.baseimage);
-          image.lang = this._humanizeName(image.lang);
-
-          const resource_limit = image.resource_limits;
-          resource_limit.forEach((resource) => {
-            if (resource.max == 0) {
-              resource.max = '∞';
-            }
-            if (resource.key == 'cuda.device') {
-              resource.key = 'cuda_device';
-            }
-            if (resource.key == 'cuda.shares') {
-              resource.key = 'cuda_shares';
-            }
-            if (resource.key == 'rocm.device') {
-              resource.key = 'rocm_device';
-            }
-            if (resource.key == 'tpu.device') {
-              resource.key = 'tpu_device';
-            }
-            if (resource.min !== null && resource.min !== undefined) {
-              image[resource.key + '_limit_min'] = this._addUnit(resource.min);
-            }
-            if (resource.max !== null && resource.max !== undefined) {
-              image[resource.key + '_limit_max'] = this._addUnit(resource.max);
-            }
-          });
-
-          image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
-          domainImages.push(image);
-        }
-      });
-      // let image_keys = Object.keys(domainImages);
-      // console.log(image_keys);
-      // let sorted_images = {};
-      // image_keys.sort();
-      this.images = domainImages;
-      this.spinner.hide();
-    }).catch((err) => {
-      console.log(err);
-      if (typeof err.message !== 'undefined') {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-      } else {
-        this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
-      }
-      this.notification.show(true, err);
-      this.spinner.hide();
-    });
-  }
-
-  /**
-   * Add unit to the value.
-   *
-   * @param {string} value
-   * @return {string} value with proper unit
-   */
-  _addUnit(value) {
-    const unit = value.substr(-1);
-    if (unit == 'm') {
-      return value.slice(0, -1) + 'MB';
-    }
-    if (unit == 'g') {
-      return value.slice(0, -1) + 'GB';
-    }
-    if (unit == 't') {
-      return value.slice(0, -1) + 'TB';
-    }
-    return value;
-  }
-
-  /**
-   * Change unit to symbol.
-   *
-   * @param {string} value
-   * @return {string} value with proper unit
-   */
-  _symbolicUnit(value) {
-    const unit = value.substr(-2);
-    if (unit == 'MB') {
-      return value.slice(0, -2) + 'm';
-    }
-    if (unit == 'GB') {
-      return value.slice(0, -2) + 'g';
-    }
-    if (unit == 'TB') {
-      return value.slice(0, -2) + 't';
-    }
-    return value;
-  }
-
-  /**
-   * Humanize the value.
-   *
-   * @param {string} value - Language name, version, environment or identifier
-   * @return {string} Humanized value for value
-   */
-  _humanizeName(value) {
-    this.alias = {
-      'python': 'Python',
-      'tensorflow': 'TensorFlow',
-      'pytorch': 'PyTorch',
-      'lua': 'Lua',
-      'r': 'R',
-      'r-base': 'R',
-      'julia': 'Julia',
-      'rust': 'Rust',
-      'cpp': 'C++',
-      'gcc': 'GCC',
-      'go': 'Go',
-      'tester': 'Tester',
-      'haskell': 'Haskell',
-      'matlab': 'MATLAB',
-      'sagemath': 'Sage',
-      'texlive': 'TeXLive',
-      'java': 'Java',
-      'php': 'PHP',
-      'octave': 'Octave',
-      'nodejs': 'Node',
-      'caffe': 'Caffe',
-      'scheme': 'Scheme',
-      'scala': 'Scala',
-      'base': 'Base',
-      'cntk': 'CNTK',
-      'h2o': 'H2O.AI',
-      'triton-server': 'Triton Server',
-      'digits': 'DIGITS',
-      'ubuntu-linux': 'Ubuntu Linux',
-      'tf1': 'TensorFlow 1',
-      'tf2': 'TensorFlow 2',
-      'py3': 'Python 3',
-      'py2': 'Python 2',
-      'py27': 'Python 2.7',
-      'py35': 'Python 3.5',
-      'py36': 'Python 3.6',
-      'py37': 'Python 3.7',
-      'py38': 'Python 3.8',
-      'py39': 'Python 3.9',
-      'py310': 'Python 3.10',
-      'ji15': 'Julia 1.5',
-      'ji16': 'Julia 1.6',
-      'ji17': 'Julia 1.7',
-      'lxde': 'LXDE',
-      'lxqt': 'LXQt',
-      'xfce': 'XFCE',
-      'xrdp': 'XRDP',
-      'gnome': 'GNOME',
-      'kde': 'KDE',
-      'ubuntu16.04': 'Ubuntu 16.04',
-      'ubuntu18.04': 'Ubuntu 18.04',
-      'ubuntu20.04': 'Ubuntu 20.04',
-      'intel': 'Intel MKL',
-      '2018': '2018',
-      '2019': '2019',
-      '2020': '2020',
-      '2021': '2021',
-      '2022': '2022',
-      'rocm': 'GPU:ROCm',
-      'cuda9': 'GPU:CUDA9',
-      'cuda10': 'GPU:CUDA10',
-      'cuda10.0': 'GPU:CUDA10',
-      'cuda10.1': 'GPU:CUDA10.1',
-      'cuda10.2': 'GPU:CUDA10.2',
-      'cuda10.3': 'GPU:CUDA10.3',
-      'cuda11': 'GPU:CUDA11',
-      'cuda11.0': 'GPU:CUDA11',
-      'cuda11.1': 'GPU:CUDA11.1',
-      'cuda11.2': 'GPU:CUDA11.2',
-      'cuda11.3': 'GPU:CUDA11.3',
-      'cuda12': 'GPU:CUDA12',
-      'cuda12.0': 'GPU:CUDA12.0',
-      'miniconda': 'Miniconda',
-      'anaconda2018.12': 'Anaconda 2018.12',
-      'anaconda2019.12': 'Anaconda 2019.12',
-      'alpine3.8': 'Alpine Linux 3.8',
-      'alpine3.12': 'Alpine Linux 3.12',
-      'ngc': 'NVidia GPU Cloud',
-      'ff': 'Research Env.',
-    };
-    if (value in this.alias) {
-      return this.alias[value];
-    } else {
-      return value;
-    }
-  }
-
-  _changeSliderValue(el) {
-    const currentVal= this._range[el.id].filter((value, index) => {
-      return index === el.value;
-    });
-    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as Button).label = currentVal[0];
-    // TODO button does not have value property
-    (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
   }
 }
 
