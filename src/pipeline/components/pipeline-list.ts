@@ -7,6 +7,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
+import {PipelineInfo, PipelineYAML, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 import '../lib/pipeline-login';
 import '../../components/backend-ai-dialog';
 import '../../components/lablup-activity-panel';
@@ -57,7 +58,7 @@ import 'weightless/expansion';
 export default class PipelineList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: Array}) pipelineTypes = ['Custom']; //
-  @property({type: Object}) pipelineInfo = Object();
+  @property({type: PipelineInfo}) pipelineInfo;
   @property({type: Array}) pipelines = [];
   @property({type: Object}) userInfo;
   @query('vaadin-grid#pipeline-list') pipelineGrid;
@@ -131,6 +132,7 @@ export default class PipelineList extends BackendAIPage {
     this._initResource();
     this.notification = globalThis.lablupNotification;
     this.resourceBroker = globalThis.resourceBroker;
+    this.pipelineInfo = new PipelineInfo();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -497,17 +499,6 @@ export default class PipelineList extends BackendAIPage {
     return humanizedName;
   }
 
-  /**
-   * Combine kernel and version
-   *
-   * @param {string} kernel - kernel name
-   * @param {string} version - version
-   * @return {string} `${kernel}:${version}`
-   */
-  _generateKernelIndex(kernel, version) {
-    return kernel + ':' + version;
-  }
-
   _validatePipelineConfigInput() {
     const validityCheckByGroup = (inputGroup: Array<any>) => {
       return inputGroup.some((elem) => {
@@ -552,30 +543,33 @@ export default class PipelineList extends BackendAIPage {
     
     // FIXME: for now, we only support custom type pipeline creation.
     if (this._pipelineType.value === 'Custom') {
+      /* raw inputs */
       const name = this._pipelineNameInput.value;
       const description = this._pipelineDescriptionInput.value;
       const scalingGroup = this._pipelineScalingGroupSelect.value;
       const kernel = this._environment.value;
       const version = this._versionSelector.value;
-      const cpuRequest = parseInt(this._pipelineCpuInput.value);
-      const memRequest = parseFloat(this._pipelineMemInput.value);
-      const shmemRequest = parseFloat(this._pipelineShmemInput.value);
-      const gpuRequest = parseFloat(this._pipelineGpuInput.value);
+      const cpuRequest = this._pipelineCpuInput.value;
+      const memRequest = this._pipelineMemInput.value;
+      const shmemRequest = this._pipelineShmemInput.value;
+      const gpuRequest = this._pipelineGpuInput.value;
       const storageHost = this._pipelineStorageMountSelect.value;
       const storageHostMountFolderName = this._pipelineMountFolderNameInput.value;
+
+      /* structured inputs */
       const environment = {
-        scaling_group: scalingGroup,
-        image: this._generateKernelIndex(kernel, version),
+        'scaling-group': scalingGroup,
+        image: PipelineUtils._generateKernelIndex(kernel, version),
         envs: {},
-      };
+      } as PipelineEnvironment;
       const resources = {
         cpu: cpuRequest,
-        mem: memRequest + 'g',
+        memory: memRequest + 'g',
         cuda: {
           shares: gpuRequest,
-          device: ''
+          device: '',
         },
-      };
+      } as PipelineResources;
       const resource_opts = {
         shmem: shmemRequest + 'g'
       };
@@ -596,16 +590,17 @@ export default class PipelineList extends BackendAIPage {
         resource_opts: resource_opts,
         mounts: mounts,
         tasks: [], // this will be handled in server-side
-      };
+      } as PipelineYAML;
   
       this.pipelineInfo = {
         name: name,
         description: description,
         storage: storage,
         yaml: JSON.stringify(yaml),
-        dataflow: {}, // used for graph visualization
+        dataflow: {}, // used for graph visualization,
         is_active: true,
-      };
+      } as PipelineInfo;
+
       globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
         this.pipelineInfo = res;
         this.notification.text = `Pipeline ${this.pipelineInfo.name} created.`;

@@ -26,6 +26,7 @@ import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
+import {PipelineTaskNode, PipelineTask, PipelineTaskDetail, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**
@@ -527,26 +528,28 @@ export default class PipelineView extends BackendAIPage {
   /**
    * Return task into formatted json
    *
-   * @return {json} task
+   * @return {PipelineTaskNode} task
    */
   _readCurrentTaskInfo() {
     const taskName = this.shadowRoot.querySelector('#task-name').value;
     const taskType = this.shadowRoot.querySelector('#task-type').value;
+    const kernel = this.shadowRoot.querySelector('#task-environment').value;
+    const version = this.shadowRoot.querySelector('#task-environment-tag').value;
     const taskEnvironment = {
-      'kernel': this.shadowRoot.querySelector('#task-environment').value,
-      'version': this.shadowRoot.querySelector('#task-environment-tag').value,
       'scaling-group': this.shadowRoot.querySelector('#task-environment-scaling-group').value,
-    };
+      image: PipelineUtils._generateKernelIndex(kernel, version),
+      envs: {},
+    } as PipelineEnvironment;
     const taskResources = {
       cpu: this.shadowRoot.querySelector('#task-cpu').value,
-      mem: this.shadowRoot.querySelector('#task-mem').value,
-      resource_opts: {
-        shmem: this.shadowRoot.querySelector('#task-shmem').value,
-      },
+      memory: this.shadowRoot.querySelector('#task-mem').value,
       cuda: {
         shares: this.shadowRoot.querySelector('#task-gpu').value,
         device: ''
       },
+    } as PipelineResources;
+    const taskResourceOpts = {
+      shmem: this.shadowRoot.querySelector('#task-shmem').value,
     };
     const taskCommand = this.shadowRoot.querySelector('#command-editor').getValue();
     const taskMounts = this.selectedVfolders;
@@ -562,18 +565,19 @@ export default class PipelineView extends BackendAIPage {
         type: taskType,
         environment: taskEnvironment,
         resources: taskResources,
-        cmd: taskCommand,
+        resource_opts: taskResourceOpts,
+        command: taskCommand,
         mounts: taskMounts,
-      },
+      } as PipelineTaskDetail,
       html: `${taskName}`, // put raw html code
-    };
+    } as PipelineTaskNode;
   }
 
   /**
    * Update the selected task in pipeline
    */
   _updateTask() {
-    const taskInfo = this._readCurrentTaskInfo();
+    const taskInfo: PipelineTaskNode = this._readCurrentTaskInfo();
 
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     Object.assign(taskInfo, {
@@ -876,7 +880,7 @@ export default class PipelineView extends BackendAIPage {
    * Parse custom data from dataflow element to array of formatted task (json)
    *
    * @param {json} rawData - raw object from dataflow
-   * @return {Array} taskList
+   * @return {Array<PipelineTask>} taskList
    */
   parseTaskListInfo(rawData) {
     const rawTaskList = rawData?.drawflow?.Home?.data;
@@ -894,23 +898,23 @@ export default class PipelineView extends BackendAIPage {
           description: task.description,
           type: Object.keys(this.taskType).find((type) => this.taskType[type] === task.data.type),
           module_uri: '',
-          command: task.data.cmd,
+          command: task.data.command,
           environment: {
             'scaling-group': this.pipelineInfo?.yaml?.environment?.scaling_group,
-            'image': `${this._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
-            'envs': task.data.environment.envs ?? {},
-          },
+            image: `${this._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
+            envs: task.data.environment.envs ?? {},
+          } as PipelineEnvironment,
           resources: {
-            cpu: parseInt(task.data.resources.cpu),
-            memory: task.data.resources.mem + 'g',
-            // cuda: task.data.resources.cuda
-          },
+            cpu: task.data.resources.cpu,
+            memory: task.data.resources.memory + 'g',
+            cuda: task.data.resources.cuda
+          } as PipelineResources,
           resource_opts: {
-            shmem: task.data.resources.resource_opts.shmem + 'g'
+            shmem: task.data.resource_opts.shmem + 'g'
           },
           mounts: task.data.mounts,
           dependencies: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
-        };
+        } as PipelineTask;
       });
     } else {
       taskList = [];
