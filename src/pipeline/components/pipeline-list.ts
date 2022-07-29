@@ -551,7 +551,7 @@ export default class PipelineList extends BackendAIPage {
     }
     
     // FIXME: for now, we only support custom type pipeline creation.
-    if (this._pipelineType === 'Custom') {
+    if (this._pipelineType.value === 'Custom') {
       const name = this._pipelineNameInput.value;
       const description = this._pipelineDescriptionInput.value;
       const scalingGroup = this._pipelineScalingGroupSelect.value;
@@ -571,13 +571,13 @@ export default class PipelineList extends BackendAIPage {
       const resources = {
         cpu: cpuRequest,
         mem: memRequest + 'g',
-        resource_opts: {
-          shmem: shmemRequest + 'g'
-        },
         cuda: {
           shares: gpuRequest,
           device: ''
         },
+      };
+      const resource_opts = {
+        shmem: shmemRequest + 'g'
       };
       const storage = {
         host: storageHost,
@@ -593,6 +593,7 @@ export default class PipelineList extends BackendAIPage {
         },
         environment: environment,
         resources: resources,
+        resource_opts: resource_opts,
         mounts: mounts,
         tasks: [], // this will be handled in server-side
       };

@@ -902,7 +902,7 @@ export default class PipelineView extends BackendAIPage {
           },
           resources: {
             cpu: parseInt(task.data.resources.cpu),
-            mem: task.data.resources.mem + 'g',
+            memory: task.data.resources.mem + 'g',
             // cuda: task.data.resources.cuda
           },
           resource_opts: {
