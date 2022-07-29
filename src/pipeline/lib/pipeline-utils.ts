@@ -134,6 +134,17 @@ export default class PipelineUtils extends LitElement {
     document.dispatchEvent(moveToViewEvent);
   }
 
+  /**
+  * Combine kernel and version
+  *
+  * @param {string} kernel - kernel name
+  * @param {string} version - version
+  * @return {string} `${kernel}:${version}`
+  */
+  static _generateKernelIndex(kernel, version) {
+   return kernel + ':' + version;
+ }
+
   render() {
     // language=HTML
     return html`
