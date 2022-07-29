@@ -43,7 +43,6 @@ import './pipeline-list';
 @group Backend.AI pipeline
  @element pipeline-view
 */
-
 @customElement('pipeline-view')
 export default class PipelineView extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
@@ -922,6 +921,164 @@ export default class PipelineView extends BackendAIPage {
     return taskList;
   }
 
+  renderSettingsTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="task-settings" class="vertical layout center flex task-tab-content">
+      <mwc-textfield id="task-name" label="Task Name" value="${this.selectedNode?.name}" required></mwc-textfield>
+      ${this.isNodeSelected ? html`
+        <mwc-textfield id="task-type" label="Task Type" value="${this.selectedNode?.data?.type}" disabled></mwc-textfield>` : html`
+        <mwc-select class="full-width" id="task-type" label="Task Type" fixedMenuPosition required>
+          ${Object.keys(this.taskType).map((item) => {
+            return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}">
+                          ${this.taskType[item]}
+                        </mwc-list-item>`;
+          })}
+        </mwc-select>
+      `}
+      <div class="vertical layout start-justified flex">
+        <span style="padding-left:15px;">Command</span>
+        <lablup-codemirror id="command-editor" mode="shell" useLineWrapping></lablup-codemirror>
+      </div>
+    </div>`;
+  }
+
+  renderResourcesTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">
+      <mwc-select class="full-width" id="task-environment-scaling-group" label="Scaling Group" fixedMenuPosition>
+        ${this.scalingGroups.map((item, idx) => {
+          return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+        })}
+      </mwc-select>
+      <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition value="${this.defaultLanguage}">
+        ${this.languages.map((item) => html`
+          <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === (this.selectedNode?.data?.environment?.kernel ?? this.defaultLanguage)}">
+            <div class="horizontal justified center flex layout" style="width:325px;">
+              <div style="padding-right:5px;">${item.basename}</div>
+              <div class="horizontal layout end-justified center flex">
+                  ${item.tags ? item.tags.map((item) => html`
+                    <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
+                  `) : ''}
+                </div>
+            </div>
+          </mwc-list-item>`
+        )}
+      </mwc-select>
+      <mwc-select class="full-width" id="task-environment-tag" label="Version" required fixedMenuPosition>
+        <mwc-list-item style="display:none"></mwc-list-item>
+        ${this.isNodeSelected ? html`
+          ${this.versions.map((item) => {
+            return html`<mwc-list-item id="${item}" value="${item}"
+                          ?selected="${item === this.selectedNode?.data?.environment?.version}">${item}</mwc-list-item>`;
+          })}` : html`
+          ${this.versions.map((item, idx) => html`
+            <mwc-list-item id="${item}" value="${item}"
+                ?selected="${idx === 0}">${item}</mwc-list-item>
+          `)}
+        `}
+      </mwc-select>
+      <mwc-textfield id="task-cpu" label="CPU" type="number" value="${this.selectedNode.data?.resources?.cpu ?? 1}" min="1" suffix="Core"></mwc-textfield>
+      <mwc-textfield id="task-mem" label="Memory (GiB)" type="number" value="${this.selectedNode.data?.resources?.mem ?? 0}" min="0" suffix="GB"></mwc-textfield>
+      <mwc-textfield id="task-shmem" label="Shared Memory" type="number" value="${this.selectedNode.data?.resources?.resource_opts?.shmem ?? 0.0125}" min="0.0125" suffix="GB"></mwc-textfield>
+      <mwc-textfield id="task-gpu" label="GPU" type="number" value="${this.selectedNode.data?.resources?.cuda?.shares ?? 0}" min="0" suffix="Unit"></mwc-textfield>
+    </div>`;
+  }
+
+  renderMountsTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="task-mounts" class="vertical layout center flex task-tab-content" style="display:none;">
+      <vaadin-grid
+          theme="row-stripes column-borders compact wrap-cell-content"
+          id="vfolder-grid"
+          aria-label="vfolder list"
+          all-rows-visible
+          .items="${this.vfolders}"
+          @selected-items-changed="${() => this._updateSelectedFolder()}">
+        <vaadin-grid-selection-column id="select-column"
+                                      flex-grow="0"
+                                      text-align="center"
+                                      auto-select></vaadin-grid-selection-column>
+        <vaadin-grid-filter-column header="Folder"
+                                  path="name" resizable></vaadin-grid-filter-column>
+      </vaadin-grid>
+      ${this.vfolders.length > 0 ? html`` : html`
+        <div class="vertical layout center flex blank-box-medium">
+          <span>There's no available folder to mount :(</span>
+        </div>
+      `}
+    </div>
+    `;
+  }
+
+  renderRunPipelineDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
+      <span slot="title">Run Pipeline</span>
+      <div slot="content" class="vertical layout center center-justified flex">
+        <p style="font-weight: bold; font-size:1rem;">Ready to instantiate pipeline</p>
+        <p style="font-size:1rem;">${this.pipelineInfo.name}</p>
+      </div>
+      <div slot="footer" class="horizontal layout end-justified flex">
+        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-pipeline')}"></mwc-button>
+        <mwc-button unelevated label="Proceed" @click="${() => this._runPipeline()}"></mwc-button>
+      </div>
+    </backend-ai-dialog>`;
+  }
+
+  renderEditPipelineDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent>
+      <span slot="title">Edit Pipeline</span>
+      <div slot="content">
+        <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
+        <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
+          ${this.scalingGroups.map((item) => {
+            return html`
+              <mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.scaling_group}">${item}</mwc-list-item>
+              `;
+            })}
+        </mwc-select>
+      </div>
+      <div slot="footer" class="horizontal layout end-justified flex">
+        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
+        <mwc-button unelevated label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
+      </div>
+    </backend-ai-dialog>
+    `;
+  }
+
+  renderPipelineTaskDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent>
+    <span slot="title">${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span>
+    <div slot="content" class="vertical layout center flex">
+      <mwc-tab-bar class="task-tab">
+        <mwc-tab title="task-settings" label="Settings" @MDCTab:interacted=${() => this._focusCmdEditor()} @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
+        <mwc-tab title="task-resources" label="Resources" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
+        <mwc-tab title="task-mounts" label="Mounts" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
+      </mwc-tab-bar>
+      ${this.renderSettingsTabTemplate()}
+      ${this.renderResourcesTabTemplate()}
+      ${this.renderMountsTabTemplate()}
+    </div>
+    <div slot="footer" class="horizontal layout center center-justified flex">
+      ${this.isNodeSelected ? html`
+        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#task-dialog')}"></mwc-button>
+        <mwc-button unelevated label="Update" @click="${() => this._updateTask()}"></mwc-button>
+      `: html`
+        <mwc-button unelevated class="full-width" label="CREATE TASK" @click="${()=> this._createTask()}"></mwc-button>
+      `}
+    </div>
+  </backend-ai-dialog>
+    `;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -933,152 +1090,33 @@ export default class PipelineView extends BackendAIPage {
               <mwc-tab title="pipeline-view" label="View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
-        <div id="pipeline-list" class="tab-content">
-          <pipeline-list ?active="${this._activeTab === 'pipeline-list'}"></pipeline-list>
-        </div>
-        <div id="pipeline-view" class="tab-content" style="display:none;">
-          <div class="horizontal layout flex justified">
-            <div class="horizontal layout flex center start-justified">
-            <span id="pipeline-name"></span>
-            <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
-            <mwc-icon-button class="pipeline-operation" icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
-            <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
-            </div>
-            <div class="horizontal layout flex center end-justified">
-              ${this.isNodeSelected ? html`
-                <mwc-button outlined icon="delete" label="Remove Task" @click="${() => this._removeTask()}"></mwc-button>
-                <mwc-button outlined icon="edit" label="Edit Task" @click="${() => this._showTaskEditDialog()}"></mwc-button>
-              ` : html`
-                <mwc-button id="new-task" unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
-              `}
-            </div>
+          <div id="pipeline-list" class="tab-content">
+            <pipeline-list ?active="${this._activeTab === 'pipeline-list'}"></pipeline-list>
           </div>
-          <pipeline-flow isEditable></pipeline-flow>
+          <div id="pipeline-view" class="tab-content" style="display:none;">
+            <div class="horizontal layout flex justified">
+              <div class="horizontal layout flex center start-justified">
+                <span id="pipeline-name"></span>
+                <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
+                <mwc-icon-button class="pipeline-operation" icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
+                <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
+              </div>
+              <div class="horizontal layout flex center end-justified">
+                ${this.isNodeSelected ? html`
+                  <mwc-button outlined icon="delete" label="Remove Task" @click="${() => this._removeTask()}"></mwc-button>
+                  <mwc-button outlined icon="edit" label="Edit Task" @click="${() => this._showTaskEditDialog()}"></mwc-button>
+                ` : html`
+                  <mwc-button id="new-task" unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
+                `}
+              </div>
+            </div>
+            <pipeline-flow isEditable></pipeline-flow>
+          </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog id="run-pipeline" fixed backdrop blockscrolling persistent>
-        <span slot="title">Run Pipeline</span>
-        <div slot="content" class="vertical layout center center-justified flex">
-          <p style="font-weight: bold; font-size:1rem;">Ready to instantiate pipeline</p>
-          <p style="font-size:1rem;">${this.pipelineInfo.name}</p>
-        </div>
-        <div slot="footer" class="horizontal layout end-justified flex">
-          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#run-pipeline')}"></mwc-button>
-          <mwc-button unelevated label="Proceed" @click="${() => this._runPipeline()}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent>
-        <span slot="title">Edit Pipeline</span>
-        <div slot="content">
-          <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
-          <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
-            ${this.scalingGroups.map((item) => {
-    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.scaling_group}">${item}</mwc-list-item>`;
-  })}
-          </mwc-select>
-        </div>
-        <div slot="footer" class="horizontal layout end-justified flex">
-          <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
-          <mwc-button unelevated label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent>
-        <span slot="title">${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span>
-        <div slot="content" class="vertical layout center flex">
-          <mwc-tab-bar class="task-tab">
-            <mwc-tab title="task-settings" label="Settings" @MDCTab:interacted=${() => this._focusCmdEditor()} @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
-            <mwc-tab title="task-resources" label="Resources" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
-            <mwc-tab title="task-mounts" label="Mounts" @click="${(e) => this._showTab(e.target, '.task-tab-content')}"></mwc-tab>
-          </mwc-tab-bar>
-          <div id="task-settings" class="vertical layout center flex task-tab-content">
-            <mwc-textfield id="task-name" label="Task Name" value="${this.selectedNode?.name}" required></mwc-textfield>
-            ${this.isNodeSelected ? html`
-              <mwc-textfield id="task-type" label="Task Type" value="${this.selectedNode?.data?.type}" disabled></mwc-textfield>
-            ` : html`
-              <mwc-select class="full-width" id="task-type" label="Task Type" fixedMenuPosition required>
-                ${Object.keys(this.taskType).map((item) => {
-    return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}">${this.taskType[item]}</mwc-list-item>`;
-  })}
-              </mwc-select>
-            `}
-            <div class="vertical layout start-justified flex">
-              <span style="padding-left:15px;">Command</span>
-              <lablup-codemirror id="command-editor" mode="shell" useLineWrapping></lablup-codemirror>
-            </div>
-          </div>
-          <div id="task-resources" class="vertical layout center flex task-tab-content" style="display:none;">
-          <mwc-select class="full-width" id="task-environment-scaling-group" label="Scaling Group" fixedMenuPosition>
-            ${this.scalingGroups.map((item, idx) => {
-    return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
-  })}
-          </mwc-select>
-            <mwc-select class="full-width" id="task-environment" label="Task Environment" required fixedMenuPosition value="${this.defaultLanguage}">
-                ${this.languages.map((item) => html`
-                  <mwc-list-item id="${item.name}" value="${item.name}" ?selected="${item.name === (this.selectedNode?.data?.environment?.kernel ?? this.defaultLanguage)}">
-                    <div class="horizontal justified center flex layout" style="width:325px;">
-                      <div style="padding-right:5px;">${item.basename}</div>
-                      <div class="horizontal layout end-justified center flex">
-                          ${item.tags ? item.tags.map((item) => html`
-                            <lablup-shields style="margin-left:5px;" description="${item}"></lablup-shields>
-                          `) : ''}
-                        </div>
-                    </div>
-                  </mwc-list-item>`
-  )}
-            </mwc-select>
-
-            <mwc-select class="full-width" id="task-environment-tag" label="Version" required fixedMenuPosition>
-              <mwc-list-item style="display:none"></mwc-list-item>
-              ${this.isNodeSelected ? html`
-                ${this.versions.map((item) => {
-    return html`
-                  <mwc-list-item id="${item}" value="${item}"
-                  ?selected="${item === this.selectedNode?.data?.environment?.version}">${item}</mwc-list-item>
-                  `;
-  })}
-              ` : html`
-                  ${this.versions.map((item, idx) => html`
-                    <mwc-list-item id="${item}" value="${item}"
-                        ?selected="${idx === 0}">${item}</mwc-list-item>
-                  `)}
-              `}
-            </mwc-select>
-            <mwc-textfield id="task-cpu" label="CPU" type="number" value="${this.selectedNode.data?.resources?.cpu ?? 1}" min="1" suffix="Core"></mwc-textfield>
-            <mwc-textfield id="task-mem" label="Memory (GiB)" type="number" value="${this.selectedNode.data?.resources?.mem ?? 0}" min="0" suffix="GB"></mwc-textfield>
-            <mwc-textfield id="task-shmem" label="Shared Memory" type="number" value="${this.selectedNode.data?.resources?.resource_opts?.shmem ?? 0.0125}" min="0.0125" suffix="GB"></mwc-textfield>
-            <mwc-textfield id="task-gpu" label="GPU" type="number" value="${this.selectedNode.data?.resources?.cuda?.shares ?? 0}" min="0" suffix="Unit"></mwc-textfield>
-          </div>
-          <div id="task-mounts" class="vertical layout center flex task-tab-content" style="display:none;">
-            <vaadin-grid
-                theme="row-stripes column-borders compact wrap-cell-content"
-                id="vfolder-grid"
-                aria-label="vfolder list"
-                all-rows-visible
-                .items="${this.vfolders}"
-                @selected-items-changed="${() => this._updateSelectedFolder()}">
-              <vaadin-grid-selection-column id="select-column"
-                                            flex-grow="0"
-                                            text-align="center"
-                                            auto-select></vaadin-grid-selection-column>
-              <vaadin-grid-filter-column header="Folder"
-                                        path="name" resizable></vaadin-grid-filter-column>
-            </vaadin-grid>
-            ${this.vfolders.length > 0 ? html`` : html`
-              <div class="vertical layout center flex blank-box-medium">
-                <span>There's no available folder to mount :(</span>
-              </div>
-            `}
-          </div>
-        </div>
-        <div slot="footer" class="horizontal layout center center-justified flex">
-          ${this.isNodeSelected ? html`
-            <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#task-dialog')}"></mwc-button>
-            <mwc-button unelevated label="Update" @click="${() => this._updateTask()}"></mwc-button>
-          `: html`
-            <mwc-button unelevated class="full-width" label="CREATE TASK" @click="${()=> this._createTask()}"></mwc-button>
-          `}
-        </div>
-      </backend-ai-dialog>
+      ${this.renderRunPipelineDialogTemplate()}
+      ${this.renderEditPipelineDialogTemplate()}
+      ${this.renderPipelineTaskDialogTemplate()}
     `;
   }
 }

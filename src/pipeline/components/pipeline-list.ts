@@ -576,7 +576,7 @@ export default class PipelineList extends BackendAIPage {
       const storage = {
         host: storageHost,
         name: storageHostMountFolderName
-      }
+      };
       const mounts = this.selectedVfolders;
       const yaml = { // used for tasks
         name: name,
