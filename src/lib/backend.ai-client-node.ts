@@ -778,7 +778,7 @@ class Client {
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = undefined) {
+  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture = '') {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -3955,9 +3955,8 @@ class Pipeline {
 
   async logout() {
     const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
-    let result;
     try {
-      result = await this.client._wrapWithPromise(rqst);
+      await this.client._wrapWithPromise(rqst);
       this._removeCookieByName(this.tokenName); 
     } catch (err) {
       console.log(err);

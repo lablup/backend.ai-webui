@@ -3973,6 +3973,7 @@ class Pipeline {
       } else {
         const token = result.token;
         document.cookie = `${this.tokenName}=${token}; path=/`;
+        return Promise.resolve(false);
       }
     } catch (err) {
       console.log(err);
@@ -3985,9 +3986,8 @@ class Pipeline {
 
   async logout() {
     const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
-    let result;
     try {
-      result = await this.client._wrapWithPromise(rqst);
+      await this.client._wrapWithPromise(rqst);
       this._removeCookieByName(this.tokenName); 
     } catch (err) {
       console.log(err);
