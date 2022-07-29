@@ -184,7 +184,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     }
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
 

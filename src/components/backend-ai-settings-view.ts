@@ -20,9 +20,9 @@ import {
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
-import '@material/mwc-switch/mwc-switch';
 import {Select} from '@material/mwc-select';
 import {TextField} from '@material/mwc-textfield';
+import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-list/mwc-list-item';
 
 import './lablup-activity-panel';
@@ -601,7 +601,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     });
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
     }
@@ -795,11 +795,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
     }
   }
 
-  openDialog(id) {
+  openDialog(id: string) {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
-  closeDialog(id) {
+  closeDialog(id: string) {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
