@@ -594,7 +594,7 @@ export default class BackendAIImport extends BackendAIPage {
         <div slot="message">
           <div class="horizontal wrap layout center">
             <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
-                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @change="${(e) => this.notebookUrlChanged(e)}"></mwc-textfield>
+                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @keyup="${(e) => this.notebookUrlChanged(e)}"></mwc-textfield>
             <mwc-button ?disabled="${this.importButtonDisabled}" icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
