@@ -2,12 +2,11 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
- import {get as _text, translate as _t} from 'lit-translate';
- import {css, CSSResultGroup, html, LitElement, render} from 'lit';
- import {customElement, property, query} from 'lit/decorators.js';
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultGroup, html, LitElement, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import {BackendAIPage} from '../../components/backend-ai-page';
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 import '../../components/lablup-codemirror';
 import {
@@ -16,7 +15,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineYAML, PipelineTaskNode, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -33,6 +32,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
 import 'weightless/expansion';
+
+import {default as YAML} from 'js-yaml';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 
@@ -101,7 +102,7 @@ export default class PipelineConfigurationForm extends LitElement {
   @query('#environment-tag-select') private _versionSelector;
   @query('#vfolder-grid') vfolderGrid;
   @query('#name-input') private _nameInput;
-  @query('#pipeline-type') private _typeInput;
+  @query('#pipeline-type') private _typeSelect;
   @query('#description-input') private _descriptionInput;
   @query('#scaling-group-select') private _scalingGroupSelect;
   @query('#cpu-input') private _cpuInput;
@@ -117,6 +118,9 @@ export default class PipelineConfigurationForm extends LitElement {
     gitlab: 'Import from GitLab',
     custom: 'Custom Task'
   };
+
+  @property({type: PipelineInfo, attribute: "pipeline-info"}) pipelineInfo;
+  @property({type: PipelineTask, attribute: "pipeline-task"}) pipelineTask;
 
   constructor() {
     super();
@@ -284,6 +288,52 @@ export default class PipelineConfigurationForm extends LitElement {
 
   _loadSupportedLanguages() {
     this.languages = this.resourceBroker.languages;
+  }
+
+  _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
+    // name, description
+    this._nameInput.value = pipeline.name;
+    this._descriptionInput.value = pipeline.description;
+
+    // storage
+    this._storageMountSelect.value = pipeline.storage.host;
+    this._mountFolderNameInput.value = pipeline.storage.name;
+     // FIXME: disable renaming auto-created vfolder of pipeline
+    this._mountFolderNameInput.disabled = true;
+
+    const pipelineYaml: PipelineYAML = JSON.parse(pipeline.yaml) as PipelineYAML;
+
+    // type
+    /* FIXME:
+     * - apply "Custom", since only custom type is available
+     * - temporally disable changing type selection
+     */
+    this._typeSelect.value = this.pipelineTypes[0];
+    this._typeSelect.disabled = true;
+
+    // scaling-group
+    this._scalingGroupSelect.value = pipelineYaml.environment['scaling-group'];
+
+    // environment
+    [this._environment.value, this._versionSelector.value]= pipelineYaml.environment['image'].split(':');
+
+    // resources
+    this._cpuInput.value = pipelineYaml.resources.cpu;
+    this._memInput.value = pipelineYaml.resources.memory;
+    this._gpuInput.value = pipelineYaml.resources.cuda?.shares ?? 0;
+    this._shmemInput.value = pipelineYaml.resource_opts.shmem;
+
+    // virtual folders
+    this.vfolderGrid.selectedItems = this.vfolderGrid.items.filter((item) => pipelineYaml.mounts.includes(item.name));
+  }
+
+  _loadCurrentPipelineTaskConfiguration() {
+    // name, description
+    // type
+    // scaling-group
+    // environment
+    // resources
+    // virtual folders
   }
 
   _loadDefaultMounts(mountFolderList: Array<string> = []) {
@@ -557,7 +607,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // general tab inputs
     if (validityCheckByGroup(
-      [this._nameInput, this._typeInput, this._scalingGroupSelect, 
+      [this._nameInput, this._typeSelect, this._scalingGroupSelect, 
       this._environment, this._versionSelector, this._descriptionInput])) {
         this._switchActiveTab(this._generalTab);
         return false;
