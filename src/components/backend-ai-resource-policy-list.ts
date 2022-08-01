@@ -377,6 +377,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     `;
   }
 
+  /**
+   * Render an index.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
     render(
@@ -387,6 +394,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a resource.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   resourceRenderer(root, column?, rowData?) {
     render(
       html`
@@ -436,6 +450,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a concurrency.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   concurrencyRenderer(root, column?, rowData?) {
     render(
       html`
@@ -444,6 +465,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control buttons 
+   * @param {DOMelement} root
+   * @param {object} column 
+   * @param {object} rowData
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -460,6 +487,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render resource policy name
+   * @param {DOMelement} root
+   * @param {object} column 
+   * @param {object} rowData
+   */
   policyNameRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -471,6 +504,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a cluster size
+   * @param {DOMelement} root
+   * @param {object} column 
+   * @param {object} rowData
+   */
   clusterSizeRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -480,6 +519,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a storage nodes 
+   * @param {DOMelement} root
+   * @param {object} column 
+   * @param {object} rowData
+   */
   storageNodesRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -501,7 +546,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: Boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -821,6 +866,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
   }
 
+  /**
+  * update status of user input.
+  *
+  * @param {object} resource
+  */
   _updateInputStatus(resource) {
     const textfield = resource;
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
