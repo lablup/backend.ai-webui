@@ -23,7 +23,7 @@ import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
-import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -376,11 +376,17 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   _launchDialogById(id: string) {
-    this.shadowRoot?.querySelector(id).show();
+    const dialog = this.shadowRoot?.querySelector(id);
+    if (dialog instanceof BackendAIDialog) {
+      dialog.show();
+    }
   }
 
   _hideDialogById(id: string) {
-    this.shadowRoot?.querySelector(id).hide();
+    const dialog = this.shadowRoot?.querySelector(id);
+    if (dialog instanceof BackendAIDialog) {
+      dialog.hide();
+    }
   }
 
   _openCreateRegistryDialog() {
