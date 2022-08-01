@@ -80,7 +80,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) exportToCsvDialog = Object();
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
@@ -100,6 +99,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#new-keypair-dialog') newKeypairDialog!: BackendAIDialog;
   @query('#new-policy-dialog') newPolicyDialog!: BackendAIDialog;
   @query('#new-user-dialog') newUserDialog!: BackendAIDialog;
+  @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
+  @query('#export-file-name') exportFileNameInput!: TextField;
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
@@ -351,7 +352,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this._updateInputStatus(this.session_lifetime);
     }
     this.vfolder_max_limit['value'] = 10;
-    this.exportToCsvDialog = this.shadowRoot?.querySelector('#export-to-csv');
     this._defaultFileName = this._getDefaultCSVFileName();
   }
 
@@ -848,8 +848,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Export user list and credential lists and resource policy lists to csv.
    */
   _exportToCSV() {
-    const fileNameEl = this.shadowRoot?.querySelector('#export-file-name') as TextField;
-    if (!fileNameEl.validity.valid) {
+    if (!this.exportFileNameInput.validity.valid) {
       return;
     }
     let users; let credential_active; let credential_inactive; let credential; let resource_policy;
@@ -859,7 +858,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       users.map((obj) => { // filtering unnecessary key
         ['password', 'need_password_change'].forEach((key) => delete obj[key]);
       });
-      JsonToCsv.exportToCsv(fileNameEl.value, users);
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, users);
       break;
     case 'credential-lists':
       credential_active = this.activeCredentialList.keypairs;
@@ -868,11 +867,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       credential.map((obj)=> { // filtering unnecessary key
         ['is_admin'].forEach((key) => delete obj[key]);
       });
-      JsonToCsv.exportToCsv(fileNameEl.value, credential);
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, credential);
       break;
     case 'resource-policy-lists':
       resource_policy = this.resourcePolicyList.resourcePolicy;
-      JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, resource_policy);
       break;
     }
     this.notification.text = _text('session.DownloadingCSVFile');
