@@ -54,7 +54,7 @@ type ConfigurationType = 'pipeline' | 'pipeline-task';
 @customElement('pipeline-configuration-form')
 export default class PipelineConfigurationForm extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object, attribute: 'configuration-type'}) configurationType = 'pipeline';
+  @property({type: Object, attribute: 'configuration-type'}) configurationType = 'pipeline' as ConfigurationType;
   @property({type: Boolean, attribute: 'is-editmode'}) isEditmode = false;
   @property({type: Boolean}) active = false;
   @property({type: Object}) userInfo;
@@ -273,12 +273,17 @@ export default class PipelineConfigurationForm extends LitElement {
   }
 
   _initConfiguration() {
-    this.languages = this.resourceBroker.languages;
     this._fetchUserInfo();
     this._updateVirtualFolderList();
+    this._loadSupportedLanguages();
+    this._selectDefaultLanguage();
+
     // default active tab is general
     this._showTabContent(this._generalTab);
-    this._selectDefaultLanguage();
+  }
+
+  _loadSupportedLanguages() {
+    this.languages = this.resourceBroker.languages;
   }
 
   _loadDefaultMounts(mountFolderList: Array<string> = []) {
@@ -509,6 +514,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} language - default language
    */
    async _selectDefaultLanguage(forceUpdate = false, language = '') {
+    this.languages = this.resourceBroker.languages;
     if (this._defaultLanguageUpdated === true && forceUpdate === false) {
       return;
     }
@@ -527,7 +533,9 @@ export default class PipelineConfigurationForm extends LitElement {
     }
     // await environment.updateComplete; async way.
     const obj = this._environment.items.find((o) => o.value === this.defaultLanguage);
-    if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
+    if (typeof obj === 'undefined' && 
+        typeof globalThis.backendaiclient !== 'undefined' && 
+        globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
         return this._selectDefaultLanguage(forceUpdate, language);
@@ -648,7 +656,8 @@ export default class PipelineConfigurationForm extends LitElement {
    * Initialize user info
    */
    _fetchUserInfo() {
-    return globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, ['full_name', 'username', 'domain_name', 'id']).then((res) => {
+    const userKeyList: Array<string> = ['full_name', 'username', 'domain_name', 'id'];
+    return globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, userKeyList).then((res) => {
       const userInfo = res.user;
       this.userInfo = {
         // username: userInfo.full_name ? userInfo.full_name : userInfo.username,
