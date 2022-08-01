@@ -120,7 +120,7 @@
     "rollup": "^2.71.1",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-workbox": "^6.2.0",
-    "serve": "^13.0.2",
+    "serve": "^13.0.4",
     "testcafe": "^1.18.6",
     "tinyify": "^3.0.0",
     "tslib": "^2.4.0",
