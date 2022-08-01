@@ -291,49 +291,78 @@ export default class PipelineConfigurationForm extends LitElement {
   }
 
   _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
+    this._updateVirtualFolderList();
+    this._loadSupportedLanguages();
+    const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
+
     // name, description
-    this._nameInput.value = pipeline.name;
-    this._descriptionInput.value = pipeline.description;
+    this._autoFillInput(this._nameInput, pipeline.name);
+    this._autoFillInput(this._descriptionInput, pipeline.description);
 
     // storage
-    this._storageMountSelect.value = pipeline.storage.host;
-    this._mountFolderNameInput.value = pipeline.storage.name;
+    this._autoFillInput(this._storageMountSelect, pipeline.storage.host);
+    this._autoFillInput(this._mountFolderNameInput, pipeline.storage.name);
      // FIXME: disable renaming auto-created vfolder of pipeline
     this._mountFolderNameInput.disabled = true;
-
-    const pipelineYaml: PipelineYAML = JSON.parse(pipeline.yaml) as PipelineYAML;
 
     // type
     /* FIXME:
      * - apply "Custom", since only custom type is available
      * - temporally disable changing type selection
      */
-    this._typeSelect.value = this.pipelineTypes[0];
+    this._autoFillInput(this._typeSelect, this.pipelineTypes[0]);
     this._typeSelect.disabled = true;
 
     // scaling-group
-    this._scalingGroupSelect.value = pipelineYaml.environment['scaling-group'];
+    this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
 
     // environment
-    [this._environment.value, this._versionSelector.value]= pipelineYaml.environment['image'].split(':');
+    const [environment, version] = pipelineYaml.environment['image'].split(':');
+    this._autoFillInput(this._environment, environment);
+    this._autoFillInput(this._versionSelector, version);
 
     // resources
-    this._cpuInput.value = pipelineYaml.resources.cpu;
-    this._memInput.value = pipelineYaml.resources.memory;
-    this._gpuInput.value = pipelineYaml.resources.cuda?.shares ?? 0;
-    this._shmemInput.value = pipelineYaml.resource_opts.shmem;
+    this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
+
+    /* FIXME:
+     * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
+     */
+    this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._gpuInput, pipelineYaml.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
+    this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
 
     // virtual folders
-    this.vfolderGrid.selectedItems = this.vfolderGrid.items.filter((item) => pipelineYaml.mounts.includes(item.name));
+    this._loadDefaultMounts(pipelineYaml.mounts);
   }
 
-  _loadCurrentPipelineTaskConfiguration() {
+  _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
+    /**
+     * TODO: auto-fill pipeline task by current pipeline info (default)
+     * 
+     */
     // name, description
     // type
     // scaling-group
     // environment
     // resources
     // virtual folders
+  }
+
+  _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
+    /**
+     * TODO: auto-fill pipeline task by current task info
+     * 
+     */
+    // name, description
+    // type
+    // scaling-group
+    // environment
+    // resources
+    // virtual folders
+  }
+
+  _autoFillInput(inputElement: any, value: string) {
+    inputElement.value = value;
   }
 
   _loadDefaultMounts(mountFolderList: Array<string> = []) {
@@ -1031,7 +1060,7 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
       <mwc-textfield id="cpu-input" label="CPU" type="number" min="1" suffix="Core" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="mem-input" label="Memory (GiB)" type="number" min="0" suffix="GiB" ?required=${isRequired}></mwc-textfield>
+      <mwc-textfield id="mem-input" label="Memory (GiB)" type="number" min="2" suffix="GiB" ?required=${isRequired}></mwc-textfield>
       <mwc-textfield id="shmem-input" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB" ?required=${isRequired}></mwc-textfield>
       <mwc-textfield id="gpu-input" label="GPU" type="number" min="0" suffix="Unit" ?required=${isRequired}></mwc-textfield>
     `;
