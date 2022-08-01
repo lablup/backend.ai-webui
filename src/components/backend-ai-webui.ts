@@ -436,7 +436,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     indicator.show();
   }
 
-  _parseConfig(fileName: string, returning = false): Promise<void> {
+  _parseConfig(fileName, returning = false): Promise<void> {
+    const _preprocessToml = (config) => {
+      if (config?.general?.apiEndpointText) {
+        config.general.apiEndpointText = JSON.parse(`"${config.general.apiEndpointText}"`);
+      }
+      if (config?.general?.siteDescription) {
+        config.general.siteDescription = JSON.parse(`"${config.general.siteDescription}"`);
+      }
+    };
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -446,13 +454,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       })
       .then((res) => {
         const tomlConfig = toml(res);
+        _preprocessToml(tomlConfig)
         if (returning) {
           return tomlConfig;
         } else {
-          this.config = toml(res);
+          this.config = tomlConfig;
         }
       }).catch((err) => {
         console.log('Configuration file missing.');
+        console.error(err);
       });
   }
 
