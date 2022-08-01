@@ -25,7 +25,7 @@ import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
-import {PipelineTaskNode, PipelineTask, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**
@@ -49,7 +49,7 @@ export default class PipelineView extends BackendAIPage {
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) isNodeSelected = false;
   @property({type: Object}) selectedNode = Object();
-  @property({type: Object}) pipelineInfo = Object();
+  @property({type: PipelineInfo}) pipelineInfo;
   @property({type: Object}) taskInfo;
 
   // Elements
@@ -74,6 +74,7 @@ export default class PipelineView extends BackendAIPage {
 
   _initResources() {
     this.resourceBroker = globalThis.resourceBroker;
+    this.pipelineInfo = new PipelineInfo();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -172,12 +173,14 @@ export default class PipelineView extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         if (this._activeTab === 'pipeline-view') {
-          this._loadCurrentFlowData();
+          const parsedPipelineInfo = this._parsePipelineInfo(this.pipelineInfo);
+          this._loadCurrentFlowData(parsedPipelineInfo);
         }
       }, true);
     } else { // already connected
       if (this._activeTab === 'pipeline-view') {
-        this._loadCurrentFlowData();
+        const parsedPipelineInfo = this._parsePipelineInfo(this.pipelineInfo);
+        this._loadCurrentFlowData(parsedPipelineInfo);
       }
     }
   }
@@ -207,9 +210,9 @@ export default class PipelineView extends BackendAIPage {
         this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
         this._showTabContent(e.detail.activeTab);
         this.pipelineInfo = e.detail.pipeline;
-        this.pipelineInfo = this._deserializePipelineInfo(this.pipelineInfo);
-        this._loadCurrentFlowData();
-        this.pipelineConfigurationForm._loadDefaultMounts(this.pipelineInfo.yaml.mounts);
+        const parsedPipelineInfo = this._parsePipelineInfo(this.pipelineInfo);
+        this._loadCurrentFlowData(parsedPipelineInfo);
+        this.pipelineConfigurationForm._loadDefaultMounts(parsedPipelineInfo.yaml.mounts);
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       }
     });
@@ -333,11 +336,11 @@ export default class PipelineView extends BackendAIPage {
     const pipelineId = this.pipelineInfo.id;
     globalThis.backendaiclient.pipeline.update(pipelineId, input).then((res) => {
       // step 2. Receive the response and if succeeds, then change current pipeline info
-      const pipeline = res;
-      pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
-      pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
-      this.pipelineInfo = this._deserializePipelineInfo(pipeline);
-      this.pipelineInfo.yaml.environment.scaling_group = selectedScalingGroup;
+      this.pipelineInfo = res;
+      // pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
+      // pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
+      // this.pipelineInfo = this._parsePipelineInfo(pipeline);
+      // this.pipelineInfo.yaml.environment.scaling_group = selectedScalingGroup;
       this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       this.notification.text = `Pipeline ${this.pipelineInfo.name} updated.`;
       this.notification.show();
@@ -351,13 +354,13 @@ export default class PipelineView extends BackendAIPage {
   /**
    * Import pipeline node graph to dataflow pane
    */
-  _loadCurrentFlowData() {
-    if (this.pipelineInfo) {
-      const currentFlowData = this.pipelineInfo.dataflow ?? {};
+  _loadCurrentFlowData(pipeline) {
+    if (pipeline) {
+      const currentFlowData = pipeline.dataflow ?? {};
       const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
       document.dispatchEvent(flowDataReqEvent);
-      if (this.pipelineInfo.name) {
-        this.notification.text = `Pipeline ${this.pipelineInfo.name} loaded.`;
+      if (pipeline.name) {
+        this.notification.text = `Pipeline ${pipeline.name} loaded.`;
         this.notification.show();
       }
     }
@@ -371,13 +374,12 @@ export default class PipelineView extends BackendAIPage {
     const flowDataReqEvent = new CustomEvent('export-flow');
     document.dispatchEvent(flowDataReqEvent);
 
-    this.pipelineInfo = this._deserializePipelineInfo(this.pipelineInfo);
+    const parsedPipelineInfo = this._parsePipelineInfo(this.pipelineInfo);
     // convert object to string (dataflow)
-    this.pipelineInfo.yaml.tasks = this.parseTaskListInfo(this.pipelineInfo.dataflow);
-    this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
+    parsedPipelineInfo.tasks = this._parseTaskListInfo(this.pipelineInfo.dataflow);
+    this.pipelineInfo = this._stringifyPipelineInfo(parsedPipelineInfo);
     globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
-      const pipeline = res;
-      this.pipelineInfo = this._deserializePipelineInfo(pipeline);
+      this.pipelineInfo = res;
       this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
       this.notification.show();
     }).catch((err) => {
@@ -388,7 +390,7 @@ export default class PipelineView extends BackendAIPage {
   /**
    * Return pipelineInfo to sendable data stream
    */
-  _serializePipelineInfo(pipelineInfo) {
+  _stringifyPipelineInfo(pipelineInfo) {
     if (Object.keys(pipelineInfo).length !== 0) {
       return {
         ...pipelineInfo,
@@ -401,7 +403,7 @@ export default class PipelineView extends BackendAIPage {
   /**
    * Return pipelineInfo to modificable data object
    */
-  _deserializePipelineInfo(pipelineInfo) {
+  _parsePipelineInfo(pipelineInfo) {
     if (Object.keys(pipelineInfo).length !== 0) {
       return {
         ...pipelineInfo,
@@ -437,7 +439,7 @@ export default class PipelineView extends BackendAIPage {
    * Instantiate pipeline to pipeline job and move to pipeline job page
    */
   _runPipeline() {
-    this.pipelineInfo = this._serializePipelineInfo(this.pipelineInfo);
+    this.pipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo);
     globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
       this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.id}...`;
       this.notification.show();
@@ -463,6 +465,14 @@ export default class PipelineView extends BackendAIPage {
     this.pipelineConfigurationForm._clearCmdEditor();
     await this.pipelineConfigurationForm._initConfiguration();
     this._launchDialogById('#task-dialog');
+  }
+
+  /**
+   * Show pipeline update dialog
+   */
+  async _showPipelineEditDialog() {
+    await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(this.pipelineInfo);
+    this._launchDialogById('#edit-pipeline');
   }
 
   /**
@@ -498,7 +508,7 @@ export default class PipelineView extends BackendAIPage {
    * @param {json} rawData - raw object from dataflow
    * @return {Array<PipelineTask>} taskList
    */
-  parseTaskListInfo(rawData) {
+  _parseTaskListInfo(rawData) {
     const rawTaskList = rawData?.drawflow?.Home?.data;
     const getTaskNameFromNodeId = (connectionList) => {
       return (connectionList.length > 0) ? connectionList.map((item) => {
@@ -560,14 +570,15 @@ export default class PipelineView extends BackendAIPage {
     <backend-ai-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
       <span slot="title">Edit Pipeline</span>
       <div slot="content">
-        <mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
+        <pipeline-configuration-form ?is-editmode=${this.pipelineInfo !== null} pipeline-info=${this.pipelineInfo}></pipeline-configuration-form>
+      <!--<mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
         <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
           ${this.scalingGroups.map((item) => {
             return html`
               <mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.['scaling-group']}">${item}</mwc-list-item>
               `;
             })}
-        </mwc-select>
+        </mwc-select>-->
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
         <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
@@ -618,7 +629,7 @@ export default class PipelineView extends BackendAIPage {
                 <span id="pipeline-name"></span>
                 <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
                 <mwc-icon-button class="pipeline-operation" icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
-                <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._launchDialogById('#edit-pipeline')}"></mwc-icon-button>
+                <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._showPipelineEditDialog()}"></mwc-icon-button>
               </div>
               <div class="horizontal layout flex center end-justified">
                 ${this.isNodeSelected ? html`
