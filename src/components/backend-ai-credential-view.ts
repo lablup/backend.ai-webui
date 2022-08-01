@@ -38,7 +38,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import { List } from '@material/mwc-list';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
