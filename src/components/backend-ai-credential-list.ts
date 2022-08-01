@@ -461,7 +461,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Change d of any type to human readable date time.
    *
-   * @param {any} d   - string or DateTime object to convert
+   * @param {Date} d   - string or DateTime object to convert
    * @return {Date}   - Formatted date / time to be human-readable text.
    */
   _humanReadableTime(d) {
