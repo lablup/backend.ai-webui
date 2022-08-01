@@ -471,7 +471,8 @@ export default class PipelineView extends BackendAIPage {
    * Show pipeline update dialog
    */
   async _showPipelineEditDialog() {
-    await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(this.pipelineInfo);
+    const stringifiedPipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo)
+    await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(stringifiedPipelineInfo);
     this._launchDialogById('#edit-pipeline');
   }
 
@@ -509,6 +510,7 @@ export default class PipelineView extends BackendAIPage {
    * @return {Array<PipelineTask>} taskList
    */
   _parseTaskListInfo(rawData) {
+    const parsedPipelineInfo = this._parsePipelineInfo(this.pipelineInfo);
     const rawTaskList = rawData?.drawflow?.Home?.data;
     const getTaskNameFromNodeId = (connectionList) => {
       return (connectionList.length > 0) ? connectionList.map((item) => {
@@ -526,7 +528,7 @@ export default class PipelineView extends BackendAIPage {
           module_uri: '',
           command: task.data.command,
           environment: {
-            'scaling-group': this.pipelineInfo?.yaml?.environment?.scaling_group,
+            'scaling-group': parsedPipelineInfo.yaml?.environment?.['scaling-group'],
             image: `${PipelineUtils._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
             envs: task.data.environment.envs ?? {},
           } as PipelineEnvironment,
@@ -571,14 +573,6 @@ export default class PipelineView extends BackendAIPage {
       <span slot="title">Edit Pipeline</span>
       <div slot="content">
         <pipeline-configuration-form ?is-editmode=${this.pipelineInfo !== null} pipeline-info=${this.pipelineInfo}></pipeline-configuration-form>
-      <!--<mwc-textfield id="edit-pipeline-name" label="Pipeline Name" value="${this.pipelineInfo.name}" required></mwc-textfield>
-        <mwc-select class="full-width" id="edit-scaling-group" label="ScalingGroup" fixedMenuPosition required>
-          ${this.scalingGroups.map((item) => {
-            return html`
-              <mwc-list-item id="${item}" value="${item}" ?selected="${item === this.pipelineInfo?.yaml?.environment?.['scaling-group']}">${item}</mwc-list-item>
-              `;
-            })}
-        </mwc-select>-->
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
         <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
