@@ -38,6 +38,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import { List } from '@material/mwc-list';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -662,7 +663,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param {any} tab - Tab webcomponent
+   * @param {EventTarget} tab - Tab webcomponent
    */
   _showTab(tab) {
     const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
@@ -690,7 +691,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Display the list.
    *
-   * @param {any} list - List webcomponent
+   * @param {EventTarget} list - List webcomponent
    */
   _showList(list) {
     const els = this.shadowRoot?.querySelectorAll<HTMLElement>('.list-content') as NodeListOf<HTMLElement>;
