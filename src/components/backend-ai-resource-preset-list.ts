@@ -220,7 +220,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t('resourcePreset.ResourcePresets')}</span>
           <span class="flex"></span>
-          <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${(e) => this._launchPresetAddDialog(e)}"></mwc-button>
+          <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${() => this._launchPresetAddDialog()}"></mwc-button>
         </h4>
         <div>
           <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
@@ -337,7 +337,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
               unelevated
               class="operation"
               label="${_t('button.Okay')}"
-              @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
+              @click="${() => this._deleteResourcePresetWithCheck()}"></mwc-button>
          </div>
       </backend-ai-dialog>
     `;
