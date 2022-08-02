@@ -280,7 +280,7 @@
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
     "DefaultTensorboardPath": "/home/work/logs",
-    "SessionTerminated": "세선을 중지했습니다.",
+    "SessionTerminated": "세션을 중지했습니다.",
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
     "DownloadingCSVFile": "CSV 파일을 내려받습니다.",
@@ -305,7 +305,7 @@
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "이미 종료중인 세션입니다"
   },
   "button": {
     "Cancel": "취소",
@@ -674,7 +674,7 @@
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
     "SharedMemory": "공유메모리 (GB)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "자원 프리셋을 성공적으로 삭제하였습니다"
   },
   "usersettings": {
     "General": "일반",
@@ -808,7 +808,7 @@
     "RescanImages": "이미지 리스캔중...",
     "RescanFailed": "리스캔 작업이 실패하였습니다.",
     "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
-    "PleaseSelectOption": "__NOT_TRANSLATED__"
+    "PleaseSelectOption": "옵션을 선택하세요"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
@@ -1194,7 +1194,7 @@
     "ResourcePolicyAlreadyExist": "같은 이름의 자원 정책이 이미 있습니다.",
     "ScalingGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
     "ResourceLimitExceed": "자원 제한을 초과했습니다. 가용 자원량을 확인하세요.",
-    "SmallerResourceThenImageRequires": "요청한 자원가 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
+    "SmallerResourceThenImageRequires": "요청한 자원이 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
     "LoginSucceededManagerNotResponding": "로그인은 성공하였으나 매니저 서버가 응답하지 않습니다.",
     "UserNameAlreadyExist": "이미 사용하고 있는 사용자명입니다.",
     "ResourcePolicyStillReferenced": "이 자원 정책을 사용하고 있는 자격 증명이 있습니다.",

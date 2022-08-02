@@ -336,10 +336,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
-    mwc-select.fixed-position > mwc-list-item {
-      width: 255px;
-    }
-
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
@@ -441,6 +437,11 @@ export const BackendAIWebUIStyles = [
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+      --mdc-ripple-focus-opacity: 0;
+    }
+
+    mwc-icon-button#mini-ui-toggle-button {
+      --mdc-ripple-focus-opacity: 0;
     }
 
     #sidebar-navbar-footer mwc-icon-button {

@@ -348,9 +348,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
     const scalingGroupId = kInfo.compute_session.scaling_group;
     const groupId = globalThis.backendaiclient.current_group_id();
-    const wsproxyVersion = (globalThis.isElectron)
-      ? 'v1'
-      : (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
+    const wsproxyVersion = (globalThis.isElectron) ?
+      'v1' :
+      (await globalThis.backendaiclient.scalingGroup.getWsproxyVersion(scalingGroupId, groupId)).wsproxy_version;
     return wsproxyVersion;
   }
 
@@ -497,7 +497,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'Accept': 'application/json',
         'Content-Type': 'application/json'
       },
-      uri: proxyURL + 'conf'
+      uri: new URL('conf', proxyURL).href,
     };
     this.indicator.set(20, _text('session.launcher.SettingUpProxyForApp'));
     const response = await this.sendRequest(rqst);

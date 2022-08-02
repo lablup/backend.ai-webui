@@ -901,7 +901,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       // allow any input in variable or value
       const nonempty = (row) => Array.prototype.filter.call(
-          row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
       ).length <= 1;
 
       const encodeRow = (row) => {
@@ -1082,7 +1082,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     this.sessionInfoObj.environment = environmentString.split('/').pop();
     this.sessionInfoObj.version = [versionArray[0].toUpperCase()].concat(
-        (versionArray.length !== 1 ? versionArray.slice(1).map((item) => item.toUpperCase()) : ['']));
+      (versionArray.length !== 1 ? versionArray.slice(1).map((item) => item.toUpperCase()) : ['']));
     return true;
   }
 
@@ -1285,23 +1285,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     config['cpu'] = this.cpu_request;
     switch (this.gpu_request_type) {
-      case 'cuda.shares':
-        config['cuda.shares'] = this.gpu_request;
-        break;
-      case 'cuda.device':
-        config['cuda.device'] = this.gpu_request;
-        break;
-      case 'rocm.device':
-        config['rocm.device'] = this.gpu_request;
-        break;
-      case 'tpu.device':
-        config['tpu.device'] = this.gpu_request;
-        break;
-      default:
+    case 'cuda.shares':
+      config['cuda.shares'] = this.gpu_request;
+      break;
+    case 'cuda.device':
+      config['cuda.device'] = this.gpu_request;
+      break;
+    case 'rocm.device':
+      config['rocm.device'] = this.gpu_request;
+      break;
+    case 'tpu.device':
+      config['tpu.device'] = this.gpu_request;
+      break;
+    default:
       // Fallback to current gpu mode if there is a gpu request, but without gpu type.
-        if (this.gpu_request > 0 && this.gpu_mode) {
-          config[this.gpu_mode] = this.gpu_request;
-        }
+      if (this.gpu_request > 0 && this.gpu_mode) {
+        config[this.gpu_mode] = this.gpu_request;
+      }
     }
     if (String(this.shadowRoot.querySelector('#mem-resource').value) === 'Infinity') {
       config['mem'] = String(this.shadowRoot.querySelector('#mem-resource').value);
@@ -1366,7 +1366,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
     let kernelName: string;
-    if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
+    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
@@ -1764,6 +1764,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, true);
     } else {
       this.metric_updating = true;
+      let enqueue_session = false;
+      if (globalThis.backendaiclient._config.always_enqueue_compute_session === true) {
+        enqueue_session = true;
+      }
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
@@ -1823,6 +1827,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
+          if (enqueue_session) {
+            available_slot['cpu'] = Infinity;
+            available_slot['mem'] = Infinity;
+            available_slot['cuda_device'] = Infinity;
+            available_slot['cuda_shares'] = Infinity;
+            available_slot['rocm_device'] = Infinity;
+            available_slot['tpu_device'] = Infinity;
+          }
+
           if ('cpu' in this.userResourceLimit) {
             if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max) && cpu_metric.max !== null) {
               cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
@@ -2077,11 +2090,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   folderToMountListRenderer(root, column, rowData) {
     render(
-        html`
+      html`
           <div style="font-size:14px;text-overflow:ellipsis;overflow:hidden;">${rowData.item.name}</div>
           <span style="font-size:10px;">${rowData.item.host}</span>
         `,
-        root
+      root
     );
   }
 
@@ -2094,25 +2107,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   folderMapRenderer(root, column?, rowData?) {
     render(
-        html`
+      html`
           <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
                              pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
                              theme="small" placeholder="/home/work/${rowData.item.name}"
                              @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
         `,
-        root
+      root
     );
   }
 
   infoHeaderRenderer(root, column?) {
     render(
-        html`
+      html`
           <div class="horizontal layout center">
             <span id="vfolder-header-title">${_t('session.launcher.FolderAlias')}</span>
             <mwc-icon-button icon="info" class="fg green info" @click="${(e) => this._showPathDescription(e)}"></mwc-icon-button>
           </div>
         `,
-        root
+      root
     );
   }
 
@@ -2549,26 +2562,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const value = e.target.value;
     const id = e.target.id.split('-')[0];
     switch (id) {
-      case 'cpu':
-        this.cpu_request = value;
-        break;
-      case 'mem':
-        this.mem_request = value;
-        break;
-      case 'shmem':
-        this.shmem_request = value;
-        break;
-      case 'gpu':
-        this.gpu_request = value;
-        break;
-      case 'session':
-        this.session_request = value;
-        break;
-      case 'cluster':
-        this._changeTotalAllocationPane();
-        break;
-      default:
-        break;
+    case 'cpu':
+      this.cpu_request = value;
+      break;
+    case 'mem':
+      this.mem_request = value;
+      break;
+    case 'shmem':
+      this.shmem_request = value;
+      break;
+    case 'gpu':
+      this.gpu_request = value;
+      break;
+    case 'session':
+      this.session_request = value;
+      break;
+    case 'cluster':
+      this._changeTotalAllocationPane();
+      break;
+    default:
+      break;
     }
     this.requestUpdate();
     if (isResourceClicked) { // resource allocation
@@ -2805,7 +2818,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const container = this.shadowRoot.querySelector('#modify-env-container');
     const rows = container.querySelectorAll('.row.extra');
     const empty = (row) => Array.prototype.filter.call(
-        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
     ).length === 2;
     Array.prototype.filter.call(rows, (row) => empty(row)).map((row) => row.parentNode.removeChild(row));
   }
@@ -2873,7 +2886,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const container = this.shadowRoot.querySelector('#modify-env-container');
     const rows = container.querySelectorAll('.row:not(.header)');
     const nonempty = (row) => Array.prototype.filter.call(
-        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
     ).length === 0;
     const encodeRow = (row) => {
       const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
