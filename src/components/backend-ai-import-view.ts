@@ -61,7 +61,6 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) storageProxyInfo = Object();
-  @property({type: Boolean}) importButtonDisabled = true;
 
   constructor() {
     super();
@@ -582,8 +581,29 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
-  notebookUrlChanged(e) {
-    this.importButtonDisabled = !(e.target.value.length > 0);
+  urlTextfieldChanged(e, buttonIdValue, validation) {
+    const inputValue = e.target.value;
+    const button = this.shadowRoot.querySelector(`#${buttonIdValue}`);
+    if (validation(inputValue)) {
+      button.removeAttribute('disabled');
+    } else {
+      this.notification.text = _text('import.WrongURLType');
+      button.setAttribute('disabled', 'true');
+      this.importMessage = this.notification.text;
+      this.notification.show();
+    }
+  }
+
+  checkNotebookUrlValidation(url) {
+    return /^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$/.test(url);
+  }
+
+  checkGithubRepoUrlValidation(url) {
+    return /^(https?):\/\/github.com\/([a-zA-Z\d\.]{2,})\/([a-zA-Z\d\.]{2,}).git/.test(url);
+  }
+
+  checkGitlabRepoUrlValidation(url) {
+    return /^(https?):\/\/gitlab.com\/([a-zA-Z\d\.]{2,})\/([a-zA-Z\d\.]{2,}).git/.test(url);
   }
 
   render() {
@@ -594,8 +614,8 @@ export default class BackendAIImport extends BackendAIPage {
         <div slot="message">
           <div class="horizontal wrap layout center">
             <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
-                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @keyup="${(e) => this.notebookUrlChanged(e)}"></mwc-textfield>
-            <mwc-button ?disabled="${this.importButtonDisabled}" icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
+                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @change="${(e) => this.urlTextfieldChanged(e, 'import-notebook-button', this.checkNotebookUrlValidation)}"></mwc-textfield>
+            <mwc-button id="import-notebook-button" disabled icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
           </div>
@@ -617,8 +637,8 @@ export default class BackendAIImport extends BackendAIPage {
               ${_t('import.YouCanCreateNotebookCode')}
               <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
               <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
-              <mwc-button fullwidth @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @change="${(e) => this.urlTextfieldChanged(e, 'create-notebook-button', this.checkNotebookUrlValidation)}"></mwc-textfield>
+              <mwc-button id="create-notebook-button" disabled fullwidth @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
               <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
               <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
             </div>
@@ -633,7 +653,7 @@ export default class BackendAIImport extends BackendAIPage {
             </div>
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button', this.checkGithubRepoUrlValidation)}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
@@ -641,7 +661,7 @@ export default class BackendAIImport extends BackendAIPage {
                 </mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
+              <mwc-button id="import-github-repo-button" disabled class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
@@ -657,7 +677,7 @@ export default class BackendAIImport extends BackendAIPage {
             </div>
             <div class="horizontal wrap layout center">
               <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"></mwc-textfield>
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', this.checkGitlabRepoUrlValidation)}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
               <mwc-select id="gitlab-add-folder-host" label="${_t('data.Host')}">
@@ -667,7 +687,7 @@ export default class BackendAIImport extends BackendAIPage {
                 </mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-button class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+              <mwc-button id="import-gitlab-repo-button" disabled class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
