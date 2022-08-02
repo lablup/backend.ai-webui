@@ -63,11 +63,11 @@ const main = async () => {
 
     const tag = process.env.RELEASE_TAG || (await getLatestTag())
     const releaseId = await getReleaseIdFromTag(tag)
-    console.log(`Uploading file ${filename} to https://github.com/${OWNER}/${REPOSITORY}/releases/${tag}`)
-
-    for (const filepath of DMGs) {
+    
+    for (const filename of DMGs) {
+        console.log(`Uploading file ${filename} to https://github.com/${OWNER}/${REPOSITORY}/releases/${tag}`)
         const uploadUrl = await getUploadURL(releaseId)
-        const buf = await fs.promises.readFile(path.join(folder, filepath))
+        const buf = await fs.promises.readFile(path.join(folder, filename))
         try {
             await octokit.request({
                 method: 'POST',
