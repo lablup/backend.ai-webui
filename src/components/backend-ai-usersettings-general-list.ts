@@ -88,6 +88,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-management-dialog') sshKeypairManagementDialog!: BackendAIDialog;
   @query('#clear-ssh-keypair-dialog') clearSSHKeypairDialog!: BackendAIDialog;
   @query('#generate-ssh-keypair-dialog') generateSSHKeypairDialog!: BackendAIDialog;
+  @query('#ui-language') languageSelect!: Select;
+  @query('#delete-rcfile') deleteRcfileButton!: Button;
 
   constructor() {
     super();
@@ -439,9 +441,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       globalThis.backendaioptions.set('current_language', lang);
       setLanguage(lang);
       setTimeout(() => {
-        const langEl = this.shadowRoot?.querySelector('#ui-language') as Select;
-        // TODO remove protected property assignment
-        (langEl as any).selectedText = langEl.selected?.textContent?.trim();
+        (this.languageSelect as any).selectedText = this.languageSelect.selected?.textContent?.trim();
       }, 100);
     }
   }
@@ -710,10 +710,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Toggle delete button disabled when rcfile exists
    */
   _toggleDeleteButton() {
-    const deleteBtn = this.shadowRoot?.querySelector('#delete-rcfile') as Button;
     const idx = this.rcfiles.findIndex((item: any) => item.path === this.rcfile);
     if (idx > -1) {
-      deleteBtn.disabled = !(this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission);
+      this.deleteRcfileButton.disabled = !(this.rcfiles[idx]?.data && this.rcfiles[idx]?.permission);
     }
   }
 
