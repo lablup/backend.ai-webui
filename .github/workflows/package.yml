@@ -30,3 +30,5 @@ jobs:
           BAI_APP_SIGN_IDENTITY: ${{ secrets.BAI_APP_SIGN_IDENTITY }}
           BAI_APP_SIGN_KEYCHAIN_B64: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_B64 }}
           BAI_APP_SIGN_KEYCHAIN_PASSWORD: ${{ secrets.BAI_APP_SIGN_KEYCHAIN_PASSWORD }}
+      - name: Copy generated Applications
+        run: cp app ~/Downloads
