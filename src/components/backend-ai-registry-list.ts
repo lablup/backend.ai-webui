@@ -71,7 +71,6 @@ class BackendAIRegistryList extends BackendAIPage {
     this._editMode = false;
     this._hostnames = [];
     this._registryList = [];
-    this._registryList = [];
   }
 
   public static override get styles(): CSSResultGroup | undefined {
@@ -664,11 +663,11 @@ class BackendAIRegistryList extends BackendAIPage {
       html`
         <div icon="settings" id="controls" class="layout horizontal flex center">
           <wl-button fab flat inverted
-              class="fg blue"
-              @click=${() => {
-                this._selectedIndex = rowData.index;
-                this._openEditRegistryDialog(rowData.item.hostname);
-              }}>
+            class="fg blue"
+            @click=${() => {
+              this._selectedIndex = rowData.index;
+              this._openEditRegistryDialog(rowData.item.hostname);
+            }}>
             <wl-icon>settings</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
@@ -711,7 +710,6 @@ class BackendAIRegistryList extends BackendAIPage {
         <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
             @click=${this._openCreateRegistryDialog}></mwc-button>
       </h4>
-
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
@@ -773,10 +771,13 @@ class BackendAIRegistryList extends BackendAIPage {
             value="${this._registryList[this._selectedIndex]?.password || ''}"
           ></wl-textfield>
         </div>
-        <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
-                      @change=${this._toggleProjectNameInput} required
-                      validationMessage="${_t('registry.PleaseSelectOption')}"
-                      value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
+        <mwc-select 
+          id="select-registry-type" 
+          label="${_t('registry.RegistryType')}"
+          @change=${this._toggleProjectNameInput} 
+          required
+          validationMessage="${_t('registry.PleaseSelectOption')}"
+          value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
           ${BackendAIRegistryList._registryTypes.map((item) => html`
             <mwc-list-item
               value="${item}"
