@@ -102,7 +102,7 @@ export default class PipelineConfigurationForm extends LitElement {
   @query('#environment-tag-select') private _versionSelector;
   @query('#vfolder-grid') vfolderGrid;
   @query('#name-input') private _nameInput;
-  @query('#pipeline-type') private _typeSelect;
+  @query('#type-select') private _typeSelect;
   @query('#description-input') private _descriptionInput;
   @query('#scaling-group-select') private _scalingGroupSelect;
   @query('#cpu-input') private _cpuInput;
@@ -336,29 +336,83 @@ export default class PipelineConfigurationForm extends LitElement {
   }
 
   _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
-    /**
-     * TODO: auto-fill pipeline task by current pipeline info (default)
-     * 
-     */
+    this._updateVirtualFolderList();
+    this._loadSupportedLanguages();
+
+    const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
+
     // name, description
+    this._autoFillInput(this._nameInput, pipeline.name);
+    this._autoFillInput(this._descriptionInput, pipeline.description);
+
     // type
+    /* FIXME:
+     * - apply "Import ", since only custom type is available
+     * - temporally disable changing type selection
+     */
+    this._autoFillInput(this._typeSelect, this.taskType.custom);
+
     // scaling-group
+    this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
+
     // environment
+    const [environment, version] = pipelineYaml.environment['image'].split(':');
+    this._autoFillInput(this._environment, environment);
+    this._autoFillInput(this._versionSelector, version);
+
     // resources
+    this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
+
+    /* FIXME:
+     * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
+     */
+    this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._gpuInput, pipelineYaml.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
+    this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+
     // virtual folders
+    this._loadDefaultMounts(pipelineYaml.mounts);
+
+    // default active tab is general
+    this._showTabContent(this._generalTab);
   }
 
   _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
-    /**
-     * TODO: auto-fill pipeline task by current task info
-     * 
-     */
+    this._updateVirtualFolderList();
+    this._loadSupportedLanguages();
+
     // name, description
+    this._autoFillInput(this._nameInput, pipelineTask.name);
+    this._autoFillInput(this._descriptionInput, pipelineTask.description);
+
     // type
+    /* FIXME:
+     * - apply "Custom Task", since only custom type is available
+     * - temporally disable changing type selection
+     */
+    this._autoFillInput(this._typeSelect, this.taskType.custom);
+    this._typeSelect.disabled = true;
+
     // scaling-group
+    this._autoFillInput(this._scalingGroupSelect, pipelineTask.environment['scaling-group']);
+
     // environment
+    const [environment, version] = pipelineTask.environment['image'].split(':');
+    this._autoFillInput(this._environment, environment);
+    this._autoFillInput(this._versionSelector, version);
+
     // resources
+    this._autoFillInput(this._cpuInput, pipelineTask.resources.cpu);
+
+    /* FIXME:
+     * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
+     */
+    this._autoFillInput(this._memInput, pipelineTask.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._gpuInput, pipelineTask.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
+    this._autoFillInput(this._shmemInput, pipelineTask.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+
     // virtual folders
+    this._loadDefaultMounts(pipelineTask.mounts);
   }
 
   _autoFillInput(inputElement: any, value: string) {
@@ -897,17 +951,17 @@ export default class PipelineConfigurationForm extends LitElement {
     );
   }
 
-  renderNameTemplate() {
+  renderNameTemplate(label="Pipeline Name") {
     // language=HTML
     return html`
-      <mwc-textfield id="name-input" label="Pipeline Name" required></mwc-textfield>
+      <mwc-textfield id="name-input" label=${label} required></mwc-textfield>
     `;
   }
 
-  renderDescriptionTemplate() {
+  renderDescriptionTemplate(label="Pipeline Description") {
     // language=HTML
     return html`
-    <mwc-textarea id="description-input" label="Pipeline Description"></mwc-textarea>
+    <mwc-textarea id="description-input" label=${label}></mwc-textarea>
     `;
 
   }
@@ -915,7 +969,7 @@ export default class PipelineConfigurationForm extends LitElement {
   renderPipelineTypeTemplate() {
     // language=HTML
     return html`
-    <mwc-select class="full-width" id="pipeline-type" label="Pipeline Type" required fixedMenuPosition>
+    <mwc-select class="full-width" id="type-select" label="Pipeline Type" required fixedMenuPosition>
       <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
       ${this.pipelineTypes.map((item) => {
         return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
@@ -927,7 +981,7 @@ export default class PipelineConfigurationForm extends LitElement {
   renderPipelineTaskTypeTemplate() {
     // language=HTML
     return html`
-    <mwc-select class="full-width" id="task-type" label="Task Type" fixedMenuPosition required>
+    <mwc-select class="full-width" id="type-select" label="Task Type" fixedMenuPosition required>
       ${Object.keys(this.taskType).map((item) => {
         return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}">
                       ${this.taskType[item]}
@@ -1030,11 +1084,12 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
     <div id="general" class="vertical layout center flex tab-content">
-      ${this.renderNameTemplate()}
+      ${this.renderNameTemplate("Task Name")}
+      ${this.renderDescriptionTemplate("Task Description")}
       ${isEdit ? html`
-        <mwc-textfield id="task-type" label="Task Type" disabled></mwc-textfield>` : 
+        <mwc-textfield id="type-select" label="Task Type" disabled></mwc-textfield>` : 
         this.renderPipelineTaskTypeTemplate()}
-        ${this.renderCmdEditorTemplate()}
+      ${this.renderCmdEditorTemplate()}
     </div>
     `;
   }
@@ -1066,6 +1121,13 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  renderMountsContentTemplate() {
+    // language=HTML
+    return html`
+
+    `;
+  }
+
   renderMountsTabTemplate() {
     // language=HTML
     return html`
@@ -1082,56 +1144,71 @@ export default class PipelineConfigurationForm extends LitElement {
                     maxLength="64" placeholder="" helper="${_text('maxLength.64chars')}"></mwc-textfield>
       <wl-expansion class="vfolder" name="vfolder">
         <span slot="title">Additional mount (Optional)</span>
-        <div class="vfolder-list">
-          <vaadin-grid
-              theme="row-stripes column-borders compact"
-              id="vfolder-grid"
-              aria-label="vfolder list"
-              all-rows-visible
-              .items="${this.nonAutoMountedVfolders}"
-              @selected-items-changed="${() => this._updateSelectedFolder()}">
-            <vaadin-grid-selection-column id="select-column"
-                                          flex-grow="0"
-                                          text-align="center"
-                                          auto-select></vaadin-grid-selection-column>
-            <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
-                                      path="name" resizable
-                                      .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
-            <vaadin-grid-column width="135px"
-                                path=" ${_t('session.launcher.FolderAlias')}"
-                                .renderer="${this._boundFolderMapRenderer}"
-                                .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
-          </vaadin-grid>
-          ${this.vfolders.length > 0 ? html`` : html`
-            <div class="vertical layout center flex blank-box-medium">
-              <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
-            </div>
-          `}
-        </div>
-        <div class="vfolder-mounted-list">
-          ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
-            <ul class="vfolder-list">
-              ${this.selectedVfolders.map((item) => html`
-                <li>
-                  <mwc-icon>folder_open</mwc-icon>
-                  ${item}
-                  ${item in this.folderMapping ?
-                    this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
-                      html`(&#10140; /home/work/${this.folderMapping[item]})` :
-                      html`(&#10140; /home/work/${item})`}
-                </li>
-              `)}
-              ${this.autoMountedVfolders.map((item) => html`
-                <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-              `)}
-            </ul>` : html`
-            <div class="vertical layout center flex blank-box-large">
-              <span>${_t('session.launcher.NoFolderMounted')}</span>
-            </div>
-          `}
-        </div>
+          ${this.renderAdditionalVFolderListTemplate()}
       </wl-expansion>
     </div>`;
+  }
+
+  renderMountsTaskTabTemplate() {
+    // language=HTML
+    return html`
+    <div id="mounts" class="vertical layout center flex tab-content" style="display:none;">
+      ${this.renderAdditionalVFolderListTemplate()}
+    </div>`;
+  }
+
+  renderAdditionalVFolderListTemplate() {
+    // language=HTML
+    return html`
+      <div class="vfolder-list">
+        <vaadin-grid
+            theme="row-stripes column-borders compact"
+            id="vfolder-grid"
+            aria-label="vfolder list"
+            all-rows-visible
+            .items="${this.nonAutoMountedVfolders}"
+            @selected-items-changed="${() => this._updateSelectedFolder()}">
+          <vaadin-grid-selection-column id="select-column"
+                                        flex-grow="0"
+                                        text-align="center"
+                                        auto-select></vaadin-grid-selection-column>
+          <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
+                                    path="name" resizable
+                                    .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-column width="135px"
+                              path=" ${_t('session.launcher.FolderAlias')}"
+                              .renderer="${this._boundFolderMapRenderer}"
+                              .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        ${this.vfolders.length > 0 ? html`` : html`
+          <div class="vertical layout center flex blank-box-medium">
+            <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
+          </div>
+        `}
+      </div>
+      <div class="vfolder-mounted-list">
+        ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
+          <ul class="vfolder-list">
+            ${this.selectedVfolders.map((item) => html`
+              <li>
+                <mwc-icon>folder_open</mwc-icon>
+                ${item}
+                ${item in this.folderMapping ?
+                  this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+                    html`(&#10140; /home/work/${this.folderMapping[item]})` :
+                    html`(&#10140; /home/work/${item})`}
+              </li>
+            `)}
+            ${this.autoMountedVfolders.map((item) => html`
+              <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+            `)}
+          </ul>` : html`
+          <div class="vertical layout center flex blank-box-large">
+            <span>${_t('session.launcher.NoFolderMounted')}</span>
+          </div>
+        `}
+      </div>
+    `;
   }
 
   render() {
@@ -1145,11 +1222,12 @@ export default class PipelineConfigurationForm extends LitElement {
       ${this.configurationType === 'pipeline' ? html`
         ${this.renderGeneralTabTemplate()}
         ${this.renderResourcesTabTemplate()}
+        ${this.renderMountsTabTemplate()}
       ` : html`
         ${this.renderGeneralTaskTabTemplate()}
         ${this.renderResourcesTaskTabTemplate(this.isEditmode, false)}
+        ${this.renderMountsTaskTabTemplate()}
       `}
-      ${this.renderMountsTabTemplate()}
     `;
   }
 }
