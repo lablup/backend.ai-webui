@@ -65,7 +65,8 @@ export default class PipelineView extends BackendAIPage {
     custom: 'Custom Task'
   };
 
-  @query('pipeline-configuration-form') pipelineConfigurationForm!: PipelineConfigurationForm;
+  @query('pipeline-configuration-form#pipeline') pipelineConfigurationForm!: PipelineConfigurationForm;
+  @query('pipeline-configuration-form#task') pipelineTaskConfigurationForm!: PipelineConfigurationForm;
 
   constructor() {
     super();
@@ -254,11 +255,11 @@ export default class PipelineView extends BackendAIPage {
    * Create a task in pipeline
    */
   _createTask() {
-    if (!this.pipelineConfigurationForm._validatePipelineConfigInput()) {
+    if (!this.pipelineTaskConfigurationForm._validatePipelineConfigInput()) {
       return;
     }
 
-    const taskInfo: PipelineTaskNode = this.pipelineConfigurationForm.inputFieldListAsInstance(false) as PipelineTaskNode;
+    const taskInfo: PipelineTaskNode = this.pipelineTaskConfigurationForm.inputFieldListAsInstance(false) as PipelineTaskNode;
 
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     const paneElement = this.shadowRoot.querySelector('pipeline-flow');
@@ -282,7 +283,7 @@ export default class PipelineView extends BackendAIPage {
       return;
     }
 
-    const taskInfo: PipelineTaskNode = this.pipelineConfigurationForm.inputFieldListAsInstance(false) as PipelineTaskNode;
+    const taskInfo: PipelineTaskNode = this.pipelineTaskConfigurationForm.inputFieldListAsInstance(false) as PipelineTaskNode;
 
     // detail: {name, inputs #, outputs #, pos_x, pos_y, class, data, html, typenode}
     Object.assign(taskInfo, {
@@ -459,29 +460,31 @@ export default class PipelineView extends BackendAIPage {
   }
 
   /**
-   * Show task create dialog
-   */
-  async _showTaskCreateDialog() {
-    this.pipelineConfigurationForm._clearCmdEditor();
-    await this.pipelineConfigurationForm._initConfiguration();
-    this._launchDialogById('#task-dialog');
-  }
-
-  /**
    * Show pipeline update dialog
    */
-  async _showPipelineEditDialog() {
+   async _showPipelineEditDialog() {
     const stringifiedPipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo)
     await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(stringifiedPipelineInfo);
     this._launchDialogById('#edit-pipeline');
   }
 
   /**
+   * Show task create dialog
+   */
+  async _showTaskCreateDialog() {
+    this.pipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo);
+    this.pipelineTaskConfigurationForm._clearCmdEditor();
+    await this.pipelineTaskConfigurationForm._initPipelineTaskConfiguration(this.pipelineInfo);
+    this._launchDialogById('#task-dialog');
+    this.pipelineTaskConfigurationForm._focusCmdEditor();
+  }
+
+  /**
    * Show task edit dialog
    */
   async _showTaskEditDialog() {
-    this.pipelineConfigurationForm._loadDataToCmdEditor(this.selectedNode.data?.cmd);
-    await this.pipelineConfigurationForm._initConfiguration();
+    this.pipelineTaskConfigurationForm._loadDataToCmdEditor(this.selectedNode.data?.cmd);
+    await this.pipelineTaskConfigurationForm._initConfiguration();
     this._launchDialogById('#task-dialog');
   }
 
@@ -572,7 +575,7 @@ export default class PipelineView extends BackendAIPage {
     <backend-ai-dialog id="edit-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
       <span slot="title">Edit Pipeline</span>
       <div slot="content">
-        <pipeline-configuration-form ?is-editmode=${this.pipelineInfo !== null} pipeline-info=${this.pipelineInfo}></pipeline-configuration-form>
+        <pipeline-configuration-form id="pipeline" ?is-editmode=${this.pipelineInfo !== null} pipeline-info=${this.pipelineInfo}></pipeline-configuration-form>
       </div>
       <div slot="footer" class="horizontal layout end-justified flex">
         <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
@@ -588,7 +591,7 @@ export default class PipelineView extends BackendAIPage {
     <backend-ai-dialog id="task-dialog" fixed backdrop blockscrolling persistent narrowLayout>
     <span slot="title">${this.isNodeSelected ? 'Edit Task' : 'Add Task'}</span>
     <div slot="content" class="vertical layout center flex">
-      <pipeline-configuration-form configuration-type="pipeline-task" ?is-editmode=${this.isNodeSelected}></pipeline-configuration-form>
+      <pipeline-configuration-form id="task" configuration-type="pipeline-task" ?is-editmode=${this.isNodeSelected}></pipeline-configuration-form>
     </div>
     <div slot="footer" class="horizontal layout center center-justified flex">
       ${this.isNodeSelected ? html`
