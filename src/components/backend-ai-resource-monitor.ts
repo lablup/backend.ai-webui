@@ -299,10 +299,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 15px;
         }
 
-        .resources.vertical .monitor {
-          margin-bottom: 10px;
-        }
-
+        .resources.vertical .monitor,
         .resources.horizontal .monitor {
           margin-bottom: 10px;
         }
@@ -505,24 +502,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const legend = this.shadowRoot.querySelector('#resource-legend');
     const toggleButton = this.shadowRoot.querySelector('#resource-gauge-toggle-button');
     if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.visibility = 'visible';
       legend.style.display = 'flex';
       [...this.resourceGauge.children].forEach((elem) => {
-        elem.style.display = '';
+        elem.style.display = 'flex';
       });
     } else {
       if (toggleButton.selected) {
-        this.resourceGauge.style.visibility = 'visible';
         legend.style.display = 'flex';
         if (document.body.clientWidth < 750) {
           this.resourceGauge.style.left = '20px';
           this.resourceGauge.style.right = '20px';
         }
         [...this.resourceGauge.children].forEach((elem) => {
-          elem.style.display = '';
+          elem.style.display = 'flex';
         });
       } else {
-        this.resourceGauge.style.visibility = 'collapse';
         [...this.resourceGauge.children].forEach((elem) => {
           elem.style.display = 'none';
         });
@@ -732,15 +726,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  /**
-   * show/hide resource monitor gauge by switch on/off.
-   *
-   * @param {event} e - EventEmitter
-   */
-  _toggleResourceGauge(e) {
-
-  }
-
   _disableEnterKey() {
     this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
       element.onKeyDown = (e) => {
@@ -751,6 +736,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       };
     });
   }
+
   _numberWithPostfix(str, postfix = '') {
     if (isNaN(parseInt(str))) {
       return '';
