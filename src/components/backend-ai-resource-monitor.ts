@@ -526,39 +526,39 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateScalingGroupSelector() {
-      const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
-      // Detached from template to support live-update after creating new group (will need it)
-      if (scaling_group_selection_box.hasChildNodes()) {
-        scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+    const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
+    // Detached from template to support live-update after creating new group (will need it)
+    if (scaling_group_selection_box.hasChildNodes()) {
+      scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+    }
+    const scaling_select = document.createElement('mwc-select');
+    scaling_select.label = _text('session.launcher.ResourceGroup');
+    scaling_select.id = 'scaling-group-select';
+    scaling_select.value = this.scaling_group;
+    scaling_select.setAttribute('fullwidth', 'true');
+    scaling_select.style.margin= '1px solid #ccc';
+    // scaling_select.setAttribute('outlined', 'true');
+    scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
+    let opt = document.createElement('mwc-list-item');
+    opt.setAttribute('disabled', 'true');
+    opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+    opt.style.borderBottom = '1px solid #ccc';
+    scaling_select.appendChild(opt);
+    const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
+    this.resourceBroker.scaling_groups.map((group) => {
+      opt = document.createElement('mwc-list-item');
+      opt.value = group.name;
+      opt.setAttribute('graphic', 'icon');
+      if (currentSelectedResourceGroup === group.name) {
+        opt.selected = true;
+      } else {
+        opt.selected = false;
       }
-      const scaling_select = document.createElement('mwc-select');
-      scaling_select.label = _text('session.launcher.ResourceGroup');
-      scaling_select.id = 'scaling-group-select';
-      scaling_select.value = this.scaling_group;
-      scaling_select.setAttribute('fullwidth', 'true');
-      scaling_select.style.margin= '1px solid #ccc';
-      // scaling_select.setAttribute('outlined', 'true');
-      scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
-      let opt = document.createElement('mwc-list-item');
-      opt.setAttribute('disabled', 'true');
-      opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-      opt.style.borderBottom = '1px solid #ccc';
+      opt.innerHTML = group.name;
       scaling_select.appendChild(opt);
-      const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
-      this.resourceBroker.scaling_groups.map((group) => {
-        opt = document.createElement('mwc-list-item');
-        opt.value = group.name;
-        opt.setAttribute('graphic', 'icon');
-        if (currentSelectedResourceGroup === group.name) {
-          opt.selected = true;
-        } else {
-          opt.selected = false;
-        }
-        opt.innerHTML = group.name;
-        scaling_select.appendChild(opt);
-      });
-      // scaling_select.updateOptions();
-      scaling_group_selection_box.appendChild(scaling_select);
+    });
+    // scaling_select.updateOptions();
+    scaling_group_selection_box.appendChild(scaling_select);
   }
 
   /**
