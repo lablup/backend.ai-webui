@@ -280,7 +280,7 @@
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
     "DefaultTensorboardPath": "/home/work/logs",
-    "SessionTerminated": "세선을 중지했습니다.",
+    "SessionTerminated": "세션을 중지했습니다.",
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
     "DownloadingCSVFile": "CSV 파일을 내려받습니다.",

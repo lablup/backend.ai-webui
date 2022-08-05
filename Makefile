@@ -1,4 +1,3 @@
-EP = ./node_modules/electron-packager/bin/electron-packager.js ./build/electron-app "Backend.AI Desktop" --ignore=node_modules/electron-packager --ignore=.git --overwrite --asar --ignore="\.git(ignore|modules)" --out=app
 BUILD_DATE := $(shell date +%y%m%d)
 BUILD_TIME := $(shell date +%H%m%S)
 BUILD_VERSION := $(shell grep version package.json | head -1 | cut -c 15- | rev | cut -c 3- | rev)
@@ -7,6 +6,10 @@ site := $(or $(site),main)
 
 mkfile_path := $(abspath $(lastword $(MAKEFILE_LIST)))
 current_dir := $(notdir $(patsubst %/,%,$(dir $(mkfile_path))))
+
+KEYCHAIN_NAME := bai-build-$(shell uuidgen).keychain
+BAI_APP_SIGN_KEYCHAIN_FILE := $(shell mktemp -d)/keychain.p12
+BAI_APP_SIGN_KEYCHAIN =
 
 test_web:
 	npm run server:d
@@ -31,9 +34,9 @@ compile_wsproxy:
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
 all: dep mac win linux
 dep:
-	#cp -u ./scripts/pre-commit ./.git/hooks/pre-commit && chmod 755 ./.git/hooks/pre-commit
-	#cd ./src/plastics/weightless && bash ./patch-input-behavior.sh
-	#cp ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js # Temporary fix for lit-2 rc stage.
+	if [ ! -f "./config.toml" ]; then \
+		cp config.toml.sample config.toml; \
+	fi
 	if [ ! -d "./build/rollup/" ];then \
 		make compile; \
 		make compile_wsproxy; \
@@ -64,11 +67,32 @@ web:
 	if [ -f "./configs/$(site).css" ];then \
 		cp ./configs/$(site).css deploy/$(site)/webui/resources/custom.css; \
 	fi
+mac_load_keychain:
+ifeq ($(BAI_APP_SIGN_KEYCHAIN),)
+ifdef BAI_APP_SIGN_KEYCHAIN_B64
+ifndef BAI_APP_SIGN_KEYCHAIN_PASSWORD
+	$(error BAI_APP_SIGN_KEYCHAIN_PASSWORD is not defined)
+endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
+	security create-keychain -p "" "${KEYCHAIN_NAME}"
+	security set-keychain-settings -lut 21600 "${KEYCHAIN_NAME}"
+	security unlock-keychain -p "" "${KEYCHAIN_NAME}"
+	$(shell echo "${BAI_APP_SIGN_KEYCHAIN_B64}" | base64 -d -o "${BAI_APP_SIGN_KEYCHAIN_FILE}")
+	security import "${BAI_APP_SIGN_KEYCHAIN_FILE}" -A -P "${BAI_APP_SIGN_KEYCHAIN_PASSWORD}" -k "${KEYCHAIN_NAME}"
+	security list-keychain -d user -s login.keychain
+	security list-keychain -d user -s "${KEYCHAIN_NAME}"
+	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
+	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
+	echo Keychain ${KEYCHAIN_NAME} created for build
+endif  # BAI_APP_SIGN_KEYCHAIN_B64
+endif  # BAI_APP_SIGN_KEYCHAIN
 mac: mac_intel mac_apple
-mac_intel: dep
+mac_intel: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=darwin --arch=x64 --icon=manifest/backend-ai.icns
-	rm -rf ./app/backend.ai-desktop-macos-x64
+	BAI_APP_SIGN_KEYCHAIN="${BAI_APP_SIGN_KEYCHAIN}" node ./app-packager.js darwin x64
+ifdef BAI_APP_SIGN_KEYCHAIN
+	security default-keychain -s login.keychain
+endif
+	rm -rf ./app/backend.ai-desktop-macos-intel
 	cd app; mv "Backend.AI Desktop-darwin-x64" backend.ai-desktop-macos-intel;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-intel/Backend.AI Desktop.app' ./app/backend.ai-desktop-intel-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
@@ -76,10 +100,13 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-intel-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-macos-intel.dmg
 endif
-mac_apple: dep
+mac_apple: dep mac_load_keychain
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=darwin --arch=arm64 --icon=manifest/backend-ai.icns
-	rm -rf ./app/backend.ai-desktop-macos-arm64
+	BAI_APP_SIGN_KEYCHAIN="${BAI_APP_SIGN_KEYCHAIN}" node ./app-packager.js darwin arm64
+ifdef BAI_APP_SIGN_KEYCHAIN
+	security default-keychain -s login.keychain
+endif
+	rm -rf ./app/backend.ai-desktop-macos-apple
 	cd app; mv "Backend.AI Desktop-darwin-arm64" backend.ai-desktop-macos-apple;
 	./node_modules/electron-installer-dmg/bin/electron-installer-dmg.js './app/backend.ai-desktop-macos-apple/Backend.AI Desktop.app' ./app/backend.ai-desktop-apple-$(BUILD_DATE) --overwrite --icon=manifest/backend-ai.icns --title=Backend.AI
 ifeq ($(site),main)
@@ -89,7 +116,7 @@ else
 endif
 win: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=win32 --arch=x64 --icon=manifest/backend-ai.ico
+	node ./app-packager.js win x64
 	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-x64.zip
@@ -99,7 +126,7 @@ endif
 linux: linux_intel linux_arm64
 linux_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=linux --arch=arm64 --icon=manifest/backend-ai.ico
+	node ./app-packager.js linux arm64
 	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
@@ -108,7 +135,7 @@ else
 endif
 linux_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	$(EP) --platform=linux --arch=x64 --icon=manifest/backend-ai.ico
+	node ./app-packager.js linux x64
 	cd app; zip -r -9 ./backend.ai-desktop-linux-x64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-x64"
 ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
