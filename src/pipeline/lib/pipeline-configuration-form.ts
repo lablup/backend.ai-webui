@@ -15,7 +15,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources, PipelineTaskDetail} from '../lib/pipeline-type';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -32,8 +32,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
 import 'weightless/expansion';
-
-import {default as YAML} from 'js-yaml';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 
@@ -112,6 +110,7 @@ export default class PipelineConfigurationForm extends LitElement {
   @query('#storage-mount-select') private _storageMountSelect;
   @query('#mount-folder-input') private _mountFolderNameInput;
   @query('#command-editor') private _cmdEditor;
+  @query('#codemirror-validation-message') private _cmdEditorValidationMessage;
   
   private _isRequired;
 
@@ -177,6 +176,13 @@ export default class PipelineConfigurationForm extends LitElement {
           font-size: 16px;
           font-family: var(--general-font-family);
           font-weight: 500;
+        }
+
+        #codemirror-validation-message {
+          font-size: 12px;
+          font-family: var(--general-font-family);
+          margin-left: 15px;
+          color: var(--paper-red-400);
         }
 
         fieldset input {
@@ -353,8 +359,8 @@ export default class PipelineConfigurationForm extends LitElement {
     const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
 
     // name, description
-    this._autoFillInput(this._nameInput, pipeline.name);
-    this._autoFillInput(this._descriptionInput, pipeline.description);
+    this._autoFillInput(this._nameInput, '');
+    this._autoFillInput(this._descriptionInput, '');
 
     // type
     /* FIXME:
@@ -698,15 +704,15 @@ export default class PipelineConfigurationForm extends LitElement {
     return Promise.resolve(true);
   }
 
-  _validatePipelineConfigInput() {
-    const validityCheckByGroup = (inputGroup: Array<any>) => {
-      return inputGroup.some((elem) => {
+  static _validityCheckByGroup(inputGroup: Array<any>) {
+    return inputGroup.some((elem) => {
         return !elem.reportValidity();
       });
-    };
+  }
 
+  _validatePipelineConfigInput() {
     // general tab inputs
-    if (validityCheckByGroup(
+    if (PipelineConfigurationForm._validityCheckByGroup(
       [this._nameInput, this._typeSelect, this._scalingGroupSelect, 
       this._environment, this._versionSelector, this._descriptionInput])) {
         this._switchActiveTab(this._generalTab);
@@ -714,7 +720,7 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // resources tab inputs
-    if (validityCheckByGroup(
+    if (PipelineConfigurationForm._validityCheckByGroup(
       [this._cpuInput, this._memInput, this._shmemInput, 
        this._gpuInput])) {
         this._switchActiveTab(this._resourcesTab);
@@ -722,7 +728,7 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // mounts tab inputs
-    if (validityCheckByGroup(
+    if (PipelineConfigurationForm._validityCheckByGroup(
       [this._storageMountSelect, this._mountFolderNameInput])) {
         this._switchActiveTab(this._mountsTab);
         return false;
@@ -732,46 +738,78 @@ export default class PipelineConfigurationForm extends LitElement {
     return true;
   }
 
+  _validatePipelineTaskConfigInput() {
+    // general task tab inputs
+    if (PipelineConfigurationForm._validityCheckByGroup(
+      [this._nameInput, this._typeSelect])) {
+        this._switchActiveTab(this._generalTab);
+        return false;
+    }
+    const isCommandValid = this._cmdEditor._validateInput();
+    if (!isCommandValid) {
+      this._cmdEditorValidationMessage.style.display = '';
+      this._switchActiveTab(this._generalTab);
+      return false;
+    } else {
+      this._cmdEditorValidationMessage.style.display = 'none';
+    }
+
+    // resources task tab inputs
+    if (PipelineConfigurationForm._validityCheckByGroup(
+      [this._scalingGroupSelect, this._environment, this._versionSelector,
+       this._cpuInput, this._memInput, this._shmemInput, this._gpuInput])) {
+        this._switchActiveTab(this._resourcesTab);
+        return false;
+    }
+
+    // all passed validation check
+    return true;
+  }
+
   inputFieldListAsInstance (isPipelineType = true) {
     let obj: PipelineInfo | PipelineTaskNode;
+    /* raw inputs */
+    const name = this._nameInput.value;
+    const description = this._descriptionInput.value;
+    const scalingGroup = this._scalingGroupSelect.value;
+    const kernel = this._environment.value;
+    const version = this._versionSelector.value;
+    const cpuRequest = this._cpuInput.value;
+    const memRequest = this._memInput.value;
+    const shmemRequest = this._shmemInput.value;
+    const gpuRequest = this._gpuInput.value;
+    const mounts = this.selectedVfolders;
+
+    /* structured inputs */
+    const environment = {
+      'scaling-group': scalingGroup,
+      image: PipelineUtils._generateKernelIndex(kernel, version),
+      envs: {},
+    } as PipelineEnvironment;
+    const resources = {
+      cpu: cpuRequest,
+      memory: memRequest + 'g',
+      cuda: {
+        shares: gpuRequest,
+        device: '',
+      },
+    } as PipelineResources;
+    const resource_opts = {
+      shmem: shmemRequest + 'g'
+    };
+
     if (isPipelineType) {
       // FIXME: for now, we only support custom type pipeline creation.
 
-      /* raw inputs */
-      const name = this._nameInput.value;
-      const description = this._descriptionInput.value;
-      const scalingGroup = this._scalingGroupSelect.value;
-      const kernel = this._environment.value;
-      const version = this._versionSelector.value;
-      const cpuRequest = this._cpuInput.value;
-      const memRequest = this._memInput.value;
-      const shmemRequest = this._shmemInput.value;
-      const gpuRequest = this._gpuInput.value;
+      /* raw inputs only used in pipeline info */
       const storageHost = this._storageMountSelect.value;
       const storageHostMountFolderName = this._mountFolderNameInput.value;
 
-      /* structured inputs */
-      const environment = {
-        'scaling-group': scalingGroup,
-        image: PipelineUtils._generateKernelIndex(kernel, version),
-        envs: {},
-      } as PipelineEnvironment;
-      const resources = {
-        cpu: cpuRequest,
-        memory: memRequest + 'g',
-        cuda: {
-          shares: gpuRequest,
-          device: '',
-        },
-      } as PipelineResources;
-      const resource_opts = {
-        shmem: shmemRequest + 'g'
-      };
+      /* extra structured inputs */
       const storage = {
         host: storageHost,
         name: storageHostMountFolderName
       };
-      const mounts = this.selectedVfolders;
       const yaml = { // used for tasks
         name: name,
         description: description,
@@ -795,9 +833,31 @@ export default class PipelineConfigurationForm extends LitElement {
         is_active: true,
       } as PipelineInfo;
     } else {
+      /* raw inputs only used in pipeline task info */
+      const taskType = this._typeSelect.value;
+      const command = this._cmdEditor.getValue();
+
+      /* extra structured inputs */
+      const taskData: PipelineTaskDetail = {
+        type: taskType,
+        environment: environment,
+        resources: resources,
+        resource_opts: resource_opts,
+        command: command,
+        mounts: mounts,
+      } as PipelineTaskDetail;
+
       obj = {
-        // TODO: pipeline task type
-      } as PipelineTaskNode 
+        name: name,
+        inputs: 1,
+        outputs: 1,
+        pos_x: 0,
+        pos_y: 0,
+        // FIXME: temporary name for distinguishing pipeline specific node
+        class: 'drawflow-node',
+        data: taskData,
+        html: name,
+      } as PipelineTaskNode;
     }
     return obj;
   }
@@ -908,8 +968,8 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Give focus on command-editor
    */
-   _focusCmdEditor() {
-    this._cmdEditor.refresh();
+   async _focusCmdEditor() {
+    await this._cmdEditor.refresh();
     this._cmdEditor.focus();
   }
 
@@ -968,10 +1028,10 @@ export default class PipelineConfigurationForm extends LitElement {
     );
   }
 
-  renderNameTemplate(label="Pipeline Name") {
+  renderNameTemplate() {
     // language=HTML
     return html`
-      <mwc-textfield id="name-input" label=${label} required></mwc-textfield>
+      <mwc-textfield id="name-input" label="Pipeline Name" required autoValidate></mwc-textfield>
     `;
   }
 
@@ -995,12 +1055,13 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
-  renderPipelineTaskTypeTemplate() {
+  renderPipelineTaskTypeTemplate(isEdit = false) {
     // language=HTML
+    // FIXME: disable other types except 'custom' for now
     return html`
-    <mwc-select class="full-width" id="type-select" label="Task Type" fixedMenuPosition required>
+    <mwc-select class="full-width" id="type-select" label="Task Type" fixedMenuPosition required ?disabled=${isEdit}>
       ${Object.keys(this.taskType).map((item) => {
-        return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}">
+        return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}" ?disabled=${item !== 'custom'}">
                       ${this.taskType[item]}
                     </mwc-list-item>`;
       })}
@@ -1081,7 +1142,8 @@ export default class PipelineConfigurationForm extends LitElement {
     <div class="vertical layout start-justified">
       <span style="width:370px;padding-left:15px;">Command</span>
     </div>
-    <lablup-codemirror id="command-editor" mode="shell" useLineWrapping></lablup-codemirror>
+    <lablup-codemirror id="command-editor" mode="shell" useLineWrapping required></lablup-codemirror>
+    <span id="codemirror-validation-message" style="display:none;">This command field is required.</span>
     `;
   }
 
@@ -1101,11 +1163,9 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
     <div id="general" class="vertical layout center flex tab-content">
-      ${this.renderNameTemplate("Task Name")}
+      ${this.renderNameTemplate()}
       ${this.renderDescriptionTemplate("Task Description")}
-      ${isEdit ? html`
-        <mwc-textfield id="type-select" label="Task Type" disabled></mwc-textfield>` : 
-        this.renderPipelineTaskTypeTemplate()}
+      ${this.renderPipelineTaskTypeTemplate(isEdit)}
       ${this.renderCmdEditorTemplate()}
     </div>
     `;

@@ -4,6 +4,7 @@
  */
 import {html, LitElement} from 'lit';
 import {customElement} from 'lit/decorators.js';
+import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskType} from '../lib/pipeline-type';
 
  /**
   Pipeline Utils
@@ -229,6 +230,80 @@ export default class PipelineUtils extends LitElement {
       return alias[value];
     } else {
       return value;
+    }
+  }
+
+  /**
+  * Parse custom data from dataflow element to array of formatted task (json)
+  *
+  * @param {json} rawData - raw object from dataflow
+  * @param {string} scalingGroup - scaling group set by pipeline
+  * @return {Array<PipelineTask>} taskList
+  */
+ static _parseTaskListInfo(rawData, scalingGroup='') {
+   const rawTaskList = rawData?.drawflow?.Home?.data;
+   const getTaskNameFromNodeId = (connectionList) => {
+     return (connectionList.length > 0) ? connectionList.map((item) => {
+       return rawTaskList[item.node].name;
+     }) : [];
+   };
+   let taskList: Array<PipelineTask>;
+   const taskNodes = Object.values(rawTaskList ?? {});
+   if (taskNodes.length > 0) {
+     taskList = taskNodes.map((task: any) => {
+       return {
+         name: task.name,
+         description: task.description,
+         // FIXME: let's set custom type as a fallback for now.
+         type: task.data.type ?? PipelineTaskType.custom,
+         module_uri: '',
+         command: task.data.command,
+         environment: {
+           'scaling-group': scalingGroup,
+           image: `${PipelineUtils._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
+           envs: task.data.environment.envs ?? {},
+         } as PipelineEnvironment,
+         resources: {
+           cpu: task.data.resources.cpu,
+           memory: task.data.resources.memory,
+           cuda: task.data.resources.cuda
+         } as PipelineResources,
+         resource_opts: {
+           shmem: task.data.resource_opts.shmem
+         },
+         mounts: task.data.mounts,
+         dependencies: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
+       } as PipelineTask;
+     });
+   } else {
+     taskList = [];
+   }
+   return taskList;
+ }
+
+  /**
+   * Return pipelineInfo to sendable data stream
+   */
+  static _stringifyPipelineInfo(pipelineInfo) {
+    if (Object.keys(pipelineInfo).length !== 0) {
+      return {
+        ...pipelineInfo,
+        yaml: (typeof pipelineInfo.yaml !== 'string') ? JSON.stringify(pipelineInfo.yaml ?? {}) : pipelineInfo.yaml,
+        dataflow: (typeof pipelineInfo.dataflow !== 'string') ? JSON.stringify(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
+      };
+    }
+  }
+
+  /**
+   * Return pipelineInfo to modificable data object
+   */
+  static _parsePipelineInfo(pipelineInfo) {
+    if (Object.keys(pipelineInfo).length !== 0) {
+      return {
+        ...pipelineInfo,
+        yaml: (typeof pipelineInfo.yaml === 'string') ? JSON.parse(pipelineInfo.yaml === '' ? `{}` : pipelineInfo.yaml) : pipelineInfo.yaml,
+        dataflow: (typeof pipelineInfo.dataflow === 'string') ? JSON.parse(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
+      };
     }
   }
 
