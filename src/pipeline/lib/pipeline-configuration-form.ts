@@ -278,9 +278,9 @@ export default class PipelineConfigurationForm extends LitElement {
     });
   }
 
-  _initConfiguration() {
+  async _initConfiguration() {
     this._fetchUserInfo();
-    this._updateVirtualFolderList();
+    await this._updateVirtualFolderList();
     this._configureRequiredInputField();
     this._loadSupportedLanguages();
     this._selectDefaultLanguage();
@@ -298,8 +298,9 @@ export default class PipelineConfigurationForm extends LitElement {
     this._isRequired = (this.configurationType === 'pipeline');
   }
 
-  _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
-    this._updateVirtualFolderList();
+  async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
+    await this._updateVirtualFolderList(pipeline.storage.name);
+    this._fetchUserInfo();
     this._loadSupportedLanguages();
     this._configureRequiredInputField();
     const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
@@ -344,8 +345,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadDefaultMounts(pipelineYaml.mounts);
   }
 
-  _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
-    this._updateVirtualFolderList();
+  async _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
+    await this._updateVirtualFolderList();
     this._loadSupportedLanguages();
     this._configureRequiredInputField();
 
@@ -387,8 +388,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._showTabContent(this._generalTab);
   }
 
-  _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
-    this._updateVirtualFolderList();
+  async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
+    await this._updateVirtualFolderList();
     this._loadSupportedLanguages();
 
     // name, description
@@ -481,14 +482,15 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @return {void}
    */
-   async _updateVirtualFolderList() {
+   async _updateVirtualFolderList(pipelineFolder = '') {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
       this.allowedStorageHostList = [...new Set(this.vfolders.map((vfolder) => (vfolder.host)))];
       // select first element of allowedStorageHostList as a default
       this.selectedStorageHost = (this.allowedStorageHostList.length > 0) ? this.allowedStorageHostList[0] : '';
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+      // filter pipeline-folder created by pipeline server during pipeline creation
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.') || item.name === pipelineFolder));
     });
   }
 
