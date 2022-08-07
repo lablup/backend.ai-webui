@@ -260,7 +260,7 @@ export default class PipelineUtils extends LitElement {
          command: task.data.command,
          environment: {
            'scaling-group': scalingGroup,
-           image: `${PipelineUtils._generateKernelIndex(task.data.environment.kernel, task.data.environment.version)}` ?? '',
+           image: task.data.environment.image ?? '',
            envs: task.data.environment.envs ?? {},
          } as PipelineEnvironment,
          resources: {
