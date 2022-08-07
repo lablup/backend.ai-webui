@@ -112,6 +112,8 @@ export default class PipelineConfigurationForm extends LitElement {
   @query('#storage-mount-select') private _storageMountSelect;
   @query('#mount-folder-input') private _mountFolderNameInput;
   @query('#command-editor') private _cmdEditor;
+  
+  private _isRequired;
 
   @property({type: Object}) taskType = {
     github: 'Import from GitHub',
@@ -279,6 +281,7 @@ export default class PipelineConfigurationForm extends LitElement {
   _initConfiguration() {
     this._fetchUserInfo();
     this._updateVirtualFolderList();
+    this._configureRequiredInputField();
     this._loadSupportedLanguages();
     this._selectDefaultLanguage();
 
@@ -290,9 +293,15 @@ export default class PipelineConfigurationForm extends LitElement {
     this.languages = this.resourceBroker.languages;
   }
 
+  _configureRequiredInputField() {
+    // default resource configuration is required when creating/modifying pipeline
+    this._isRequired = (this.configurationType === 'pipeline');
+  }
+
   _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
     this._updateVirtualFolderList();
     this._loadSupportedLanguages();
+    this._configureRequiredInputField();
     const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
 
     // name, description
@@ -338,6 +347,7 @@ export default class PipelineConfigurationForm extends LitElement {
   _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
     this._updateVirtualFolderList();
     this._loadSupportedLanguages();
+    this._configureRequiredInputField();
 
     const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
 
@@ -393,8 +403,13 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._typeSelect, this.taskType.custom);
     this._typeSelect.disabled = true;
 
+    /**
+     * FIXME:
+     * - temporally disable changing scaling-group selection
+     */
     // scaling-group
     this._autoFillInput(this._scalingGroupSelect, pipelineTask.environment['scaling-group']);
+    this._scalingGroupSelect.disabled = true;
 
     // environment
     const [environment, version] = pipelineTask.environment['image'].split(':');
@@ -1094,7 +1109,7 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
-  renderResourcesTaskTabTemplate(isEdit = false, isRequired = false) {
+  renderResourcesTaskTabTemplate(isRequired = false) {
     return html`
     <div id="resources" class="vertical layout center flex tab-content" style="display:none;">
       ${this.renderScalingGroupTemplate()}
@@ -1221,11 +1236,11 @@ export default class PipelineConfigurationForm extends LitElement {
       </mwc-tab-bar>
       ${this.configurationType === 'pipeline' ? html`
         ${this.renderGeneralTabTemplate()}
-        ${this.renderResourcesTabTemplate()}
+        ${this.renderResourcesTabTemplate(this._isRequired)}
         ${this.renderMountsTabTemplate()}
       ` : html`
-        ${this.renderGeneralTaskTabTemplate()}
-        ${this.renderResourcesTaskTabTemplate(this.isEditmode, false)}
+        ${this.renderGeneralTaskTabTemplate(this.isEditmode)}
+        ${this.renderResourcesTaskTabTemplate(this._isRequired)}
         ${this.renderMountsTaskTabTemplate()}
       `}
     `;
