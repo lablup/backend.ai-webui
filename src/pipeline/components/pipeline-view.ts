@@ -19,13 +19,10 @@ import {
 } from '../../plastics/layout/iron-flex-layout-classes';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-textfield';
 import '../lib/pipeline-flow';
-import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineEnvironment, PipelineResources, PipelineYAML} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**
@@ -114,16 +111,6 @@ export default class PipelineView extends BackendAIPage {
           color: #555;
         }
 
-        mwc-select.full-width {
-          width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-menu-item-height: auto;
-          /* Need to be set when fixedMenuPosition attribute is enabled */
-          --mdc-menu-max-width: 360px;
-          --mdc-menu-min-width: 360px;
-        }
-
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
           --mdc-text-transform: none;
@@ -131,20 +118,6 @@ export default class PipelineView extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
-        mwc-textfield {
-          width: 100%;
-        }
-
-        mwc-textfield#edit-pipeline-name {
-          margin-bottom: 10px;
-        }
-
-        mwc-textfield#pipeline-name {
-          margin:auto 10px;
-          height: 36px;
-          width: auto;
-        }
-        
         span#pipeline-name {
           font-size: 1.2rem;
           margin: auto 10px;
@@ -316,39 +289,18 @@ export default class PipelineView extends BackendAIPage {
    *
    */
   _updatePipelineInfo() {
-    // if name input field is empty, then use original name instead
-    const name = this.shadowRoot.querySelector('#edit-pipeline-name').value ?? this.pipelineInfo.name;
-    const selectedScalingGroup = this.shadowRoot.querySelector('#edit-scaling-group').value;
+    const updatedPipelineInfo = this.pipelineConfigurationForm.inputFieldListAsInstance() as PipelineInfo;
 
-    /**
-     * TODO: update pipeline edit dialog with rich input form
-     */
-    const yaml = this.pipelineInfo.yaml;
-    yaml.name = name;
-    yaml.environment.scaling_group = selectedScalingGroup;
-    const input = {
-      name: name,
-      // description: '',
-      yaml: JSON.stringify(yaml),
-      // dataflow: {},
-      // is_active: true,
-    };
-    // step 1. Send update request to corresponding API server
-    const pipelineId = this.pipelineInfo.id;
-    globalThis.backendaiclient.pipeline.update(pipelineId, input).then((res) => {
-      // step 2. Receive the response and if succeeds, then change current pipeline info
+    // need to update partially since pipelineInfo returns data without id
+    Object.assign(this.pipelineInfo, {...updatedPipelineInfo});
+    globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
       this.pipelineInfo = res;
-      // pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
-      // pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
-      // this.pipelineInfo = this._parsePipelineInfo(pipeline);
-      // this.pipelineInfo.yaml.environment.scaling_group = selectedScalingGroup;
       this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
       this.notification.text = `Pipeline ${this.pipelineInfo.name} updated.`;
       this.notification.show();
     }).catch((err) => {
       console.log(err);
     });
-    // step 3. Close the edit-pipeline dialog
     this._hideDialogById('#edit-pipeline');
   }
 
@@ -463,7 +415,7 @@ export default class PipelineView extends BackendAIPage {
    * Show pipeline update dialog
    */
    async _showPipelineEditDialog() {
-    const stringifiedPipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo)
+    const stringifiedPipelineInfo = this._stringifyPipelineInfo(this.pipelineInfo);
     await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(stringifiedPipelineInfo);
     this._launchDialogById('#edit-pipeline');
   }
