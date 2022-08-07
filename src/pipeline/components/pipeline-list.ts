@@ -7,7 +7,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import {PipelineInfo} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineInfoExtended, PipelineYAML} from '../lib/pipeline-type';
 import PipelineConfigurationForm from '../lib/pipeline-configuration-form';
 import '../lib/pipeline-configuration-form';
 import '../../components/backend-ai-dialog';
@@ -48,7 +48,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 export default class PipelineList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: PipelineInfo}) pipelineInfo;
-  @property({type: Array}) pipelines = [];
+  @property({type: PipelineInfoExtended}) pipelineInfoExtended;
+  @property({type: Array<PipelineInfoExtended>}) pipelines;
   @property({type: String}) _activeTab = 'pipeline-general';
 
   // 
@@ -142,7 +143,8 @@ export default class PipelineList extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.resourceBroker = globalThis.resourceBroker;
     this.pipelineInfo = new PipelineInfo();
-    this.pipelines = [];
+    this.pipelineInfoExtended = new PipelineInfoExtended();
+    this.pipelines = [] as Array<PipelineInfoExtended>;
   }
 
   async _viewStateChanged(active) {
@@ -153,11 +155,11 @@ export default class PipelineList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        this._loadPipelineList();
+        await this._loadPipelineList();
         this._enableLaunchButton();
       }, {once: true});
     } else { // already connected
-      this._loadPipelineList();
+      await this._loadPipelineList();
       this._enableLaunchButton();
     }
   }
@@ -182,9 +184,9 @@ export default class PipelineList extends BackendAIPage {
       return;
     }
     this.pipelineInfo = this.pipelineConfigurationForm.inputFieldListAsInstance();
-    globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res) => {
-      this.pipelineInfo = res;
-      this.notification.text = `Pipeline ${this.pipelineInfo.name} created.`;
+    globalThis.backendaiclient.pipeline.create(this.pipelineInfo).then((res: PipelineInfoExtended) => {
+      this.pipelineInfoExtended = res;
+      this.notification.text = `Pipeline ${this.pipelineInfoExtended.name} created.`;
       this.notification.show();
       this._loadPipelineList();
       // move to pipeline view page with current pipeline info
@@ -229,7 +231,7 @@ export default class PipelineList extends BackendAIPage {
     };
     try {
       const pipelineList = await globalThis.backendaiclient.pipeline.list();
-      this.pipelines = pipelineList.map((pipeline) => {
+      this.pipelines = pipelineList.map((pipeline: PipelineInfoExtended) => {
         pipeline.yaml = sanitizeYaml(pipeline.yaml);
         // data transformation on yaml and date (created_at, last_modified)
         pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
@@ -280,20 +282,23 @@ export default class PipelineList extends BackendAIPage {
   /**
    * Show information dialog of selected pipeline
    *
-   * @param {json} pipelineInfo
+   * @param {pipelineInfoExtended} pipeline
    */
-  _launchPipelineDetailDialog(pipelineInfo: Object) {
-    this.pipelineInfo = pipelineInfo;
+  _launchPipelineDetailDialog(pipeline: PipelineInfoExtended) {
+    this.pipelineInfoExtended = pipeline;
+    const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(this.pipelineInfoExtended);
+    parsedPipelineInfo.yaml.tasks = PipelineUtils._parseTaskListInfo(parsedPipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group']);
+    this.pipelineInfoExtended = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
     this._launchDialogById('#pipeline-detail');
   }
 
   /**
    * Show delete dialog of selected pipeline
    *
-   * @param {json} pipelineInfo
+   * @param {PipelineInfoExtended} pipeline
    */
-  _launchPipelineDeleteDialog(pipelineInfo: Object) {
-    this.pipelineInfo = pipelineInfo;
+  _launchPipelineDeleteDialog(pipeline: PipelineInfoExtended) {
+    this.pipelineInfoExtended = pipeline;
     this._launchDialogById('#delete-pipeline');
   }
 
@@ -301,9 +306,9 @@ export default class PipelineList extends BackendAIPage {
    * Show yaml data dialog of selected pipeline
    *
    */
-  _launchPipelineYAMLDialog() {
+  _launchPipelineYAMLDialog(pipelineYaml: PipelineYAML) {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#yaml-data');
-    const yamlString = YAML.dump(this.pipelineInfo.yaml, {});
+    const yamlString = YAML.dump(pipelineYaml, {});
     codemirror.setValue(yamlString);
     this._launchDialogById('#pipeline-yaml');
   }
@@ -420,7 +425,7 @@ export default class PipelineList extends BackendAIPage {
             'activeTab': {
               title: 'pipeline-view'
             },
-            'pipeline': this.pipelineInfo
+            'pipeline': this.pipelineInfoExtended
           }
         });
     document.dispatchEvent(moveToViewEvent);
@@ -429,10 +434,10 @@ export default class PipelineList extends BackendAIPage {
   /**
    * Move to pipeline view tab with selected pipeline data
    *
-   * @param {json} pipelineInfo
+   * @param {PipelineInfoExtended} pipeline
    */
-  loadPipeline(pipelineInfo: object) {
-    this.pipelineInfo = pipelineInfo;
+  loadPipeline(pipeline: PipelineInfoExtended) {
+    this.pipelineInfoExtended = pipeline;
     this.moveToViewTab();
   }
 
@@ -469,40 +474,42 @@ export default class PipelineList extends BackendAIPage {
     </backend-ai-dialog>`;
   }
 
-  renderPipelineDetailDialogTemplate() {
+  renderPipelineDetailDialogTemplate(pipeline: PipelineInfoExtended) {
     // language=HTML
+    // FIXME: Hide owner info since its only provided by UUID
+    const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(pipeline);
     return html`
     <backend-ai-dialog id="pipeline-detail" fixed backdrop blockscrolling persistent>
       <span slot="title">Pipeline Detail</span>
       <div slot="content" class="vertical layout flex">
-        <div class="horizontal flex layout wrap justified center pipeline-detail-items">
+        <!--<div class="horizontal flex layout wrap justified center pipeline-detail-items">
             <div class="vertical center start-justified flex">
               <div class="title">Owner</div>
-              <div class="description">${this.pipelineInfo.owner}</div>
+              <div class="description"></div>
             </div>
-        </div>
+        </div>-->
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
             <div class="vertical center start-justified flex">
               <div class="title">Name</div>
-              <div class="description">${this.pipelineInfo.name}</div>
+              <div class="description">${parsedPipelineInfo.name}</div>
             </div>
         </div>
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
             <div class="vertical center start-justified flex">
               <div class="title">Description</div>
-              <div class="description">${this.pipelineInfo.description}</div>
+              <div class="description">${parsedPipelineInfo.description}</div>
             </div>
         </div>
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
           <div class="vertical center start-justified flex">
             <div class="title">YAML</div>
           </div>
-          <mwc-button unelevated label="SEE YAML" icon="description" @click="${() => this._launchPipelineYAMLDialog()}"></mwc-button>
+          <mwc-button unelevated label="SEE YAML" icon="description" @click="${() => this._launchPipelineYAMLDialog(parsedPipelineInfo.yaml)}"></mwc-button>
         </div>
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
           <div class="vertical center start-justified flex">
             <div class="title">Version</div>
-            <div class="description">${this.pipelineInfo.version ? this.pipelineInfo.version : 'None'}</div>
+            <div class="description">${parsedPipelineInfo.version ? parsedPipelineInfo.version : 'None'}</div>
           </div>
         </div>
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
@@ -548,7 +555,7 @@ export default class PipelineList extends BackendAIPage {
     </vaadin-grid>
     ${this.renderCreatePipelineDialogTemplate()}
     ${this.renderDeletePipelineDialogTemplate()}
-    ${this.renderPipelineDetailDialogTemplate()}
+    ${this.renderPipelineDetailDialogTemplate(this.pipelineInfoExtended)}
     ${this.renderPipelineYAMLDialogTemplate()}
     `;
   }
