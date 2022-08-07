@@ -11,6 +11,7 @@ import 'drawflow';
 import {style} from 'drawflow/dist/drawflow.style';
 import {DrawflowBaseStyle} from './drawflow-base-style.css';
 import 'drawflow/dist/drawflow.min';
+// import 'drawflow/dist/drawflow.min';
 import {DrawflowNode} from 'drawflow';
 import {
   IronFlex,
@@ -377,7 +378,7 @@ export default class PipelineFlow extends LitElement {
    */
   _addNode(nodeInfo: DrawflowNode) {
     this.editor.addNode(nodeInfo.name, nodeInfo.inputs, nodeInfo.outputs,
-      nodeInfo.pos_x, nodeInfo.pos_y, nodeInfo.class, nodeInfo.data, nodeInfo.html);
+      nodeInfo.pos_x, nodeInfo.pos_y, nodeInfo.class, nodeInfo.data, nodeInfo.html, false);
   }
 
   /**
@@ -393,7 +394,8 @@ export default class PipelineFlow extends LitElement {
     Object.assign(node, {
       data: nodeInfo.data,
       html: nodeInfo.html,
-      name: nodeInfo.name});
+      name: nodeInfo.name
+    });
     // monkeypatch: manually update node name
     const nodeElem = this.shadowRoot.querySelector(`.${nodeInfo.class}.selected`);
     if (nodeElem) {
