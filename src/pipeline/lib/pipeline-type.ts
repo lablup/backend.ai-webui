@@ -13,6 +13,9 @@ export interface PipelineInfoBase {
   is_active: boolean,
 };
 
+/**
+ * Pipeline Information class
+ */
 export class PipelineInfo implements PipelineInfoBase {
   name: string;
   description: string;
@@ -34,6 +37,27 @@ export class PipelineInfo implements PipelineInfoBase {
     this.yaml = '';
     this.dataflow = Object();
     this.is_active = false;
+  }
+}
+
+/**
+ * Extended Pipeline Information class received from pipeline server 
+ * 
+ */
+export class PipelineInfoExtended extends PipelineInfo {
+  created_at: string;
+  last_modified: string;
+  id: string;
+  owner: string;
+  version: string;
+  
+  constructor() {
+    super();
+    this.created_at = '';
+    this.last_modified = '';
+    this.id = '';
+    this.owner = '';
+    this.version = '';
   }
 }
 
@@ -230,4 +254,13 @@ export class PipelineEnvironment implements PipelineEnvironmentBase {
     this.envs = {};
     this["scaling-group"] = '';
   }
+}
+
+/**
+ * The type of Pipeline Task
+ */
+export enum PipelineTaskType {
+  github = 'Import from GitHub',
+  gitlab = 'Import from GitLab',
+  custom = 'Custom Task'
 }
