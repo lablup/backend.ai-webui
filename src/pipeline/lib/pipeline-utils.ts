@@ -307,6 +307,23 @@ export default class PipelineUtils extends LitElement {
     }
   }
 
+  /**
+   * Return stringified html for workflow-file-dialog
+   * 
+   * @returns {string} - stringified html
+   */
+  static renderWorkflowFileDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
+      <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
+      <div slot="content">
+        <lablup-codemirror id="workflow-editor" mode="yaml" readonly useLineWrapping></lablup-codemirror>
+      </div>
+    </backend-ai-dialog>
+    `;
+  }
+
   render() {
     // language=HTML
     return html`

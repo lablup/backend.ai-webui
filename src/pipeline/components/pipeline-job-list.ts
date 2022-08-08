@@ -535,18 +535,6 @@ export default class PipelineJobList extends BackendAIPage {
     `;
   }
 
-  renderWorkflowFileDialogTemplate() {
-    // language=HTML
-    return html`
-    <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
-      <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
-      <div slot="content">
-        <lablup-codemirror id="workflow-editor" mode="yaml" readonly useLineWrapping></lablup-codemirror>
-      </div>
-    </backend-ai-dialog>
-    `;
-  }
-
   render() {
     // language=HTML
     return html`
@@ -561,7 +549,7 @@ export default class PipelineJobList extends BackendAIPage {
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
       ${this.renderPipelineJobDetailDialogTemplate()}
-      ${this.renderWorkflowFileDialogTemplate()}
+      ${PipelineUtils.renderWorkflowFileDialogTemplate()}
     `;
   }
 }
