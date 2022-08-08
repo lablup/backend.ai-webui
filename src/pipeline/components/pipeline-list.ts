@@ -52,8 +52,6 @@ export default class PipelineList extends BackendAIPage {
   @property({type: Array<PipelineInfoExtended>}) pipelines;
   @property({type: String}) _activeTab = 'pipeline-general';
 
-  // 
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourceBroker;
 
