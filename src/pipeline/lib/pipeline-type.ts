@@ -40,24 +40,54 @@ export class PipelineInfo implements PipelineInfoBase {
   }
 }
 
+export interface PipelineInfoExtendedBase extends PipelineInfoBase {
+  created_at: string;
+  email: string;
+  id: string;
+  last_modified: string;
+  owner: string;
+  version: string;
+}
+
 /**
  * Extended Pipeline Information class received from pipeline server 
  * 
  */
-export class PipelineInfoExtended extends PipelineInfo {
+export class PipelineInfoExtended implements PipelineInfoExtendedBase {
+
   created_at: string;
-  last_modified: string;
+  dataflow: object;
+  description: string;
+  email: string;
   id: string;
+  is_active: boolean;
+  last_modified: string;
+  name: string;
   owner: string;
+  storage: {
+    host: string,
+    name: string,
+  };
   version: string;
-  
+  yaml: string;
+
+
   constructor() {
-    super();
     this.created_at = '';
-    this.last_modified = '';
+    this.dataflow = new Object();
+    this.description = '';
+    this.email = '';
     this.id = '';
+    this.is_active = true; // default is true
+    this.last_modified = '';
+    this.name = '';
     this.owner = '';
+    this.storage = {
+      host: '',
+      name: '',
+    };
     this.version = '';
+    this.yaml = '';
   }
 }
 
@@ -104,6 +134,48 @@ export class PipelineYAML implements PipelineYAMLBase {
     this.resources = new PipelineResources();
     this.resource_opts = {shmem: ''};
     this.mounts = [];
+  }
+}
+
+/**
+ * Pipeline Job interface
+ */
+export interface PipelineJobBase extends Omit<PipelineInfoExtendedBase, 'storage' | 'is_active' | 'version'> {
+  pipeline: string, // pipeline uuid
+  result: string,
+  status: string,
+  terminated_at: string
+}
+
+export class PipelineJob implements PipelineJobBase {
+  created_at: string;
+  dataflow: object;
+  description: string;
+  email: string;
+  id: string;
+  last_modified: string;
+  name: string;
+  owner: string;
+  pipeline: string; // pipeline uuid
+  result: string;
+  status: string;
+  terminated_at: string;
+  yaml: string;
+
+  constructor() {
+    this.created_at = '';
+    this.dataflow = new Object();
+    this.description = '';
+    this.email = '';
+    this.id = '';
+    this.last_modified = '';
+    this.name = '';
+    this.owner = '';
+    this.pipeline = '';
+    this.result = '';
+    this.status = '';
+    this.terminated_at = '';
+    this.yaml = '';
   }
 }
 
@@ -206,6 +278,70 @@ export class PipelineTaskDetail implements PipelineTaskDetailBase {
     this.resource_opts = {shmem: ''};
     this.command = '';
     this.mounts = [];
+  }
+}
+
+/**
+ * The type of key list excluded in pipeline task instance
+ */
+type ExcludedKeyListInPipelineTaskInstance = 'dataflow' | 'description' | 'email' | 'name' | 'owner' | 'pipeline' | 'yaml';
+
+/**
+ * Task instance interface
+ * 
+ */
+export interface PipelineTaskInstanceBase extends Omit<PipelineJobBase, ExcludedKeyListInPipelineTaskInstance> {
+  compute_session_id: string,
+  config: object,
+  pipeline_job: string, // pipeline job uuid
+}
+
+export class PipelinTaskInstance implements PipelineTaskInstanceBase {
+  created_at: string;
+  compute_session_id: string;
+  config: object;
+  id: string;
+  last_modified: string;
+  pipeline_job: string; // pipeline job uuid
+  result: string;
+  status: string;
+  terminated_at: string;
+
+  constructor() {
+    this.created_at = '';
+    this.compute_session_id = '';
+    this.config = new Object();
+    this.id = '';
+    this.last_modified = '';
+    this.pipeline_job = '';
+    this.result = '';
+    this.status = '';
+    this.terminated_at = '';
+  }
+}
+
+/**
+ * Session event webhook interface
+ * 
+ */
+export interface SessionEventWebHookBase {
+  type: string,
+  event: string,
+  session_id: string, // session uuid
+  when: string, // datetime field
+}
+
+export class SessionEventWebHook implements SessionEventWebHookBase {
+  type: string;
+  event: string;
+  session_id: string; // session uuid
+  when: string; // datetime field
+
+  constructor() {
+    this.type = '';
+    this.event = '';
+    this.session_id = '';
+    this.when = '';
   }
 }
 
