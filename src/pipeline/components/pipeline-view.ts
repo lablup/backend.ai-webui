@@ -330,12 +330,22 @@ export default class PipelineView extends BackendAIPage {
     // convert object to string (dataflow)
     parsedPipelineInfo.tasks = PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group']);
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
-    globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
-      // this.pipelineInfo = Object.assign(res, {yaml : JSON.stringify({...res.yaml, tasks: parsedPipelineInfo.tasks}));
+
+    // FIXME: remove storage key for avoiding overlapping
+    const pipelineInfoWithoutStorage = this.pipelineInfo;
+    delete pipelineInfoWithoutStorage.storage;
+
+    globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, pipelineInfoWithoutStorage).then((res) => {
+      this.pipelineInfo = res;
       this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
       this.notification.show();
     }).catch((err) => {
       console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
@@ -366,12 +376,21 @@ export default class PipelineView extends BackendAIPage {
    */
   _runPipeline() {
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(this.pipelineInfo);
-    globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
-      this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.id}...`;
+
+    // FIXME: remove storage key for avoiding overlapping
+    const pipelineInfoWithoutStorage = this.pipelineInfo;
+    delete pipelineInfoWithoutStorage.storage;
+    globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, pipelineInfoWithoutStorage).then((res) => {
+      this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.name}...`;
       this.notification.show();
       this._moveTo('/pipeline-job');
     }).catch((err) => {
       console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
