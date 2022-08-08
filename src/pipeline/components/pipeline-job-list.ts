@@ -2,6 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
@@ -31,6 +32,7 @@ import '../../plastics/chart-js';
 import '../../plastics/lablup-shields/lablup-shields';
 import '../../components/lablup-codemirror';
 import '../../components/backend-ai-dialog';
+import { ro } from 'date-fns/locale';
 
 /**
  Pipeline Job List
@@ -95,6 +97,18 @@ export default class PipelineJobList extends BackendAIPage {
 
         #workflow-file-dialog-title {
           min-width: 530px;
+        }
+
+        .mount-button,
+        .status-button {
+          border: none;
+          background: none;
+          padding: 0;
+          outline-style: none;
+        }
+
+        .no-mount {
+          color: var(--paper-grey-400);
         }
 
         mwc-icon {
@@ -319,6 +333,47 @@ export default class PipelineJobList extends BackendAIPage {
     );
   }
 
+  /**
+   * Create dropdown menu that shows mounted folder names.
+   * Added menu to document.body to show at the top.
+   *
+   * @param {Event} e - mouseenter the mount-button
+   * @param {Array} mounts - array of the mounted folders
+   * */
+   _createMountedFolderDropdown(e, mounts) {
+    const menuButton: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as any;
+    menu.anchor = menuButton;
+    menu.className = 'dropdown-menu';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('x', 10);
+    menu.setAttribute('y', 15);
+
+    if (mounts.length >= 1) {
+      mounts.map((key, index) => {
+        const mountedFolderItem = document.createElement('mwc-list-item');
+        mountedFolderItem.style.height = '25px';
+        mountedFolderItem.style.fontWeight = '400';
+        mountedFolderItem.style.fontSize = '14px';
+        mountedFolderItem.style.fontFamily = 'var(--general-font-family)';
+        mountedFolderItem.innerHTML = (mounts.length > 1) ? key : _text('session.OnlyOneFolderAttached');
+
+        menu.appendChild(mountedFolderItem);
+      });
+      document.body.appendChild(menu);
+    }
+  }
+
+  /**
+   * Remove the dropdown menu when mouseleave the mount-button.
+   * */
+  _removeMountedFolderDropdown() {
+    const menu = document.getElementsByClassName('dropdown-menu') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
+
   _setVaadinGridRenderers() {
     let columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-column');
     columns[0].renderer = (root, column, rowData) => { // #
@@ -379,23 +434,37 @@ export default class PipelineJobList extends BackendAIPage {
         <a @click="${() => this._loadPipelineJobView(rowData.item)}">${rowData.item.name}</a>
       `, root);
     };
+
+    // TODO: show auto-created pipeline-folder (currently response doesn't have that information)
+    columns[1].renderer = (root, column, rowData) => { // mounts
+      // monkeypatch for extracting and formatting legacy mounts info
+      const mountedFolderList: Array<string> = rowData.item.yaml.mounts.map((elem: string) => {
+        return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
+      });
+      render(html`
+          <div class="layout horizontal center flex">
+            <div class="layout horizontal center configuration">
+              ${rowData.item.yaml.mounts.length > 0 ? html`
+                <wl-icon class="fg green indicator">folder_open</wl-icon>
+                <button class="mount-button"
+                  @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}">
+                  ${mountedFolderList.join(', ')}
+                </button>
+              ` : html`
+              <wl-icon class="indicator no-mount">folder_open</wl-icon>
+              <span class="no-mount">No mount</span>
+              `}
+            </div>
+          </div>
+      `, root);
+    }
   }
 
-  render() {
+  renderPipelineJobDetailDialogTemplate() {
     // language=HTML
     return html`
-      <vaadin-grid id="pipeline-job-list" theme="row-stripes column-borders compact"
-        aria-label="Pipeline Job List" .items="${this.pipelineJobs}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
-        <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
-        <!--<vaadin-grid-sort-column path="version" header="Version" resizable></vaadin-grid-sort-column>-->
-        <vaadin-grid-filter-column path="vfolder" header="Mounted folder" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
-        <vaadin-grid-column header="Result" resizable></vaadin-grid-column>
-        <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
-        <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
-      </vaadin-grid>
-      <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
+    <backend-ai-dialog id="pipeline-job-detail-dialog" fixed backdrop>
         <span slot="title">${this.pipelineJobInfo.name || 'Pipeline Details'}</span>
         <div slot="content" role="listbox" class="horizontal center layout">
           <mwc-list class="vertical center layout">
@@ -451,12 +520,36 @@ export default class PipelineJobList extends BackendAIPage {
           </mwc-list>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
-        <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
-        <div slot="content">
-          <lablup-codemirror id="workflow-editor" mode="yaml" readonly useLineWrapping></lablup-codemirror>
-        </div>
-      </backend-ai-dialog>
+    `;
+  }
+
+  renderWorkflowFileDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog id="workflow-file-dialog" fixed backgroup blockscrolling>
+      <span id="workflow-file-dialog-title" slot="title">Workflow file</span>
+      <div slot="content">
+        <lablup-codemirror id="workflow-editor" mode="yaml" readonly useLineWrapping></lablup-codemirror>
+      </div>
+    </backend-ai-dialog>
+    `;
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      <vaadin-grid id="pipeline-job-list" theme="row-stripes column-borders compact"
+        aria-label="Pipeline Job List" .items="${this.pipelineJobs}">
+        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
+        <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
+        <vaadin-grid-filter-column auto-width path="yaml.mounts" header="Additional Mounted" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
+        <vaadin-grid-column header="Result" resizable></vaadin-grid-column>
+        <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
+        <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
+      </vaadin-grid>
+      ${this.renderPipelineJobDetailDialogTemplate()}
+      ${this.renderWorkflowFileDialogTemplate()}
     `;
   }
 }
