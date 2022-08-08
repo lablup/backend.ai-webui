@@ -296,7 +296,7 @@ export interface PipelineTaskInstanceBase extends Omit<PipelineJobBase, Excluded
   pipeline_job: string, // pipeline job uuid
 }
 
-export class PipelinTaskInstance implements PipelineTaskInstanceBase {
+export class PipelineTaskInstance implements PipelineTaskInstanceBase {
   created_at: string;
   compute_session_id: string;
   config: object;
