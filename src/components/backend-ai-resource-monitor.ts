@@ -299,10 +299,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           margin-bottom: 15px;
         }
 
-        .resources.vertical .monitor {
-          margin-bottom: 10px;
-        }
-
+        .resources.vertical .monitor,
         .resources.horizontal .monitor {
           margin-bottom: 10px;
         }
@@ -505,24 +502,21 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     const legend = this.shadowRoot.querySelector('#resource-legend');
     const toggleButton = this.shadowRoot.querySelector('#resource-gauge-toggle-button');
     if (document.body.clientWidth > 750 && this.direction == 'horizontal') {
-      this.resourceGauge.style.visibility = 'visible';
       legend.style.display = 'flex';
       [...this.resourceGauge.children].forEach((elem) => {
-        elem.style.display = '';
+        elem.style.display = 'flex';
       });
     } else {
       if (toggleButton.selected) {
-        this.resourceGauge.style.visibility = 'visible';
         legend.style.display = 'flex';
         if (document.body.clientWidth < 750) {
           this.resourceGauge.style.left = '20px';
           this.resourceGauge.style.right = '20px';
         }
         [...this.resourceGauge.children].forEach((elem) => {
-          elem.style.display = '';
+          elem.style.display = 'flex';
         });
       } else {
-        this.resourceGauge.style.visibility = 'collapse';
         [...this.resourceGauge.children].forEach((elem) => {
           elem.style.display = 'none';
         });
@@ -532,39 +526,39 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   _updateScalingGroupSelector() {
-      const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
-      // Detached from template to support live-update after creating new group (will need it)
-      if (scaling_group_selection_box.hasChildNodes()) {
-        scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+    const scaling_group_selection_box = this.shadowRoot.querySelector('#scaling-group-select-box'); // monitor SG selector
+    // Detached from template to support live-update after creating new group (will need it)
+    if (scaling_group_selection_box.hasChildNodes()) {
+      scaling_group_selection_box.removeChild(scaling_group_selection_box.firstChild);
+    }
+    const scaling_select = document.createElement('mwc-select');
+    scaling_select.label = _text('session.launcher.ResourceGroup');
+    scaling_select.id = 'scaling-group-select';
+    scaling_select.value = this.scaling_group;
+    scaling_select.setAttribute('fullwidth', 'true');
+    scaling_select.style.margin= '1px solid #ccc';
+    // scaling_select.setAttribute('outlined', 'true');
+    scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
+    let opt = document.createElement('mwc-list-item');
+    opt.setAttribute('disabled', 'true');
+    opt.innerHTML = _text('session.launcher.SelectResourceGroup');
+    opt.style.borderBottom = '1px solid #ccc';
+    scaling_select.appendChild(opt);
+    const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
+    this.resourceBroker.scaling_groups.map((group) => {
+      opt = document.createElement('mwc-list-item');
+      opt.value = group.name;
+      opt.setAttribute('graphic', 'icon');
+      if (currentSelectedResourceGroup === group.name) {
+        opt.selected = true;
+      } else {
+        opt.selected = false;
       }
-      const scaling_select = document.createElement('mwc-select');
-      scaling_select.label = _text('session.launcher.ResourceGroup');
-      scaling_select.id = 'scaling-group-select';
-      scaling_select.value = this.scaling_group;
-      scaling_select.setAttribute('fullwidth', 'true');
-      scaling_select.style.margin= '1px solid #ccc';
-      // scaling_select.setAttribute('outlined', 'true');
-      scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
-      let opt = document.createElement('mwc-list-item');
-      opt.setAttribute('disabled', 'true');
-      opt.innerHTML = _text('session.launcher.SelectResourceGroup');
-      opt.style.borderBottom = '1px solid #ccc';
+      opt.innerHTML = group.name;
       scaling_select.appendChild(opt);
-      const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
-      this.resourceBroker.scaling_groups.map((group) => {
-        opt = document.createElement('mwc-list-item');
-        opt.value = group.name;
-        opt.setAttribute('graphic', 'icon');
-        if (currentSelectedResourceGroup === group.name) {
-          opt.selected = true;
-        } else {
-          opt.selected = false;
-        }
-        opt.innerHTML = group.name;
-        scaling_select.appendChild(opt);
-      });
-      // scaling_select.updateOptions();
-      scaling_group_selection_box.appendChild(scaling_select);
+    });
+    // scaling_select.updateOptions();
+    scaling_group_selection_box.appendChild(scaling_select);
   }
 
   /**
@@ -732,15 +726,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  /**
-   * show/hide resource monitor gauge by switch on/off.
-   *
-   * @param {event} e - EventEmitter
-   */
-  _toggleResourceGauge(e) {
-
-  }
-
   _disableEnterKey() {
     this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
       element.onKeyDown = (e) => {
@@ -751,6 +736,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       };
     });
   }
+
   _numberWithPostfix(str, postfix = '') {
     if (isNaN(parseInt(str))) {
       return '';
