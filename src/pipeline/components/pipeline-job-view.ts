@@ -28,6 +28,8 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 
 import PipelineUtils from '../lib/pipeline-utils';
+import PipelineJobList from './pipeline-job-list';
+import {PipelineJob, PipelineTaskInstance} from '../lib/pipeline-type';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import './pipeline-job-list';
 import '../lib/pipeline-flow';
@@ -53,19 +55,31 @@ export default class PipelineJobView extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'pipeline-job-list';
   @property({type: String}) totalDuration;
-  @property({type: Object}) pipelineJobInfo = Object();
-  @property({type: Array}) pipelineJobs;
-  @property({type: Array}) taskInstanceList;
-  @property({type: Boolean}) refreshing = false;
-  @property({type: Object}) refreshTimer = Object();
-  @property({type: Object}) taskInstanceNodeMap = Object();
+  @property({type: PipelineJob}) pipelineJobInfo;
+  @property({type: Array<PipelineJob>}) pipelineJobs;
+  @property({type: Array<PipelineTaskInstance>}) taskInstanceList;
+  @property({type: Boolean}) refreshing;
+  @property({type: Object}) refreshTimer;
+  @property({type: Object}) taskInstanceNodeMap;
   // Elements
-  @property({type: Object}) spinner = Object();
-  @property({type: Object}) notification = Object();
+  @property({type: Object}) spinner;
+  @property({type: Object}) notification;
+
+  // @query('pipeline-job-list') pipelineJobList!: PipelineJobList;
 
 
   constructor() {
     super();
+    this._initResource();
+  }
+
+  _initResource() {
+    this.notification = globalThis.lablupNotification;
+    this.pipelineJobInfo = new PipelineJob();
+    this.pipelineJobs = [] as Array<PipelineJob>;
+    this.refreshing = false;
+    this.refreshTimer = new Object();
+    this.taskInstanceNodeMap = Object();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -167,16 +181,16 @@ export default class PipelineJobView extends BackendAIPage {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     this.refreshTimer = null;
-    document.addEventListener('pipeline-job-view-active-tab-change', (e: any) => {
+    document.addEventListener('pipeline-job-view-active-tab-change', async (e: any) => {
       if (e.detail) {
         this._initPipelineTaskListItem();
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-job-pane').children];
         this.shadowRoot.querySelector('#pipeline-job-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
-        this._showTab(e.detail.activeTab, '.tab-content');
-        this.pipelineJobInfo = this._deserializePipelineInfo(e.detail.pipelineJob);
+        this._showTabContent(e.detail.activeTab);
+        this.pipelineJobInfo = PipelineUtils._parsePipelineInfo(e.detail.pipelineJob);
         this.pipelineJobs = e.detail.pipelineJobs;
         this._matchTaskNodeId();
-        this._loadCurrentFlowData();
+        await this._loadCurrentFlowData();
         this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
           this.taskInstanceList = res;
         });
@@ -184,7 +198,7 @@ export default class PipelineJobView extends BackendAIPage {
     });
     document.addEventListener('active-menu-change-event', (e: any) => {
       if (e.detail) {
-        this._showTab(e.detail.tabTitle, '.tab-content');
+        this._showTabContent(e.detail.tabTitle);
       }
     });
   }
@@ -201,41 +215,15 @@ export default class PipelineJobView extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
         if (this._activeTab === 'pipeline-job-view') {
-          this._loadCurrentFlowData();
+          await this._loadCurrentFlowData();
         }
       }, true);
     } else { // already connected
       if (this._activeTab === 'pipeline-job-view') {
-        this._loadCurrentFlowData();
+        await this._loadCurrentFlowData();
       }
-    }
-  }
-
-  /**
-   * Return pipelineInfo to sendable data stream
-   */
-  _serializePipelineInfo(pipelineInfo) {
-    if (Object.keys(pipelineInfo).length !== 0) {
-      return {
-        ...pipelineInfo,
-        yaml: (typeof pipelineInfo.yaml !== 'string') ? JSON.stringify(pipelineInfo.yaml ?? {}) : pipelineInfo.yaml,
-        dataflow: (typeof pipelineInfo.dataflow !== 'string') ? JSON.stringify(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
-      };
-    }
-  }
-
-  /**
-   * Return pipelineInfo to modificable data object
-   */
-  _deserializePipelineInfo(pipelineInfo) {
-    if (Object.keys(pipelineInfo).length !== 0) {
-      return {
-        ...pipelineInfo,
-        yaml: (typeof pipelineInfo.yaml === 'string') ? JSON.parse(pipelineInfo.yaml ?? `{}`) : pipelineInfo.yaml,
-        dataflow: (typeof pipelineInfo.dataflow === 'string') ? JSON.parse(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
-      };
     }
   }
 
@@ -253,16 +241,16 @@ export default class PipelineJobView extends BackendAIPage {
     }
     this.refreshing = true;
     globalThis.backendaiclient.pipelineJob.info(this.pipelineJobInfo.id).then((res) => {
-      this.pipelineJobInfo = this._deserializePipelineInfo(res);
+      this.pipelineJobInfo = PipelineUtils._parsePipelineInfo(res);
       if (['SUCCESS', 'FAILURE'].includes(this.pipelineJobInfo.result)) {
         repeat = false;
       }
       return this._loadTaskInstances(this.pipelineJobInfo.id);
     }).then((res) => {
       this.taskInstanceList = res;
-      this.taskInstanceList.forEach((task) => {
+      this.taskInstanceList.forEach((task: PipelineTaskInstance) => {
         const updateTaskStatusEvent = new CustomEvent('update-task-status', {'detail': {
-          nodeId: this.taskInstanceNodeMap[task.config.name]['nodeId'],
+          nodeId: this.taskInstanceNodeMap[task.config['name']]['nodeId'],
           status: task.status
         }});
         document.dispatchEvent(updateTaskStatusEvent);
@@ -285,7 +273,7 @@ export default class PipelineJobView extends BackendAIPage {
   }
 
   _matchTaskNodeId() {
-    const dataflowObj = this.pipelineJobInfo.dataflow;
+    const dataflowObj = (typeof this.pipelineJobInfo.dataflow === 'string' ) ? JSON.parse(this.pipelineJobInfo.dataflow) : this.pipelineJobInfo.dataflow;
     const rawTaskInstanceList = dataflowObj?.drawflow?.Home?.data;
     const taskInstanceNodes = Object.values(rawTaskInstanceList ?? {});
     if (taskInstanceNodes.length > 0) {
@@ -299,24 +287,38 @@ export default class PipelineJobView extends BackendAIPage {
   }
 
   /**
+   * Request and receive pipeline job list from pipeline server
+   */
+  async _loadPipelineJobList() {
+    // If disconnected
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', async () => {
+        this.pipelineJobs = await globalThis.backendaiclient.pipelineJob.list();
+      }, true);
+    } else { // already connected
+      this.pipelineJobs = await globalThis.backendaiclient.pipelineJob.list();
+    }
+  }
+
+  /**
    * Import pipeline node graph to dataflow pane
    */
   async _loadCurrentFlowData() {
-    const currentFlowData = this.pipelineJobInfo.dataflow ?? {};
+    const currentFlowData = (typeof this.pipelineJobInfo.dataflow === 'string' ) ? JSON.parse(this.pipelineJobInfo.dataflow) : this.pipelineJobInfo.dataflow;
     const flowDataReqEvent = new CustomEvent('import-flow', {'detail': currentFlowData});
     document.dispatchEvent(flowDataReqEvent);
-    if (Object.keys(this.pipelineJobInfo).length > 0) {
+    if (this.pipelineJobInfo.id !== '' && this.pipelineJobInfo.id !== undefined) {
       await this._refreshPipelineJob();
       this.requestUpdate();
     }
   }
 
-  _showTab(tab, tabClass='') {
-    const els = this.shadowRoot.querySelectorAll(tabClass);
+  async _showTabContent(tab) {
+    const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
       obj.style.display = 'none';
     }
-    this._activeTab = tab?.title ?? tab;
+    this._activeTab = tab.title;
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
@@ -342,11 +344,11 @@ export default class PipelineJobView extends BackendAIPage {
     this.shadowRoot.querySelector('#pipeline-task-list').items = [];
   }
 
-  _changePipelineJob(e) {
+  async _changePipelineJob(e) {
     const selectedPipelineJobName = e.target.value;
     this._initPipelineTaskListItem();
     this.pipelineJobInfo = this.pipelineJobs.filter((job) => job.name === selectedPipelineJobName)[0];
-    this._loadCurrentFlowData();
+    await this._loadCurrentFlowData();
   }
 
   async _refreshViewPane() {
@@ -362,7 +364,7 @@ export default class PipelineJobView extends BackendAIPage {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
     const yamlString = YAML.dump(this.pipelineJobInfo.yaml, {});
     codemirror.setValue(yamlString);
-    this._launchDialogById('#workflow-dialog');
+    this._launchDialogById('#workflow-file-dialog');
   }
 
   _toggleButtonStatus() {
@@ -481,8 +483,8 @@ export default class PipelineJobView extends BackendAIPage {
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar id="pipeline-job-pane" @MDCTabBar:activated="${() => this._refreshViewPane()}">
-              <mwc-tab title="pipeline-job-list" label="Job List" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
-              <mwc-tab title="pipeline-job-view" label="Job View" @click="${(e) => this._showTab(e.target, '.tab-content')}"></mwc-tab>
+              <mwc-tab title="pipeline-job-list" label="Job List" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
+              <mwc-tab title="pipeline-job-view" label="Job View" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
             </mwc-tab-bar>
           </h3>
           <div id="pipeline-job-list" class="tab-content">
@@ -490,7 +492,7 @@ export default class PipelineJobView extends BackendAIPage {
           </div>
           <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-select id="pipeline-list" label="Pipeline">
+              <mwc-select id="pipeline-list" label="Pipeline Job" @change=${this._matchTaskNodeId} ?disabled="${this.pipelineJobs.length <= 0}">
                 ${this.pipelineJobs?.map((job) => {
                   return html`
                     <mwc-list-item value="${job.name}" ?selected="${job.name === this.pipelineJobInfo.name}"
@@ -500,7 +502,11 @@ export default class PipelineJobView extends BackendAIPage {
               </mwc-select>
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
-                <span class="monospace" slot="secondary">${PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at)}</span>
+                <span class="monospace" slot="secondary">
+                  ${this.pipelineJobInfo.created_at !== '' ? 
+                    PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at) : 
+                    `-`}
+                </span>
               </mwc-list-item>
               <span class="flex"></span>
               ${['WAITING', 'RUNNING', 'STOPPED'].includes(this.pipelineJobInfo.status) ? html`
@@ -510,7 +516,7 @@ export default class PipelineJobView extends BackendAIPage {
                 <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}"></mwc-icon-button>
                 <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
                   <mwc-list-item class="horizontal layout center"
-                    @click="${() => {this._launchWorkFlowDialog();}}">
+                    @click="${this._launchWorkFlowDialog}">
                     <mwc-icon>assignment</mwc-icon>
                     <span>View workflow file</span>
                   </mwc-list-item>
@@ -531,12 +537,7 @@ export default class PipelineJobView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      <backend-ai-dialog id="workflow-dialog">
-        <span id="workflow-dialog-title" slot="title">Workflow file</span>
-        <div slot="content">
-          <lablup-codemirror id="workflow-editor" mode="yaml" useLineWrapping readonly></lablup-codemirror>
-        </div>
-      </backend-ai-dialog>
+      ${PipelineUtils.renderWorkflowFileDialogTemplate()}
     `;
   }
 }
