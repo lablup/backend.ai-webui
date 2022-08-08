@@ -28,11 +28,11 @@ import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon-button/mwc-icon-button';
 
 import PipelineUtils from '../lib/pipeline-utils';
+import {PipelineJob} from '../lib/pipeline-type';
 import '../../plastics/chart-js';
 import '../../plastics/lablup-shields/lablup-shields';
 import '../../components/lablup-codemirror';
 import '../../components/backend-ai-dialog';
-import { ro } from 'date-fns/locale';
 
 /**
  Pipeline Job List
@@ -52,15 +52,25 @@ import { ro } from 'date-fns/locale';
 @customElement('pipeline-job-list')
 export default class PipelineJobList extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Array}) pipelineJobs = [];
-  @property({type: Object}) pipelineJobInfo = Object();
-  @property({type: Object}) tasks;
+  @property({type: Array<PipelineJob>}) pipelineJobs;
+  @property({type: PipelineJob}) pipelineJobInfo;
+  @property({type: Object}) tasksGraph;
   @property({type: Object}) options;
-  @property({type: Boolean}) refreshing = false;
-  @property({type: Object}) refreshTimer = Object();
+  @property({type: Boolean}) refreshing;
+  @property({type: Object}) refreshTimer;
+  @property({type: Object}) notification;
 
   constructor() {
     super();
+    this._initResource();
+  }
+
+  _initResource() {
+    this.notification = globalThis.lablupNotification;
+    this.pipelineJobInfo = new PipelineJob();
+    this.pipelineJobs = [] as Array<PipelineJob>;
+    this.refreshing = false;
+    this.refreshTimer = new Object();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -219,11 +229,11 @@ export default class PipelineJobList extends BackendAIPage {
    */
   _createTaskProgressChart() {
     this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
-      const tasks = res;
-      const numActiveTasks = tasks?.filter((task) =>
+      const tasksGraph = res;
+      const numActiveTasks = tasksGraph?.filter((task) =>
         ['PENDING', 'SCHEDULED', 'PREPARING', 'BUILDING', 'PULLING', 'RUNNING', 'RESTARTING', 'RESIZING', 'SUSPENDED', 'TERMINATING'].includes(task.status)).length?? 0;
-      const numFinishedTasks = tasks?.filter((task) => ['TERMINATED', 'ERROR', 'CANCELLED'].includes(task.status)).length?? 0;
-      this.tasks = {
+      const numFinishedTasks = tasksGraph?.filter((task) => ['TERMINATED', 'ERROR', 'CANCELLED'].includes(task.status)).length?? 0;
+      this.tasksGraph = {
         labels: [
           `${numActiveTasks} ACTIVE`,
           `${numFinishedTasks} FINISHED`,
@@ -282,7 +292,7 @@ export default class PipelineJobList extends BackendAIPage {
    *
    * @param {json} pipelineJobInfo
    */
-  async _launchPipelineJobDetailDialog(pipelineJobInfo: Object) {
+  async _launchPipelineJobDetailDialog(pipelineJobInfo: PipelineJob) {
     this.pipelineJobInfo = pipelineJobInfo;
     await this._createTaskProgressChart();
     this._launchDialogById('#pipeline-job-detail-dialog');
@@ -401,6 +411,8 @@ export default class PipelineJobList extends BackendAIPage {
         </mwc-list-item>
       `, root);
     };
+
+    // FIXME: hide stop/resume button since stop operation is not fully implemented in pipeline-server
     columns[4].renderer = (root, column, rowData) => { // control
       const isFinished = ['SUCCESS', 'FAILURE'].includes(rowData.item.result);
       const isActive = ['PENDING', 'RUNNING', 'WAITING'].includes(rowData.item.status);
@@ -411,7 +423,7 @@ export default class PipelineJobList extends BackendAIPage {
           <mwc-icon-button class="fg green info"
             icon="assignment"
             @click="${() => { this._launchPipelineJobDetailDialog(rowData.item);}}"></mwc-icon-button>
-          <!--<mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>-->
+          <!--<mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
           ${!isFinished ? html`
             <mwc-icon-button class="fg green start"
               icon="${icon}"
@@ -423,7 +435,7 @@ export default class PipelineJobList extends BackendAIPage {
           ${isRunning ? html`
           <mwc-icon-button class="fg green start"
               icon="stop" @click="${() => {this._stopPipelineJobExecution(rowData.item)}}"></mwc-icon-button>
-          ` : html``}
+          ` : html``}-->
         </div>
       `, root);
     };
@@ -497,7 +509,7 @@ export default class PipelineJobList extends BackendAIPage {
               <div slot="secondary" class="horizontal center layout">
                 <lablup-shields id="pipeline-status" description="${this.pipelineJobInfo.status}"
                   color="${PipelineUtils._getStatusColor(this.pipelineJobInfo.status)}"></lablup-shields>
-                <chart-js id="tasks-status" type="doughnut" .data="${this.tasks}" .options="${this.options}" width="160" height="40"></chart-js>
+                <chart-js id="tasks-status" type="doughnut" .data="${this.tasksGraph}" .options="${this.options}" width="160" height="40"></chart-js>
               </div>
             </mwc-list-item>
             ${this.pipelineJobInfo.ownership ? html`
