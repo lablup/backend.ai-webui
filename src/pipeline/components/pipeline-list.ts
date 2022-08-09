@@ -203,10 +203,10 @@ export default class PipelineList extends BackendAIPage {
    * Delete selected pipeline
    */
   _deletePipeline() {
-    globalThis.backendaiclient.pipeline.delete(this.pipelineInfo.id).then((res) => {
-      this.notification.text = `Pipeline ${this.pipelineInfo.name} deleted.`;
+    globalThis.backendaiclient.pipeline.delete(this.pipelineInfoExtended.id).then((res) => {
+      this.notification.text = `Pipeline ${this.pipelineInfoExtended.name} deleted.`;
       this.notification.show();
-      this.pipelineInfo = {};
+      this.pipelineInfoExtended = {};
       this._loadPipelineList();
     }).catch((err) => {
       console.log(err);
