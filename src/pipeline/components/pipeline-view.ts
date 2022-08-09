@@ -433,7 +433,7 @@ export default class PipelineView extends BackendAIPage {
     const taskInfo: PipelineTask = {
       name: this.selectedNode.name,
       description: '',
-      ...this.selectedNode.data
+      ...JSON.parse(this.selectedNode.data)
     } as PipelineTask;
     await this.pipelineTaskConfigurationForm._loadCurrentPipelineTaskConfiguration(taskInfo);
     this._launchDialogById('#task-dialog');

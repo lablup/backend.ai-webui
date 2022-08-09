@@ -4,7 +4,7 @@
  */
 import {html, LitElement} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskType} from '../lib/pipeline-type';
+import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskDetail, PipelineTaskType} from '../lib/pipeline-type';
 
  /**
   Pipeline Utils
@@ -251,27 +251,30 @@ export default class PipelineUtils extends LitElement {
    const taskNodes = Object.values(rawTaskList ?? {});
    if (taskNodes.length > 0) {
      taskList = taskNodes.map((task: any) => {
+      // FIXME: parse stringified task data to pipeline task detail
+      const taskData: PipelineTaskDetail = JSON.parse(task.data) as PipelineTaskDetail;
        return {
          name: task.name,
          description: task.description,
          // FIXME: let's set custom type as a fallback for now.
-         type: task.data.type ?? PipelineTaskType.custom,
+         type: taskData.type ?? PipelineTaskType.custom,
          module_uri: '',
-         command: task.data.command,
+         command: taskData.command,
          environment: {
            'scaling-group': scalingGroup,
-           image: task.data.environment.image ?? '',
-           envs: task.data.environment.envs ?? {},
+           image: taskData.environment.image ?? '',
+           envs: taskData.environment.envs ?? {},
          } as PipelineEnvironment,
          resources: {
-           cpu: task.data.resources.cpu,
-           memory: task.data.resources.memory,
-           cuda: task.data.resources.cuda
+           cpu: taskData.resources.cpu,
+           memory: taskData.resources.memory,
+           "cuda.device": taskData.resources["cuda.device"],
+           "cuda.shares": taskData.resources["cuda.shares"],
          } as PipelineResources,
          resource_opts: {
-           shmem: task.data.resource_opts.shmem
+           shmem: taskData.resource_opts.shmem
          },
-         mounts: task.data.mounts,
+         mounts: taskData.mounts,
          dependencies: getTaskNameFromNodeId(task.inputs?.input_1?.connections),
        } as PipelineTask;
      });

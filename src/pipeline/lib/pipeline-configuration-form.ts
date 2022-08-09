@@ -344,8 +344,12 @@ export default class PipelineConfigurationForm extends LitElement {
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
     this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._gpuInput, pipelineYaml.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    // FIXME: auto input cuda resources if it's declared
+    const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
+    if (cudaResource.length > 0) {
+      this._autoFillInput(this._gpuInput, cudaResource[0]);
+    }
 
     // virtual folders
     this._loadDefaultMounts(pipelineYaml.mounts);
@@ -384,8 +388,12 @@ export default class PipelineConfigurationForm extends LitElement {
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
     this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._gpuInput, pipelineYaml.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    // FIXME: auto input cuda resources if it's declared
+    const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
+    if (cudaResource.length > 0) {
+      this._autoFillInput(this._gpuInput, cudaResource[0]);
+    }
 
     // virtual folders
     this._loadDefaultMounts(pipelineYaml.mounts);
@@ -430,8 +438,12 @@ export default class PipelineConfigurationForm extends LitElement {
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
     this._autoFillInput(this._memInput, pipelineTask.resources.memory.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._gpuInput, pipelineTask.resources.cuda?.shares.split('g')[0] ?? this._gpuInput.min);
     this._autoFillInput(this._shmemInput, pipelineTask.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    // FIXME: auto input cuda resources if it's declared
+    const cudaResource = [pipelineTask.resources['cuda.device'], pipelineTask.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
+    if (cudaResource.length > 0) {
+      this._autoFillInput(this._gpuInput, cudaResource[0]);
+    }
 
     // virtual folders
     this._loadDefaultMounts(pipelineTask.mounts);
@@ -745,14 +757,14 @@ export default class PipelineConfigurationForm extends LitElement {
         this._switchActiveTab(this._generalTab);
         return false;
     }
-    const isCommandValid = this._cmdEditor._validateInput();
-    if (!isCommandValid) {
-      this._cmdEditorValidationMessage.style.display = '';
-      this._switchActiveTab(this._generalTab);
-      return false;
-    } else {
-      this._cmdEditorValidationMessage.style.display = 'none';
-    }
+    // const isCommandValid = this._cmdEditor._validateInput();
+    // if (!isCommandValid) {
+    //   this._cmdEditorValidationMessage.style.display = '';
+    //   this._switchActiveTab(this._generalTab);
+    //   return false;
+    // } else {
+    //   this._cmdEditorValidationMessage.style.display = 'none';
+    // }
 
     // resources task tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
@@ -789,10 +801,8 @@ export default class PipelineConfigurationForm extends LitElement {
     const resources = {
       cpu: cpuRequest,
       memory: memRequest + 'g',
-      cuda: {
-        shares: gpuRequest,
-        device: '',
-      },
+      ...(gpuRequest !== '' ? {"cuda.device" : gpuRequest} : null),
+      ...(gpuRequest !== '' ? {"cuda.shares": gpuRequest}: null),
     } as PipelineResources;
     const resource_opts = {
       shmem: shmemRequest + 'g'
@@ -855,7 +865,7 @@ export default class PipelineConfigurationForm extends LitElement {
         pos_y: 0,
         // FIXME: temporary name for distinguishing pipeline specific node
         class: 'drawflow-node',
-        data: taskData,
+        data: JSON.stringify(taskData),
         html: name,
       } as PipelineTaskNode;
     }
@@ -1028,10 +1038,10 @@ export default class PipelineConfigurationForm extends LitElement {
     );
   }
 
-  renderNameTemplate() {
+  renderNameTemplate(label="Pipeline Name") {
     // language=HTML
     return html`
-      <mwc-textfield id="name-input" label="Pipeline Name" required autoValidate></mwc-textfield>
+      <mwc-textfield id="name-input" label=${label} required autoValidate></mwc-textfield>
     `;
   }
 
@@ -1163,7 +1173,7 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
     <div id="general" class="vertical layout center flex tab-content">
-      ${this.renderNameTemplate()}
+      ${this.renderNameTemplate("Task Name")}
       ${this.renderDescriptionTemplate("Task Description")}
       ${this.renderPipelineTaskTypeTemplate(isEdit)}
       ${this.renderCmdEditorTemplate()}
