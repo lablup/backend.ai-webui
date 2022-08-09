@@ -7,6 +7,7 @@ export interface PipelineInfoBase {
   storage: {
     host: string,
     name: string,
+    id: string, // uuid for vfolder
   },
   yaml: string,
   dataflow: object,
@@ -22,6 +23,7 @@ export class PipelineInfo implements PipelineInfoBase {
   storage: {
     host: string,
     name: string,
+    id: string,
   };
   yaml: string;
   dataflow: object;
@@ -33,6 +35,7 @@ export class PipelineInfo implements PipelineInfoBase {
     this.storage = {
       host: '',
       name: '',
+      id: '',
     };
     this.yaml = '';
     this.dataflow = Object();
@@ -67,6 +70,7 @@ export class PipelineInfoExtended implements PipelineInfoExtendedBase {
   storage: {
     host: string,
     name: string,
+    id: string,
   };
   version: string;
   yaml: string;
@@ -85,6 +89,7 @@ export class PipelineInfoExtended implements PipelineInfoExtendedBase {
     this.storage = {
       host: '',
       name: '',
+      id: '',
     };
     this.version = '';
     this.yaml = '';
@@ -189,7 +194,9 @@ export interface PipelineTaskNodeBase {
   class: string,
   pos_x: number,
   pos_y: number,
-  data: PipelineTaskDetail,
+  // FIXME: need to be converted to string because of "cuda.device" and "cuda.shares"
+  data: string, 
+  // data: PipelineTaskDetail,
   html: string,
 }
 
@@ -200,7 +207,8 @@ export class PipelineTaskNode implements PipelineTaskNodeBase {
   class: string;
   pos_x: number;
   pos_y: number;
-  data: PipelineTaskDetail;
+  // data: PipelineTaskDetail;
+  data: string;
   html: string;
 
   constructor() {
@@ -210,7 +218,8 @@ export class PipelineTaskNode implements PipelineTaskNodeBase {
     this.class = '';
     this.pos_x = 0;
     this.pos_y = 0;
-    this.data = new PipelineTaskDetail();
+    // this.data = new PipelineTaskDetail();
+    this.data = '';
     this.html = '';
   }
 }
@@ -351,19 +360,15 @@ export class SessionEventWebHook implements SessionEventWebHookBase {
 export interface PipelineResourcesBase {
   cpu: string,
   memory: string,
-  cuda?: {
-    shares: string,
-    device: string,
-  },
+  "cuda.shares"?: string,
+  "cuda.device"?: string,
 }
 
 export class PipelineResources implements PipelineResourcesBase {
   cpu: string;
   memory: string;
-  cuda?: {
-    shares: string,
-    device: string,
-  };
+  "cuda.shares"?: string;
+  "cuda.device"?: string;
 
   constructor() {
     this.cpu = '';
