@@ -22,7 +22,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '../lib/pipeline-flow';
-import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineEnvironment, PipelineResources, PipelineYAML} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineTaskNode, PipelineTask} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**

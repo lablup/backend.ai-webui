@@ -28,7 +28,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import PipelineJobList from './pipeline-job-list';
 import {PipelineJob, PipelineTaskInstance} from '../lib/pipeline-type';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import './pipeline-job-list';
