@@ -291,7 +291,21 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadSupportedLanguages();
     this._selectDefaultLanguage();
 
+    // name, description
+    this._autoFillInput(this._nameInput, '');
+    this._autoFillInput(this._descriptionInput, '');
+
+    // resources
+    this._autoFillInput(this._cpuInput, '');
+    this._autoFillInput(this._memInput, '');
+    this._autoFillInput(this._gpuInput, '');
+    this._autoFillInput(this._shmemInput, '');
+
+    // virtual folders
+    this._unselectAllSelectedFolder();
+
     // default active tab is general
+    this._switchActiveTab(this._generalTab);
     this._showTabContent(this._generalTab);
   }
 
@@ -909,15 +923,15 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Display inside the tab content and hide contents in the others tab
    *
-   * @param {HTMLElement} tab - mwc-tab element
+   * @param {HTMLElement} tabContent - tabContnet to show corresponding mwc-tab
    */
-  _showTabContent(tab) {
+  _showTabContent(tabContent) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
       obj.style.display = 'none';
     }
-    this._activeTab = tab.title;
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    this._activeTab = tabContent.title;
+    this.shadowRoot.querySelector('#' + tabContent.title).style.display = 'block';
   }
 
 /**
