@@ -153,11 +153,11 @@ export default class PipelineList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', async () => {
-        await this._loadPipelineList();
+        this._loadPipelineList();
         this._enableLaunchButton();
       }, {once: true});
     } else { // already connected
-      await this._loadPipelineList();
+      this._loadPipelineList();
       this._enableLaunchButton();
     }
   }
@@ -206,7 +206,7 @@ export default class PipelineList extends BackendAIPage {
     globalThis.backendaiclient.pipeline.delete(this.pipelineInfoExtended.id).then((res) => {
       this.notification.text = `Pipeline ${this.pipelineInfoExtended.name} deleted.`;
       this.notification.show();
-      this.pipelineInfoExtended = {};
+      this.pipelineInfo = {};
       this._loadPipelineList();
     }).catch((err) => {
       console.log(err);
@@ -216,9 +216,8 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Get Pipeline list from pipeline server
-   *
    */
-  async _loadPipelineList() {
+  _loadPipelineList() {
     const sanitizeYaml = (yaml) => {
       if (typeof yaml === 'string') {
         return (yaml === '') ? {} : JSON.parse(yaml);
@@ -227,22 +226,23 @@ export default class PipelineList extends BackendAIPage {
         return yaml;
       }
     };
-    try {
-      const pipelineList = await globalThis.backendaiclient.pipeline.list();
-      this.pipelines = pipelineList.map((pipeline: PipelineInfoExtended) => {
+
+    globalThis.backendaiclient.pipeline.list().then((res) => {
+      this.pipelines = res.map((pipeline: PipelineInfoExtended) => {
         pipeline.yaml = sanitizeYaml(pipeline.yaml);
         // data transformation on yaml and date (created_at, last_modified)
         pipeline.created_at = PipelineUtils._humanReadableDate(pipeline.created_at);
         pipeline.last_modified = PipelineUtils._humanReadableDate(pipeline.last_modified);
         return pipeline;
       });
-      this.requestUpdate();
-    } catch (err) {
+      // FIXME: need to update grid items manually. If not, deleted or updated row remains.
+      this.pipelineGrid.items = this.pipelines;
+    }).catch((err) => {
       this.notification.text = err.message;
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
       document.dispatchEvent(event);
-    }
+    });
   }
 
   /**
@@ -467,7 +467,7 @@ export default class PipelineList extends BackendAIPage {
       <div slot="footer" class="horizontal end-justified flex layout">
         <div class="flex"></div>
         <mwc-button label="Cancel" @click="${() => this._hideDialogById('#delete-pipeline')}"></mwc-button>
-        <mwc-button unelevated class="delete" label="Delete" @click="${() => this._deletePipeline()}"></mwc-button>
+        <mwc-button unelevated class="delete" label="Delete" @click="${this._deletePipeline}"></mwc-button>
       </div>
     </backend-ai-dialog>`;
   }
