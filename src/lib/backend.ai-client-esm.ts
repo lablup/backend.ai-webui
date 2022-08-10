@@ -3988,13 +3988,14 @@ class Pipeline {
     const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
     try {
       await this.client._wrapWithPromise(rqst);
-      this._removeCookieByName(this.tokenName); 
     } catch (err) {
-      console.log(err);
       throw {
         "title": "Pipeline Logout Failed.",
-        "message": "Pipeline Loout failed. Check information and pipeline server status."
+        "message": "Pipeline Logout failed. Check information and pipeline server status."
       }
+    } finally {
+      // remove cookie anyway
+      this._removeCookieByName(this.tokenName);
     }
   }
 
@@ -4110,13 +4111,13 @@ class Pipeline {
   }
 
   /**
-   * Remove Cooke By its name if exists
+   * Remove Cookie By its name if exists
    * 
    * @param {string} name - cookie name 
    */
   _removeCookieByName(name = '') {
     if (name !== '') {
-      document.cookie = name +'=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
     }
   }
 }

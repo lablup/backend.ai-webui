@@ -1127,6 +1127,7 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
+        globalThis.backendaiclient.pipeline.logout();
         this.client.logout();
       }
       this._enableUserInput();

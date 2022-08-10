@@ -3962,8 +3962,11 @@ class Pipeline {
       console.log(err);
       throw {
         "title": "Pipeline Logout Failed.",
-        "message": "Pipeline Loout failed. Check information and pipeline server status."
+        "message": "Pipeline Logout failed. Check information and pipeline server status."
       }
+    } finally {
+      // remove cookie anyway
+      this._removeCookieByName(this.tokenName);
     }
   }
 
