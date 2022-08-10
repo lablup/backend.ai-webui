@@ -289,7 +289,6 @@ export default class PipelineView extends BackendAIPage {
    */
   _updatePipelineInfo() {
     const updatedPipelineInfo = this.pipelineConfigurationForm.inputFieldListAsInstance() as PipelineInfo;
-
     // need to update partially since pipelineInfo returns data without id
     Object.assign(this.pipelineInfo, {...updatedPipelineInfo});
     globalThis.backendaiclient.pipeline.update(this.pipelineInfo.id, this.pipelineInfo).then((res) => {
@@ -328,7 +327,7 @@ export default class PipelineView extends BackendAIPage {
 
     const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
     // convert object to string (dataflow)
-    parsedPipelineInfo.tasks = PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group']);
+    Object.assign(parsedPipelineInfo.yaml, {tasks: PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group'])})    
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
 
     // FIXME: remove storage key for avoiding overlapping
