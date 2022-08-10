@@ -220,7 +220,7 @@ export default class PipelineList extends BackendAIPage {
   _loadPipelineList() {
     const sanitizeYaml = (yaml) => {
       if (typeof yaml === 'string') {
-        return (yaml === '') ? {} : JSON.parse(yaml);
+        return (yaml === '') ? {} : YAML.load(yaml);
       } else {
         // already parsed
         return yaml;

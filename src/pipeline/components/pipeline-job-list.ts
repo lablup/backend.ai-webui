@@ -204,7 +204,7 @@ export default class PipelineJobList extends BackendAIPage {
       const pipelineJobList = await globalThis.backendaiclient.pipelineJob.list();
       this.pipelineJobs = pipelineJobList.map((pipelineJob) => {
         // data transformation on yaml
-        pipelineJob.yaml = JSON.parse(pipelineJob.yaml);
+        pipelineJob.yaml = YAML.load(pipelineJob.yaml);
         return pipelineJob;
       });
       const refreshTime = 5000; // refresh
@@ -290,7 +290,7 @@ export default class PipelineJobList extends BackendAIPage {
   /**
    * Show information dialog of selected pipeline
    *
-   * @param {json} pipelineJobInfo
+   * @param {PipelineJob} pipelineJobInfo
    */
   async _launchPipelineJobDetailDialog(pipelineJobInfo: PipelineJob) {
     this.pipelineJobInfo = pipelineJobInfo;

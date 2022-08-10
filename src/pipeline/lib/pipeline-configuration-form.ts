@@ -16,6 +16,7 @@ import {
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
 import {PipelineInfo, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources, PipelineTaskDetail} from '../lib/pipeline-type';
+import {default as YAML} from 'js-yaml';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -323,7 +324,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._fetchUserInfo();
     this._loadSupportedLanguages();
     this._configureRequiredInputField();
-    const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
+    const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
 
     // name, description
     this._autoFillInput(this._nameInput, pipeline.name);
@@ -374,7 +375,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadSupportedLanguages();
     this._configureRequiredInputField();
 
-    const pipelineYaml = JSON.parse(pipeline.yaml) as PipelineYAML;
+    const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
 
     // name, description
     this._autoFillInput(this._nameInput, '');
@@ -852,7 +853,7 @@ export default class PipelineConfigurationForm extends LitElement {
         name: name,
         description: description,
         storage: storage,
-        yaml: JSON.stringify(yaml),
+        yaml: YAML.dump(yaml),
         dataflow: {}, // used for graph visualization,
         is_active: true,
       } as PipelineInfo;
