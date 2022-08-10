@@ -285,7 +285,10 @@ export default class PipelineConfigurationForm extends LitElement {
     });
   }
 
-  async _initConfiguration() {
+  /**
+   * Initialize pipeline configuration on pipeline creation
+   */
+  async _initPipelineConfiguration() {
     this._fetchUserInfo();
     await this._updateVirtualFolderList();
     this._configureRequiredInputField();
@@ -306,19 +309,14 @@ export default class PipelineConfigurationForm extends LitElement {
     this._unselectAllSelectedFolder();
 
     // default active tab is general
-    this._switchActiveTab(this._generalTab);
-    this._showTabContent(this._generalTab);
+    this._setActiveTabToGeneral();
   }
 
-  _loadSupportedLanguages() {
-    this.languages = this.resourceBroker.languages;
-  }
-
-  _configureRequiredInputField() {
-    // default resource configuration is required when creating/modifying pipeline
-    this._isRequired = (this.configurationType === 'pipeline');
-  }
-
+  /**
+   * Load pipelineInfo to each of corresponding input field in pipeline dialog
+   * 
+   * @param {PipelineInfo} pipeline
+   */
   async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
     await this._updateVirtualFolderList(pipeline.storage.name);
     this._fetchUserInfo();
@@ -363,10 +361,19 @@ export default class PipelineConfigurationForm extends LitElement {
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
+    
     // virtual folders
     this._loadDefaultMounts(pipelineYaml.mounts);
+
+    // default active tab is general
+    this._setActiveTabToGeneral();
   }
 
+  /**
+   * Initialize pipeline task configuration on pipeline task creation by applying default values from pipeline
+   * 
+   * @param {PipelineInfo} pipeline
+   */
   async _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
     await this._updateVirtualFolderList();
     this._loadSupportedLanguages();
@@ -408,11 +415,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadDefaultMounts(pipelineYaml.mounts);
 
     // default active tab is general
-    this._showTabContent(this._generalTab);
-
-    // default active tab is general
-    this._switchActiveTab(this._generalTab);
-    this._showTabContent(this._generalTab);
+    this._setActiveTabToGeneral();
   }
 
   async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
@@ -459,12 +462,50 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // virtual folders
     this._loadDefaultMounts(pipelineTask.mounts);
+
+    // default active tab is general
+    this._setActiveTabToGeneral();
   }
 
+  /**
+   * Switch active tab in dialog to "general" which is the first tab of tab-group
+   */
+   _setActiveTabToGeneral() {
+    this._switchActiveTab(this._generalTab);
+    this._showTabContent(this._generalTab);
+  }
+
+  /**
+   * Set supported language list according to resourceBroker
+   */
+  _loadSupportedLanguages() {
+    this.languages = this.resourceBroker.languages;
+  }
+
+  /**
+   * Set required toggle by the type of configuration-form
+   * Required only when configuration-form type is `pipeline`
+   */
+  _configureRequiredInputField() {
+    // default resource configuration is required when creating/modifying pipeline
+    this._isRequired = (this.configurationType === 'pipeline');
+  }
+
+  /**
+   * Auto-fill input with value
+   * 
+   * @param inputElement - mwc element mostly `mwc-textfield` and `mwc-select`
+   * @param value 
+   */
   _autoFillInput(inputElement: any, value: string) {
     inputElement.value = value;
   }
 
+  /**
+   * Auto-select default mounts in vfolder grid
+   * 
+   * @param {Array<string>} mountFolderList 
+   */
   _loadDefaultMounts(mountFolderList: Array<string> = []) {
     this.defaultSelectedVfolders = mountFolderList;
     if (this.vfolderGrid && this.vfolderGrid.items) {
@@ -559,6 +600,13 @@ export default class PipelineConfigurationForm extends LitElement {
     this.selectedVfolders = [];
   }
 
+  /**
+   * Update Folder map by input folder name and alias
+   * 
+   * @param {string} folder 
+   * @param {string} alias 
+   * @returns 
+   */
   async _updateFolderMap(folder, alias) {
     if (alias === '') {
       if (folder in this.folderMapping) {
@@ -794,7 +842,6 @@ export default class PipelineConfigurationForm extends LitElement {
     let obj: PipelineInfo | PipelineTaskNode;
     /* raw inputs */
     const name = this._nameInput.value;
-    const description = this._descriptionInput.value;
     const scalingGroup = this._scalingGroupSelect.value;
     const kernel = this._environment.value;
     const version = this._versionSelector.value;
@@ -823,6 +870,7 @@ export default class PipelineConfigurationForm extends LitElement {
       // FIXME: for now, we only support custom type pipeline creation.
 
       /* raw inputs only used in pipeline info */
+      const description = this._descriptionInput.value;
       const storageHost = this._storageMountSelect.value;
       const storageHostMountFolderName = this._mountFolderNameInput.value;
 
@@ -991,7 +1039,9 @@ export default class PipelineConfigurationForm extends LitElement {
    */
    async _focusCmdEditor() {
     await this._cmdEditor.refresh();
-    this._cmdEditor.focus();
+    setTimeout(() => {
+      this._focusCmdEditor();
+    }, 0);
   }
 
   /**
@@ -1007,6 +1057,14 @@ export default class PipelineConfigurationForm extends LitElement {
   _loadDataToCmdEditor(data: string = '') {
     this._cmdEditor.setValue(data);
   }
+  
+  /**
+   * Render Mount list of vfolder
+   * 
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
 
   folderToMountListRenderer(root, column, rowData) {
     render(
