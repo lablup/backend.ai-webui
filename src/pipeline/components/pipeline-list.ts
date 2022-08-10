@@ -240,8 +240,11 @@ export default class PipelineList extends BackendAIPage {
     }).catch((err) => {
       this.notification.text = err.message;
       this.notification.show();
-      const event = new CustomEvent('backend-ai-logout', {'detail': ''});
-      document.dispatchEvent(event);
+      // authentication failed
+      if (err.statusCode === 403) {
+        const event = new CustomEvent('backend-ai-logout', {'detail': ''});
+        document.dispatchEvent(event);
+      }
     });
   }
 
