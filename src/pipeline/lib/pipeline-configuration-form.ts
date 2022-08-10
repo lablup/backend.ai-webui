@@ -361,11 +361,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
     // FIXME: auto input cuda resources if it's declared
-    const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
-    if (cudaResource.length > 0) {
-      this._autoFillInput(this._gpuInput, cudaResource[0]);
-    }
-
+    const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
+    this._autoFillInput(this._gpuInput, cudaResource ?? 0);
     // virtual folders
     this._loadDefaultMounts(pipelineYaml.mounts);
   }
@@ -405,10 +402,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
     // FIXME: auto input cuda resources if it's declared
-    const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
-    if (cudaResource.length > 0) {
-      this._autoFillInput(this._gpuInput, cudaResource[0]);
-    }
+    const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
+    this._autoFillInput(this._gpuInput, cudaResource ?? 0);
 
     // virtual folders
     this._loadDefaultMounts(pipelineYaml.mounts);
@@ -820,8 +815,7 @@ export default class PipelineConfigurationForm extends LitElement {
     const resources = {
       cpu: cpuRequest,
       mem: memRequest + 'g',
-      ...(gpuRequest !== '' ? {"cuda.device" : gpuRequest} : null),
-      ...(gpuRequest !== '' ? {"cuda.shares": gpuRequest}: null),
+      [this.resourceBroker.gpu_mode]: gpuRequest
     } as PipelineResources;
     const resource_opts = {
       shmem: shmemRequest + 'g'
