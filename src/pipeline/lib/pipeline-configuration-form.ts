@@ -39,7 +39,7 @@ type ConfigurationType = 'pipeline' | 'pipeline-task';
 /**
  Pipeline Configuration Form
 
- `pipeline-configuration-form` display current/new configuration on pipeline itself and pipeline-task 
+ `pipeline-configuration-form` display current/new configuration on pipeline itself and pipeline-task
  mostly split into relative items
 
  Example:
@@ -112,7 +112,7 @@ export default class PipelineConfigurationForm extends LitElement {
   @query('#mount-folder-input') private _mountFolderNameInput;
   @query('#command-editor') private _cmdEditor;
   @query('#codemirror-validation-message') private _cmdEditorValidationMessage;
-  
+
   private _isRequired;
 
   @property({type: Object}) taskType = {
@@ -358,7 +358,7 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
@@ -402,7 +402,7 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineYaml.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
     this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = [pipelineYaml.resources['cuda.device'], pipelineYaml.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
@@ -456,7 +456,7 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineTask.resources.memory.split('g')[0] ?? this._memInput.min);
+    this._autoFillInput(this._memInput, pipelineTask.resources.mem.split('g')[0] ?? this._memInput.min);
     this._autoFillInput(this._shmemInput, pipelineTask.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = [pipelineTask.resources['cuda.device'], pipelineTask.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
@@ -720,8 +720,8 @@ export default class PipelineConfigurationForm extends LitElement {
     }
     // await environment.updateComplete; async way.
     const obj = this._environment.items.find((o) => o.value === this.defaultLanguage);
-    if (typeof obj === 'undefined' && 
-        typeof globalThis.backendaiclient !== 'undefined' && 
+    if (typeof obj === 'undefined' &&
+        typeof globalThis.backendaiclient !== 'undefined' &&
         globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
@@ -744,7 +744,7 @@ export default class PipelineConfigurationForm extends LitElement {
   _validatePipelineConfigInput() {
     // general tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._nameInput, this._typeSelect, this._scalingGroupSelect, 
+      [this._nameInput, this._typeSelect, this._scalingGroupSelect,
       this._environment, this._versionSelector, this._descriptionInput])) {
         this._switchActiveTab(this._generalTab);
         return false;
@@ -752,7 +752,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // resources tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._cpuInput, this._memInput, this._shmemInput, 
+      [this._cpuInput, this._memInput, this._shmemInput,
        this._gpuInput])) {
         this._switchActiveTab(this._resourcesTab);
         return false;
@@ -819,7 +819,7 @@ export default class PipelineConfigurationForm extends LitElement {
     } as PipelineEnvironment;
     const resources = {
       cpu: cpuRequest,
-      memory: memRequest + 'g',
+      mem: memRequest + 'g',
       ...(gpuRequest !== '' ? {"cuda.device" : gpuRequest} : null),
       ...(gpuRequest !== '' ? {"cuda.shares": gpuRequest}: null),
     } as PipelineResources;
@@ -1079,7 +1079,7 @@ export default class PipelineConfigurationForm extends LitElement {
       <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
       ${this.pipelineTypes.map((item) => {
         return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
-      })} 
+      })}
     </mwc-select>
     `;
   }

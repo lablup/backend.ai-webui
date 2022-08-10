@@ -53,8 +53,8 @@ export interface PipelineInfoExtendedBase extends PipelineInfoBase {
 }
 
 /**
- * Extended Pipeline Information class received from pipeline server 
- * 
+ * Extended Pipeline Information class received from pipeline server
+ *
  */
 export class PipelineInfoExtended implements PipelineInfoExtendedBase {
 
@@ -195,7 +195,7 @@ export interface PipelineTaskNodeBase {
   pos_x: number,
   pos_y: number,
   // FIXME: need to be converted to string because of "cuda.device" and "cuda.shares"
-  data: string, 
+  data: string,
   // data: PipelineTaskDetail,
   html: string,
 }
@@ -257,7 +257,7 @@ export class PipelineTask implements PipelineTaskBase {
 }
 
 /**
- * Task data interface partially used in PipelineTaskNode interface 
+ * Task data interface partially used in PipelineTaskNode interface
  */
 export interface PipelineTaskDetailBase {
   type: string,
@@ -297,7 +297,7 @@ type ExcludedKeyListInPipelineTaskInstance = 'dataflow' | 'description' | 'email
 
 /**
  * Task instance interface
- * 
+ *
  */
 export interface PipelineTaskInstanceBase extends Omit<PipelineJobBase, ExcludedKeyListInPipelineTaskInstance> {
   compute_session_id: string,
@@ -331,7 +331,7 @@ export class PipelineTaskInstance implements PipelineTaskInstanceBase {
 
 /**
  * Session event webhook interface
- * 
+ *
  */
 export interface SessionEventWebHookBase {
   type: string,
@@ -359,20 +359,20 @@ export class SessionEventWebHook implements SessionEventWebHookBase {
  */
 export interface PipelineResourcesBase {
   cpu: string,
-  memory: string,
+  mem: string,
   "cuda.shares"?: string,
   "cuda.device"?: string,
 }
 
 export class PipelineResources implements PipelineResourcesBase {
   cpu: string;
-  memory: string;
+  mem: string;
   "cuda.shares"?: string;
   "cuda.device"?: string;
 
   constructor() {
     this.cpu = '';
-    this.memory = '';
+    this.mem= '';
   }
 }
 
@@ -381,7 +381,7 @@ export class PipelineResources implements PipelineResourcesBase {
  */
 export interface PipelineEnvironmentBase {
   image: string,
-  envs: object, 
+  envs: object,
   'scaling-group': string,
 }
 

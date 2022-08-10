@@ -146,7 +146,7 @@ export default class PipelineUtils extends LitElement {
   static _generateKernelIndex(kernel, version) {
    return kernel + ':' + version;
  }
- 
+
   static _aliasName(value) {
     const alias = {
       'python': 'Python',
@@ -268,7 +268,7 @@ export default class PipelineUtils extends LitElement {
          } as PipelineEnvironment,
          resources: {
            cpu: taskData.resources.cpu,
-           memory: taskData.resources.memory,
+           mem: taskData.resources.mem,
            "cuda.device": taskData.resources["cuda.device"],
            "cuda.shares": taskData.resources["cuda.shares"],
          } as PipelineResources,
@@ -313,7 +313,7 @@ export default class PipelineUtils extends LitElement {
 
   /**
    * Return stringified html for workflow-file-dialog
-   * 
+   *
    * @returns {string} - stringified html
    */
   static renderWorkflowFileDialogTemplate() {

@@ -93,7 +93,7 @@ export default class PipelineJobView extends BackendAIPage {
         .tab-content {
           width: 100%;
         }
-      
+
         div.configuration {
           width: 90px !important;
           height: 20px;
@@ -121,7 +121,7 @@ export default class PipelineJobView extends BackendAIPage {
           --mdc-tab-color-default: var(--general-tabbar-background-color);
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
-        
+
         mwc-icon-button {
           color: var(--general-button-background-color);
         }
@@ -502,8 +502,8 @@ export default class PipelineJobView extends BackendAIPage {
               <mwc-list-item twoline>
                 <span><strong>Duration</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${this.pipelineJobInfo.created_at !== '' ? 
-                    PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at) : 
+                  ${this.pipelineJobInfo.created_at !== '' ?
+                    PipelineUtils._humanReadableTimeDuration(this.pipelineJobInfo.created_at, this.pipelineJobInfo.terminated_at) :
                     `-`}
                 </span>
               </mwc-list-item>
