@@ -4,7 +4,7 @@
  */
 import {html, LitElement} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskDetail, PipelineTaskType} from '../lib/pipeline-type';
+import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskDetail, PipelineTaskInstance, PipelineTaskType} from '../lib/pipeline-type';
 import {default as YAML} from 'js-yaml';
 
  /**
@@ -326,6 +326,16 @@ export default class PipelineUtils extends LitElement {
       </div>
     </backend-ai-dialog>
     `;
+  }
+
+  /**
+   * Request and receive the list of pipeline task instances by pipeline job id
+   * 
+   * @param {string} pipelineJobId 
+   * @returns {Array<PipelineTaskInstance>}
+   */
+   static async _loadTaskInstances(pipelineJobId = '') {
+    return globalThis.backendaiclient.pipelineTaskInstance.list(pipelineJobId);
   }
 
   render() {

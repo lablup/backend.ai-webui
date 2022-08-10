@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 import {BackendAIPage} from '../../components/backend-ai-page';
@@ -19,7 +19,6 @@ import {default as YAML} from 'js-yaml';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 
 import '@material/mwc-icon/mwc-icon';
@@ -60,11 +59,18 @@ export default class PipelineJobList extends BackendAIPage {
   @property({type: Object}) refreshTimer;
   @property({type: Object}) notification;
 
+  @query('vaadin-grid#pipeline-job-list') pipelineJobGrid;
+  @queryAll('vaadin-grid#pipeline-job-list vaadin-grid-column') pipelineJobGridColumnList;
+  @queryAll('vaadin-grid#pipeline-job-list vaadin-grid-filter-column') pipelineJobGridFilterColumnList;
+
   constructor() {
     super();
     this._initResource();
   }
 
+  /**
+   *  Initialize properties of the component
+   */
   _initResource() {
     this.notification = globalThis.lablupNotification;
     this.pipelineJobInfo = new PipelineJob();
@@ -131,7 +137,8 @@ export default class PipelineJobList extends BackendAIPage {
         mwc-list.left-border mwc-list-item {
           border-left: 1px solid #ccc;
         }
-      `];
+      `
+    ];
   }
 
   firstUpdated() {
@@ -183,7 +190,6 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Get Pipeline Job list from pipeline server
-   *
    */
   async _loadPipelineJobList() {
    await this._refreshPipelineJobList();
@@ -231,7 +237,7 @@ export default class PipelineJobList extends BackendAIPage {
    * Create Task Progress Doughnut Chart
    */
   _createTaskProgressChart() {
-    this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
+    PipelineUtils._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
       const tasksGraph = res;
       const numActiveTasks = tasksGraph?.filter((task) =>
         ['PENDING', 'SCHEDULED', 'PREPARING', 'BUILDING', 'PULLING', 'RUNNING', 'RESTARTING', 'RESIZING', 'SUSPENDED', 'TERMINATING'].includes(task.status)).length?? 0;
@@ -281,7 +287,6 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Show yaml data dialog of selected pipeline
-   *
    */
   _launchWorkFlowDialog() {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
@@ -301,6 +306,11 @@ export default class PipelineJobList extends BackendAIPage {
     this._launchDialogById('#pipeline-job-detail-dialog');
   }
 
+  /**
+   * Toggle icon accornding to the status of event-target
+   * 
+   * @param {event} e 
+   */
   _toggleRunningIcon(e) {
     const button = e.target;
     if (button.icon === 'pause') {
@@ -310,15 +320,22 @@ export default class PipelineJobList extends BackendAIPage {
     }
   }
 
-  async _loadTaskInstances(pipelineJobId = '') {
-    return globalThis.backendaiclient.pipelineTaskInstance.list(pipelineJobId);
-  }
-
-  _togglePipelineJobExecution(pipelineJob) {
+  /**
+   * Set current pipelineJobInfo from argument
+   * 
+   * @param {PipelineJob} pipelineJob
+   */
+  _togglePipelineJobExecution(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
   }
 
-  _stopPipelineJobExecution(pipelineJob) {
+  /**
+   * Send request to stop running pipeline job by id
+   * 
+   * @param {PipelineJob} pipelineJob 
+   * @returns {Promise}
+   */
+  _stopPipelineJobExecution(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
     /**
      * TODO: update the status of selected pipelineJob
@@ -331,7 +348,12 @@ export default class PipelineJobList extends BackendAIPage {
     });
   }
 
-  _loadPipelineJobView(pipelineJob) {
+  /**
+   * Load current pipeline job information and trigger tab-change to pipeline-job-view
+   * 
+   * @param {PipelineJob} pipelineJob 
+   */
+  _loadPipelineJobView(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
     PipelineUtils._setCustomEvent('pipeline-job-view-active-tab-change',
       {
@@ -387,24 +409,28 @@ export default class PipelineJobList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
+  /**
+   * Render rowData according to type of the column (plain, filtered, sorted)
+   */
   _setVaadinGridRenderers() {
-    let columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-column');
-    columns[0].renderer = (root, column, rowData) => { // #
+    
+    // plain columns
+    this.pipelineJobGridColumnList[0].renderer = (root, column, rowData) => { // #
       root.textContent = rowData.index + 1;
     };
-    columns[1].renderer = (root, column, rowData) => { // status
+    this.pipelineJobGridColumnList[1].renderer = (root, column, rowData) => { // status
       const color = PipelineUtils._getStatusColor(rowData.item.status);
       root.innerHTML = `
         <lablup-shields description="${rowData.item.status}" color="${color}"></lablup-shields>
       `;
     };
-    columns[2].renderer = (root, column, rowData) => { // result
+    this.pipelineJobGridColumnList[2].renderer = (root, column, rowData) => { // result
       const color = PipelineUtils._getResultColor(rowData.item.result);
       root.innerHTML = `
         <lablup-shields description="${rowData.item.result}" color="${color}"></lablup-shields>
       `;
     };
-    columns[3].renderer = (root, column, rowData) => { // duration
+    this.pipelineJobGridColumnList[3].renderer = (root, column, rowData) => { // duration
       const createdAt = PipelineUtils._humanReadablePassedTime(rowData.item.created_at);
       const duration = PipelineUtils._humanReadableTimeDuration(rowData.item.created_at, rowData.item.terminated_at);
       render(html`
@@ -416,7 +442,7 @@ export default class PipelineJobList extends BackendAIPage {
     };
 
     // FIXME: hide stop/resume button since stop operation is not fully implemented in pipeline-server
-    columns[4].renderer = (root, column, rowData) => { // control
+    this.pipelineJobGridColumnList[4].renderer = (root, column, rowData) => { // control
       const isFinished = ['SUCCESS', 'FAILURE'].includes(rowData.item.result);
       const isActive = ['PENDING', 'RUNNING', 'WAITING'].includes(rowData.item.status);
       const isRunning = rowData.item.status === 'RUNNING';
@@ -443,15 +469,15 @@ export default class PipelineJobList extends BackendAIPage {
       `, root);
     };
 
-    columns = this.shadowRoot.querySelectorAll('#pipeline-job-list vaadin-grid-filter-column');
-    columns[0].renderer = (root, column, rowData) => { // name
+    // filter columns
+    this.pipelineJobGridFilterColumnList[0].renderer = (root, column, rowData) => { // name
       render(html`
         <a @click="${() => this._loadPipelineJobView(rowData.item)}">${rowData.item.name}</a>
       `, root);
     };
 
     // TODO: show auto-created pipeline-folder (currently response doesn't have that information)
-    columns[1].renderer = (root, column, rowData) => { // mounts
+    this.pipelineJobGridFilterColumnList[0][1].renderer = (root, column, rowData) => { // mounts
       // monkeypatch for extracting and formatting legacy mounts info
       const mountedFolderList: Array<string> = rowData.item.yaml.mounts.map((elem: string) => {
         return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
@@ -476,6 +502,11 @@ export default class PipelineJobList extends BackendAIPage {
     }
   }
 
+  /**
+   * Render pipeline job detail dialog
+   * 
+   * @returns {string} stringified html
+   */
   renderPipelineJobDetailDialogTemplate() {
     // language=HTML
     return html`

@@ -3,7 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
 import {
@@ -64,21 +64,15 @@ export default class PipelineJobView extends BackendAIPage {
   @property({type: Object}) spinner;
   @property({type: Object}) notification;
 
-  // @query('pipeline-job-list') pipelineJobList!: PipelineJobList;
+  @query('vaadin-grid#pipeline-task-instance-list') taskInstanceGrid;
+  @queryAll('vaadin-grid#pipeline-task-instance-list vaadin-grid-column') taskInstanceGridColumnList;
+  @queryAll('vaadin-grid#pipeline-task-instance-list vaadin-grid-filter-column') taskInstanceGridFilterColumnList;
+  @queryAll('vaadin-grid#pipeline-task-instance-list vaadin-grid-sort-column') taskInstanceGridSortColumnList;
 
 
   constructor() {
     super();
     this._initResource();
-  }
-
-  _initResource() {
-    this.notification = globalThis.lablupNotification;
-    this.pipelineJobInfo = new PipelineJob();
-    this.pipelineJobs = [] as Array<PipelineJob>;
-    this.refreshing = false;
-    this.refreshTimer = new Object();
-    this.taskInstanceNodeMap = Object();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -175,6 +169,18 @@ export default class PipelineJobView extends BackendAIPage {
     ];
   }
 
+  /**
+   *  Initialize properties of the component
+   */
+   _initResource() {
+    this.notification = globalThis.lablupNotification;
+    this.pipelineJobInfo = new PipelineJob();
+    this.pipelineJobs = [] as Array<PipelineJob>;
+    this.refreshing = false;
+    this.refreshTimer = new Object();
+    this.taskInstanceNodeMap = Object();
+  }
+
   firstUpdated() {
     this._setVaadinGridRenderers();
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
@@ -188,9 +194,9 @@ export default class PipelineJobView extends BackendAIPage {
         this._showTabContent(e.detail.activeTab);
         this.pipelineJobInfo = PipelineUtils._parsePipelineInfo(e.detail.pipelineJob);
         this.pipelineJobs = e.detail.pipelineJobs;
-        this._matchTaskNodeId();
+        this._loadTaskNodesByCurrentPipelineJob();
         await this._loadCurrentFlowData();
-        this._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
+        PipelineUtils._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
           this.taskInstanceList = res;
         });
       }
@@ -226,10 +232,12 @@ export default class PipelineJobView extends BackendAIPage {
     }
   }
 
-  async _loadTaskInstances(pipelineJobId = '') {
-    return globalThis.backendaiclient.pipelineTaskInstance.list(pipelineJobId);
-  }
-
+  /**
+   * Refresh PipelineJob by long-polling technique
+   * 
+   * @param {boolean} repeat 
+   * @returns {Array<PipelineTaskInstance>} pipelinetask instances
+   */
   async _refreshPipelineJob(repeat = true) {
     await this.updateComplete;
     if (this.active !== true) {
@@ -244,7 +252,7 @@ export default class PipelineJobView extends BackendAIPage {
       if (['SUCCESS', 'FAILURE'].includes(this.pipelineJobInfo.result)) {
         repeat = false;
       }
-      return this._loadTaskInstances(this.pipelineJobInfo.id);
+      return PipelineUtils._loadTaskInstances(this.pipelineJobInfo.id);
     }).then((res) => {
       this.taskInstanceList = res;
       this.taskInstanceList.forEach((task: PipelineTaskInstance) => {
@@ -271,7 +279,10 @@ export default class PipelineJobView extends BackendAIPage {
     });
   }
 
-  _matchTaskNodeId() {
+  /**
+   * Load task nodes by current(selected) pipeline job
+   */
+  _loadTaskNodesByCurrentPipelineJob() {
     const dataflowObj = (typeof this.pipelineJobInfo.dataflow === 'string' ) ? JSON.parse(this.pipelineJobInfo.dataflow) : this.pipelineJobInfo.dataflow;
     const rawTaskInstanceList = dataflowObj?.drawflow?.Home?.data;
     const taskInstanceNodes = Object.values(rawTaskInstanceList ?? {});
@@ -312,6 +323,11 @@ export default class PipelineJobView extends BackendAIPage {
     }
   }
 
+  /**
+   * Display inside the tab content and hide contents in the others tab
+   * 
+   * @param {HTMLElement} tab - mwc-tab
+   */
   async _showTabContent(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
@@ -339,8 +355,11 @@ export default class PipelineJobView extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * 
+   */
   _initPipelineTaskListItem() {
-    this.shadowRoot.querySelector('#pipeline-task-list').items = [];
+    this.taskInstanceGrid.items = [];
   }
 
   async _changePipelineJob(e) {
@@ -402,12 +421,15 @@ export default class PipelineJobView extends BackendAIPage {
     }
   }
 
+  /**
+   * Render rowData according to type of the column (plain, filtered, sorted)
+   */
   _setVaadinGridRenderers() {
-    let columns = this.shadowRoot.querySelectorAll('#pipeline-task-list vaadin-grid-column');
-    columns[0].renderer = (root, column, rowData) => { // #
+    // plain columns
+    this.taskInstanceGridColumnList[0].renderer = (root, column, rowData) => { // #
       root.textContent = rowData.index + 1;
     };
-    columns[1].renderer = (root, column, rowData) => { // id
+    this.taskInstanceGridColumnList[1].renderer = (root, column, rowData) => { // id
       render(
         html`
           <span class="monosapce" style="font-size:0.8rem">
@@ -416,7 +438,7 @@ export default class PipelineJobView extends BackendAIPage {
         `
         , root);
     };
-    columns[2].renderer = (root, column, rowData) => { // status
+    this.taskInstanceGridColumnList[2].renderer = (root, column, rowData) => { // status
       const color = PipelineUtils._getStatusColor(rowData.item.status);
       render(
         html`
@@ -424,7 +446,7 @@ export default class PipelineJobView extends BackendAIPage {
         `, root
       );
     };
-    columns[3].renderer = (root, column, rowData) => { // resources
+    this.taskInstanceGridColumnList[3].renderer = (root, column, rowData) => { // resources
       render(
         html`
         <div class="layout vertical flex">
@@ -448,7 +470,7 @@ export default class PipelineJobView extends BackendAIPage {
         </div>
       `, root);
     };
-    columns[4].renderer = (root, column, rowData) => { // command
+    this.taskInstanceGridColumnList[4].renderer = (root, column, rowData) => { // command
       render(
         html`
           <div class="horizontal center start-justified layout">
@@ -459,15 +481,17 @@ export default class PipelineJobView extends BackendAIPage {
         `
         , root);
     };
-    columns = this.shadowRoot.querySelectorAll('#pipeline-task-list vaadin-grid-filter-column');
-    columns[0].renderer = (root, column, rowData) => { // name
+
+    // filter columns
+    this.taskInstanceGridFilterColumnList[0].renderer = (root, column, rowData) => { // name
       render(
         html`
           <span>${rowData.item.config.name}</span>
         `, root);
     };
-    columns = this.shadowRoot.querySelectorAll('#pipeline-task-list vaadin-grid-sort-column');
-    columns[0].renderer = (root, column, rowData) => { // type
+
+    // sortable columns
+    this.taskInstanceGridSortColumnList[0].renderer = (root, column, rowData) => { // type
       render(
         html`
           <span>${rowData.item.config.type}</span>
@@ -491,7 +515,7 @@ export default class PipelineJobView extends BackendAIPage {
           </div>
           <div id="pipeline-job-view" class="tab-content item card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-select id="pipeline-list" label="Pipeline Job" @change=${this._matchTaskNodeId} ?disabled="${this.pipelineJobs.length <= 0}">
+              <mwc-select id="pipeline-list" label="Pipeline Job" @change=${this._loadTaskNodesByCurrentPipelineJob} ?disabled="${this.pipelineJobs.length <= 0}">
                 ${this.pipelineJobs?.map((job) => {
                   return html`
                     <mwc-list-item value="${job.name}" ?selected="${job.name === this.pipelineJobInfo.name}"
@@ -523,7 +547,7 @@ export default class PipelineJobView extends BackendAIPage {
               </div>
             </h4>
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
-            <vaadin-grid id="pipeline-task-list" theme="row-stripes column-borders compact"
+            <vaadin-grid id="pipeline-task-instance-list" theme="row-stripes column-borders compact"
               aria-label="Pipeline Task List" .items="${this.taskInstanceList}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
               <vaadin-grid-filter-column width="120px" header="Name" resizable frozen></vaadin-grid-filter-column>

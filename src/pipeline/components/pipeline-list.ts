@@ -136,7 +136,9 @@ export default class PipelineList extends BackendAIPage {
     ];
   }
 
-
+  /**
+   *  Initialize properties of the component
+   */
   _initResource() {
     this.notification = globalThis.lablupNotification;
     this.resourceBroker = globalThis.resourceBroker;
@@ -162,6 +164,9 @@ export default class PipelineList extends BackendAIPage {
     }
   }
 
+  /**
+   * Enable launch button only when image updating is not in progress
+   */
   _enableLaunchButton() {
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
       this._isLaunchable = true;
@@ -275,7 +280,7 @@ export default class PipelineList extends BackendAIPage {
         this._launchPipelineDialog();
       }, 1000);
     } else {
-      await this.pipelineConfigurationForm._initConfiguration();
+      await this.pipelineConfigurationForm._initPipelineConfiguration();
       this._launchDialogById('#create-pipeline');
     }
   }
@@ -315,6 +320,33 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
+   * Move to pipeline-view tab
+   */
+   moveToViewTab() {
+    const moveToViewEvent =
+      new CustomEvent('pipeline-view-active-tab-change',
+        {
+          'detail': {
+            'activeTab': {
+              title: 'pipeline-view'
+            },
+            'pipeline': this.pipelineInfoExtended
+          }
+        });
+    document.dispatchEvent(moveToViewEvent);
+  }
+
+  /**
+   * Move to pipeline view tab with selected pipeline data
+   *
+   * @param {PipelineInfoExtended} pipeline
+   */
+  loadPipeline(pipeline: PipelineInfoExtended) {
+    this.pipelineInfoExtended = pipeline;
+    this.moveToViewTab();
+  }
+
+  /**
    * Render index of rowData
    *
    * @param {Element} root - the row details content DOM element
@@ -350,7 +382,7 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Control rendering
+   * Render icon button for showing pipeline details, pipeline graph and double-checking for deletion
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
@@ -382,7 +414,7 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Control rendering
+   * Render created at date of rowData
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
@@ -399,7 +431,7 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Control rendering
+   * Render modified at date of rowData
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
@@ -416,32 +448,10 @@ export default class PipelineList extends BackendAIPage {
   }
 
   /**
-   * Move to pipeline-view tab
+   * Render pipeline create dialog
+   * 
+   * @returns {string} stringified html
    */
-  moveToViewTab() {
-    const moveToViewEvent =
-      new CustomEvent('pipeline-view-active-tab-change',
-        {
-          'detail': {
-            'activeTab': {
-              title: 'pipeline-view'
-            },
-            'pipeline': this.pipelineInfoExtended
-          }
-        });
-    document.dispatchEvent(moveToViewEvent);
-  }
-
-  /**
-   * Move to pipeline view tab with selected pipeline data
-   *
-   * @param {PipelineInfoExtended} pipeline
-   */
-  loadPipeline(pipeline: PipelineInfoExtended) {
-    this.pipelineInfoExtended = pipeline;
-    this.moveToViewTab();
-  }
-
   renderCreatePipelineDialogTemplate() {
     // language=HTML
     return html`
@@ -456,6 +466,11 @@ export default class PipelineList extends BackendAIPage {
     </backend-ai-dialog>`;
   }
 
+  /**
+   * Render pipeline delete confirmation dialog
+   * 
+   * @returns {string} stringified html
+   */
   renderDeletePipelineDialogTemplate() {
     // language=HTML
     return html`
@@ -475,9 +490,16 @@ export default class PipelineList extends BackendAIPage {
     </backend-ai-dialog>`;
   }
 
+  /**
+   * Render pipeline detail dialog
+   * 
+   * @param {PipelineInfoExtended} pipeline
+   * @returns {string} stringified html
+   */
   renderPipelineDetailDialogTemplate(pipeline: PipelineInfoExtended) {
     // language=HTML
     // FIXME: Hide owner info since its only provided by UUID
+    // TODO: Add id of pipeline and fix visibility of created_at and modified_at
     const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(pipeline);
     return html`
     <backend-ai-dialog id="pipeline-detail" fixed backdrop blockscrolling persistent>
@@ -529,6 +551,11 @@ export default class PipelineList extends BackendAIPage {
     </backend-ai-dialog>`;
   }
 
+  /**
+   * Render pipeline YAML dialog
+   * 
+   * @returns {string} stringified html
+   */
   renderPipelineYAMLDialogTemplate() {
     // language=HTML
     return html`

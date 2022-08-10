@@ -64,6 +64,9 @@ export default class PipelineView extends BackendAIPage {
     this._initResources();
   }
 
+  /**
+   *  Initialize properties of the component
+   */
   _initResources() {
     this.resourceBroker = globalThis.resourceBroker;
     this.pipelineInfo = new PipelineInfo();
@@ -471,6 +474,11 @@ export default class PipelineView extends BackendAIPage {
     this.shadowRoot.querySelector(id).hide();
   }
 
+  /**
+   * Render Run Pipeline dialog with current(selected) pipeline
+   * 
+   * @returns {string} stringified html
+   */
   renderRunPipelineDialogTemplate() {
     // language=HTML
     return html`
@@ -487,6 +495,11 @@ export default class PipelineView extends BackendAIPage {
     </backend-ai-dialog>`;
   }
 
+  /**
+   * Render Edit Pipeline dialog
+   * 
+   * @returns {string} stringified html
+   */
   renderEditPipelineDialogTemplate() {
     // language=HTML
     return html`
@@ -503,6 +516,11 @@ export default class PipelineView extends BackendAIPage {
     `;
   }
 
+  /**
+   * Render Pipeline Task dialog (Add / Edit)
+   * 
+   * @returns {string} stringified html
+   */
   renderPipelineTaskDialogTemplate() {
     // language=HTML
     return html`
@@ -522,7 +540,6 @@ export default class PipelineView extends BackendAIPage {
   </backend-ai-dialog>
     `;
   }
-
 
   render() {
     // language=HTML

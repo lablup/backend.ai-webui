@@ -968,15 +968,15 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Display inside the tab content and hide contents in the others tab
    *
-   * @param {HTMLElement} tabContent - tabContnet to show corresponding mwc-tab
+   * @param {HTMLElement} tab - mwc-tab
    */
-  _showTabContent(tabContent) {
+  _showTabContent(tab) {
     const els = this.shadowRoot.querySelectorAll('.tab-content');
     for (const obj of els) {
       obj.style.display = 'none';
     }
-    this._activeTab = tabContent.title;
-    this.shadowRoot.querySelector('#' + tabContent.title).style.display = 'block';
+    this._activeTab = tab.title;
+    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
 /**
