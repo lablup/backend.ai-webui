@@ -22,7 +22,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '../lib/pipeline-flow';
-import {PipelineInfo, PipelineTaskNode, PipelineTask} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineTaskDetail} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**
@@ -242,6 +242,10 @@ export default class PipelineView extends BackendAIPage {
     });
     const addTaskEvent = new CustomEvent('add-task', {'detail': taskInfo});
     document.dispatchEvent(addTaskEvent);
+
+    // apply create task info to current pipeline Info
+    this._saveCurrentFlowData();
+
     this.notification.text = `Task ${taskInfo.name} created.`;
     this.notification.show();
     this._hideDialogById('#task-dialog');
@@ -268,9 +272,13 @@ export default class PipelineView extends BackendAIPage {
     }
     });
     document.dispatchEvent(updateTaskEvent);
-    this._hideDialogById('#task-dialog');
+
+    // apply updated task info to current pipeline Info
+    this._saveCurrentFlowData();
+
     this.notification.text = `Task ${taskInfo.name} updated.`;
     this.notification.show();
+    this._hideDialogById('#task-dialog');
   }
 
   /**
@@ -285,7 +293,6 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Update Pipeline Information to current change
-   *
    */
   _updatePipelineInfo() {
     const updatedPipelineInfo = this.pipelineConfigurationForm.inputFieldListAsInstance() as PipelineInfo;
@@ -319,7 +326,6 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Save pipeline node graph into pipeline data
-   *
    */
   _saveCurrentFlowData() {
     const flowDataReqEvent = new CustomEvent('export-flow');
@@ -329,7 +335,12 @@ export default class PipelineView extends BackendAIPage {
     // convert object to string (dataflow)
     Object.assign(parsedPipelineInfo.yaml, {tasks: PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group'])})    
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
+  }
 
+  /**
+   * Request for applying changes of current pipeline info to pipeline server
+   */
+  _updateCurrentPipelineInfo() {
     // FIXME: remove storage key for avoiding overlapping
     const pipelineInfoWithoutStorage = this.pipelineInfo;
     delete pipelineInfoWithoutStorage.storage;
@@ -399,6 +410,7 @@ export default class PipelineView extends BackendAIPage {
   _showRunPipelineDialog() {
     // automatically save current pipeline info before execute
     this._saveCurrentFlowData();
+    this._updateCurrentPipelineInfo();
     this._launchDialogById('#run-pipeline');
   }
 
@@ -426,13 +438,16 @@ export default class PipelineView extends BackendAIPage {
    * Show task edit dialog
    */
   async _showTaskEditDialog() {
-    this.pipelineTaskConfigurationForm._loadDataToCmdEditor(this.selectedNode.data?.command);
+    const parsedData: PipelineTaskDetail = JSON.parse(this.selectedNode.data);
+    this.pipelineTaskConfigurationForm._loadDataToCmdEditor(parsedData?.command);
     await this.pipelineTaskConfigurationForm._focusCmdEditor();
 
     const taskInfo: PipelineTask = {
       name: this.selectedNode.name,
       description: '',
-      ...JSON.parse(this.selectedNode.data)
+      // FIXME: set module_uri as empty string for now
+      module_uri: '',
+      ...parsedData
     } as PipelineTask;
     await this.pipelineTaskConfigurationForm._loadCurrentPipelineTaskConfiguration(taskInfo);
     this._launchDialogById('#task-dialog');
@@ -455,8 +470,6 @@ export default class PipelineView extends BackendAIPage {
   _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
   }
-
-
 
   renderRunPipelineDialogTemplate() {
     // language=HTML
@@ -529,7 +542,7 @@ export default class PipelineView extends BackendAIPage {
             <div class="horizontal layout flex justified">
               <div class="horizontal layout flex center start-justified">
                 <span id="pipeline-name"></span>
-                <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => this._saveCurrentFlowData()}"></mwc-icon-button>
+                <mwc-icon-button class="pipeline-operation" icon="save" @click="${() => {this._saveCurrentFlowData(); this._updateCurrentPipelineInfo();}}"></mwc-icon-button>
                 <mwc-icon-button class="pipeline-operation" icon="play_arrow" @click="${() => this._showRunPipelineDialog()}"></mwc-icon-button>
                 <mwc-icon-button class="pipeline-operation" icon="settings" @click="${() => this._showPipelineEditDialog()}"></mwc-icon-button>
               </div>
