@@ -415,6 +415,10 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // default active tab is general
     this._showTabContent(this._generalTab);
+
+    // default active tab is general
+    this._switchActiveTab(this._generalTab);
+    this._showTabContent(this._generalTab);
   }
 
   async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
