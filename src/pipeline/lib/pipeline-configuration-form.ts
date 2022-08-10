@@ -374,9 +374,8 @@ export default class PipelineConfigurationForm extends LitElement {
 
     const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
 
-    // name, description
+    // name
     this._autoFillInput(this._nameInput, '');
-    this._autoFillInput(this._descriptionInput, '');
 
     // type
     /* FIXME:
@@ -420,9 +419,8 @@ export default class PipelineConfigurationForm extends LitElement {
     await this._updateVirtualFolderList();
     this._loadSupportedLanguages();
 
-    // name, description
+    // name
     this._autoFillInput(this._nameInput, pipelineTask.name);
-    this._autoFillInput(this._descriptionInput, pipelineTask.description);
 
     // type
     /* FIXME:
@@ -1187,7 +1185,6 @@ export default class PipelineConfigurationForm extends LitElement {
     return html`
     <div id="general" class="vertical layout center flex tab-content">
       ${this.renderNameTemplate("Task Name")}
-      ${this.renderDescriptionTemplate("Task Description")}
       ${this.renderPipelineTaskTypeTemplate(isEdit)}
       ${this.renderCmdEditorTemplate()}
     </div>

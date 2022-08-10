@@ -224,7 +224,7 @@ export class PipelineTaskNode implements PipelineTaskNodeBase {
   }
 }
 
-export interface PipelineTaskBase extends Omit<PipelineYAMLBase, 'ownership'> {
+export interface PipelineTaskBase extends Omit<PipelineYAMLBase, 'ownership' | 'description'> {
   module_uri: string,
   type: string,
   dependencies? : Array<string>,
@@ -232,7 +232,6 @@ export interface PipelineTaskBase extends Omit<PipelineYAMLBase, 'ownership'> {
 
 export class PipelineTask implements PipelineTaskBase {
   name: string;
-  description: string;
   environment: PipelineEnvironment;
   resources: PipelineResources;
   resource_opts: {
@@ -245,7 +244,6 @@ export class PipelineTask implements PipelineTaskBase {
 
   constructor() {
     this.name = '';
-    this.description = '';
     this.environment = new PipelineEnvironment();
     this.resources = new PipelineResources();
     this.resource_opts = {shmem: ''};
