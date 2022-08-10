@@ -477,7 +477,7 @@ export default class PipelineJobList extends BackendAIPage {
     };
 
     // TODO: show auto-created pipeline-folder (currently response doesn't have that information)
-    this.pipelineJobGridFilterColumnList[0].renderer = (root, column, rowData) => { // mounts
+    this.pipelineJobGridFilterColumnList[1].renderer = (root, column, rowData) => { // mounts
       // monkeypatch for extracting and formatting legacy mounts info
       const mountedFolderList: Array<string> = rowData.item.yaml.mounts.map((elem: string) => {
         return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
