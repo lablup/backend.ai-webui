@@ -538,13 +538,13 @@ export default class PipelineList extends BackendAIPage {
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
           <div class="vertical center start-justified flex">
             <div class="title">Created at</div>
-            <div class="description">${this.pipelineInfo.created_at}</div>
+            <div class="description">${parsedPipelineInfo.created_at}</div>
           </div>
         </div>
         <div class="horizontal flex layout wrap justified center pipeline-detail-items">
           <div class="vertical center start-justified flex">
             <div class="title">Last modified</div>
-            <div class="description">${this.pipelineInfo.last_modified}</div>
+            <div class="description">${parsedPipelineInfo.last_modified}</div>
           </div>
         </div>
       </div>
