@@ -281,8 +281,8 @@ export default class PipelineConfigurationForm extends LitElement {
   firstUpdated() {
     this._environment.addEventListener(
       'selected', this.updateLanguage.bind(this));
-    this._versionSelector.addEventListener('selected', () => {
-      this.updateEnvironmentSetting();
+    this._versionSelector.addEventListener('selected', async () => {
+      await this.updateEnvironmentSetting();
     });
   }
 
@@ -347,9 +347,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
 
     // environment
-    const [environment, version] = pipelineYaml.environment['image'].split(':');
-    this._autoFillInput(this._environment, environment);
-    this._autoFillInput(this._versionSelector, version);
+    const forceUpdateDefaultLanguage = true;
+    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -396,9 +395,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
 
     // environment
-    const [environment, version] = pipelineYaml.environment['image'].split(':');
-    this._autoFillInput(this._environment, environment);
-    this._autoFillInput(this._versionSelector, version);
+    const forceUpdateDefaultLanguage = true;
+    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -443,9 +441,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._scalingGroupSelect.disabled = true;
 
     // environment
-    const [environment, version] = pipelineTask.environment['image'].split(':');
-    this._autoFillInput(this._environment, environment);
-    this._autoFillInput(this._versionSelector, version);
+    const forceUpdateDefaultLanguage = true;
+    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineTask.environment['image']);
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineTask.resources.cpu);
@@ -500,7 +497,16 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param value 
    */
   _autoFillInput(inputElement: any, value: string) {
-    inputElement.value = value;
+    if (inputElement.localName === "mwc-select") {
+      const obj = inputElement.items.find((o) => o.value === value);
+      const idx = inputElement.items.indexOf(obj);
+      // need to request layout to select correct item
+      inputElement.layout(true).then(() => {
+        inputElement.select(idx);
+      });
+    } else {
+      inputElement.value = value;
+    }
   }
 
   /**
@@ -726,11 +732,9 @@ export default class PipelineConfigurationForm extends LitElement {
     // set defaultLanguage version
     if (this.defaultLanguage !== undefined) {
       const obj = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
-      if (obj !== 'undefined') {
-        const idx = this._versionSelector.items.indexOf(obj);
-        await this._versionSelector.layout(true);
-        this._versionSelector.select(idx);
-      }
+      const idx = this._versionSelector.items.indexOf(obj);
+      await this._versionSelector.layout(true);
+      this._versionSelector.select(idx);
     }
 
     const selectedVersionValue = selectedVersionItem.value;
