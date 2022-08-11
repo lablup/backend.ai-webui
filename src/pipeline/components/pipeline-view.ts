@@ -22,7 +22,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 import '../lib/pipeline-flow';
-import {PipelineInfo, PipelineTaskNode, PipelineTask, PipelineTaskDetail} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineInfoExtended, PipelineTaskNode, PipelineTask, PipelineTaskDetail} from '../lib/pipeline-type';
 import './pipeline-list';
 
 /**
@@ -46,7 +46,7 @@ export default class PipelineView extends BackendAIPage {
   @property({type: Boolean}) active = false;
   @property({type: Boolean}) isNodeSelected = false;
   @property({type: Object}) selectedNode = Object();
-  @property({type: PipelineInfo}) pipelineInfo;
+  @property({type: PipelineInfoExtended}) pipelineInfo;
   @property({type: Object}) taskInfo;
 
   // Elements
@@ -69,7 +69,7 @@ export default class PipelineView extends BackendAIPage {
    */
   _initResources() {
     this.resourceBroker = globalThis.resourceBroker;
-    this.pipelineInfo = new PipelineInfo();
+    this.pipelineInfo = new PipelineInfoExtended();
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -184,8 +184,9 @@ export default class PipelineView extends BackendAIPage {
         const tabGroup = [...this.shadowRoot.querySelector('#pipeline-pane').children];
         this.shadowRoot.querySelector('#pipeline-pane').activeIndex = tabGroup.map((tab) => tab.title).indexOf(e.detail.activeTab.title);
         this._showTabContent(e.detail.activeTab);
-        this.pipelineInfo = e.detail.pipeline;
-        const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
+        this.pipelineInfo = e.detail.pipeline as PipelineInfoExtended;
+        // FIXME: type casting `any` for suppress undefined posibility error
+        const parsedPipelineInfo: any = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
         this._loadCurrentFlowData(parsedPipelineInfo);
         this.pipelineConfigurationForm._loadDefaultMounts(parsedPipelineInfo.yaml.mounts);
         this.shadowRoot.querySelector('#pipeline-name').innerHTML = this.pipelineInfo.name;
@@ -334,7 +335,8 @@ export default class PipelineView extends BackendAIPage {
     const flowDataReqEvent = new CustomEvent('export-flow');
     document.dispatchEvent(flowDataReqEvent);
 
-    const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
+    // FIXME: type casting `any` for suppress undefined posibility error
+    const parsedPipelineInfo: any = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
     // convert object to string (dataflow)
     Object.assign(parsedPipelineInfo.yaml, {tasks: PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group'])})    
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
@@ -421,7 +423,7 @@ export default class PipelineView extends BackendAIPage {
    * Show pipeline update dialog
    */
    async _showPipelineEditDialog() {
-    const stringifiedPipelineInfo = PipelineUtils._stringifyPipelineInfo(this.pipelineInfo);
+    const stringifiedPipelineInfo = PipelineUtils._stringifyPipelineInfo(this.pipelineInfo) as PipelineInfoExtended;
     await this.pipelineConfigurationForm._loadCurrentPipelineConfiguration(stringifiedPipelineInfo);
     this._launchDialogById('#edit-pipeline');
   }
@@ -430,7 +432,7 @@ export default class PipelineView extends BackendAIPage {
    * Show task create dialog
    */
   async _showTaskCreateDialog() {
-    this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(this.pipelineInfo);
+    this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(this.pipelineInfo) as PipelineInfoExtended;
     this.pipelineTaskConfigurationForm._clearCmdEditor();
     await this.pipelineTaskConfigurationForm._initPipelineTaskConfiguration(this.pipelineInfo);
     await this.pipelineTaskConfigurationForm._focusCmdEditor();

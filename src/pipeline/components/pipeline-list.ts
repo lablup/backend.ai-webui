@@ -499,7 +499,8 @@ export default class PipelineList extends BackendAIPage {
   renderPipelineDetailDialogTemplate(pipeline: PipelineInfoExtended) {
     // language=HTML
     // FIXME: Hide owner info since its only provided by UUID
-    const parsedPipelineInfo = PipelineUtils._parsePipelineInfo(pipeline);
+    // FIXME: type casting `any` for suppress undefined posibility error
+    const parsedPipelineInfo: any = PipelineUtils._parsePipelineInfo(pipeline);
     return html`
     <backend-ai-dialog id="pipeline-detail" fixed backdrop blockscrolling persistent>
       <span slot="title">Pipeline Detail</span>
