@@ -1302,9 +1302,9 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
       <mwc-textfield id="cpu-input" label="CPU" type="number" min="1" suffix="Core" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="mem-input" label="Memory (GiB)" type="number" min="2" suffix="GiB" ?required=${isRequired}></mwc-textfield>
+      <mwc-textfield id="mem-input" label="Memory (GiB)" type="number" min="0.1" step="0.05" suffix="GiB" ?required=${isRequired}></mwc-textfield>
       <mwc-textfield id="shmem-input" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="gpu-input" label="GPU" type="number" min="0" suffix="Unit" ?required=${isRequired}></mwc-textfield>
+      <mwc-textfield id="gpu-input" label="GPU" type="number" min="0" step="0.1" suffix="Unit" ?required=${isRequired}></mwc-textfield>
     `;
   }
 
