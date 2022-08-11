@@ -280,8 +280,8 @@ export default class PipelineConfigurationForm extends LitElement {
   firstUpdated() {
     this._environment.addEventListener(
       'selected', this.updateLanguage.bind(this));
-    this._versionSelector.addEventListener('selected', async () => {
-      await this.updateEnvironmentSetting();
+    this._versionSelector.addEventListener('selected', () => {
+      this.updateEnvironmentSetting();
     });
   }
 
@@ -397,8 +397,6 @@ export default class PipelineConfigurationForm extends LitElement {
     // environment
     const forceUpdateDefaultLanguage = true;
     await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
-    console.log(pipelineYaml.environment['image'])
-    console.log(this.defaultLanguage);
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -733,15 +731,13 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // set defaultLanguage version
     if (this.defaultLanguage !== undefined) {
-      const obj = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
+      const obj: string | undefined = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
       let idx = this._versionSelector.items.indexOf(obj);
 
       // workaround as select index to first item if there's no matching version
       if (idx < 0) {
         idx = (this._versionSelector.items.length > 1) ? 1 : 0;
       }
-
-      await this._versionSelector.layout(true);
       this._versionSelector.select(idx);
     }
 
