@@ -15,7 +15,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources, PipelineTaskDetail} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineInfoExtended, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources, PipelineTaskDetail} from '../lib/pipeline-type';
 import {default as YAML} from 'js-yaml';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -33,7 +33,6 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
 import 'weightless/expansion';
-import { fi } from 'date-fns/locale';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 
@@ -318,7 +317,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * 
    * @param {PipelineInfo} pipeline
    */
-  async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
+  async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
     await this._updateVirtualFolderList(pipeline.storage.name);
     await this._fetchUserInfo();
     await this._loadSupportedLanguages();
@@ -835,14 +834,14 @@ export default class PipelineConfigurationForm extends LitElement {
         this._switchActiveTab(this._generalTab);
         return false;
     }
-    // const isCommandValid = this._cmdEditor._validateInput();
-    // if (!isCommandValid) {
-    //   this._cmdEditorValidationMessage.style.display = '';
-    //   this._switchActiveTab(this._generalTab);
-    //   return false;
-    // } else {
-    //   this._cmdEditorValidationMessage.style.display = 'none';
-    // }
+    const isCommandValid = this._cmdEditor._validateInput();
+    if (!isCommandValid) {
+      this._cmdEditorValidationMessage.style.display = '';
+      this._switchActiveTab(this._generalTab);
+      return false;
+    } else {
+      this._cmdEditorValidationMessage.style.display = 'none';
+    }
 
     // resources task tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
