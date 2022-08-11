@@ -373,9 +373,10 @@ export default class PipelineConfigurationForm extends LitElement {
    * 
    * @param {PipelineInfo} pipeline
    */
-  async _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
+  async _initPipelineTaskConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
     await this._updateVirtualFolderList();
     await this._loadSupportedLanguages();
+    await this._selectDefaultLanguage();
     this._configureRequiredInputField();
 
     const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
@@ -396,6 +397,8 @@ export default class PipelineConfigurationForm extends LitElement {
     // environment
     const forceUpdateDefaultLanguage = true;
     await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
+    console.log(pipelineYaml.environment['image'])
+    console.log(this.defaultLanguage);
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -731,7 +734,13 @@ export default class PipelineConfigurationForm extends LitElement {
     // set defaultLanguage version
     if (this.defaultLanguage !== undefined) {
       const obj = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
-      const idx = this._versionSelector.items.indexOf(obj);
+      let idx = this._versionSelector.items.indexOf(obj);
+
+      // workaround as select index to first item if there's no matching version
+      if (idx < 0) {
+        idx = (this._versionSelector.items.length > 1) ? 1 : 0;
+      }
+
       await this._versionSelector.layout(true);
       this._versionSelector.select(idx);
     }
@@ -777,7 +786,8 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // await environment.updateComplete; async way.
-    const obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
+    let obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
+
     if (typeof obj === 'undefined' &&
         typeof globalThis.backendaiclient !== 'undefined' &&
         globalThis.backendaiclient.ready === false) { // Not ready yet.
@@ -787,7 +797,15 @@ export default class PipelineConfigurationForm extends LitElement {
       }, 500);
       return Promise.resolve(true);
     }
-    const idx = this._environment.items.indexOf(obj);
+    let idx = this._environment.items.indexOf(obj);
+    // whene default session environment is not installed to available resource slots(agent),
+    // select the first one.
+    if (idx < 0) {
+      this.defaultLanguage = (this.languages.length > 1) ? this.languages[1].name : this.languages[0].name;
+      obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
+      idx = this._environment.items.indexOf(obj);
+    }
+    // await this._environment.layout(true);
     this._environment.select(idx);
     this._defaultLanguageUpdated = true;
     return Promise.resolve(true);
