@@ -523,6 +523,9 @@ export default class PipelineConfigurationForm extends LitElement {
           this.vfolderGrid.selectItem(item);
         }
       });
+      if (this.defaultSelectedVfolders.length === 0) {
+        this._unselectAllSelectedFolder();
+      }
     }
   }
 
