@@ -4,7 +4,7 @@
  */
 import {html, LitElement} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import {PipelineEnvironment, PipelineResources, PipelineTask, PipelineTaskDetail, PipelineTaskInstance, PipelineTaskType} from '../lib/pipeline-type';
+import {PipelineEnvironment, PipelineInfo, PipelineInfoExtended, PipelineResources, PipelineTask, PipelineTaskDetail, PipelineTaskType} from '../lib/pipeline-type';
 import {default as YAML} from 'js-yaml';
 
  /**
@@ -288,26 +288,30 @@ export default class PipelineUtils extends LitElement {
   /**
    * Return pipelineInfo to sendable data stream
    */
-  static _stringifyPipelineInfo(pipelineInfo) {
+  static _stringifyPipelineInfo(pipelineInfo: PipelineInfo | PipelineInfoExtended) {
     if (Object.keys(pipelineInfo).length !== 0) {
       return {
         ...pipelineInfo,
         yaml: (typeof pipelineInfo.yaml !== 'string') ? YAML.dump(pipelineInfo.yaml ?? {}) : pipelineInfo.yaml,
         dataflow: (typeof pipelineInfo.dataflow !== 'string') ? JSON.stringify(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
       };
+    } else {
+      return pipelineInfo;
     }
   }
 
   /**
    * Return pipelineInfo to modificable data object
    */
-  static _parsePipelineInfo(pipelineInfo) {
+  static _parsePipelineInfo(pipelineInfo: PipelineInfo | PipelineInfoExtended) {
     if (Object.keys(pipelineInfo).length !== 0) {
       return {
         ...pipelineInfo,
         yaml: (typeof pipelineInfo.yaml === 'string') ? YAML.load(pipelineInfo.yaml === '' ? `{}` : pipelineInfo.yaml) : pipelineInfo.yaml,
         dataflow: (typeof pipelineInfo.dataflow === 'string') ? JSON.parse(pipelineInfo.dataflow ?? `{}`): pipelineInfo.dataflow,
       };
+    } else {
+      return pipelineInfo;
     }
   }
 
