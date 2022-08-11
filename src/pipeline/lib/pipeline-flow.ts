@@ -273,6 +273,9 @@ export default class PipelineFlow extends LitElement {
       if (e.detail) {
         this._removeNode(e.detail);
       }
+      // dispatch node-unselected event
+      const nodeUnselectedEvent = new CustomEvent('node-unselected', {'detail': false});
+      document.dispatchEvent(nodeUnselectedEvent);
     });
 
     document.addEventListener('update-task-status', (e: any) => {

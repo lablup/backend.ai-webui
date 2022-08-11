@@ -289,9 +289,9 @@ export default class PipelineView extends BackendAIPage {
    * Remove the selected task in pipeline
    */
   _removeTask() {
+    this.notification.text = `Task ${this.selectedNode.name} removed.`;
     const removeTaskEvent = new CustomEvent('remove-task', {'detail': this.selectedNode.id});
     document.dispatchEvent(removeTaskEvent);
-    this.notification.text = `Task ${this.selectedNode.name} removed.`;
     this.notification.show();
   }
 
