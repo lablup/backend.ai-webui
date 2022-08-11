@@ -33,6 +33,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
 import 'weightless/expansion';
+import { fi } from 'date-fns/locale';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 
@@ -289,11 +290,11 @@ export default class PipelineConfigurationForm extends LitElement {
    * Initialize pipeline configuration on pipeline creation
    */
   async _initPipelineConfiguration() {
-    this._fetchUserInfo();
+    await this._fetchUserInfo();
     await this._updateVirtualFolderList();
+    await this._loadSupportedLanguages();
+    await this._selectDefaultLanguage();
     this._configureRequiredInputField();
-    this._loadSupportedLanguages();
-    this._selectDefaultLanguage();
 
     // name, description
     this._autoFillInput(this._nameInput, '');
@@ -319,8 +320,8 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo) {
     await this._updateVirtualFolderList(pipeline.storage.name);
-    this._fetchUserInfo();
-    this._loadSupportedLanguages();
+    await this._fetchUserInfo();
+    await this._loadSupportedLanguages();
     this._configureRequiredInputField();
     const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
 
@@ -376,7 +377,7 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   async _initPipelineTaskConfiguration(pipeline: PipelineInfo) {
     await this._updateVirtualFolderList();
-    this._loadSupportedLanguages();
+    await this._loadSupportedLanguages();
     this._configureRequiredInputField();
 
     const pipelineYaml = YAML.load(pipeline.yaml) as PipelineYAML;
@@ -420,7 +421,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
     await this._updateVirtualFolderList();
-    this._loadSupportedLanguages();
+    await this._loadSupportedLanguages();
 
     // name
     this._autoFillInput(this._nameInput, pipelineTask.name);
@@ -478,8 +479,9 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Set supported language list according to resourceBroker
    */
-  _loadSupportedLanguages() {
+  async _loadSupportedLanguages() {
     this.languages = this.resourceBroker.languages;
+    await this._environment.layout(true);
   }
 
   /**
@@ -720,6 +722,17 @@ export default class PipelineConfigurationForm extends LitElement {
       this.metricUpdating = false;
       return;
     }
+
+    // set defaultLanguage version
+    if (this.defaultLanguage !== undefined) {
+      const obj = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
+      if (obj !== 'undefined') {
+        const idx = this._versionSelector.items.indexOf(obj);
+        await this._versionSelector.layout(true);
+        this._versionSelector.select(idx);
+      }
+    }
+
     const selectedVersionValue = selectedVersionItem.value;
     const selectedVersionArchitecture = selectedVersionItem.getAttribute('architecture');
     this._updateVersionSelectorText(selectedVersionValue, selectedVersionArchitecture);
@@ -729,8 +742,8 @@ export default class PipelineConfigurationForm extends LitElement {
       return;
     }
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.updateEnvironmentSetting();
+      document.addEventListener('backend-ai-connected', async () => {
+        await this.updateEnvironmentSetting();
       }, true);
     }
   }
@@ -742,7 +755,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} language - default language
    */
    async _selectDefaultLanguage(forceUpdate = false, language = '') {
-    this.languages = this.resourceBroker.languages;
+    // this.languages = this.resourceBroker.languages;
     if (this._defaultLanguageUpdated === true && forceUpdate === false) {
       return;
     }
@@ -759,8 +772,9 @@ export default class PipelineConfigurationForm extends LitElement {
     } else {
       this.defaultLanguage = 'cr.backend.ai/stable/python';
     }
+
     // await environment.updateComplete; async way.
-    const obj = this._environment.items.find((o) => o.value === this.defaultLanguage);
+    const obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
     if (typeof obj === 'undefined' &&
         typeof globalThis.backendaiclient !== 'undefined' &&
         globalThis.backendaiclient.ready === false) { // Not ready yet.
@@ -1161,7 +1175,8 @@ export default class PipelineConfigurationForm extends LitElement {
   renderEnvironmentTemplate() {
     // language=HTML
     return html`
-      <mwc-select class="full-width" id="environment-select" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition>
+      <mwc-select class="full-width" id="environment-select" icon="code" label="${_text('session.launcher.Environments')}" 
+        required fixedMenuPosition>
       <mwc-list-item selected graphic="icon" style="display:none!important;">
         ${_t('session.launcher.ChooseEnvironment')}
       </mwc-list-item>
@@ -1170,7 +1185,7 @@ export default class PipelineConfigurationForm extends LitElement {
           <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
               role="separator" disabled="true">${item.basename}</h5>
           ` : html`
-          <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon" ?selected="$${item.name === this.defaultLanguage}">
+          <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
           <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
               style="width:24px;height:24px;"/>
           <div class="horizontal justified center flex layout" style="width:325px;">
