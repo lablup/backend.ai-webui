@@ -1141,7 +1141,7 @@ export default class PipelineConfigurationForm extends LitElement {
   renderNameTemplate(label="Pipeline Name") {
     // language=HTML
     return html`
-      <mwc-textfield id="name-input" label=${label} required autoValidate></mwc-textfield>
+      <mwc-textfield id="name-input" label=${label} required autoValidate maxLength="64"></mwc-textfield>
     `;
   }
 
