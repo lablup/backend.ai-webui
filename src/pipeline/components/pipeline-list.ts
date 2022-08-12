@@ -15,6 +15,7 @@ import '../../components/lablup-activity-panel';
 import '../../components/lablup-codemirror';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -78,6 +79,7 @@ export default class PipelineList extends BackendAIPage {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      BackendAIPipelineStyles,
       // language=CSS
       css`
         .description {
@@ -316,7 +318,7 @@ export default class PipelineList extends BackendAIPage {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#yaml-data');
     const yamlString = YAML.dump(pipelineYaml, {});
     codemirror.setValue(yamlString);
-    this._launchDialogById('#pipeline-yaml');
+    this._launchDialogById('#pipeline-yaml-dialog');
   }
 
   /**
@@ -565,7 +567,7 @@ export default class PipelineList extends BackendAIPage {
   renderPipelineYAMLDialogTemplate() {
     // language=HTML
     return html`
-      <backend-ai-dialog class="yaml" id="pipeline-yaml" fixed backdrop blockscrolling>
+      <backend-ai-dialog class="yaml" id="pipeline-yaml-dialog" fixed backdrop blockscrolling>
         <span slot="title">${`Pipeline Data (YAML)`}</span>
         <div slot="content">
           <lablup-codemirror id="yaml-data" mode="yaml" readonly useLineWrapping></lablup-codemirror>

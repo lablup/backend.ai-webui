@@ -583,7 +583,6 @@ export default class PipelineJobList extends BackendAIPage {
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
       ${this.renderPipelineJobDetailDialogTemplate()}
-      ${PipelineUtils.renderWorkflowFileDialogTemplate()}
     `;
   }
 }

@@ -6,6 +6,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -28,11 +29,12 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import {PipelineJob, PipelineTaskInstance} from '../lib/pipeline-type';
+import {PipelineJob, PipelineTaskInstance, PipelineYAML} from '../lib/pipeline-type';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import './pipeline-job-list';
 import '../lib/pipeline-flow';
 import '../../components/lablup-activity-panel';
+import '../../components/lablup-codemirror';
 import '../../components/backend-ai-dialog';
 
 /**
@@ -69,7 +71,6 @@ export default class PipelineJobView extends BackendAIPage {
   @queryAll('vaadin-grid#pipeline-task-instance-list vaadin-grid-filter-column') taskInstanceGridFilterColumnList;
   @queryAll('vaadin-grid#pipeline-task-instance-list vaadin-grid-sort-column') taskInstanceGridSortColumnList;
 
-
   constructor() {
     super();
     this._initResource();
@@ -82,6 +83,7 @@ export default class PipelineJobView extends BackendAIPage {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      BackendAIPipelineStyles,
       // language=CSS
       css`
         .tab-content {
@@ -160,10 +162,6 @@ export default class PipelineJobView extends BackendAIPage {
           padding-right: 10px;
           position: relative;
           top: 5px;
-        }
-
-        #workflow-dialog-title {
-          min-width: 530px;
         }
       `
     ];
@@ -378,9 +376,9 @@ export default class PipelineJobView extends BackendAIPage {
    * Show yaml data dialog of current pipeline job
    *
    */
-  _launchWorkFlowDialog() {
-    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
-    const yamlString = YAML.dump(this.pipelineJobInfo.yaml, {});
+  _launchWorkFlowDialog(pipelineYaml: PipelineYAML) {
+    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-file');
+    const yamlString = YAML.dump(pipelineYaml, {});
     codemirror.setValue(yamlString);
     this._launchDialogById('#workflow-file-dialog');
   }
@@ -499,6 +497,18 @@ export default class PipelineJobView extends BackendAIPage {
     };
   }
 
+  renderWorkflowFileDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog class="yaml" id="workflow-file-dialog" fixed backgroup blockscrolling>
+      <span slot="title">Workflow file</span>
+      <div slot="content">
+        <lablup-codemirror id="workflow-file" mode="yaml" readonly useLineWrapping></lablup-codemirror>
+      </div>
+    </backend-ai-dialog>
+    `;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -539,7 +549,7 @@ export default class PipelineJobView extends BackendAIPage {
                 <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}"></mwc-icon-button>
                 <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
                   <mwc-list-item class="horizontal layout center"
-                    @click="${this._launchWorkFlowDialog}">
+                    @click="${() => this._launchWorkFlowDialog(this.pipelineJobInfo.yaml)}">
                     <mwc-icon>assignment</mwc-icon>
                     <span>View workflow file</span>
                   </mwc-list-item>
@@ -560,7 +570,7 @@ export default class PipelineJobView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      ${PipelineUtils.renderWorkflowFileDialogTemplate()}
+      ${this.renderWorkflowFileDialogTemplate()}
     `;
   }
 }
