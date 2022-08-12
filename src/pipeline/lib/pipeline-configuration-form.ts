@@ -148,7 +148,6 @@ export default class PipelineConfigurationForm extends LitElement {
     this.selectedStorageHost = '';
     this.vfolders = [];
     this.versions = ['Not Selected'];
-
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -371,7 +370,7 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Initialize pipeline task configuration on pipeline task creation by applying default values from pipeline
    * 
-   * @param {PipelineInfo} pipeline
+   * @param {PipelineInfo | PipelineInfoExtended} pipeline
    */
   async _initPipelineTaskConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
     await this._updateVirtualFolderList();
@@ -417,6 +416,11 @@ export default class PipelineConfigurationForm extends LitElement {
     this._setActiveTabToGeneral();
   }
 
+  /**
+   * Load pipelineTask to each of corresponding input field in pipeline task dialog
+   * 
+   * @param {PipelineTask} pipelineTask
+   */
   async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
     await this._updateVirtualFolderList();
     await this._loadSupportedLanguages();
@@ -493,8 +497,8 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Auto-fill input with value
    * 
-   * @param inputElement - mwc element mostly `mwc-textfield` and `mwc-select`
-   * @param value 
+   * @param {any} inputElement - mwc element mostly `mwc-textfield` and `mwc-select`
+   * @param {string} value
    */
   _autoFillInput(inputElement: any, value: string) {
     if (inputElement.localName === "mwc-select") {
@@ -529,7 +533,13 @@ export default class PipelineConfigurationForm extends LitElement {
     }
   }
 
-  _showKernelDescription(e, item) {
+  /**
+   * Show kernel description according to event target
+   * 
+   * @param {Event} e
+   * @param {any} item
+   */
+  _showKernelDescription(e: Event, item) {
     e.stopPropagation();
     const name = item.kernelname;
     if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
@@ -548,7 +558,12 @@ export default class PipelineConfigurationForm extends LitElement {
     }
   }
 
-  _showPathDescription(e?) {
+  /**
+   * Show path description according to event target
+   * 
+   * @param e 
+   */
+  _showPathDescription(e?: Event) {
     if (e != undefined) {
       e.stopPropagation();
     }
@@ -810,12 +825,23 @@ export default class PipelineConfigurationForm extends LitElement {
     return Promise.resolve(true);
   }
 
+  /**
+   * Check validity of each input in group and return false if one of input fields is invalid
+   * 
+   * @param {Array<any>}inputGroup 
+   * @returns {boolean} - true when valid, false when one of input field in group is invalid
+   */
   static _validityCheckByGroup(inputGroup: Array<any>) {
     return inputGroup.some((elem) => {
         return !elem.reportValidity();
       });
   }
 
+  /**
+   * Check validity of each input field of pipeline configuration
+   * 
+   * @returns {boolean} - true when valid, false one of input fields invalid
+   */
   _validatePipelineConfigInput() {
     // general tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
@@ -844,6 +870,11 @@ export default class PipelineConfigurationForm extends LitElement {
     return true;
   }
 
+  /**
+   * Check validity of each input field of pipeline task configuration
+   * 
+   * @returns {boolean} - true when valid, false one of input fields invalid
+   */
   _validatePipelineTaskConfigInput() {
     // general task tab inputs
     if (PipelineConfigurationForm._validityCheckByGroup(
@@ -872,6 +903,12 @@ export default class PipelineConfigurationForm extends LitElement {
     return true;
   }
 
+  /**
+   * Returns object (pipelineInfo | pipelineTaskNode) from input fields
+   * 
+   * @param isPipelineType - check whether return type would be pipelineInfo or not
+   * @returns {PipelineInfo | PipelineTaskNode} object
+   */
   inputFieldListAsInstance (isPipelineType = true) {
     let obj: PipelineInfo | PipelineTaskNode;
     /* raw inputs */
@@ -1087,6 +1124,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Load string to command-editor
+   * @param {string} data - string data to load
    */
   _loadDataToCmdEditor(data: string = '') {
     this._cmdEditor.setValue(data);
@@ -1099,7 +1137,6 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
    */
-
   folderToMountListRenderer(root, column, rowData) {
     render(
       html`
@@ -1129,6 +1166,13 @@ export default class PipelineConfigurationForm extends LitElement {
     );
   }
 
+  /**
+   * Render folder path alias
+   * 
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   infoHeaderRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1141,6 +1185,12 @@ export default class PipelineConfigurationForm extends LitElement {
     );
   }
 
+  /**
+   * Render name input field with label
+   * 
+   * @param {string} label - name input
+   * @returns {string} stringified html
+   */
   renderNameTemplate(label="Pipeline Name") {
     // language=HTML
     return html`
@@ -1148,6 +1198,12 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  /**
+   * Render description input field with label
+   * 
+   * @param {string} label - description input
+   * @returns {string} stringified html
+   */
   renderDescriptionTemplate(label="Pipeline Description") {
     // language=HTML
     return html`
@@ -1156,6 +1212,11 @@ export default class PipelineConfigurationForm extends LitElement {
 
   }
 
+  /**
+   * Render type of pipeline in forms of select(dropdown) UI with label
+   * 
+   * @returns {string} stringified html
+   */
   renderPipelineTypeTemplate() {
     // language=HTML
     return html`
@@ -1168,6 +1229,12 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  /**
+   * Render type of pipeline task in forms of select(dropdown) UI with label
+   * 
+   * @param {boolean} isEdit - enable/disable type of pipeline task
+   * @returns {string} stringified html
+   */
   renderPipelineTaskTypeTemplate(isEdit = false) {
     // language=HTML
     // FIXME: disable other types except 'custom' for now
@@ -1182,6 +1249,11 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  /**
+   * Render type of scaling group(resource group) in forms of select(dropdown) UI with label
+   * 
+   * @returns {string} stringified html
+   */
   renderScalingGroupTemplate() {
     // language=HTML
     return html`
@@ -1192,6 +1264,11 @@ export default class PipelineConfigurationForm extends LitElement {
     </mwc-select>`;
   }
 
+  /**
+   * Render type of environment(image) in forms of select(dropdown) UI with label
+   * 
+   * @returns {string} stringified html
+   */
   renderEnvironmentTemplate() {
     // language=HTML
     return html`
@@ -1250,6 +1327,12 @@ export default class PipelineConfigurationForm extends LitElement {
       `)}
     </mwc-select>`;
   }
+
+  /**
+   * Render command editor
+   * 
+   * @returns {string} stringified html
+   */
   renderCmdEditorTemplate() {
     // language=HTML
     return html`
@@ -1261,6 +1344,11 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  /**
+   * Render general tab content
+   * 
+   * @returns {string} stringified html
+   */
   renderGeneralTabTemplate() {
     // language=HTML
     return html`
@@ -1273,6 +1361,12 @@ export default class PipelineConfigurationForm extends LitElement {
       </div>`;
   }
 
+  /**
+   * Render general task tab content
+   * 
+   * @param {boolean} isEdit - enable/disable type of pipeline task
+   * @returns {string} stringified html
+   */
   renderGeneralTaskTabTemplate(isEdit = false) {
     // language=HTML
     return html`
@@ -1284,6 +1378,12 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
+  /**
+   * Render resources task tab content
+   * 
+   * @param {boolean} isRequired - configure input field is required or not
+   * @returns {string} stringified html
+   */
   renderResourcesTaskTabTemplate(isRequired = false) {
     return html`
     <div id="resources" class="vertical layout center flex tab-content" style="display:none;">
@@ -1293,6 +1393,12 @@ export default class PipelineConfigurationForm extends LitElement {
     </div>`;
   }
 
+  /**
+   * Render resources tab content
+   * 
+   * @param {boolean} isRequired - configure input field is required or not
+   * @returns {string} stringified html
+   */
   renderResourcesTabTemplate(isRequired = false) {
     // language=HTML
     return html`
@@ -1301,6 +1407,12 @@ export default class PipelineConfigurationForm extends LitElement {
     </div>`;
   }
 
+  /**
+   * Render resource content
+   * 
+   * @param {boolean} isRequired - set input field as required if true
+   * @returns {string} stringified html
+   */
   renderResourceContentTemplate(isRequired = false) {
     // language=HTML
     return html`
@@ -1311,13 +1423,11 @@ export default class PipelineConfigurationForm extends LitElement {
     `;
   }
 
-  renderMountsContentTemplate() {
-    // language=HTML
-    return html`
-
-    `;
-  }
-
+  /**
+   * Render mounts tab content
+   * 
+   * @returns {string} stringified html
+   */
   renderMountsTabTemplate() {
     // language=HTML
     return html`
@@ -1339,6 +1449,11 @@ export default class PipelineConfigurationForm extends LitElement {
     </div>`;
   }
 
+  /**
+   * Render mounts task tab content
+   * 
+   * @returns {string} stringified html
+   */
   renderMountsTaskTabTemplate() {
     // language=HTML
     return html`
@@ -1347,6 +1462,11 @@ export default class PipelineConfigurationForm extends LitElement {
     </div>`;
   }
 
+  /**
+   * Render additional vfolder list
+   * 
+   * @returns {string} stringified html
+   */
   renderAdditionalVFolderListTemplate() {
     // language=HTML
     return html`

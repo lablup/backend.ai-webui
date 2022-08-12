@@ -354,12 +354,17 @@ export default class PipelineJobView extends BackendAIPage {
   }
 
   /**
-   * 
+   * Empty items in task instance grid
    */
   _initPipelineTaskListItem() {
     this.taskInstanceGrid.items = [];
   }
 
+  /**
+   * Change pipeline job according to event target
+   * 
+   * @param {Event} e - event source
+   */
   async _changePipelineJob(e) {
     const selectedPipelineJobName = e.target.value;
     this._initPipelineTaskListItem();
@@ -367,6 +372,9 @@ export default class PipelineJobView extends BackendAIPage {
     await this._loadCurrentFlowData();
   }
 
+  /**
+   * Refresh view pane to current flow data
+   */
   async _refreshViewPane() {
     await this._loadCurrentFlowData();
     this._toggleButtonStatus();
@@ -374,7 +382,6 @@ export default class PipelineJobView extends BackendAIPage {
 
   /**
    * Show yaml data dialog of current pipeline job
-   *
    */
   _launchWorkFlowDialog(pipelineYaml: PipelineYAML) {
     const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-file');
