@@ -149,6 +149,8 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         .endpoint-text {
+          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0);
+          --mdc-text-field-hover-line-color:rgba(0, 0, 0, 0);
           --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0.0);
         }
 
@@ -204,6 +206,39 @@ export default class BackendAILogin extends BackendAIPage {
           padding: 0;
         }
 
+        .title-img {
+          height: 35px;
+          padding: 15px 0 15px 5px;
+        }
+
+        #change-signin-area > #change-signin-message {
+          font-size: 12px;
+          margin: 5px 10px;
+          text-align: center;
+          font-weight: 400;
+        }
+
+        #session-login-form.block {
+          display: block;
+        }
+
+        #session-login-form.none {
+          display: none;
+        }
+
+        #api-login-form.block {
+          display: block;
+        }
+
+        #api-login-form.none {
+          display: none;
+        }
+
+        #endpoint-button {
+          padding-left: 3px;
+          background-color: rgb(250, 250, 250);
+        }
+
         .login-input {
           background-color: #FAFAFA;
           border-bottom: 1px solid #ccc;
@@ -231,6 +266,34 @@ export default class BackendAILogin extends BackendAIPage {
 
         .login-form {
           position: relative;
+        }
+
+        #additional-action-area {
+          margin-top: 2em;
+        }
+
+        #additional-action-area > #signup-area {
+          width: 100%;
+        }
+
+        #signup-area > #signup-message {
+          font-size: 12px;
+          margin: 0 10px;
+          text-align: center;
+        }
+
+        #additional-action-area > span {
+          min-width: 1em;
+        }
+
+        #change-password-area {
+          width: 100%;
+        }
+
+        #change-password-area > #change-password-message {
+          font-size: 12px;
+          margin:0 10px;
+          text-align: center;
         }
 
         .waiting-animation {
@@ -1174,20 +1237,17 @@ export default class BackendAILogin extends BackendAIPage {
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
-            <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
-            <div class="flex"></div>
+            <img class="title-img" src="manifest/backend.ai-text.svg" alt="backend.ai" />
           </div>
         </div>
-        <div slot="content" class="login-panel intro centered" style="margin: 0;">
+        <div slot="content" class="login-panel intro centered">
           <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
             <div>${this.connection_mode == 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
-                <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:5px 10px;text-align:center;font-weight:400;">${_t('login.LoginAnotherway')}</div>
-                  <mwc-button
-                      class="change-login-mode-button"
-                      outlined
+                <div id="change-signin-area" class="vertical center-justified layout">
+                  <div id="change-signin-message">${_t('login.LoginAnotherway')}</div>
+                  <mwc-button outlined class="change-login-mode-button"
                       label="${this.connection_mode == 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
                       @click="${() => this._changeSigninMode()}">
                   </mwc-button>
@@ -1204,80 +1264,93 @@ export default class BackendAILogin extends BackendAIPage {
               </div>
               <div id="loading-message">Waiting...</div>
             </div>
-            <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
+            <form id="session-login-form" class="${this.connection_mode === 'SESSION' ? 'block' : 'none'}">
               <fieldset>
                 <div class="horizontal layout start-justified center login-input">
                   <mwc-icon>email</mwc-icon>
                   <input type="email" id="id_user_id" maxlength="64" autocomplete="username"
-                              label="${_t('login.E-mail')}" placeholder="${_t('login.E-mail')}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
+                      label="${_t('login.E-mail')}" placeholder="${_t('login.E-mail')}" icon="email"
+                      value="${this.user_id}"
+                      @keyup="${this._submitIfEnter}" />
                 </div>
                 <div class="horizontal layout start-justified center login-input">
                   <mwc-icon>vpn_key</mwc-icon>
                   <input type="password" id="id_password" autocomplete="current-password"
-                              label="${_t('login.Password')}" placeholder="${_t('login.Password')}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
+                      label="${_t('login.Password')}" placeholder="${_t('login.Password')}" icon="vpn_key"
+                      value="${this.password}"
+                      @keyup="${this._submitIfEnter}" />
                 </div>
               </fieldset>
             </form>
-            <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+            <form id="api-login-form" class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}">
               <fieldset>
                 <mwc-textfield type="text" id="id_api_key" maxLength="20"
-                            label="${_t('login.APIKey')}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                    label="${_t('login.APIKey')}" icon="lock"
+                    value="${this.api_key}"
+                    @keyup="${this._submitIfEnter}">
+                </mwc-textfield>
                 <mwc-textfield type="password" id="id_secret_key" maxLength="40"
-                            label="${_t('login.SecretKey')}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}" ></mwc-textfield>
+                    label="${_t('login.SecretKey')}" icon="vpn_key"
+                    value="${this.secret_key}"
+                    @keyup="${this._submitIfEnter}">
+                </mwc-textfield>
               </fieldset>
             </form>
             <form>
               <fieldset>
                 <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
-                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="padding-left: 3px; background-color: rgb(250, 250, 250);" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                  <mwc-icon-button id="endpoint-button" icon="cloud_queue"
+                      @click="${() => this._toggleEndpoint()}">
+                  </mwc-icon-button>
                   <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
                     <mwc-list-item disabled>${_t('login.EndpointHistory')}</mwc-list-item>
                     ${this.endpoints.length === 0 ? html`
-                    <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
+                      <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
                     ` : html``}
 
-                    ${this.endpoints.map((item) =>
-    html`<mwc-list-item value="${item}">
-                      <div class="horizontal justified center flex layout" style="width:365px;">
-                        <span>${item}</span><span class="flex"></span>
-                        <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
-                      </div>
-                    </mwc-list-item>`)}
+                    ${this.endpoints.map((item) => html`
+                      <mwc-list-item value="${item}">
+                        <div class="horizontal justified center flex layout" style="width:365px;">
+                          <span>${item}</span><span class="flex"></span>
+                          <mwc-icon-button class="endpoint-control-button" icon="delete"
+                              @click="${() => this._deleteEndpoint(item)}">
+                          </mwc-icon-button>
+                        </div>
+                      </mwc-list-item>
+                    `)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" maxLength="2048"
-                              style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                              label="${_t('login.Endpoint')}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                      maxLength="2048" label="${_t('login.Endpoint')}"
+                      value="${this.api_endpoint}"
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
                 </div>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized" maxLength="2048"
-                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                            label="${_t('login.Endpoint')}" icon="cloud" value=""></mwc-textfield>
-                <mwc-button
-                      unelevated
-                      id="login-button"
-                      icon="check"
-                      fullwidth
-                      label="${_t('login.Login')}"
-                      @click="${() => this._login()}"></mwc-button>
-                <div class="layout horizontal" style="margin-top:2em;">
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                    maxLength="2048" style="display:none;"
+                    label="${_t('login.Endpoint')}" icon="cloud" value="">
+                </mwc-textfield>
+                <mwc-button unelevated fullwidth id="login-button" icon="check"
+                    label="${_t('login.Login')}"
+                    @click="${() => this._login()}">
+                </mwc-button>
+                <div id="additional-action-area" class="layout horizontal">
                   ${this.signup_support ? html`
-                    <div class="vertical center-justified layout" style="width:100%;">
-                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t('login.NotAUser')}</div>
-                      <mwc-button
-                          outlined
-                          label="${_t('login.SignUp')}"
-                          @click="${() => this._showSignupDialog()}"></mwc-button>
+                    <div id="signup-area" class="vertical center-justified layout">
+                      <div id="signup-message">${_t('login.NotAUser')}</div>
+                      <mwc-button outlined label="${_t('login.SignUp')}"
+                          @click="${() => this._showSignupDialog()}">
+                      </mwc-button>
                     </div>
                   `: html``}
                   ${this.signup_support && this.allowAnonymousChangePassword ? html`
-                    <span class="flex" style="min-width:1em;"></span>
+                    <span class="flex"></span>
                   `: html``}
                   ${this.allowAnonymousChangePassword ? html`
-                    <div class="vertical center-justified layout" style="width:100%;">
-                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t('login.ForgotPassword')}</div>
-                      <mwc-button
-                          outlined
-                          label="${_t('login.ChangePassword')}"
-                          @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
+                    <div id="change-password-area" class="vertical center-justified layout">
+                      <div id="change-password-message">${_t('login.ForgotPassword')}</div>
+                      <mwc-button outlined label="${_t('login.ChangePassword')}"
+                          @click="${() => this._showChangePasswordEmailDialog()}">
+                      </mwc-button>
                     </div>
                   ` : html``}
                 </div>
@@ -1292,19 +1365,20 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div class="warning">${_t('login.DescConfirmLeave')}</div>
           </section>
-          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxLength="64"
-              label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-          <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
-              label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id"
+              maxLength="64" label="E-mail" value=""
+              @keyup="${this._signoutIfEnter}">
+          </mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+              maxLength="64" label="Password" value=""
+              @keyup="${this._signoutIfEnter}">
+          </mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-              outlined
-              fullwidth
-              id="signout-button"
-              icon="check"
-              label="${_t('login.LeaveService')}"
-              @click="${() => this._signout()}"></mwc-button>
+          <mwc-button outlined fullwidth id="signout-button"
+              icon="check" label="${_t('login.LeaveService')}"
+              @click="${() => this._signout()}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
@@ -1333,14 +1407,15 @@ export default class BackendAILogin extends BackendAIPage {
             <span slot="title" id="work-title">${this.blockType}</span>
           ` : html``}
           <div slot="content" style="text-align:center;padding-top:15px;">
-          ${this.blockMessage}
+            ${this.blockMessage}
           </div>
           <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
+            <mwc-button
               outlined
               fullwidth
               label="${_t('login.CancelLogin')}"
-              @click="${(e) => this._cancelLogin(e)}"></mwc-button>
+              @click="${(e) => this._cancelLogin(e)}">
+            </mwc-button>
           </div>
         ` : html``}
       </backend-ai-dialog>
@@ -1348,6 +1423,7 @@ export default class BackendAILogin extends BackendAIPage {
     `;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'backend-ai-login': BackendAILogin;
