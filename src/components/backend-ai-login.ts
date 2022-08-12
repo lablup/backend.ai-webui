@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -14,10 +14,10 @@ import 'weightless/card';
 import '@material/mwc-button';
 import '@material/mwc-icon';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button';
-import '@material/mwc-menu';
+import {IconButton} from '@material/mwc-icon-button';
+import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
-import '@material/mwc-textfield';
+import {TextField} from '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
@@ -55,6 +55,8 @@ declare global {
  */
 @customElement('backend-ai-login')
 export default class BackendAILogin extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -72,9 +74,6 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
-  @property({type: Object}) loginPanel;
-  @property({type: Object}) signoutPanel;
-  @property({type: Object}) blockPanel;
   @property({type: Boolean}) is_connected = false;
   @property({type: Object}) clientConfig;
   @property({type: Object}) client;
@@ -100,6 +99,14 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
+  @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
+  @query('#id_api_endpoint') apiEndpointInput!: TextField;
+  @query('#id_api_endpoint_humanized') apiEndpointHumanizedInput!: TextField;
+  @query('#id_user_id') userIdInput!: HTMLInputElement;
+  @query('#id_password') passwordInput!: HTMLInputElement;
 
   constructor() {
     super();
@@ -107,7 +114,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -348,9 +355,6 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
-    this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
-    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
@@ -404,7 +408,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.signup_support = false;
     } else {
       this.signup_support = true;
-      (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
+      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
     }
     if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword == false) {
       this.allowAnonymousChangePassword = false;
@@ -485,21 +489,21 @@ export default class BackendAILogin extends BackendAIPage {
       this.proxy_url = config.wsproxy.proxyURL;
     }
     if (typeof config.general === 'undefined' || typeof config.general.apiEndpoint === 'undefined' || config.general.apiEndpoint === '') {
-      (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
-      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
+      this.apiEndpointContainer.style.display = 'flex';
+      this.apiEndpointHumanizedInput.style.display = 'none';
     } else {
       this.api_endpoint = config.general.apiEndpoint;
       if (typeof config.general === 'undefined' || typeof config.general.apiEndpointText === 'undefined' || config.general.apiEndpointText === '') {
-        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
-        (this.shadowRoot.querySelector('#endpoint-button') as any).disabled = 'true';
+        this.apiEndpointContainer.style.display = 'flex';
+        this.apiEndpointHumanizedInput.style.display = 'none';
+        (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
       } else {
-        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'none';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
+        this.apiEndpointContainer.style.display = 'none';
+        this.apiEndpointHumanizedInput.style.display = 'block';
+        this.apiEndpointHumanizedInput.value = config.general.apiEndpointText;
       }
-      (this.shadowRoot.querySelector('#id_api_endpoint') as any).disabled = true;
-      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).disabled = true;
+      this.apiEndpointInput.disabled = true;
+      this.apiEndpointHumanizedInput.disabled = true;
     }
     if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation == false) {
       this.allowSignupWithoutConfirmation = false;
@@ -720,18 +724,18 @@ export default class BackendAILogin extends BackendAIPage {
       this.notification.show();
       return;
     }
-    const signupDialog = this.shadowRoot.querySelector('#signup-dialog');
+    const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup'];
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
     signupDialog.open();
   }
 
   _showChangePasswordEmailDialog() {
-    this.shadowRoot.querySelector('#change-password-confirm-dialog').show();
+    (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
   async _sendChangePasswordEmail() {
-    const emailEl = this.shadowRoot.querySelector('#password-change-email');
+    const emailEl = this.shadowRoot?.querySelector('#password-change-email') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
       // Create an anonymous client.
@@ -742,7 +746,7 @@ export default class BackendAILogin extends BackendAIPage {
       );
 
       await client.cloud.send_password_change_email(emailEl.value);
-      this.shadowRoot.querySelector('#change-password-confirm-dialog').hide();
+      (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as HTMLElementTagNameMap['backend-ai-dialog']).hide();
       this.notification.text = _text('signup.EmailSent');
       this.notification.show();
     } catch (e) {
@@ -773,8 +777,8 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _signout() {
-    const user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
-    const password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
+    const user_id = (this.shadowRoot?.querySelector('#id_signout_user_id') as TextField).value;
+    const password = (this.shadowRoot?.querySelector('#id_signout_password') as TextField).value;
     this.client.signout(user_id, password).then((response) => {
       this.notification.text = _text('login.SignoutFinished');
       this.notification.show();
@@ -815,7 +819,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
     }
 
-    this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
+    this.api_endpoint = this.apiEndpointInput.value;
     this.api_endpoint = this.api_endpoint.replace(/\/+$/, '');
     if (this.api_endpoint === '') {
       this.notification.text = _text('login.APIEndpointEmpty');
@@ -824,8 +828,8 @@ export default class BackendAILogin extends BackendAIPage {
     }
     if (this.connection_mode === 'SESSION') {
       this._disableUserInput();
-      this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
-      this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
+      this.user_id = this.userIdInput.value;
+      this.password = this.passwordInput.value;
 
       // show error message when id or password input is empty
       if (this.user_id === '' || this.user_id === 'undefined' || this.password === '' || this.password === 'undefined') {
@@ -837,8 +841,8 @@ export default class BackendAILogin extends BackendAIPage {
       }
     } else {
       this._disableUserInput();
-      this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
-      this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
+      this.api_key = (this.shadowRoot?.querySelector('#id_api_key') as TextField).value;
+      this.secret_key = (this.shadowRoot?.querySelector('#id_secret_key') as TextField).value;
       this._connectUsingAPI(true);
     }
   }
@@ -1123,15 +1127,17 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _toggleEndpoint() {
-    const endpoint_list = this.shadowRoot.querySelector('#endpoint-list');
-    const endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+    const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
+    const endpoint_button = this.shadowRoot?.querySelector('#endpoint-button') as IconButton;
     endpoint_list.anchor = endpoint_button;
     endpoint_list.open = !endpoint_list.open;
   }
 
   _updateEndpoint() {
-    const endpoint_list = this.shadowRoot.querySelector('#endpoint-list');
-    this.api_endpoint = endpoint_list.selected.value;
+    const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
+    if (endpoint_list.selected && !(endpoint_list.selected instanceof Array)) {
+      this.api_endpoint = endpoint_list.selected.value;
+    }
   }
 
   _deleteEndpoint(endpoint) {
@@ -1145,21 +1151,19 @@ export default class BackendAILogin extends BackendAIPage {
 
   _disableUserInput() {
     if (this.connection_mode === 'SESSION') {
-      this.shadowRoot.querySelector('#id_user_id').disabled = true;
-      this.shadowRoot.querySelector('#id_password').disabled = true;
+      this.userIdInput.disabled = true;
+      this.passwordInput.disabled = true;
     } else {
-      this.shadowRoot.querySelector('#id_user_id').disabled = true;
-      this.shadowRoot.querySelector('#id_password').disabled = true;
+      this.userIdInput.disabled = true;
+      this.passwordInput.disabled = true;
     }
-    this.shadowRoot.querySelector('.waiting-animation').style.display = 'flex';
+    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
   }
 
   _enableUserInput() {
-    this.shadowRoot.querySelector('#id_user_id').disabled = false;
-    this.shadowRoot.querySelector('#id_password').disabled = false;
-    this.shadowRoot.querySelector('#id_user_id').disabled = false;
-    this.shadowRoot.querySelector('#id_password').disabled = false;
-    this.shadowRoot.querySelector('.waiting-animation').style.display = 'none';
+    this.userIdInput.disabled = false;
+    this.passwordInput.disabled = false;
+    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
   }
 
   render() {
