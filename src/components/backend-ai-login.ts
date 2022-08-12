@@ -1266,20 +1266,16 @@ export default class BackendAILogin extends BackendAIPage {
             </div>
             <form id="session-login-form" class="${this.connection_mode === 'SESSION' ? 'block' : 'none'}">
               <fieldset>
-                <div class="horizontal layout start-justified center login-input">
-                  <mwc-icon>email</mwc-icon>
-                  <input type="email" id="id_user_id" maxlength="64" autocomplete="username"
-                      label="${_t('login.E-mail')}" placeholder="${_t('login.E-mail')}" icon="email"
+                  <mwc-textfield type="email" id="id_user_id" maxlength="64" autocomplete="username"
+                      label="${_t('login.E-mail')}" icon="email"
                       value="${this.user_id}"
-                      @keyup="${this._submitIfEnter}" />
-                </div>
-                <div class="horizontal layout start-justified center login-input">
-                  <mwc-icon>vpn_key</mwc-icon>
-                  <input type="password" id="id_password" autocomplete="current-password"
-                      label="${_t('login.Password')}" placeholder="${_t('login.Password')}" icon="vpn_key"
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
+                  <mwc-textfield type="password" id="id_password" autocomplete="current-password"
+                      label="${_t('login.Password')}" icon="vpn_key"
                       value="${this.password}"
-                      @keyup="${this._submitIfEnter}" />
-                </div>
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
               </fieldset>
             </form>
             <form id="api-login-form" class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}">
