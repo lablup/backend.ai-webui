@@ -417,7 +417,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Change the signin mode with SESSION or API
    * */
-  _changeSigninMode() {
+  private _changeSigninMode() {
     if (this.change_signin_support === true) {
       if (this.connection_mode === 'SESSION') {
         this.connection_mode = 'API';
@@ -652,7 +652,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel.hide();
   }
 
-  _trimChar(str: string) {
+  private _trimChar(str: string) {
     return str.replace(/^\|+|\|+$/g, '');
   }
 
@@ -660,7 +660,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Load configuration file from the WebServer when using Session mode.
    *
    * */
-  _loadConfigFromWebServer() {
+  private _loadConfigFromWebServer() {
     if (!window.location.href.startsWith(this.api_endpoint)) {
       // Override configs with Webserver's config.
       const webuiEl = document.querySelector('backend-ai-webui');
@@ -735,7 +735,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  async _checkLoginUsingSession(showError = true) {
+  private async _checkLoginUsingSession(showError = true) {
     if (this.api_endpoint === '') {
       return Promise.resolve(false);
     }
@@ -771,7 +771,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
-  _showSignupDialog() {
+  private _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
@@ -784,11 +784,11 @@ export default class BackendAILogin extends BackendAIPage {
     signupDialog.open();
   }
 
-  _showChangePasswordEmailDialog() {
+  private _showChangePasswordEmailDialog() {
     (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as HTMLElementTagNameMap['backend-ai-dialog']).show();
   }
 
-  async _sendChangePasswordEmail() {
+  private async _sendChangePasswordEmail() {
     const emailEl = this.shadowRoot?.querySelector('#password-change-email') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
@@ -810,27 +810,27 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  _cancelLogin(e) {
+  private _cancelLogin(e) {
     this._hideDialog(e);
     this.open();
   }
 
-  _validate_data(value) {
+  private _validate_data(value) {
     if (value !== undefined && value !== null && value !== '') {
       return true;
     }
     return false;
   }
 
-  _submitIfEnter(e) {
+  private _submitIfEnter(e) {
     if (e.keyCode === 13) this._login();
   }
 
-  _signoutIfEnter(e) {
+  private _signoutIfEnter(e) {
     if (e.keyCode === 13) this._signout();
   }
 
-  _signout() {
+  private _signout() {
     const user_id = (this.shadowRoot?.querySelector('#id_signout_user_id') as TextField).value;
     const password = (this.shadowRoot?.querySelector('#id_signout_password') as TextField).value;
     this.client.signout(user_id, password).then((response) => {
@@ -856,7 +856,7 @@ export default class BackendAILogin extends BackendAIPage {
     });
   }
 
-  _login() {
+  private _login() {
     const loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
     const lastLogin = globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
     const currentTime = Math.floor(Date.now() / 1000);
@@ -990,7 +990,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  _connectUsingAPI(showError = true) {
+  private _connectUsingAPI(showError = true) {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
@@ -1011,7 +1011,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  _connectGQL(showError = true) {
+  private _connectGQL(showError = true) {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
@@ -1053,7 +1053,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @return {Void}
    * */
-  _connectViaGQL() {
+  private _connectViaGQL() {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
@@ -1180,21 +1180,21 @@ export default class BackendAILogin extends BackendAIPage {
     localStorage.removeItem('backendaiwebui.login.password');
   }
 
-  _toggleEndpoint() {
+  private _toggleEndpoint() {
     const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
     const endpoint_button = this.shadowRoot?.querySelector('#endpoint-button') as IconButton;
     endpoint_list.anchor = endpoint_button;
     endpoint_list.open = !endpoint_list.open;
   }
 
-  _updateEndpoint() {
+  private _updateEndpoint() {
     const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
     if (endpoint_list.selected && !(endpoint_list.selected instanceof Array)) {
       this.api_endpoint = endpoint_list.selected.value;
     }
   }
 
-  _deleteEndpoint(endpoint) {
+  private _deleteEndpoint(endpoint) {
     const idx = this.endpoints.indexOf(endpoint);
     if (idx > -1) {
       this.endpoints.splice(idx, 1);
@@ -1203,7 +1203,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.requestUpdate();
   }
 
-  _disableUserInput() {
+  private _disableUserInput() {
     if (this.connection_mode === 'SESSION') {
       this.userIdInput.disabled = true;
       this.passwordInput.disabled = true;
@@ -1214,13 +1214,13 @@ export default class BackendAILogin extends BackendAIPage {
     (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
   }
 
-  _enableUserInput() {
+  private _enableUserInput() {
     this.userIdInput.disabled = false;
     this.passwordInput.disabled = false;
     (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
   }
 
-  render() {
+  protected render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
