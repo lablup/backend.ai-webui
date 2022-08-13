@@ -1003,6 +1003,10 @@ export default class BackendAILogin extends BackendAIPage {
     this.client.ready = false;
     return this.client.get_manager_version().then((response) => {
       return this._connectGQL(showError);
+    }).catch((err) => {
+      // FIXME need error handling logic and message prompt
+      console.log(err);
+      this._enableUserInput();
     });
   }
 
