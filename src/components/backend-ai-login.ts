@@ -101,8 +101,10 @@ export default class BackendAILogin extends BackendAIPage {
   @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
   @query('#id_api_endpoint') apiEndpointInput!: TextField;
   @query('#id_api_endpoint_humanized') apiEndpointHumanizedInput!: TextField;
-  @query('#id_user_id') userIdInput!: HTMLInputElement;
-  @query('#id_password') passwordInput!: HTMLInputElement;
+  @query('#id_user_id') userIdInput!: TextField;
+  @query('#id_password') passwordInput!: TextField;
+  @query('#id_api_key') apiKeyInput!: TextField;
+  @query('#id_secret_key') secretKeyInput!: TextField;
 
   constructor() {
     super();
@@ -883,8 +885,8 @@ export default class BackendAILogin extends BackendAIPage {
         this._connectUsingSession(true);
       }
     } else {
-      this.api_key = (this.shadowRoot?.querySelector('#id_api_key') as TextField).value;
-      this.secret_key = (this.shadowRoot?.querySelector('#id_secret_key') as TextField).value;
+      this.api_key = this.apiKeyInput.value;
+      this.secret_key = this.secretKeyInput.value;
 
       if (!this.api_key || this.api_key === 'undefined' || !this.secret_key || this.secret_key === 'undefined') {
         this.notification.text = _text('login.PleaseInputLoginInfo');
@@ -1207,8 +1209,8 @@ export default class BackendAILogin extends BackendAIPage {
       this.userIdInput.disabled = true;
       this.passwordInput.disabled = true;
     } else {
-      this.userIdInput.disabled = true;
-      this.passwordInput.disabled = true;
+      this.apiKeyInput.disabled = true;
+      this.secretKeyInput.disabled = true;
     }
     (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
   }
@@ -1216,6 +1218,8 @@ export default class BackendAILogin extends BackendAIPage {
   private _enableUserInput() {
     this.userIdInput.disabled = false;
     this.passwordInput.disabled = false;
+    this.apiKeyInput.disabled = false;
+    this.secretKeyInput.disabled = false;
     (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
   }
 
