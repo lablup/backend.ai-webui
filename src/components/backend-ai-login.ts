@@ -7,14 +7,10 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-
 import '@material/mwc-button';
 import '@material/mwc-icon';
-import '@material/mwc-list/mwc-list-item';
 import {IconButton} from '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import {TextField} from '@material/mwc-textfield';
