@@ -922,13 +922,14 @@ export default class BackendAILogin extends BackendAIPage {
               this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
               this.notification.show();
             }
-            return Promise.reject();
+            return Promise.resolve(false);
           } else if (response.fail_reason) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
             }
+            return Promise.resolve(false);
           } else {
             this.is_connected = true;
             return this._connectGQL();
@@ -951,7 +952,6 @@ export default class BackendAILogin extends BackendAIPage {
               } else {
                 this.notification.text = PainKiller.relieve('Login failed. Check login information.');
               }
-              console.log(err);
             }
             this.notification.show();
           }
