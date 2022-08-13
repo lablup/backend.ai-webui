@@ -71,8 +71,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) email;
   @property({type: Object}) config = Object();
   @property({type: Boolean}) is_connected = false;
-  @property({type: Object}) clientConfig;
-  @property({type: Object}) client;
+  @property({type: Object}) clientConfig: ai.ClientConfig | undefined;
+  @property({type: Object}) client: ai.Client | undefined;
   @property({type: Object}) notification;
   @property({type: Object}) user_groups;
   @property({type: Boolean}) signup_support = false;
@@ -746,7 +746,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async ()=>{
-      const isLogon = await this.client.check_login();
+      const isLogon = await this.client?.check_login();
       return Promise.resolve(isLogon);
     });
   }
@@ -757,7 +757,7 @@ export default class BackendAILogin extends BackendAIPage {
    * @param {boolean} showError
    * */
   async _logoutSession(showError = true) {
-    return this.client.logout();
+    return this.client?.logout();
   }
 
   signout() {
@@ -822,7 +822,7 @@ export default class BackendAILogin extends BackendAIPage {
   private _signout() {
     const user_id = (this.shadowRoot?.querySelector('#id_signout_user_id') as TextField).value;
     const password = (this.shadowRoot?.querySelector('#id_signout_password') as TextField).value;
-    this.client.signout(user_id, password).then((response) => {
+    this.client?.signout(user_id, password).then((response) => {
       this.notification.text = _text('login.SignoutFinished');
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
@@ -911,17 +911,18 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async () => {
-      const isLogon = await this.client.check_login();
+      const isLogon = await this.client?.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
 
-        this.client.login().then((response) => {
+        this.client?.login().then((response) => {
           if (response === false) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
               this.notification.show();
             }
+            return Promise.reject();
           } else if (response.fail_reason) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
@@ -1048,7 +1049,7 @@ export default class BackendAILogin extends BackendAIPage {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
-    return this.client.query(q, v).then((response) => {
+    return this.client?.query(q, v).then((response) => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       const resource_policy = response['keypair'].resource_policy;
@@ -1158,7 +1159,7 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
-        this.client.logout();
+        this.client?.logout();
       }
       this._enableUserInput();
     });
