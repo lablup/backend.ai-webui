@@ -875,7 +875,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.password = this.passwordInput.value;
 
       // show error message when id or password input is empty
-      if (this.user_id === '' || this.user_id === 'undefined' || this.password === '' || this.password === 'undefined') {
+      if (!this.user_id || this.user_id === 'undefined' || !this.password || this.password === 'undefined') {
         this.notification.text = _text('login.PleaseInputLoginInfo');
         this.notification.show();
         this._enableUserInput();
@@ -885,7 +885,14 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.api_key = (this.shadowRoot?.querySelector('#id_api_key') as TextField).value;
       this.secret_key = (this.shadowRoot?.querySelector('#id_secret_key') as TextField).value;
-      this._connectUsingAPI(true);
+
+      if (!this.api_key || this.api_key === 'undefined' || !this.secret_key || this.secret_key === 'undefined') {
+        this.notification.text = _text('login.PleaseInputLoginInfo');
+        this.notification.show();
+        this._enableUserInput();
+      } else {
+        this._connectUsingAPI(true);
+      }
     }
   }
 
