@@ -197,11 +197,6 @@ export default class BackendAILogin extends BackendAIPage {
           --button-font-size: 12px;
         }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
         .title-img {
           height: 35px;
           padding: 15px 0 15px 5px;
