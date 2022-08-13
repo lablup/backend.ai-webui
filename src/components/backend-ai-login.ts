@@ -862,15 +862,15 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
     }
 
-    this.api_endpoint = this.apiEndpointInput.value;
-    this.api_endpoint = this.api_endpoint.replace(/\/+$/, '');
+    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '');
     if (this.api_endpoint === '') {
       this.notification.text = _text('login.APIEndpointEmpty');
       this.notification.show();
       return;
     }
+
+    this._disableUserInput();
     if (this.connection_mode === 'SESSION') {
-      this._disableUserInput();
       this.user_id = this.userIdInput.value;
       this.password = this.passwordInput.value;
 
@@ -883,7 +883,6 @@ export default class BackendAILogin extends BackendAIPage {
         this._connectUsingSession(true);
       }
     } else {
-      this._disableUserInput();
       this.api_key = (this.shadowRoot?.querySelector('#id_api_key') as TextField).value;
       this.secret_key = (this.shadowRoot?.querySelector('#id_secret_key') as TextField).value;
       this._connectUsingAPI(true);
@@ -911,10 +910,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-    return this.client.get_manager_version().then(async ()=>{
+    return this.client.get_manager_version().then(async () => {
       const isLogon = await this.client.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+
         this.client.login().then((response) => {
           if (response === false) {
             this.open();
@@ -978,6 +978,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Connect GQL when API mode.
    *
    * @param {boolean} showError
+   * @return {Promise}
    * */
   private _connectUsingAPI(showError = true) {
     this.clientConfig = new ai.backend.ClientConfig(
@@ -990,7 +991,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this.client.get_manager_version().then((response) => {
+    return this.client.get_manager_version().then((response) => {
       return this._connectGQL(showError);
     });
   }
@@ -999,13 +1000,14 @@ export default class BackendAILogin extends BackendAIPage {
    * Call _connectViaGQL() to connect to GQL.
    *
    * @param {boolean} showError
+   * @return {Promise}
    * */
   private _connectGQL(showError = true) {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    new Promise(() => {
+    return new Promise(() => {
       const currentTime = Math.floor(Date.now() / 1000);
       globalThis.backendaioptions.set('last_login', currentTime, 'general');
       globalThis.backendaioptions.set('login_attempt', 0, 'general');
