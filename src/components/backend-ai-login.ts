@@ -652,10 +652,6 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel.hide();
   }
 
-  private _trimChar(str: string) {
-    return str.replace(/^\|+|\|+$/g, '');
-  }
-
   /**
    * Load configuration file from the WebServer when using Session mode.
    *
@@ -813,13 +809,6 @@ export default class BackendAILogin extends BackendAIPage {
   private _cancelLogin(e) {
     this._hideDialog(e);
     this.open();
-  }
-
-  private _validate_data(value) {
-    if (value !== undefined && value !== null && value !== '') {
-      return true;
-    }
-    return false;
   }
 
   private _submitIfEnter(e) {
