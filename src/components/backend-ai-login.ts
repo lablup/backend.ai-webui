@@ -428,7 +428,7 @@ export default class BackendAILogin extends BackendAIPage {
    * */
   _changeSigninMode() {
     if (this.change_signin_support === true) {
-      if (this.connection_mode == 'SESSION') {
+      if (this.connection_mode === 'SESSION') {
         this.connection_mode = 'API';
         localStorage.setItem('backendaiwebui.connection_mode', 'API');
       } else {
@@ -467,38 +467,38 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiwebui.debug = true;
       console.log('Debug flag is set to true');
     }
-    if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport === false) {
       this.signup_support = false;
     } else {
       this.signup_support = true;
       (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword === false) {
       this.allowAnonymousChangePassword = false;
     } else {
       this.allowAnonymousChangePassword = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode === false) {
       this.change_signin_support = false;
     } else {
       this.change_signin_support = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor === false) {
       this.allow_project_resource_monitor = false;
     } else {
       this.allow_project_resource_monitor = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession === false) {
       this.allow_manual_image_name_for_session = false;
     } else {
       this.allow_manual_image_name_for_session = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession === false) {
       this.always_enqueue_compute_session = false;
     } else {
       this.always_enqueue_compute_session = true;
     }
-    if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
+    if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic === false) {
       this.openPortToPublic = false;
     } else {
       this.openPortToPublic = true;
@@ -533,7 +533,7 @@ export default class BackendAILogin extends BackendAIPage {
     } else {
       this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout === false) {
       this.allow_signout = false;
     } else {
       this.allow_signout = true;
@@ -568,7 +568,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.apiEndpointInput.disabled = true;
       this.apiEndpointHumanizedInput.disabled = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation == false) {
+    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation === false) {
       this.allowSignupWithoutConfirmation = false;
     } else {
       this.allowSignupWithoutConfirmation = true;
@@ -595,7 +595,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.maskUserInfo = config.general.maskUserInfo;
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
-    if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
+    if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
       if (connection_mode === 'SESSION') {
         this.connection_mode = 'SESSION';
       } else {
@@ -661,7 +661,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel.hide();
   }
 
-  _trimChar(str, char) {
+  _trimChar(str: string) {
     return str.replace(/^\|+|\|+$/g, '');
   }
 
@@ -700,8 +700,8 @@ export default class BackendAILogin extends BackendAIPage {
    * */
   login(showError = true) {
     if (this.api_endpoint === '') {
-      const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
-      if (api_endpoint != null) {
+      const api_endpoint = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (api_endpoint !== null) {
         this.api_endpoint = api_endpoint.replace(/^"+|"+$/g, '');
       }
     }
@@ -722,7 +722,7 @@ export default class BackendAILogin extends BackendAIPage {
   async check_login(showError = true) {
     if (this.api_endpoint === '') {
       const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
-      if (api_endpoint != null) {
+      if (api_endpoint !== null) {
         this.api_endpoint = api_endpoint.replace(/^"+|"+$/g, '');
       }
     }
@@ -825,18 +825,18 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   _validate_data(value) {
-    if (value != undefined && value != null && value != '') {
+    if (value !== undefined && value !== null && value !== '') {
       return true;
     }
     return false;
   }
 
   _submitIfEnter(e) {
-    if (e.keyCode == 13) this._login();
+    if (e.keyCode === 13) this._login();
   }
 
   _signoutIfEnter(e) {
-    if (e.keyCode == 13) this._signout();
+    if (e.keyCode === 13) this._signout();
   }
 
   _signout() {
@@ -938,13 +938,13 @@ export default class BackendAILogin extends BackendAIPage {
         this.client.login().then((response) => {
           if (response === false) {
             this.open();
-            if (this.user_id != '' && this.password != '') {
+            if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
               this.notification.show();
             }
           } else if (response.fail_reason) {
             this.open();
-            if (this.user_id != '' && this.password != '') {
+            if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
             }
@@ -1242,13 +1242,13 @@ export default class BackendAILogin extends BackendAIPage {
         </div>
         <div slot="content" class="login-panel intro centered">
           <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
-            <div>${this.connection_mode == 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
+            <div>${this.connection_mode === 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
                 <div id="change-signin-area" class="vertical center-justified layout">
                   <div id="change-signin-message">${_t('login.LoginAnotherway')}</div>
                   <mwc-button outlined class="change-login-mode-button"
-                      label="${this.connection_mode == 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
+                      label="${this.connection_mode === 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
                       @click="${() => this._changeSigninMode()}">
                   </mwc-button>
                 </div>
@@ -1398,7 +1398,7 @@ export default class BackendAILogin extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed blockscrolling persistent escapeKeyAction>
-        ${this.blockMessage != '' ? html`
+        ${this.blockMessage !== '' ? html`
           ${this.blockType !== '' ? html`
             <span slot="title" id="work-title">${this.blockType}</span>
           ` : html``}
