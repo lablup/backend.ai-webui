@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
@@ -116,6 +116,9 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) selectedSessionStatus = Object();
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
+  @query('#commit-session-dialog') commitSessionDialog;
+  @query('#commit-current-session-path-input') commitSessionInput;
+
   constructor() {
     super();
     this._selected_items = [];
@@ -223,6 +226,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           --mdc-list-item-graphic-margin: 10px;
         }
 
+        mwc-textfield {
+          width: 100%;
+        }
+
         #work-dialog {
           --component-width: calc(100% - 80px);
           --component-height: auto;
@@ -232,6 +239,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         #status-detail-dialog {
           --component-width: 375px;
+        }
+
+        #commit-session-dialog {
+          --component-width: 390px;
         }
 
         @media screen and (max-width: 899px) {
@@ -410,6 +421,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
     );
     this.notification = globalThis.lablupNotification;
+    this.indicator = globalThis.lablupIndicator;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.sessionStatusInfoDialog = this.shadowRoot.querySelector('#status-detail-dialog');
@@ -1011,6 +1023,71 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controls = controller.closest('#controls');
     const sessionUuid = controls['session-uuid'];
     return globalThis.appLauncher.runTerminal(sessionUuid);
+  }
+
+  async _getCommitSessionStatus(sessionName: string = '') {
+    let isOnProgress: boolean = false;
+    if (sessionName !== '') {
+      globalThis.backendaiclient.computeSession.getCommitSessionStatus(sessionName).then((res) =>{
+        console.log(res);
+        isOnProgress = res;
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+    return isOnProgress;
+  }
+
+  /**
+   * Request commit session
+   */
+  async _requestCommitSession() {
+    const path = this.commitSessionInput.value;
+    const indicator = await this.indicator.start('indeterminate');
+    indicator.set(0, _text('session.CommitOnGoing'));
+    globalThis.tasker.add(
+      _text('session.CommitSession'),
+      globalThis.backendaiclient.computeSession.commitSession(this.commitSessionDialog.sessionName, path).then(({commit_session}) => {
+        console.log(commit_session);
+        const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commit_session.task_id);
+        sse.addEventListener('bgtask_updated', (e) => {
+          const data = JSON.parse(e['data']);
+          const ratio = data.current_progress/data.total_progress;
+          indicator.set(100 * ratio, _text('session.CommitOnGoing'));
+        });
+        sse.addEventListener('bgtask_done', (e) => {
+          indicator.set(100, _text('session.CommitFinished'));
+          sse.close();
+        });
+        sse.addEventListener('bgtask_failed', (e) => {
+          console.log('task_failed', e['data']);
+          sse.close();
+          throw new Error('Commit session request has been cancelled.');
+        });
+        sse.addEventListener('bgtask_cancelled', (e) => {
+          sse.close();
+          throw new Error('Commit session request has been cancelled.');
+        });
+      }).catch((err) => {
+        console.log(err);
+        indicator.set(50, _text('session.CommitFailed'));
+        indicator.end(1000);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      })
+    );
+
+  }
+
+  _openCommitSessionDialog(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const sessionName = controls['session-name'];
+    this.commitSessionDialog.sessionName = sessionName;
+    this.commitSessionDialog.show();
   }
 
   // Single session closing
@@ -1686,9 +1763,15 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
             <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
+          ${(this._isRunning && !this._isPreparing(rowData.item.status)) && !this._isError(rowData.item.status) ? html`
+            <mwc-icon-button class="fg blue controls-running"
+                             icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
+          ` : html``}
         </div>
       `, root
     );
+    // FIXME: cannot load visibility of icon by getting status therefore commenting out for now
+    // ?disabled=${this._getCommitSessionStatus(rowData.item.name)}
   }
 
   /**
@@ -2070,7 +2153,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
-        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
+        <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                             .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
@@ -2153,6 +2236,16 @@ export default class BackendAiSessionList extends BackendAIPage {
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>
         <span slot="title">${_t('session.StatusInfo')}</span>
         <div slot="content" id="status-detail"></div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
+        <span slot="title">${_t('session.CommitSession')}</span>
+        <div slot="content" class="horizontal layout flex">
+          <mwc-textfield id="commit-current-session-path-input" label="${_t('session.CommitSessionPathOptional')}" type="text">
+          </mwc-text-field>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated class="ok" @click=${() => this._requestCommitSession()} label="${_t('button.Commit')}"></mwc-button>
+        </div>
       </backend-ai-dialog>
     `;
   }
