@@ -305,7 +305,12 @@
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     },
-    "AlreadyTerminatingSession": "이미 종료중인 세션입니다"
+    "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
+    "CommitSession": "세션을 이미지로 커밋하기",
+    "CommitSessionPathOptional": "커밋 파일 저장 경로 (옵션)",
+    "CommitOnGoing": "세션 커밋 작업 진행중",
+    "CommitFinished": "세션 커밋 작업 완료",
+    "CommitFailed": "세션 커밋 작업 실패"
   },
   "button": {
     "Cancel": "취소",
@@ -335,7 +340,8 @@
     "Generate": "생성하기",
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
-    "ForceTerminate": "강제 종료"
+    "ForceTerminate": "강제 종료",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "엔드포인트",

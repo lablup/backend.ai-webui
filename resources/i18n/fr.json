@@ -306,7 +306,12 @@
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitSessionPathOptional": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -336,7 +341,8 @@
     "Generate": "produire",
     "Continue": "Continuer",
     "GoBackToSummaryPage": "Revenir à la page Résumé",
-    "ForceTerminate": "Forcer l'arrêt"
+    "ForceTerminate": "Forcer l'arrêt",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
