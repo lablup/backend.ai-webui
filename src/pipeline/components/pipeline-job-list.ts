@@ -7,6 +7,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
 import {BackendAIPage} from '../../components/backend-ai-page';
 import {
   IronFlex,
@@ -82,6 +83,7 @@ export default class PipelineJobList extends BackendAIPage {
   static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
+      BackendAIPipelineStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
@@ -109,10 +111,6 @@ export default class PipelineJobList extends BackendAIPage {
 
         #view-workflow-button {
           margin: 10px auto;
-        }
-
-        #workflow-file-dialog-title {
-          min-width: 530px;
         }
 
         .mount-button,
@@ -355,17 +353,16 @@ export default class PipelineJobList extends BackendAIPage {
    */
   _loadPipelineJobView(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
-    PipelineUtils._setCustomEvent('pipeline-job-view-active-tab-change',
-      {
-        detail: {
-          activeTab: {
-            title: 'pipeline-job-view',
-          },
-          pipelineJob: this.pipelineJobInfo,
-          pipelineJobs: this.pipelineJobs,
-        }
+    const activeTabChangeEvent = new CustomEvent('pipeline-job-view-active-tab-change', {
+      detail: {
+        activeTab: {
+          title: 'pipeline-job-view'
+        },
+        pipelineJob: this.pipelineJobInfo,
+        pipelineJobs: this.pipelineJobs,
       }
-    );
+    });
+    document.dispatchEvent(activeTabChangeEvent);
   }
 
   /**

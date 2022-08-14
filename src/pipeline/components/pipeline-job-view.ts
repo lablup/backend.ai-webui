@@ -79,17 +79,13 @@ export default class PipelineJobView extends BackendAIPage {
   static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
+      BackendAIPipelineStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
-      BackendAIPipelineStyles,
       // language=CSS
       css`
-        .tab-content {
-          width: 100%;
-        }
-
         div.configuration {
           width: 90px !important;
           height: 20px;
@@ -103,23 +99,6 @@ export default class PipelineJobView extends BackendAIPage {
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
-        }
-
-        mwc-icon-button {
-          color: var(--general-button-background-color);
         }
 
         mwc-icon.indicator {
@@ -143,25 +122,25 @@ export default class PipelineJobView extends BackendAIPage {
           margin-right: 20px;
         }
 
-        #dropdown-menu-container {
+        mwc-menu#dropdown-menu-container {
           position: relative;
         }
 
-        #dropdown-menu {
+        mwc-menu#dropdown-menu {
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
           --mdc-menu-item-height: auto;
           --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height : auto;
         }
 
-        #dropdown-menu mwc-list-item {
-          font-size: 14px;
-        }
-
-        #dropdown-menu mwc-icon {
+        mwc-menu#dropdown-menu mwc-icon {
           padding-right: 10px;
           position: relative;
           top: 5px;
+        }
+
+        mwc-menu#dropdown-menu mwc-list-item {
+          font-size: 14px;
         }
       `
     ];

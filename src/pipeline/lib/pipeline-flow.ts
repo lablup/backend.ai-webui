@@ -11,7 +11,10 @@ import 'drawflow';
 import {style} from 'drawflow/dist/drawflow.style';
 import {DrawflowBaseStyle} from './drawflow-base-style.css';
 import 'drawflow/dist/drawflow.min';
-// import 'drawflow/dist/drawflow.min';
+// FIXME:
+// cannot import module sinc drawflow.min.js does not provide
+// an export named 'default'
+// import Drawflow from 'drawflow';
 import {DrawflowNode} from 'drawflow';
 import {
   IronFlex,
@@ -72,7 +75,7 @@ export default class PipelineFlow extends LitElement {
           border: var(--dfNodeBorderSize)  solid var(--dfNodeBorderColor);
           border-radius: var(--dfNodeBorderRadius);
           min-height: var(--dfNodeMinHeight);
-          max-heigth: 100px;
+          max-height: 100px;
           width: auto;
           min-width: var(--dfNodeMinWidth);
           max-width: 200px; // max-width of node

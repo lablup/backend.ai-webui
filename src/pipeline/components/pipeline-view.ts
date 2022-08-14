@@ -11,6 +11,7 @@ import {BackendAIPage} from '../../components/backend-ai-page';
 import '../../components/backend-ai-dialog';
 import '../../components/lablup-activity-panel';
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -75,44 +76,19 @@ export default class PipelineView extends BackendAIPage {
   static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
+      BackendAIPipelineStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
       // language=CSS
       css`
-        .tab-content {
-          width: 100%;
-        }
-
-        backend-ai-dialog {
-          --component-min-width: 390px;
-          --component-max-width: 390px;
-        }
-
-        h3.tab {
-          background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
-        }
-
         mwc-button { 
           margin: 10px;
         }
 
         mwc-button.full-width {
           width: 100%;
-        }
-
-        mwc-icon-button {
-          color: #555;
-        }
-
-        mwc-tab-bar {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
         span#pipeline-name {

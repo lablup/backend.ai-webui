@@ -8,6 +8,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
 import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
 import '../../components/lablup-codemirror';
 import {
   IronFlex,
@@ -15,7 +16,9 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineInfoExtended, PipelineYAML, PipelineTask, PipelineTaskNode, PipelineEnvironment, PipelineResources, PipelineTaskDetail} from '../lib/pipeline-type';
+import {PipelineInfo, PipelineInfoExtended, PipelineYAML, 
+        PipelineTask, PipelineTaskDetail, PipelineTaskNode,
+        PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 import {default as YAML} from 'js-yaml';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
@@ -153,16 +156,13 @@ export default class PipelineConfigurationForm extends LitElement {
   static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
+      BackendAIPipelineStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
       // language=CSS
       css`
-        .tab-content {
-          width: 100%;
-        }
-
         #vfolder {
           width: 100%;
         }
@@ -215,10 +215,6 @@ export default class PipelineConfigurationForm extends LitElement {
 
         mwc-tab-bar {
           height: 50px !important;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-text-transform: none;
-          --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
         mwc-tab {

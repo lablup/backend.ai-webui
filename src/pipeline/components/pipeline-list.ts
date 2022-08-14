@@ -75,11 +75,11 @@ export default class PipelineList extends BackendAIPage {
   static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
+      BackendAIPipelineStyles,
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
-      BackendAIPipelineStyles,
       // language=CSS
       css`
         .description {
