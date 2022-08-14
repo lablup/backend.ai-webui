@@ -175,6 +175,12 @@ export default class PipelineJobView extends BackendAIPage {
         await this._loadCurrentFlowData();
         PipelineUtils._loadTaskInstances(this.pipelineJobInfo.id).then((res) => {
           this.taskInstanceList = res;
+        }).catch((err) => {
+          if (err && err.message) {
+            this.notification.text = err.title;
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
         });
       }
     });
@@ -250,9 +256,12 @@ export default class PipelineJobView extends BackendAIPage {
         }
       }
     }).catch((err) => {
-      console.log(err);
-      this.notification.text = err.title;
-      this.notification.show(true);
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
@@ -277,13 +286,21 @@ export default class PipelineJobView extends BackendAIPage {
    * Request and receive pipeline job list from pipeline server
    */
   async _loadPipelineJobList() {
-    // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
+    try {
+      // If disconnected
+      if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+        document.addEventListener('backend-ai-connected', async () => {
+          this.pipelineJobs = await globalThis.backendaiclient.pipelineJob.list();
+        }, true);
+      } else { // already connected
         this.pipelineJobs = await globalThis.backendaiclient.pipelineJob.list();
-      }, true);
-    } else { // already connected
-      this.pipelineJobs = await globalThis.backendaiclient.pipelineJob.list();
+      }
+    } catch (err) {
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     }
   }
 

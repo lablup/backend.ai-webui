@@ -284,9 +284,15 @@ export default class PipelineView extends BackendAIPage {
       this.notification.text = `Pipeline ${this.pipelineInfo.name} updated.`;
       this.notification.show();
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    }).finally(() => {
+      this._hideDialogById('#edit-pipeline');
     });
-    this._hideDialogById('#edit-pipeline');
   }
 
   /**
@@ -331,7 +337,7 @@ export default class PipelineView extends BackendAIPage {
       this.notification.text = `Pipeline ${this.pipelineInfo.name} saved.`;
       this.notification.show();
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = err.title;
         this.notification.detail = err.message;
@@ -371,12 +377,13 @@ export default class PipelineView extends BackendAIPage {
     // FIXME: remove storage key for avoiding overlapping
     const pipelineInfoWithoutStorage = this.pipelineInfo;
     delete pipelineInfoWithoutStorage.storage;
+
     globalThis.backendaiclient.pipeline.run(this.pipelineInfo.id, pipelineInfoWithoutStorage).then((res) => {
       this.notification.text = `Instantiate Pipeline ${this.pipelineInfo.name}...`;
       this.notification.show();
       this._moveTo('/pipeline-job');
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
       if (err && err.message) {
         this.notification.text = err.title;
         this.notification.detail = err.message;

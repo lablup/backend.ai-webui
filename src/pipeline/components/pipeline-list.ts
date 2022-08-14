@@ -198,9 +198,14 @@ export default class PipelineList extends BackendAIPage {
       this.moveToViewTab();
       this.pipelineInfo = {};
     }).catch((err) => {
-      console.log(err);
-      this.notification.text = `Pipeline Creation failed. Check Input or server status.`;
-      this.notification.show(true);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+      // deprecated error message
+      // this.notification.text = `Pipeline Creation failed. Check Input or server status.`;
+      // this.notification.show(true);
     }).finally(() => {
       this._hideDialogById('#create-pipeline');
     });
@@ -216,9 +221,15 @@ export default class PipelineList extends BackendAIPage {
       this.pipelineInfo = {};
       this._loadPipelineList();
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    }).finally(() => {
+      this._hideDialogById('#delete-pipeline');
     });
-    this._hideDialogById('#delete-pipeline');
   }
 
   /**
@@ -245,12 +256,16 @@ export default class PipelineList extends BackendAIPage {
       // FIXME: need to update grid items manually. If not, deleted or updated row remains.
       this.pipelineGrid.items = this.pipelines;
     }).catch((err) => {
-      this.notification.text = err.message;
-      this.notification.show();
-      // authentication failed
-      if (err.statusCode === 403) {
-        const event = new CustomEvent('backend-ai-logout', {'detail': ''});
-        document.dispatchEvent(event);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+
+        // authentication failed
+        if (err.statusCode === 403) {
+          const event = new CustomEvent('backend-ai-logout', {'detail': ''});
+          document.dispatchEvent(event);
+        }
       }
     });
   }

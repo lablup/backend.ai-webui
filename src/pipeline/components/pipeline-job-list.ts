@@ -220,9 +220,12 @@ export default class PipelineJobList extends BackendAIPage {
       } else {
       }
     } catch (err) {
-      console.log(err);
-      this.notification.text = err.message;
-      this.notification.show();
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
       // authentication failed
       if (err.statusCode === 403) {
         const event = new CustomEvent('backend-ai-logout', {'detail': ''});
@@ -259,9 +262,11 @@ export default class PipelineJobList extends BackendAIPage {
         }]
       };
     }).catch((err) => {
-      console.log(err);
-      this.notification.text = err.message;
-      this.notification.show();
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
@@ -342,7 +347,12 @@ export default class PipelineJobList extends BackendAIPage {
     return globalThis.backendaiclient.pipelineJob.stop(this.pipelineJobInfo.id).then((res) => {
       console.log(res);
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 

@@ -1012,7 +1012,12 @@ export default class PipelineConfigurationForm extends LitElement {
         // user_uuid: userInfo.id
       };
     }).catch((err) => {
-      console.log(err);
+      // console.log(err);
+      if (err && err.message) {
+        this.notification.text = err.title;
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
