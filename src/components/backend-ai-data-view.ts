@@ -233,6 +233,7 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-disabled-ink-color: #cccccc;
         }
 
         mwc-select.full-width.fixed-position {
@@ -384,7 +385,7 @@ export default class BackendAIData extends BackendAIPage {
               ` : html``}
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
