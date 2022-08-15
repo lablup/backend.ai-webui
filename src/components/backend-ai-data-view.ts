@@ -660,7 +660,6 @@ export default class BackendAIData extends BackendAIPage {
 
   _toggleFolderTypeInput() {
     this.folderType = this.shadowRoot.querySelector('#add-folder-type').value;
-    console.log(this.folderType)
   }
 
   /**
