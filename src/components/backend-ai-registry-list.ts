@@ -635,38 +635,34 @@
     private _controlsRenderer(root, column, rowData) {
      render(
        html`
-         <div
-           icon="settings"
-           id="controls"
-           class="layout horizontal flex center"
-         >
-           <wl-button fab flat inverted
-               class="fg blue"
-               @click=${() => {
-     this.selectedIndex = rowData.index;
-     this._openEditRegistryDialog(rowData.item.hostname);
-   }}>
-             <wl-icon>settings</wl-icon>
-           </wl-button>
-           <wl-button fab flat inverted
-             icon="delete"
-             class="fg red"
-             @click=${() => {
-     this.selectedIndex = rowData.index;
-     this._launchDialogById('#delete-registry-dialog');
-   }}>
-             <wl-icon>delete</wl-icon>
-           </wl-button>
-           <wl-button fab flat inverted
-             icon="refresh"
-             class="fg green"
-             @click=${() => {
-     this.selectedIndex = rowData.index;
-     this._rescanImage();
-   }}>
+        <div icon="settings" id="controls" class="layout horizontal flex center">
+          <wl-button fab flat inverted
+            class="fg blue"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._openEditRegistryDialog(rowData.item.hostname);
+            }}>
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
+            icon="delete"
+            class="fg red"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._launchDialogById('#delete-registry-dialog');
+            }}>
+            <wl-icon>delete</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted
+            icon="refresh"
+            class="fg green"
+            @click=${() => {
+              this.selectedIndex = rowData.index;
+              this._rescanImage();
+            }}>
              <wl-icon>refresh</wl-icon>
-           </wl-button>
-         </div>
+          </wl-button>
+        </div>
        `,
        root
      );
@@ -745,18 +741,21 @@
              style="padding-left:10px;"
              value="${this._registryList[this.selectedIndex]?.password || ''}"
            ></wl-textfield>
-          </div>
-          <mwc-select id="select-registry-type" label="${_t('registry.RegistryType')}"
-                       @change=${this._toggleProjectNameInput} required
-                       validationMessage="${_t('registry.PleaseSelectOption')}"
-                       value="${this._registryList[this.selectedIndex]?.type || this.registryType}">
-             ${this._registryTypes.map((item) => html`
-               <mwc-list-item 
-                 value="${item}" 
-                 ?selected="${this.editMode ? item === this._registryList[this.selectedIndex]?.type : item === 'docker'}">
-                 ${item}
-               </mwc-list-item>
-             `)}
+           </div>
+           <mwc-select 
+            id="select-registry-type" 
+            label="${_t('registry.RegistryType')}"
+            @change=${this._toggleProjectNameInput} 
+            required
+            validationMessage="${_t('registry.PleaseSelectOption')}"
+            value="${this._registryList[this.selectedIndex]?.type || this.registryType}">
+            ${this._registryTypes.map((item) => html`
+              <mwc-list-item 
+                value="${item}" 
+                ?selected="${this.editMode ? item === this._registryList[this.selectedIndex]?.type : item === 'docker'}">
+                ${item}
+              </mwc-list-item>
+            `)}
            </mwc-select>
            <div class="vertical layout end-justified">
              <wl-textfield
