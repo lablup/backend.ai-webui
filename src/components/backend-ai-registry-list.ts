@@ -7,8 +7,6 @@
  import {customElement, property, query} from 'lit/decorators.js';
  
  import {BackendAIPage} from './backend-ai-page';
- import BackendAIIndicator from './backend-ai-indicator';
- import BackendAIIndicatorPool from './backend-ai-indicator-pool';
  
  import './backend-ai-dialog';
  import {default as PainKiller} from './backend-ai-painkiller';
@@ -28,7 +26,6 @@
  import 'weightless/card';
  import 'weightless/icon';
  import {Label as WlLabel} from 'weightless/label';
- import {Textfield as WlTextfield} from 'weightless/textfield';
  
  /**
   Backend AI Registry List
