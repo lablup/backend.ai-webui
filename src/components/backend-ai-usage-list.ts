@@ -290,7 +290,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
         <h3 class="horizontal center layout">
           <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              id="period-selector" style="width:150px; border:1px solid #ccc;"
               @change="${(e) => {
     this.pulldownChange(e);
   }}">

@@ -336,10 +336,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
-    mwc-select.fixed-position > mwc-list-item {
-      width: 255px;
-    }
-
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
