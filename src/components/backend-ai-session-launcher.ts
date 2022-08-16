@@ -1354,7 +1354,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
     let kernelName: string;
-    if (this._debug || ( this.manualImageName && this.manualImageName.value !== '')) {
+    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
       kernelName = this.manualImageName.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);

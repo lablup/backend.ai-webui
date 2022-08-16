@@ -47,7 +47,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Object}) cpu_resource = {};
@@ -73,6 +72,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
+  @state() private is_super_admin = false;
 
   constructor() {
     super();
@@ -106,6 +106,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         wl-button {
           --button-fab-size: 40px;
           margin-right: 5px;
+        }
+
+        wl-button[disabled].fg {
+          color: rgba(0,0,0,0.4) !important;
         }
 
         vaadin-item {
@@ -438,18 +442,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-        <div id="controls" class="layout horizontal flex center"
-            .policy-name="${rowData.item.name}">
-        ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg blue controls-running" icon="settings"
-                                @click="${(e) => this._launchResourcePolicyDialog(e)}"><wl-icon>settings</wl-icon></wl-button>
-                                ` : html``}
-        ${this.is_admin ? html`
-              <wl-button fab flat inverted class="fg red controls-running" icon="delete"
-                                @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}"><wl-icon>delete</wl-icon></wl-button>
-                                ` : html``}
-        </div>
-    `, root
+        <div id="controls" class="layout horizontal flex center" .policy-name="${rowData.item.name}">
+          <wl-button fab flat inverted class="fg blue controls-running" ?disabled=${!this.is_super_admin}
+                      @click="${(e) => this._launchResourcePolicyDialog(e)}">
+            <wl-icon>settings</wl-icon>
+          </wl-button>
+          <wl-button fab flat inverted class="fg red controls-running" ?disabled=${!this.is_super_admin}
+                      @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}">
+            <wl-icon>delete</wl-icon>
+          </wl-button>
+      `, root
     );
   }
 
@@ -503,13 +505,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-        this.is_admin = globalThis.backendaiclient.is_admin;
+        this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
         this._getResourceInfo();
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-      this.is_admin = globalThis.backendaiclient.is_admin;
+      this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
       this._getResourceInfo();
     }
