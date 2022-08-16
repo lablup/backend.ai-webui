@@ -70,7 +70,7 @@
      this.editMode = false;
    }
  
-   static get styles(): CSSResultGroup | undefined {
+   public static override get styles(): CSSResultGroup | undefined {
      return [
        BackendAiStyles,
        IronFlex,
@@ -146,7 +146,11 @@
        `];
    }
  
-   firstUpdated() {
+  /**
+   * Invoked when the element is first updated. Implement to perform one time
+   * work on the element after update.
+   */
+   protected override firstUpdated() {
      this.notification = globalThis.lablupNotification;
      this.indicator = globalThis.lablupIndicator;
    }
@@ -189,7 +193,7 @@
     *
     * @param {Boolean} active - whether view state change or not
     * */
-   async _viewStateChanged(active) {
+   public override async _viewStateChanged(active) {
      await this.updateComplete;
      if (active === false) {
        return;
@@ -220,8 +224,10 @@
  
    /**
     * Add registry with validation
+    * For now, both add and modify operations for registry result in "add(put)" operation on server-side eventually.
+    * Therefore the name of function will be maintained as "_addRegistry"
     * */
-   _addRegistry() {
+   private _addRegistry() {
      // somehow type casting is needed to prevent errors, unlike similar use cases in other files
      const hostname = this._hostname.value;
      const url = this._url.value;
@@ -291,7 +297,7 @@
    /**
     * Delete registry
     * */
-   _deleteRegistry() {
+   private _deleteRegistry() {
      const name = (<HTMLInputElement> this.shadowRoot.querySelector('#delete-registry')).value;
      if (this._registryList[this.selectedIndex].hostname === name) {
        globalThis.backendaiclient.registry.delete(name)
@@ -320,7 +326,7 @@
    /**
     * Rescan the images if registry has been updated.
     * */
-   async _rescanImage() {
+   private async _rescanImage() {
      const indicator = await this.indicator.start('indeterminate');
      indicator.set(10, _text('registry.UpdatingRegistryInfo'));
      globalThis.backendaiclient.maintenance.rescan_images(this._registryList[this.selectedIndex]['hostname'])
@@ -367,28 +373,28 @@
        });
    }
  
-   _launchDialogById(id) {
+   private _launchDialogById(id) {
      this.shadowRoot.querySelector(id).show();
    }
  
-   _hideDialogById(id) {
+   private _hideDialogById(id) {
      this.shadowRoot.querySelector(id).hide();
    }
  
-   _openCreateRegistryDialog() {
+   private _openCreateRegistryDialog() {
      this.editMode = false;
      this.selectedIndex = -1;
      this.registryType = 'docker';
      this._launchDialogById('#configure-registry-dialog');
    }
  
-   _hideValidationMessage() {
+   private _hideValidationMessage() {
      this._registryHostnameValidationMsg.style.display = 'none';
      this._registryUrlValidationMsg.style.display = 'none';
      this._projectNameValidationMsg.style.display = 'none';
    }
  
-   _openEditRegistryDialog(registry) {
+   private _openEditRegistryDialog(registry) {
      this.editMode = true;
      let registryInfo;
      for (let i = 0; i < this._registryList.length; i++) {
@@ -407,16 +413,16 @@
      this._launchDialogById('#configure-registry-dialog');
    }
  
-   _toggleProjectNameInput() {
+   private _toggleProjectNameInput() {
      this.registryType = this._selectedRegistryType.value;
      this._validateProjectName();
    }
  
-   _validateUrl() {
+   private _validateUrl() {
      this._registryUrlValidationMsg.style.display = this._url.valid ? 'none' : 'block';
    }
  
-   _validateHostname() {
+   private _validateHostname() {
      const hostname = this._hostname.value;
      if (hostname && hostname !== '') {
        this._registryHostnameValidationMsg.style.display = 'none';
@@ -425,7 +431,7 @@
      }
    }
  
-   _validateProjectName() {
+   private _validateProjectName() {
      this._projectName.value = this._projectName.value.replace(/\s/g, '');
      this._projectNameValidationMsg.style.display = 'block';
      if (['harbor', 'harbor2'].includes(this.registryType)) {
@@ -441,7 +447,7 @@
      }
    }
  
-   _resetRegistryField() {
+   private _resetRegistryField() {
      const registryHostname = this._hostname;
      const registryURL = this._url;
      const registryUsername = this._username;
@@ -457,7 +463,7 @@
      registryProjectName.value = '';
    }
  
-   toggleRegistry(e, hostname) {
+   private toggleRegistry(e, hostname) {
      if (!e.target.selected) {
        this._changeRegistryState(hostname, false);
      } else {
@@ -472,7 +478,7 @@
     * @param {string} hostname
     * @param {boolean} state
     * */
-   _changeRegistryState(hostname, state) {
+    private _changeRegistryState(hostname, state) {
      if (state === true) {
        this.allowed_registries.push(hostname);
        this.notification.text = _text('registry.RegistryTurnedOn');
@@ -489,7 +495,7 @@
      });
    }
  
-   _indexRenderer(root, column, rowData) {
+   private _indexRenderer(root, column, rowData) {
      const idx = rowData.index + 1;
      render(
        html`
@@ -499,7 +505,7 @@
      );
    }
  
-   _hostRenderer(root, column, rowData) {
+   private _hostRenderer(root, column, rowData) {
      render(
        html`
          <div>
@@ -510,7 +516,7 @@
      );
    }
  
-   _registryRenderer(root, column, rowData) {
+   private _registryRenderer(root, column, rowData) {
      render(
        html`
          <div>
@@ -521,7 +527,7 @@
      );
    }
  
-   _passwordRenderer(root, column?, rowData?) {
+   private _passwordRenderer(root, column?, rowData?) {
      render(
        html`
          <div>
@@ -539,7 +545,7 @@
     * @param {Element} column - the column element that controls the state of the host element
     * @param {Object} rowData - the object with the properties related with the rendered item
     * */
-   _isEnabledRenderer(root, column, rowData) {
+    private _isEnabledRenderer(root, column, rowData) {
      render(
        html`
          <div>
@@ -559,7 +565,7 @@
     * @param {Element} column - the column element that controls the state of the host element
     * @param {Object} rowData - the object with the properties related with the rendered item
     * */
-   _controlsRenderer(root, column, rowData) {
+    private _controlsRenderer(root, column, rowData) {
      render(
        html`
          <div
@@ -599,7 +605,7 @@
      );
    }
  
-   render() {
+   protected override render() {
      // language=HTML
      return html`
        <h4 class="horizontal flex center center-justified layout">
