@@ -49,7 +49,7 @@ class BackendAIRegistryList extends BackendAIPage {
   private _registryType: string = 'docker';
   private static _registryTypes: Array<string> = ['docker', 'harbor', 'harbor2'];
   private _selectedIndex: number = -1;
-  
+
   /* Renderer function for grid table */
   private _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
   private _boundControlsRenderer = this._controlsRenderer.bind(this);
@@ -224,20 +224,8 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Get host name from url
-   * @deprecated
-   * @param {string} url - URL containing hostname
-   * @return {string} hostname of URL
-   * */
-  private _getHostname(url) {
-    const anchor = document.createElement('a');
-    anchor.href = url;
-    return anchor.hostname;
-  }
-
-  /**
    * Add registry with validation
-   * 
+   *
    * For now, both add and modify operations for registry result in "add(put)" operation on server-side eventually.
    * Therefore the name of function will be maintained as "_addRegistry"
    * */
@@ -390,7 +378,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Open dialog by element id
-   * 
+   *
    * @param {string} id - element id starts from `#`
    */
   private _launchDialogById(id) {
@@ -399,7 +387,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Hide dialog by element id
-   * 
+   *
    * @param {string} id - element id starts from `#`
    */
   private _hideDialogById(id) {
@@ -432,8 +420,8 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Open registry configuration dialog by hostname
-   * 
-   * @param hostname 
+   *
+   * @param hostname
    */
   private _openEditRegistryDialog(hostname) {
     this._editMode = true;
@@ -450,7 +438,7 @@ class BackendAIRegistryList extends BackendAIPage {
     }
     this._registryList[this._selectedIndex] = registryInfo;
     this._registryType = this._registryList[this._selectedIndex]?.type as string;
-    this.requestUpdate();  // call for explicit update
+    this.requestUpdate(); // call for explicit update
     this._resetValidationMessage();
     this._launchDialogById('#configure-registry-dialog');
   }
@@ -492,7 +480,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Toggle registry enabled/disabled triggered by switch on/off
-   * 
+   *
    * @param {Event} e - click the switch button
    * @param {string} hostname - hostname of current registry row
    */
@@ -529,7 +517,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Add/Remove registry as an element of list to refresh(update) when state is true. 
+   * Add/Remove registry as an element of list to refresh(update) when state is true.
    * Disabled when state is false.
    *
    * @param {string} hostname
@@ -553,7 +541,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Render index of each row corresponding to element in registry list. Starts from 1.
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -570,10 +558,10 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Render hostname (string) usually represented by string without protocol of registry url.
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
-   * @param {Object} rowData - the object with the properties related with the rendered item 
+   * @param {Object} rowData - the object with the properties related with the rendered item
    */
   private _hostNameRenderer(root, column, rowData) {
     render(
@@ -588,10 +576,10 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Render registry url (string) starts from http or https protocol.
-   * 
+   *
    * For now, the key itself represents registry url received from server-side is ''(empty string).
    * Therefore to extract from the rowData, we need to use 'empty string'.
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -609,7 +597,7 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Render string to special character used for password handling
-   * 
+   *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
@@ -765,10 +753,10 @@ class BackendAIRegistryList extends BackendAIPage {
             value="${this._registryList[this._selectedIndex]?.password || ''}"
           ></wl-textfield>
         </div>
-        <mwc-select 
-          id="select-registry-type" 
+        <mwc-select
+          id="select-registry-type"
           label="${_t('registry.RegistryType')}"
-          @change=${this._toggleProjectNameInput} 
+          @change=${this._toggleProjectNameInput}
           required
           validationMessage="${_t('registry.PleaseSelectOption')}"
           value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
@@ -799,7 +787,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated fullwidth icon="add"
             label=${this._editMode ? _t('button.Save') : _t('button.Add')}
-            @click=${() => {this._addRegistry}}></mwc-button>
+            @click=${() => {this._addRegistry()}}></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
