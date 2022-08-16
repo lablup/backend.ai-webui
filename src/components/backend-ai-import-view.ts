@@ -595,15 +595,15 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   checkNotebookUrlValidation(url) {
-    return /^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$/.test(url);
+    return /^(https?):\/\/([\w\-\/\.]{1,})\.ipynb$/.test(url);
   }
 
   checkGithubRepoUrlValidation(url) {
-    return /^(https?):\/\/github.com\/([a-zA-Z\d\.]{2,})\/([a-zA-Z\d\.]{2,}).git/.test(url);
+    return /^(https?):\/\/github\.com\/([\w\-\/]{1,})\.git$/.test(url);
   }
 
   checkGitlabRepoUrlValidation(url) {
-    return /^(https?):\/\/gitlab.com\/([a-zA-Z\d\.]{2,})\/([a-zA-Z\d\.]{2,}).git/.test(url);
+    return /^(https?):\/\/gitlab\.com\/([\w\-\/]{1,})\.git$/.test(url);
   }
 
   render() {
