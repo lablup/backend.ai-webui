@@ -57,6 +57,9 @@
    @query('#configure-registry-password') private _password;
    @query('#select-registry-type') private _selectedRegistryType;
    @query('#configure-project-name') private _projectName;
+   @query('#registry-url-validation') private _registryUrlValidationMsg!: WlLabel;
+   @query('#registry-hostname-validation') private _registryHostnameValidationMsg!: WlLabel;
+   @query('#project-name-validation') private _projectNameValidationMsg!: WlLabel;
    
    constructor() {
      super();
@@ -228,17 +231,15 @@
      const projectName = this._projectName.value.replace(/\s/g, '');
  
      if (!this._hostname.valid) {
-       const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
-       if (validationMessage) {
-         validationMessage.style.display = 'block';
+       if (this._registryHostnameValidationMsg) {
+         this._registryHostnameValidationMsg.style.display = 'block';
        }
        return;
      }
  
      if (!this._url.valid) {
-       const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-       if (validationMessage) {
-         validationMessage.style.display = 'block';
+       if (this._registryUrlValidationMsg) {
+         this._registryUrlValidationMsg.style.display = 'block';
        }
        return;
      }
@@ -382,9 +383,9 @@
    }
  
    _hideValidationMessage() {
-     this.shadowRoot.querySelector('#registry-hostname-validation').style.display = 'none';
-     this.shadowRoot.querySelector('#registry-url-validation').style.display = 'none';
-     this.shadowRoot.querySelector('#project-name-validation').style.display = 'none';
+     this._registryHostnameValidationMsg.style.display = 'none';
+     this._registryUrlValidationMsg.style.display = 'none';
+     this._projectNameValidationMsg.style.display = 'none';
    }
  
    _openEditRegistryDialog(registry) {
@@ -412,33 +413,30 @@
    }
  
    _validateUrl() {
-     const validationMessage = this.shadowRoot.querySelector('#registry-url-validation');
-     validationMessage.style.display = this._url.valid ? 'none' : 'block';
+     this._registryUrlValidationMsg.style.display = this._url.valid ? 'none' : 'block';
    }
  
    _validateHostname() {
      const hostname = this._hostname.value;
-     const validationMessage = this.shadowRoot.querySelector('#registry-hostname-validation');
      if (hostname && hostname !== '') {
-       validationMessage.style.display = 'none';
+       this._registryHostnameValidationMsg.style.display = 'none';
      } else {
-       validationMessage.style.display = 'block';
+       this._registryHostnameValidationMsg.style.display = 'block';
      }
    }
  
    _validateProjectName() {
-     const validationEl = this.shadowRoot.querySelector('#project-name-validation');
      this._projectName.value = this._projectName.value.replace(/\s/g, '');
-     validationEl.style.display = 'block';
+     this._projectNameValidationMsg.style.display = 'block';
      if (['harbor', 'harbor2'].includes(this.registryType)) {
        if (!this._projectName.value) {
-         validationEl.textContent = _text('registry.ProjectNameIsRequired');
+         this._projectNameValidationMsg.textContent = _text('registry.ProjectNameIsRequired');
        } else {
-         validationEl.style.display = 'none';
+         this._projectNameValidationMsg.style.display = 'none';
        }
        this._projectName.disabled = false;
      } else {
-       validationEl.textContent = _text('registry.ForHarborOnly');
+       this._projectNameValidationMsg.textContent = _text('registry.ForHarborOnly');
        this._projectName.disabled = true;
      }
    }
