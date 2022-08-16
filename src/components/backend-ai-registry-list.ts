@@ -690,7 +690,7 @@ class BackendAIRegistryList extends BackendAIPage {
         <span>${_t('registry.Registries')}</span>
         <span class="flex"></span>
         <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
-            @click=${this._openCreateRegistryDialog}></mwc-button>
+            @click=${() => this._openCreateRegistryDialog()}></mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
         <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
@@ -722,8 +722,8 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             ?disabled="${this._editMode}"
             value="${this._registryList[this._selectedIndex]?.hostname || ''}"
-            @click=${this._toggleValidationMsgOnHostnameInput}
-            @change=${this._toggleValidationMsgOnHostnameInput}
+            @click=${()=>this._toggleValidationMsgOnHostnameInput()}
+            @change=${()=>this._toggleValidationMsgOnHostnameInput()}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t('registry.DescHostnameIsEmpty')}</wl-label>
           <wl-textfield
@@ -733,8 +733,8 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
             value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-            @click=${this._toggleValidationMsgOnUrlInput}
-            @change=${this._toggleValidationMsgOnUrlInput}
+            @click=${()=>this._toggleValidationMsgOnUrlInput()}
+            @change=${()=>this._toggleValidationMsgOnUrlInput()}
           ></wl-textfield>
           <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t('registry.DescURLStartString')}</wl-label>
          <div class="horizontal layout flex">
@@ -801,7 +801,7 @@ class BackendAIRegistryList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated fullwidth icon="delete" label="${_t('button.Delete')}"
-              @click=${this._deleteRegistry}></mwc-button>
+              @click=${() => {this._deleteRegistry()}}></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
