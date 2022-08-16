@@ -716,6 +716,15 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel.show();
   }
 
+  async loginWithSAML() {
+    const rqst = this.client.newUnsignedRequest('POST', '/saml/login', null);
+    const form = document.createElement('form');
+    document.body.appendChild(form);
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', rqst.uri);
+    form.submit();
+  }
+
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
@@ -1266,7 +1275,7 @@ export default class BackendAILogin extends BackendAIPage {
                     id="sso-login-saml-button"
                     label="${_t('login.SingleSignOn.LoginWithSAML')}"
                     fullwidth
-                    @click="${() => this.client.login_with_saml()}"
+                    @click="${this.loginWithSAML}"
                   ></mwc-button>
                 ` : html``}
                 <div class="layout horizontal" style="margin-top:2em;">
