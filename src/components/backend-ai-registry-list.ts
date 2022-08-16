@@ -1,32 +1,34 @@
 /**
  @license
- Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
  import {get as _text, translate as _t} from 'lit-translate';
  import {css, CSSResultGroup, html, render} from 'lit';
  import {customElement, property, query} from 'lit/decorators.js';
  
  import {BackendAIPage} from './backend-ai-page';
+ import BackendAIIndicator from './backend-ai-indicator';
+ import BackendAIIndicatorPool from './backend-ai-indicator-pool';
  
- import '@vaadin/vaadin-grid/vaadin-grid';
+ import './backend-ai-dialog';
+ import {default as PainKiller} from './backend-ai-painkiller';
+ import {BackendAiStyles} from './backend-ai-general-styles';
+ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
  
  import '../plastics/lablup-shields/lablup-shields';
- 
- import 'weightless/button';
- import 'weightless/card';
- import 'weightless/icon';
- import 'weightless/label';
- import 'weightless/textfield';
  
  import '@material/mwc-button/mwc-button';
  import '@material/mwc-select/mwc-select';
  import '@material/mwc-list/mwc-list-item';
  import '@material/mwc-switch/mwc-switch';
  
- import './backend-ai-dialog';
- import {default as PainKiller} from './backend-ai-painkiller';
- import {BackendAiStyles} from './backend-ai-general-styles';
- import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+ import '@vaadin/vaadin-grid/vaadin-grid';
+
+ import 'weightless/button';
+ import 'weightless/card';
+ import 'weightless/icon';
+ import {Label as WlLabel} from 'weightless/label';
+ import {Textfield as WlTextfield} from 'weightless/textfield';
  
  /**
   Backend AI Registry List
