@@ -174,7 +174,10 @@
            hostname
          });
    }
- 
+
+   /**
+    * Request and Retrieve registry lists from server allowed in the current domain
+    */
    _refreshRegistryList() {
      globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
        this.allowed_registries = response.domain.allowed_docker_registries;
@@ -295,7 +298,7 @@
    }
  
    /**
-    * Delete registry
+    * Delete registry from allowed registry list corresponding to the current domain by user input on delete registry dialog
     * */
    private _deleteRegistry() {
      const name = (<HTMLInputElement> this.shadowRoot.querySelector('#delete-registry')).value;
@@ -373,14 +376,28 @@
        });
    }
  
+   /**
+    * Open dialog by element id
+    * 
+    * @param {string} id - element id starts from `#`
+    */
    private _launchDialogById(id) {
      this.shadowRoot.querySelector(id).show();
    }
  
+   /**
+    * Hide dialog by element id
+    * 
+    * @param {string} id - element id starts from `#`
+    */
    private _hideDialogById(id) {
      this.shadowRoot.querySelector(id).hide();
    }
  
+   /**
+    * Open create registry dialog with initial value
+    * NOTE: Initial registry type is `docker`.
+    */
    private _openCreateRegistryDialog() {
      this.editMode = false;
      this.selectedIndex = -1;
@@ -388,28 +405,35 @@
      this._launchDialogById('#configure-registry-dialog');
    }
  
-   private _hideValidationMessage() {
+   /**
+    * Reset validation message in registry configuation dialog
+    */
+   private _resetValidationMessage() {
      this._registryHostnameValidationMsg.style.display = 'none';
      this._registryUrlValidationMsg.style.display = 'none';
      this._projectNameValidationMsg.style.display = 'none';
    }
- 
-   private _openEditRegistryDialog(registry) {
+   /**
+    * Open registry configuration dialog by hostname
+    * 
+    * @param hostname 
+    */
+   private _openEditRegistryDialog(hostname) {
      this.editMode = true;
      let registryInfo;
      for (let i = 0; i < this._registryList.length; i++) {
-       if (this._registryList[i].hostname === registry) {
+       if (this._registryList[i].hostname === hostname) {
          registryInfo = this._registryList[i];
          break;
        }
      }
      if (!registryInfo) {
-       globalThis.notification.show(`No such registry: ${registry}`);
+       globalThis.notification.show(`No such hostname: ${hostname}`);
        return;
      }
      this._registryList[this.selectedIndex] = registryInfo;
      this.registryType = this._registryList[this.selectedIndex]?.type;
-     this._hideValidationMessage();
+     this._resetValidationMessage();
      this._launchDialogById('#configure-registry-dialog');
    }
  
@@ -417,11 +441,17 @@
      this.registryType = this._selectedRegistryType.value;
      this._validateProjectName();
    }
- 
+   
+   /**
+    * Hide/Show validation msg on url input field in registry configuration dialog
+    */
    private _validateUrl() {
      this._registryUrlValidationMsg.style.display = this._url.valid ? 'none' : 'block';
    }
- 
+   
+   /**
+    * Hide/Show validation msg on url input field in registry configuration dialog
+    */
    private _validateHostname() {
      const hostname = this._hostname.value;
      if (hostname && hostname !== '') {
@@ -430,7 +460,10 @@
        this._registryHostnameValidationMsg.style.display = 'block';
      }
    }
- 
+
+   /**
+    * Hide/Show validation msg on hostname input in registry configuration dialog
+    */
    private _validateProjectName() {
      this._projectName.value = this._projectName.value.replace(/\s/g, '');
      this._projectNameValidationMsg.style.display = 'block';
@@ -447,6 +480,9 @@
      }
    }
  
+   /**
+    * Reset registry input fields in registry configuration dialog
+    */
    private _resetRegistryField() {
      const registryHostname = this._hostname;
      const registryURL = this._url;
@@ -472,8 +508,8 @@
    }
  
    /**
-    * If state is true, turn on the registry.
-    * If state is false, turn off the registry.
+    * Add/Remove registry as an element of list to refresh(update) when state is true. 
+    * Disabled when state is false.
     *
     * @param {string} hostname
     * @param {boolean} state
@@ -495,6 +531,13 @@
      });
    }
  
+  /**
+   * Render index of each row corresponding to element in registry list. Starts from 1.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
    private _indexRenderer(root, column, rowData) {
      const idx = rowData.index + 1;
      render(
@@ -505,6 +548,13 @@
      );
    }
  
+  /**
+   * Render hostname (string) usually represented by string without protocol of registry url.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item 
+   */
    private _hostRenderer(root, column, rowData) {
      render(
        html`
@@ -516,6 +566,16 @@
      );
    }
  
+  /**
+   * Render registry url (string) starts from http or https protocol.
+   * 
+   * For now, the key itself represents registry url received from server-side is ''(empty string).
+   * Therefore to extract from the rowData, we need to use 'empty string'.
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
    private _registryRenderer(root, column, rowData) {
      render(
        html`
@@ -527,6 +587,13 @@
      );
    }
  
+  /**
+   * Render string to special character used for password handling
+   * 
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   */
    private _passwordRenderer(root, column?, rowData?) {
      render(
        html`
