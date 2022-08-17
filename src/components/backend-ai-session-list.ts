@@ -1059,7 +1059,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    */
   async _requestCommitSession() {
     globalThis.tasker.add(
-      _text('session.CommitSession'),
+      _text('session.CommitSession') + this.commitSessionDialog.sessionName,
       globalThis.backendaiclient.computeSession.commitSession(this.commitSessionDialog.sessionName).then((commit_session) => {
         const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commit_session.bgtask_id);
         // sse.addEventListener('task_updated', (e) => {
@@ -1087,9 +1087,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         }
       }).finally(() => {
         this.commitSessionDialog.hide();
-      })
-    );
-
+      }), '', 'commit', 'remove-later');
   }
 
   _openCommitSessionDialog(e) {
