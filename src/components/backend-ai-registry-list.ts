@@ -342,7 +342,7 @@ class BackendAIRegistryList extends BackendAIPage {
             const ratio = data.current_progress/data.total_progress;
             indicator.set(100 * ratio, _text('registry.RescanImages'));
           });
-          sse.addEventListener('bgtask_done', (e) => {
+          sse.addEventListener('bgtask_done', () => {
             const event = new CustomEvent('image-rescanned');
             document.dispatchEvent(event);
             indicator.set(100, _text('registry.RegistryUpdateFinished'));
@@ -353,7 +353,7 @@ class BackendAIRegistryList extends BackendAIPage {
             sse.close();
             throw new Error('Background Image scanning task has failed');
           });
-          sse.addEventListener('bgtask_cancelled', (e) => {
+          sse.addEventListener('bgtask_cancelled', () => {
             sse.close();
             throw new Error('Background Image scanning task has been cancelled');
           });
@@ -402,7 +402,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this._editMode = false;
     this._selectedIndex = -1;
     this._registryType = 'docker';
-    this.requestUpdate();  // call for explicit update
+    this.requestUpdate(); // call for explicit update
     this._launchDialogById('#configure-registry-dialog');
   }
 
@@ -421,9 +421,9 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Open registry configuration dialog by hostname
    *
-   * @param hostname
+   * @param {string} hostname
    */
-  private _openEditRegistryDialog(hostname) {
+  private _openEditRegistryDialog(hostname: string) {
     this._editMode = true;
     let registryInfo;
     for (let i = 0; i < this._registryList.length; i++) {
@@ -503,7 +503,7 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Reset registry input fields in registry configuration dialog
    */
-   private _resetRegistryField() {
+  private _resetRegistryField() {
     /**
      * FIXME: need to change repetitive value manipulation in future.
      */
@@ -523,7 +523,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {string} hostname
    * @param {boolean} state
    * */
-  private _changeRegistryState(hostname, state) {
+  private _changeRegistryState(hostname, state: boolean) {
     if (state === true) {
       this._allowed_registries.push(hostname);
       this.notification.text = _text('registry.RegistryTurnedOn');
@@ -546,7 +546,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-  private _indexRenderer(root, column, rowData) {
+  private _indexRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     const idx = rowData.index + 1;
     render(
       html`
@@ -563,7 +563,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-  private _hostNameRenderer(root, column, rowData) {
+  private _hostNameRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     render(
       html`
         <div>
@@ -584,7 +584,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-  private _registryUrlRenderer(root, column, rowData) {
+  private _registryUrlRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     render(
       html`
         <div>
@@ -602,7 +602,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-  private _passwordRenderer(root, column?, rowData?) {
+  private _passwordRenderer(root: HTMLElement, column?: HTMLElement, rowData?) {
     render(
       html`
         <div>
@@ -620,7 +620,9 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  private _isEnabledRenderer(root, column, rowData) {
+  private _isEnabledRenderer(root: HTMLElement, column: HTMLElement, rowData) {
+    console.log('rowData:', rowData);
+    console.log('allowed registries:', this._allowed_registries)
     render(
       html`
         <div>
@@ -640,7 +642,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {element} column - the column element that controls the state of the host element
    * @param {object} rowData - the object with the properties related with the rendered item
    * */
-  private _controlsRenderer(root, column, rowData) {
+  private _controlsRenderer(root: HTMLElement, column: HTMLElement, rowData) {
     render(
       html`
         <div icon="settings" id="controls" class="layout horizontal flex center">
@@ -681,7 +683,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * any value renderable by lit-html's `ChildPart` - typically a
    * `TemplateResult`. Setting properties inside this method will *not* trigger
    * the element to update.
-   * @returns {TemplateResult<1>} - html
+   * @return {TemplateResult<1>} - html
    * */
   protected override render() {
     // language=HTML
