@@ -908,7 +908,8 @@ export default class BackendAILogin extends BackendAIPage {
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
 
-        // TODO: This is a temporary solution to logs a user in.
+        // TODO: This is a temporary solution to automatically logs a user in
+        // via SSO response.
         // If token is delivered as a querystring, login with the token.
         const queryString = window.location.search;
         const urlParams = new URLSearchParams(queryString);
