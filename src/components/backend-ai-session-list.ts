@@ -1847,14 +1847,16 @@ export default class BackendAiSessionList extends BackendAIPage {
             <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
           ${this._isContainerCommitEnabled ? html`
-            <mwc-icon-button class="fg blue controls-running" ?disabled=${this._isPending(rowData.item.status) || this._isError(rowData.item.status)}
+            <mwc-icon-button class="fg blue controls-running"
+                             ?disabled=${this._isPending(rowData.item.status) ||
+                                         this._isPreparing(rowData.item.status) ||
+                                         this._isError(rowData.item.status) ||
+                                         rowData.item.commit_status === 'duplicated'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
         </div>
       `, root
     );
-    // FIXME: cannot load visibility of icon by getting status therefore commenting out for now
-    // ?disabled=${this._getCommitSessionStatus(rowData.item.name)}
   }
 
   /**
@@ -2174,8 +2176,18 @@ export default class BackendAiSessionList extends BackendAIPage {
                   description="${rowData.item.status_info}" ui="round"></lablup-shields>
           </div>
         ` : html``}
+        ${this._isContainerCommitEnabled ? html`
+          <lablup-shields app"" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}"
+                description="${rowData.item.commit_status as CommitSessionStatus === 'duplicated' ?
+                  '' : 'commit on-going'}"
+                ui="round"></lablup-shields>
+        ` : html``}
       `, root
     );
+  }
+
+  _setColorOfStatusInformation(status: CommitSessionStatus = 'available') {
+    return status === 'available' ? 'green' : 'lightgrey';
   }
 
   /**
@@ -2249,7 +2261,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               unelevated
               class="ok"
               ?disabled="${commitSessionInfo?.environment === ''}"
-              @click=${() => this._requestCommitSession()}
+              @click=${() => this._requestCommitSession(commitSessionInfo)}
               label="${_t('button.Commit')}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -2409,7 +2421,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else {
       this.current_page += 1;
     }
-
     this.refreshList();
   }
 }
