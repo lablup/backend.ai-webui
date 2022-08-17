@@ -99,6 +99,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
+  @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
@@ -534,6 +535,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.maskUserInfo = false;
     } else {
       this.maskUserInfo = config.general.maskUserInfo;
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.singleSignOnVendors === 'undefined' || config.general.singleSignOnVendors === '') {
+      this.singleSignOnVendors = [];
+    } else {
+      this.singleSignOnVendors = config.general.singleSignOnVendors.split(',');
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
@@ -1079,6 +1085,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
       globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
+      globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1262,6 +1269,14 @@ export default class BackendAILogin extends BackendAIPage {
                       fullwidth
                       label="${_t('login.Login')}"
                       @click="${() => this._login()}"></mwc-button>
+                ${this.singleSignOnVendors.includes('saml') ? html`
+                  <mwc-button
+                    id="sso-login-saml-button"
+                    label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                    fullwidth
+                    @click="${() => this.client.login_with_saml()}"
+                  ></mwc-button>
+                ` : html``}
                 <div class="layout horizontal" style="margin-top:2em;">
                   ${this.signup_support ? html`
                     <div class="vertical center-justified layout" style="width:100%;">
