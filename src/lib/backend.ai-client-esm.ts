@@ -557,6 +557,9 @@ class Client {
     if (this.isAPIVersionCompatibleWith('v6.20220615')) {
       this._features['secure-payload'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09')) {
+      this._features['image-commit'] = true;
+    }
   }
 
   /**
