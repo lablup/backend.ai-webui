@@ -1337,7 +1337,7 @@ export default class BackendAILogin extends BackendAIPage {
                 ${this.singleSignOnVendors.includes('saml') ? html`
                   <mwc-button fullwidth id="sso-login-saml-button"
                       label="${_t('login.SingleSignOn.LoginWithSAML')}"
-                      @click="${() => this.client.login_with_saml()}"
+                      @click="${() => this.client?.login_with_saml()}"
                   ></mwc-button>
                 ` : html``}
                 <div id="additional-action-area" class="layout horizontal">
