@@ -1082,12 +1082,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       const commitSession = await globalThis.backendaiclient.computeSession.commitSession(commitSessionInfo.session.name);
       const newCommitSessionTask: CommitSessionInfo = Object.assign(commitSessionInfo, {
         taskId: commitSession.bgtask_id,
-        commitStatus: {
-          isOnGoing: true
-        }
       }) as CommitSessionInfo;
       this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
+      this.notification.text = _text('session.CommitOnGoing');
+      this.notification.show();
     } catch(err) {
       console.log(err);
       if (err && err.message) {
@@ -1110,15 +1109,21 @@ export default class BackendAiSessionList extends BackendAIPage {
     // });
     sse.addEventListener('task_done', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      this.notification.text = _text('session.CommitFinished');
+      this.notification.show();
       sse.close();
     });
     sse.addEventListener('task_failed', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      this.notification.text = _text('session.CommitFailed');
+      this.notification.show(true);
       sse.close();
       throw new Error('Commit session request has been failed.');
     });
     sse.addEventListener('task_cancelled', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+            this.notification.text = _text('session.CommitFailed');
+      this.notification.show(true);
       sse.close();
       throw new Error('Commit session request has been cancelled.');
     });
@@ -2179,7 +2184,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         ${this._isContainerCommitEnabled ? html`
           <lablup-shields app"" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}"
                 description="${rowData.item.commit_status as CommitSessionStatus === 'duplicated' ?
-                  '' : 'commit on-going'}"
+                  'commit on-going' : ''}"
                 ui="round"></lablup-shields>
         ` : html``}
       `, root
