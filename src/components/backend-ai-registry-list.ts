@@ -255,8 +255,10 @@ class BackendAIRegistryList extends BackendAIPage {
     const input = {};
     input[''] = url;
 
-    input['username'] = username;
-    input['password'] = password;
+    if (username !== '' && password !== '') {
+      input['username'] = username;
+      input['password'] = password;
+    }
 
     input['type'] = registryType;
     if (['harbor', 'harbor2'].includes(registryType)) {

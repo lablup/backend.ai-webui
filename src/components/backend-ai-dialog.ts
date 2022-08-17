@@ -200,7 +200,9 @@ export default class BackendAiDialog extends LitElement {
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold">
-            <span class="vertical center-justified layout"><slot name="title"></slot></span>
+            <span class="vertical center-justified layout">
+              <slot name="title"></slot>
+            </span>
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
@@ -216,7 +218,7 @@ export default class BackendAiDialog extends LitElement {
           </div>
         </div>
       </mwc-dialog>
-      `;
+    `;
   }
 }
 

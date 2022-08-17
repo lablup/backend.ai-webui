@@ -96,6 +96,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) storageProxyInfo = Object();
+  @property({type: String}) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
 
@@ -234,6 +235,7 @@ export default class BackendAIData extends BackendAIPage {
           /* Need to be set when fixedMenuPosition attribute is enabled */
           --mdc-menu-max-width: 345px;
           --mdc-menu-min-width: 172.5px;
+          --mdc-select-disabled-ink-color: #cccccc;
         }
 
         mwc-select.full-width.fixed-position {
@@ -375,7 +377,8 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}"
+                        @change=${this._toggleFolderTypeInput} required>
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
@@ -384,12 +387,11 @@ export default class BackendAIData extends BackendAIPage {
               ` : html``}
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
-            </div>
           ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
@@ -656,6 +658,10 @@ export default class BackendAIData extends BackendAIPage {
         ]
       }]
     };
+  }
+
+  _toggleFolderTypeInput() {
+    this.folderType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
   }
 
   /**
