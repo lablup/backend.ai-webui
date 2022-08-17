@@ -53,6 +53,15 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  @element backend-ai-session-list
  */
 
+type CommitSessionInfo = {
+  environment: string;
+  version: string;
+  tags: Array<string>;
+  session: {
+    name: string;
+    id: string;
+  }
+}
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -115,6 +124,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  private _isContainerCommitEnabled = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
@@ -306,6 +316,10 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-weight: bold;
         }
 
+        mwc-list-item.commit-session-info {
+          height: 100%;
+        }
+
         mwc-list-item.predicate-check {
           height: 100%;
           margin-bottom: 5px;
@@ -458,6 +472,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+        this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit;
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -479,6 +494,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+      this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit;
       this._refreshJobData();
     }
   }
@@ -1042,41 +1058,35 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Request commit session
    */
   async _requestCommitSession() {
-    const path = this.commitSessionInput.value;
-    const indicator = await this.indicator.start('indeterminate');
-    indicator.set(0, _text('session.CommitOnGoing'));
     globalThis.tasker.add(
       _text('session.CommitSession'),
-      globalThis.backendaiclient.computeSession.commitSession(this.commitSessionDialog.sessionName, path).then(({commit_session}) => {
-        console.log(commit_session);
-        const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commit_session.task_id);
-        sse.addEventListener('bgtask_updated', (e) => {
-          const data = JSON.parse(e['data']);
-          const ratio = data.current_progress/data.total_progress;
-          indicator.set(100 * ratio, _text('session.CommitOnGoing'));
-        });
-        sse.addEventListener('bgtask_done', (e) => {
-          indicator.set(100, _text('session.CommitFinished'));
+      globalThis.backendaiclient.computeSession.commitSession(this.commitSessionDialog.sessionName).then((commit_session) => {
+        const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commit_session.bgtask_id);
+        // sse.addEventListener('task_updated', (e) => {
+        //   // FIXME: for now, there is no progress updates during this task
+        //   // const ratio = data.current_progress/data.total_progress;
+        //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
+        // });
+        sse.addEventListener('task_done', (e) => {
           sse.close();
         });
-        sse.addEventListener('bgtask_failed', (e) => {
-          console.log('task_failed', e['data']);
+        sse.addEventListener('task_failed', (e) => {
           sse.close();
-          throw new Error('Commit session request has been cancelled.');
+          throw new Error('Commit session request has been failed.');
         });
-        sse.addEventListener('bgtask_cancelled', (e) => {
+        sse.addEventListener('task_cancelled', (e) => {
           sse.close();
           throw new Error('Commit session request has been cancelled.');
         });
       }).catch((err) => {
         console.log(err);
-        indicator.set(50, _text('session.CommitFailed'));
-        indicator.end(1000);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
+      }).finally(() => {
+        this.commitSessionDialog.hide();
       })
     );
 
@@ -1085,8 +1095,12 @@ export default class BackendAiSessionList extends BackendAIPage {
   _openCommitSessionDialog(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
-    const sessionName = controls['session-name'];
+    const sessionName: string = controls['session-name'];
+    const sessionId: string = controls['session-uuid'];
+    const kernelImage: string = controls['kernel-image'];
     this.commitSessionDialog.sessionName = sessionName;
+    this.commitSessionDialog.sessionId = sessionId;
+    this.commitSessionDialog.kernelImage = kernelImage;
     this.commitSessionDialog.show();
   }
 
@@ -1763,8 +1777,8 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
             <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
-          ${(this._isRunning && !this._isPreparing(rowData.item.status)) && !this._isError(rowData.item.status) ? html`
-            <mwc-icon-button class="fg blue controls-running"
+          ${this._isContainerCommitEnabled ? html`
+            <mwc-icon-button class="fg blue controls-running" ?disabled=${this._isPending(rowData.item.status) || this._isError(rowData.item.status)}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
         </div>
@@ -2112,6 +2126,82 @@ export default class BackendAiSessionList extends BackendAIPage {
     return userId;
   }
 
+  _renderCommitSessionConfirmationDialog(commitSessionInfo: CommitSessionInfo) {
+    // language=HTML
+    return html`
+      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
+        <span slot="title">${_t('session.CommitSession')}</span>
+        <div slot="content" class="vertical layout center flex">
+          <span style="font-size:14px;margin:auto 20px;">${_t('session.DescCommitSession')}</span>
+          <mwc-list style="width:100%">
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+                <span class="subheading">Session Name</span>
+                <span class="monospace" slot="secondary">
+                  ${commitSessionInfo?.session?.name ? commitSessionInfo.session.name : '-'}
+                </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+                <span class="subheading">Session Id</span>
+                <span class="monospace" slot="secondary">
+                  ${commitSessionInfo?.session?.id ? commitSessionInfo.session.id : '-'}
+                </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+              <span class="subheading"><strong>Environment and Version</strong></span>
+              <span class="monospace" slot="secondary">
+                ${commitSessionInfo ? html`
+                  <lablup-shields app="${commitSessionInfo.environment === '' ? '-' : commitSessionInfo.environment}"
+                    color="blue"
+                    description="${commitSessionInfo.version === '' ? '-' : commitSessionInfo.version}"
+                    ui="round"
+                    style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                    `: html``}
+              </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+              <span class="subheading">Tags</span>
+              <span class="monospace horizontal layout" slot="secondary">
+                ${commitSessionInfo ? commitSessionInfo?.tags?.map((tag) => 
+                  html`
+                    <lablup-shields app=""
+                      color="green"
+                      description="${tag}"
+                      ui="round"
+                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                  `
+                )
+              : html``}
+              </span>
+            </mwc-list-item>
+          </mwc-list>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              class="ok"
+              ?disabled="${commitSessionInfo?.environment === ''}"
+              @click=${() => this._requestCommitSession()}
+              label="${_t('button.Commit')}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
+  }
+
+  _parseSessionInfoToCommitSessionInfo(kernelImageStr: string = '', sessionName: string = '', sessionId: string = '') {
+    const emptyKernelImageArr = ['', ''];
+    const [environment, rawVersion] = kernelImageStr ? kernelImageStr.split(':') : emptyKernelImageArr;
+    const [version, ...tags] = rawVersion ? rawVersion.split('-') : emptyKernelImageArr;
+    return {
+      environment: environment,
+      version: version,
+      tags: tags,
+      session: {
+        name: sessionName,
+        id: sessionId,
+      }
+    } as CommitSessionInfo;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -2237,16 +2327,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span slot="title">${_t('session.StatusInfo')}</span>
         <div slot="content" id="status-detail"></div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
-        <span slot="title">${_t('session.CommitSession')}</span>
-        <div slot="content" class="horizontal layout flex">
-          <mwc-textfield id="commit-current-session-path-input" label="${_t('session.CommitSessionPathOptional')}" type="text">
-          </mwc-text-field>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated class="ok" @click=${() => this._requestCommitSession()} label="${_t('button.Commit')}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
+      ${this._renderCommitSessionConfirmationDialog(
+        this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
     `;
   }
 
