@@ -307,10 +307,10 @@
     },
     "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
     "CommitSession": "세션을 이미지로 커밋하기",
-    "CommitSessionPathOptional": "커밋 파일 저장 경로 (옵션)",
     "CommitOnGoing": "세션 커밋 작업 진행중",
     "CommitFinished": "세션 커밋 작업 완료",
-    "CommitFailed": "세션 커밋 작업 실패"
+    "CommitFailed": "세션 커밋 작업 실패",
+    "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: "
   },
   "button": {
     "Cancel": "취소",

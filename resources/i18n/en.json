@@ -247,7 +247,7 @@
     "StatusInfo": "Status Info",
     "StatusDetail": "Detail",
     "CommitSession": "Commit Session",
-    "CommitSessionPathOptional": "Commit Session Path (Optional)",
+    "DescCommitSession": "You are about to commit container corresponding to the session below: ",
     "CommitOnGoing": "Commit on progress...",
     "CommitFinished": "Commit session operation finished.",
     "CommitFailed": "Commit session operation failed",

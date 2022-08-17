@@ -308,10 +308,10 @@
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
     "CommitSession": "__NOT_TRANSLATED__",
-    "CommitSessionPathOptional": "__NOT_TRANSLATED__",
     "CommitOnGoing": "__NOT_TRANSLATED__",
     "CommitFinished": "__NOT_TRANSLATED__",
-    "CommitFailed": "__NOT_TRANSLATED__"
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
