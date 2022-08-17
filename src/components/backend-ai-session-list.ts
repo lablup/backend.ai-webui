@@ -1077,37 +1077,88 @@ export default class BackendAiSessionList extends BackendAIPage {
   /**
    * Request commit session
    */
-  async _requestCommitSession() {
-    globalThis.tasker.add(
-      _text('session.CommitSession') + this.commitSessionDialog.sessionName,
-      globalThis.backendaiclient.computeSession.commitSession(this.commitSessionDialog.sessionName).then((commit_session) => {
-        const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commit_session.bgtask_id);
-        // sse.addEventListener('task_updated', (e) => {
-        //   // FIXME: for now, there is no progress updates during this task
-        //   // const ratio = data.current_progress/data.total_progress;
-        //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
-        // });
-        sse.addEventListener('task_done', (e) => {
-          sse.close();
-        });
-        sse.addEventListener('task_failed', (e) => {
-          sse.close();
-          throw new Error('Commit session request has been failed.');
-        });
-        sse.addEventListener('task_cancelled', (e) => {
-          sse.close();
-          throw new Error('Commit session request has been cancelled.');
-        });
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
+  async _requestCommitSession(commitSessionInfo: CommitSessionInfo) {
+    try {
+      const commitSession = await globalThis.backendaiclient.computeSession.commitSession(commitSessionInfo.session.name);
+      const newCommitSessionTask: CommitSessionInfo = Object.assign(commitSessionInfo, {
+        taskId: commitSession.bgtask_id,
+        commitStatus: {
+          isOnGoing: true
         }
-      }).finally(() => {
-        this.commitSessionDialog.hide();
-      }), '', 'commit', 'remove-later');
+      }) as CommitSessionInfo;
+      this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
+      this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
+    } catch(err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  _applyContainerCommitAsBackgroundTask(commitSessionInfo: CommitSessionInfo) {
+    const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commitSessionInfo.taskId);
+    // this._saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo);
+    // sse.addEventListener('task_updated', (e) => {
+    //   // FIXME: for now, there is no progress updates during this task
+    //   // const ratio = data.current_progress/data.total_progress;
+    //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
+    // });
+    sse.addEventListener('task_done', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      sse.close();
+    });
+    sse.addEventListener('task_failed', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      sse.close();
+      throw new Error('Commit session request has been failed.');
+    });
+    sse.addEventListener('task_cancelled', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      sse.close();
+      throw new Error('Commit session request has been cancelled.');
+    });
+  }
+
+  _addCommitSessionToTasker(task: any = null, commitSessionInfo: CommitSessionInfo) {
+    /**
+     * TODO:
+     *    - Show progress of commit session operation
+     *    - Show task in tasker panel regardless of client interruption (e.g. page refresh, etc.)
+     * 
+     */
+    globalThis.tasker.add(
+      _text('session.CommitSession') + commitSessionInfo.session.name,
+      ((task !== null && typeof task === 'function') ? task : null),
+      commitSessionInfo.taskId ?? '',
+      'commit',
+      'remove-later'
+    );
+  }
+
+  _getCurrentContainerCommitInfoListFromLocalStorage() {
+    // FIXME:
+    // parse error occurs when using `get` function declared in backendai-setting-store
+    // instead, using `getItem` function in localStorage
+    return JSON.parse(localStorage.getItem('backendaiwebui.settings.user.container_commit_sessions') || '[]');
+  }
+
+  _saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo: CommitSessionInfo) {
+    const containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
+    containerCommitSessionList.push(commitSessionInfo);
+    globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
+  }
+
+  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId: string = '', taskId: string = '') {
+    let containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
+    containerCommitSessionList = containerCommitSessionList.filter((commitSessionInfo) => {
+      return (commitSessionInfo.session.id !== sessionId && commitSessionInfo.taskId !== taskId);
+    });
+    globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
   }
 
   _openCommitSessionDialog(e) {
