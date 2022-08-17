@@ -1112,23 +1112,26 @@ export default class BackendAiSessionList extends BackendAIPage {
     //   // const ratio = data.current_progress/data.total_progress;
     //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
     // });
-    sse.addEventListener('task_done', (e) => {
+    sse.addEventListener('bgtask_done', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
       this.notification.text = _text('session.CommitFinished');
       this.notification.show();
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
       sse.close();
     });
-    sse.addEventListener('task_failed', (e) => {
+    sse.addEventListener('bgtask_failed', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
       this.notification.text = _text('session.CommitFailed');
       this.notification.show(true);
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
       sse.close();
       throw new Error('Commit session request has been failed.');
     });
-    sse.addEventListener('task_cancelled', (e) => {
+    sse.addEventListener('bgtask_cancelled', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
             this.notification.text = _text('session.CommitFailed');
       this.notification.show(true);
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
       sse.close();
       throw new Error('Commit session request has been cancelled.');
     });
@@ -1147,6 +1150,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       'commit',
       'remove-later'
     );
+  }
+
+  _removeCommitSessionFromTasker(taskId: string = '') {
+    globalThis.tasker.remove(taskId);
   }
 
   _getCurrentContainerCommitInfoListFromLocalStorage() {
