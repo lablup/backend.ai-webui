@@ -4,11 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-<<<<<<< HEAD
-import {customElement, property, query} from 'lit/decorators.js';
-=======
 import {customElement, query} from 'lit/decorators.js';
->>>>>>> main
 
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIIndicator from './backend-ai-indicator';
@@ -21,26 +17,11 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 import '../plastics/lablup-shields/lablup-shields';
 
-<<<<<<< HEAD
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/label';
-import {Textfield} from 'weightless/textfield';
-
-=======
->>>>>>> main
 import '@material/mwc-button/mwc-button';
 import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
-<<<<<<< HEAD
-import BackendAIDialog from './backend-ai-dialog';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-=======
 import '@vaadin/vaadin-grid/vaadin-grid';
 
 import 'weightless/button';
@@ -48,7 +29,6 @@ import 'weightless/card';
 import 'weightless/icon';
 import {Label as WlLabel} from 'weightless/label';
 import {Textfield as WlTextfield} from 'weightless/textfield';
->>>>>>> main
 
 /**
  Backend AI Registry List
@@ -61,27 +41,6 @@ import {Textfield as WlTextfield} from 'weightless/textfield';
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-<<<<<<< HEAD
-  public registryList: any;
-
-  @property({type: Object}) indicator = Object();
-  @property({type: Number}) selectedIndex = -1;
-  @property({type: Object}) _boundIsEnabledRenderer = this._isEnabledRenderer.bind(this);
-  @property({type: Object}) _boundControlsRenderer = this._controlsRenderer.bind(this);
-  @property({type: Object}) _boundPasswordRenderer = this._passwordRenderer.bind(this);
-  @property({type: Array}) _registryTypes;
-  @property({type: Array}) allowed_registries;
-  @property({type: Array}) hostnames;
-  @property({type: String}) registryType = 'docker';
-  @property({type: Boolean}) editMode;
-  @query('#add-registry-hostname') hostnameInput!: Textfield;
-  @query('#add-registry-url') urlInput!: Textfield;
-  @query('#add-registry-username') usernameInput!: Textfield;
-  @query('#add-registry-password') passwordInput!: Textfield;
-  @query('#select-registry-type') typeSelect!: Select;
-  @query('#add-project-name') projectNameInput!: Textfield;
-  @query('#delete-registry') deleteRegistryInput!: Textfield;
-=======
   private _allowed_registries: Array<object>;
   private _editMode: boolean = false;
   private _hostnames: Array<string>;
@@ -105,7 +64,6 @@ class BackendAIRegistryList extends BackendAIPage {
   @query('#registry-url-validation') private _registryUrlValidationMsg!: WlLabel;
   @query('#registry-hostname-validation') private _registryHostnameValidationMsg!: WlLabel;
   @query('#project-name-validation') private _projectNameValidationMsg!: WlLabel;
->>>>>>> main
 
   constructor() {
     super();
@@ -115,11 +73,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this._registryList = [];
   }
 
-<<<<<<< HEAD
-  static get styles(): CSSResultGroup {
-=======
-  public static override get styles(): CSSResultGroup | undefined {
->>>>>>> main
+  public static override get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -277,19 +231,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * */
   private _addRegistry() {
     // somehow type casting is needed to prevent errors, unlike similar use cases in other files
-<<<<<<< HEAD
-    const hostname = this.hostnameInput.value;
-    const url = this.urlInput.value;
-    const username = this.usernameInput.value;
-    const password = this.passwordInput.value;
-    const registerType = this.typeSelect.value;
-    const projectName = this.projectNameInput.value.replace(/\s/g, '');
-
-    if (!this.hostnameInput.valid) {
-      const validationMessage = this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement;
-      if (validationMessage) {
-        validationMessage.style.display = 'block';
-=======
     const hostname = this._hostnameInput.value;
     const url = this._urlInput.value;
     const username = this._usernameInput.value;
@@ -300,21 +241,13 @@ class BackendAIRegistryList extends BackendAIPage {
     if (!this._hostnameInput.valid) {
       if (this._registryHostnameValidationMsg) {
         this._registryHostnameValidationMsg.style.display = 'block';
->>>>>>> main
       }
       return;
     }
 
-<<<<<<< HEAD
-    if (!this.urlInput.valid) {
-      const validationMessage = this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement;
-      if (validationMessage) {
-        validationMessage.style.display = 'block';
-=======
     if (!this._urlInput.valid) {
       if (this._registryUrlValidationMsg) {
         this._registryUrlValidationMsg.style.display = 'block';
->>>>>>> main
       }
       return;
     }
@@ -366,18 +299,11 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Delete registry from allowed registry list corresponding to the current domain by user input on delete registry dialog
    * */
-<<<<<<< HEAD
-  _deleteRegistry() {
-    const name = this.deleteRegistryInput.value;
-    if (this.registryList[this.selectedIndex].hostname === name) {
-      globalThis.backendaiclient.registry.delete(name)
-=======
   private _deleteRegistry() {
     const deleteRegistryInputField: WlTextfield = (this.shadowRoot.querySelector('#delete-registry') as WlTextfield);
     const registryNameToDelete: string = deleteRegistryInputField.value;
     if (this._registryList[this._selectedIndex].hostname === registryNameToDelete) {
       globalThis.backendaiclient.registry.delete(deleteRegistryInputField.value)
->>>>>>> main
         .then(({result}) => {
           if (result === 'ok') {
             this.notification.text = _text('registry.RegistrySuccessfullyDeleted');
@@ -397,11 +323,7 @@ class BackendAIRegistryList extends BackendAIPage {
       this.notification.show();
     }
     // remove written hostname
-<<<<<<< HEAD
-    this.deleteRegistryInput.value = '';
-=======
     deleteRegistryInputField.value = '';
->>>>>>> main
   }
 
   /**
@@ -454,20 +376,6 @@ class BackendAIRegistryList extends BackendAIPage {
       });
   }
 
-<<<<<<< HEAD
-  _launchDialogById(id: string) {
-    const dialog = this.shadowRoot?.querySelector(id);
-    if (dialog instanceof BackendAIDialog) {
-      dialog.show();
-    }
-  }
-
-  _hideDialogById(id: string) {
-    const dialog = this.shadowRoot?.querySelector(id);
-    if (dialog instanceof BackendAIDialog) {
-      dialog.hide();
-    }
-=======
   /**
    * Open dialog by element id
    *
@@ -484,7 +392,6 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _hideDialogById(id) {
     this.shadowRoot.querySelector(id).hide();
->>>>>>> main
   }
 
   /**
@@ -499,16 +406,6 @@ class BackendAIRegistryList extends BackendAIPage {
     this._launchDialogById('#configure-registry-dialog');
   }
 
-<<<<<<< HEAD
-  _hideValidationMessage() {
-    (this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement).style.display = 'none';
-    (this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement).style.display = 'none';
-    (this.shadowRoot?.querySelector('#project-name-validation') as HTMLElement).style.display = 'none';
-  }
-
-  _openEditRegistryDialog(registry: string) {
-    this.editMode = true;
-=======
   /**
    * Reset validation message in registry configuation dialog
    */
@@ -528,7 +425,6 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _openEditRegistryDialog(hostname) {
     this._editMode = true;
->>>>>>> main
     let registryInfo;
     for (let i = 0; i < this._registryList.length; i++) {
       if (this._registryList[i].hostname === hostname) {
@@ -540,40 +436,6 @@ class BackendAIRegistryList extends BackendAIPage {
       globalThis.notification.show(`No such registry hostname: ${hostname}`);
       return;
     }
-<<<<<<< HEAD
-    this.registryList[this.selectedIndex] = registryInfo;
-    this._hideValidationMessage();
-    this._launchDialogById('#add-registry-dialog');
-  }
-
-  _toggleProjectNameInput() {
-    this.registryType = this.typeSelect.value;
-    this._validateProjectName();
-  }
-
-  _validateUrl() {
-    const validationMessage = this.shadowRoot?.querySelector('#registry-url-validation') as HTMLElement;
-    validationMessage.style.display = this.urlInput.valid ? 'none' : 'block';
-  }
-
-  _validateHostname() {
-    const hostname = this.hostnameInput.value;
-    const validationMessage = this.shadowRoot?.querySelector('#registry-hostname-validation') as HTMLElement;
-    if (hostname && hostname !== '') {
-      validationMessage.style.display = 'none';
-    } else {
-      validationMessage.style.display = 'block';
-    }
-  }
-
-  _validateProjectName() {
-    const validationEl = this.shadowRoot?.querySelector('#project-name-validation') as HTMLElement;
-    this.projectNameInput.value = this.projectNameInput.value.replace(/\s/g, '');
-    validationEl.style.display = 'block';
-    if (['harbor', 'harbor2'].includes(this.registryType)) {
-      if (!this.projectNameInput.value) {
-        validationEl.textContent = _text('registry.ProjectNameIsRequired');
-=======
     this._registryList[this._selectedIndex] = registryInfo;
     this._registryType = this._registryList[this._selectedIndex]?.type as string;
     this.requestUpdate(); // call for explicit update
@@ -606,29 +468,9 @@ class BackendAIRegistryList extends BackendAIPage {
     if (['harbor', 'harbor2'].includes(this._registryType)) {
       if (!this._projectNameInput.value) {
         this._projectNameValidationMsg.textContent = _text('registry.ProjectNameIsRequired');
->>>>>>> main
       } else {
         this._projectNameValidationMsg.style.display = 'none';
       }
-<<<<<<< HEAD
-      this.projectNameInput.disabled = false;
-    } else {
-      validationEl.textContent = _text('registry.ForHarborOnly');
-      this.projectNameInput.disabled = true;
-    }
-  }
-
-  _resetRegistryField() {
-    this.hostnameInput.value = '';
-    this.urlInput.value = '';
-    this.usernameInput.value = '';
-    this.passwordInput.value = '';
-    this.typeSelect.value = '';
-    this.projectNameInput.value = '';
-  }
-
-  toggleRegistry(e: { target: { selected: boolean; }; }, hostname: string) {
-=======
       this._projectNameInput.disabled = false;
     } else {
       this._projectNameValidationMsg.textContent = _text('registry.ForHarborOnly');
@@ -643,7 +485,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {string} hostname - hostname of current registry row
    */
   private _toggleRegistryEnabled(e, hostname) {
->>>>>>> main
     if (!e.target.selected) {
       this._changeRegistryState(hostname, false);
     } else {
@@ -698,9 +539,6 @@ class BackendAIRegistryList extends BackendAIPage {
     });
   }
 
-<<<<<<< HEAD
-  _indexRenderer(root, column?, rowData?) {
-=======
   /**
    * Render index of each row corresponding to element in registry list. Starts from 1.
    *
@@ -709,7 +547,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   private _indexRenderer(root, column, rowData) {
->>>>>>> main
     const idx = rowData.index + 1;
     render(
       html`
@@ -719,9 +556,6 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-<<<<<<< HEAD
-  _hostRenderer(root, column?, rowData?) {
-=======
   /**
    * Render hostname (string) usually represented by string without protocol of registry url.
    *
@@ -730,7 +564,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   private _hostNameRenderer(root, column, rowData) {
->>>>>>> main
     render(
       html`
         <div>
@@ -741,9 +574,6 @@ class BackendAIRegistryList extends BackendAIPage {
     );
   }
 
-<<<<<<< HEAD
-  _registryRenderer(root, column?, rowData?) {
-=======
   /**
    * Render registry url (string) starts from http or https protocol.
    *
@@ -755,7 +585,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   private _registryUrlRenderer(root, column, rowData) {
->>>>>>> main
     render(
       html`
         <div>
@@ -791,11 +620,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-<<<<<<< HEAD
-  _isEnabledRenderer(root, column?, rowData?) {
-=======
   private _isEnabledRenderer(root, column, rowData) {
->>>>>>> main
     render(
       html`
         <div>
@@ -815,11 +640,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {element} column - the column element that controls the state of the host element
    * @param {object} rowData - the object with the properties related with the rendered item
    * */
-<<<<<<< HEAD
-  _controlsRenderer(root, column?, rowData?) {
-=======
   private _controlsRenderer(root, column, rowData) {
->>>>>>> main
     render(
       html`
         <div icon="settings" id="controls" class="layout horizontal flex center">
