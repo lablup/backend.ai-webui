@@ -254,6 +254,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           width: 100%;
         }
 
+        lablup-shields.right-below-margin {
+          margin-right: 3px;
+          margin-bottom: 3px;
+        }
+
         #work-dialog {
           --component-width: calc(100% - 80px);
           --component-height: auto;
@@ -1134,7 +1139,6 @@ export default class BackendAiSessionList extends BackendAIPage {
      * TODO:
      *    - Show progress of commit session operation
      *    - Show task in tasker panel regardless of client interruption (e.g. page refresh, etc.)
-     * 
      */
     globalThis.tasker.add(
       _text('session.CommitSession') + commitSessionInfo.session.name,
@@ -1741,9 +1745,9 @@ export default class BackendAiSessionList extends BackendAIPage {
                                 color="${item.color}"
                                 description="${item.tag}"
                                 ui="round"
-                                style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                class="right-below-margin"></lablup-shields>
                     `;
-  })}
+})}
               </div>`) : html``}
               ${rowData.item.additional_reqs ? html`
                 <div class="layout horizontal center wrap">
@@ -1753,7 +1757,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                       color="green"
                                       description="${tag}"
                                       ui="round"
-                                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                      class="right-below-margin"></lablup-shields>
                     `;
   })}
                 </div>
@@ -1764,7 +1768,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                   color="blue"
                                   description="${ 'X ' + rowData.item.cluster_size}"
                                   ui="round"
-                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                  class="right-below-margin"></lablup-shields>
                 </div>
               `: html``}
             </div>
@@ -2182,10 +2186,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>
         ` : html``}
         ${this._isContainerCommitEnabled ? html`
-          <lablup-shields app"" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}"
-                description="${rowData.item.commit_status as CommitSessionStatus === 'duplicated' ?
-                  'commit on-going' : ''}"
-                ui="round"></lablup-shields>
+          <lablup-shields app="" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}" class="right-below-margin"
+                          description=${rowData.item.commit_status as CommitSessionStatus === 'duplicated' ? 'commit on-going' : ''}></lablup-shields>
         ` : html``}
       `, root
     );
@@ -2240,7 +2242,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                     color="blue"
                     description="${commitSessionInfo.version === '' ? '-' : commitSessionInfo.version}"
                     ui="round"
-                    style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                    class="right-below-margin"></lablup-shields>
                     `: html``}
               </span>
             </mwc-list-item>
@@ -2253,10 +2255,13 @@ export default class BackendAiSessionList extends BackendAIPage {
                       color="green"
                       description="${tag}"
                       ui="round"
-                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
-                  `
-                )
-              : html``}
+                      class="right-below-margin"></lablup-shields>
+                  `) : html`
+                    <lablup-shields app=""
+                      color="green"
+                      description="-"
+                      ui="round"
+                      style="right-below-margin"></lablup-shields>`}
               </span>
             </mwc-list-item>
           </mwc-list>
