@@ -719,9 +719,14 @@ export default class BackendAILogin extends BackendAIPage {
   async loginWithSAML() {
     const rqst = this.client.newUnsignedRequest('POST', '/saml/login', null);
     const form = document.createElement('form');
+    const redirect_to = document.createElement('input');
+    form.appendChild(redirect_to);
     document.body.appendChild(form);
     form.setAttribute('method', 'POST');
     form.setAttribute('action', rqst.uri);
+    redirect_to.setAttribute('type', 'hidden');
+    redirect_to.setAttribute('name', 'redirect_to');
+    redirect_to.setAttribute('value', window.location.href);
     form.submit();
   }
 
