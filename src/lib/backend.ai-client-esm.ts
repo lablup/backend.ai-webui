@@ -2828,14 +2828,9 @@ class ComputeSession {
    * Request container commit for corresponding session in agent node
    * 
    * @param sessionName - name of the session
-   * @param filename - filename set by user input
    */
-  async commitSession(sessionName: string = '', filename: string = '') {
-    let body = {};
-    if (filename !== '') {
-      body['filename'] = filename;
-    }
-    const rqst = this.client.newSignedRequest('POST', `/session/${sessionName}/commit`, body);
+  async commitSession(sessionName: string = '') {
+    const rqst = this.client.newSignedRequest('POST', `/session/${sessionName}/commit`, null);
     return this.client._wrapWithPromise(rqst);
   }
 
