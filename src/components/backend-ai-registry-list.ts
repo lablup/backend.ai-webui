@@ -255,8 +255,10 @@ class BackendAIRegistryList extends BackendAIPage {
     const input = {};
     input[''] = url;
 
-    input['username'] = username;
-    input['password'] = password;
+    if (username !== '' && password !== '') {
+      input['username'] = username;
+      input['password'] = password;
+    }
 
     input['type'] = registryType;
     if (['harbor', 'harbor2'].includes(registryType)) {
@@ -421,7 +423,7 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Open registry configuration dialog by hostname
    *
-   * @param hostname
+   * @param {string} hostname
    */
   private _openEditRegistryDialog(hostname) {
     this._editMode = true;
