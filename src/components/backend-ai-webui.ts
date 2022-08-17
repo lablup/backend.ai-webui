@@ -443,6 +443,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _parseConfig(fileName, returning = false): Promise<void> {
+    const _preprocessToml = (config) => {
+      if (config?.general?.apiEndpointText) {
+        config.general.apiEndpointText = JSON.parse(`"${config.general.apiEndpointText}"`);
+      }
+      if (config?.general?.siteDescription) {
+        config.general.siteDescription = JSON.parse(`"${config.general.siteDescription}"`);
+      }
+    };
     return fetch(fileName)
       .then((res) => {
         if (res.status == 200) {
@@ -452,13 +460,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       })
       .then((res) => {
         const tomlConfig = toml(res);
+        _preprocessToml(tomlConfig)
         if (returning) {
           return tomlConfig;
         } else {
-          this.config = toml(res);
+          this.config = tomlConfig;
         }
       }).catch((err) => {
         console.log('Configuration file missing.');
+        console.error(err);
       });
   }
 
@@ -1405,7 +1415,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.03.5.220804</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1429,7 +1439,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.03.3.220626</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.03.5.220804</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

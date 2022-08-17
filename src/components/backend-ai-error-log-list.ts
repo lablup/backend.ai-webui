@@ -364,7 +364,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
+        <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">

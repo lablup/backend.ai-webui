@@ -280,7 +280,7 @@
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
     "DefaultTensorboardPath": "/home/work/logs",
-    "SessionTerminated": "세선을 중지했습니다.",
+    "SessionTerminated": "세션을 중지했습니다.",
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
     "DownloadingCSVFile": "CSV 파일을 내려받습니다.",
@@ -1055,7 +1055,10 @@
     "InvalidChangePasswordToken": "토큰 오류",
     "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
-    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다."
+    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
+    "SingleSignOn": {
+      "LoginWithSAML": "SAML 로그인"
+    }
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
@@ -1194,7 +1197,7 @@
     "ResourcePolicyAlreadyExist": "같은 이름의 자원 정책이 이미 있습니다.",
     "ScalingGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
     "ResourceLimitExceed": "자원 제한을 초과했습니다. 가용 자원량을 확인하세요.",
-    "SmallerResourceThenImageRequires": "요청한 자원가 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
+    "SmallerResourceThenImageRequires": "요청한 자원이 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
     "LoginSucceededManagerNotResponding": "로그인은 성공하였으나 매니저 서버가 응답하지 않습니다.",
     "UserNameAlreadyExist": "이미 사용하고 있는 사용자명입니다.",
     "ResourcePolicyStillReferenced": "이 자원 정책을 사용하고 있는 자격 증명이 있습니다.",
