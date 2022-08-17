@@ -471,7 +471,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.signup_support = false;
     } else {
       this.signup_support = true;
-      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
+      (this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup).active = true;
     }
     if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword === false) {
       this.allowAnonymousChangePassword = false;
