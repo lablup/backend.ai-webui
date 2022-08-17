@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {PaperColor} from './paper-color';
 
 export const BackendAiStyles = [
@@ -62,6 +62,7 @@ export const BackendAiStyles = [
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
+      --general-switch-on-background-color: #E3E7D8; 
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
@@ -199,6 +200,35 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
+    backend-ai-multi-select {
+      /* override for mwc-list */
+      --select-primary-theme: var(--general-sidebar-color);
+      --select-secondary-theme: var(--general-checkbox-color);
+      --select-background-color: var(#E7EBEE, #efefef);
+      --select-background-border-radius: 5px;
+      --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+
+      /* override for selected-area */
+      --select-title-font-size: 10px;
+      --selected-area-border-radius: 5px;
+      --selected-area-border: none;
+      --selected-area-padding: 5px;
+      --selected-area-min-height: 24px;
+      --selected-area-height: 100%;
+
+      /* override for selected-item */
+      --selected-item-font-family: var(--general-font-family);
+      --selected-item-theme-color: #C8CED7;
+      --selected-item-theme-font-color: #182739;
+      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-outlined-theme-font-color: black;
+      --selected-item-unelevated-theme-font-color: black;
+      --selected-item-font-size: 14px;
+      --selected-item-text-transform: none;
+    }
+
+
     wl-icon.tiny {
       --icon-size: 12px;
     }
@@ -300,9 +330,25 @@ export const BackendAiStyles = [
     }
 
     mwc-switch {
-      --mdc-theme-surface: var(--general-switch-off-color);
-      --mdc-theme-on-surface: var(--general-switch-off-color);
-      --mdc-theme-secondary: var(--general-switch-on-color);
+      --mdc-switch-unselected-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-unselected-hover-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-hover-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-focus-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-focus-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-unselected-pressed-handle-color: var(--general-switch-off-color);
+      --mdc-switch-unselected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-track-color: var(--general-switch-on-background-color) !important;
+      --mdc-switch-selected-hover-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-hover-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-hover-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-focus-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-focus-state-layer-color: var(--general-switch-on-color);
+      --mdc-switch-selected-pressed-handle-color: var(--general-switch-on-color);
+      --mdc-switch-selected-pressed-track-color: var(--general-switch-on-background-color);
+      --mdc-switch-selected-pressed-state-layer-color: var(--general-switch-on-color);
     }
 
     wl-card p,
@@ -487,7 +533,7 @@ export const BackendAiStyles = [
     mwc-button, mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
       --mdc-typography-font-family: var(--general-font-family);
     }
 

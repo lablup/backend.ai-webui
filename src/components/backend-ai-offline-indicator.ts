@@ -1,8 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement} from 'lit/decorators.js';
 
 /**
  Backend.AI Offline Indicator
@@ -17,7 +18,7 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement}
 
 @customElement('backend-ai-offline-indicator')
 export default class BackendAIOfflineIndicator extends LitElement {
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       css`
         :host {

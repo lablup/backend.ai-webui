@@ -1,9 +1,9 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v21.3.1)
+Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
 ====================================================================
 
-(C) Copyright 2016-2021 Lablup Inc.
+(C) Copyright 2016-2022 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -11,6 +11,7 @@ Licensed under MIT
 //const Headers = fetch.Headers; /* Exclude for ES6 */
 const crypto_node = require('crypto');
 //const FormData = require('form-data');
+//import crypto from 'crypto-browserify';
 const querystring = require('querystring');
 class ClientConfig {
     /**
@@ -471,6 +472,15 @@ class Client {
         }
         if (this.isManagerVersionCompatibleWith('20.09.16')) {
             this._features['avoid-hol-blocking'] = true;
+            this._features['session-detail-status'] = true;
+        }
+        if (this.isManagerVersionCompatibleWith('21.09')) {
+            this._features['schedulable'] = true;
+            this._features['wsproxy-addr'] = true;
+        }
+        if (this.isManagerVersionCompatibleWith('22.03')) {
+            this._features['scheduler-opts'] = true;
+            this._features['session-lifetime'] = true;
         }
     }
     /**
@@ -675,15 +685,17 @@ class Client {
      *
      * @param {string} kernelType - the kernel type (usually language runtimes)
      * @param {string} sessionId - user-defined session ID
+     * @param {string} architecture - image architecture
      * @param {object} resources - Per-session resource
      * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
      */
-    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0) {
+    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0, architecture = undefined) {
         if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
             "lang": kernelType,
             "clientSessionToken": sessionId,
+            "architecture": architecture,
         };
         if (resources != {}) {
             let config = {};
@@ -965,7 +977,7 @@ class Client {
     }
     // legacy aliases (DO NOT USE for new codes)
     createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
-        return this.createIfNotExists(kernelType, sessionId, resources, timeout);
+        return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
     }
     // legacy aliases (DO NOT USE for new codes)
     destroyKernel(sessionId, ownerKey = null) {
@@ -978,6 +990,13 @@ class Client {
     // legacy aliases (DO NOT USE for new codes)
     runCode(code, sessionId, runId, mode) {
         return this.execute(sessionId, runId, mode, code, {});
+    }
+    async rename(sessionId, newId) {
+        let params = {
+            'name': newId
+        };
+        let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params);
+        return this._wrapWithPromise(rqst);
     }
     async shutdown_service(sessionId, service_name) {
         let params = {
@@ -1069,7 +1088,6 @@ class Client {
                 "X-BackendAI-Version": this._config.apiVersion,
                 "X-BackendAI-Date": d.toISOString(),
             });
-            //console.log(queryString.startsWith('/server') ===true);
             if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
                 uri = this._config.endpoint + queryString;
             }
@@ -1184,11 +1202,16 @@ class Client {
         let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
         return k2;
     }
-    generateSessionId(length = 8, nosuffix = false) {
+    generateRandomStr(length) {
         var text = "";
         var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        for (var i = 0; i < length; i++)
+        for (var i = 0; i < length; i++) {
             text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
+    generateSessionId(length = 8, nosuffix = false) {
+        var text = this.generateRandomStr(length);
         return nosuffix ? text : text + "-jsSDK";
     }
     slugify(text) {
@@ -1394,6 +1417,7 @@ class VFolder {
         return this.client._wrapWithPromise(rqst);
     }
     /**
+     * Update Information of virtual folder
      *
      * @param {json} input - parameters for updating folder options of Vfolder
      * @param {boolean} input.cloneable - whether Vfolder is cloneable or not
@@ -1407,22 +1431,46 @@ class VFolder {
     /**
      * List Virtual folders that requested accessKey has permission to.
      */
-    async list(groupId = null) {
+    async list(groupId = null, userEmail = null) {
         let reqUrl = this.urlPrefix;
+        let params = {};
         if (groupId) {
-            const params = { group_id: groupId };
-            const q = querystring.stringify(params);
-            reqUrl += `?${q}`;
+            params['group_id'] = groupId;
         }
+        if (userEmail) {
+            params['owner_user_email'] = userEmail;
+        }
+        const q = querystring.stringify(params);
+        reqUrl += `?${q}`;
         let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
      * List Virtual folder hosts that requested accessKey has permission to.
+     *
+     * @param {string} groupId - project(group) id
      */
-    async list_hosts() {
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/hosts`, null);
+    async list_hosts(groupId = null) {
+        // let reqUrl = `${this.urlPrefix}/_/all-hosts`;
+        let reqUrl = `${this.urlPrefix}/_/hosts`;
+        let params = {};
+        if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
+            params['group_id'] = groupId;
+        }
+        const q = querystring.stringify(params);
+        reqUrl += `?${q}`;
+        let rqst = this.client.newSignedRequest('GET', reqUrl, null);
         return this.client._wrapWithPromise(rqst);
+    }
+    /**
+     * List all storage hosts connected to storage-proxy server
+     */
+    async list_all_hosts() {
+        if (this.client.is_superadmin === true) {
+            let reqUrl = `${this.urlPrefix}/_/all-hosts`;
+            let rqst = this.client.newSignedRequest('GET', reqUrl, null);
+            return this.client._wrapWithPromise(rqst);
+        }
     }
     /**
      * Information about specific virtual folder.
@@ -1852,6 +1900,32 @@ class Agent {
         let v = { 'status': status };
         return this.client.query(q, v, null, timeout);
     }
+    /**
+     * modify agent configuration with given name and fields.
+     *
+     * @param {string} agent_id - resource preset name.
+     * @param {json} input - resource preset specification and data. Required fields are:
+     * {
+     *   'schedulable': schedulable
+     * };
+     */
+    async update(id = null, input) {
+        if (this.client.is_superadmin === true && id !== null) {
+            let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
+                `  modify_agent(id: $id, props: $input) {` +
+                `    ok msg ` +
+                `  }` +
+                `}`;
+            let v = {
+                'id': id,
+                'input': input
+            };
+            return this.client.query(q, v);
+        }
+        else {
+            return Promise.resolve(false);
+        }
+    }
 }
 class StorageProxy {
     /**
@@ -2177,6 +2251,9 @@ class ResourcePolicy {
         'max_vfolder_size',
         'allowed_vfolder_hosts',
         'idle_timeout']) {
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         let q, v;
         if (name === null) {
             q = `query {` +
@@ -2205,7 +2282,8 @@ class ResourcePolicy {
      *   'idle_timeout': idle_timeout,
      *   'max_vfolder_count': vfolder_count_limit,
      *   'max_vfolder_size': vfolder_capacity_limit,
-     *   'allowed_vfolder_hosts': vfolder_hosts
+     *   'allowed_vfolder_hosts': vfolder_hosts,
+     *   'max_session_lifetime': max_session_lifetime
      * };
      */
     async add(name = null, input) {
@@ -2219,6 +2297,9 @@ class ResourcePolicy {
             'max_vfolder_size',
             'allowed_vfolder_hosts',
             'idle_timeout'];
+        if (this.client.supports('session-lifetime')) {
+            fields.push('max_session_lifetime');
+        }
         if (this.client.is_admin === true && name !== null) {
             let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
                 `  create_keypair_resource_policy(name: $name, props: $input) {` +
@@ -2248,7 +2329,8 @@ class ResourcePolicy {
      *   {bigint} 'idle_timeout': idle_timeout,
      *   {int} 'max_vfolder_count': vfolder_count_limit,
      *   {bigint} 'max_vfolder_size': vfolder_capacity_limit,
-     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts
+     *   {[string]} 'allowed_vfolder_hosts': vfolder_hosts,
+     *   {int} 'max_session_lifetime': max_session_lifetime
      * };
      */
     async mutate(name = null, input) {
@@ -2376,10 +2458,11 @@ class ContainerImage {
      * install specific container images from registry
      *
      * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
+     * @param {string} architecture - architecture to install.
      * @param {object} resource - resource to use for installation.
      * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
      */
-    async install(name, resource = {}, registry = 'index.docker.io') {
+    async install(name, architecture, resource = {}, registry = 'index.docker.io') {
         if (registry != 'index.docker.io') {
             registry = registry + '/';
         }
@@ -2391,7 +2474,7 @@ class ContainerImage {
         if (Object.keys(resource).length === 0) {
             resource = { 'cpu': '1', 'mem': '512m' };
         }
-        return this.client.createIfNotExists(registry + name, sessionId, resource, 600000).then((response) => {
+        return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
             return this.client.destroy(sessionId);
         }).catch(err => {
             throw err;
@@ -2473,7 +2556,7 @@ class ComputeSession {
      * @param {string} group - project group id to query. Default returns sessions from all groups.
      * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
      */
-    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
+    async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"], status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout = 0) {
         fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
         let q, v;
         q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2530,7 +2613,6 @@ class ComputeSession {
                 v.group_id = group;
             }
             const session = await this.client.query(q, v, null, timeout);
-            console.log(session.compute_session_list.total_count);
             sessions.push(...session.compute_session_list.items);
             if (offset >= session.compute_session_list.total_count) {
                 break;
@@ -2555,12 +2637,13 @@ class ComputeSession {
         v = { session_uuid: sessionUuid };
         return this.client.query(q, v);
     }
-    async startService(session, app, port = null, envs = null, args = null) {
+    async startService(loginSessionToken, session, app, port = null, envs = null, args = null) {
         let rqst = this.client.newSignedRequest('POST', `/session/${session}/start-service`, {
+            login_session_token: loginSessionToken,
             app,
             port: port || undefined,
             envs: envs || undefined,
-            args: args || undefined,
+            arguments: JSON.stringify(args) || undefined,
         });
         return this.client._wrapWithPromise(rqst);
     }
@@ -2843,7 +2926,7 @@ class Domain {
      *   'is_active': Boolean,    // Whether the group is active or not.
      *   'created_at': String,    // Created date of group.
      *   'modified_at': String,   // Modified date of group.
-     *   'total_resource_slots': JSOONString,   // Total resource slots
+     *   'total_resource_slots': JSONString,   // Total resource slots
      *   'allowed_vfolder_hosts': [String],   // Allowed virtual folder hosts
      *   'allowed_docker_registries': [String],   // Allowed docker registry lists
      *   'integration_id': [String],   // Integration ids
@@ -2950,13 +3033,13 @@ class User {
      *   'need_password_change': Boolean, // Let user change password at the next login.
      *   'full_name': String,     // Full name of given user id.
      *   'description': String,   // Description for user.
-     *   'is_active': Boolean,    // Flag if user is active or not.
+     *   'is_active': Boolean, // Flag if user is active or not.
      *   'domain_name': String,   // Domain for user.
      *   'role': String,          // Role for user.
      *   'groups': {id name}  // Group Ids for user. Shoule be list of UUID strings.
      * };
      */
-    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    async list(is_active = true, fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
         let q, v;
         if (this.client._apiVersionMajor < 5) {
             q = this.client.is_admin ? `
@@ -3163,36 +3246,32 @@ class ScalingGroup {
      * Get the version of WSProxy for a specific scaling group.
      * (NEW) manager version 21.09.
      *
-     * @param {string} group - Scaling group name
+     * @param {string} scalingGroup - Scaling group name
+     * @param {string} groupId - Project (group) ID
      */
-    async getWsproxyVersion(group) {
+    async getWsproxyVersion(scalingGroup, groupId) {
         if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-            return Promise.resolve({ version: 'v1' }); // for manager<=21.03 compatibility.
+            return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
         }
-        const queryString = `/scaling-groups/${group}/wsproxy-version`;
-        const rqst = this.client.newSignedRequest("GET", queryString, null);
+        const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
+        const rqst = this.client.newSignedRequest("GET", url, null);
         return this.client._wrapWithPromise(rqst);
     }
     /**
      * Create a scaling group
      *
-     * @param {string} name - Scaling group name
-     * @param {string} description - Scaling group description
-     * @param {string} wsproxyAddress - wsproxy url (NEW in manager 21.09)
+     * @param {json} input - object containing desired modifications
+     * {
+     *   'description': String          // description of scaling group
+     *   'is_active': Boolean           // active status of scaling group
+     *   'driver': String
+     *   'driver_opts': JSONString
+     *   'scheduler': String
+     *   'scheduler_opts': JSONString   // NEW in manager 22.03
+     *   'wsproxy_addr': String         // NEW in manager 21.09
+     * }
      */
-    async create(name, description = "", wsproxyAddress = null) {
-        const input = {
-            description: description,
-            is_active: true,
-            driver: "static",
-            scheduler: "fifo",
-            driver_opts: "{}",
-            scheduler_opts: "{}"
-        };
-        if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
-            input['wsproxy_addr'] = wsproxyAddress;
-        }
-        // if (this.client.is_admin === true) {
+    async create(name, input) {
         let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
             `  create_scaling_group(name: $name, props: $input) {` +
             `    ok msg` +
@@ -3203,9 +3282,6 @@ class ScalingGroup {
             input
         };
         return this.client.query(q, v);
-        // } else {
-        //   return Promise.resolve(false);
-        // }
     }
     /**
      * Associate a scaling group with a domain
@@ -3236,7 +3312,7 @@ class ScalingGroup {
      *   'driver': String
      *   'driver_opts': JSONString
      *   'scheduler': String
-     *   'scheduler_opts': JSONString
+     *   'scheduler_opts': JSONString   // NEW in manager 22.03
      *   'wsproxy_addr': String         // NEW in manager 21.09
      * }
      */
@@ -3599,7 +3675,7 @@ class utils {
         this.client = client;
     }
     changeBinaryUnit(value, targetUnit = 'g', defaultUnit = 'b') {
-        if (value === undefined) {
+        if (value === undefined || value === null) {
             return value;
         }
         let sourceUnit;

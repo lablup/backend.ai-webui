@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -16,7 +18,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sorter';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
 import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-select';
@@ -80,7 +82,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
         max: 1000
       },
       mtu: {
-        min: 0
+        min: 0,
+        max: 15000
       },
     };
     // Save the key and ID of the options.
@@ -94,7 +97,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return 'backend-ai-settings-view';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -201,6 +204,10 @@ export default class BackendAiSettingsView extends BackendAIPage {
         mwc-textfield#num-retries {
           width: 10rem;
         }
+
+        mwc-button {
+          word-break: keep-all;
+        }
         @media screen and (max-width: 750px) {
           .setting-desc, .setting-desc-shrink {
             width: 275px;
@@ -251,7 +258,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <mwc-select id="ui-image-pulling-behavior"
                             required
                             outlined
-                            style="width:120px;"
+                            style="width:150px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
                 ${this.imagePullingBehavior.map((item) => html`
                   <mwc-list-item value="${item.behavior}"
@@ -308,7 +315,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="allow-agent-registration-switch" checked disabled></mwc-switch>
+                      <mwc-switch id="allow-agent-registration-switch" selected disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -345,7 +352,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="cuda-gpu-support-switch" ?checked="${this.options['cuda_gpu']}" disabled></mwc-switch>
+                      <mwc-switch id="cuda-gpu-support-switch" ?selected="${this.options['cuda_gpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -355,7 +362,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="rocm-gpu-support-switch" ?checked="${this.options['rocm_gpu']}" disabled></mwc-switch>
+                      <mwc-switch id="rocm-gpu-support-switch" ?selected="${this.options['rocm_gpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -386,7 +393,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="fractional-gpu-switch" ?checked="${this.options['cuda_fgpu']}" disabled></mwc-switch>
+                      <mwc-switch id="fractional-gpu-switch" ?selected="${this.options['cuda_fgpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                   <div class="horizontal layout setting-item">
@@ -396,7 +403,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">
-                      <mwc-switch id="tpu-switch" ?checked="${this.options['tpu']}" disabled></mwc-switch>
+                      <mwc-switch id="tpu-switch" ?selected="${this.options['tpu']}" disabled></mwc-switch>
                     </div>
                   </div>
                 </div>
@@ -475,6 +482,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                              type="number"
                              pattern="[0-9]+"
                              min="${this.optionRange.mtu.min}"
+                             max="${this.optionRange.mtu.max}"
                              style="margin-top:18px;min-width:240px;"
                              @change="${(e) => this._validateInput(e)}"
                              @input="${(e) => this._customizeValidationMessage(e)}"></mwc-textfield>

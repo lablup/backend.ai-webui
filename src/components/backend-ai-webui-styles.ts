@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 export const BackendAIWebUIStyles = [
@@ -203,12 +203,12 @@ export const BackendAIWebUIStyles = [
       margin: auto 10px;
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primary] {
+    mwc-button[unelevated] {
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
     .page {
@@ -336,10 +336,6 @@ export const BackendAIWebUIStyles = [
       --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
-    mwc-select.fixed-position > mwc-list-item {
-      width: 255px;
-    }
-
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
@@ -441,6 +437,11 @@ export const BackendAIWebUIStyles = [
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+      --mdc-ripple-focus-opacity: 0;
+    }
+
+    mwc-icon-button#mini-ui-toggle-button {
+      --mdc-ripple-focus-opacity: 0;
     }
 
     #sidebar-navbar-footer mwc-icon-button {
@@ -546,6 +547,20 @@ export const BackendAIWebUIStyles = [
       height: 100px;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
+    }
+
+    #password-change-request {
+      background-color: var(--paper-orange-400);
+      color: white;
+      font-size: 14px;
+      height: 28px;
+      position: absolute;
+      right: 0;
+      width: 100vw;
+    }
+
+    #password-change-request > mwc-icon-button > i {
+      font-size: 14px;
     }
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {

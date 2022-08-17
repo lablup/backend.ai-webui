@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -65,7 +67,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     this.data = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -288,7 +290,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
         <h3 class="horizontal center layout">
           <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              id="period-selector" style="width:150px; border:1px solid #ccc;"
               @change="${(e) => {
     this.pulldownChange(e);
   }}">

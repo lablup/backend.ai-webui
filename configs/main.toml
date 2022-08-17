@@ -22,16 +22,17 @@ disableCertCheck = false
 [resources]
 openPortToPublic = true
 maxCPUCoresPerContainer = 4096
+maxMemoryPerContainer = 16384
 maxCUDADevicesPerContainer = 2048
 maxCUDASharesPerContainer = 4096
-maxShmPerContainer = 32
+maxShmPerContainer = 512
 maxFileUploadSize = 68719476736 # 64GB.
 
 [environments]
 #allowlist = ""
 
 [server]
-consoleServerURL =
+webServerURL =
 
 [plugin]
 #login = "signup-cloud.js"

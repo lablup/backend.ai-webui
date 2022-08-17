@@ -4,7 +4,8 @@
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-select/mwc-select';

@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -89,14 +91,15 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) storageProxyInfo = Object();
+  @property({type: String}) folderType = 'user';
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -228,18 +231,23 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 172.5px;
+          --mdc-select-disabled-ink-color: #cccccc;
         }
 
-        mwc-select.full-width {
+        mwc-select.full-width.fixed-position {
           width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 345px;
         }
 
-        mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 314px; // default width
-        }
-
-        mwc-select.fixed-position > mwc-list-item {
-          width: 140px; // default width
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 172.5px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
@@ -368,7 +376,8 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}"
+                        @change=${this._toggleFolderTypeInput} required>
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
@@ -377,12 +386,11 @@ export default class BackendAIData extends BackendAIPage {
               ` : html``}
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
-            </div>
           ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
@@ -651,6 +659,10 @@ export default class BackendAIData extends BackendAIPage {
     };
   }
 
+  _toggleFolderTypeInput() {
+    this.folderType = this.shadowRoot.querySelector('#add-folder-type').value;
+  }
+
   /**
    * display tabs
    *
@@ -863,7 +875,7 @@ export default class BackendAIData extends BackendAIPage {
         permission = 'rw';
       }
     }
-    cloneable = cloneableEl ? cloneableEl.checked : false;
+    cloneable = cloneableEl ? cloneableEl.selected : false;
     nameEl.reportValidity();
     if (nameEl.checkValidity()) {
       const input = {

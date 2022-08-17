@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
+import {html, css, CSSResultArray, CSSResultOrNative} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property, query} from 'lit-element';
 import {unsafeHTML} from 'lit-html/directives/unsafe-html';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -73,11 +75,11 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   @property({type: Array}) gpu_modes = [];
   @property({type: Number}) gpu_step = 0.1;
   @property({type: Object}) cpu_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) mem_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) shmem_metric = {
@@ -87,19 +89,19 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   };
   @property({type: Object}) cuda_device_metric = {
     'min': 0,
-    'max': 0
+    'max': 1
   };
   @property({type: Object}) cuda_shares_metric;
   @property({type: Object}) rocm_device_metric = {
     'min': '0',
-    'max': '0'
+    'max': '1'
   };
   @property({type: Object}) tpu_device_metric = {
-    'min': '1',
+    'min': '0',
     'max': '1'
   };
   @property({type: Object}) cluster_metric = {
-    'min': 1,
+    'min': 0,
     'max': 1
   };
   @property({type: Array}) cluster_mode_list = [
@@ -523,7 +525,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         mwc-button[disabled] {
           background-image: none;
           --mdc-theme-primary: #ddd;
-          --mdc-on-theme-primary: var(--general-sidebar-topbar-background-color);
+          --mdc-theme-on-primary: var(--general-sidebar-topbar-background-color);
         }
 
         #environment {
@@ -1257,7 +1259,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   }
 
   _createKernel(kernelName, sessionName, config) {
-    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000);
+    const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000, undefined);
     task.catch((err) => {
       // console.log(err);
       if (err && err.message) {
@@ -2579,7 +2581,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
             `)}
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
-            
+
             <mwc-textfield id="image-name" type="text" class="flex" value=""
               label="${_t('session.launcher.ManualImageName')}" @change=${(e) => this._toggleEnvironmentSelectUI()}></mwc-textfield>
 
