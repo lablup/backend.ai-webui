@@ -53,6 +53,9 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  @element backend-ai-session-list
  */
 
+/**
+ * Type of commit session info
+ */
 type CommitSessionInfo = {
   environment: string;
   version: string;
@@ -61,7 +64,18 @@ type CommitSessionInfo = {
     name: string;
     id: string;
   }
+  taskId?: string
+  commitStatus?: {
+    statusDetail?: string
+  }
 }
+
+/**
+ * Type of commit session status
+ * - available: no container commit operation is on-going
+ * - duplicated: container commit operation is proceeding now
+ */
+type CommitSessionStatus = 'available' | 'duplicated';
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
