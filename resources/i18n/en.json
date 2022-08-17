@@ -1059,7 +1059,10 @@
     "InvalidChangePasswordToken": "Invalid Token",
     "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
     "PleaseInputLoginInfo": "Please input ID and password for login.",
-    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while."
+    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
+    "SingleSignOn": {
+      "LoginWithSAML": "Login with SAML"
+    }
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

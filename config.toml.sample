@@ -18,6 +18,7 @@ autoLogout = false                      # If true, user will be automatically lo
 #loginBlockTime = 180                   # The amount of time(sec.) for rejecting login attempt for preventing from brute-force attacks
 debug = false                           # Please refer to `[Debug mode](https://github.com/lablup/backend.ai-webui#debug-mode)` in README
 maskUserInfo = false                    # If true, then account information in header, session list will be masked
+#singleSignOnVendors = "saml"           # Comma-separated list of vendors that support single sign-on.
 enableContainerCommit = false           # If true, then user can request container commit corresponding to the session in running status
 
 

@@ -38,6 +38,9 @@ export default class LablupCodemirror extends LitElement {
   @property({type: String}) mode = 'shell';
   @property({type: String}) theme = 'monokai';
   @property({type: String}) src = '';
+  @property({type: Boolean}) readonly = false;
+  @property({type: Boolean}) useLineWrapping = false;
+  @property({type: Boolean}) required = false;
 
   constructor() {
     super();
@@ -112,6 +115,13 @@ export default class LablupCodemirror extends LitElement {
     this.refresh();
   }
 
+  _validateInput() {
+    if (this.required && this.getValue() === '') {
+      return false;
+    }
+    return true;
+  }
+
   static get styles(): CSSResultGroup | undefined {
     return [
       IronFlex,
@@ -131,7 +141,7 @@ export default class LablupCodemirror extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai">
+      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @change=${this._validateInput}>
         <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
       </wc-codemirror>
     `;
