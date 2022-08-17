@@ -693,7 +693,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  login(showError = true) {
+  async login(showError = true) {
     if (this.api_endpoint === '') {
       const api_endpoint = localStorage.getItem('backendaiwebui.api_endpoint');
       if (api_endpoint !== null) {
@@ -708,7 +708,7 @@ export default class BackendAILogin extends BackendAIPage {
       this._connectUsingSession(showError);
     } else if (this.connection_mode === 'API') {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingAPI(showError);
+      await this._connectUsingAPI(showError);
     } else {
       this.open();
     }
@@ -889,6 +889,7 @@ export default class BackendAILogin extends BackendAIPage {
         this._enableUserInput();
       } else {
         this._connectUsingSession(true);
+        // globalThis.backendaiclient.pipeline.login()
       }
     } else {
       this.api_key = this.apiKeyInput.value;
@@ -1068,7 +1069,7 @@ export default class BackendAILogin extends BackendAIPage {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
-    return this.client?.query(q, v).then((response) => {
+    return this.client.query(q, v).then(async (response) => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       const resource_policy = response['keypair'].resource_policy;
@@ -1077,6 +1078,23 @@ export default class BackendAILogin extends BackendAIPage {
       const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}', 'need_password_change'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
+
+      /**
+       * FIXME: Pipeline Login after WebUI Login
+       */
+      const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
+      if (!pipelineToken) {
+        const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
+        const keypairs = res.keypairs;
+        const loginInfo = {
+          username: this.user_id,
+          password: this.password,
+          // use first keypair
+          access_key: keypairs[0].access_key,
+          secret_key: keypairs[0].secret_key,
+        };
+        await globalThis.backendaiclient.pipeline.login(loginInfo);
+      }
       return globalThis.backendaiclient.query(q, v);
     }).then((response) => {
       const email = response['user'].email;
@@ -1099,7 +1117,7 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient.is_superadmin = true;
       }
       return globalThis.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
-    }).then((response) => {
+    }).then(async (response) => {
       const groups = response.groups;
       const user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
@@ -1179,6 +1197,7 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
+        globalThis.backendaiclient.pipeline.logout();
         this.client?.logout();
       }
       this._enableUserInput();
