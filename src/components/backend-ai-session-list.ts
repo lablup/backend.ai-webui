@@ -486,7 +486,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-        this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit;
+        // check whether image commit supported via both configuration variable and version(22.09)
+        this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit && globalThis.backendaiclient.supports('image-commit');
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -508,7 +509,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit;
+      // check whether image commit supported via both configuration variable and version(22.09)
+      this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit && globalThis.backendaiclient.supports('image-commit');
       this._refreshJobData();
     }
   }
@@ -591,6 +593,10 @@ export default class BackendAiSessionList extends BackendAIPage {
       fields.push('containers {container_id occupied_slots live_stat last_stat}');
     }
     const group_id = globalThis.backendaiclient.current_group_id();
+
+    if (this._isContainerCommitEnabled) {
+      fields.push('commit_status');
+    }
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
       this.spinner.hide();
