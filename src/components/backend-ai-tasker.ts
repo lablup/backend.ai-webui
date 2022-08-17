@@ -106,7 +106,7 @@ export default class BackendAiTasker extends LitElement {
       taskid = this.generate_UUID();
     }
     const item = new Task(title, task, taskid, tasktype);
-    if (task != null && typeof task.then === 'function') { // For Promise type task
+    if (task != null && (typeof task.then === 'function' || task === 'function')) { // For Promise type task
       task.then().catch((err) => {
         // NOTICE: this is a stop-gap measure for error handling.
         // console.log(err);
@@ -121,7 +121,9 @@ export default class BackendAiTasker extends LitElement {
         }
       });
     } else { // For function type task (not supported yet)
-      return false;
+      if (additionalRequest !== 'remove-later') {
+        return false;
+      }
     }
     this.taskstore.push(item);
     this.signal();
