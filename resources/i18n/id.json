@@ -306,7 +306,12 @@
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -336,7 +341,8 @@
     "Generate": "Hasilkan",
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
-    "ForceTerminate": "Hentikan paksa"
+    "ForceTerminate": "Hentikan paksa",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",

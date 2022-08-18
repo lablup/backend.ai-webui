@@ -96,6 +96,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
+  private _enableContainerCommit = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -592,6 +593,11 @@ export default class BackendAILogin extends BackendAIPage {
       this.singleSignOnVendors = [];
     } else {
       this.singleSignOnVendors = config.general.singleSignOnVendors.split(',');
+    }
+    if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
+      this._enableContainerCommit = false;
+    } else {
+      this._enableContainerCommit = config.general.enableContainerCommit;
     }
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
@@ -1184,6 +1190,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
       globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
+      globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

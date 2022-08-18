@@ -246,6 +246,11 @@
     "Status": "Status",
     "StatusInfo": "Status Info",
     "StatusDetail": "Detail",
+    "CommitSession": "Commit Session",
+    "DescCommitSession": "You are about to commit container corresponding to the session below: ",
+    "CommitOnGoing": "Commit on progress...",
+    "CommitFinished": "Commit session operation finished.",
+    "CommitFailed": "Commit session operation failed",
     "TotalRetries": "Total Retries",
     "LastTry": "Last Try",
     "Control": "Control",
@@ -333,7 +338,8 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
-    "ForceTerminate": "Force Terminate"
+    "ForceTerminate": "Force Terminate",
+    "Commit": "Commit"
   },
   "agent": {
     "Endpoint": "Endpoint",
