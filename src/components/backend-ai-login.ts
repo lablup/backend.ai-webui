@@ -822,7 +822,6 @@ export default class BackendAILogin extends BackendAIPage {
     // If token is delivered as a querystring, just save it as cookie.
     document.cookie = `sToken=${sToken}; expires=Session; path=/`;
     try {
-      console.log('logging with (cookie) token...');
       const loginSuccess = await this.client.token_login();
       if (!loginSuccess) {
         this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
