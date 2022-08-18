@@ -22,15 +22,10 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 @customElement('lablup-loading-dots')
 export default class LablupLoadingdots extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) active = true;
-  @query('#dots') dots;
+  @query('#dots') dots!: HTMLDivElement;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -100,14 +95,6 @@ export default class LablupLoadingdots extends LitElement {
     this.active = true;
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
   /**
    * Set up active state and dots style to show the loading dots.
    * */
@@ -132,6 +119,7 @@ export default class LablupLoadingdots extends LitElement {
    * */
   async toggle() {
     await this.updateComplete;
+    // FIXME incorrect property
     if (this.dots.active === true) {
       this.active = true;
       this.dots.style.display = 'none';
