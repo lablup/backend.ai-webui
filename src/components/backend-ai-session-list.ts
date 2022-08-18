@@ -1071,7 +1071,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     let isOnProgress: boolean = false;
     if (sessionName !== '') {
       globalThis.backendaiclient.computeSession.getCommitSessionStatus(sessionName).then((res) =>{
-        console.log(res);
+        // console.log(res);
         isOnProgress = res;
       }).catch((err) => {
         console.log(err);
