@@ -72,10 +72,11 @@ type CommitSessionInfo = {
 
 /**
  * Type of commit session status
- * - available: no container commit operation is on-going
- * - duplicated: container commit operation is proceeding now
+ * - ready: no container commit operation is on-going
+ * - ongoing: container commit operation is proceeding now
  */
-type CommitSessionStatus = 'available' | 'duplicated';
+type CommitSessionStatus = "ready" | "ongoing";
+
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -2192,16 +2193,16 @@ export default class BackendAiSessionList extends BackendAIPage {
                   description="${rowData.item.status_info}" ui="round"></lablup-shields>
           </div>
         ` : html``}
-        ${this._isContainerCommitEnabled ? html`
+        ${(this._isContainerCommitEnabled && rowData.item?.commit_status !== undefined) ? html`
           <lablup-shields app="" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}" class="right-below-margin"
-                          description=${rowData.item.commit_status as CommitSessionStatus === 'duplicated' ? 'commit on-going' : ''}></lablup-shields>
+                          description=${rowData.item.commit_status as CommitSessionStatus === 'ongoing' ? 'commit on-going' : ''}></lablup-shields>
         ` : html``}
       `, root
     );
   }
 
-  _setColorOfStatusInformation(status: CommitSessionStatus = 'available') {
-    return status === 'available' ? 'green' : 'lightgrey';
+  _setColorOfStatusInformation(status: CommitSessionStatus = 'ready') {
+    return status === 'ready' ? 'green' : 'lightgrey';
   }
 
   /**
@@ -2338,7 +2339,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                    .renderer="${this._boundSessionInfoRenderer}">
         </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
+        <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
                                    .renderer="${this._boundStatusRenderer}">
         </vaadin-grid-filter-column>
         <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
