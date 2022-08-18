@@ -2674,6 +2674,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+>>>>>>> main
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version

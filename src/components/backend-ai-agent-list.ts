@@ -409,26 +409,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value
-   * @return {number} converted value from byte to MB.
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value
-   * @return {number} converted value from MB to GB.
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
    * Return backend.ai client elapsed time.
    *
    * @param {Date} start - Start time of backend.ai client.
@@ -450,27 +430,6 @@ export default class BackendAIAgentList extends BackendAIPage {
       return 'Reserved for ' + seconds + 'sec.';
     }
     return seconds;
-  }
-
-  /**
-   * Covert start date to human readable date.
-   *
-   * @param {Date} start
-   * @return {string} Human-readable date string.
-   */
-  _humanReadableDate(start) {
-    const d = new Date(start);
-    return d.toLocaleString();
-  }
-
-  /**
-   * Increase index by 1.
-   *
-   * @param {number} index
-   * @return {number} index + 1 (for table index)
-   */
-  _indexFrom1(index: number) {
-    return index + 1;
   }
 
   /**
@@ -612,6 +571,17 @@ export default class BackendAIAgentList extends BackendAIPage {
    * */
   _elapsed2(start, end) {
     return globalThis.backendaiclient.utils.elapsedTime(start, end);
+  }
+
+  /**
+   * Convert start date to human readable date.
+   *
+   * @param {Date} start date
+   * @return {string} Human-readable date
+   */
+  _humanReadableDate(start) {
+    const d = new Date(start);
+    return d.toLocaleString();
   }
 
   /**

@@ -1479,7 +1479,7 @@ class VFolder {
         if (name == null) {
             name = this.name;
         }
-        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`, null);
+        let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}`);
         return this.client._wrapWithPromise(rqst);
     }
     /**
@@ -1488,7 +1488,9 @@ class VFolder {
      * @param {string} new_name - New virtual folder name.
      */
     async rename(new_name = null) {
-        const body = { new_name };
+        const body = {
+            'new_name': new_name
+        };
         let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
         return this.client._wrapWithPromise(rqst);
     }
@@ -1968,6 +1970,53 @@ class StorageProxy {
             `}`;
         let v = { 'vfolder_host': host };
         return this.client.query(q, v);
+    }
+    /**
+     * Get storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     */
+    async get(path = '') {
+        if (path) {
+            const rqst = this.client.newSignedRequest("GET", path);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Create storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async create(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("POST", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Update storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async update(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("PATCH", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
+    }
+    /**
+     * Delete storage-proxy specific feature
+     *
+     * @param {string} path - additional path
+     * @param {Object} body - body to send in the request
+     */
+    async delete(path = '', body = {}) {
+        if (path) {
+            const rqst = this.client.newSignedRequest("DELETE", path, body);
+            return this.client._wrapWithPromise(rqst);
+        }
     }
 }
 class Keypair {

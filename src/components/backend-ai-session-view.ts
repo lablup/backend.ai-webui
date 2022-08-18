@@ -311,12 +311,14 @@ export default class BackendAiSessionView extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
+  /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
   _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+    return Math.floor(value / 1000000);
   }
 
   _exportToCSV() {

@@ -383,6 +383,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     return status === 'PENDING';
   }
 
+  /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _bytesToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -724,6 +734,18 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Change d of any type to human readable date time.
+   *
+   * @param {string | Date} d - Data string or object
+   * @return {string} Human readable time string
+   */
+  _humanReadableTime(d: any) {
+    d = new Date(d);
+    const option = {hour12: false};
+    return d.toLocaleString('en-US', option);
+  }
+
+  /**
    * Refresh work dialog.
    *
    * @param {Event} e
@@ -735,17 +757,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else {
       work_dialog.classList.remove('mini_ui');
     }
-  }
-
-  /**
-   * Convert start date to human readable date.
-   *
-   * @param {Date} d - Date to convert
-   * @return {string} Human-readable date
-   */
-  _humanReadableTime(d: any) {
-    d = new Date(d);
-    return d.toLocaleString();
   }
 
   /**
@@ -802,18 +813,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -841,13 +840,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
   /**
    * Return elapsed time
    *

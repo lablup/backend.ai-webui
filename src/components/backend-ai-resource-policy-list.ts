@@ -224,10 +224,28 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </vaadin-grid-column>
         <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
-            .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
+
+        <vaadin-grid-column resizable>
+          <template class="header">
+            <vaadin-grid-sorter path="max_containers_per_session">${_t('resourcePolicy.ClusterSize')}</vaadin-grid-sorter>
+          </template>
+          <template>
+            <div>[[item.max_containers_per_session]]</div>
+          </template>
         </vaadin-grid-column>
+
+        <vaadin-grid-column resizable>
+          <template class="header">${_t('resourcePolicy.StorageNodes')}</template>
+          <template>
+            <div class="layout horizontal center flex">
+              <div class="vertical start layout">
+                <div>[[item.allowed_vfolder_hosts]]
+                </div>
+              </div>
+            </div>
+          </template>
+        </vaadin-grid-column>
+
         <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
         </vaadin-grid-column>
       </vaadin-grid>
@@ -383,12 +401,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -397,7 +415,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
             <span class="indicator">GPU</span>
           </div>
 ` : html``}
@@ -405,7 +423,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
             <span class="indicator">fGPU</span>
           </div>
 ` : html``}
@@ -418,7 +436,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+            <span>${globalThis.backendaiutils._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
             <span class="indicator">Folders</span>
           </div>
         </div>

@@ -535,7 +535,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let unit = 'MiB'; // default unit starts with MiB.
     const convertedCurrentQuota = currentQuotaInput.value * (this.quotaUnit[currentQuotaUnit.value]);
     const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
-    [currentQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
+    [currentQuotaInput.value, unit]= this._humanReadableFileSize(convertedCurrentQuota).split(' ');
     if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
       if (unit === 'MiB') {
         currentQuotaInput.value = currentQuotaInput.value < 1 ? 1 : Math.round(currentQuotaInput.value);
@@ -554,6 +554,23 @@ export default class BackendAiStorageList extends BackendAIPage {
     currentQuotaInput.step = (currentQuotaUnit.value === 'MiB')? 0 : 0.1;
     const idx = currentQuotaUnit.items.findIndex((item) => item.value === unit);
     currentQuotaUnit.select(idx);
+  }
+
+  /**
+   * Returns bytes with human readable unit and value
+   *
+   * @param {number} bytes
+   * @param {number} decimals
+   * @return {string} converted value with unit
+   */
+  _humanReadableFileSize(bytes, decimals = 2) {
+    if (bytes === 0) return '0 Bytes';
+    const k = Math.pow(2, 10);
+    const dm = decimals < 0 ? 0 : decimals;
+    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+    let i = Math.floor(Math.log(bytes) / Math.log(k));
+    i = i < 0 ? 0 : i; // avoid negative value
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
 
   render() {
@@ -722,8 +739,8 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
-                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
+                  ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? this._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? this._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
                   ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size >= 0 ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -1103,7 +1120,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
+      quotaIndicator = this._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
     }
     render(
       // language=HTML
@@ -1595,6 +1612,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.shadowRoot.querySelector('#' + id).hide();
   }
 
+  /**
+   * Increase index by 1.
+   *
+   * @param {number} index
+   * @return {number} index + 1
+   */
   _indexFrom1(index) {
     return index + 1;
   }
@@ -1680,8 +1703,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         const quotaEl = this.shadowRoot.querySelector('#modify-folder-quota');
         const quotaUnitEl = this.shadowRoot.querySelector('#modify-folder-quota-unit');
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
-        quotaEl.value = this.quota.value;
+        let quota_val = '';
+        [quota_val, this.quota.unit] = this._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
+        quotaEl.value = this.quota.value = parseFloat(quota_val);
         quotaUnitEl.value = this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
@@ -1931,7 +1955,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count', 'max_vfolder_size']);
     const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
     // default unit starts with MB.
-    [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size).split(' ');
+    let maxSize_val = '';
+    [maxSize_val, this.maxSize.unit] = this._humanReadableFileSize(max_vfolder_size).split(' ');
+    this.maxSize.value = parseFloat(maxSize_val);
     if (['Bytes', 'KiB', 'MiB'].includes(this.maxSize.unit)) {
       this.maxSize.value = this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
       this.maxSize.unit = 'MiB';
@@ -2239,7 +2265,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             const file = e.dataTransfer.files[i];
             /* Drag & Drop file upload size limits to configuration */
             if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
+              this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
               this.notification.show();
               return;
             } else {
@@ -2323,7 +2349,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       for (let i = 0; i < 5; i++) text += possible.charAt(Math.floor(Math.random() * possible.length));
       /* File upload size limits to configuration */
       if (this._maxFileUploadSize > 0 && file.size > this._maxFileUploadSize) {
-        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
+        this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${this._humanReadableFileSize(this._maxFileUploadSize)})`;
         this.notification.show();
         return;
       } else {

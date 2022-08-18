@@ -52,6 +52,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @property({type: Object}) defaultDescription = Object(); // prior to current text descriptions
 
   constructor() {
     super();
@@ -109,6 +110,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           --mdc-linear-progress-buffer-color: #98be5a;
         }
 
+        lablup-progress-bar.exceeded {
+          --progress-bar-background: #C03D29;
+        }
+
         lablup-progress-bar.cpu {
           --progress-bar-height: 5px;
           margin-bottom: 0;
@@ -130,7 +135,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }
 
         .resource-indicator {
-          width: 100px !important;
+          width: 50px !important;
         }
 
       `];
@@ -173,7 +178,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
+    globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage', 'hardware_metadata']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const storages: Array<any> = [];
       if (storage_volumes !== undefined && storage_volumes.length != 0) {
@@ -190,6 +195,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         });
       }
       this.storages = storages;
+      // Updates the width of all columns which have autoWidth
+      this.shadowRoot.querySelector('vaadin-grid').recalculateColumnWidths();
       const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -204,47 +211,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
-  }
-
-  /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value - byte value
-   * @return {number} value converted to MB
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value - MB value
-   * @return {number} value converted to GB
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
-   * Convert start date to human readable date.
-   *
-   * @param {Date} start date
-   * @return {string} Human-readable date
-   */
-  _humanReadableDate(start) {
-    const d = new Date(start);
-    return d.toLocaleString();
-  }
-
-  /**
-   * Increase index by 1.
-   *
-   * @param {number} index
-   * @return {number} index + 1
-   */
-  _indexFrom1(index: number) {
-    return index + 1;
   }
 
   /**
@@ -292,6 +258,16 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
+   * Convert the value byte to MB.
+   *
+   * @param {number} value
+   * @return {number} converted value from byte to MB.
+   */
+  _bytesToMB(value) {
+    return Math.floor(value / 1000000);
+  }
+
+  /**
    * Render regions by platforms and locations.
    *
    * @param {DOMelement} root
@@ -324,6 +300,10 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     case 'dgx':
       color = 'green';
       icon = 'local';
+      break;
+    case 'netapp':
+      color = 'black';
+      icon = 'local'; // TODO: add netapp ontap logo into /resources/icons/...
       break;
     default:
       color = 'yellow';
@@ -368,13 +348,13 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout flex">
-          <div class="layout horizontal center flex">
+          <div class="layout horizontal center wrap justified">
             <div class="layout horizontal start resource-indicator">
               <mwc-icon class="fg green">data_usage</mwc-icon>
-              <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
+              <span class="indicator" style="padding-left:5px;">${this.defaultDescription?.usage ?? _t('session.Usage')}</span>
             </div>
             <span class="flex"></span>
-            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}" class="${parseInt(usagePercent) > 100 ? 'exceeded' : ''}"
                                  buffer="${totalBuffer}"
                                  description="${usagePercent}%"></lablup-progress-bar>
           </div>
@@ -429,6 +409,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     try {
       const perfMetric = JSON.parse(rowData.item.performance_metric);
       perfMetricDisabled = Object.keys(perfMetric).length > 0 ? false : true;
+      // check once more and disable when it's 3rd plugin and its not in agent page
+      perfMetricDisabled = (globalThis.currentPage === 'agent' && !perfMetricDisabled) ? true : false;
     } catch {
       perfMetricDisabled = true;
     }
@@ -443,28 +425,23 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     );
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
-
   render() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.storages}">
+      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.storages}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                             .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.endpoint ?? _t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.backendType ?? _t('agent.BackendType')}"
                             .renderer="${this._boundTypeRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
+        <vaadin-grid-column auto-width flex-grow="0" resizable header="${this.defaultDescription?.usage ?? _t('agent.Resources')}"
                             .renderer="${this._boundResourceRenderer}">
         </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
+        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${this.defaultDescription?.capabilities ??_t('agent.Capabilities')}"
                             .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
+        <vaadin-grid-column width="60px" resizable header="${this.defaultDescription?.control ?? _t('general.Control')}"
                             .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>

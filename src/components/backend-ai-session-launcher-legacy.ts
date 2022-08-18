@@ -2220,32 +2220,6 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
   }
 
   /**
-   * Get MB value when input is less than 1 GB.
-   *
-   * @param {number} value - value with GB unit.
-   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
-   * */
-  _conditionalGBtoMB(value) {
-    if (value < 1.0) {
-      return (value * 1024).toFixed(0);
-    }
-    return value;
-  }
-
-  /**
-   * Get MB unit when input is less than 1 GB.
-   *
-   * @param {number} value - value with GB unit.
-   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
-   * */
-  _conditionalGBtoMBunit(value) {
-    if (value < 1.0) {
-      return 'MB';
-    }
-    return 'GB';
-  }
-
-  /**
    * Get version information - Version, Language, Additional information.
    *
    * @param {any} version
@@ -2506,6 +2480,32 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
     const selectedIndex = isManualImageEnabled ? -1 : 1;
     SelectedEnvironment.select(selectedIndex);
     SelectedVersions.select(selectedIndex);
+  }
+
+  /**
+   * Get MB value when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * */
+  _conditionalGBtoMB(value) {
+    if (value < 1.0) {
+      return (value * 1024).toFixed(0);
+    }
+    return value;
+  }
+
+  /**
+   * Get MB unit when input is less than 1 GB.
+   *
+   * @param {number} value - value with GB unit.
+   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * */
+  _conditionalGBtoMBunit(value) {
+    if (value < 1.0) {
+      return 'MB';
+    }
+    return 'GB';
   }
 
 

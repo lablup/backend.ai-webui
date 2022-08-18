@@ -979,6 +979,24 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
+  /**
+   *
+   * Expand or Shrink the dialog height by the number of items in the dropdown.
+   *
+   * @param {boolean} isOpened - notify whether the dialog is opened or not.
+   */
+  _controlHeightByVfolderHostCount(isOpened = false) {
+    if (!isOpened) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = this.selectAreaHeight;
+      return;
+    }
+    const itemCount = this.shadowRoot.querySelector('#allowed_vfolder-hosts').items.length;
+    const actualHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight;
+    if (itemCount > 0) {
+      this.shadowRoot.querySelector('#dropdown-area').style.height = (actualHeight + itemCount * 14) +'px';
+    }
+  }
+
   _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);

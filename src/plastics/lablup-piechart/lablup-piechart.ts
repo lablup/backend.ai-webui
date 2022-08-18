@@ -54,6 +54,26 @@ export default class LablupPiechart extends LitElement {
   }
 
   firstUpdated() {
+    this._setPieChart();
+  }
+
+  updated(changedProperties) {
+    changedProperties.forEach((oldVal, propName) => {
+      if (propName === 'currentNumber' || propName === 'maxNumber') {
+        this._setPieChart();
+      }
+    });
+  }
+
+  connectedCallback() {
+    super.connectedCallback();
+  }
+
+  _moveTo() {
+    window.location.href = this.url;
+  }
+
+  _setPieChart() {
     this.sizeParam = this.size + "px";
     let chartFontSize = this.fontsize / this.size;
     if (chartFontSize >= 0.5) {
@@ -61,7 +81,8 @@ export default class LablupPiechart extends LitElement {
     } else {
       chartFontSize = 0.9 / (this.currentNumber.toString().length);
     }
-    this.chartFontSize = chartFontSize.toString();
+    // apply custom chartFontSize if it has own value
+    this.chartFontSize = this.chartFontSize ?? chartFontSize.toString();
     let chart: HTMLElement = this.shadowRoot.querySelector("#chart");
     let chartText: HTMLElement = this.shadowRoot.querySelector("#chart-text");
     let unitText: HTMLElement = this.shadowRoot.querySelector("#unit-text");
@@ -112,14 +133,6 @@ export default class LablupPiechart extends LitElement {
       this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
     }
     this.requestUpdate();
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  _moveTo() {
-    window.location.href = this.url;
   }
 
   render() {

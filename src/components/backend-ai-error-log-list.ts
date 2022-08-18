@@ -204,16 +204,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     return d.toLocaleString('en-US', option);
   }
 
-  /**
-   * Change d of any type to ISO date time.
-   *
-   * @param {string | Date} d - Data string or object
-   * @return {string} ISO time string
-   */
-  _toISOTime(d: any) {
-    d = new Date(d);
-    return d.toISOString();
-  }
 
   /**
    * Render timeStamp for each column
