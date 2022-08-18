@@ -548,8 +548,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     this.refreshing = true;
 
-    this.list_condition = 'loading';
-    this.list_status.show();
+    // this.list_condition = 'loading'; // Remove loading indicator during automatic refresh.
+    // this.list_status.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -756,7 +756,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 5000 : 30000;
+          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 7000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -2342,43 +2342,28 @@ export default class BackendAiSessionList extends BackendAIPage {
                                       .renderer="${this._boundUserInfoRenderer}">
             </vaadin-grid-filter-column>
           ` : html``}
-        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
-                                   .renderer="${this._boundSessionInfoRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
-                                   .renderer="${this._boundStatusRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
-                            .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
-                            .renderer="${this._boundUsageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
-                                 path="created_at" .renderer="${this._boundReservationRenderer}">
-        </vaadin-grid-sort-column>
-        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                   .renderer="${this._boundArchitectureRenderer}">
-        </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
-                              .renderer="${this._boundAgentRenderer}">
+          <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+                                     .renderer="${this._boundSessionInfoRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
+                                     .renderer="${this._boundStatusRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
+                              .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+                              .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
-                                  path="created_at" .renderer="${this._boundReservationRenderer}">
+                                   path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
           <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                    .renderer="${this._boundArchitectureRenderer}">
+                                     .renderer="${this._boundArchitectureRenderer}">
           </vaadin-grid-filter-column>
           ${this._isIntegratedCondition ? html`
             <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-          ` :
-      html``}
+        ` : html``}
           ${this.is_superadmin ? html`
             <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                                 .renderer="${this._boundAgentRenderer}">

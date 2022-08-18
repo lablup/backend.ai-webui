@@ -779,13 +779,13 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   async loginWithSAML() {
-    const rqst = this.client.newUnsignedRequest('POST', '/saml/login', null);
+    const rqst = this.client?.newUnsignedRequest('POST', '/saml/login', null);
     const form = document.createElement('form');
     const redirect_to = document.createElement('input');
     form.appendChild(redirect_to);
     document.body.appendChild(form);
     form.setAttribute('method', 'POST');
-    form.setAttribute('action', rqst.uri);
+    form.setAttribute('action', rqst?.uri as string); // TODO: need to check its behavior.
     redirect_to.setAttribute('type', 'hidden');
     redirect_to.setAttribute('name', 'redirect_to');
     redirect_to.setAttribute('value', window.location.href);
@@ -877,14 +877,14 @@ export default class BackendAILogin extends BackendAIPage {
     // If token is delivered as a querystring, just save it as cookie.
     document.cookie = `sToken=${sToken}; expires=Session; path=/`;
     try {
-      const loginSuccess = await this.client.token_login();
+      const loginSuccess = await this.client?.token_login();
       if (!loginSuccess) {
         this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
         this.notification.show(true);
       }
       window.location.href = '/';
     } catch (err) {
-      console.error(err)
+      console.error(err);
       this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
       this.notification.show(true, err);
       window.location.href = '/';
