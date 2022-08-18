@@ -128,7 +128,7 @@ export default class LablupLoadingdots extends LitElement {
   }
 
   /**
-   * Change whether dots is visible or not.
+   * Change whether dots are visible or not.
    * */
   async toggle() {
     await this.updateComplete;
