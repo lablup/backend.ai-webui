@@ -655,16 +655,6 @@ class Client {
   }
 
   /**
-   * Login with SAML 2.0 authentication.
-   * @param saml_token
-   * @returns
-   */
-  login_with_saml() {
-    let rqst = this.newUnsignedRequest('POST', `/saml/login`, null);
-    return this._wrapWithPromise(rqst);
-  }
-
-  /**
    * Logout from webserver. This requires additional webserver package.
    *
    */

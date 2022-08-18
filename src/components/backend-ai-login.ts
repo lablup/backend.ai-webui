@@ -778,6 +778,20 @@ export default class BackendAILogin extends BackendAIPage {
     this.signoutPanel.show();
   }
 
+  async loginWithSAML() {
+    const rqst = this.client.newUnsignedRequest('POST', '/saml/login', null);
+    const form = document.createElement('form');
+    const redirect_to = document.createElement('input');
+    form.appendChild(redirect_to);
+    document.body.appendChild(form);
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', rqst.uri);
+    redirect_to.setAttribute('type', 'hidden');
+    redirect_to.setAttribute('name', 'redirect_to');
+    redirect_to.setAttribute('value', window.location.href);
+    form.submit();
+  }
+
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
@@ -859,6 +873,24 @@ export default class BackendAILogin extends BackendAIPage {
     });
   }
 
+  async _token_login(sToken) {
+    // If token is delivered as a querystring, just save it as cookie.
+    document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+    try {
+      const loginSuccess = await this.client.token_login();
+      if (!loginSuccess) {
+        this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
+        this.notification.show(true);
+      }
+      window.location.href = '/';
+    } catch (err) {
+      console.error(err)
+      this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
+      this.notification.show(true, err);
+      window.location.href = '/';
+    }
+  }
+
   private _login() {
     const loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
     const lastLogin = globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
@@ -935,6 +967,17 @@ export default class BackendAILogin extends BackendAIPage {
       const isLogon = await this.client?.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
+
+        // TODO: This is a temporary solution to automatically logs a user in
+        // via SSO response.
+        // If token is delivered as a querystring, login with the token.
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const sToken = urlParams.get('sToken') || null;
+        if (sToken !== null) {
+          this._token_login(sToken);
+          return;
+        }
 
         this.client?.login().then((response) => {
           if (response === false) {
@@ -1342,9 +1385,11 @@ export default class BackendAILogin extends BackendAIPage {
                     @click="${() => this._login()}">
                 </mwc-button>
                 ${this.singleSignOnVendors.includes('saml') ? html`
-                  <mwc-button fullwidth id="sso-login-saml-button"
-                      label="${_t('login.SingleSignOn.LoginWithSAML')}"
-                      @click="${() => this.client?.login_with_saml()}"
+                  <mwc-button
+                    id="sso-login-saml-button"
+                    label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                    fullwidth
+                    @click="${() => this.loginWithSAML()}"
                   ></mwc-button>
                 ` : html``}
                 <div id="additional-action-area" class="layout horizontal">
