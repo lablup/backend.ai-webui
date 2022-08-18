@@ -609,13 +609,17 @@ export default class BackendAiSessionList extends BackendAIPage {
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
       this.total_session_count = response.compute_session_list.total_count;
+      let sessions = response.compute_session_list.items;
       if (this.total_session_count === 0) {
         this.list_condition = 'no-data';
         this.total_session_count = 1;
       } else {
-        this.list_status.hide();
+        if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
+          this.list_condition = 'no-data';
+        } else {
+          this.list_status.hide();
+        }
       }
-      let sessions = response.compute_session_list.items;
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
         const previousSessionKeys: any = [];
