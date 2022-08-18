@@ -428,6 +428,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     return status === 'PENDING';
   }
 
+  _isFinished(status) {
+    return ['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(status);
+  }
+
   firstUpdated() {
     this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._grid = this.shadowRoot.querySelector('#list-grid');
@@ -1868,6 +1872,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                              ?disabled=${this._isPending(rowData.item.status) ||
                                          this._isPreparing(rowData.item.status) ||
                                          this._isError(rowData.item.status) ||
+                                         this._isFinished(rowData.item.status) ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
