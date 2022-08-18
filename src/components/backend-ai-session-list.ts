@@ -1851,7 +1851,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
-            <mwc-icon-button class="fg red controls-running" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status === 'duplicated'}
+            <mwc-icon-button class="fg red controls-running" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status as CommitSessionStatus === 'ongoing'}
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
@@ -1868,7 +1868,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                              ?disabled=${this._isPending(rowData.item.status) ||
                                          this._isPreparing(rowData.item.status) ||
                                          this._isError(rowData.item.status) ||
-                                         rowData.item.commit_status === 'duplicated'}
+                                         rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
         </div>
