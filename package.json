@@ -59,7 +59,7 @@
     "@vanillawc/wc-codemirror": "^2.1.0",
     "@webcomponents/webcomponentsjs": "^2.6.0",
     "bufferutil": "^4.0.6",
-    "chart.js": "^3.9.1",
+    "chart.js": "~3.8.2",
     "chartjs-adapter-date-fns": "^2.0.0",
     "commander": "^9.4.0",
     "crypto-browserify": "^3.12.0",
