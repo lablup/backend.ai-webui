@@ -119,14 +119,10 @@ export default class LablupLoadingdots extends LitElement {
    * */
   async toggle() {
     await this.updateComplete;
-    // FIXME incorrect property
-    if (this.dots.active === true) {
-      this.active = true;
-      this.dots.style.display = 'none';
-      this.active = false;
+    if (this.dots.style.display === 'block') {
+      await this.hide();
     } else {
-      this.active = true;
-      this.dots.style.display = 'block';
+      await this.show();
     }
   }
 }
