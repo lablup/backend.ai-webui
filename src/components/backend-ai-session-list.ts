@@ -604,7 +604,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     const group_id = globalThis.backendaiclient.current_group_id();
 
-    if (this._isContainerCommitEnabled) {
+    if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
       fields.push('commit_status');
     }
 
