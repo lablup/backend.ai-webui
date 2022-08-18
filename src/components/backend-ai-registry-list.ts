@@ -9,7 +9,7 @@ import {customElement, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIIndicator from './backend-ai-indicator';
 import BackendAIIndicatorPool from './backend-ai-indicator-pool';
-
+import BackendAIListStatus from './backend-ai-list-status';
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -41,6 +41,7 @@ import {Textfield as WlTextfield} from 'weightless/textfield';
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
+  private _list_condition: string = 'loading';
   private _allowed_registries: Array<object>;
   private _editMode: boolean = false;
   private _hostnames: Array<string>;
@@ -55,6 +56,7 @@ class BackendAIRegistryList extends BackendAIPage {
   private _boundControlsRenderer = this._controlsRenderer.bind(this);
   private _boundPasswordRenderer = this._passwordRenderer.bind(this);
 
+  @query('#list-status') private _list_status!: BackendAIListStatus;
   @query('#configure-registry-hostname') private _hostnameInput!: WlTextfield;
   @query('#configure-registry-password') private _passwordInput!: WlTextfield;
   @query('#configure-project-name') private _projectNameInput!: WlTextfield;
@@ -190,11 +192,18 @@ class BackendAIRegistryList extends BackendAIPage {
    * Request and Retrieve registry lists from server allowed in the current domain
    */
   _refreshRegistryList() {
+    this._list_condition = 'loading';
+    this._list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this._allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this._registryList = this._parseRegistryList(result);
+      if (this._registryList.length == 0) {
+        this._list_condition = 'no-data';
+      } else {
+        this._list_status.hide();
+      }
       this._hostnames = this._registryList.map((value) => {
         return value.hostname;
       }) as string[];
@@ -404,7 +413,7 @@ class BackendAIRegistryList extends BackendAIPage {
     this._editMode = false;
     this._selectedIndex = -1;
     this._registryType = 'docker';
-    this.requestUpdate();  // call for explicit update
+    this.requestUpdate(); // call for explicit update
     this._launchDialogById('#configure-registry-dialog');
   }
 
@@ -505,7 +514,7 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Reset registry input fields in registry configuration dialog
    */
-   private _resetRegistryField() {
+  private _resetRegistryField() {
     /**
      * FIXME: need to change repetitive value manipulation in future.
      */
@@ -683,7 +692,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * any value renderable by lit-html's `ChildPart` - typically a
    * `TemplateResult`. Setting properties inside this method will *not* trigger
    * the element to update.
-   * @returns {TemplateResult<1>} - html
+   * @return {TemplateResult<1>} - html
    * */
   protected override render() {
     // language=HTML
@@ -694,25 +703,28 @@ class BackendAIRegistryList extends BackendAIPage {
         <mwc-button raised id="add-registry" label="${_t('registry.AddRegistry')}" icon="add"
             @click=${() => this._openCreateRegistryDialog()}></mwc-button>
       </h4>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
-        <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer}>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer}>
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project">
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username">
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer}></vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
+          <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer}>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project">
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username">
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer}></vaadin-grid-column>
+          <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this._list_condition}" message="${_text('registry.NoRegistryToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${this._editMode ? _t('registry.ModifyRegistry') : _t('registry.AddRegistry')}</span>
         <div slot="content" class="login-panel intro centered">

@@ -307,6 +307,7 @@
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
     "CommitSession": "__NOT_TRANSLATED__",
     "CommitOnGoing": "__NOT_TRANSLATED__",
     "CommitFinished": "__NOT_TRANSLATED__",
@@ -362,7 +363,8 @@
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
     "AgentSetting": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -456,7 +458,9 @@
     "UserNotFound": "La création des identifiants a échoué, car l'ID utilisateur suivant est introuvable :",
     "UserIDRequired": "L'ID utilisateur est requis.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",
@@ -531,7 +535,8 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -660,7 +665,8 @@
     "ProblemOccurred": "Un problème est survenu",
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
     "NoChangeMade": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -681,7 +687,8 @@
     "MinimumShmemUnit": "L'unité minimale pour la mémoire partagée est de 0,01 Go.",
     "RAM": "RAM (Go)",
     "SharedMemory": "Mémoire partagée (Go)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Général",
@@ -755,7 +762,8 @@
     "RequestUrl": "URL de demande",
     "Parameters": "Paramètres",
     "ErrorType": "Type d'erreur",
-    "LogMessageRemoved": "Les messages de journal ont été supprimés."
+    "LogMessageRemoved": "Les messages de journal ont été supprimés.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Ressources",
@@ -781,7 +789,8 @@
     "SuccessfullyDeleted": "La stratégie de ressources a bien été supprimée.",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
     "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
-    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nom d'hôte",
@@ -815,7 +824,8 @@
     "RescanFailed": "Échec de la réanalyse.",
     "PleaseSelectOption": "Veuillez sélectionner une option.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
@@ -845,7 +855,8 @@
     "SetSchedulerOptions": "Définir les options du planificateur",
     "TimeoutSeconds": "Seconds",
     "ResourceGroupDetail": "Détail du groupe de ressources",
-    "RetriesToSkip": "__NOT_TRANSLATED__"
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",

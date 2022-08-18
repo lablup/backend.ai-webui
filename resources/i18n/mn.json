@@ -307,6 +307,7 @@
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
     "CommitSession": "__NOT_TRANSLATED__",
     "CommitOnGoing": "__NOT_TRANSLATED__",
     "CommitFinished": "__NOT_TRANSLATED__",
@@ -362,7 +363,8 @@
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
     "AgentSetting": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "цөм",
@@ -456,7 +458,9 @@
     "UserNotFound": "Дараах хэрэглэгчийн ID олдсонгүй тул итгэмжлэл үүсгэх амжилтгүй боллоо.",
     "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -531,7 +535,8 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -660,7 +665,8 @@
     "ProblemOccurred": "Асуудал гарсан",
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
     "NoChangeMade": "Өөрчлөлт ороогүй",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -681,7 +687,8 @@
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
     "SharedMemory": "Хуваалцсан санах ой (GB)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -755,7 +762,8 @@
     "RequestUrl": "Url хүсэх",
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
-    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан."
+    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",
@@ -781,7 +789,8 @@
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
-    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -815,7 +824,8 @@
     "RescanFailed": "Дахин шалгаж чадсангүй.",
     "PleaseSelectOption": "Нэг сонголтыг сонгоно уу.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -845,7 +855,8 @@
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
     "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
-    "RetriesToSkip": "__NOT_TRANSLATED__"
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",

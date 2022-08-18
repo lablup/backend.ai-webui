@@ -29,7 +29,7 @@ import '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
@@ -75,7 +75,7 @@ type CommitSessionInfo = {
  * - ready: no container commit operation is on-going
  * - ongoing: container commit operation is proceeding now
  */
-type CommitSessionStatus = "ready" | "ongoing";
+type CommitSessionStatus = 'ready' | 'ongoing';
 
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
@@ -113,7 +113,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Object}) sessionStatusInfoDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) spinner = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
@@ -429,7 +430,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -546,7 +547,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    this.spinner.show();
+
+    // this.list_condition = 'loading'; // Remove loading indicator during automatic refresh.
+    // this.list_status.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -605,12 +608,20 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
 
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
-      this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
-      if (this.total_session_count === 0) {
-        this.total_session_count = 1;
-      }
       let sessions = response.compute_session_list.items;
+      if (this.total_session_count === 0) {
+        this.list_condition = 'no-data';
+        this.list_status.show();
+        this.total_session_count = 1;
+      } else {
+        if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
+          this.list_condition = 'no-data';
+          this.list_status.show();
+        } else {
+          this.list_status.hide();
+        }
+      }
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
         const previousSessionKeys: any = [];
@@ -747,12 +758,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          // console.log("refresh!!");
           const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': {}});
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 5000 : 30000;
+          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 7000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -767,7 +777,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this._refreshJobData();
         }, refreshTime);
       }
-      this.spinner.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1222,9 +1232,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1233,7 +1243,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1260,20 +1269,19 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -1287,19 +1295,19 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @return {void}
    * */
   _terminateSelectedSessions() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       if ('description' in err) {
@@ -2304,7 +2312,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
@@ -2322,56 +2329,58 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
-
-      <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}" height-by-rows>
-        ${this._isRunning ? html`
-          <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
-          </vaadin-grid-column>
-        ` : html``}
-        <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        ${this.is_admin ? html`
-          <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
-                                     header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
-                                     .renderer="${this._boundUserInfoRenderer}">
+      <div class="list-wrapper">
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+          .items="${this.compute_sessions}" height-by-rows>
+          ${this._isRunning ? html`
+            <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            </vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          ${this.is_admin ? html`
+            <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+                                      header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
+                                      .renderer="${this._boundUserInfoRenderer}">
+            </vaadin-grid-filter-column>
+          ` : html``}
+          <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+                                     .renderer="${this._boundSessionInfoRenderer}">
           </vaadin-grid-filter-column>
-        ` : html``}
-        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
-                                   .renderer="${this._boundSessionInfoRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
-                                   .renderer="${this._boundStatusRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
-                            .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
-                            .renderer="${this._boundUsageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
-                                 path="created_at" .renderer="${this._boundReservationRenderer}">
-        </vaadin-grid-sort-column>
-        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                   .renderer="${this._boundArchitectureRenderer}">
-        </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
-                              .renderer="${this._boundAgentRenderer}">
+          <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
+                                     .renderer="${this._boundStatusRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
+                              .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+                              .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
+                                   path="created_at" .renderer="${this._boundReservationRenderer}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                     .renderer="${this._boundArchitectureRenderer}">
+          </vaadin-grid-filter-column>
+          ${this._isIntegratedCondition ? html`
+            <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
         ` : html``}
-      </vaadin-grid>
+          ${this.is_superadmin ? html`
+            <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
+                                .renderer="${this._boundAgentRenderer}">
+            </vaadin-grid-column>
+                ` : html``}
+          </vaadin-grid>
+          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
+        </div>
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <mwc-icon-button
           class="pagination"
           id="previous-page"
-      icon="navigate_before"
-      ?disabled="${this.current_page === 1}"
-      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+          icon="navigate_before"
+          ?disabled="${this.current_page === 1}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <mwc-icon-button

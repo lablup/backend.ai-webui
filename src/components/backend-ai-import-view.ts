@@ -9,8 +9,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
-
 import 'weightless/card';
 
 import '@material/mwc-icon';
@@ -42,7 +40,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) authenticated = false;
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) sessionLauncher = Object();
@@ -158,7 +155,6 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
@@ -584,7 +580,6 @@ export default class BackendAIImport extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">

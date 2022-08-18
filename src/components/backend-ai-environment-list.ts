@@ -18,6 +18,7 @@ import {
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -56,7 +57,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Object}) alias = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Object}) installImageDialog = Object();
   @property({type: Object}) deleteImageDialog = Object();
@@ -77,6 +77,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
@@ -262,7 +264,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-theme-secondary: var(--general-slider-color);
           --mdc-theme-text-primary-on-dark: #ffffff;
         }
-
       `];
   }
 
@@ -868,37 +869,39 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-        <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
-        </vaadin-grid-selection-column>
-        <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
-        </vaadin-grid-sort-column>
-        <vaadin-grid-filter-column path="registry" width="80px" resizable
-            header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="architecture" width="80px" resizable
-            header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="namespace" width="60px" resizable
-            header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="lang" resizable
-            header="${_t('environment.Language')}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="baseversion" resizable
-            header="${_t('environment.Version')}"></vaadin-grid-filter-column>
-        <vaadin-grid-column resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrappert">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
+          <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+          </vaadin-grid-selection-column>
+          <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-filter-column path="registry" width="80px" resizable
+              header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="architecture" width="80px" resizable
+              header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="namespace" width="60px" resizable
+              header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="lang" resizable
+              header="${_t('environment.Language')}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="baseversion" resizable
+              header="${_t('environment.Version')}"></vaadin-grid-filter-column>
+          <vaadin-grid-column resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
@@ -1225,7 +1228,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     this.installImageDialog = this.shadowRoot.querySelector('#install-image-dialog');
@@ -1288,8 +1291,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    * Get backend.ai client images.
    */
   _getImages() {
-    this.spinner.show();
-
+    this.list_condition = 'loading';
+    this.list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -1372,7 +1375,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // let sorted_images = {};
       // image_keys.sort();
       this.images = domainImages;
-      this.spinner.hide();
+      if (this.images.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {
@@ -1382,7 +1389,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
       this.notification.show(true, err);
-      this.spinner.hide();
+      this.list_status.hide();
     });
   }
 

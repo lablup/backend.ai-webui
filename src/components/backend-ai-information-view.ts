@@ -23,7 +23,6 @@ import 'weightless/card';
 import '@material/mwc-icon/mwc-icon';
 
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 /**
  Backend.AI Information View
