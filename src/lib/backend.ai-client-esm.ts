@@ -557,6 +557,9 @@ class Client {
     if (this.isAPIVersionCompatibleWith('v6.20220615')) {
       this._features['secure-payload'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09')) {
+      this._features['image-commit'] = true;
+    }
   }
 
   /**
@@ -1377,6 +1380,8 @@ class Client {
     let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null);
     return this._wrapWithPromise(rqst, false);
   }
+
+  // TODO: move attach_background_task function in Maintenance Class to here.
 }
 
 class ResourcePreset {
@@ -2821,8 +2826,27 @@ class ComputeSession {
     });
     return this.client._wrapWithPromise(rqst);
   }
-}
 
+  /**
+   * Request container commit for corresponding session in agent node
+   * 
+   * @param sessionName - name of the session
+   */
+  async commitSession(sessionName: string = '') {
+    const rqst = this.client.newSignedRequest('POST', `/session/${sessionName}/commit`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get status of requested container commit on agent node (on-going / finished / failed)
+   * 
+   * @param sessionName - name of the session
+   */
+  async getCommitSessionStatus(sessionName: string = '') {
+    const rqst = this.client.newSignedRequest('GET', `/session/${sessionName}/commit`);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
 class SessionTemplate {
   public client: any;
   public urlPrefix: string;

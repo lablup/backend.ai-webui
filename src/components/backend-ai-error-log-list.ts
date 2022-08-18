@@ -354,8 +354,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="list-wrapper">
         <vaadin-grid id="list-grid" page-size="${this._pageSize}"
-                    theme="row-stripes column-borders compact wrap-cell-content"
-                    aria-label="Error logs" .items="${this.logView}">
+                     theme="row-stripes column-borders compact wrap-cell-content"
+                     aria-label="Error logs" .items="${this.logView}">
           <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}" .renderer="${this.boundTimeStampRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}" .renderer="${this.boundStatusRenderer}">
@@ -370,7 +370,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           </vaadin-grid-column>
           <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
+          <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>

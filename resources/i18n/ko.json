@@ -306,7 +306,12 @@
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
     },
-    "AlreadyTerminatingSession": "이미 종료중인 세션입니다"
+    "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
+    "CommitSession": "세션을 이미지로 커밋하기",
+    "CommitOnGoing": "세션 커밋 작업 진행중",
+    "CommitFinished": "세션 커밋 작업 완료",
+    "CommitFailed": "세션 커밋 작업 실패",
+    "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: "
   },
   "button": {
     "Cancel": "취소",
@@ -336,7 +341,8 @@
     "Generate": "생성하기",
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
-    "ForceTerminate": "강제 종료"
+    "ForceTerminate": "강제 종료",
+    "Commit": "커밋하기"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1067,7 +1073,10 @@
     "InvalidChangePasswordToken": "토큰 오류",
     "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
-    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다."
+    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
+    "SingleSignOn": {
+      "LoginWithSAML": "SAML 로그인"
+    }
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

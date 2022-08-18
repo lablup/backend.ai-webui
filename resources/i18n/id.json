@@ -307,7 +307,12 @@
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
-    "NoSessionToDisplay": "__NOT_TRANSLATED__"
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -337,7 +342,8 @@
     "Generate": "Hasilkan",
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
-    "ForceTerminate": "Hentikan paksa"
+    "ForceTerminate": "Hentikan paksa",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -1068,7 +1074,10 @@
     "InvalidChangePasswordToken": "Token Tidak Valid",
     "InvalidChangePasswordTokenMessage": "Ada kesalahan pada token yang dikeluarkan untuk mengubah kata sandi. Silakan kirim email lain untuk mengubah kata sandi dan coba lagi.",
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
-    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu."
+    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",

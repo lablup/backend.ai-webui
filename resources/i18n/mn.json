@@ -307,7 +307,12 @@
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
-    "NoSessionToDisplay": "__NOT_TRANSLATED__"
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -337,7 +342,8 @@
     "Generate": "Үүсгэх",
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
-    "ForceTerminate": "Хүчээр цуцлах"
+    "ForceTerminate": "Хүчээр цуцлах",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -1068,7 +1074,10 @@
     "InvalidChangePasswordToken": "Буруу Token",
     "InvalidChangePasswordTokenMessage": "Нууц үгийг өөрчлөхийн тулд гаргасан токенд алдаа гарсан байна. Нууц үгээ өөрчлөхийн тулд өөр имэйл илгээж, дахин оролдоно уу.",
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
-    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна."
+    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",

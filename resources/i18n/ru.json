@@ -307,7 +307,12 @@
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
     "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
-    "NoSessionToDisplay": "__NOT_TRANSLATED__"
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -337,7 +342,8 @@
     "Generate": "Генерировать",
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
-    "ForceTerminate": "Принудительно завершить"
+    "ForceTerminate": "Принудительно завершить",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -1068,7 +1074,10 @@
     "InvalidChangePasswordToken": "Неверный токен",
     "InvalidChangePasswordTokenMessage": "Выданный токен для смены пароля содержит ошибку. Отправьте еще одно электронное письмо для смены пароля и повторите попытку.",
     "PleaseInputLoginInfo": "Пожалуйста, введите ID и пароль для входа.",
-    "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы."
+    "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",
