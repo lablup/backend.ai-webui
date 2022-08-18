@@ -75,7 +75,7 @@ type CommitSessionInfo = {
  * - ready: no container commit operation is on-going
  * - ongoing: container commit operation is proceeding now
  */
-type CommitSessionStatus = "ready" | "ongoing";
+type CommitSessionStatus = 'ready' | 'ongoing';
 
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {

@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
 
 /**
  Lablup Loading Dots
@@ -21,14 +23,14 @@ import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement,
 @customElement('lablup-loading-dots')
 export default class LablupLoadingdots extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) dots;
   @property({type: Boolean}) active = true;
+  @query('#dots') dots;
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS
       css`
@@ -94,7 +96,7 @@ export default class LablupLoadingdots extends LitElement {
   }
 
   firstUpdated() {
-    this.dots = this.shadowRoot.querySelector('#dots');
+    // this.dots = this.shadowRoot.querySelector('#dots');
     this.active = true;
   }
 
