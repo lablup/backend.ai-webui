@@ -1063,7 +1063,10 @@
     "InvalidChangePasswordToken": "jeton invalide",
     "InvalidChangePasswordTokenMessage": "Le jeton émis pour changer le mot de passe a une erreur. Veuillez envoyer un autre e-mail pour changer le mot de passe et réessayer.",
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
-    "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps."
+    "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",

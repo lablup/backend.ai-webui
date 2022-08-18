@@ -1063,7 +1063,10 @@
     "InvalidChangePasswordToken": "Token Tidak Valid",
     "InvalidChangePasswordTokenMessage": "Ada kesalahan pada token yang dikeluarkan untuk mengubah kata sandi. Silakan kirim email lain untuk mengubah kata sandi dan coba lagi.",
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
-    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu."
+    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",
