@@ -962,7 +962,6 @@ export default class BackendAILogin extends BackendAIPage {
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
 
-<<<<<<< HEAD
         // TODO: This is a temporary solution to automatically logs a user in
         // via SSO response.
         // If token is delivered as a querystring, login with the token.
@@ -974,10 +973,7 @@ export default class BackendAILogin extends BackendAIPage {
           return;
         }
 
-        this.client.login().then((response) => {
-=======
         this.client?.login().then((response) => {
->>>>>>> main
           if (response === false) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
@@ -1382,17 +1378,11 @@ export default class BackendAILogin extends BackendAIPage {
                     @click="${() => this._login()}">
                 </mwc-button>
                 ${this.singleSignOnVendors.includes('saml') ? html`
-<<<<<<< HEAD
                   <mwc-button
                     id="sso-login-saml-button"
                     label="${_t('login.SingleSignOn.LoginWithSAML')}"
                     fullwidth
-                    @click="${this.loginWithSAML}"
-=======
-                  <mwc-button fullwidth id="sso-login-saml-button"
-                      label="${_t('login.SingleSignOn.LoginWithSAML')}"
-                      @click="${() => this.client?.login_with_saml()}"
->>>>>>> main
+                    @click="${() => this.loginWithSAML()}"
                   ></mwc-button>
                 ` : html``}
                 <div id="additional-action-area" class="layout horizontal">
