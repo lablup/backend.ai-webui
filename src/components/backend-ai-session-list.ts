@@ -612,10 +612,12 @@ export default class BackendAiSessionList extends BackendAIPage {
       let sessions = response.compute_session_list.items;
       if (this.total_session_count === 0) {
         this.list_condition = 'no-data';
+        this.list_status.show();
         this.total_session_count = 1;
       } else {
         if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
           this.list_condition = 'no-data';
+          this.list_status.show();
         } else {
           this.list_status.hide();
         }
@@ -1233,7 +1235,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.list_condition = 'loading';
     this.list_status.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
-      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1242,7 +1243,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
-      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1276,14 +1276,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.list_status.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.list_status.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -1303,7 +1301,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
