@@ -2257,7 +2257,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             <mwc-list-item twoline noninteractive class="commit-session-info">
               <span class="subheading">Tags</span>
               <span class="monospace horizontal layout" slot="secondary">
-                ${commitSessionInfo ? commitSessionInfo?.tags?.map((tag) => 
+                ${commitSessionInfo ? commitSessionInfo?.tags?.map((tag) =>
                   html`
                     <lablup-shields app=""
                       color="green"
