@@ -50,7 +50,8 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) requestURL = '';
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
-  @property({type: String}) importMessage = '';
+  @property({type: String}) importNotebookMessage = '';
+  @property({type: String}) importGithubMessage = '';
   @property({type: String}) importGitlabMessage = '';
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
@@ -222,7 +223,7 @@ export default class BackendAIImport extends BackendAIPage {
     let queryString = globalThis.currentPageParams.queryString;
     queryString = queryString.substring(queryString.indexOf('?') + 1);
     this.queryString = queryString;
-    this.importMessage = this.queryString;
+    this.importNotebookMessage = this.queryString;
     this.environment = this.guessEnvironment(this.queryString);
     if (queryString !== '') {
       let downloadURL = 'https://raw.githubusercontent.com/' + this.queryString;
@@ -259,7 +260,7 @@ export default class BackendAIImport extends BackendAIPage {
   _fetchNotebookURLResource(downloadURL) {
     fetch(downloadURL).then((res) => {
       this.notification.text = _text('import.ReadyToImport');
-      this.importMessage = this.notification.text;
+      this.importNotebookMessage = this.notification.text;
       this.notification.show();
       this.sessionLauncher.selectDefaultLanguage(true, this.environment);
       this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
@@ -267,7 +268,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.sessionLauncher._launchSessionDialog();
     }).catch((err) => {
       this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
-      this.importMessage = this.notification.text;
+      this.importNotebookMessage = this.notification.text;
       this.notification.show();
     });
   }
@@ -294,7 +295,7 @@ export default class BackendAIImport extends BackendAIPage {
         return this.importRepoFromURL(url, name);
       } else {
         this.notification.text = _text('import.WrongURLType');
-        this.importMessage = this.notification.text;
+        this.importNotebookMessage = this.notification.text;
         this.notification.show();
         return false;
       }
@@ -338,7 +339,7 @@ export default class BackendAIImport extends BackendAIPage {
           return this.importRepoFromURL(url, name);
         } else {
           this.notification.text = _text('import.WrongURLType');
-          this.importMessage = this.notification.text;
+          this.importNotebookMessage = this.notification.text;
           this.notification.show();
           return false;
         }
@@ -358,7 +359,7 @@ export default class BackendAIImport extends BackendAIPage {
           }
           break;
         }
-        this.importMessage = this.notification.text;
+        this.importNotebookMessage = this.notification.text;
         this.notification.show();
         return false;
       });
@@ -390,7 +391,7 @@ export default class BackendAIImport extends BackendAIPage {
         return this.importRepoFromURL(url, name);
       } else {
         this.notification.text = _text('import.WrongURLType');
-        this.importMessage = this.notification.text;
+        this.importNotebookMessage = this.notification.text;
         this.notification.show();
         return false;
       }
@@ -454,7 +455,7 @@ export default class BackendAIImport extends BackendAIPage {
     name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
       if (url.includes('github.com/')) {
-        this.importMessage = _text('import.FolderName') + name;
+        this.importNotebookMessage = _text('import.FolderName') + name;
       } else {
         this.importGitlabMessage = _text('import.FolderName') + name;
       }
@@ -476,7 +477,7 @@ export default class BackendAIImport extends BackendAIPage {
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
       if (url.includes('github.com/')) {
-        this.importMessage = this.notification.text;
+        this.importNotebookMessage = this.notification.text;
       } else {
         this.importGitlabMessage = this.notification.text;
       }
@@ -581,16 +582,18 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
-  urlTextfieldChanged(e, buttonIdValue) {
+  urlTextfieldChanged(e, buttonIdValue, message?) {
     const button = this.shadowRoot.querySelector(`#${buttonIdValue}`);
     if (e.target.value !== '' && e.currentTarget.checkValidity()) {
       button.removeAttribute('disabled');
+      this.setAttribute(message, '');
     } else {
       this.notification.text = _text('import.WrongURLType');
       button.setAttribute('disabled', 'true');
-      this.importMessage = this.notification.text;
+      this.setAttribute(message, e.target.value === '' ? '' : _text('import.WrongURLType'));
       this.notification.show();
     }
+    this.requestUpdate();
   }
 
   render() {
@@ -604,12 +607,12 @@ export default class BackendAIImport extends BackendAIPage {
                            autoValidate validationMessage="${_text('import.WrongURLType')}"
                            pattern="^(https?):\/\/([\\w\.\/\-]{1,})\.ipynb$"
                            maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
-                           @change="${(e) => this.urlTextfieldChanged(e, 'import-notebook-button')}"></mwc-textfield>
+                           @change="${(e) => this.urlTextfieldChanged(e, 'import-notebook-button', 'importNotebookMessage')}"></mwc-textfield>
             <mwc-button id="import-notebook-button" disabled icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
           </div>
-          ${this.importMessage}
+          ${this.importNotebookMessage}
         </div>
       </lablup-activity-panel>
       <backend-ai-session-launcher mode="import" location="import" hideLaunchButton
@@ -649,7 +652,7 @@ export default class BackendAIImport extends BackendAIPage {
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
                              pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})\.git$"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
-                             @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button')}"></mwc-textfield>
+                             @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button', 'importGithubMessage')}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
                 ${this.vhosts.map((item, idx) => html `
                 <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
@@ -661,7 +664,7 @@ export default class BackendAIImport extends BackendAIPage {
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
-            ${this.importMessage}
+            ${this.importGithubMessage}
           </div>
         </lablup-activity-panel>
       </div>
@@ -676,7 +679,7 @@ export default class BackendAIImport extends BackendAIPage {
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
                              pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})\.git$"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
-                             @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button')}"></mwc-textfield>
+                             @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', 'importGitlabMessage')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
               <mwc-select id="gitlab-add-folder-host" label="${_t('data.Host')}">
