@@ -3583,7 +3583,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('registry.ProjectName')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
-              ${this.scaling_group}
+              ${globalThis.backendaiclient.current_group}
             </div>
             <p class="title">${_t('session.SessionInfo')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
