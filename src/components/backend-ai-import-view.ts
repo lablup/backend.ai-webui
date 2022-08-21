@@ -46,7 +46,6 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) resourcePolicy;
   @property({type: String}) requestURL = '';
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
@@ -61,7 +60,6 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Object}) storageProxyInfo = Object();
 
   constructor() {
     super();
