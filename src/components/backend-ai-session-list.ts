@@ -1481,6 +1481,10 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
+                  <span class="subheading">${_text('session.Message')}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.msg}</span>
+                </mwc-list-item>
+                <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
                   <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
                 </mwc-list-item>

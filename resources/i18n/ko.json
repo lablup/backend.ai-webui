@@ -246,6 +246,7 @@
     "Status": "상태",
     "StatusInfo": "상태 정보",
     "StatusDetail": "상세 정보",
+    "Message": "메세지",
     "TotalRetries": "생성 시도 횟수",
     "LastTry": "최근 시도한 시간",
     "Control": "제어",
