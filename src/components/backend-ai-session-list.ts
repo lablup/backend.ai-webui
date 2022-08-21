@@ -1107,7 +1107,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
       this.notification.text = _text('session.CommitOnGoing');
       this.notification.show();
-    } catch(err) {
+    } catch (err) {
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1144,7 +1144,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
     sse.addEventListener('bgtask_cancelled', (e) => {
       // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
-            this.notification.text = _text('session.CommitFailed');
+      this.notification.text = _text('session.CommitFailed');
       this.notification.show(true);
       this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
       sse.close();
@@ -1771,7 +1771,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                 ui="round"
                                 class="right-below-margin"></lablup-shields>
                     `;
-})}
+  })}
               </div>`) : html``}
               ${rowData.item.additional_reqs ? html`
                 <div class="layout horizontal center wrap">
