@@ -251,6 +251,7 @@
     "CommitOnGoing": "Commit on progress...",
     "CommitFinished": "Commit session operation finished.",
     "CommitFailed": "Commit session operation failed",
+    "Message": "Message",
     "TotalRetries": "Total Retries",
     "LastTry": "Last Try",
     "Control": "Control",

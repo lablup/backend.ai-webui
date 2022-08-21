@@ -312,7 +312,8 @@
     "CommitOnGoing": "__NOT_TRANSLATED__",
     "CommitFinished": "__NOT_TRANSLATED__",
     "CommitFailed": "__NOT_TRANSLATED__",
-    "DescCommitSession": "__NOT_TRANSLATED__"
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "Pesan"
   },
   "button": {
     "Cancel": "Batalkan",
