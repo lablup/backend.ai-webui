@@ -8,7 +8,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -49,6 +49,7 @@ type TextField = HTMLElementTagNameMap['mwc-textfield'];
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
@@ -76,12 +77,15 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @property({type: Object}) list_status = Object();
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
   @property({type: Object}) keypairs;
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
+  @property({type: Object}) userGrid = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @property({type: Object}) userStatus = {
@@ -92,6 +96,7 @@ export default class BackendAIUserList extends BackendAIPage {
   };
   @query('#user-grid') userGrid!: VaadinGrid;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-status') list_status!: BackendAIListStatus;
   @query('#password') passwordInput!: TextField;
   @query('#confirm') confirmInput!: TextField;
   @query('#username') usernameInput!: TextField;
@@ -114,7 +119,6 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 235px);
         }
 
         backend-ai-dialog h4,
@@ -255,7 +259,8 @@ export default class BackendAIUserList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.spinner.hide();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
@@ -264,9 +269,14 @@ export default class BackendAIUserList extends BackendAIPage {
       // Blank for the next impl.
       // });
       this.users = users;
-      this._totalUserCount = this.users.length;
+      if (this.users.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -642,20 +652,23 @@ export default class BackendAIUserList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid theme="row-stripes column-borders compact"
-                   aria-label="User list" id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
-                            .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
-                            .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
-        ${this.condition !== 'active' ? html`
-          <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
-                            .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact"
+                    aria-label="User list" id="user-grid" .items="${this.users}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
+                              .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
+                              .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
+          ${this.condition !== 'active' ? html`
+            <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
+                              .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">

@@ -2,8 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
@@ -21,7 +20,7 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 import '@material/mwc-icon';
@@ -35,6 +34,8 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
+
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 
 /**
@@ -55,6 +56,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;
@@ -69,6 +72,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) boundReqUrlRenderer = this.reqUrlRender.bind(this);
   @property({type: Object}) boundParamRenderer = this.paramRenderer.bind(this);
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   static get styles(): CSSResultGroup {
     return [
@@ -147,13 +151,18 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * Refresh log data.
    */
   _refreshLogData() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
-    this.spinner.hide();
+    if (this.logs.length == 0) {
+      this.list_condition = 'no-data';
+    } else {
+      this.list_status.hide();
+    }
   }
 
   /**
@@ -347,26 +356,29 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid id="list-grid" page-size="${this._pageSize}"
-                   theme="row-stripes column-borders compact wrap-cell-content"
-                   aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}" .renderer="${this.boundTimeStampRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}" .renderer="${this.boundStatusRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}" .renderer="${this.boundErrTitleRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}" .renderer="${this.boundErrMsgRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}" .renderer="${this.boundErrTypeRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}" .renderer="${this.boundMethodRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid id="list-grid" page-size="${this._pageSize}"
+                     theme="row-stripes column-borders compact wrap-cell-content"
+                     aria-label="Error logs" .items="${this.logView}">
+          <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}" .renderer="${this.boundTimeStampRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}" .renderer="${this.boundStatusRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}" .renderer="${this.boundErrTitleRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}" .renderer="${this.boundErrMsgRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}" .renderer="${this.boundErrTypeRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}" .renderer="${this.boundMethodRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <mwc-icon-button
             class="pagination"

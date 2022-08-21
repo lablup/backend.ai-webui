@@ -349,18 +349,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           max-height: 450px;
         }
 
-        div.blank-box {
-          padding: 3rem 0;
-        }
-
-        div.blank-box-medium {
-          padding: 8.8rem 0;
-        }
-
-        div.blank-box-large {
-          padding: 11.3rem 0;
-        }
-
         .environment-variables-container {
           font-size: 0.8rem;
           padding: 10px;

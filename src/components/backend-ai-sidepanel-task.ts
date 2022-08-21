@@ -65,6 +65,15 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
           padding: 0;
           margin: 0;
         }
+
+        mwc-list-item {
+          height: 100%;
+          margin-bottom: 10px;
+        }
+
+        .title {
+          white-space: pre-wrap;
+        }
       `
     ];
   }
@@ -87,9 +96,12 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     case 'image':
       return 'extension';
       break;
+    case 'commit':
+      return 'archive';
+      break;
     case 'general':
     default:
-      return 'widget';
+      return 'widgets';
       break;
     }
   }
@@ -104,7 +116,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     html`
           <mwc-list-item graphic="icon" twoline>
             <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg black">${this._taskIcon(item.tasktype)}</mwc-icon>
-            <span>${item.tasktitle}</span>
+            <span class="title">${item.tasktitle}</span>
             <span slot="secondary">${_t('sidepanel.Running')}</span>
           </mwc-list-item>
           <li divider role="separator"></li>`)}

@@ -7,7 +7,6 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
@@ -21,6 +20,7 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import './backend-ai-dialog';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -42,6 +42,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
   @query('#create-preset-name') createPresetNameInput!: TextField;
@@ -70,7 +72,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 225px);
         }
 
         wl-button > wl-icon {
@@ -222,8 +223,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <span class="flex"></span>
           <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${() => this._launchPresetAddDialog()}"></mwc-button>
         </h4>
-        <div>
-          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+        <div class="list-wrapper">
+          <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
             <vaadin-grid-sort-column resizable path="name" header="${_t('resourcePreset.Name')}">
@@ -233,6 +234,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
+          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
@@ -344,6 +346,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot?.querySelectorAll('mwc-textfield');
     textfields?.forEach((textfield) => {
@@ -427,6 +430,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const param = {
       'group': globalThis.backendaiclient.current_group
     };
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
@@ -439,6 +444,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
       });
       this.resourcePresets = resourcePresets;
+      if (this.resourcePresets.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {

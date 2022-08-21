@@ -246,6 +246,12 @@
     "Status": "Status",
     "StatusInfo": "Status Info",
     "StatusDetail": "Detail",
+    "CommitSession": "Commit Session",
+    "DescCommitSession": "You are about to commit container corresponding to the session below: ",
+    "CommitOnGoing": "Commit on progress...",
+    "CommitFinished": "Commit session operation finished.",
+    "CommitFailed": "Commit session operation failed",
+    "Message": "Message",
     "TotalRetries": "Total Retries",
     "LastTry": "Last Try",
     "Control": "Control",
@@ -271,6 +277,7 @@
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
+    "NoSessionToDisplay": "No sessions to display",
     "CreationFailed": "Session creation failed. Please try again in few minutes.",
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
@@ -333,7 +340,8 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
-    "ForceTerminate": "Force Terminate"
+    "ForceTerminate": "Force Terminate",
+    "Commit": "Commit"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -353,6 +361,7 @@
     "Running": "Running",
     "BackendType": "Backend Type",
     "Capabilities": "Capabilities",
+    "NoAgentToDisplay": "No Agents to display",
     "NoNetworkSignal": "No network signals."
   },
   "general": {
@@ -426,6 +435,8 @@
     "Description": "Description",
     "Days": "Days",
     "NoChanges": "No changes were made",
+    "NoUserToDisplay": "No Users to display",
+    "NoCredentialToDisplay": "No Credentials to display",
     "FileName": "File name",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
@@ -519,6 +530,7 @@
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
+      "NoFolderToDisplay": "No Folders to display",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
@@ -644,6 +656,7 @@
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
     "Disabled": "disabled",
+    "NoImageToDisplay": "No Images to display",
     "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
     "InstallingImage": "Installing: ",
     "TakesTime": ". It takes time so have a cup of coffee!",
@@ -664,6 +677,7 @@
     "PresetName": "Preset Name",
     "AboutToDeletePreset": "You are about to delete this preset:",
     "NoPresetName": "Input preset name",
+    "NoResourcePresetToDisplay": "No Resource Presets to display",
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
@@ -746,6 +760,7 @@
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
     "ErrorType": "Error Type",
+    "NoLogToDisplay": "No Logs to display",
     "LogMessageRemoved": "Log Messages have been removed."
   },
   "resourcePolicy": {
@@ -772,6 +787,7 @@
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
+    "NoResourcePolicyToDisplay": "No Resource Policies to display",
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
   },
   "registry": {
@@ -805,6 +821,8 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
+    "NoRegistryToDisplay": "No Registries to display",
+    "ModifyRegistryConfigurations": "Modify registry configurations",
     "RegistrySuccessfullyModified": "Registry successfully modified.",
     "PleaseSelectOption": "Please Select Option"
   },
@@ -836,7 +854,8 @@
     "SetSchedulerOptions": "Set Scheduler Options",
     "TimeoutSeconds": "Seconds",
     "ResourceGroupDetail": "Resource Group Detail",
-    "RetriesToSkip": "Times"
+    "RetriesToSkip": "Times",
+    "NoGroupToDisplay": "NoGroupToDisplay"
   },
   "maintenance": {
     "General": "General",

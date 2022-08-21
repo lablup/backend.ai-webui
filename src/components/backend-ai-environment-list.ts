@@ -1,7 +1,7 @@
 /**
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
- */
+*/
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
@@ -17,6 +17,7 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -38,18 +39,18 @@ import '@material/mwc-list/mwc-list-item';
 import {default as PainKiller} from './backend-ai-painkiller';
 
 /* FIXME:
- * This type definition is a workaround for resolving both Type error and Importing error.
- */
+* This type definition is a workaround for resolving both Type error and Importing error.
+*/
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type Slider = HTMLElementTagNameMap['mwc-slider'];
 
 /**
- Backend.AI Environment List
-
+Backend.AI Environment List
 @group Backend.AI Web UI
- @element backend-ai-environment-list
- */
+@element backend-ai-environment-list
+*/
 
 @customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
@@ -81,6 +82,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2']};
   @property({type: Number}) cpuValue = 0;
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
   @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
   @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
@@ -88,6 +90,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
   @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#backend-ai-list-status') list_status!: BackendAIListStatus;
   @query('#modify-image-cpu') modifyImageCpu!: Button;
   @query('#modify-image-mem') modifyImageMemory!: Button;
   @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
@@ -122,17 +125,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           font-size: 14px;
           height: calc(100vh - 235px);
         }
-
         wl-button > wl-icon {
           --icon-size: 24px;
           padding: 0;
         }
-
         wl-icon {
           --icon-size: 16px;
           padding: 0;
         }
-
         wl-label {
           --label-font-size: 13px;
           --label-font-family: 'Ubuntu', Roboto;
@@ -148,33 +148,27 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           display: inline-block;
           margin: 0;
         }
-
         wl-label.installed {
           --label-color: #52595d;
         }
-
         wl-label.installing {
           --label-color: var(--paper-orange-700);
         }
-
         img.indicator-icon {
           width: 16px;
           height: 16px;
         }
-
         div.indicator,
         span.indicator {
           font-size: 9px;
           margin-right: 5px;
         }
-
         span.resource-limit-title {
           font-size: 14px;
           font-family: var(--general-font-family);
           text-align: left;
           width: 70px;
         }
-
         wl-button {
           --button-bg: var(--paper-orange-50);
           --button-bg-hover: var(--paper-orange-100);
@@ -182,58 +176,46 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --button-color: #242424;
           color: var(--paper-orange-900);
         }
-
         wl-button.operation {
           margin: auto 10px;
           padding: auto 10px;
         }
-
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-
         backend-ai-dialog#modify-image-dialog wl-select,
         backend-ai-dialog#modify-image-dialog wl-textfield {
           margin-bottom: 20px;
         }
-
         wl-select, wl-textfield {
           --input-font-family: var(--general-font-family);
         }
-
         backend-ai-dialog wl-textfield {
           --input-font-size: 14px;
         }
-
         #modify-app-dialog {
           --component-max-height: 550px;
         }
-
         backend-ai-dialog vaadin-grid {
           margin: 0px 20px;
         }
-
         .gutterBottom {
           margin-bottom: 20px;
         }
-
         div.container {
           display: flex;
           flex-direction: column;
           padding: 0px 30px;
         }
-
         div.row {
           display: grid;
           grid-template-columns: 4fr 4fr 4fr 1fr;
           margin-bottom: 10px;
         }
-
         mwc-button.operation {
           margin: auto 10px;
           padding: auto 10px;
         }
-
         mwc-button[outlined] {
           width: 100%;
           margin: 10px auto;
@@ -244,40 +226,33 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           --mdc-theme-primary: #38bd73;
           --mdc-theme-on-primary: #38bd73;
         }
-
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
         }
-
         mwc-button[disabled] {
           background-image: var(--general-sidebar-color);
         }
-
         mwc-button[disabled].range-value {
           --mdc-button-disabled-ink-color: var(--general-sidebar-color);
         }
-
         mwc-select {
           --mdc-theme-primary: var(--general-sidebar-color);
           --mdc-menu-item-height: auto;
         }
-
         mwc-textfield {
           width: 100%;
           --mdc-text-field-fill-color: transparent;
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
-
         mwc-slider {
           width: 100%;
           margin: auto 10px;
           --mdc-theme-secondary: var(--general-slider-color);
           --mdc-theme-text-primary-on-dark: #ffffff;
         }
-
       `];
   }
 
@@ -311,9 +286,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Remove selected row in the environment list.
-   *
-   */
+  * Remove selected row in the environment list.
+  *
+  */
   _removeRow() {
     this.deleteAppRow.remove();
     this.deleteAppInfoDialog.hide();
@@ -322,8 +297,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Add a row to the environment list.
-     */
+    * Add a row to the environment list.
+    */
   _addRow() {
     const lastChild = this.modifyAppContainer.children[this.modifyAppContainer.children.length - 1];
     const div = this._createRow();
@@ -331,10 +306,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Create a row in the environment list.
-     *
-     * @return {HTMLElement} Generated div element
-     */
+    * Create a row in the environment list.
+    *
+    * @return {HTMLElement} Generated div element
+    */
   _createRow() {
     const div = document.createElement('div');
     div.setAttribute('class', 'row extra');
@@ -367,10 +342,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Check whether delete operation will proceed or not.
-     *
-     * @param {any} e - Dispatches from the native input event each time the input changes.
-     */
+    * Check whether delete operation will proceed or not.
+    *
+    * @param {any} e - Dispatches from the native input event each time the input changes.
+    */
   _checkDeleteAppInfo(e) {
     // htmlCollection should be converted to Array.
     this.deleteAppRow = e.target.parentNode;
@@ -387,8 +362,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Clear rows from the environment list.
-     */
+    * Clear rows from the environment list.
+    */
   _clearRows() {
     const rows = this.modifyAppContainer.querySelectorAll('.row');
     const lastRow = rows[rows.length - 1];
@@ -402,18 +377,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Deselect the selected row from the environment list.
-     */
+    * Deselect the selected row from the environment list.
+    */
   _uncheckSelectedRow() {
     // empty out selectedItem
     this._grid.selectedItems = [];
   }
 
   /**
-     * Refresh the sorter.
-     *
-     * @param {Event} e - Dispatches from the native input event each time the input changes.
-     */
+    * Refresh the sorter.
+    *
+    * @param {Event} e - Dispatches from the native input event each time the input changes.
+    */
   _refreshSorter(e) {
     const sorter = e.target;
     const sorterPath = sorter.path.toString();
@@ -438,11 +413,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Get backend.ai client images.
-     */
+    * Get backend.ai client images.
+    */
   _getImages() {
-    this.spinner.show();
-
+    this.list_condition = 'loading';
+    this.list_status.show(); 
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -525,7 +500,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // let sorted_images = {};
       // image_keys.sort();
       this.images = domainImages;
-      this.spinner.hide();
+      if (this.images.length == 0) {
+      this.list_condition = 'no-data';
+    } else {
+      this.list_status.hide();
+    }
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {
@@ -535,16 +514,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
       }
       this.notification.show(true, err);
-      this.spinner.hide();
+      this.list_status.hide();
     });
   }
 
   /**
-     * Add unit to the value.
-     *
-     * @param {string} value
-     * @return {string} value with proper unit
-     */
+    * Add unit to the value.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _addUnit(value) {
     const unit = value.substr(-1);
     if (unit == 'm') {
@@ -560,11 +539,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Change unit to symbol.
-     *
-     * @param {string} value
-     * @return {string} value with proper unit
-     */
+    * Change unit to symbol.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _symbolicUnit(value) {
     const unit = value.substr(-2);
     if (unit == 'MB') {
@@ -580,11 +559,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-     * Humanize the value.
-     *
-     * @param {string} value - Language name, version, environment or identifier
-     * @return {string} Humanized value for value
-     */
+    * Humanize the value.
+    *
+    * @param {string} value - Language name, version, environment or identifier
+    * @return {string} Humanized value for value
+    */
   _humanizeName(value) {
     this.alias = {
       'python': 'Python',
@@ -684,11 +663,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * If value includes unlimited contents, mark as unlimited.
-   *
-   * @param {string} value - string value
-   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
-   */
+  * If value includes unlimited contents, mark as unlimited.
+  *
+  * @param {string} value - string value
+  * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
+  */
   _markIfUnlimited(value: string) {
     if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
       return '∞';
@@ -698,28 +677,28 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Hide a dialog by id.
-   *
-   * @param {string} id - Dialog component ID
-   * @return {void}
-   */
+  * Hide a dialog by id.
+  *
+  * @param {string} id - Dialog component ID
+  * @return {void}
+  */
   _hideDialogById(id: string) {
     return (this.shadowRoot?.querySelector(id) as BackendAIDialog).hide();
   }
 
   /**
-   * Display a dialog by id.
-   *
-   * @param {string} id - Dialog component ID
-   * @return {void}
-   */
+  * Display a dialog by id.
+  *
+  * @param {string} id - Dialog component ID
+  * @return {void}
+  */
   _launchDialogById(id: string) {
     return (this.shadowRoot?.querySelector(id) as BackendAIDialog).show();
   }
 
   /**
-   * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
-   */
+  * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
+  */
   modifyImage() {
     const cpu = this.modifyImageCpu.label;
     const mem = this.modifyImageMemory.label;
@@ -770,9 +749,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Open the selected image.
-   *
-   */
+  * Open the selected image.
+  *
+  */
   openInstallImageDialog() {
     // select only uninstalled images
     this.selectedImages = this._grid.selectedItems.filter((images: any): boolean => {
@@ -886,9 +865,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Open images to delete.
-   *
-   */
+  * Open images to delete.
+  *
+  */
   openDeleteImageDialog() {
     // select only installed images
     this.selectedImages = this._grid.selectedItems.filter((images: any): object => {
@@ -911,10 +890,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Set resource limits to default value.
-   *
-   * @param {object} resource_limits
-   */
+  * Set resource limits to default value.
+  *
+  * @param {object} resource_limits
+  */
   _setPulldownDefaults(resource_limits) {
     this._cuda_gpu_disabled = resource_limits.filter((e) => e.key === 'cuda_device').length === 0;
     this._cuda_fgpu_disabled = resource_limits.filter((e) => e.key === 'cuda_shares').length === 0;
@@ -978,8 +957,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Decode backend.ai service ports.
-   */
+  * Decode backend.ai service ports.
+  */
   _decodeServicePort() {
     if (this.images[this.selectedIndex].labels['ai.backend.service-ports'] === '') {
       this.servicePorts = [];
@@ -999,10 +978,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Validate backend.ai service ports.
-   *
-   * @return {boolean} Whether the port is valid or not
-   */
+  * Validate backend.ai service ports.
+  *
+  * @return {boolean} Whether the port is valid or not
+  */
   _isServicePortValid() {
     const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
@@ -1040,10 +1019,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Parse backend.ai service ports.
-   *
-   * @return {string} Service ports separated with comma
-   */
+  * Parse backend.ai service ports.
+  *
+  * @return {string} Service ports separated with comma
+  */
   _parseServicePort() {
     const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
@@ -1056,8 +1035,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Modify backend.ai service ports.
-   */
+  * Modify backend.ai service ports.
+  */
   modifyServicePort() {
     if (this._isServicePortValid()) {
       const value = this._parseServicePort();
@@ -1080,13 +1059,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Render requirments such as cpu limit, memoty limit
-   * cuda share limit, rocm device limit and tpu limit.
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
+  * Render requirments such as cpu limit, memoty limit
+  * cuda share limit, rocm device limit and tpu limit.
+  *
+  * @param {DOMelement} root
+  * @param {object} column (<vaadin-grid-column> element)
+  * @param {object} rowData
+  */
   requirementsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1106,7 +1085,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </div>
             </div>
           ${rowData.item.cuda_device_limit_min ? html`
-             <div class="layout horizontal center flex">
+            <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
                   <span>${rowData.item.cuda_device_limit_min}</span> ~
@@ -1126,7 +1105,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </div>
               ` : html``}
           ${rowData.item.rocm_device_limit_min ? html`
-             <div class="layout horizontal center flex">
+            <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
                   <span>${rowData.item.rocm_device_limit_min}</span> ~
@@ -1136,7 +1115,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               </div>
               ` : html``}
           ${rowData.item.tpu_device_limit_min ? html`
-             <div class="layout horizontal center flex">
+            <div class="layout horizontal center flex">
                 <div class="layout horizontal configuration">
                   <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
                   <span>${rowData.item.tpu_device_limit_min}</span> ~
@@ -1150,12 +1129,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   * Render controllers.
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
+  * Render controllers.
+  *
+  * @param {DOMelement} root
+  * @param {object} column (<vaadin-grid-column> element)
+  * @param {object} rowData
+  */
   controlsRenderer(root, column?, rowData?) {
     render(
       html`
@@ -1190,12 +1169,12 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
- * Render an installed tag for each image.
- *
- * @param {DOMelement} root
- * @param {object} column (<vaadin-grid-column> element)
- * @param {object} rowData
- */
+* Render an installed tag for each image.
+*
+* @param {DOMelement} root
+* @param {object} column (<vaadin-grid-column> element)
+* @param {object} rowData
+*/
   installRenderer(root, column, rowData) {
     render(
       // language=HTML
@@ -1225,13 +1204,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
 
 
   /**
-   *
-   * Render an base image label for each image
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
+  *
+  * Render an base image label for each image
+  *
+  * @param {DOMelement} root
+  * @param {object} column (<vaadin-grid-column> element)
+  * @param {object} rowData
+  */
   baseImageRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1244,13 +1223,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   *
-   * Render an constraint for each image
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
+  *
+  * Render an constraint for each image
+  *
+  * @param {DOMelement} root
+  * @param {object} column (<vaadin-grid-column> element)
+  * @param {object} rowData
+  */
   constraintRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1262,13 +1241,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-   *
-   * Render digest information for each image
-   *
-   * @param {DOMelement} root
-   * @param {object} column (<vaadin-grid-column> element)
-   * @param {object} rowData
-   */
+  *
+  * Render digest information for each image
+  *
+  * @param {DOMelement} root
+  * @param {object} column (<vaadin-grid-column> element)
+  * @param {object} rowData
+  */
   digestRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -1283,11 +1262,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="horizontal layout flex end-justified" style="margin:10px;">
         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
       </div>
+      <div class="list-wrapper">
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
         <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
         </vaadin-grid-selection-column>
@@ -1314,6 +1293,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
+      <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
         <div slot="content">
