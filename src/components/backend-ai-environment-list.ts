@@ -90,7 +90,7 @@
    @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
    @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
    @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-   @query('#backend-ai-list-status') list_status!: BackendAIListStatus;
+   @query('#list-status') list_status!: BackendAIListStatus;
    @query('#modify-image-cpu') modifyImageCpu!: Button;
    @query('#modify-image-mem') modifyImageMemory!: Button;
    @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
