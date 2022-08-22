@@ -44,6 +44,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 /**
  Backend AI Session List
@@ -114,7 +115,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) notification = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
@@ -154,8 +154,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
-  @query('#list-status') list_status;
-  @query('#list-grid') _grid;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   constructor() {
     super();

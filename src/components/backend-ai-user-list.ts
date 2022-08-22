@@ -77,14 +77,12 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) list_status = Object();
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
   @property({type: Object}) keypairs;
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) userGrid = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;

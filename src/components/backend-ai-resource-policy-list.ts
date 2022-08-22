@@ -38,6 +38,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 class BigNumber {
   static getValue() {
@@ -48,7 +49,6 @@ class BigNumber {
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
@@ -80,6 +80,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @query('#modify-policy-dialog') modifyPolicyDialog!: BackendAIDialog;
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @query('#id_new_policy_name') newPolicyName!: TextField;
+  @query('#list-status') list_status!: BackendAIListStatus;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
@@ -546,7 +547,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';

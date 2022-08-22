@@ -29,6 +29,7 @@ import './lablup-progress-bar';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 /**
  Backend.AI Storage Proxy List
@@ -47,7 +48,6 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
@@ -59,6 +59,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
   @query('#storage-proxy-detail') storageProxyDetailDialog!: BackendAIDialog;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -143,7 +144,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 

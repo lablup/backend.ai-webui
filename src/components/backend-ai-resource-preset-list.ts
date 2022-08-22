@@ -31,6 +31,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  */
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
@@ -42,7 +43,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -61,6 +61,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @query('#create-preset-dialog') createPresetDialog!: BackendAIDialog;
   @query('#modify-template-dialog') modifyTemplateDialog!: BackendAIDialog;
   @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: BackendAIDialog;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   static get styles(): CSSResultGroup {
     return [
@@ -346,7 +347,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot?.querySelectorAll('mwc-textfield');
     textfields?.forEach((textfield) => {

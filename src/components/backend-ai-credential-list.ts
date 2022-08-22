@@ -33,6 +33,11 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
+
 /**
  Backend.AI Credential List
 
@@ -66,7 +71,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) list_status;
   @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
@@ -85,6 +89,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
   @query('#policy-list') policyListSelect!: Select;
   @query('#rate-limit') rateLimit!: TextField;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -170,7 +175,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 

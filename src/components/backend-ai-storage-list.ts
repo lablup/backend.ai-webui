@@ -99,11 +99,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   // TODO delete - not used in this file
   // @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) renameFileDialog = Object();
-  @property({type: Object}) deleteFileDialog = Object();
-  @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;

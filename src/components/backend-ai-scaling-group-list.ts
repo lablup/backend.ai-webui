@@ -4,8 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
@@ -25,17 +25,22 @@ import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
 
-import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-textarea/mwc-textarea';
+import {Switch} from '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
+import {TextArea} from '@material/mwc-textarea';
+import {TextField} from '@material/mwc-textfield';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 /**
  Backend AI Scaling Group List
@@ -54,12 +59,16 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Number}) _totalScalingGroupCount = 0;
+  @query('#scaling-group-name') scalingGroupName!: TextField;
+  @query('#scaling-group-description') scalingGroupDescription!: TextArea;
+  @query('#scaling-group-domain') scalingGroupDomain!: Select;
+  @query('#modify-scaling-group-active') modifyScalingGroupActive!: Switch;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -69,7 +78,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -163,7 +172,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -238,11 +246,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _launchDialogById(id) {
-    this.shadowRoot.querySelector(id).show();
+    this.shadowRoot?.querySelector(id).show();
   }
 
   _hideDialogById(id) {
-    this.shadowRoot.querySelector(id).hide();
+    this.shadowRoot?.querySelector(id).hide();
   }
 
   /**
@@ -264,7 +272,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             class="fg blue"
             @click=${() => {
     this.selectedIndex = rowData.index;
-    this.shadowRoot.querySelector('#modify-scaling-group-active').checked = this.scalingGroups[rowData.index].is_active;
+    this.modifyScalingGroupActive.selected = this.scalingGroups[rowData.index].is_active;
     this._launchDialogById('#modify-scaling-group-dialog');
   }}
           ><wl-icon>settings</wl-icon></wl-button>
@@ -282,7 +290,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _validateResourceGroupName() {
     const scalingGroupNames = this.scalingGroups.map((scalingGroup) => scalingGroup['name']);
-    const scalingGroupInfo = this.shadowRoot.querySelector('#scaling-group-name');
+    const scalingGroupInfo = this.scalingGroupName;
     scalingGroupInfo.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
@@ -315,11 +323,11 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * Create scaling group and associate scaling group with domain.
    * */
   _createScalingGroup() {
-    const scalingGroupEl = this.shadowRoot.querySelector('#scaling-group-name');
+    const scalingGroupEl = this.scalingGroupName;
     if (scalingGroupEl.checkValidity()) {
-      const scalingGroup = this.shadowRoot.querySelector('#scaling-group-name').value;
-      const description = this.shadowRoot.querySelector('#scaling-group-description').value;
-      const domain = this.shadowRoot.querySelector('#scaling-group-domain').value;
+      const scalingGroup = this.scalingGroupName.value;
+      const description = this.scalingGroupDescription.value;
+      const domain = this.scalingGroupDomain.value;
       globalThis.backendaiclient.scalingGroup.create(scalingGroup, description)
         .then(({create_scaling_group: res}) => {
           if (res.ok) {
@@ -336,8 +344,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           if (res.ok) {
             this.notification.text = _text('resourceGroup.ResourceGroupCreated');
             this._refreshList();
-            this.shadowRoot.querySelector('#scaling-group-name').value = '';
-            this.shadowRoot.querySelector('#scaling-group-description').value = '';
+            this.scalingGroupName.value = '';
+            this.scalingGroupDescription.value = '';
           } else {
             this.notification.text = PainKiller.relieve(res.title);
             this.notification.detail = res.msg;
@@ -361,9 +369,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
    * Modify scaling group such as description, scheduler, is_active, and name.
    * */
   _modifyScalingGroup() {
-    const description = this.shadowRoot.querySelector('#modify-scaling-group-description').value;
-    const scheduler = this.shadowRoot.querySelector('#modify-scaling-group-scheduler').value;
-    const is_active = this.shadowRoot.querySelector('#modify-scaling-group-active').checked;
+    const description = (this.shadowRoot?.querySelector('#modify-scaling-group-description') as TextArea).value;
+    const scheduler = (this.shadowRoot?.querySelector('#modify-scaling-group-scheduler') as Select).value;
+    const is_active = this.modifyScalingGroupActive.selected;
     const name = this.scalingGroups[this.selectedIndex].name;
 
     const input = {};
@@ -393,7 +401,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _deleteScalingGroup() {
     const name = this.scalingGroups[this.selectedIndex].name;
-    if (this.shadowRoot.querySelector('#delete-scaling-group').value !== name) {
+    if ((this.shadowRoot?.querySelector('#delete-scaling-group') as TextField).value !== name) {
       this.notification.text = _text('resourceGroup.ResourceGroupNameNotMatch');
       this._hideDialogById('#delete-scaling-group-dialog');
       this.notification.show();
@@ -405,7 +413,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         if (delete_scaling_group.ok) {
           this.notification.text = _text('resourceGroup.ResourceGroupDeleted');
           this._refreshList();
-          this.shadowRoot.querySelector('#delete-scaling-group').value = '';
+          (this.shadowRoot?.querySelector('#delete-scaling-group') as TextField).value = '';
         } else {
           this.notification.text = PainKiller.relieve(delete_scaling_group.msg);
           this.notification.detail = delete_scaling_group.msg;

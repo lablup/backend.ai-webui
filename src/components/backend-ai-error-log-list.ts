@@ -56,7 +56,6 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: Object}) list_status = Object();
   @property({type: String}) list_condition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];

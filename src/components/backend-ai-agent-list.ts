@@ -29,6 +29,11 @@ import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
+
 /**
  Backend.AI Agent List
 
@@ -48,7 +53,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) list_condition = 'loading';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
-  @property({type: Object}) list_status = Object();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -64,6 +68,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @query('#agent-detail') agentDetailDialog!: BackendAIDialog;
   @query('#agent-setting') agentSettingDialog!: BackendAIDialog;
   @query('#schedulable-switch') schedulableToggle!: Switch;
+  @query('#list-status') list_status!: BackendAIListStatus;
 
   static get styles(): CSSResultGroup {
     return [
@@ -157,7 +162,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
