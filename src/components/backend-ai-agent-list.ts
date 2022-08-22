@@ -282,10 +282,12 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
               agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
               agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
+              agents[objectKey].total_cpu_percent = (agents[objectKey].cpu_total_usage_ratio * 100).toFixed(2);
             } else {
               agents[objectKey].current_cpu_percent = 0;
               agents[objectKey].cpu_total_usage_ratio = 0;
               agents[objectKey].cpu_current_usage_ratio = 0;
+              agents[objectKey].total_cpu_percent = (agents[objectKey].cpu_total_usage_ratio * 100).toFixed(2);
             }
             if (agent.mem_cur_bytes !== null) {
               agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
@@ -298,6 +300,8 @@ export default class BackendAIAgentList extends BackendAIPage {
             agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
             agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
             agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
+            agents[objectKey].total_mem_percent = (agents[objectKey].mem_total_usage_ratio * 100).toFixed(2);
+
             if ('cuda.device' in available_slots) {
               agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
               if ('cuda.device' in occupied_slots) {
@@ -306,6 +310,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_cuda_gpu_slots = 0;
               }
               agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
+              agents[objectKey].total_cuda_gpu_percent = (agents[objectKey].used_cuda_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda.shares' in available_slots) {
               agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
@@ -315,6 +320,8 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_cuda_fgpu_slots = 0;
               }
               agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
+              agents[objectKey].total_cuda_fgpu_percent = (agents[objectKey].used_cuda_fgpu_slots_ratio * 100).toFixed(2);
+
             }
             if ('rocm.device' in available_slots) {
               agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
@@ -324,6 +331,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_rocm_gpu_slots = 0;
               }
               agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+              agents[objectKey].total_rocm_gpu_percent = (agents[objectKey].used_rocm_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda' in compute_plugins) {
               const cuda_plugin = compute_plugins['cuda'];
@@ -697,46 +705,44 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           ${rowData.item.cpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cpu_slots}/${rowData.item.cpu_slots}</span>
                 <span class="indicator">${_t('general.cores')}</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                                   buffer="${rowData.item.cpu_total_usage_ratio}"
-                                   description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
+              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_total_usage_ratio}"
+                                   description="${rowData.item.total_cpu_percent}%"></lablup-progress-bar>
             </div>` : html``}
           ${rowData.item.mem_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <mwc-icon class="fg green">memory</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
-                <span class="indicator">GB</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_mem_slots}/${rowData.item.mem_slots}</span>
+                <span class="indicator">GiB</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                                   buffer="${rowData.item.mem_total_usage_ratio}"
-                                   description="${rowData.item.current_mem}GB"></lablup-progress-bar>
+              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_total_usage_ratio}"
+                                   description="${rowData.item.total_mem_percent}%"></lablup-progress-bar>
             </div>` : html``}
           ${rowData.item.cuda_gpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
-                <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cuda_gpu_slots}/${rowData.item.cuda_gpu_slots}</span>
                 <span class="indicator">GPU</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
-                                   description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
+                                   description="${rowData.item.total_cuda_gpu_percent}%"></lablup-progress-bar>
             </div>
           ` : html``}
           ${rowData.item.cuda_fgpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
-                <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cuda_fgpu_slots}/${rowData.item.cuda_fgpu_slots}</span>
                 <span class="indicator">fGPU</span>
               </div>
               <span class="flex"></span>
@@ -745,10 +751,10 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           ` : html``}
           ${rowData.item.rocm_gpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/ROCm.png"/>
-                <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_rocm_gpu_slots}/${rowData.item.rocm_gpu_slots}</span>
                 <span class="indicator">ROCm</span>
               </div>
               <span class="flex"></span>
@@ -757,10 +763,10 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           ` : html``}
           ${rowData.item.tpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/tpu.svg"/>
-                <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_tpu_slots}/${rowData.item.tpu_slots}</span>
                 <span class="indicator">TPU</span>
               </div>
               <span class="flex"></span>
