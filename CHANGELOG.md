@@ -1,5 +1,19 @@
 # Changelog
 
+## v22.09.0 (22/08/2022)
+ * Release update to match 22.09 branch
+
+
+## v22.03.7 (22/08/2022)
+
+## What's Changed
+* Feature: webui grid status by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1138
+* Hotfix: Temporally disable terminate and container commit on running session by @lizable in https://github.com/lablup/backend.ai-webui/pull/1425
+* feature: display message when session's status is `no-available-instances` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1426
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.6...v22.03.7
+
 ## v22.03.6 (18/08/2022)
 
 ## What's Changed
