@@ -99,33 +99,17 @@ export default class BackendAIAgentList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
+        .progress-bar-section {
+          height: 20px;
         }
 
-        mwc-icon {
-          --mdc-icon-size: 16px;
+        .resource-indicator {
+          width: 100px !important;
         }
 
-        mwc-icon.schedulable {
-          --mdc-icon-size: 24px;
-        }
-
-        img.indicator-icon {
-          width: 16px !important;
-          height: 16px !important;
-        }
-
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        .agent-detail-title {
+          font-size: 8px;
+          width: 35px;
         }
 
         div.indicator,
@@ -141,6 +125,11 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         backend-ai-dialog {
           --component-width: 350px;
+        }
+
+        img.indicator-icon {
+          width: 16px !important;
+          height: 16px !important;
         }
 
 
@@ -168,17 +157,26 @@ export default class BackendAIAgentList extends BackendAIPage {
           --progress-bar-height: 15px;
         }
 
+        lablup-progress-bar.utilization {
+          --progress-bar-width: 80px;
+          margin-left: 10px;
+        }
+
         lablup-shields {
           margin: 1px;
         }
 
-        .resource-indicator {
-          width: 100px !important;
+        mwc-icon {
+          --mdc-icon-size: 16px;
         }
 
-        .agent-detail-title {
-          font-size: 8px;
-          width: 35px;
+        mwc-icon.schedulable {
+          --mdc-icon-size: 24px;
+        }
+
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
         }
     `];
   }
