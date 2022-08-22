@@ -941,8 +941,13 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
 
-  _bytesToMB(value) {
+  _bytesToMiB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
+  }
+
+  static bytesToGiB(num, digits=2) {
+    if (!num) return num;
+    return (num / 2 ** 30).toFixed(digits);
   }
 
   _modifyAgentSetting() {
@@ -1008,28 +1013,30 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ${this.agentDetail.cpu_util_live.map((item) => html`
                   <div class="horizontal start-justified center layout" style="padding:0 5px;">
                     <div class="agent-detail-title">CPU${item.num}</div>
-                    <lablup-progress-bar class="cpu"
-                                          progress="${item.pct / 100.0}"
+                    <lablup-progress-bar
+                        class="cpu"
+                        progress="${item.pct / 100.0}"
                     ></lablup-progress-bar>
                   </div>`)}
               </div>` : html``}
               <div class="vertical layout start-justified flex">
                 <h3>Memory</h3>
                 <div>
-                  <lablup-progress-bar class="mem"
-                                      progress="${this.agentDetail.mem_current_usage_ratio}"
-                                      description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
+                  <lablup-progress-bar
+                      class="mem"
+                      progress="${this.agentDetail.mem_current_usage_ratio}"
+                      description="${this.agentDetail.current_mem}GiB/${this.agentDetail.mem_slots}GiB"
                   ></lablup-progress-bar>
                 </div>
                 <h3>Network</h3>
                 ${this.agentDetail?.live_stat?.node ? html`
                   <div class="horizontal layout justified" style="width:100px;">
                     <span>TX: </span>
-                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</span>
+                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
                   </div>
                   <div class="horizontal layout justified flex" style="width:100px;">
                     <span>RX: </span>
-                    <span>${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</span>
+                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
                   </div>
                 ` : html`
                   <p>${_t('agent.NoNetworkSignal')}</p>
