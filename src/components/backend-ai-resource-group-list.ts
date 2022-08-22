@@ -25,12 +25,12 @@ import 'weightless/textfield';
 import 'weightless/title';
 import {Expansion} from 'weightless/expansion';
 
-import {Switch} from '@material/mwc-switch/mwc-switch';
 import '@material/mwc-button/mwc-button';
-import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
-import {TextArea} from '@material/mwc-textarea/mwc-textarea';
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-textarea/mwc-textarea';
+import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -41,6 +41,10 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type TextArea = HTMLElementTagNameMap['mwc-textarea'];
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
+type Switch = HTMLElementTagNameMap['mwc-switch'];
+type Select = HTMLElementTagNameMap['mwc-select'];
 
 /**
  Backend AI Resource Group List
@@ -458,7 +462,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const name = this.resourceGroupInfo.name;
 
     const input = {};
-    if (this.resourceGroupDescriptionInput !== this.resourceGroupInfo.description) input['description'] = this.resourceGroupDescriptionInput;
+    if (this.resourceGroupDescriptionInput !== this.resourceGroupInfo.description) input['description'] = this.resourceGroupDescriptionInput.value;
     if (scheduler !== this.resourceGroupInfo.scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.resourceGroupInfo.is_active) input['is_active'] = is_active;
     if (this.enableWSProxyAddr) {
