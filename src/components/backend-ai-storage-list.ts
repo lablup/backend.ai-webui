@@ -8,7 +8,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 
 import '@material/mwc-textfield';
@@ -93,7 +93,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) spinner = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -183,7 +184,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         vaadin-grid.folderlist {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 230px);
         }
 
         vaadin-grid.explorer {
@@ -560,26 +560,28 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
-        <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
-            header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
-        <vaadin-grid-column width="135px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
-            header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
-        ${this.enableStorageProxy ? html`
-          <!--<vaadin-grid-column
-              auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
-              .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
-        <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
-      </vaadin-grid>
-
+      <div class="list-wrapper">
+        <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
+          <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
+              header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
+          <vaadin-grid-column width="135px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
+              header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
+          ${this.enableStorageProxy ? html`
+            <!--<vaadin-grid-column
+                auto-width flex-grow="0" resizable header="${_t('data.folders.Cloneable')}"
+                .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
+          <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('data.folders.NoFolderToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
@@ -1013,7 +1015,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
@@ -1502,12 +1504,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
+    this.list_condition = 'loading';
+    this.list_status.show();
     this._getMaxSize();
-    this.spinner.show();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
-      this.spinner.hide();
       const folders = value.filter((item) => {
         if (this.storageType === 'general' && !item.name.startsWith('.')) {
           return item;
@@ -1516,6 +1518,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       });
       this.folders = folders;
+      if (this.folders.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       this._folderRefreshing = false;
     }).catch(()=>{
       this._folderRefreshing = false;

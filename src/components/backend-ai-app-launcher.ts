@@ -12,7 +12,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
 import 'macro-carousel';
 
-import './lablup-loading-spinner';
 import './backend-ai-dialog';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -44,7 +43,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) _selected_items = [];
   @property({type: Boolean}) refreshing = false;
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();

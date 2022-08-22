@@ -24,6 +24,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -45,6 +46,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
+  @property({type: Object}) list_status = Object();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -59,6 +61,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
+  @property({type: String}) list_condition = 'loading';
 
   constructor() {
     super();
@@ -74,7 +77,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: var(--list-height, calc(100vh - 200px));
         }
 
         mwc-icon {
@@ -157,6 +159,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
     this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
@@ -199,6 +202,8 @@ export default class BackendAIAgentList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
+    this.list_condition = 'loading';
+    this.list_status.show();
     let fields: Array<string>;
     switch (this.condition) {
     case 'running':
@@ -380,6 +385,11 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      if (this.agents.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       if (this.agentDetailDialog.open) { // refresh the data
         this.agentDetail = this.agentsObject[this.agentDetail['id']];
         this.agentDetailDialog.updateComplete;
@@ -391,6 +401,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
+      this.list_status.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -874,33 +885,36 @@ export default class BackendAIAgentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
-                            .renderer="${this._boundRegionRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
-        </vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
-                            .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
-                                 header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
-                            .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        ${this.enableAgentSchedulable ? html`
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
-                          .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
-        ` : html``}
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                    .items="${this.agents}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
+                              .renderer="${this._boundRegionRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
+                              .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
+                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
+          <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
+                              .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+          ${this.enableAgentSchedulable ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                            .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">

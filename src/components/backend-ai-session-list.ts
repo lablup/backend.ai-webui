@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
@@ -29,7 +29,7 @@ import '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import './lablup-loading-spinner';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
@@ -52,6 +52,30 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 @group Backend.AI Web UI
  @element backend-ai-session-list
  */
+
+/**
+ * Type of commit session info
+ */
+type CommitSessionInfo = {
+  environment: string;
+  version: string;
+  tags: Array<string>;
+  session: {
+    name: string;
+    id: string;
+  }
+  taskId?: string
+  commitStatus?: {
+    statusDetail?: string
+  }
+}
+
+/**
+ * Type of commit session status
+ * - ready: no container commit operation is on-going
+ * - ongoing: container commit operation is proceeding now
+ */
+type CommitSessionStatus = 'ready' | 'ongoing';
 
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
@@ -89,7 +113,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Object}) sessionStatusInfoDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) spinner = Object();
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
@@ -115,6 +140,10 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  private _isContainerCommitEnabled = false;
+
+  @query('#commit-session-dialog') commitSessionDialog;
+  @query('#commit-current-session-path-input') commitSessionInput;
 
   constructor() {
     super();
@@ -223,6 +252,15 @@ export default class BackendAiSessionList extends BackendAIPage {
           --mdc-list-item-graphic-margin: 10px;
         }
 
+        mwc-textfield {
+          width: 100%;
+        }
+
+        lablup-shields.right-below-margin {
+          margin-right: 3px;
+          margin-bottom: 3px;
+        }
+
         #work-dialog {
           --component-width: calc(100% - 80px);
           --component-height: auto;
@@ -232,6 +270,10 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         #status-detail-dialog {
           --component-width: 375px;
+        }
+
+        #commit-session-dialog {
+          --component-width: 390px;
         }
 
         @media screen and (max-width: 899px) {
@@ -293,6 +335,10 @@ export default class BackendAiSessionList extends BackendAIPage {
         span.subheading {
           color: #666;
           font-weight: bold;
+        }
+
+        mwc-list-item.commit-session-info {
+          height: 100%;
         }
 
         mwc-list-item.predicate-check {
@@ -383,8 +429,12 @@ export default class BackendAiSessionList extends BackendAIPage {
     return status === 'PENDING';
   }
 
+  _isFinished(status) {
+    return ['TERMINATED', 'CANCELLED', 'TERMINATING'].includes(status);
+  }
+
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -410,6 +460,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
     );
     this.notification = globalThis.lablupNotification;
+    this.indicator = globalThis.lablupIndicator;
     this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
     this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
     this.sessionStatusInfoDialog = this.shadowRoot.querySelector('#status-detail-dialog');
@@ -446,6 +497,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+        // check whether image commit supported via both configuration variable and version(22.09)
+        this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit && globalThis.backendaiclient.supports('image-commit');
         this._refreshJobData();
       }, true);
     } else { // already connected
@@ -467,6 +520,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+      // check whether image commit supported via both configuration variable and version(22.09)
+      this._isContainerCommitEnabled = globalThis.backendaiclient._config.enableContainerCommit && globalThis.backendaiclient.supports('image-commit');
       this._refreshJobData();
     }
   }
@@ -496,7 +551,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    this.spinner.show();
+
+    // this.list_condition = 'loading'; // Remove loading indicator during automatic refresh.
+    // this.list_status.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -550,13 +607,25 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     const group_id = globalThis.backendaiclient.current_group_id();
 
+    if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
+      fields.push('commit_status');
+    }
+
     globalThis.backendaiclient.computeSession.list(fields, status, this.filterAccessKey, this.session_page_limit, (this.current_page - 1) * this.session_page_limit, group_id, 10 * 1000).then((response) => {
-      this.spinner.hide();
       this.total_session_count = response.compute_session_list.total_count;
-      if (this.total_session_count === 0) {
-        this.total_session_count = 1;
-      }
       let sessions = response.compute_session_list.items;
+      if (this.total_session_count === 0) {
+        this.list_condition = 'no-data';
+        this.list_status.show();
+        this.total_session_count = 1;
+      } else {
+        if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
+          this.list_condition = 'no-data';
+          this.list_status.show();
+        } else {
+          this.list_status.hide();
+        }
+      }
       if (sessions !== undefined && sessions.length != 0) {
         const previousSessions = this.compute_sessions;
         const previousSessionKeys: any = [];
@@ -693,12 +762,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active === true) {
         if (refresh === true) {
-          // console.log("refresh!!");
           const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': {}});
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 5000 : 30000;
+          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 7000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -713,7 +781,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this._refreshJobData();
         }, refreshTime);
       }
-      this.spinner.hide();
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1013,6 +1081,129 @@ export default class BackendAiSessionList extends BackendAIPage {
     return globalThis.appLauncher.runTerminal(sessionUuid);
   }
 
+  async _getCommitSessionStatus(sessionName: string = '') {
+    let isOnProgress: boolean = false;
+    if (sessionName !== '') {
+      globalThis.backendaiclient.computeSession.getCommitSessionStatus(sessionName).then((res) =>{
+        // console.log(res);
+        isOnProgress = res;
+      }).catch((err) => {
+        console.log(err);
+      });
+    }
+    return isOnProgress;
+  }
+
+  /**
+   * Request commit session
+   */
+  async _requestCommitSession(commitSessionInfo: CommitSessionInfo) {
+    try {
+      const commitSession = await globalThis.backendaiclient.computeSession.commitSession(commitSessionInfo.session.name);
+      const newCommitSessionTask: CommitSessionInfo = Object.assign(commitSessionInfo, {
+        taskId: commitSession.bgtask_id,
+      }) as CommitSessionInfo;
+      this._addCommitSessionToTasker(commitSession, newCommitSessionTask);
+      this._applyContainerCommitAsBackgroundTask(newCommitSessionTask);
+      this.notification.text = _text('session.CommitOnGoing');
+      this.notification.show();
+    } catch (err) {
+      console.log(err);
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    } finally {
+      this.commitSessionDialog.hide();
+    }
+  }
+
+  _applyContainerCommitAsBackgroundTask(commitSessionInfo: CommitSessionInfo) {
+    const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(commitSessionInfo.taskId);
+    // this._saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo);
+    // sse.addEventListener('task_updated', (e) => {
+    //   // FIXME: for now, there is no progress updates during this task
+    //   // const ratio = data.current_progress/data.total_progress;
+    //   // indicator.set(100 * ratio, _text('session.CommitOnGoing'));
+    // });
+    sse.addEventListener('bgtask_done', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      this.notification.text = _text('session.CommitFinished');
+      this.notification.show();
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
+      sse.close();
+    });
+    sse.addEventListener('bgtask_failed', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      this.notification.text = _text('session.CommitFailed');
+      this.notification.show(true);
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
+      sse.close();
+      throw new Error('Commit session request has been failed.');
+    });
+    sse.addEventListener('bgtask_cancelled', (e) => {
+      // this._removeFinishedContainerCommitInfoFromLocalStorage(commitSessionInfo.session.id, commitSessionInfo.taskId);
+      this.notification.text = _text('session.CommitFailed');
+      this.notification.show(true);
+      this._removeCommitSessionFromTasker(commitSessionInfo.taskId);
+      sse.close();
+      throw new Error('Commit session request has been cancelled.');
+    });
+  }
+
+  _addCommitSessionToTasker(task: any = null, commitSessionInfo: CommitSessionInfo) {
+    /**
+     * TODO:
+     *    - Show progress of commit session operation
+     *    - Show task in tasker panel regardless of client interruption (e.g. page refresh, etc.)
+     */
+    globalThis.tasker.add(
+      _text('session.CommitSession') + commitSessionInfo.session.name,
+      ((task !== null && typeof task === 'function') ? task : null),
+      commitSessionInfo.taskId ?? '',
+      'commit',
+      'remove-later'
+    );
+  }
+
+  _removeCommitSessionFromTasker(taskId: string = '') {
+    globalThis.tasker.remove(taskId);
+  }
+
+  _getCurrentContainerCommitInfoListFromLocalStorage() {
+    // FIXME:
+    // parse error occurs when using `get` function declared in backendai-setting-store
+    // instead, using `getItem` function in localStorage
+    return JSON.parse(localStorage.getItem('backendaiwebui.settings.user.container_commit_sessions') || '[]');
+  }
+
+  _saveCurrentContainerCommitInfoToLocalStorage(commitSessionInfo: CommitSessionInfo) {
+    const containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
+    containerCommitSessionList.push(commitSessionInfo);
+    globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
+  }
+
+  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId: string = '', taskId: string = '') {
+    let containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
+    containerCommitSessionList = containerCommitSessionList.filter((commitSessionInfo) => {
+      return (commitSessionInfo.session.id !== sessionId && commitSessionInfo.taskId !== taskId);
+    });
+    globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
+  }
+
+  _openCommitSessionDialog(e) {
+    const controller = e.target;
+    const controls = controller.closest('#controls');
+    const sessionName: string = controls['session-name'];
+    const sessionId: string = controls['session-uuid'];
+    const kernelImage: string = controls['kernel-image'];
+    this.commitSessionDialog.sessionName = sessionName;
+    this.commitSessionDialog.sessionId = sessionId;
+    this.commitSessionDialog.kernelImage = kernelImage;
+    this.commitSessionDialog.show();
+  }
+
   // Single session closing
   _openTerminateSessionDialog(e) {
     const controller = e.target;
@@ -1045,9 +1236,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1056,7 +1247,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       const event = new CustomEvent('backend-ai-resource-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
     }).catch((err) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1083,20 +1273,19 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
     this._selected_items = [];
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
       this.notification.text = PainKiller.relieve('Problem occurred during termination.');
@@ -1110,19 +1299,19 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @return {void}
    * */
   _terminateSelectedSessions() {
-    this.spinner.show();
+    this.list_condition = 'loading';
+    this.list_status.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
     return Promise.all(terminateSessionQueue).then((response) => {
-      this.spinner.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.spinner.hide();
+      this.list_status.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       if ('description' in err) {
@@ -1291,6 +1480,10 @@ export default class BackendAiSessionList extends BackendAIPage {
             <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             <div class="vertical layout flex" style="width:100%;">
               <mwc-list>
+                <mwc-list-item twoline noninteractive class="predicate-check">
+                  <span class="subheading">${_text('session.Message')}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.msg}</span>
+                </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
                   <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.retries}</span>
@@ -1576,7 +1769,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                 color="${item.color}"
                                 description="${item.tag}"
                                 ui="round"
-                                style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                class="right-below-margin"></lablup-shields>
                     `;
   })}
               </div>`) : html``}
@@ -1588,7 +1781,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                       color="green"
                                       description="${tag}"
                                       ui="round"
-                                      style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                      class="right-below-margin"></lablup-shields>
                     `;
   })}
                 </div>
@@ -1599,7 +1792,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                   color="blue"
                                   description="${ 'X ' + rowData.item.cluster_size}"
                                   ui="round"
-                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                                  class="right-below-margin"></lablup-shields>
                 </div>
               `: html``}
             </div>
@@ -1674,7 +1867,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
-            <mwc-icon-button class="fg red controls-running"
+            <mwc-icon-button class="fg red controls-running" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status as CommitSessionStatus === 'ongoing'}
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
@@ -1686,6 +1879,15 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
             <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
           `}
+          ${this._isContainerCommitEnabled ? html`
+            <mwc-icon-button class="fg blue controls-running"
+                             ?disabled=${this._isPending(rowData.item.status) ||
+                                         this._isPreparing(rowData.item.status) ||
+                                         this._isError(rowData.item.status) ||
+                                         this._isFinished(rowData.item.status) ||
+                                         rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
+                             icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
+          ` : html``}
         </div>
       `, root
     );
@@ -2008,8 +2210,16 @@ export default class BackendAiSessionList extends BackendAIPage {
                   description="${rowData.item.status_info}" ui="round"></lablup-shields>
           </div>
         ` : html``}
+        ${(this._isContainerCommitEnabled && rowData.item?.commit_status !== undefined) ? html`
+          <lablup-shields app="" color="${this._setColorOfStatusInformation(rowData.item.commit_status)}" class="right-below-margin"
+                          description=${rowData.item.commit_status as CommitSessionStatus === 'ongoing' ? 'commit on-going' : ''}></lablup-shields>
+        ` : html``}
       `, root
     );
+  }
+
+  _setColorOfStatusInformation(status: CommitSessionStatus = 'ready') {
+    return status === 'ready' ? 'green' : 'lightgrey';
   }
 
   /**
@@ -2029,10 +2239,88 @@ export default class BackendAiSessionList extends BackendAIPage {
     return userId;
   }
 
+  _renderCommitSessionConfirmationDialog(commitSessionInfo: CommitSessionInfo) {
+    // language=HTML
+    return html`
+      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
+        <span slot="title">${_t('session.CommitSession')}</span>
+        <div slot="content" class="vertical layout center flex">
+          <span style="font-size:14px;margin:auto 20px;">${_t('session.DescCommitSession')}</span>
+          <mwc-list style="width:100%">
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+                <span class="subheading">Session Name</span>
+                <span class="monospace" slot="secondary">
+                  ${commitSessionInfo?.session?.name ? commitSessionInfo.session.name : '-'}
+                </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+                <span class="subheading">Session Id</span>
+                <span class="monospace" slot="secondary">
+                  ${commitSessionInfo?.session?.id ? commitSessionInfo.session.id : '-'}
+                </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+              <span class="subheading"><strong>Environment and Version</strong></span>
+              <span class="monospace" slot="secondary">
+                ${commitSessionInfo ? html`
+                  <lablup-shields app="${commitSessionInfo.environment === '' ? '-' : commitSessionInfo.environment}"
+                    color="blue"
+                    description="${commitSessionInfo.version === '' ? '-' : commitSessionInfo.version}"
+                    ui="round"
+                    class="right-below-margin"></lablup-shields>
+                    `: html``}
+              </span>
+            </mwc-list-item>
+            <mwc-list-item twoline noninteractive class="commit-session-info">
+              <span class="subheading">Tags</span>
+              <span class="monospace horizontal layout" slot="secondary">
+                ${commitSessionInfo ? commitSessionInfo?.tags?.map((tag) =>
+                  html`
+                    <lablup-shields app=""
+                      color="green"
+                      description="${tag}"
+                      ui="round"
+                      class="right-below-margin"></lablup-shields>
+                  `) : html`
+                    <lablup-shields app=""
+                      color="green"
+                      description="-"
+                      ui="round"
+                      style="right-below-margin"></lablup-shields>`}
+              </span>
+            </mwc-list-item>
+          </mwc-list>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              unelevated
+              class="ok"
+              ?disabled="${commitSessionInfo?.environment === ''}"
+              @click=${() => this._requestCommitSession(commitSessionInfo)}
+              label="${_t('button.Commit')}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+    `;
+  }
+
+  _parseSessionInfoToCommitSessionInfo(kernelImageStr: string = '', sessionName: string = '', sessionId: string = '') {
+    const emptyKernelImageArr = ['', ''];
+    const [environment, rawVersion] = kernelImageStr ? kernelImageStr.split(':') : emptyKernelImageArr;
+    const [version, ...tags] = rawVersion ? rawVersion.split('-') : emptyKernelImageArr;
+    return {
+      environment: environment,
+      version: version,
+      tags: tags,
+      session: {
+        name: sessionName,
+        id: sessionId,
+      }
+    } as CommitSessionInfo;
+  }
+
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
@@ -2050,56 +2338,58 @@ export default class BackendAiSessionList extends BackendAIPage {
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
-
-      <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
-         .items="${this.compute_sessions}" height-by-rows>
-        ${this._isRunning ? html`
-          <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
-          </vaadin-grid-column>
-        ` : html``}
-        <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        ${this.is_admin ? html`
-          <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
-                                     header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
-                                     .renderer="${this._boundUserInfoRenderer}">
+      <div class="list-wrapper">
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+          .items="${this.compute_sessions}" height-by-rows>
+          ${this._isRunning ? html`
+            <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            </vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          ${this.is_admin ? html`
+            <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+                                      header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
+                                      .renderer="${this._boundUserInfoRenderer}">
+            </vaadin-grid-filter-column>
+          ` : html``}
+          <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+                                     .renderer="${this._boundSessionInfoRenderer}">
           </vaadin-grid-filter-column>
-        ` : html``}
-        <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
-                                   .renderer="${this._boundSessionInfoRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="status" header="${_t('session.Status')}" resizable
-                                   .renderer="${this._boundStatusRenderer}">
-        </vaadin-grid-filter-column>
-        <vaadin-grid-column width="210px" flex-grow="0" header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
-                            .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
-                            .renderer="${this._boundUsageRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
-                                 path="created_at" .renderer="${this._boundReservationRenderer}">
-        </vaadin-grid-sort-column>
-        <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
-                                   .renderer="${this._boundArchitectureRenderer}">
-        </vaadin-grid-filter-column>
-        ${this._isIntegratedCondition ? html`
-          <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
-        ` :
-    html``}
-        ${this.is_superadmin ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
-                              .renderer="${this._boundAgentRenderer}">
+          <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
+                                     .renderer="${this._boundStatusRenderer}">
+          </vaadin-grid-filter-column>
+          <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
+                              .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+                              .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
+                                   path="created_at" .renderer="${this._boundReservationRenderer}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+                                     .renderer="${this._boundArchitectureRenderer}">
+          </vaadin-grid-filter-column>
+          ${this._isIntegratedCondition ? html`
+            <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
         ` : html``}
-      </vaadin-grid>
+          ${this.is_superadmin ? html`
+            <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
+                                .renderer="${this._boundAgentRenderer}">
+            </vaadin-grid-column>
+                ` : html``}
+          </vaadin-grid>
+          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
+        </div>
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
         <mwc-icon-button
           class="pagination"
           id="previous-page"
-      icon="navigate_before"
-      ?disabled="${this.current_page === 1}"
-      @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
+          icon="navigate_before"
+          ?disabled="${this.current_page === 1}"
+          @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
         <wl-label style="padding-top: 5px; width:auto; text-align:center;">
         ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
         <mwc-icon-button
@@ -2154,6 +2444,8 @@ export default class BackendAiSessionList extends BackendAIPage {
         <span slot="title">${_t('session.StatusInfo')}</span>
         <div slot="content" id="status-detail"></div>
       </backend-ai-dialog>
+      ${this._renderCommitSessionConfirmationDialog(
+        this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
     `;
   }
 
@@ -2165,7 +2457,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     } else {
       this.current_page += 1;
     }
-
     this.refreshList();
   }
 }

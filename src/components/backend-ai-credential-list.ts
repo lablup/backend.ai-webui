@@ -20,6 +20,7 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -65,6 +66,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
+  @property({type: Object}) list_status;
   @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
@@ -76,6 +78,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) _boundAllocationRenderer = this.allocationRenderer.bind(this);
   @property({type: Object}) _boundUserIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
 
@@ -95,7 +98,6 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 235px);
         }
 
         mwc-icon-button {
@@ -164,6 +166,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -208,6 +211,8 @@ export default class BackendAICredentialList extends BackendAIPage {
     default:
       is_active = false;
     }
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -274,9 +279,14 @@ export default class BackendAICredentialList extends BackendAIPage {
         }
       });
       this.keypairs = keypairs;
-      this._totalCredentialCount = this.keypairs.length > 0 ? this.keypairs.length : 1;
+      if (this.keypairs.length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -774,18 +784,21 @@ export default class BackendAICredentialList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                   id="keypair-grid" .items="${this.keypairs}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
-        <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}" .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}" .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
+                    id="keypair-grid" .items="${this.keypairs}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}" .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}" .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">Keypair Detail</span>
         <div slot="action" class="horizontal end-justified flex layout">

@@ -25,6 +25,7 @@ import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './backend-ai-multi-select';
 import '../plastics/lablup-shields/lablup-shields';
@@ -41,6 +42,8 @@ class BigNumber {
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
+  @property({type: Object}) list_status = Object();
+  @property({type: String}) list_condition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
@@ -89,7 +92,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
         }
 
         wl-icon.indicator {
@@ -216,21 +218,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                  .items="${this.resourcePolicy}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
-            .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+                    .items="${this.resourcePolicy}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
+              .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
         <div slot="content">
@@ -486,6 +491,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
+    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
@@ -568,6 +574,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _refreshPolicyData() {
+    this.list_condition = 'loading';
+    this.list_status.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -606,7 +614,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
       });
       this.resourcePolicy = resourcePolicies;
+      if (Object.keys(this.resourcePolicy).length == 0) {
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
+      this.list_status.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
