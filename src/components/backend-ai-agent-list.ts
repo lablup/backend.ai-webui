@@ -80,6 +80,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
+  @property({type: Object}) _boundUtilizationRenderer = this.utilizationRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
@@ -794,6 +795,58 @@ export default class BackendAIAgentList extends BackendAIPage {
     );
   }
 
+  utilizationRenderer(root, column?, rowData?) {
+    if (rowData.item.status === 'ALIVE') {
+      let liveStat: LiveStat = {
+        cpu_util: {capacity: 0, current: 0, ratio: 0},
+        mem_util: {capacity: 0, current: 0, ratio: 0},
+      };
+      if (rowData.item.live_stat.node.cuda_util) {
+        liveStat = Object.assign(liveStat, {
+          cuda_util: {capacity: 0, current: 0, ratio: 0},
+        });
+        liveStat.cuda_util!.capacity = parseFloat(rowData.item.live_stat.node.cuda_util.capacity ?? 0);
+        liveStat.cuda_util!.current = parseFloat(rowData.item.live_stat.node.cuda_util.current);
+        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
+      }
+      if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
+        const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;
+        liveStat.cpu_util.capacity = parseFloat(rowData.item.live_stat.node.cpu_util.capacity);
+        liveStat.cpu_util.current = parseFloat(rowData.item.live_stat.node.cpu_util.current);
+        liveStat.cpu_util.ratio = (liveStat.cpu_util.current / liveStat.cpu_util.capacity / numCores) || 0;
+        liveStat.mem_util.capacity = parseInt(rowData.item.live_stat.node.mem.capacity);
+        liveStat.mem_util.current = parseInt(rowData.item.live_stat.node.mem.current);
+        liveStat.mem_util.ratio = (liveStat.mem_util.current / liveStat.mem_util.capacity) || 0;
+      }
+      render(
+        // language=HTML
+        html`
+            <div>
+              <div class="layout horizontal justified flex progress-bar-section">
+                <span style="margin-right:5px;">CPU</span>
+                <lablup-progress-bar class="utilization" progress="${liveStat.cpu_util.ratio}" description="${(liveStat.cpu_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+              </div>
+              <div class="layout horizontal justified flex progress-bar-section">
+                <span style="margin-right:5px;">MEM</span>
+                <lablup-progress-bar class="utilization" progress="${liveStat.mem_util.ratio}" description="${BackendAIAgentList.bytesToGiB(liveStat.mem_util.current)}/${BackendAIAgentList.bytesToGiB(liveStat.mem_util.capacity)} GiB"></lablup-progress-bar>
+              </div>
+              ${liveStat.cuda_util ? html`
+                <div class="layout horizontal justified flex progress-bar-section">
+                  <span style="margin-right:5px;">GPU</span>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                </div>
+              ` : html``}
+            </div>
+        `, root
+      );
+    } else {
+      render(
+        // language=HTML
+        html`${_t('agent.NoAvailableLiveStat')}`, root
+      );
+    }
+  }
+
   /**
    * Render a heartbeat status.
    *
@@ -1076,6 +1129,48 @@ export default class BackendAIAgentList extends BackendAIPage {
           @click="${() => this._modifyAgentSetting()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    `;
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      <div class="list-wrapper">
+        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                    .items="${this.agents}">
+          <vaadin-grid-column width="30px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable width="100px" header="${_t('agent.Endpoint')}"
+                              .renderer="${this._boundEndpointRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column auto-width resizable header="${_t('agent.Region')}"
+                              .renderer="${this._boundRegionRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column auto-width flex-grow="0" resizable path="architecture" header="${_t('agent.Architecture')}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-column resizable auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
+                              .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="120px" header="${_t('agent.Utilization')}"
+                              .renderer="${this._boundUtilizationRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable auto-width flex-grow="0" path="scaling_group"
+                              header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
+          <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
+                              .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+          ${this.enableAgentSchedulable ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                              .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+      </div>
+      ${this._renderAgentDetailDialog()}
+      ${this._renderAgentSettingDialog()}
     `;
   }
 }
