@@ -970,39 +970,9 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
-  render() {
+  _renderAgentDetailDialog() {
     // language=HTML
     return html`
-      <div class="list-wrapper">
-        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                    .items="${this.agents}">
-          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
-                              .renderer="${this._boundRegionRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-sort-column width="40px" resizable path="architecture" header="${_t('agent.Architecture')}">
-          </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
-                              .renderer="${this._boundResourceRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
-                                  header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
-          <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
-                              .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-          ${this.enableAgentSchedulable ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
-                            .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
-          ` : html``}
-          <vaadin-grid-column resizable header="${_t('general.Control')}"
-                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-        </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
-      </div>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
@@ -1125,12 +1095,17 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             unelevated
-            id="close-button"
             icon="check"
             label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    `;
+  }
+
+  _renderAgentSettingDialog() {
+    // language=HTML
+    return html`
       <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.AgentSetting')}</span>
         <div slot="content" class="horizontal layout justified center">
@@ -1140,7 +1115,6 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
         <mwc-button
           unelevated
-          id="update-agent-setting-button"
           icon="check"
           label="${_t('button.Update')}"
           @click="${() => this._modifyAgentSetting()}"></mwc-button>
