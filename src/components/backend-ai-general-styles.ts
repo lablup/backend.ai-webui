@@ -881,7 +881,7 @@ export const BackendAiStyles = [
     }
 
     div.list-wrapper {
-      height: calc(100vh - 235px);
+      height: auto;
     }
 
     div.blank-box {
