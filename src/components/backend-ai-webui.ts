@@ -454,7 +454,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       })
       .then((res) => {
         const tomlConfig = toml(res);
-        _preprocessToml(tomlConfig)
+        _preprocessToml(tomlConfig);
         if (returning) {
           return tomlConfig;
         } else {

@@ -20,7 +20,7 @@ import 'weightless/card';
 import './backend-ai-chart';
 
 /**
- * FIXME: Repeated import statement(s) is/are needed 
+ * FIXME: Repeated import statement(s) is/are needed
  *        when using custom elements and type casting of the component at other components
  */
 import '@material/mwc-icon-button';

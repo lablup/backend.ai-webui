@@ -417,7 +417,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     */
   _getImages() {
     this.list_condition = 'loading';
-    this.list_status.show(); 
+    this.list_status.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this.allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -501,10 +501,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // image_keys.sort();
       this.images = domainImages;
       if (this.images.length == 0) {
-      this.list_condition = 'no-data';
-    } else {
-      this.list_status.hide();
-    }
+        this.list_condition = 'no-data';
+      } else {
+        this.list_status.hide();
+      }
     }).catch((err) => {
       console.log(err);
       if (typeof err.message !== 'undefined') {

@@ -472,9 +472,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-   * Render control buttons 
+   * Render control buttons
    * @param {DOMelement} root
-   * @param {object} column 
+   * @param {object} column
    * @param {object} rowData
    */
   controlRenderer(root, column?, rowData?) {
@@ -496,7 +496,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   /**
    * Render resource policy name
    * @param {DOMelement} root
-   * @param {object} column 
+   * @param {object} column
    * @param {object} rowData
    */
   policyNameRenderer(root, column?, rowData?) {
@@ -513,7 +513,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   /**
    * Render a cluster size
    * @param {DOMelement} root
-   * @param {object} column 
+   * @param {object} column
    * @param {object} rowData
    */
   clusterSizeRenderer(root, column?, rowData?) {
@@ -526,9 +526,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   /**
-   * Render a storage nodes 
+   * Render a storage nodes
    * @param {DOMelement} root
-   * @param {object} column 
+   * @param {object} column
    * @param {object} rowData
    */
   storageNodesRenderer(root, column?, rowData?) {
@@ -552,7 +552,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
   }
 
-  async _viewStateChanged(active: Boolean) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return;

@@ -2577,14 +2577,14 @@ class ContainerImage {
     let promiseArray: Array<Promise<any>> = [];
     registry = registry.replace(":", "%3A");
     image = image.replace("/", "%2F");
-    Object.keys(input).forEach(slot_type => {
+    Object.keys(input).forEach((slot_type) => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
           "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
           "value": input[slot_type][key]
         });
         promiseArray.push(this.client._wrapWithPromise(rqst));
-      })
+      });
     });
     return Promise.all(promiseArray);
   }

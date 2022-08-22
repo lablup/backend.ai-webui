@@ -548,7 +548,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-   _indexRenderer(root, column, rowData) {
+  _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
     render(
       html`
@@ -565,7 +565,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
-   controlRenderer(root, column?, rowData?) {
+  controlRenderer(root, column?, rowData?) {
     render(
       html`
         <div

@@ -41,7 +41,7 @@ import {Textfield as WlTextfield} from 'weightless/textfield';
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  private _list_condition: string = 'loading';
+  private _list_condition = 'loading';
   private _allowed_registries: Array<object>;
   private _editMode = false;
   private _hostnames: Array<string>;
@@ -632,8 +632,6 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   private _isEnabledRenderer(root: HTMLElement, column: HTMLElement, rowData) {
-    console.log('rowData:', rowData);
-    console.log('allowed registries:', this._allowed_registries)
     render(
       html`
         <div>

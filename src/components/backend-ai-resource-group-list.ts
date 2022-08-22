@@ -560,7 +560,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     } else if ('pending_timeout' === name) {
       this.timeoutInput.value = value;
     } else if ('config' === name) {
-      this,this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
+      this, this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
     } else {
       // other scheduler options
     }

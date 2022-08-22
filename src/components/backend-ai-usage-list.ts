@@ -9,7 +9,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {Select} from "@material/mwc-select";
+import {Select} from '@material/mwc-select';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';

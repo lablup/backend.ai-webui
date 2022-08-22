@@ -1089,8 +1089,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     return globalThis.appLauncher.runTerminal(sessionUuid);
   }
 
-  async _getCommitSessionStatus(sessionName: string = '') {
-    let isOnProgress: boolean = false;
+  async _getCommitSessionStatus(sessionName = '') {
+    let isOnProgress = false;
     if (sessionName !== '') {
       globalThis.backendaiclient.computeSession.getCommitSessionStatus(sessionName).then((res) =>{
         // console.log(res);
@@ -1175,7 +1175,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  _removeCommitSessionFromTasker(taskId: string = '') {
+  _removeCommitSessionFromTasker(taskId = '') {
     globalThis.tasker.remove(taskId);
   }
 
@@ -1192,7 +1192,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
   }
 
-  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId: string = '', taskId: string = '') {
+  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId = '', taskId = '') {
     let containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
     containerCommitSessionList = containerCommitSessionList.filter((commitSessionInfo) => {
       return (commitSessionInfo.session.id !== sessionId && commitSessionInfo.taskId !== taskId);
@@ -2315,7 +2315,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     `;
   }
 
-  _parseSessionInfoToCommitSessionInfo(kernelImageStr: string = '', sessionName: string = '', sessionId: string = '') {
+  _parseSessionInfoToCommitSessionInfo(kernelImageStr = '', sessionName = '', sessionId = '') {
     const emptyKernelImageArr = ['', ''];
     const [environment, rawVersion] = kernelImageStr ? kernelImageStr.split(':') : emptyKernelImageArr;
     const [version, ...tags] = rawVersion ? rawVersion.split('-') : emptyKernelImageArr;
