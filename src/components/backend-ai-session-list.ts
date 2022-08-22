@@ -18,6 +18,7 @@ import 'weightless/button';
 import {Checkbox} from 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
+import 'weightless/tooltip';
 import {Textfield} from 'weightless/textfield';
 import {Tooltip} from 'weightless/tooltip/tooltip';
 
@@ -25,7 +26,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu';
+import {Menu} from '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -1395,7 +1396,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
-    const menu = document.createElement('mwc-menu') as any;
+    const menu = document.createElement('mwc-menu') as Menu;
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
