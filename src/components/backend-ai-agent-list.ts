@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -62,6 +62,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
   @property({type: String}) list_condition = 'loading';
+  @query('vaadin-grid') private _agentGrid;
 
   constructor() {
     super();
@@ -385,6 +386,8 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      this._agentGrid.recalculateColumnWidths();
+
       if (this.agents.length == 0) {
         this.list_condition = 'no-data';
       } else {
