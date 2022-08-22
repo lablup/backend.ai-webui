@@ -456,13 +456,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       return;
     }
     this._saveSchedulerOpts();
+    const description = this.resourceGroupDescriptionInput.value;
     const scheduler = this.resourceGroupSchedulerSelect.value;
     const is_active = this.resourceGroupActiveSwitch.selected;
     const schedulerOptions = this.schedulerOpts;
     const name = this.resourceGroupInfo.name;
 
     const input = {};
-    if (this.resourceGroupDescriptionInput !== this.resourceGroupInfo.description) input['description'] = this.resourceGroupDescriptionInput.value;
+    if (description !== this.resourceGroupInfo.description) input['description'] = description;
     if (scheduler !== this.resourceGroupInfo.scheduler) input['scheduler'] = scheduler;
     if (is_active !== this.resourceGroupInfo.is_active) input['is_active'] = is_active;
     if (this.enableWSProxyAddr) {
