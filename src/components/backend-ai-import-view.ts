@@ -546,8 +546,8 @@ export default class BackendAIImport extends BackendAIPage {
         }
         baseURL = baseURL + '/github?';
       }
-      const fullText: string = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-      const fullTextMarkdown: string = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      const fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
       this.notebookBadgeCodeInput.value = fullText;
       this.notebookBadgeCodeMarkdownInput.value = fullTextMarkdown;
     }
