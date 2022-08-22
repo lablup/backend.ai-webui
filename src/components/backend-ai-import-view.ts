@@ -601,7 +601,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   urlTextfieldChanged(e, buttonIdValue, message?) {
-    const button = this.shadowRoot.querySelector(`#${buttonIdValue}`);
+    const button = this.shadowRoot?.querySelector(`#${buttonIdValue}`) as TextField;
     if (e.target.value !== '' && e.currentTarget.checkValidity()) {
       button.removeAttribute('disabled');
       this.setAttribute(message, '');

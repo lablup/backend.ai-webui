@@ -1402,8 +1402,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
     menu.setAttribute('open', '');
     menu.setAttribute('fixed', '');
-    menu.setAttribute('x', 10);
-    menu.setAttribute('y', 15);
+    menu.setAttribute('x', '10');
+    menu.setAttribute('y', '15');
 
     if (mounts.length >= 1) {
       mounts.map((key, index) => {
