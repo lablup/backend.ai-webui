@@ -3581,10 +3581,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
-            <p class="title">${_t('registry.ProjectName')}</p>
-            <div class="vertical layout center center-justified cluster-total-allocation-container">
-              ${globalThis.backendaiclient.current_group}
-            </div>
             <p class="title">${_t('session.SessionInfo')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
               <div class="horizontal center center-justified layout">
@@ -3712,6 +3708,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <span>${_t('session.launcher.NoFolderMounted')}</span>
                 </div>
               `}
+            </div>
+            <p class="title">${_t('registry.ProjectName')}</p>
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
+                ${globalThis.backendaiclient.current_group}
+              </div>
+            </div>
+            <p class="title">${_t('session.ResourceGroup')}</p>
+            <div class="vertical layout center center-justified cluster-total-allocation-container">
+              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
+                ${this.scaling_group}
+              </div>
             </div>
             <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
             <div class="environment-variables-container">
