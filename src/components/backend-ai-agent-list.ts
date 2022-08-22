@@ -572,8 +572,8 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${rowData.item.id}</div>
-        <div class="indicator monospace">${rowData.item.addr}</div>
+        <div style="white-space:pre-wrap;">${rowData.item.id}</div>
+        <div class="indicator monospace" style="white-space:pre-wrap;">${rowData.item.addr}</div>
       `, root
     );
   }
@@ -638,7 +638,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="horizontal start-justified center layout">
+        <div class="horizontal start-justified center layout wrap">
           <img src="/resources/icons/${icon}.png" style="width:32px;height:32px;"/>
           <lablup-shields app="${location}" color="${color}"
                           description="${platform}" ui="round"></lablup-shields>
@@ -1043,8 +1043,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
@@ -1053,8 +1054,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
@@ -1067,8 +1069,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
@@ -1077,8 +1080,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
@@ -1091,8 +1095,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
@@ -1101,8 +1106,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                     <div class="horizontal start-justified center layout">
                       <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
