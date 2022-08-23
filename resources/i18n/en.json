@@ -359,7 +359,7 @@
     "DetailedInformation": "Detailed Information",
     "AgentSetting": "Agent Settings",
     "AgentSettingUpdated": "Agent Setting Updated.",
-    "NoAvailableLiveStat": "",
+    "NoAvailableLiveStat": "No available live stat",
     "NoChanges": "No changes.",
     "Running": "Running",
     "BackendType": "Backend Type",
