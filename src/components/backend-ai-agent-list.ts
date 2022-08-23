@@ -1144,7 +1144,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable width="120px" header="${_t('agent.Utilization')}"
+          <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" path="scaling_group"
