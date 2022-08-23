@@ -105,6 +105,11 @@ export default class PipelineJobList extends BackendAIPage {
           top: -10px;
         }
 
+        #pipeline-job-detail-dialog {
+          --component-width: auto;
+          --component-max-width: auto;
+        }
+
         #workflow-item {
           padding-bottom: 6px;
         }
@@ -132,8 +137,43 @@ export default class PipelineJobList extends BackendAIPage {
           --mdc-icon-size: 16px;
         }
 
+        backend-ai-dialog.yaml {
+          --component-width: 100%;
+          --component-max-width: 100%;
+        }
+
         mwc-list.left-border mwc-list-item {
           border-left: 1px solid #ccc;
+        }
+
+        /* Set width according to screen width (on mobile, tablet, and desktop) */
+        @media screen and (max-width: 400px) {
+          backend-ai-dialog.yaml {
+            --component-width: 100%;
+          }
+        }
+
+        @media screen and (max-width:720px) {
+          #pipeline-job-detail-dialog {
+            --component-width: 390px;
+            --component-max-width: 390px;
+          }
+
+          #pipeline-job-detail-dialog div[slot="content"] {
+            -ms-flex-wrap: wrap;
+            -webkit-flex-wrap: wrap;
+            flex-wrap: wrap;
+          }
+
+          mwc-list.left-border mwc-list-item {
+            border-left: none;
+          }
+        }
+
+        @media screen and (min-width: 1024px) {
+          backend-ai-dialog.yaml {
+            --component-width: 70vw;
+          }
         }
       `
     ];
@@ -292,7 +332,7 @@ export default class PipelineJobList extends BackendAIPage {
    * Show yaml data dialog of selected pipeline
    */
   _launchWorkFlowDialog() {
-    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-editor');
+    const codemirror = this.shadowRoot.querySelector('lablup-codemirror#workflow-file');
     const yamlString = YAML.dump(this.pipelineJobInfo.yaml, {});
     codemirror.setValue(yamlString);
     this._launchDialogById('#workflow-file-dialog');
@@ -567,12 +607,29 @@ export default class PipelineJobList extends BackendAIPage {
               <span><strong>View Workflow File</strong></span>
               <mwc-button id="view-workflow-button" unelevated slot="secondary" 
                 icon="assignment" label="View workflow file"
-                @click="${() => { this._launchWorkFlowDialog(); }}">
+                @click="${() => this._launchWorkFlowDialog()}">
               </mwc-button>
             </mwc-list-item>
           </mwc-list>
         </div>
       </backend-ai-dialog>
+    `;
+  }
+
+  /**
+   * Render workflow file (pipeline job YAML) dialog
+   *
+   * @returns {string} stringified html
+   */
+  renderWorkflowFileDialogTemplate() {
+    // language=HTML
+    return html`
+    <backend-ai-dialog class="yaml" id="workflow-file-dialog" fixed backgroup blockscrolling>
+      <span slot="title">Workflow file</span>
+      <div slot="content">
+        <lablup-codemirror id="workflow-file" mode="yaml" readonly useLineWrapping></lablup-codemirror>
+      </div>
+    </backend-ai-dialog>
     `;
   }
 
