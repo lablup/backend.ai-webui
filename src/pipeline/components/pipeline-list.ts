@@ -98,10 +98,6 @@ export default class PipelineList extends BackendAIPage {
           margin: 10px;
         }
 
-        a.pipeline-link:hover {
-          color: var(--general-textfield-selected-color);
-        }
-
         backend-ai-dialog {
           --component-min-width: 390px;
           --component-max-width: 390px;

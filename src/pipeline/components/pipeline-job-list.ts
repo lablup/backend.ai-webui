@@ -130,6 +130,10 @@ export default class PipelineJobList extends BackendAIPage {
           color: var(--paper-grey-400);
         }
 
+        a.pipeline-link:hover {
+          color: var(--general-textfield-selected-color);
+        }
+
         mwc-icon {
           padding-right: 10px;
           position: relative;
@@ -498,7 +502,7 @@ export default class PipelineJobList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center" pipeline-id="${rowData.item.id}">
           <mwc-icon-button class="fg green info"
             icon="assignment"
-            @click="${() => { this._launchPipelineJobDetailDialog(rowData.item);}}"></mwc-icon-button>
+            @click="${() => this._launchPipelineJobDetailDialog(rowData.item)}"></mwc-icon-button>
           <!--<mwc-icon-button class="fg blue settings" icon="settings"></mwc-icon-button>
           ${!isFinished ? html`
             <mwc-icon-button class="fg green start"
@@ -519,7 +523,7 @@ export default class PipelineJobList extends BackendAIPage {
     // filter columns
     this.pipelineJobGridFilterColumnList[0].renderer = (root, column, rowData) => { // name
       render(html`
-        <a @click="${() => this._loadPipelineJobView(rowData.item)}">${rowData.item.name}</a>
+        <a class="pipeline-link" @click="${() => this._loadPipelineJobView(rowData.item)}">${rowData.item.name}</a>
       `, root);
     };
 

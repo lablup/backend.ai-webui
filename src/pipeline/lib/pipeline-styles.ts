@@ -7,10 +7,8 @@ export const BackendAIPipelineStyles = [
       width: 100%;
     }
 
-    h3.tab {
-      background-color: var(--general-tabbar-background-color);
-      border-radius: 5px 5px 0px 0px;
-      margin: 0px auto;
+    a.pipeline-link:hover {
+      color: var(--general-textfield-selected-color);
     }
 
     backend-ai-dialog {
