@@ -647,13 +647,14 @@ export default class PipelineJobList extends BackendAIPage {
         aria-label="Pipeline Job List" .items="${this.pipelineJobs}">
         <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
         <vaadin-grid-filter-column id="pipeline-name" width="120px" path="name" header="Name" resizable frozen></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column auto-width path="yaml.mounts" header="Additional Mounted" resizable></vaadin-grid-filter-column>
-        <vaadin-grid-column header="Status" resizable></vaadin-grid-column>
-        <vaadin-grid-column header="Result" resizable></vaadin-grid-column>
+        <vaadin-grid-filter-column auto-width flex-grow="0" path="yaml.mounts" header="Additional Mounted" resizable></vaadin-grid-filter-column>
+        <vaadin-grid-column auto-width header="Status" resizable></vaadin-grid-column>
+        <vaadin-grid-column auto-width  header="Result" resizable></vaadin-grid-column>
         <vaadin-grid-column width="150px" header="Duration" resizable></vaadin-grid-column>
         <vaadin-grid-column id="pipeline-control" width="160px" flex-grow="0" header="Control" resizable></vaadin-grid-column>
       </vaadin-grid>
       ${this.renderPipelineJobDetailDialogTemplate()}
+      ${this.renderWorkflowFileDialogTemplate()}
     `;
   }
 }
