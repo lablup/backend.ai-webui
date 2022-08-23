@@ -104,43 +104,37 @@ export default class PipelineFlow extends LitElement {
         }
 
         /**
-         * Custom style for the status of task instance
+         * Custom style for the status of task instances
+         * Synced to lablup-shields.
          */
-        .drawflow .drawflow-node.pending {
-          background: #9f9f9f;
-          color: black; // text-color
-        }
-
-        .drawflow .drawflow-node.scheduled,
-        .drawflow .drawflow-node.preparing,
+        .drawflow .drawflow-node.running,
         .drawflow .drawflow-node.restarting,
         .drawflow .drawflow-node.resizing,
-        .drawflow .drawflow-node.suspended {
-          background: #9f9f9f;
-          color: black; // text-color
-        }
-
-        .drawflow .drawflow-node.running,
         .drawflow .drawflow-node.terminating {
           background: #97ca00;
           color: white; // text-color
         }
+        .drawflow .drawflow-node.waiting,
+        .drawflow .drawflow-node.paused,
+        .drawflow .drawflow-node.suspended,
+        .drawflow .drawflow-node.building,
+        .drawflow .drawflow-node.pulling,
+        .drawflow .drawflow-node.scheduled,
+        .drawflow .drawflow-node.preparing,
+        .drawflow .drawflow-node.pending {
+          background: #dfb317;
+          color: black; // text-color
+        }
 
         .drawflow .drawflow-node.terminated {
-          background: #007ec6;
-          color: white; // text-color
+          background: #9f9f9f;
+          color: black; // text-color
         }
 
         .drawflow .drawflow-node.error,
         .drawflow .drawflow-node.cancelled {
-          background: #c85530;
-          color: black;
-        }
-
-        .drawflow .drawflow-node.building,
-        .drawflow .drawflow-node.pulling {
-          background: #5773d4;
-          color: white; // text-color
+          background: #e05d44;
+          color: white;
         }
         
         .drawflow .drawflow-node .input {
