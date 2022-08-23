@@ -1525,7 +1525,7 @@ export default class PipelineConfigurationForm extends LitElement {
   render() {
     // language=HTML
     return html`
-      <mwc-tab-bar class="pipeline-tab">
+      <mwc-tab-bar class="modal">
         <mwc-tab title="general" label="General" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
         <mwc-tab title="resources" label="Resources" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
         <mwc-tab title="mounts" label="Mounts" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>

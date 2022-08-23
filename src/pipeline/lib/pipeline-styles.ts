@@ -1,7 +1,10 @@
 import {css} from 'lit';
+import {BackendAiStyles} from '../../components/backend-ai-general-styles';
+
 
 export const BackendAIPipelineStyles = [
   // language=CSS
+  BackendAiStyles,
   css`
     .tab-content {
       width: 100%;
@@ -20,6 +23,12 @@ export const BackendAIPipelineStyles = [
       --component-width: 100%;
     }
 
+    h3.tab {
+      background-color: var(--general-tabbar-background-color);
+      border-radius: 5px 5px 0px 0px;
+      margin: 0px auto;
+    }
+
     mwc-icon-button {
       color: var(--general-button-background-color);
     }
@@ -29,6 +38,10 @@ export const BackendAIPipelineStyles = [
       --mdc-text-transform: none;
       --mdc-tab-color-default: var(--general-tabbar-background-color);
       --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+    }
+
+    mwc-tab-bar.modal {
+      --mdc-theme-primary: #37B276;
     }
 
     /* Set width according to screen width (on mobile, tablet, and desktop) */

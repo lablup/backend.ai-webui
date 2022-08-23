@@ -128,6 +128,9 @@ export default class PipelineJobView extends BackendAIPage {
 
         mwc-menu#dropdown-menu {
           box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+          position: relative;
+          left: 0px;
+          top: 40px;
           --mdc-menu-item-height: auto;
           --mdc-theme-surface: #f1f1f1;
           --mdc-menu-item-height : auto;
@@ -500,6 +503,11 @@ export default class PipelineJobView extends BackendAIPage {
     };
   }
 
+  /**
+   * Render workflow file (pipeline job YAML) dialog
+   *
+   * @returns {string} stringified html
+   */
   renderWorkflowFileDialogTemplate() {
     // language=HTML
     return html`
@@ -549,8 +557,8 @@ export default class PipelineJobView extends BackendAIPage {
                 <mwc-button label="Start" icon="play_arrow" @click="${(e) => this._toggleRunning(e)}"></mwc-button>
                 ` : html``}
               <div id="dropdown-menu-container">
-                <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}"></mwc-icon-button>
-                <mwc-menu id="dropdown-menu" corner="BOTTOM_LEFT">
+                <mwc-icon-button icon="more_horiz" @click="${(e) => this._toggleDropDown(e)}" ?disabled="${this.pipelineJobInfo?.name === ''}"></mwc-icon-button>
+                <mwc-menu id="dropdown-menu">
                   <mwc-list-item class="horizontal layout center"
                     @click="${() => this._launchWorkFlowDialog(this.pipelineJobInfo.yaml)}">
                     <mwc-icon>assignment</mwc-icon>
