@@ -605,7 +605,10 @@ export default class PipelineJobList extends BackendAIPage {
             ` : html``}
             <mwc-list-item twoline>
               <span><strong>Mounted Folder</strong></span>
-              <span class="monospace" slot="secondary">${this.pipelineJobInfo.vfolder}</span>
+              <span class="monospace" slot="secondary">${(this.pipelineJobInfo.yaml?.mounts?.length > 0) ?
+                this.pipelineJobInfo.yaml.mounts.map((vfolder) => html`
+                  ${vfolder}
+                `) : html`No mount`}</span>
             </mwc-list-item>
             <mwc-list-item id="workflow-item" twoline>
               <span><strong>View Workflow File</strong></span>
