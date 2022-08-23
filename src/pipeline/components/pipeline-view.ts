@@ -493,9 +493,8 @@ export default class PipelineView extends BackendAIPage {
       <div slot="content">
         <pipeline-configuration-form id="pipeline" ?is-editmode=${this.pipelineInfo !== null} pipeline-info=${this.pipelineInfo}></pipeline-configuration-form>
       </div>
-      <div slot="footer" class="horizontal layout end-justified flex">
-        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#edit-pipeline')}"></mwc-button>
-        <mwc-button unelevated label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
+      <div slot="footer" class="horizontal layout center-justified flex">
+        <mwc-button unelevated class="full-width" label="Update" @click="${() => this._updatePipelineInfo()}"></mwc-button>
       </div>
     </backend-ai-dialog>
     `;
@@ -514,10 +513,9 @@ export default class PipelineView extends BackendAIPage {
     <div slot="content" class="vertical layout center flex">
       <pipeline-configuration-form id="task" configuration-type="pipeline-task" ?is-editmode=${this.isNodeSelected} pipeline-task=${this.selectedNode}></pipeline-configuration-form>
     </div>
-    <div slot="footer" class="horizontal layout center center-justified flex">
+    <div slot="footer" class="horizontal layout center-justified flex">
       ${this.isNodeSelected ? html`
-        <mwc-button outlined label="Cancel" @click="${() => this._hideDialogById('#task-dialog')}"></mwc-button>
-        <mwc-button unelevated label="Update" @click="${() => this._updateTask()}"></mwc-button>
+        <mwc-button unelevated class="full-width" label="Update" @click="${() => this._updateTask()}"></mwc-button>
       `: html`
         <mwc-button unelevated class="full-width" label="Create Task" @click="${()=> this._createTask()}"></mwc-button>
       `}

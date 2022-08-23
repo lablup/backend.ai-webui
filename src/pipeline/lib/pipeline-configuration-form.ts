@@ -304,7 +304,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._unselectAllSelectedFolder();
 
     // default active tab is general
-    this._setActiveTabToGeneral();
+    this._setActiveTab(this._generalTab);
   }
 
   /**
@@ -360,7 +360,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadDefaultMounts(pipelineYaml.mounts);
 
     // default active tab is general
-    this._setActiveTabToGeneral();
+    this._setActiveTab(this._generalTab);
   }
 
   /**
@@ -409,7 +409,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadDefaultMounts(pipelineYaml.mounts);
 
     // default active tab is general
-    this._setActiveTabToGeneral();
+    this._setActiveTab(this._generalTab);
   }
 
   /**
@@ -462,17 +462,18 @@ export default class PipelineConfigurationForm extends LitElement {
     this._loadDefaultMounts(pipelineTask.mounts);
 
     // default active tab is general
-    this._setActiveTabToGeneral();
+    this._setActiveTab(this._generalTab);
   }
 
   /**
-   * Switch active tab in dialog to "general" which is the first tab of tab-group
+   * Activate tab received from argument and display corresponding tab content 
+   * with hiding/deactivating other tab and tab contents
+   *
+   * @param {HTMLElement} tab - mwc-tab
    */
-   _setActiveTabToGeneral() {
-    this._switchActiveTab(this._generalTab);
-    this._showTabContent(this._generalTab);
+  _setActiveTab(tab) {
+    this._switchActiveTab(tab);
   }
-
   /**
    * Set supported language list according to resourceBroker
    */
@@ -1526,9 +1527,9 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
       <mwc-tab-bar class="modal">
-        <mwc-tab title="general" label="General" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
-        <mwc-tab title="resources" label="Resources" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
-        <mwc-tab title="mounts" label="Mounts" @click="${(e) => this._showTabContent(e.target)}"></mwc-tab>
+        <mwc-tab title="general" label="General" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
+        <mwc-tab title="resources" label="Resources" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
+        <mwc-tab title="mounts" label="Mounts" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
       </mwc-tab-bar>
       ${this.configurationType === 'pipeline' ? html`
         ${this.renderGeneralTabTemplate()}
