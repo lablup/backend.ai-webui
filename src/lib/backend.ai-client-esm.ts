@@ -4212,7 +4212,7 @@ class PipelineTaskInstance {
    */
   async list(pipelineJobId = '') {
     let queryString = `${this.urlPrefix}`;
-    queryString += (pipelineJobId) ? `?pipeline_job=${pipelineJobId}` : `/`;
+    queryString += (pipelineJobId) ? `/?pipeline_job=${pipelineJobId}` : `/`;
     let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
