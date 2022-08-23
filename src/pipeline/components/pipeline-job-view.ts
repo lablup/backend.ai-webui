@@ -109,12 +109,9 @@ export default class PipelineJobView extends BackendAIPage {
           --pane-height: 400px;
         }
 
-        pre {
-          white-space: pre-wrap;
-          white-space: -moz-pre-wrap;
-          white-space: -pre-wrap;
-          white-space: -o-pre-wrap;
+        span.command-section {
           word-wrap: break-word;
+          font-size: 0.8rem;
         }
 
         #pipeline-list {
@@ -478,9 +475,9 @@ export default class PipelineJobView extends BackendAIPage {
       render(
         html`
           <div class="horizontal center start-justified layout">
-            <pre class="monospace" style="font-size:0.8rem;">
+            <span class="monospace command-section">
               ${rowData.item.config.command}
-            </pre>
+            </span>
           </div>
         `
         , root);
@@ -568,7 +565,7 @@ export default class PipelineJobView extends BackendAIPage {
               </div>
             </h4>
             <pipeline-flow id="pipeline-job-flow"></pipeline-flow>
-            <vaadin-grid id="pipeline-task-instance-list" theme="row-stripes column-borders compact"
+            <vaadin-grid id="pipeline-task-instance-list" theme="row-stripes column-borders compact wrap-cell-content"
               aria-label="Pipeline Task List" .items="${this.taskInstanceList}">
               <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" frozen></vaadin-grid-column>
               <vaadin-grid-filter-column width="120px" header="Name" resizable frozen></vaadin-grid-filter-column>
