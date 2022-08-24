@@ -84,6 +84,7 @@ export default class PipelineConfigurationForm extends LitElement {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Array}) vfolders;
+  @property({type: String}) pipelineVfolder; // default pipeline vfolder
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) defaultSelectedVfolders;
   @property({type: Array}) autoMountedVfolders;
@@ -150,6 +151,7 @@ export default class PipelineConfigurationForm extends LitElement {
     this.selectedVfolders = [];
     this.selectedStorageHost = '';
     this.vfolders = [];
+    this.pipelineVfolder = '';
     this.versions = ['Not Selected'];
   }
 
@@ -283,9 +285,10 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Initialize pipeline configuration on pipeline creation
    */
-  async _initPipelineConfiguration() {
+  async _initPipelineConfiguration(pipeline: PipelineInfoExtended) {
+    this._setDefaultPipelineVfolder(pipeline.storage.name);
     await this._fetchUserInfo();
-    await this._updateVirtualFolderList();
+    await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._loadSupportedLanguages();
     await this._selectDefaultLanguage();
     this._configureRequiredInputField();
@@ -313,7 +316,8 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {PipelineInfo} pipeline
    */
   async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
-    await this._updateVirtualFolderList(pipeline.storage.name);
+    this._setDefaultPipelineVfolder(pipeline.storage.name);
+    await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._fetchUserInfo();
     await this._loadSupportedLanguages();
     this._configureRequiredInputField();
@@ -370,7 +374,8 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {PipelineInfo | PipelineInfoExtended} pipeline
    */
   async _initPipelineTaskConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
-    await this._updateVirtualFolderList();
+    this._setDefaultPipelineVfolder(pipeline.storage.name);
+    await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._loadSupportedLanguages();
     await this._selectDefaultLanguage();
     this._configureRequiredInputField();
@@ -417,10 +422,12 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Load pipelineTask to each of corresponding input field in pipeline task dialog
    * 
+   * @param {string} pipelineFolder
    * @param {PipelineTask} pipelineTask
    */
-  async _loadCurrentPipelineTaskConfiguration(pipelineTask: PipelineTask) {
-    await this._updateVirtualFolderList();
+  async _loadCurrentPipelineTaskConfiguration(pipelineVfolder: string, pipelineTask: PipelineTask) {
+    this._setDefaultPipelineVfolder(pipelineVfolder);
+    await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._loadSupportedLanguages();
 
     // name
@@ -466,6 +473,15 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
+  }
+
+  /**
+   * Set default vfolder which is created for pipeline only
+   * 
+   * @param {string} pipelineVfolder
+   */
+  _setDefaultPipelineVfolder(pipelineVfolder: string = '') {
+    this.pipelineVfolder = pipelineVfolder;
   }
 
   /**
@@ -1451,6 +1467,7 @@ export default class PipelineConfigurationForm extends LitElement {
       <wl-expansion class="vfolder" name="vfolder">
         <span slot="title">Additional mount (Optional)</span>
           ${this.renderAdditionalVFolderListTemplate()}
+          ${this.renderMountedResultTemplate()}
       </wl-expansion>
     </div>`;
   }
@@ -1465,6 +1482,7 @@ export default class PipelineConfigurationForm extends LitElement {
     return html`
     <div id="mounts" class="vertical layout center flex tab-content" style="display:none;">
       ${this.renderAdditionalVFolderListTemplate()}
+      ${this.renderMountedResultTemplate(this.pipelineVfolder)}
     </div>`;
   }
 
@@ -1502,28 +1520,34 @@ export default class PipelineConfigurationForm extends LitElement {
           </div>
         `}
       </div>
-      <div class="vfolder-mounted-list">
-        ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
-          <ul class="vfolder-list">
-            ${this.selectedVfolders.map((item) => html`
-              <li>
-                <mwc-icon>folder_open</mwc-icon>
-                ${item}
-                ${item in this.folderMapping ?
-                  this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
-                    html`(&#10140; /home/work/${this.folderMapping[item]})` :
-                    html`(&#10140; /home/work/${item})`}
-              </li>
-            `)}
-            ${this.autoMountedVfolders.map((item) => html`
-              <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-            `)}
-          </ul>` : html`
-          <div class="vertical layout center flex blank-box-large">
-            <span>${_t('session.launcher.NoFolderMounted')}</span>
-          </div>
-        `}
+    `;
+  }
+
+  renderMountedResultTemplate(pipelineVfolder: string = '') {
+    // language=HTML
+    return html`
+    <div class="vfolder-mounted-list">
+    ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
+      <ul class="vfolder-list">
+        ${[...this.selectedVfolders, ((pipelineVfolder!== '') ? pipelineVfolder : null)].map((item) => html`
+          <li>
+            <mwc-icon>folder_open</mwc-icon>
+            ${item}
+            ${item in this.folderMapping ?
+              this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
+                html`(&#10140; /home/work/${this.folderMapping[item]})` :
+                html`(&#10140; /home/work/${item})`}
+          </li>
+        `)}
+        ${this.autoMountedVfolders.map((item) => html`
+          <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+        `)}
+      </ul>` : html`
+      <div class="vertical layout center flex blank-box-large">
+        <span>${_t('session.launcher.NoFolderMounted')}</span>
       </div>
+    `}
+  </div>
     `;
   }
 

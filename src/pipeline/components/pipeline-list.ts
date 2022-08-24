@@ -293,7 +293,7 @@ export default class PipelineList extends BackendAIPage {
         this._launchPipelineDialog();
       }, 1000);
     } else {
-      await this.pipelineConfigurationForm._initPipelineConfiguration();
+      await this.pipelineConfigurationForm._initPipelineConfiguration(this.pipelineInfoExtended);
       this._launchDialogById('#create-pipeline');
     }
   }

@@ -437,7 +437,7 @@ export default class PipelineView extends BackendAIPage {
       module_uri: '',
       ...parsedData
     } as PipelineTask;
-    await this.pipelineTaskConfigurationForm._loadCurrentPipelineTaskConfiguration(taskInfo);
+    await this.pipelineTaskConfigurationForm._loadCurrentPipelineTaskConfiguration(this.pipelineInfo.storage.name, taskInfo);
     this._launchDialogById('#task-dialog');
   }
 
