@@ -357,7 +357,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
     
     // virtual folders
-    this._loadDefaultMounts(pipelineYaml.mounts);
+    const enableForceInitializeSelectedVFolder = true;
+    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineYaml.mounts);
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -406,7 +407,8 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
 
     // virtual folders
-    this._loadDefaultMounts(pipelineYaml.mounts);
+    const enableForceInitializeSelectedVFolder = true;
+    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineYaml.mounts);
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -459,7 +461,8 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // virtual folders
-    this._loadDefaultMounts(pipelineTask.mounts);
+    const enableForceInitializeSelectedVFolder = true;
+    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineTask.mounts);
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -513,19 +516,20 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Auto-select default mounts in vfolder grid
    * 
+   * @param {boolean} forceInitialize  - whether to initialize selected vfolder or not
    * @param {Array<string>} mountFolderList 
    */
-  _loadDefaultMounts(mountFolderList: Array<string> = []) {
+  _loadDefaultMounts(forceInitialize = false, mountFolderList: Array<string> = []) {
     this.defaultSelectedVfolders = mountFolderList;
-    if (this.vfolderGrid && this.vfolderGrid.items) {
-      this.vfolderGrid.items.forEach((item) => {
+    if (forceInitialize) {
+      this._unselectAllSelectedFolder();
+    }
+    if (this.vfolderGrid && this.vfolderGrid.items.length > 0) {
+      for (const item of this.vfolderGrid.items) {
         if (this.defaultSelectedVfolders.includes(item.name)) {
           // force-select vfolder
           this.vfolderGrid.selectItem(item);
         }
-      });
-      if (this.defaultSelectedVfolders.length === 0) {
-        this._unselectAllSelectedFolder();
       }
     }
   }
