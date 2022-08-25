@@ -77,6 +77,12 @@ type CommitSessionInfo = {
  */
 type CommitSessionStatus = 'ready' | 'ongoing';
 
+/**
+ * Type of sesion type
+ * - INTERACTIVE: execute in prompt, terminate on-demand
+ * - BATCH: apply execution date and time, and automatically terminated when command is done
+ */
+type SessionType = "INTERACTIVE" | "BATCH";
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -1885,6 +1891,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                          this._isPreparing(rowData.item.status) ||
                                          this._isError(rowData.item.status) ||
                                          this._isFinished(rowData.item.status) ||
+                                         rowData.item.type as SessionType === 'BATCH' ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
