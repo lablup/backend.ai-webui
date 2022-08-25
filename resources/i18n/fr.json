@@ -55,7 +55,8 @@
       "Run": "Exécuter",
       "UserName": "Nom d'utilisateur",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",

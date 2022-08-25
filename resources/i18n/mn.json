@@ -55,7 +55,8 @@
       "Run": "Ажиллуулах",
       "UserName": "Хэрэглэгчийн нэр",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",

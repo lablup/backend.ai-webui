@@ -109,7 +109,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         .agent-detail-title {
           font-size: 8px;
-          width: 35px;
+          width: 42px;
         }
 
         div.indicator,
@@ -321,7 +321,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               }
               agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
               agents[objectKey].total_cuda_fgpu_percent = (agents[objectKey].used_cuda_fgpu_slots_ratio * 100).toFixed(2);
-
             }
             if ('rocm.device' in available_slots) {
               agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);

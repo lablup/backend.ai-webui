@@ -127,6 +127,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) mini_ui = false;
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
+  @property({type: Boolean}) isHideAgents = true;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -135,7 +136,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
-    'data', 'pipeline', 'statistics', 'usersettings', 'credential',
+    'data', 'pipeline', 'agent-summary', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
     'information', 'github', 'import', 'unauthorized'];
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
@@ -322,6 +323,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if ((typeof config.general !== 'undefined' && 'maskUserInfo' in config.general)) {
       this.isUserInfoMaskEnabled = config.general.maskUserInfo;
     }
+    if (typeof config.general !== 'undefined' && 'hideAgents' in config.general) {
+      this.isHideAgents = config.general.hideAgents;
+    }
 
     globalThis.packageEdition = this.edition;
     if (typeof config.license !== 'undefined' && 'validUntil' in config.license) {
@@ -460,7 +464,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       })
       .then((res) => {
         const tomlConfig = toml(res);
-        _preprocessToml(tomlConfig)
+        _preprocessToml(tomlConfig);
         if (returning) {
           return tomlConfig;
         } else {
@@ -891,6 +895,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     case 'pipeline':
       this.menuTitle = _text('webui.menu.Pipeline');
       break;
+    case 'agent-summary':
+      this.menuTitle = _text('webui.menu.AgentSummary');
+      break;
     case 'statistics':
       this.menuTitle = _text('webui.menu.Statistics');
       break;
@@ -1165,6 +1172,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
     this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
+    this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
@@ -1347,6 +1355,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
             </mwc-list-item>
+            ${this.isHideAgents ? html`` : html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'agent-summary'}" @click="${() => this._moveTo('/agent-summary')}" ?disabled="${this.blockedMenuitem.includes('agent-summary')}">
+                <i class="fas fa-server" slot="graphic" id="agent-summary-menu-icon"></i>
+                <span class="full-menu">${_t('webui.menu.AgentSummary')}</span>
+              </mwc-list-item>
+            `}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
@@ -1551,6 +1565,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
+                    <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${this._page === 'agent-summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
                     <backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>

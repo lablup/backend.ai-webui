@@ -55,7 +55,8 @@
       "Run": "Jalankan",
       "UserName": "Nama Pengguna",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
