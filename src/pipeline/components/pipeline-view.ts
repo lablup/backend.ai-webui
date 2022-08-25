@@ -551,7 +551,7 @@ export default class PipelineView extends BackendAIPage {
                   <mwc-button outlined icon="delete" label="Remove Task" @click="${() => this._removeTask()}"></mwc-button>
                   <mwc-button outlined icon="edit" label="Edit Task" @click="${() => this._showTaskEditDialog()}"></mwc-button>
                 ` : html`
-                  <mwc-button id="new-task" unelevated icon="add" label="New Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
+                  <mwc-button id="new-task" unelevated icon="add" label="CREATE Task" @click="${() => this._showTaskCreateDialog()}"></mwc-button>
                 `}
               </div>
             </div>

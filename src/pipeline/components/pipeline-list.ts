@@ -469,7 +469,7 @@ export default class PipelineList extends BackendAIPage {
     // language=HTML
     return html`
     <backend-ai-dialog id="create-pipeline" fixed backdrop blockscrolling persistent narrowLayout>
-      <span slot="title">New Pipeline</span>
+      <span slot="title">Create Pipeline</span>
       <div slot="content" class="vertical layout flex">
         <pipeline-configuration-form></pipeline-configuration-form>
       </div>
