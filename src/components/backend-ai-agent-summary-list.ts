@@ -221,7 +221,7 @@ export default class BackendAIAgent extends BackendAIPage {
     }
     this.list_condition = 'loading';
     this.list_status.show();
-    const fields = ['id', 'status', 'available_slots', 'occupied_slots'];
+    const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'architecture'];
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';

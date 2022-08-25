@@ -2151,7 +2151,7 @@ class AgentSummary {
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.) 
    */
-  async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots"],
+  async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots", "architecture"],
               limit = 20, offset = 0, timeout:number = 0) {
     let f = fields.join(' ');
     if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
