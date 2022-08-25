@@ -2347,7 +2347,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
             <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
