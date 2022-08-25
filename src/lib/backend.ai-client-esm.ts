@@ -161,6 +161,9 @@ class Client {
   public eduApp: EduApp;
   public service: Service;
   public enterprise: Enterprise;
+  public pipeline: Pipeline;
+  public pipelineJob: PipelineJob;
+  public pipelineTaskInstance: PipelineTaskInstance;
   public _features: any;
   public ready: boolean = false;
   public abortController: any;
@@ -221,7 +224,9 @@ class Client {
     this.enterprise = new Enterprise(this);
     this.cloud = new Cloud(this);
     this.eduApp = new EduApp(this);
-
+    this.pipeline = new Pipeline(this);
+    this.pipelineJob = new PipelineJob(this);
+    this.pipelineTaskInstance = new PipelineTaskInstance(this);
     this._features = {}; // feature support list
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
@@ -591,7 +596,7 @@ class Client {
    *
    */
   async check_login() {
-    let rqst = this.newSignedRequest('POST', `/server/login-check`, null);
+    let rqst = this.newSignedRequest('POST', `/server/login-check`, null, null);
     let result;
     try {
       result = await this._wrapWithPromise(rqst);
@@ -618,7 +623,7 @@ class Client {
       'username': this._config.userId,
       'password': this._config.password
     };
-    let rqst = this.newSignedRequest('POST', `/server/login`, body, true);
+    let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
       result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
@@ -662,7 +667,7 @@ class Client {
    */
   logout() {
     let body = {};
-    let rqst = this.newSignedRequest('POST', `/server/logout`, body);
+    let rqst = this.newSignedRequest('POST', `/server/logout`, body, null);
     // clean up log msg for security reason
     const currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
@@ -677,7 +682,7 @@ class Client {
    */
   async token_login() {
     const body = {};
-    const rqst = this.newSignedRequest('POST', `/server/token-login`, body);
+    const rqst = this.newSignedRequest('POST', `/server/token-login`, body, null);
     try {
       const result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
@@ -716,7 +721,7 @@ class Client {
       'username': userid,
       'password': password
     };
-    let rqst = this.newSignedRequest('POST', `/auth/signout`, body);
+    let rqst = this.newSignedRequest('POST', `/auth/signout`, body, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -728,7 +733,7 @@ class Client {
       'email': email,
       'full_name': fullName
     };
-    let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body);
+    let rqst = this.newSignedRequest('POST', `/auth/update-full-name`, body, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -742,7 +747,7 @@ class Client {
       'new_password': newPassword,
       'new_password2': newPassword2
     };
-    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, true);
+    let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, '', true);
     return this._wrapWithPromise(rqst);
   }
 
@@ -864,9 +869,9 @@ class Client {
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
-      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params);
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/create`, params, null);
     } else {
-      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params);
+      rqst = this.newSignedRequest('POST', `${this.kernelPrefix}`, params, null);
     }
     //return this._wrapWithPromise(rqst);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -962,7 +967,7 @@ class Client {
         params['config'].environ = resources['env'];
       }
     }
-    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params);
+    const rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/_/create-from-template`, params, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -976,7 +981,7 @@ class Client {
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
-    let rqst = this.newSignedRequest('GET', queryString, null);
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -992,7 +997,7 @@ class Client {
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
-    let rqst = this.newSignedRequest('GET', queryString, null);
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -1003,7 +1008,7 @@ class Client {
    */
   getTaskLogs(sessionId) {
     const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
-    let rqst = this.newSignedRequest('GET', queryString, null);
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1021,7 +1026,7 @@ class Client {
     } else {
       queryString = `${queryString}${forced ? '?forced=true' : ''}`;
     }
-    let rqst = this.newSignedRequest('DELETE', queryString, null);
+    let rqst = this.newSignedRequest('DELETE', queryString, null, null);
     return this._wrapWithPromise(rqst, false, null, 15000, 2); // 15 sec., two trial when error occurred.
   }
 
@@ -1035,7 +1040,7 @@ class Client {
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
-    let rqst = this.newSignedRequest('PATCH', queryString, null);
+    let rqst = this.newSignedRequest('PATCH', queryString, null, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1058,7 +1063,7 @@ class Client {
       "runId": runId,
       "options": opts,
     };
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params, null);
 	return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
@@ -1086,7 +1091,7 @@ class Client {
     let params = {
       'name': newId
     }
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1095,7 +1100,7 @@ class Client {
       'service_name': service_name
     };
     const q = new URLSearchParams(params).toString();
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/shutdown-service?${q}`, null, null);
     return this._wrapWithPromise(rqst, true);
   }
 
@@ -1103,7 +1108,7 @@ class Client {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
-    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData);
+    let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/upload`, formData, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1112,7 +1117,7 @@ class Client {
       'files': files
     };
     const q = new URLSearchParams(params).toString();
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download?${q}`, null, null);
     return this._wrapWithPromise(rqst, true);
   }
 
@@ -1121,7 +1126,7 @@ class Client {
       'file': file
     };
     const q = new URLSearchParams(params).toString();
-    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null);
+    let rqst = this.newSignedRequest('GET', `${this.kernelPrefix}/${sessionId}/download_single?${q}`, null, null);
     return this._wrapWithPromise(rqst, true);
   }
 
@@ -1145,7 +1150,7 @@ class Client {
       'query': q,
       'variables': v
     };
-    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query, secure);
+    let rqst = this.newSignedRequest('POST', `/admin/graphql`, query, null, secure);
     return this._wrapWithPromise(rqst, false, signal, timeout, retry);
   }
 
@@ -1156,9 +1161,10 @@ class Client {
    * @param {string} method - the HTTP method
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {string | null} serviceName - serviceName for sending up requests to other services
    * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any, secure: boolean = false) {
+  newSignedRequest(method: string, queryString, body: any, serviceName: string | null, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1207,6 +1213,22 @@ class Client {
       });
       uri = this._config.endpoint + queryString;
     }
+
+    if (serviceName === 'pipeline') {
+      uri = this._config.endpoint + `/${serviceName}` + queryString;
+      hdrs = new Headers({
+        "Accept": content_type,
+        // "Allow-Control-Allow-Origin": "*"
+      });
+      const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
+
+      // Append Authorization token for every API request to pipeline
+      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) { 
+        const token = this.pipeline.getPipelineToken();
+        hdrs.set("Authorization", `Token ${token}`);
+      }
+    }
+
     if (body != undefined) {
       if (typeof body.getBoundary === 'function') {
         hdrs.set('Content-Type', body.getHeaders()['content-type']);
@@ -1370,7 +1392,7 @@ class Client {
    * only ssh_public_key will be received.
    */
   async fetchSSHKeypair() {
-    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null);
+    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null)
     return this._wrapWithPromise(rqst, false);
   }
 
@@ -1379,7 +1401,7 @@ class Client {
    * gets randomly generated keypair (both ssh_public_key and ssh_private_key) will be received.
    */
   async refreshSSHKeypair() {
-    let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null);
+    let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null, null);
     return this._wrapWithPromise(rqst, false);
   }
 
@@ -3525,7 +3547,7 @@ class ScalingGroup {
 
   async list(group = 'default') {
     const queryString = `/scaling-groups?group=${group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null);
+    const rqst = this.client.newSignedRequest("GET", queryString, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3541,7 +3563,7 @@ class ScalingGroup {
       return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
     }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
-    const rqst = this.client.newSignedRequest("GET", url, null);
+    const rqst = this.client.newSignedRequest("GET", url, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3977,6 +3999,309 @@ class Cloud {
   async change_password(email: string, password: string, token: string) {
     const body = {email, password, token};
     const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+    return this.client._wrapWithPromise(rqst);
+  }
+}
+
+
+class Pipeline {
+  public client: any;
+  public tokenName: string;
+  public urlPrefix: string;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client: Client) {
+    this.client = client;
+    this.tokenName = 'pipeline-token';
+    this.urlPrefix = `/api/pipelines`;
+  }
+
+  /**
+   * 
+   * @param {json} input - pipeline specification and data. Required fields are:
+   * {
+   *    'username': string,
+   *    'password': string,
+   *    'access_key': string,
+   *    'secret_key': string,
+   * }
+   */
+  async login(input) {
+    const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
+    let result;
+    try {
+      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
+        'username': input.username,
+        'password': '********'
+      })});
+      // if there's no token, then user account is invalid
+      if (result.hasOwnProperty('token') === false) {
+        return Promise.resolve(false);
+      } else {
+        const token = result.token;
+        document.cookie = `${this.tokenName}=${token}; path=/`;
+        return Promise.resolve(false);
+      }
+    } catch (err) {
+      console.log(err);
+      throw {
+        "title": "No Pipeline Server found at API Endpoint.",
+        "message": "Authentication failed. Check information and pipeline server status."
+      }
+    }
+  }
+
+  async logout() {
+    const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
+    try {
+      await this.client._wrapWithPromise(rqst);
+    } catch (err) {
+      throw {
+        "title": "Pipeline Logout Failed.",
+        "message": "Pipeline Logout failed. Check information and pipeline server status."
+      }
+    } finally {
+      // remove cookie anyway
+      this._removeCookieByName(this.tokenName);
+    }
+  }
+
+  async check_login() {
+    let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  getPipelineToken() {
+    return this._getCookieByName(this.tokenName);
+  }
+
+  /**
+   * List all pipelines
+   */
+  async list() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get pipeline with given its id
+   * 
+   * @param {string} id - pipeline id
+   */
+  async info(id) {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Create a pipeline with input
+   * 
+   * @param {json} input - pipeline specification and data. Required fields are:
+   * {
+   *    'name': string,
+   *    'description' : string,
+   *    'yaml': string,
+   *    'dataflow': object,
+   *    'is_active': boolean
+   * }
+   */
+  async create(input) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Update the pipeline based on input value
+   * 
+   * @param {string} id - pipeline id
+   * @param {json} input - pipeline specification and data. Required fields are:
+   * {
+   *    'name': string,
+   *    'description': string, // TODO
+   *    'yaml': string,
+   *    'dataflow': {},
+   *    'is_active': boolean, // TODO
+   * }
+   */
+  async update(id, input) {
+    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Delete the pipeline
+   * 
+   * @param {string} id - pipeline id 
+   */
+  async delete(id) {
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Instantiate(Run) pipeline to pipeline-job
+   * 
+   * @param {string} id - pipeline id 
+   * @param {json} input - piepline specification and data. Required fields are:
+   * {
+   *    'name': string,
+   *    'description': string,
+   *    'yaml': string,
+   *    'dataflow': {},
+   *    'is_active': boolean,
+   * }
+   */
+  async run(id, input) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+ 
+  /**
+   * Get Cookie By its name if exists
+   * 
+   * @param {string} name - cookie name
+   * @returns {string} cookieValue
+   */
+  _getCookieByName(name = '') {
+    let cookieValue: string = '';
+    if (document.cookie && document.cookie !== '') {
+      const cookies = document.cookie.split(';');
+      for (let i = 0; i < cookies.length; i++) {
+        const cookie = cookies[i].trim();
+        if (cookie.substring(0, name.length+1) === (name +'=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+          break;
+        }
+      }
+    }
+    return cookieValue;
+  }
+
+  /**
+   * Remove Cookie By its name if exists
+   * 
+   * @param {string} name - cookie name 
+   */
+  _removeCookieByName(name = '') {
+    if (name !== '') {
+      document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+    }
+  }
+}
+
+class PipelineJob {
+  public client: any;
+  public urlPrefix: string;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+   constructor(client: Client) {
+    this.client = client;
+    this.urlPrefix =  `/api/pipeline-jobs`;
+  }
+
+  /**
+   * List all pipeline jobs
+   */
+  async list() {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get pipeline job with given its id
+   * 
+   * @param {string} id - pipeline id
+   */
+  async info(id) {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Stop running pipeline job with given its id
+   * 
+   * @param {string} id - pipeline id
+   */
+  async stop(id) {
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+}
+
+class PipelineTaskInstance {
+  public client: any;
+  public urlPrefix: string;
+
+  /**
+   * Setting API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+   constructor(client: Client) {
+    this.client = client;
+    this.urlPrefix = `/api/task-instances`;
+  }
+
+  /**
+   * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
+   * if not, then bring all task instances that pipeline server user created via every pipeline job
+   * 
+   * @param {stirng} pipelineJobId - pipeline job id
+   */
+  async list(pipelineJobId = '') {
+    let queryString = `${this.urlPrefix}`;
+    queryString += (pipelineJobId) ? `/?pipeline_job=${pipelineJobId}` : `/`;
+    let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get task instance with given its id
+   * 
+   * @param {string} id - task instance id
+   */
+  async info(id) {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Create custom task instance with input
+   * 
+   * @param {json} input 
+   */
+  async create(input) {
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  } 
+
+  /**
+   * Update the task instance based on input value
+   * 
+   * @param {string} id - task instance id
+   * @param {json} input - task-instance specification and data.
+   */
+  async update(id, input) {
+    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    return this.client._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Delete the task-instance
+   * 
+   * @param {string} id - task instance id 
+   */
+  async delete(id) {
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
 }
