@@ -756,13 +756,14 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       if (['batch', 'interactive'].includes(this.condition)) {
         const result = sessions.reduce((res, session) => {
-          res[session.type === 'BATCH' ? 'batch' : 'interactive'].push(session);
+          res[session.type === 'BATCH' as SessionType ? 'batch' : 'interactive'].push(session);
           return res;
         }, {batch: [], interactive: []});
         sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
       }
 
       this.compute_sessions = sessions;
+      this._grid.recalculateColumnWidths();
       this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
@@ -1839,7 +1840,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       (rowData.item.user_email === globalThis.backendaiclient.email);
     render(
       html`
-        <div id="controls" class="layout horizontal flex center"
+        <div id="controls" class="layout horizontal wrap center"
              .session-uuid="${rowData.item.session_id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
@@ -2346,7 +2347,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         </div>
       </div>
       <div class="list-wrapper">
-        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
+        <vaadin-grid id="list-grid" theme="row-stripes column-borders compact wrap-cell-content" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
             <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
@@ -2365,7 +2366,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
                                      .renderer="${this._boundStatusRenderer}">
           </vaadin-grid-filter-column>
-          <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
+          <vaadin-grid-column width=${this._isContainerCommitEnabled ? "260px": "210px"} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
