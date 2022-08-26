@@ -41,29 +41,6 @@ Example:
 @element backend-ai-agent-list
 */
 
-/* Custom type for live stat of agent node
-*  - cpu_util
-*  - mem_util
-*  - cuda_util (optional)
-*/
-type LiveStat = {
-  cpu_util: {
-    capacity: number;
-    current: number;
-    ratio: number;
-  }
-  mem_util: {
-    capacity: number;
-    current: number;
-    ratio: number;
-  }
-  cuda_util?: { // optional
-    capacity: number;
-    current: number;
-    ratio: number;
-  }
-};
-
 @customElement('backend-ai-agent-summary-list')
 export default class BackendAIAgent extends BackendAIPage {
   @property({type: String}) condition = 'running';
