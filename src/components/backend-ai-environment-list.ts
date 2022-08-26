@@ -17,9 +17,9 @@
  } from '../plastics/layout/iron-flex-layout-classes';
  import '../plastics/lablup-shields/lablup-shields';
  import './lablup-loading-spinner';
- import './backend-ai-list-status';
  import './backend-ai-dialog';
- 
+ import BackendAIListStatus from './backend-ai-list-status';
+
  import '@vaadin/vaadin-grid/vaadin-grid';
  import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
  import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -42,7 +42,6 @@
   * This type definition is a workaround for resolving both Type error and Importing error.
   */
  type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
- type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
  type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  type Slider = HTMLElementTagNameMap['mwc-slider'];
  
@@ -90,7 +89,6 @@
    @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
    @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
    @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-   @query('#list-status') list_status!: BackendAIListStatus;
    @query('#modify-image-cpu') modifyImageCpu!: Button;
    @query('#modify-image-mem') modifyImageMemory!: Button;
    @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
@@ -101,6 +99,7 @@
    @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
    @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
    @query('#modify-app-container') modifyAppContainer!: HTMLDivElement;
+   @query('#list-status') listStatus!: BackendAIListStatus;
  
    constructor() {
      super();
@@ -417,7 +416,7 @@
       */
    _getImages() {
      this.list_condition = 'loading';
-     this.list_status.show(); 
+     this.listStatus?.show();
      globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
        this.allowed_registries = response.domain.allowed_docker_registries;
        return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -501,10 +500,10 @@
        // image_keys.sort();
        this.images = domainImages;
        if (this.images.length == 0) {
-        this.list_condition = 'no-data';
-      } else {
-        this.list_status.hide();
-      }
+         this.list_condition = 'no-data';
+       } else {
+         this.listStatus?.hide();
+       }
      }).catch((err) => {
        console.log(err);
        if (typeof err.message !== 'undefined') {
@@ -514,7 +513,7 @@
          this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
        }
        this.notification.show(true, err);
-       this.list_status.hide();
+       this.listStatus?.hide();
      });
    }
  
