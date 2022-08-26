@@ -81,7 +81,7 @@
      'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
      'tpu': ['0', '1', '2']};
    @property({type: Number}) cpuValue = 0;
-   @property({type: String}) list_condition = 'loading';
+   @property({type: String}) listCondition = 'loading';
    @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
    @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
    @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
@@ -415,7 +415,7 @@
       * Get backend.ai client images.
       */
    _getImages() {
-     this.list_condition = 'loading';
+     this.listCondition = 'loading';
      this.listStatus?.show();
      globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
        this.allowed_registries = response.domain.allowed_docker_registries;
@@ -500,7 +500,7 @@
        // image_keys.sort();
        this.images = domainImages;
        if (this.images.length == 0) {
-         this.list_condition = 'no-data';
+         this.listCondition = 'no-data';
        } else {
          this.listStatus?.hide();
        }
@@ -1292,7 +1292,7 @@
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
        </div>
        <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
          <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
