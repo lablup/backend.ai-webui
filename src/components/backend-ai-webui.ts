@@ -142,6 +142,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
+  @property({type: Object}) optionalPages;
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
   @property({type: Object}) loggedAccount = Object();
@@ -202,6 +203,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
     this._parseConfig(configPath).then(() => {
       this.loadConfig(this.config);
+      this.optionalPages = [
+        {
+          page: 'agent-summary',
+          available: !this.isHideAgents,
+        },
+      ];
       // If disconnected
       if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
         if (this._page === 'verify-email') {
@@ -434,6 +441,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
     // redirect to unauthorize page when admin user tries to access superadmin only page
     if (!this.is_superadmin && this.superAdminOnlyPages.includes(this._page)) {
+      this._page = 'unauthorized';
+      globalThis.history.pushState({}, '', '/unauthorized');
+      store.dispatch(navigate(decodeURIComponent(this._page)));
+    }
+
+    // redirect to unauthorize page when blocked by config option.
+    if (this.optionalPages.filter((item) => !item.available).map((item) => item.page).includes(this._page)) {
       this._page = 'unauthorized';
       globalThis.history.pushState({}, '', '/unauthorized');
       store.dispatch(navigate(decodeURIComponent(this._page)));
@@ -1177,7 +1191,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
-    this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
@@ -1191,6 +1204,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._createPopover('#maintenance-menu-icon', _text('webui.menu.Maintenance'));
       this._createPopover('#information-menu-icon', _text('webui.menu.Information'));
       // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
+    }
+    if (!this.isHideAgents) {
+      this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     }
   }
 
