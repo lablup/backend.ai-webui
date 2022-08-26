@@ -77,6 +77,12 @@ type CommitSessionInfo = {
  */
 type CommitSessionStatus = 'ready' | 'ongoing';
 
+/**
+ * Type of sesion type
+ * - INTERACTIVE: execute in prompt, terminate on-demand
+ * - BATCH: apply execution date and time, and automatically terminated when command is done
+ */
+type SessionType = "INTERACTIVE" | "BATCH";
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -750,13 +756,14 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       if (['batch', 'interactive'].includes(this.condition)) {
         const result = sessions.reduce((res, session) => {
-          res[session.type === 'BATCH' ? 'batch' : 'interactive'].push(session);
+          res[session.type === 'BATCH' as SessionType ? 'batch' : 'interactive'].push(session);
           return res;
         }, {batch: [], interactive: []});
         sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
       }
 
       this.compute_sessions = sessions;
+      this._grid.recalculateColumnWidths();
       this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
@@ -1833,7 +1840,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       (rowData.item.user_email === globalThis.backendaiclient.email);
     render(
       html`
-        <div id="controls" class="layout horizontal flex center"
+        <div id="controls" class="layout horizontal wrap center"
              .session-uuid="${rowData.item.session_id}"
              .session-name="${rowData.item[this.sessionNameField]}"
              .access-key="${rowData.item.access_key}"
@@ -1885,6 +1892,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                          this._isPreparing(rowData.item.status) ||
                                          this._isError(rowData.item.status) ||
                                          this._isFinished(rowData.item.status) ||
+                                         rowData.item.type as SessionType === 'BATCH' ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
           ` : html``}
@@ -2358,7 +2366,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
                                      .renderer="${this._boundStatusRenderer}">
           </vaadin-grid-filter-column>
-          <vaadin-grid-column width="260px" resizable header="${_t('general.Control')}"
+          <vaadin-grid-column width=${this._isContainerCommitEnabled ? "260px": "210px"} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
