@@ -142,7 +142,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
-  @property({type: Object}) optionalPages;
+  @property({type: Array}) optionalPages;
   @property({type: Number}) timeoutSec = 5;
   @property({type: Boolean}) use_experiment = false;
   @property({type: Object}) loggedAccount = Object();
