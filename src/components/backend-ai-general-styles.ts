@@ -578,11 +578,14 @@ export const BackendAiStyles = [
       --mdc-select-outlined-hover-border-color: var(--general-select-color);
       --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
       --mdc-select-fill-color: transparent;
+      --mdc-select-disabled-fill-color: transparent;
       --mdc-select-ink-color: black;
       --mdc-select-label-ink-color: black;
       --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
+      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     .bg-blue {

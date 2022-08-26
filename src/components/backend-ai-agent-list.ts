@@ -810,16 +810,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
         liveStat.cuda_util!.capacity = parseFloat(rowData.item.live_stat.node.cuda_util.capacity ?? 0);
         liveStat.cuda_util!.current = parseFloat(rowData.item.live_stat.node.cuda_util.current);
-        // NOTE: cuda_util.capacity is reported as 0 from the server. In that case,
-        //       we manually set it to 100 to properly display the GPU utilization.
-        // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
-        let cudaUtilCapacity;
-        if (liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
-          cudaUtilCapacity = 100;
-        } else {
-          cudaUtilCapacity = liveStat.cuda_util!.capacity;
-        }
-        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
       }
       if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
         const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;

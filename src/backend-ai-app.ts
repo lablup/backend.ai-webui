@@ -10,7 +10,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Record<string, unknown> = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/agent-summary', '/experiment', '/data', '/pipeline', '/pipeline-job', '/statistics', '/usersettings',
+  if (['/summary', '/job', '/pipeline', '/agent-summary', '/experiment', '/data', '/statistics', '/usersettings',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
     '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     const fragments = path.split(/[/]+/);
@@ -57,10 +57,7 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
     import('./components/backend-ai-session-view.js');
     break;
   case 'pipeline':
-    import('./pipeline/components/pipeline-view.js');
-    break;
-  case 'pipeline-job':
-    import('./pipeline/components/pipeline-job-view.js');
+    import('./components/backend-ai-pipeline-view.js');
     break;
   case 'agent-summary':
     import('./components/backend-ai-agent-summary-view.js');
