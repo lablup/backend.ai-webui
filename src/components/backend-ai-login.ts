@@ -36,6 +36,16 @@ declare global {
   const ai: any;
 }
 
+type ConnectionMode = 'SESSION' | 'API';
+
+type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
+
+type ConfigValueObject = {
+  valueType: ConfigValueType;
+  defaultValue: boolean | number | string | Array<string>;
+  value: boolean | number | string | Array<string>;
+};
+
 /**
  Backend.AI Login for GUI Console
 
@@ -64,7 +74,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) default_import_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
-  @property({type: String}) connection_mode = 'SESSION';
+  @property({type: String}) connection_mode = 'SESSION' as ConnectionMode;
   @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
@@ -434,6 +444,68 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  private _getConfigValueByExists(parentsKey, valueObj: ConfigValueObject) {
+    const defaultConditions: boolean = (parentsKey === undefined ||
+                                        valueObj.value === undefined ||
+                                        typeof valueObj.value === 'undefined' ||
+                                        valueObj.value === '' ||
+                                        valueObj.value === null);
+    let extraConditions;
+    switch (typeof valueObj.defaultValue) {
+      case 'number':
+        extraConditions = isNaN(valueObj.value as number);
+        // if any condition check fails return value will be defaultValue
+        return (defaultConditions || extraConditions) ? valueObj.defaultValue : valueObj.value;
+      case 'boolean':
+      case 'string':
+      default: // includes array
+        return defaultConditions ? valueObj.defaultValue : valueObj.value;
+        break;
+    }
+  }
+
+  private _initGeneralConfigWithKeys(configKey) {
+    /**
+     * TODO: set general configuration with keys from config file
+     */
+  }
+
+  private _initWSProxyConfigWithKeys(configKey) {
+    /**
+     * TODO: set wsproxy configuration with keys from config file
+     */
+  }
+
+  private _initMenuConfigWithKeys(configKey) {
+    /**
+     * TODO: set menu configuration with keys from config file
+     */
+  }
+
+  private _initResourcesConfigWithKeys(configKey) {
+    /**
+     * TODO: set resources configuration with keys from config file
+     */
+  }
+
+  private _initEnvironmentsConfigWithKeys(configKey) {
+    /**
+     * TODO: set environments configuration with keys from config file
+     */
+  }
+
+  private _initServerConfigWithKeys(configKey) {
+    /**
+     * TODO: set general configuration with keys from config file
+     */
+  }
+
+  private _initPluginConfigWithKeys(configKey) {
+    /**
+     * TODO: set plugin configuration with keys from config file
+     */
+  }
+
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
       this._enableUserInput();
@@ -456,166 +528,426 @@ export default class BackendAILogin extends BackendAIPage {
         }
       });
     }
-    if (typeof config.general === 'undefined' || typeof config.general.debug === 'undefined' || config.general.debug === '') {
-      globalThis.backendaiwebui.debug = false;
-    } else if (config.general.debug === true) {
-      globalThis.backendaiwebui.debug = true;
+
+    /**
+     * Assign Configuration as global value from config file (config.toml)
+     * - ends with flag means the value is true or false (usually use `false` as a default)
+     * - ends with number means the value is positive number with zero
+     * - ends with value means the value is string
+     * - ends with array means the value is array of string
+     */
+    // Debug flag
+    globalThis.backendaiwebui.debug = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.debug,
+      } as ConfigValueObject) as boolean;
+    if (globalThis.backendaiwebui.debug) {
       console.log('Debug flag is set to true');
     }
-    if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport === false) {
-      this.signup_support = false;
-    } else {
-      this.signup_support = true;
+    // if (typeof config.general === 'undefined' || typeof config.general.debug === 'undefined' || config.general.debug === '') {
+    //   globalThis.backendaiwebui.debug = false;
+    // } else if (config.general.debug === true) {
+    //   globalThis.backendaiwebui.debug = true;
+    //   console.log('Debug flag is set to true');
+    // }
+
+    // Signup support flag
+    this.signup_support = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.signupSupport,
+      } as ConfigValueObject) as boolean;
+    // Signup support flag
+    if (this.signup_support) {
       (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword === false) {
-      this.allowAnonymousChangePassword = false;
-    } else {
-      this.allowAnonymousChangePassword = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode === false) {
-      this.change_signin_support = false;
-    } else {
-      this.change_signin_support = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor === false) {
-      this.allow_project_resource_monitor = false;
-    } else {
-      this.allow_project_resource_monitor = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession === false) {
-      this.allow_manual_image_name_for_session = false;
-    } else {
-      this.allow_manual_image_name_for_session = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession === false) {
-      this.always_enqueue_compute_session = false;
-    } else {
-      this.always_enqueue_compute_session = true;
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic === false) {
-      this.openPortToPublic = false;
-    } else {
-      this.openPortToPublic = true;
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCPUCoresPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCPUCoresPerContainer))) {
-      this.maxCPUCoresPerContainer = 64;
-    } else {
-      this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
-      this.maxMemoryPerContainer = 16;
-    } else {
-      this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
-      this.maxCUDADevicesPerContainer = 16;
-    } else {
-      this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDASharesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDASharesPerContainer))) {
-      this.maxCUDASharesPerContainer = 16;
-    } else {
-      this.maxCUDASharesPerContainer = parseInt(config.resources.maxCUDASharesPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxShmPerContainer === 'undefined' || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
-      this.maxShmPerContainer = 2;
-    } else {
-      this.maxShmPerContainer = parseFloat(config.resources.maxShmPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxFileUploadSize === 'undefined' || config.resources.maxFileUploadSize === '') {
-      this.maxFileUploadSize = -1;
-    } else {
-      this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout === false) {
-      this.allow_signout = false;
-    } else {
-      this.allow_signout = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.loginAttemptLimit === 'undefined' || config.general.loginAttemptLimit === '') {
-    } else {
-      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.loginBlockTime === 'undefined' || config.general.loginBlockTime === '') {
-    } else {
-      this.login_block_time = parseInt(config.general.loginBlockTime);
-    }
-    if (typeof config.wsproxy === 'undefined' || typeof config.wsproxy.proxyURL === 'undefined' || config.wsproxy.proxyURL === '') {
-      this.proxy_url = 'http://127.0.0.1:5050/';
-    } else {
-      this.proxy_url = config.wsproxy.proxyURL;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.apiEndpoint === 'undefined' || config.general.apiEndpoint === '') {
+    // if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport === false) {
+    //   this.signup_support = false;
+    // } else {
+    //   this.signup_support = true;
+    //   (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
+    // }
+
+    // Signup support flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowAnonymousChangePassword,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword === false) {
+    //   this.allowAnonymousChangePassword = false;
+    // } else {
+    //   this.allowAnonymousChangePassword = true;
+    // }
+
+    // Allow change Sign-in mode flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowChangeSigninMode,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode === false) {
+    //   this.change_signin_support = false;
+    // } else {
+    //   this.change_signin_support = true;
+    // }
+
+    // Allow change Sign-in mode flag
+    this.allow_project_resource_monitor = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowProjectResourceMonitor,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor === false) {
+    //   this.allow_project_resource_monitor = false;
+    // } else {
+    //   this.allow_project_resource_monitor = true;
+    // }
+
+    // Allow manual image name for session flag
+    this.allow_manual_image_name_for_session = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowManualImageNameForSession,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession === false) {
+    //   this.allow_manual_image_name_for_session = false;
+    // } else {
+    //   this.allow_manual_image_name_for_session = true;
+    // }
+
+    // Always enqueue compute session flag
+    this.always_enqueue_compute_session = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.alwaysEnqueueComputeSession,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession === false) {
+    //   this.always_enqueue_compute_session = false;
+    // } else {
+    //   this.always_enqueue_compute_session = true;
+    // }
+
+    // Open port to public flag
+    this.openPortToPublic = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.resources?.openPortToPublic,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic === false) {
+    //   this.openPortToPublic = false;
+    // } else {
+    //   this.openPortToPublic = true;
+    // }
+
+    // Max CPU cores per container number
+    this.maxCPUCoresPerContainer = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: 64,
+        value: parseInt(config.resources?.maxCPUCoresPerContainer ?? ''),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCPUCoresPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCPUCoresPerContainer))) {
+    //   this.maxCPUCoresPerContainer = 64;
+    // } else {
+    //   this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
+    // }
+
+    // Max Memory per container number
+    this.maxMemoryPerContainer = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: 16,
+        value: parseInt(config.resources?.maxMemoryPerContainer),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
+    //   this.maxMemoryPerContainer = 16;
+    // } else {
+    //   this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
+    // }
+
+    // Max CUDA devices per container number
+    this.maxCUDADevicesPerContainer = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: 16,
+        value: parseInt(config.resources?.maxCUDADevicesPerContainer),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
+    //   this.maxCUDADevicesPerContainer = 16;
+    // } else {
+    //   this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
+    // }
+
+    // Max CUDA shares per container number
+    this.maxCUDASharesPerContainer = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: 16,
+        value: parseInt(config.resources?.maxCUDASharesPerContainer),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDASharesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDASharesPerContainer))) {
+    //   this.maxCUDASharesPerContainer = 16;
+    // } else {
+    //   this.maxCUDASharesPerContainer = parseInt(config.resources.maxCUDASharesPerContainer);
+    // }
+
+    // Max CUDA shares per container number
+    this.maxShmPerContainer = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: 2,
+        value: parseFloat(config.resources?.maxShmPerContainerr),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxShmPerContainer === 'undefined' || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
+    //   this.maxShmPerContainer = 2;
+    // } else {
+    //   this.maxShmPerContainer = parseFloat(config.resources.maxShmPerContainer);
+    // }
+
+    // Max File Upload size number
+    const unlimitedValueOnFileUpload: number = -1;
+    this.maxFileUploadSize = this._getConfigValueByExists(config.resources,
+      {
+        valueType: 'number',
+        defaultValue: unlimitedValueOnFileUpload,
+        value: parseInt(config.resources?.maxFileUploadSize),
+      } as ConfigValueObject) as number;
+    // if (typeof config.resources === 'undefined' || typeof config.resources.maxFileUploadSize === 'undefined' || config.resources.maxFileUploadSize === '') {
+    //   this.maxFileUploadSize = -1;
+    // } else {
+    //   this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
+    // }
+
+    // Allow Sign out flag
+    this.allow_signout = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowSignout,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout === false) {
+    //   this.allow_signout = false;
+    // } else {
+    //   this.allow_signout = true;
+    // }
+
+    // Login attempt limit number
+    this.login_attempt_limit = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'number',
+        defaultValue: this.login_attempt_limit, // default value has been already assigned in property declaration
+        value: parseInt(config.general?.loginAttemptLimit),
+      } as ConfigValueObject) as number;
+    // if (typeof config.general === 'undefined' || typeof config.general.loginAttemptLimit === 'undefined' || config.general.loginAttemptLimit === '') {
+    // } else {
+    //   this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
+    // }
+
+    // Login block time number
+    this.login_block_time = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'number',
+        defaultValue: this.login_block_time, // default value has been already assigned in property declaration
+        value: parseInt(config.general?.loginBlockTime),
+      } as ConfigValueObject) as number;
+    // if (typeof config.general === 'undefined' || typeof config.general.loginBlockTime === 'undefined' || config.general.loginBlockTime === '') {
+    // } else {
+    //   this.login_block_time = parseInt(config.general.loginBlockTime);
+    // }
+
+
+    // wsproxy url value
+    this.proxy_url = this._getConfigValueByExists(config.wsproxy, 
+      {
+        valueType: 'string',
+        defaultValue: 'http://127.0.0.1:5050/',
+        value: parseInt(config.wsproxy?.proxyURL),
+      } as ConfigValueObject) as string;
+    // if (typeof config.wsproxy === 'undefined' || typeof config.wsproxy.proxyURL === 'undefined' || config.wsproxy.proxyURL === '') {
+    //   this.proxy_url = 'http://127.0.0.1:5050/';
+    // } else {
+    //   this.proxy_url = config.wsproxy.proxyURL;
+    // }
+
+    // API endpoint value with additional styles
+    this.api_endpoint = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'string',
+        defaultValue: '',
+        value: config.general?.apiEndpoint
+      } as ConfigValueObject) as string;
+    if (this.api_endpoint === '') {
       this.apiEndpointContainer.style.display = 'flex';
       this.apiEndpointHumanizedInput.style.display = 'none';
     } else {
-      this.api_endpoint = config.general.apiEndpoint;
-      if (typeof config.general === 'undefined' || typeof config.general.apiEndpointText === 'undefined' || config.general.apiEndpointText === '') {
+      // API endpoint text value with additional styles
+      const apiEndpointText = this._getConfigValueByExists(config.general, 
+        {
+          valueType: 'string',
+          defaultValue: '',
+          value: config.general?.apiEndpointText
+        } as ConfigValueObject) as string;
+      if (apiEndpointText === '') {
         this.apiEndpointContainer.style.display = 'flex';
         this.apiEndpointHumanizedInput.style.display = 'none';
         (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
       } else {
-        this.apiEndpointContainer.style.display = 'none';
-        this.apiEndpointHumanizedInput.style.display = 'block';
-        this.apiEndpointHumanizedInput.value = config.general.apiEndpointText;
+        this.apiEndpointInput.disabled = true;
+        this.apiEndpointHumanizedInput.disabled = true;
       }
-      this.apiEndpointInput.disabled = true;
-      this.apiEndpointHumanizedInput.disabled = true;
     }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation === false) {
-      this.allowSignupWithoutConfirmation = false;
-    } else {
-      this.allowSignupWithoutConfirmation = true;
-    }
+    // if (typeof config.general === 'undefined' || typeof config.general.apiEndpoint === 'undefined' || config.general.apiEndpoint === '') {
+    //   this.apiEndpointContainer.style.display = 'flex';
+    //   this.apiEndpointHumanizedInput.style.display = 'none';
+    // } else {
+    //   this.api_endpoint = config.general.apiEndpoint;
+    //   if (typeof config.general === 'undefined' || typeof config.general.apiEndpointText === 'undefined' || config.general.apiEndpointText === '') {
 
-    if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
-      this.default_session_environment = '';
-    } else {
-      this.default_session_environment = config.general.defaultSessionEnvironment;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.defaultImportEnvironment === 'undefined' || config.general.defaultImportEnvironment === '') {
-      this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
-    } else {
-      this.default_import_environment = config.general.defaultImportEnvironment;
-    }
-    if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
-      this.allow_image_list = [];
-    } else {
-      this.allow_image_list = config.environments.allowlist.split(',');
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
-      this.maskUserInfo = false;
-    } else {
-      this.maskUserInfo = config.general.maskUserInfo;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.singleSignOnVendors === 'undefined' || config.general.singleSignOnVendors === '') {
-      this.singleSignOnVendors = [];
-    } else {
-      this.singleSignOnVendors = config.general.singleSignOnVendors.split(',');
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
-      this._enableContainerCommit = false;
-    } else {
-      this._enableContainerCommit = config.general.enableContainerCommit;
-    }
+    //   } else {
+    //     this.apiEndpointContainer.style.display = 'none';
+    //     this.apiEndpointHumanizedInput.style.display = 'block';
+    //     this.apiEndpointHumanizedInput.value = config.general.apiEndpointText;
+    //   }
+    //   this.apiEndpointInput.disabled = true;
+    //   this.apiEndpointHumanizedInput.disabled = true;
+    // }
+
+    // Allow signup without confirmation flag
+    this.allowSignupWithoutConfirmation = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.allowSignupWithoutConfirmation,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation === false) {
+    //   this.allowSignupWithoutConfirmation = false;
+    // } else {
+    //   this.allowSignupWithoutConfirmation = true;
+    // }
+
+    // Default session environment value
+    this.default_session_environment = this._getConfigValueByExists(config.general, 
+      {
+        valueType: 'string',
+        defaultValue: '',
+        value: parseInt(config.general?.defaultSessionEnvironment),
+      } as ConfigValueObject) as string;
+    // if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
+    //   this.default_session_environment = '';
+    // } else {
+    //   this.default_session_environment = config.general.defaultSessionEnvironment;
+    // }
+
+    // Default session environment value
+    this.default_import_environment = this._getConfigValueByExists(config.general, 
+      {
+        valueType: 'string',
+        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
+        value: parseInt(config.general?.defaultImportEnvironment),
+      } as ConfigValueObject) as string;
+    // if (typeof config.general === 'undefined' || typeof config.general.defaultImportEnvironment === 'undefined' || config.general.defaultImportEnvironment === '') {
+    //   this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
+    // } else {
+    //   this.default_import_environment = config.general.defaultImportEnvironment;
+    // }
+
+    // Allow image list array
+    this.allow_image_list = this._getConfigValueByExists(config.environments,
+      {
+        valueType: 'array',
+        defaultValue: [] as string[],
+        // sanitize whitespace on user-input after splitting
+        value: (config.environments?.allowlist ?? '').split(',').map(el => el.trim()),
+      } as ConfigValueObject) as string[];
+    // if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
+    //   this.allow_image_list = [];
+    // } else {
+    //   this.allow_image_list = config.environments.allowlist.split(',');
+    // }
+
+    // Mask user info flag
+    this.maskUserInfo = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: config.general?.maskUserInfo,
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
+    //   this.maskUserInfo = false;
+    // } else {
+    //   this.maskUserInfo = config.general.maskUserInfo;
+    // }
+
+    // Single sign-on vendors array
+    this.singleSignOnVendors = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'array',
+        defaultValue: [] as string[],
+        // sanitize whitespace on user-input after splitting
+        value: (config.general?.singleSignOnVendors  ?? '').split(',').map(el => el.trim()),
+      } as ConfigValueObject) as string[];
+    // if (typeof config.general === 'undefined' || typeof config.general.singleSignOnVendors === 'undefined' || config.general.singleSignOnVendors === '') {
+    //   this.singleSignOnVendors = [];
+    // } else {
+    //   this.singleSignOnVendors = config.general.singleSignOnVendors.split(',');
+    // }
+
+    // Enable container commit flag
+    this._enableContainerCommit = this._getConfigValueByExists(config.general, 
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (config.general?.enableContainerCommit),
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
+    //   this._enableContainerCommit = false;
+    // } else {
+    //   this._enableContainerCommit = config.general.enableContainerCommit;
+    // }
+
+    // Enable pipeline flag
+    this._enablePipeline = this._getConfigValueByExists(config.general,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (config.general?.enablePipeline),
+      } as ConfigValueObject) as boolean;
+    // if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
+    //   this._enablePipeline = false;
+    // } else {
+    //   this._enablePipeline = config.general.enableContainerCommit;
+    // }
+
+    // Connection mode value depending on Electron mode and default configuration value
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
     if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
-      if (connection_mode === 'SESSION') {
-        this.connection_mode = 'SESSION';
-      } else {
-        this.connection_mode = 'API';
-      }
+      this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
     } else {
-      if (typeof config.general === 'undefined' || typeof config.general.connectionMode === 'undefined' || config.general.connectionMode === '') {
-        this.connection_mode = 'SESSION';
-      } else {
-        if (config.general.connectionMode.toUpperCase() === 'SESSION') {
-          this.connection_mode = 'SESSION';
-        } else {
-          this.connection_mode = 'API';
-        }
-      }
+      this.connection_mode = this._getConfigValueByExists(config.general,
+        {
+          valueType: 'boolean',
+          defaultValue: this.connection_mode,
+          value: (config.general?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
+        } as ConfigValueObject) as ConnectionMode;
+      // if (typeof config.general === 'undefined' || typeof config.general.connectionMode === 'undefined' || config.general.connectionMode === '') {
+      //   this.connection_mode = 'SESSION';
+      // } else {
+      //   if (config.general.connectionMode.toUpperCase() === 'SESSION') {
+      //     this.connection_mode = 'SESSION';
+      //   } else {
+      //     this.connection_mode = 'API';
+      //   }
+      // }
     }
   }
 
@@ -707,12 +1039,12 @@ export default class BackendAILogin extends BackendAIPage {
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION') {
+    if (this.connection_mode === 'SESSION' as ConnectionMode) {
       if (globalThis.isElectron) {
         this._loadConfigFromWebServer();
       }
       this._connectUsingSession(showError);
-    } else if (this.connection_mode === 'API') {
+    } else if (this.connection_mode === 'API' as ConnectionMode) {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
       await this._connectUsingAPI(showError);
     } else {
@@ -927,7 +1259,6 @@ export default class BackendAILogin extends BackendAIPage {
         this._enableUserInput();
       } else {
         this._connectUsingSession(true);
-        // globalThis.backendaiclient.pipeline.login()
       }
     } else {
       this.api_key = this.apiKeyInput.value;
