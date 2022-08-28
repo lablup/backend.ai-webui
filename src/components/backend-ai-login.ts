@@ -107,6 +107,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
   private _enableContainerCommit = false;
+  private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
