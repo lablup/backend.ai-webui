@@ -465,48 +465,11 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  private _initGeneralConfigWithKeys(configKey) {
-    /**
-     * TODO: set general configuration with keys from config file
-     */
-  }
-
-  private _initWSProxyConfigWithKeys(configKey) {
-    /**
-     * TODO: set wsproxy configuration with keys from config file
-     */
-  }
-
-  private _initMenuConfigWithKeys(configKey) {
-    /**
-     * TODO: set menu configuration with keys from config file
-     */
-  }
-
-  private _initResourcesConfigWithKeys(configKey) {
-    /**
-     * TODO: set resources configuration with keys from config file
-     */
-  }
-
-  private _initEnvironmentsConfigWithKeys(configKey) {
-    /**
-     * TODO: set environments configuration with keys from config file
-     */
-  }
-
-  private _initServerConfigWithKeys(configKey) {
-    /**
-     * TODO: set general configuration with keys from config file
-     */
-  }
-
-  private _initPluginConfigWithKeys(configKey) {
-    /**
-     * TODO: set plugin configuration with keys from config file
-     */
-  }
-
+  /**
+   * Refresh global value used in Backend.Ai WebUI read from config file with keys
+   *
+   * @param {object} config
+   */
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
       this._enableUserInput();
@@ -537,420 +500,298 @@ export default class BackendAILogin extends BackendAIPage {
      * - ends with value means the value is string
      * - ends with array means the value is array of string
      */
-    // Debug flag
-    globalThis.backendaiwebui.debug = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.debug,
-      } as ConfigValueObject) as boolean;
-    if (globalThis.backendaiwebui.debug) {
-      console.log('Debug flag is set to true');
-    }
-    // if (typeof config.general === 'undefined' || typeof config.general.debug === 'undefined' || config.general.debug === '') {
-    //   globalThis.backendaiwebui.debug = false;
-    // } else if (config.general.debug === true) {
-    //   globalThis.backendaiwebui.debug = true;
-    //   console.log('Debug flag is set to true');
-    // }
-
-    // Signup support flag
-    this.signup_support = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.signupSupport,
-      } as ConfigValueObject) as boolean;
-    // Signup support flag
-    if (this.signup_support) {
-      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
-    }
-    // if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport === false) {
-    //   this.signup_support = false;
-    // } else {
-    //   this.signup_support = true;
-    //   (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
-    // }
-
-    // Signup support flag
-    this.allowAnonymousChangePassword = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowAnonymousChangePassword,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword === false) {
-    //   this.allowAnonymousChangePassword = false;
-    // } else {
-    //   this.allowAnonymousChangePassword = true;
-    // }
-
-    // Allow change Sign-in mode flag
-    this.allowAnonymousChangePassword = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowChangeSigninMode,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode === false) {
-    //   this.change_signin_support = false;
-    // } else {
-    //   this.change_signin_support = true;
-    // }
-
-    // Allow change Sign-in mode flag
-    this.allow_project_resource_monitor = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowProjectResourceMonitor,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor === false) {
-    //   this.allow_project_resource_monitor = false;
-    // } else {
-    //   this.allow_project_resource_monitor = true;
-    // }
-
-    // Allow manual image name for session flag
-    this.allow_manual_image_name_for_session = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowManualImageNameForSession,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession === false) {
-    //   this.allow_manual_image_name_for_session = false;
-    // } else {
-    //   this.allow_manual_image_name_for_session = true;
-    // }
-
-    // Always enqueue compute session flag
-    this.always_enqueue_compute_session = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.alwaysEnqueueComputeSession,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.alwaysEnqueueComputeSession === 'undefined' || config.general.alwaysEnqueueComputeSession === '' || config.general.alwaysEnqueueComputeSession === false) {
-    //   this.always_enqueue_compute_session = false;
-    // } else {
-    //   this.always_enqueue_compute_session = true;
-    // }
-
-    // Open port to public flag
-    this.openPortToPublic = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.resources?.openPortToPublic,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic === false) {
-    //   this.openPortToPublic = false;
-    // } else {
-    //   this.openPortToPublic = true;
-    // }
-
-    // Max CPU cores per container number
-    this.maxCPUCoresPerContainer = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: 64,
-        value: parseInt(config.resources?.maxCPUCoresPerContainer ?? ''),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCPUCoresPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCPUCoresPerContainer))) {
-    //   this.maxCPUCoresPerContainer = 64;
-    // } else {
-    //   this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
-    // }
-
-    // Max Memory per container number
-    this.maxMemoryPerContainer = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: 16,
-        value: parseInt(config.resources?.maxMemoryPerContainer),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
-    //   this.maxMemoryPerContainer = 16;
-    // } else {
-    //   this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
-    // }
-
-    // Max CUDA devices per container number
-    this.maxCUDADevicesPerContainer = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: 16,
-        value: parseInt(config.resources?.maxCUDADevicesPerContainer),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
-    //   this.maxCUDADevicesPerContainer = 16;
-    // } else {
-    //   this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
-    // }
-
-    // Max CUDA shares per container number
-    this.maxCUDASharesPerContainer = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: 16,
-        value: parseInt(config.resources?.maxCUDASharesPerContainer),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDASharesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDASharesPerContainer))) {
-    //   this.maxCUDASharesPerContainer = 16;
-    // } else {
-    //   this.maxCUDASharesPerContainer = parseInt(config.resources.maxCUDASharesPerContainer);
-    // }
-
-    // Max CUDA shares per container number
-    this.maxShmPerContainer = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: 2,
-        value: parseFloat(config.resources?.maxShmPerContainerr),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxShmPerContainer === 'undefined' || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
-    //   this.maxShmPerContainer = 2;
-    // } else {
-    //   this.maxShmPerContainer = parseFloat(config.resources.maxShmPerContainer);
-    // }
-
-    // Max File Upload size number
-    const unlimitedValueOnFileUpload: number = -1;
-    this.maxFileUploadSize = this._getConfigValueByExists(config.resources,
-      {
-        valueType: 'number',
-        defaultValue: unlimitedValueOnFileUpload,
-        value: parseInt(config.resources?.maxFileUploadSize),
-      } as ConfigValueObject) as number;
-    // if (typeof config.resources === 'undefined' || typeof config.resources.maxFileUploadSize === 'undefined' || config.resources.maxFileUploadSize === '') {
-    //   this.maxFileUploadSize = -1;
-    // } else {
-    //   this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
-    // }
-
-    // Allow Sign out flag
-    this.allow_signout = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowSignout,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout === false) {
-    //   this.allow_signout = false;
-    // } else {
-    //   this.allow_signout = true;
-    // }
-
-    // Login attempt limit number
-    this.login_attempt_limit = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'number',
-        defaultValue: this.login_attempt_limit, // default value has been already assigned in property declaration
-        value: parseInt(config.general?.loginAttemptLimit),
-      } as ConfigValueObject) as number;
-    // if (typeof config.general === 'undefined' || typeof config.general.loginAttemptLimit === 'undefined' || config.general.loginAttemptLimit === '') {
-    // } else {
-    //   this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
-    // }
-
-    // Login block time number
-    this.login_block_time = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'number',
-        defaultValue: this.login_block_time, // default value has been already assigned in property declaration
-        value: parseInt(config.general?.loginBlockTime),
-      } as ConfigValueObject) as number;
-    // if (typeof config.general === 'undefined' || typeof config.general.loginBlockTime === 'undefined' || config.general.loginBlockTime === '') {
-    // } else {
-    //   this.login_block_time = parseInt(config.general.loginBlockTime);
-    // }
-
-
-    // wsproxy url value
-    this.proxy_url = this._getConfigValueByExists(config.wsproxy, 
-      {
-        valueType: 'string',
-        defaultValue: 'http://127.0.0.1:5050/',
-        value: parseInt(config.wsproxy?.proxyURL),
-      } as ConfigValueObject) as string;
-    // if (typeof config.wsproxy === 'undefined' || typeof config.wsproxy.proxyURL === 'undefined' || config.wsproxy.proxyURL === '') {
-    //   this.proxy_url = 'http://127.0.0.1:5050/';
-    // } else {
-    //   this.proxy_url = config.wsproxy.proxyURL;
-    // }
-
-    // API endpoint value with additional styles
-    this.api_endpoint = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'string',
-        defaultValue: '',
-        value: config.general?.apiEndpoint
-      } as ConfigValueObject) as string;
-    if (this.api_endpoint === '') {
-      this.apiEndpointContainer.style.display = 'flex';
-      this.apiEndpointHumanizedInput.style.display = 'none';
-    } else {
-      // API endpoint text value with additional styles
-      const apiEndpointText = this._getConfigValueByExists(config.general, 
-        {
-          valueType: 'string',
-          defaultValue: '',
-          value: config.general?.apiEndpointText
-        } as ConfigValueObject) as string;
-      if (apiEndpointText === '') {
-        this.apiEndpointContainer.style.display = 'flex';
-        this.apiEndpointHumanizedInput.style.display = 'none';
-        (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
-      } else {
-        this.apiEndpointInput.disabled = true;
-        this.apiEndpointHumanizedInput.disabled = true;
-      }
-    }
-    // if (typeof config.general === 'undefined' || typeof config.general.apiEndpoint === 'undefined' || config.general.apiEndpoint === '') {
-    //   this.apiEndpointContainer.style.display = 'flex';
-    //   this.apiEndpointHumanizedInput.style.display = 'none';
-    // } else {
-    //   this.api_endpoint = config.general.apiEndpoint;
-    //   if (typeof config.general === 'undefined' || typeof config.general.apiEndpointText === 'undefined' || config.general.apiEndpointText === '') {
-
-    //   } else {
-    //     this.apiEndpointContainer.style.display = 'none';
-    //     this.apiEndpointHumanizedInput.style.display = 'block';
-    //     this.apiEndpointHumanizedInput.value = config.general.apiEndpointText;
-    //   }
-    //   this.apiEndpointInput.disabled = true;
-    //   this.apiEndpointHumanizedInput.disabled = true;
-    // }
-
-    // Allow signup without confirmation flag
-    this.allowSignupWithoutConfirmation = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.allowSignupWithoutConfirmation,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation === false) {
-    //   this.allowSignupWithoutConfirmation = false;
-    // } else {
-    //   this.allowSignupWithoutConfirmation = true;
-    // }
-
-    // Default session environment value
-    this.default_session_environment = this._getConfigValueByExists(config.general, 
-      {
-        valueType: 'string',
-        defaultValue: '',
-        value: parseInt(config.general?.defaultSessionEnvironment),
-      } as ConfigValueObject) as string;
-    // if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
-    //   this.default_session_environment = '';
-    // } else {
-    //   this.default_session_environment = config.general.defaultSessionEnvironment;
-    // }
-
-    // Default session environment value
-    this.default_import_environment = this._getConfigValueByExists(config.general, 
-      {
-        valueType: 'string',
-        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
-        value: parseInt(config.general?.defaultImportEnvironment),
-      } as ConfigValueObject) as string;
-    // if (typeof config.general === 'undefined' || typeof config.general.defaultImportEnvironment === 'undefined' || config.general.defaultImportEnvironment === '') {
-    //   this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
-    // } else {
-    //   this.default_import_environment = config.general.defaultImportEnvironment;
-    // }
-
-    // Allow image list array
-    this.allow_image_list = this._getConfigValueByExists(config.environments,
-      {
-        valueType: 'array',
-        defaultValue: [] as string[],
-        // sanitize whitespace on user-input after splitting
-        value: (config.environments?.allowlist ?? '').split(',').map(el => el.trim()),
-      } as ConfigValueObject) as string[];
-    // if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
-    //   this.allow_image_list = [];
-    // } else {
-    //   this.allow_image_list = config.environments.allowlist.split(',');
-    // }
-
-    // Mask user info flag
-    this.maskUserInfo = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: config.general?.maskUserInfo,
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
-    //   this.maskUserInfo = false;
-    // } else {
-    //   this.maskUserInfo = config.general.maskUserInfo;
-    // }
-
-    // Single sign-on vendors array
-    this.singleSignOnVendors = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'array',
-        defaultValue: [] as string[],
-        // sanitize whitespace on user-input after splitting
-        value: (config.general?.singleSignOnVendors  ?? '').split(',').map(el => el.trim()),
-      } as ConfigValueObject) as string[];
-    // if (typeof config.general === 'undefined' || typeof config.general.singleSignOnVendors === 'undefined' || config.general.singleSignOnVendors === '') {
-    //   this.singleSignOnVendors = [];
-    // } else {
-    //   this.singleSignOnVendors = config.general.singleSignOnVendors.split(',');
-    // }
-
-    // Enable container commit flag
-    this._enableContainerCommit = this._getConfigValueByExists(config.general, 
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: (config.general?.enableContainerCommit),
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
-    //   this._enableContainerCommit = false;
-    // } else {
-    //   this._enableContainerCommit = config.general.enableContainerCommit;
-    // }
-
-    // Enable pipeline flag
-    this._enablePipeline = this._getConfigValueByExists(config.general,
-      {
-        valueType: 'boolean',
-        defaultValue: false,
-        value: (config.general?.enablePipeline),
-      } as ConfigValueObject) as boolean;
-    // if (typeof config.general === 'undefined' || typeof config.general.enableContainerCommit === 'undefined' || config.general.enableContainerCommit === '') {
-    //   this._enablePipeline = false;
-    // } else {
-    //   this._enablePipeline = config.general.enableContainerCommit;
-    // }
-
-    // Connection mode value depending on Electron mode and default configuration value
-    const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
-    if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
-      this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
-    } else {
-      this.connection_mode = this._getConfigValueByExists(config.general,
-        {
-          valueType: 'boolean',
-          defaultValue: this.connection_mode,
-          value: (config.general?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
-        } as ConfigValueObject) as ConnectionMode;
-      // if (typeof config.general === 'undefined' || typeof config.general.connectionMode === 'undefined' || config.general.connectionMode === '') {
-      //   this.connection_mode = 'SESSION';
-      // } else {
-      //   if (config.general.connectionMode.toUpperCase() === 'SESSION') {
-      //     this.connection_mode = 'SESSION';
-      //   } else {
-      //     this.connection_mode = 'API';
-      //   }
-      // }
-    }
+    this._initGeneralConfigWithKeys(config.general);
+    this._initWSProxyConfigWithKeys(config.wsproxy);
+    this._initResourcesConfigWithKeys(config.resources);
+    this._initEnvironmentsConfigWithKeys(config.environments);
   }
+
+  /**
+   * Initialize global key with value from general section in config file
+   *
+   * @param {object} generalConfig
+   */
+  private _initGeneralConfigWithKeys(generalConfig) {
+    // Debug flag
+    globalThis.backendaiwebui.debug = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.debug,
+     } as ConfigValueObject) as boolean;
+   if (globalThis.backendaiwebui.debug) {
+     console.log('Debug flag is set to true');
+   }
+
+   // Signup support flag
+   this.signup_support = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.signupSupport,
+     } as ConfigValueObject) as boolean;
+   // Signup support flag
+   if (this.signup_support) {
+     (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
+   }
+
+   // Signup support flag
+   this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowAnonymousChangePassword,
+     } as ConfigValueObject) as boolean;
+
+   // Allow change Sign-in mode flag
+   this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowChangeSigninMode,
+     } as ConfigValueObject) as boolean;
+
+   // Allow change Sign-in mode flag
+   this.allow_project_resource_monitor = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowProjectResourceMonitor,
+     } as ConfigValueObject) as boolean;
+
+   // Allow manual image name for session flag
+   this.allow_manual_image_name_for_session = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowManualImageNameForSession,
+     } as ConfigValueObject) as boolean;
+
+   // Always enqueue compute session flag
+   this.always_enqueue_compute_session = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.alwaysEnqueueComputeSession,
+     } as ConfigValueObject) as boolean;
+
+   // Allow Sign out flag
+   this.allow_signout = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowSignout,
+     } as ConfigValueObject) as boolean;
+ 
+   // Login attempt limit number
+   this.login_attempt_limit = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'number',
+       defaultValue: this.login_attempt_limit, // default value has been already assigned in property declaration
+       value: parseInt(generalConfig?.loginAttemptLimit),
+     } as ConfigValueObject) as number;
+
+   // Login block time number
+   this.login_block_time = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'number',
+       defaultValue: this.login_block_time, // default value has been already assigned in property declaration
+       value: parseInt(generalConfig?.loginBlockTime),
+     } as ConfigValueObject) as number;
+
+   // API endpoint value with additional styles
+   this.api_endpoint = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'string',
+       defaultValue: '',
+       value: generalConfig?.apiEndpoint
+     } as ConfigValueObject) as string;
+   if (this.api_endpoint === '') {
+     this.apiEndpointContainer.style.display = 'flex';
+     this.apiEndpointHumanizedInput.style.display = 'none';
+   } else {
+     // API endpoint text value with additional styles
+     const apiEndpointText = this._getConfigValueByExists(generalConfig, 
+       {
+         valueType: 'string',
+         defaultValue: '',
+         value: generalConfig?.apiEndpointText
+       } as ConfigValueObject) as string;
+     if (apiEndpointText === '') {
+       this.apiEndpointContainer.style.display = 'flex';
+       this.apiEndpointHumanizedInput.style.display = 'none';
+       (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
+     } else {
+       this.apiEndpointInput.disabled = true;
+       this.apiEndpointHumanizedInput.disabled = true;
+     }
+   }
+
+   // Allow signup without confirmation flag
+   this.allowSignupWithoutConfirmation = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowSignupWithoutConfirmation,
+     } as ConfigValueObject) as boolean;
+
+   // Default session environment value
+   this.default_session_environment = this._getConfigValueByExists(generalConfig, 
+     {
+       valueType: 'string',
+       defaultValue: '',
+       value: parseInt(generalConfig?.defaultSessionEnvironment),
+     } as ConfigValueObject) as string;
+
+   // Default session environment value
+   this.default_import_environment = this._getConfigValueByExists(generalConfig, 
+     {
+       valueType: 'string',
+       defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
+       value: parseInt(generalConfig?.defaultImportEnvironment),
+     } as ConfigValueObject) as string;
+
+   // Mask user info flag
+   this.maskUserInfo = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.maskUserInfo,
+     } as ConfigValueObject) as boolean;
+
+   // Single sign-on vendors array
+   this.singleSignOnVendors = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'array',
+       defaultValue: [] as string[],
+       // sanitize whitespace on user-input after splitting
+       value: (generalConfig?.singleSignOnVendors  ?? '').split(',').map(el => el.trim()),
+     } as ConfigValueObject) as string[];
+
+   // Enable container commit flag
+   this._enableContainerCommit = this._getConfigValueByExists(generalConfig, 
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: (generalConfig?.enableContainerCommit),
+     } as ConfigValueObject) as boolean;
+
+   // Enable pipeline flag
+   this._enablePipeline = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: (generalConfig?.enablePipeline),
+     } as ConfigValueObject) as boolean;
+
+   // Connection mode value depending on Electron mode and default configuration value
+   const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
+   if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
+     this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
+   } else {
+     this.connection_mode = this._getConfigValueByExists(generalConfig,
+       {
+         valueType: 'boolean',
+         defaultValue: this.connection_mode,
+         value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
+       } as ConfigValueObject) as ConnectionMode;
+   }
+ }
+
+  /**
+   * Initialize global key with value from wsproxy section in config file
+   *
+   * @param {object} wsproxyConfig
+   */
+ private _initWSProxyConfigWithKeys(wsproxyConfig) {
+   // wsproxy url value
+   this.proxy_url = this._getConfigValueByExists(wsproxyConfig, 
+     {
+       valueType: 'string',
+       defaultValue: 'http://127.0.0.1:5050/',
+       value: parseInt(wsproxyConfig?.proxyURL),
+     } as ConfigValueObject) as string;
+ }
+
+  /**
+   * Initialize global key with value from resources section in config file
+   *
+   * @param {object} resourcesConfig
+   */
+ private _initResourcesConfigWithKeys(resourcesConfig) {
+   // Open port to public flag
+   this.openPortToPublic = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: resourcesConfig?.openPortToPublic,
+     } as ConfigValueObject) as boolean;
+
+   // Max CPU cores per container number
+   this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 64,
+       value: parseInt(resourcesConfig?.maxCPUCoresPerContainer ?? ''),
+     } as ConfigValueObject) as number;
+
+   // Max Memory per container number
+   this.maxMemoryPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxMemoryPerContainer),
+     } as ConfigValueObject) as number;
+
+   // Max CUDA devices per container number
+   this.maxCUDADevicesPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxCUDADevicesPerContainer),
+     } as ConfigValueObject) as number;
+
+   // Max CUDA shares per container number
+   this.maxCUDASharesPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxCUDASharesPerContainer),
+     } as ConfigValueObject) as number;
+
+   // Max CUDA shares per container number
+   this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 2,
+       value: parseFloat(resourcesConfig?.maxShmPerContainerr),
+     } as ConfigValueObject) as number;
+
+   // Max File Upload size number
+   const unlimitedValueOnFileUpload: number = -1;
+   this.maxFileUploadSize = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: unlimitedValueOnFileUpload,
+       value: parseInt(resourcesConfig?.maxFileUploadSize),
+     } as ConfigValueObject) as number;
+ }
+
+  /**
+   * Initialize global key with value from environments section in config file
+   *
+   * @param {object} environmentsConfig
+   */
+ private _initEnvironmentsConfigWithKeys(environmentsConfig) {
+   // Allow image list array
+   this.allow_image_list = this._getConfigValueByExists(environmentsConfig,
+     {
+       valueType: 'array',
+       defaultValue: [] as string[],
+       // sanitize whitespace on user-input after splitting
+       value: (environmentsConfig?.allowlist ?? '').split(',').map(el => el.trim()),
+     } as ConfigValueObject) as string[];
+ }
 
   /**
    * Open loginPanel.
