@@ -677,11 +677,12 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as boolean;
 
    // Enable pipeline flag
+   // FIXME: temporally disable pipeline feature in manual
    this._enablePipeline = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
-       value: (generalConfig?.enablePipeline),
+       value: false, // (generalConfig?.enablePipeline),
      } as ConfigValueObject) as boolean;
 
    // Connection mode value depending on Electron mode and default configuration value
@@ -1291,7 +1292,7 @@ export default class BackendAILogin extends BackendAIPage {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
-    return this.client.query(q, v).then(async (response) => {
+    return this.client?.query(q, v).then(async (response) => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       const resource_policy = response['keypair'].resource_policy;
@@ -1302,20 +1303,24 @@ export default class BackendAILogin extends BackendAIPage {
       const v = {'uuid': this.user};
 
       /**
-       * FIXME: Pipeline Login after WebUI Login
+       * FIXME: 
+       * - Pipeline Login after WebUI Login
+       * - Temporally disable pipeline login
        */
-      const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
-      if (!pipelineToken) {
-        const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
-        const keypairs = res.keypairs;
-        const loginInfo = {
-          username: this.user_id,
-          password: this.password,
-          // use first keypair
-          access_key: keypairs[0].access_key,
-          secret_key: keypairs[0].secret_key,
-        };
-        await globalThis.backendaiclient.pipeline.login(loginInfo);
+      if (this._enablePipeline) {
+        const pipelineToken = globalThis.backendaiclient.getPipelineToken();
+        if (!pipelineToken) {
+          const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
+          const keypairs = res.keypairs;
+          const loginInfo = {
+            username: this.user_id,
+            password: this.password,
+            // use first keypair
+            access_key: keypairs[0].access_key,
+            secret_key: keypairs[0].secret_key,
+          };
+          await globalThis.backendaiclient.pipeline.login(loginInfo);
+        }
       }
       return globalThis.backendaiclient.query(q, v);
     }).then((response) => {
@@ -1420,7 +1425,11 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
-        globalThis.backendaiclient.pipeline.logout();
+        
+        // Only request pipeline logout when pipeline value is enabled
+        if (this._enablePipeline) {
+          globalThis.backendaiclient.pipeline.logout();
+        }
         this.client?.logout();
       }
       this._enableUserInput();

@@ -995,8 +995,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
-      if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
-        await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
+      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
+      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
+      // }
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+        await globalThis.backendaiclient.logout();
       }
       this.is_admin = false;
       this.is_superadmin = false;
