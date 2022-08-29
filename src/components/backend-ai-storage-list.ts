@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
@@ -45,7 +45,7 @@ import tus from '../lib/tus';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend AI Storage List
@@ -93,8 +93,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
@@ -148,6 +147,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     value: 0,
     unit: 'MiB'
   };
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -580,7 +580,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 .renderer="${this._boundCloneableRenderer}"></vaadin-grid-column>` : html``}
           <vaadin-grid-column auto-width resizable header="${_t('data.folders.Control')}" .renderer="${this._boundControlFolderListRenderer}"></vaadin-grid-column>-->
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('data.folders.NoFolderToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('data.folders.NoFolderToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="modify-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
@@ -1015,7 +1015,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
@@ -1504,8 +1503,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     this._getMaxSize();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
@@ -1519,9 +1518,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
       this.folders = folders;
       if (this.folders.length == 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       }
       this._folderRefreshing = false;
     }).catch(()=>{

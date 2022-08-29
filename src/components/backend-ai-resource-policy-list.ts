@@ -8,6 +8,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -25,7 +26,6 @@ import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './backend-ai-multi-select';
 import '../plastics/lablup-shields/lablup-shields';
@@ -42,8 +42,7 @@ class BigNumber {
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
@@ -70,6 +69,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
   @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
@@ -234,7 +234,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
@@ -491,7 +491,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
@@ -574,8 +573,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   _refreshPolicyData() {
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -615,12 +614,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       });
       this.resourcePolicy = resourcePolicies;
       if (Object.keys(this.resourcePolicy).length == 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       }
     }).catch((err) => {
-      this.list_status.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
