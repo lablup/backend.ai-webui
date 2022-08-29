@@ -640,7 +640,7 @@ export default class BackendAILogin extends BackendAIPage {
      {
        valueType: 'string',
        defaultValue: '',
-       value: parseInt(generalConfig?.defaultSessionEnvironment),
+       value: generalConfig?.defaultSessionEnvironment,
      } as ConfigValueObject) as string;
 
    // Default session environment value
@@ -648,7 +648,7 @@ export default class BackendAILogin extends BackendAIPage {
      {
        valueType: 'string',
        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
-       value: parseInt(generalConfig?.defaultImportEnvironment),
+       value: generalConfig?.defaultImportEnvironment,
      } as ConfigValueObject) as string;
 
    // Mask user info flag
@@ -665,7 +665,7 @@ export default class BackendAILogin extends BackendAIPage {
        valueType: 'array',
        defaultValue: [] as string[],
        // sanitize whitespace on user-input after splitting
-       value: (generalConfig?.singleSignOnVendors  ?? '').split(',').map(el => el.trim()),
+       value: (generalConfig?.singleSignOnVendors) ? generalConfig?.singleSignOnVendors.split(',').map(el => el.trim()) : [],
      } as ConfigValueObject) as string[];
 
    // Enable container commit flag
@@ -790,7 +790,7 @@ export default class BackendAILogin extends BackendAIPage {
        valueType: 'array',
        defaultValue: [] as string[],
        // sanitize whitespace on user-input after splitting
-       value: (environmentsConfig?.allowlist ?? '').split(',').map(el => el.trim()),
+       value: (environmentsConfig?.allowlist) ? environmentsConfig?.allowlist.split(',').map(el => el.trim()) : [],
      } as ConfigValueObject) as string[];
  }
 
