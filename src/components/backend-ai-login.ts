@@ -465,11 +465,6 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  /**
-   * Refresh global value used in Backend.Ai WebUI read from config file with keys
-   *
-   * @param {object} config
-   */
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
       this._enableUserInput();
@@ -795,6 +790,8 @@ export default class BackendAILogin extends BackendAIPage {
  }
 
   /**
+=======
+>>>>>>> fc0cf224f12c74fd2830f99581a1241cd0c878fe
    * Open loginPanel.
    * */
   open() {
