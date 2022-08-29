@@ -4,8 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {render} from 'lit-html';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
@@ -36,6 +36,7 @@ import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend AI Scaling Group List
@@ -54,12 +55,12 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: Object}) listStatus = Object();
   @property({type: String}) listCondition = 'loading';
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Number}) _totalScalingGroupCount = 0;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -69,7 +70,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -163,7 +164,6 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -177,7 +177,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
       return;
     }
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -187,7 +187,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
             if (this.scalingGroups.length == 0) {
               this.listCondition = 'no-data';
             } else {
-              this.listStatus?.hide();
+              this._listStatus?.hide();
             }
           });
 
@@ -202,7 +202,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
           this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
-          this.listStatus?.hide();
+          this._listStatus?.hide();
         });
 
       globalThis.backendaiclient.domain.list()
@@ -420,14 +420,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
 
   _refreshList() {
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         if (this.scalingGroups.length == 0) {
           this.listCondition = 'no-data';
         } else {
-          this.listStatus?.hide();
+          this._listStatus?.hide();
         }
         this.requestUpdate(); // without this render is called beforehands, so update is required
       });

@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -21,6 +21,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
@@ -42,7 +43,6 @@ import './lablup-progress-bar';
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
-  @property({type: Object}) listStatus = Object();
   @property({type: String}) listCondition = 'loading';
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
@@ -54,6 +54,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -139,7 +140,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
   }
@@ -177,7 +177,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       return;
     }
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const storages: Array<any> = [];
@@ -198,7 +198,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       if (this.storages.length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       } const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -207,7 +207,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
-      this.listStatus?.hide();
+      this._listStatus?.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;

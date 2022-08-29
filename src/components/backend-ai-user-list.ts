@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -39,6 +39,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend AI User List
@@ -65,7 +66,6 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) userInfoGroups = [];
   @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) listStatus = Object();
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
@@ -84,6 +84,7 @@ export default class BackendAIUserList extends BackendAIPage {
     'before-verification': 'Before Verification',
     'deleted': 'Deleted',
   };
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -202,7 +203,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
@@ -246,7 +246,7 @@ export default class BackendAIUserList extends BackendAIPage {
       is_active = false;
     }
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
@@ -258,11 +258,11 @@ export default class BackendAIUserList extends BackendAIPage {
       if (this.users.length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
-      this.listStatus?.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

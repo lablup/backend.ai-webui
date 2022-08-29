@@ -5,9 +5,10 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -20,7 +21,6 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -66,7 +66,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   };
   @property({type: Boolean}) isAdmin = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) listStatus;
   @property({type: Array}) keypairs = [];
   @property({type: Object}) resourcePolicy = Object();
   @property({type: Object}) indicator = Object();
@@ -81,6 +80,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: String}) listCondition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -166,7 +166,6 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -212,7 +211,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       is_active = false;
     }
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -282,11 +281,11 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (this.keypairs.length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
-      this.listStatus?.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

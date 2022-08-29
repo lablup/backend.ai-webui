@@ -24,7 +24,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import './backend-ai-list-status';
+import BackendAIListStatus from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -69,7 +69,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
-  @property({type: Object}) listStatus = Object();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
@@ -87,6 +86,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) filter = '';
   @property({type: String}) listCondition = 'loading';
   @query('vaadin-grid') private _agentGrid;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -182,7 +182,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
     this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
@@ -226,7 +225,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       return;
     }
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     let fields: Array<string>;
     switch (this.condition) {
     case 'running':
@@ -421,7 +420,7 @@ export default class BackendAIAgentList extends BackendAIPage {
       if (this.agents.length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       }
       if (this.agentDetailDialog.open) { // refresh the data
         this.agentDetail = this.agentsObject[this.agentDetail['id']];
@@ -434,7 +433,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
-      this.listStatus?.hide();
+      this._listStatus?.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;

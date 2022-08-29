@@ -7,6 +7,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -18,7 +19,6 @@ import {
 import '../plastics/lablup-shields/lablup-shields';
 import './lablup-loading-spinner';
 import './backend-ai-dialog';
-import BackendAIListStatus from './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -99,7 +99,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
    @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
    @query('#modify-app-container') modifyAppContainer!: HTMLDivElement;
-   @query('#list-status') listStatus!: BackendAIListStatus;
+   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
    constructor() {
      super();
@@ -416,7 +416,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       */
    _getImages() {
      this.listCondition = 'loading';
-     this.listStatus?.show();
+     this._listStatus?.show();
      globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
        this.allowed_registries = response.domain.allowed_docker_registries;
        return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -502,7 +502,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
        if (this.images.length == 0) {
          this.listCondition = 'no-data';
        } else {
-         this.listStatus?.hide();
+         this._listStatus?.hide();
        }
      }).catch((err) => {
        console.log(err);
@@ -513,7 +513,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
        }
        this.notification.show(true, err);
-       this.listStatus?.hide();
+       this._listStatus?.hide();
      });
    }
 

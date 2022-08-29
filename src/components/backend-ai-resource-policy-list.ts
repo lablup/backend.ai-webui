@@ -8,6 +8,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
 
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -25,7 +26,6 @@ import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './backend-ai-multi-select';
 import '../plastics/lablup-shields/lablup-shields';
@@ -42,7 +42,6 @@ class BigNumber {
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
-  @property({type: Object}) listStatus = Object();
   @property({type: String}) listCondition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
@@ -70,6 +69,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
   @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
@@ -491,7 +491,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
@@ -575,7 +574,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _refreshPolicyData() {
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -617,10 +616,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       if (Object.keys(this.resourcePolicy).length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       }
     }).catch((err) => {
-      this.listStatus?.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);

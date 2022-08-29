@@ -28,7 +28,6 @@ import './lablup-loading-dots';
 
 @customElement('backend-ai-list-status')
 export default class BackendAIListStatus extends BackendAIPage {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) listStatus = Object();
   @property({type: String}) message = 'There is nothing to display';
   @property({type: String}) statusCondition = 'loading';
@@ -75,7 +74,7 @@ export default class BackendAIListStatus extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.listStatus = this.shadowRoot.querySelector('#status');
+    this.listStatus = this.shadowRoot?.querySelector('#status');
     this.active = true;
   }
 

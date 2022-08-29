@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
@@ -45,7 +45,7 @@ import tus from '../lib/tus';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend AI Storage List
@@ -93,7 +93,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) listStatus = Object();
   @property({type: String}) listCondition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
@@ -148,6 +147,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     value: 0,
     unit: 'MiB'
   };
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -1015,7 +1015,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
-    this.listStatus = this.shadowRoot.querySelector('#list-status');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
@@ -1505,7 +1504,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._folderRefreshing = true;
     this.lastQueryTime = Date.now();
     this.listCondition = 'loading';
-    this.listStatus?.show();
+    this._listStatus?.show();
     this._getMaxSize();
     let groupId = null;
     groupId = globalThis.backendaiclient.current_group_id();
@@ -1521,7 +1520,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this.folders.length == 0) {
         this.listCondition = 'no-data';
       } else {
-        this.listStatus?.hide();
+        this._listStatus?.hide();
       }
       this._folderRefreshing = false;
     }).catch(()=>{
