@@ -814,7 +814,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         //       we manually set it to 100 to properly display the GPU utilization.
         // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
         let cudaUtilCapacity;
-        if (liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
+        if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
           cudaUtilCapacity = 100;
         } else {
           cudaUtilCapacity = liveStat.cuda_util!.capacity;
