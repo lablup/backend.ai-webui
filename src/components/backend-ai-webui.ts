@@ -446,10 +446,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       store.dispatch(navigate(decodeURIComponent(this._page)));
     }
 
-    // redirect to unauthorize page when blocked by config option.
+    // redirect to error page when blocked by config option.
     if (this.optionalPages.filter((item) => !item.available).map((item) => item.page).includes(this._page)) {
-      this._page = 'unauthorized';
-      globalThis.history.pushState({}, '', '/unauthorized');
+      this._page = 'error';
+      globalThis.history.pushState({}, '', '/error');
       store.dispatch(navigate(decodeURIComponent(this._page)));
     }
   }
