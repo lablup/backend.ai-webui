@@ -206,28 +206,25 @@ export default class BackendAIAgentList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-        const status = 'ALIVE';
-        this._loadAgentList(status);
+        this._loadAgentList();
       }, true);
     } else { // already connected
       this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-      const status = 'ALIVE';
-      this._loadAgentList(status);
+      this._loadAgentList();
     }
   }
 
   /**
    * Load an agents list with agent's backend.ai information.
-   *
-   * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList(status = 'running') {
+  _loadAgentList() {
     if (this.active !== true) {
       return;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
     let fields: Array<string>;
+    let status;
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
@@ -253,7 +250,8 @@ export default class BackendAIAgentList extends BackendAIPage {
       fields.push('schedulable');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
+    const timeout = 10 * 1000;
+    globalThis.backendaiclient.agent.list(status, fields, timeout).then((response) => {
       const agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;
@@ -429,7 +427,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList(status);
+          this._loadAgentList();
         }, 15000);
       }
     }).catch((err) => {
