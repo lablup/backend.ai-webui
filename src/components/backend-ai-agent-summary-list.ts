@@ -177,13 +177,11 @@ export default class BackendAIAgent extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-        const status = 'ALIVE';
-        this._loadAgent(status);
+        this._loadAgentList();
       }, true);
     } else { // already connected
       this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-      const status = 'ALIVE';
-      this._loadAgent(status);
+      this._loadAgentList();
     }
   }
 
@@ -192,19 +190,17 @@ export default class BackendAIAgent extends BackendAIPage {
   *
   * @param {string} status - The agent's backend.ai client status.
   */
-  _loadAgent(status = 'running') {
+  _loadAgentList() {
     if (this.active !== true) {
       return;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
     const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'architecture'];
-    status = this.condition === 'running' ? 'ALIVE' : 'TERMINATED';
-
     if (globalThis.backendaiclient.supports('schedulable')) {
       fields.push('schedulable');
     }
-
+    const status = this.condition === 'running' ? 'ALIVE' : 'TERMINATED';
     const limit = 20;
     const offset = 0;
     const timeout = 10 * 1000;
@@ -288,7 +284,7 @@ export default class BackendAIAgent extends BackendAIPage {
 
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgent(status);
+          this._loadAgentList();
         }, 15000);
       }
     }).catch((err) => {
