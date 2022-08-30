@@ -3499,7 +3499,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div>${_t('webui.menu.Sessions')}</div>
                   <mwc-icon-button slot="meta" icon="info" class="fg info"
                     @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
-                  </mwc-list-item>   
+                  </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                   <lablup-slider id="session-resource" class="session"
@@ -3582,40 +3582,57 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.SessionInfo')}</p>
-            <div class="vertical layout center center-justified cluster-total-allocation-container">
-              <div class="horizontal center center-justified layout">
-                ${this._preProcessingSessionInfo() ? html`
-                  <img alt="language icon"
-                       src="resources/icons/${this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.icon}"
-                       onerror="this.src='resources/icons/default.png'"
-                       style="width:32px;height:32px;margin-left:8px;margin-right:8px;margin-bottom:8px;" />
-                  <div class="vertical layout">
-                    <lablup-shields app="${(this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.name ||
-                       this.sessionInfoObj.environment).toUpperCase()}"
-                                    color="green"
-                                    description="${this.sessionInfoObj.version[0]}"
-                                    ui="round"
-                                    style="margin-right:3px;"></lablup-shields>
-                    <div class="horizontal layout">
-                      ${this.sessionInfoObj.version.map((item, index) => {
-                         if (index > 0) {
-                           return html`
-                             <lablup-shields color="green" description="${item}" ui="round"
-                               style="margin-top:3px;margin-right:3px;"></lablup-shields>
-                           `;
-                         } else {
-                           return html``;
-                         }
-                       }
-                       )}
+            <div class="vertical layout cluster-total-allocation-container">
+              ${this._preProcessingSessionInfo() ? html`
+                <div class="vertical layout" style="margin-left:10px;margin-bottom:5px;">
+                  <div class="horizontal layout">
+                    <div style="margin-right:5px;width:150px;">
+                      ${_t('session.EnvironmentInfo')}
                     </div>
-                    <lablup-shields color="blue"
-                                    description="${this.sessionType.toUpperCase()}"
-                                    ui="round"
-                                    style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
+                    <div class="vertical layout" >
+                      <lablup-shields app="${(this.resourceBroker.imageInfo[this.sessionInfoObj.environment]?.name ||
+                          this.sessionInfoObj.environment).toUpperCase()}"
+                                      color="green"
+                                      description="${this.sessionInfoObj.version[0]}"
+                                      ui="round"
+                                      style="margin-right:3px;"></lablup-shields>
+                      <div class="horizontal layout">
+                        ${this.sessionInfoObj.version.map((item, index) => {
+                            if (index > 0) {
+                              return html`
+                                <lablup-shields color="green" description="${item}" ui="round"
+                                  style="margin-top:3px;margin-right:3px;"></lablup-shields>
+                              `;
+                            } else {
+                              return html``;
+                            }
+                          }
+                          )}
+                      </div>
+                      <lablup-shields color="blue"
+                                      description="${this.sessionType.toUpperCase()}"
+                                      ui="round"
+                                      style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
+                    </div>
                   </div>
-                ` : html``}
-              </div>
+                  <div class="horizontal layout">
+                    <div class="vertical layout" style="margin-right:5px;width:150px;">
+                      ${_t('registry.ProjectName')}
+                    </div>
+                    <div class="vertical layout">
+                      ${globalThis.backendaiclient.current_group}
+                    </div>
+                  </div>
+                  <div class="horizontal layout">
+                    <div class="vertical layout" style="margin-right:5px;width:150px;">
+                      ${_t('session.ResourceGroup')}
+                    </div>
+                    <div class="vertical layout">
+                      ${this.scaling_group}
+                    </div>
+                  </div>
+                </div>
+              ` : html``}
             </div>
             <p class="title">${_t('session.launcher.TotalAllocation')}</p>
             <div class="vertical layout center center-justified cluster-total-allocation-container">
@@ -3708,18 +3725,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <span>${_t('session.launcher.NoFolderMounted')}</span>
                 </div>
               `}
-            </div>
-            <p class="title">${_t('registry.ProjectName')}</p>
-            <div class="vertical layout center center-justified cluster-total-allocation-container">
-              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
-                ${globalThis.backendaiclient.current_group}
-              </div>
-            </div>
-            <p class="title">${_t('session.ResourceGroup')}</p>
-            <div class="vertical layout center center-justified cluster-total-allocation-container">
-              <div id="total-allocation-container" class="horizontal layout center center-justified allocation-check">
-                ${this.scaling_group}
-              </div>
             </div>
             <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
             <div class="environment-variables-container">
