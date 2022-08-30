@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -20,7 +20,6 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './backend-ai-list-status';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 import '@material/mwc-icon';
@@ -29,6 +28,7 @@ import '@material/mwc-icon-button';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend.AI Error Log List
@@ -48,8 +48,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;
@@ -63,6 +62,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) boundMethodRenderer = this.methodRenderer.bind(this);
   @property({type: Object}) boundReqUrlRenderer = this.reqUrlRender.bind(this);
   @property({type: Object}) boundParamRenderer = this.paramRenderer.bind(this);
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
 
   constructor() {
@@ -124,9 +124,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._updatePageItemSize();
-    this._grid = this.shadowRoot.querySelector('#list-grid');
+    this._grid = this.shadowRoot?.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
       this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 275px)!important';
     }
@@ -147,17 +146,17 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * Refresh log data.
    */
   _refreshLogData() {
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
     if (this.logs.length == 0) {
-      this.list_condition = 'no-data';
+      this.listCondition = 'no-data';
     } else {
-      this.list_status.hide();
+      this._listStatus?.hide();
     }
   }
 
@@ -373,7 +372,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>
       </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <mwc-icon-button

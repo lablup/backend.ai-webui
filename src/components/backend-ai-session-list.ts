@@ -37,6 +37,7 @@ import './backend-ai-dialog';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 /**
  Backend AI Session List
@@ -82,7 +83,7 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  * - INTERACTIVE: execute in prompt, terminate on-demand
  * - BATCH: apply execution date and time, and automatically terminated when command is done
  */
-type SessionType = "INTERACTIVE" | "BATCH";
+type SessionType = 'INTERACTIVE' | 'BATCH';
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   public shadowRoot: any;
@@ -119,8 +120,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Object}) terminateSelectedSessionsDialog = Object();
   @property({type: Object}) sessionStatusInfoDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
@@ -150,6 +150,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   @query('#commit-session-dialog') commitSessionDialog;
   @query('#commit-current-session-path-input') commitSessionInput;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -440,7 +441,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
@@ -558,8 +558,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     this.refreshing = true;
 
-    // this.list_condition = 'loading'; // Remove loading indicator during automatic refresh.
-    // this.list_status.show();
     let status: any;
     status = 'RUNNING';
     switch (this.condition) {
@@ -621,15 +619,15 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.total_session_count = response.compute_session_list.total_count;
       let sessions = response.compute_session_list.items;
       if (this.total_session_count === 0) {
-        this.list_condition = 'no-data';
-        this.list_status.show();
+        this.listCondition = 'no-data';
+        this._listStatus?.show();
         this.total_session_count = 1;
       } else {
         if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
-          this.list_condition = 'no-data';
-          this.list_status.show();
+          this.listCondition = 'no-data';
+          this._listStatus?.show();
         } else {
-          this.list_status.hide();
+          this._listStatus?.hide();
         }
       }
       if (sessions !== undefined && sessions.length != 0) {
@@ -788,7 +786,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           this._refreshJobData();
         }, refreshTime);
       }
-      this.list_status.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1243,8 +1241,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.show();
       return false;
     }
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
@@ -1280,8 +1278,8 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSelectedSessionsWithCheck(forced = false) {
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key, forced);
     });
@@ -1306,8 +1304,8 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @return {void}
    * */
   _terminateSelectedSessions() {
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     const terminateSessionQueue = this._selected_items.map((item) => {
       return this._terminateKernel(item['session_id'], item.access_key);
     });
@@ -1318,7 +1316,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
-      this.list_status.hide();
+      this._listStatus?.hide();
       this._selected_items = [];
       this._clearCheckboxes();
       if ('description' in err) {
@@ -2388,7 +2386,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </vaadin-grid-column>
                 ` : html``}
           </vaadin-grid>
-          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
+          <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;">
