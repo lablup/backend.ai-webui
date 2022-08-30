@@ -63,12 +63,12 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'pipeline-job':
     import('./pipeline/components/pipeline-job-view.js');
     break;
+  case 'experiment':
+    import('./components/backend-ai-experiment-view.js');
+    break; */
   case 'agent-summary':
     import('./components/backend-ai-agent-summary-view.js');
     break;
-    /* case 'experiment':
-      import('./components/backend-ai-experiment-view.js');
-      break; */
   case 'data':
     import('./components/backend-ai-data-view.js');
     break;

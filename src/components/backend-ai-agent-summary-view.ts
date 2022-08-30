@@ -13,6 +13,7 @@ import '@material/mwc-tab-bar';
 import '@material/mwc-tab';
 
 import './lablup-activity-panel';
+import './backend-ai-list-status';
 import './backend-ai-agent-summary-list';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
