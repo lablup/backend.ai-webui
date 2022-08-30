@@ -54,6 +54,7 @@
       "Menu": "Меню",
       "Run": "Запустить",
       "UserName": "Имя пользователя",
+      "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__"
     },
@@ -365,7 +366,10 @@
     "Schedulable": "__NOT_TRANSLATED__",
     "AgentSetting": "__NOT_TRANSLATED__",
     "Architecture": "__NOT_TRANSLATED__",
-    "NoAgentToDisplay": "__NOT_TRANSLATED__"
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "ядра",

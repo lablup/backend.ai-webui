@@ -41,7 +41,7 @@ import {Textfield as WlTextfield} from 'weightless/textfield';
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  private _list_condition = 'loading';
+  private _listCondition: string = 'loading';
   private _allowed_registries: Array<object>;
   private _editMode = false;
   private _hostnames: Array<string>;
@@ -56,7 +56,7 @@ class BackendAIRegistryList extends BackendAIPage {
   private _boundControlsRenderer = this._controlsRenderer.bind(this);
   private _boundPasswordRenderer = this._passwordRenderer.bind(this);
 
-  @query('#list-status') private _list_status!: BackendAIListStatus;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   @query('#configure-registry-hostname') private _hostnameInput!: WlTextfield;
   @query('#configure-registry-password') private _passwordInput!: WlTextfield;
   @query('#configure-project-name') private _projectNameInput!: WlTextfield;
@@ -192,17 +192,17 @@ class BackendAIRegistryList extends BackendAIPage {
    * Request and Retrieve registry lists from server allowed in the current domain
    */
   _refreshRegistryList() {
-    this._list_condition = 'loading';
-    this._list_status.show();
+    this._listCondition = 'loading';
+    this._listStatus?.show();
     globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
       this._allowed_registries = response.domain.allowed_docker_registries;
       return globalThis.backendaiclient.registry.list();
     }).then(({result}) => {
       this._registryList = this._parseRegistryList(result);
       if (this._registryList.length == 0) {
-        this._list_condition = 'no-data';
+        this._listCondition = 'no-data';
       } else {
-        this._list_status.hide();
+        this._listStatus?.hide();
       }
       this._hostnames = this._registryList.map((value) => {
         return value.hostname;
@@ -723,7 +723,7 @@ class BackendAIRegistryList extends BackendAIPage {
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this._list_condition}" message="${_text('registry.NoRegistryToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this._listCondition}" message="${_text('registry.NoRegistryToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${this._editMode ? _t('registry.ModifyRegistry') : _t('registry.AddRegistry')}</span>

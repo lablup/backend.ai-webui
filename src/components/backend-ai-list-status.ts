@@ -28,9 +28,9 @@ import './lablup-loading-dots';
 
 @customElement('backend-ai-list-status')
 export default class BackendAIListStatus extends BackendAIPage {
-  @property({type: Object}) list_status = Object();
+  @property({type: Object}) listStatus = Object();
   @property({type: String}) message = 'There is nothing to display';
-  @property({type: String}) status_condition = 'loading';
+  @property({type: String}) statusCondition = 'loading';
   @property({type: Object}) dots = Object();
   @property({type: Boolean}) active = true;
 
@@ -58,10 +58,10 @@ export default class BackendAIListStatus extends BackendAIPage {
     // language=HTML
     return html`
       <div class="vertical layout center flex" id="status">
-        ${this.status_condition == 'loading' ? html`
+        ${this.statusCondition == 'loading' ? html`
           <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
         ` : html`
-          ${this.status_condition == 'no-data' ? html`
+          ${this.statusCondition == 'no-data' ? html`
             <span class="list-message">${this.message}</span>
           ` : html``}
         `}
@@ -74,7 +74,7 @@ export default class BackendAIListStatus extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot?.querySelector('#status');
+    this.listStatus = this.shadowRoot?.querySelector('#status');
     this.active = true;
   }
 
@@ -92,7 +92,7 @@ export default class BackendAIListStatus extends BackendAIPage {
   async show() {
     this.active = true;
     await this.updateComplete;
-    this.list_status.style.display = 'flex';
+    this.listStatus.style.display = 'flex';
   }
 
   /**
@@ -101,7 +101,7 @@ export default class BackendAIListStatus extends BackendAIPage {
   async hide() {
     this.active = true;
     await this.updateComplete;
-    this.list_status.style.display = 'none';
+    this.listStatus.style.display = 'none';
     this.active = false;
   }
 }

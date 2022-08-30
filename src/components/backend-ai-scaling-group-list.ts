@@ -36,6 +36,7 @@ import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -59,16 +60,17 @@ type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Number}) _totalScalingGroupCount = 0;
+
   @query('#scaling-group-name') scalingGroupName!: TextField;
   @query('#scaling-group-description') scalingGroupDescription!: TextArea;
   @query('#scaling-group-domain') scalingGroupDomain!: Select;
   @query('#modify-scaling-group-active') modifyScalingGroupActive!: Switch;
-  @query('#list-status') list_status!: BackendAIListStatus;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -78,7 +80,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     this.domains = [];
   }
 
-  static get styles(): CSSResultGroup {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -184,8 +186,8 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     if (active === false) {
       return;
     }
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -193,9 +195,9 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           .then((res) => {
             this.scalingGroups = res.scaling_groups;
             if (this.scalingGroups.length == 0) {
-              this.list_condition = 'no-data';
+              this.listCondition = 'no-data';
             } else {
-              this.list_status.hide();
+              this._listStatus?.hide();
             }
           });
 
@@ -210,7 +212,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         .then((res) => {
           this.scalingGroups = res.scaling_groups;
           this._totalScalingGroupCount = this.scalingGroups.length > 0 ? this.scalingGroups.length : 1;
-          this.list_status.hide();
+          this._listStatus?.hide();
         });
 
       globalThis.backendaiclient.domain.list()
@@ -427,15 +429,15 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   }
 
   _refreshList() {
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     globalThis.backendaiclient.scalingGroup.list_available()
       .then(({scaling_groups}) => {
         this.scalingGroups = scaling_groups;
         if (this.scalingGroups.length == 0) {
-          this.list_condition = 'no-data';
+          this.listCondition = 'no-data';
         } else {
-          this.list_status.hide();
+          this._listStatus?.hide();
         }
         this.requestUpdate(); // without this render is called beforehands, so update is required
       });
@@ -494,7 +496,7 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourceGroup.NoGroupToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourceGroup.NoGroupToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="create-scaling-group-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourceGroup.CreateResourceGroup')}</span>

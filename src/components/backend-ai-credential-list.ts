@@ -8,6 +8,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -82,14 +83,14 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) _boundAllocationRenderer = this.allocationRenderer.bind(this);
   @property({type: Object}) _boundUserIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @query('#keypair-info-dialog') keypairInfoDialog!: BackendAIDialog;
   @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
   @query('#policy-list') policyListSelect!: Select;
   @query('#rate-limit') rateLimit!: TextField;
-  @query('#list-status') list_status!: BackendAIListStatus;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -219,8 +220,8 @@ export default class BackendAICredentialList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       this.resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -288,13 +289,13 @@ export default class BackendAICredentialList extends BackendAIPage {
       });
       this.keypairs = keypairs;
       if (this.keypairs.length == 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
-      this.list_status.hide();
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -804,7 +805,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">Keypair Detail</span>

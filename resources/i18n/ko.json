@@ -7,7 +7,8 @@
       "Sessions": "세션",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
-      "Pipeline": "파이프라인(베타)",
+      "Pipeline": "파이프라인 (베타)",
+      "PipelineJob": "파이프라인 잡 (베타)",
       "Statistics": "통계",
       "Help": "도움말",
       "Settings": "설정",
@@ -364,7 +365,10 @@
     "Capabilities": "지원기능",
     "NoAgentToDisplay": "에이전트 정보가 없습니다.",
     "NoNetworkSignal": "네트워크 신호 없음",
-    "Architecture": "아키텍쳐"
+    "Architecture": "아키텍쳐",
+    "Utilization": "사용량",
+    "NoAvailableLiveStat": "표시할 사용량 없음",
+    "Allocation": "할당 정보"
   },
   "general": {
     "cores": "코어",

@@ -126,14 +126,15 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
-    'data', 'pipeline', 'statistics', 'usersettings', 'credential',
+    'data', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
-    'information', 'github', 'import', 'unauthorized'];
+    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
   @property({type: Number}) timeoutSec = 5;
-  @property({type: Boolean}) use_experiment = false;
+  private _useExperiment = false;
+  private _usePipeline = false; // temporally block pipeline menu
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
@@ -887,8 +888,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     case 'data':
       this.menuTitle = _text('webui.menu.Data&Storage');
       break;
+    // temporally block pipeline menu -> move to 404 error
     case 'pipeline':
-      this.menuTitle = _text('webui.menu.Pipeline');
+      // this.menuTitle = _text('webui.menu.Pipeline');
+      this._page = 'error';
+      break;
+    case 'pipeline-job':
+      // this.menuTitle = _text('webui.menu.PipelineJob');
+      this._page = 'error';
       break;
     case 'statistics':
       this.menuTitle = _text('webui.menu.Statistics');
@@ -988,6 +995,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
+      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
+      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
+      // }
       if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
         await globalThis.backendaiclient.logout();
       }
@@ -1166,7 +1176,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
     this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
-    this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
+
+    // temporally blcok pipeline menu
+    // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
+    // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
@@ -1339,23 +1352,29 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
-            ${this.use_experiment ? html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
-              <i class="fas fa-flask" slot="graphic"></i>
-              <span class="full-menu">${_t('webui.menu.Experiments')}</span>
-            </mwc-list-item>` : html``}
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
-              <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
-            </mwc-list-item>
+            ${this._useExperiment ? html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
+                <i class="fas fa-flask" slot="graphic"></i>
+                <span class="full-menu">${_t('webui.menu.Experiments')}</span>
+              </mwc-list-item>` : html``}
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}">
+                <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
+                <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
+              </mwc-list-item>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}">
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none">
-              <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
-            </mwc-list-item>
+            ${this._usePipeline ? html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none;">
+                <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
+                <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
+              </mwc-list-item>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline-job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}" style="display:none;">
+                <i class="fas fa-sitemap" slot="graphic" id="pipeline-job-menu-icon"></i>
+                <span class="full-menu">${_t('webui.menu.PipelineJob')}</span>
+              </mwc-list-item>
+            ` : html``}
             <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
@@ -1424,7 +1443,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.0-beta.1.220822</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.09.0.220830</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1448,7 +1467,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.0-beta.1.220822</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.09.0.220830</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1561,7 +1580,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
-                    <backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>
+                    <!--<pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
+                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
+                    <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>
                     <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
