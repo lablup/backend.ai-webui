@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
@@ -25,6 +25,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
@@ -36,10 +37,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   constructor() {
     super();
   }
@@ -220,7 +221,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
-          <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
+          <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
@@ -332,7 +333,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
     for (const textfield of textfields) {
@@ -412,8 +412,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const param = {
       'group': globalThis.backendaiclient.current_group
     };
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
@@ -427,9 +427,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
       });
       this.resourcePresets = resourcePresets;
       if (this.resourcePresets.length == 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       }
     }).catch((err) => {
       console.log(err);

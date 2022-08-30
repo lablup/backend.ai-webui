@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -21,6 +21,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus from './backend-ai-list-status';
 import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
@@ -42,8 +43,7 @@ import './lablup-progress-bar';
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
-  @property({type: Object}) list_status = Object();
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
   @property({type: Object}) notification = Object();
@@ -54,6 +54,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
@@ -139,7 +140,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
   }
@@ -176,8 +176,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const storages: Array<any> = [];
@@ -196,9 +196,9 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       }
       this.storages = storages;
       if (this.storages.length == 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       } const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
@@ -207,7 +207,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
-      this.list_status.hide();
+      this._listStatus?.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -478,7 +478,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
           <vaadin-grid-column resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>

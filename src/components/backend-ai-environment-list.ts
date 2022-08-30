@@ -2,58 +2,57 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
- import {get as _text, translate as _t} from 'lit-translate';
- import {css, CSSResultGroup, html, render} from 'lit';
- import {customElement, property, query} from 'lit/decorators.js';
- 
- import {BackendAIPage} from './backend-ai-page';
- 
- import {BackendAiStyles} from './backend-ai-general-styles';
- import {
-   IronFlex,
-   IronFlexAlignment,
-   IronFlexFactors,
-   IronPositioning
- } from '../plastics/layout/iron-flex-layout-classes';
- import '../plastics/lablup-shields/lablup-shields';
- import './lablup-loading-spinner';
- import './backend-ai-list-status';
- import './backend-ai-dialog';
- 
- import '@vaadin/vaadin-grid/vaadin-grid';
- import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
- import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
- import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
- 
- import 'weightless/button';
- import 'weightless/icon';
- import 'weightless/select';
- import 'weightless/textfield';
- import 'weightless/label';
- 
- import {Button} from '@material/mwc-button/mwc-button';
- import '@material/mwc-slider';
- import '@material/mwc-select';
- import '@material/mwc-list/mwc-list-item';
- 
- import {default as PainKiller} from './backend-ai-painkiller';
- 
+import {get as _text, translate as _t} from 'lit-translate';
+import {css, CSSResultGroup, html, render} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
+import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus from './backend-ai-list-status';
+
+import {BackendAiStyles} from './backend-ai-general-styles';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning
+} from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/lablup-shields/lablup-shields';
+import './lablup-loading-spinner';
+import './backend-ai-dialog';
+
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+
+import 'weightless/button';
+import 'weightless/icon';
+import 'weightless/select';
+import 'weightless/textfield';
+import 'weightless/label';
+
+import {Button} from '@material/mwc-button/mwc-button';
+import '@material/mwc-slider';
+import '@material/mwc-select';
+import '@material/mwc-list/mwc-list-item';
+
+import {default as PainKiller} from './backend-ai-painkiller';
+
  /* FIXME:
   * This type definition is a workaround for resolving both Type error and Importing error.
   */
  type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
- type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
  type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  type Slider = HTMLElementTagNameMap['mwc-slider'];
- 
- /**
+
+/**
   Backend.AI Environment List
  @group Backend.AI Web UI
   @element backend-ai-environment-list
   */
- 
+
  @customElement('backend-ai-environment-list')
- export default class BackendAIEnvironmentList extends BackendAIPage {
+export default class BackendAIEnvironmentList extends BackendAIPage {
    @property({type: Array}) images;
    @property({type: Array}) allowed_registries;
    @property({type: Array}) servicePorts;
@@ -82,7 +81,7 @@
      'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
      'tpu': ['0', '1', '2']};
    @property({type: Number}) cpuValue = 0;
-   @property({type: String}) list_condition = 'loading';
+   @property({type: String}) listCondition = 'loading';
    @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
    @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
    @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
@@ -90,7 +89,6 @@
    @property({type: Object}) _boundConstraintRenderer = this.constraintRenderer.bind(this);
    @property({type: Object}) _boundDigestRenderer = this.digestRenderer.bind(this);
    @query('#loading-spinner') spinner!: LablupLoadingSpinner;
-   @query('#list-status') list_status!: BackendAIListStatus;
    @query('#modify-image-cpu') modifyImageCpu!: Button;
    @query('#modify-image-mem') modifyImageMemory!: Button;
    @query('#modify-image-cuda-gpu') modifyImageCudaGpu!: Button;
@@ -101,7 +99,8 @@
    @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
    @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
    @query('#modify-app-container') modifyAppContainer!: HTMLDivElement;
- 
+   @query('#list-status') private _listStatus!: BackendAIListStatus;
+
    constructor() {
      super();
      this.installImageNameList = [];
@@ -110,7 +109,7 @@
      this.allowed_registries = [];
      this.servicePorts = [];
    }
- 
+
    static get styles(): CSSResultGroup {
      // noinspection CssInvalidPropertyValue
      return [
@@ -255,11 +254,11 @@
          }
        `];
    }
- 
+
    firstUpdated() {
      this.indicator = globalThis.lablupIndicator;
      this.notification = globalThis.lablupNotification;
- 
+
      if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
        document.addEventListener('backend-ai-connected', () => {
          this._getImages();
@@ -271,11 +270,11 @@
      this._grid.addEventListener('sorter-changed', (e) => {
        this._refreshSorter(e);
      });
- 
+
      document.addEventListener('image-rescanned', () => {
        this._getImages();
      });
- 
+
      // uncheck every checked rows when dialog is closed
      this.installImageDialog.addEventListener('didHide', () => {
        this._uncheckSelectedRow();
@@ -284,7 +283,7 @@
        this._uncheckSelectedRow();
      });
    }
- 
+
    /**
     * Remove selected row in the environment list.
     *
@@ -295,7 +294,7 @@
      this.notification.text = _text('environment.AppInfoDeleted');
      this.notification.show();
    }
- 
+
    /**
       * Add a row to the environment list.
       */
@@ -304,7 +303,7 @@
      const div = this._createRow();
      this.modifyAppContainer.insertBefore(div, lastChild);
    }
- 
+
    /**
       * Create a row in the environment list.
       *
@@ -313,34 +312,34 @@
    _createRow() {
      const div = document.createElement('div');
      div.setAttribute('class', 'row extra');
- 
+
      const app = document.createElement('wl-textfield');
      app.setAttribute('type', 'text');
- 
+
      const protocol = document.createElement('wl-textfield');
      app.setAttribute('type', 'text');
- 
+
      const port = document.createElement('wl-textfield');
      app.setAttribute('type', 'number');
- 
+
      const button = document.createElement('wl-button');
      button.setAttribute('class', 'fg pink');
      button.setAttribute('fab', '');
      button.setAttribute('flat', '');
      button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
- 
+
      const icon = document.createElement('wl-icon');
      icon.innerHTML = 'remove';
      button.appendChild(icon);
- 
+
      div.appendChild(port);
      div.appendChild(protocol);
      div.appendChild(app);
      div.appendChild(button);
- 
+
      return div;
    }
- 
+
    /**
       * Check whether delete operation will proceed or not.
       *
@@ -360,14 +359,14 @@
        this.deleteAppInfoDialog.show();
      }
    }
- 
+
    /**
       * Clear rows from the environment list.
       */
    _clearRows() {
      const rows = this.modifyAppContainer.querySelectorAll('.row');
      const lastRow = rows[rows.length - 1];
- 
+
      lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
        tf.value = '';
      });
@@ -375,7 +374,7 @@
        e.remove();
      });
    }
- 
+
    /**
       * Deselect the selected row from the environment list.
       */
@@ -383,7 +382,7 @@
      // empty out selectedItem
      this._grid.selectedItems = [];
    }
- 
+
    /**
       * Refresh the sorter.
       *
@@ -404,20 +403,20 @@
        }
      }
    }
- 
+
    async _viewStateChanged(active: boolean) {
      await this.updateComplete;
      if (active === false) {
- 
+
      }
    }
- 
+
    /**
       * Get backend.ai client images.
       */
    _getImages() {
-     this.list_condition = 'loading';
-     this.list_status.show(); 
+     this.listCondition = 'loading';
+     this._listStatus?.show();
      globalThis.backendaiclient.domain.get(globalThis.backendaiclient._config.domainName, ['allowed_docker_registries']).then((response) => {
        this.allowed_registries = response.domain.allowed_docker_registries;
        return globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'architecture', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
@@ -465,7 +464,7 @@
            }
            image.baseimage = baseimage;// this._humanizeName(image.baseimage);
            image.lang = this._humanizeName(image.lang);
- 
+
            const resource_limit = image.resource_limits;
            resource_limit.forEach((resource) => {
              if (resource.max == 0) {
@@ -490,7 +489,7 @@
                image[resource.key + '_limit_max'] = this._addUnit(resource.max);
              }
            });
- 
+
            image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
            domainImages.push(image);
          }
@@ -501,10 +500,10 @@
        // image_keys.sort();
        this.images = domainImages;
        if (this.images.length == 0) {
-        this.list_condition = 'no-data';
-      } else {
-        this.list_status.hide();
-      }
+         this.listCondition = 'no-data';
+       } else {
+         this._listStatus?.hide();
+       }
      }).catch((err) => {
        console.log(err);
        if (typeof err.message !== 'undefined') {
@@ -514,10 +513,10 @@
          this.notification.text = PainKiller.relieve('Problem occurred during image metadata loading.');
        }
        this.notification.show(true, err);
-       this.list_status.hide();
+       this._listStatus?.hide();
      });
    }
- 
+
    /**
       * Add unit to the value.
       *
@@ -537,7 +536,7 @@
      }
      return value;
    }
- 
+
    /**
       * Change unit to symbol.
       *
@@ -557,7 +556,7 @@
      }
      return value;
    }
- 
+
    /**
       * Humanize the value.
       *
@@ -652,7 +651,7 @@
        return value;
      }
    }
- 
+
    _changeSliderValue(el: Slider) {
      const currentVal= this._range[el.id].filter((value, index) => {
        return index === el.value;
@@ -661,7 +660,7 @@
      // TODO button does not have value property
      (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
    }
- 
+
    /**
     * If value includes unlimited contents, mark as unlimited.
     *
@@ -675,7 +674,7 @@
        return value;
      }
    }
- 
+
    /**
     * Hide a dialog by id.
     *
@@ -685,7 +684,7 @@
    _hideDialogById(id: string) {
      return (this.shadowRoot?.querySelector(id) as BackendAIDialog).hide();
    }
- 
+
    /**
     * Display a dialog by id.
     *
@@ -695,7 +694,7 @@
    _launchDialogById(id: string) {
      return (this.shadowRoot?.querySelector(id) as BackendAIDialog).show();
    }
- 
+
    /**
     * Modify images of cpu, memory, cuda-gpu, cuda-fgpu, rocm-gpu and tpu.
     */
@@ -706,35 +705,35 @@
      const fgpu = this.modifyImageCudaFGpu.label;
      const rocm_gpu = this.modifyImageRocmGpu.label;
      const tpu = this.modifyImageTpu.label;
- 
+
      const {resource_limits} = this.images[this.selectedIndex];
- 
+
      const input = {};
- 
+
      // TODO : index modification
      const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
      if (cpu !== resource_limits[0].min) input['cpu'] = {'min': cpu};
      const memory = this._symbolicUnit(mem);
      if (memory !== resource_limits[mem_idx].min) input['mem'] = {'min': memory};
- 
+
      if (!this._cuda_gpu_disabled && gpu !== resource_limits[1].min) input['cuda.device'] = {'min': gpu};
      if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input['cuda.shares'] = {'min': fgpu};
      if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input['rocm.device'] = {'min': rocm_gpu};
      if (!this._tpu_disabled && tpu !== resource_limits[4].min) input['tpu.device'] = {'min': tpu};
- 
+
      const image = this.images[this.selectedIndex];
- 
+
      if (Object.keys(input).length === 0) {
        this.notification.text = _text('environment.NoChangeMade');
        this.notification.show();
        this._hideDialogById('#modify-image-dialog');
        return;
      }
- 
+
      globalThis.backendaiclient.image.modifyResource(image.registry, image.name, image.tag, input)
        .then((res) => {
          const ok = res.reduce((acc, cur) => acc && cur.result === 'ok', true);
- 
+
          if (ok) {
            this._getImages();
            this.requestUpdate();
@@ -742,12 +741,12 @@
          } else {
            this.notification.text = _text('environment.ProblemOccurred');
          }
- 
+
          this.notification.show();
          this._hideDialogById('#modify-image-dialog');
        });
    }
- 
+
    /**
     * Open the selected image.
     *
@@ -764,10 +763,10 @@
            image[elem] = image[elem].replace(/\s/g, '');
          }
        });
- 
+
        return image['registry'] + '/' + image['name'] + ':' + image['tag'];
      });
- 
+
      // show dialog only if selected image exists and uninstalled
      if (this.selectedImages.length > 0) {
        this.installImageDialog.show();
@@ -776,7 +775,7 @@
        this.notification.show();
      }
    }
- 
+
    _installImage() {
      this.installImageDialog.hide();
      this.selectedImages.forEach(async (image: object): Promise<void> => {
@@ -791,7 +790,7 @@
            imageResource[el['key'].replace('_', '.')] = el.min;
          });
        }
- 
+
        if ('cuda.device' in imageResource && 'cuda.shares' in imageResource) {
          isGPURequired = true;
          imageResource['gpu'] = 0;
@@ -802,19 +801,19 @@
        } else {
          isGPURequired = false;
        }
- 
+
        // Add 256m to run the image.
        if (imageResource['mem'].endsWith('g')) {
          imageResource['mem'] = imageResource['mem'].replace('g', '.5g');
        } else if (imageResource['mem'].endsWith('m')) {
          imageResource['mem'] = Number(imageResource['mem'].slice(0, -1)) + 256 + 'm';
        }
- 
+
        imageResource['domain'] = globalThis.backendaiclient._config.domainName;
        imageResource['group_name'] = globalThis.backendaiclient.current_group;
- 
+
        const resourceSlots = await globalThis.backendaiclient.get_resource_slots();
- 
+
        if (isGPURequired) {
          if (!('cuda.device' in resourceSlots) && !('cuda.shares' in resourceSlots)) {
            delete imageResource['gpu'];
@@ -823,7 +822,7 @@
            delete imageResource['cuda.device'];
          }
        }
- 
+
        if ('cuda.device' in resourceSlots && 'cuda.shares' in resourceSlots) { // Can be possible after 20.03
          if ('fgpu' in imageResource && 'gpu' in imageResource) { // Keep fgpu only.
            delete imageResource['gpu'];
@@ -836,16 +835,16 @@
          delete imageResource['gpu'];
          delete imageResource['cuda.device'];
        }
- 
+
        this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
        this.notification.show();
        const indicator = await this.indicator.start('indeterminate');
        indicator.set(10, _text('import.Downloading'));
- 
+
        globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
          indicator.set(100, _text('import.Installed'));
          indicator.end(1000);
- 
+
          // change installing -> installed
          this._grid.querySelector(selectedImageLabel).className = 'installed';
          this._grid.querySelector(selectedImageLabel).innerHTML = _text('environment.Installed');
@@ -853,7 +852,7 @@
          // if something goes wrong during installation
          this._grid.querySelector(selectedImageLabel).className = _text('environment.Installing');
          this._grid.querySelector(selectedImageLabel).setAttribute('style', 'display:none;');
- 
+
          this._uncheckSelectedRow();
          this.notification.text = PainKiller.relieve(err.title);
          this.notification.detail = err.message;
@@ -863,7 +862,7 @@
        });
      });
    }
- 
+
    /**
     * Open images to delete.
     *
@@ -884,11 +883,11 @@
        this.notification.show();
      }
    }
- 
+
    _deleteImage() {
      /** TO DO: API function call to delete selected images */
    }
- 
+
    /**
     * Set resource limits to default value.
     *
@@ -936,26 +935,26 @@
        this.modifyImageTpu.label = _t('environment.Disabled') as string;
        (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = 0;
      }
- 
+
      const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
      this.modifyImageMemory.label = this._addUnit(resource_limits[mem_idx].min);
- 
+
      (this.shadowRoot?.querySelector('mwc-slider#cpu') as Slider).value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
        return value === resource_limits[0].min;
      })[0]);
      (this.shadowRoot?.querySelector('mwc-slider#mem') as Slider).value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
        return value === this._addUnit(resource_limits[mem_idx].min);
      })[0]);
- 
+
      this._updateSliderLayout();
    }
- 
+
    _updateSliderLayout() {
      this.shadowRoot?.querySelectorAll('mwc-slider').forEach((el: Slider) => {
        el.layout();
      });
    }
- 
+
    /**
     * Decode backend.ai service ports.
     */
@@ -976,7 +975,7 @@
            });
      }
    }
- 
+
    /**
     * Validate backend.ai service ports.
     *
@@ -991,7 +990,7 @@
        if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
          continue;
        }
- 
+
        const appName = textFields[0].value; const protocol = textFields[1].value; const port = parseInt(textFields[2].value);
        if (appName === '') {
          this.servicePortsMsg = _text('environment.AppNameMustNotBeEmpty');
@@ -1017,7 +1016,7 @@
      }
      return true;
    }
- 
+
    /**
     * Parse backend.ai service ports.
     *
@@ -1030,10 +1029,10 @@
        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
      ).length === 0;
      const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value).join(':');
- 
+
      return Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row)).join(',');
    }
- 
+
    /**
     * Modify backend.ai service ports.
     */
@@ -1057,7 +1056,7 @@
          });
      }
    }
- 
+
    /**
     * Render requirments such as cpu limit, memoty limit
     * cuda share limit, rocm device limit and tpu limit.
@@ -1127,7 +1126,7 @@
          `, root
      );
    }
- 
+
    /**
     * Render controllers.
     *
@@ -1142,24 +1141,24 @@
            <wl-button fab flat inverted
              class="fg blue controls-running"
              @click=${() => {
-     this.selectedIndex = rowData.index;
-     this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-     this._launchDialogById('#modify-image-dialog');
-     this.requestUpdate();
-   }}>
+    this.selectedIndex = rowData.index;
+    this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+    this._launchDialogById('#modify-image-dialog');
+    this.requestUpdate();
+  }}>
              <wl-icon>settings</wl-icon>
            </wl-button>
            <wl-button fab flat inverted
              class="fg pink controls-running"
              @click=${() => {
-     if (this.selectedIndex !== rowData.index) {
-       this._clearRows();
-     }
-     this.selectedIndex = rowData.index;
-     this._decodeServicePort();
-     this._launchDialogById('#modify-app-dialog');
-     this.requestUpdate();
-   }}>
+    if (this.selectedIndex !== rowData.index) {
+      this._clearRows();
+    }
+    this.selectedIndex = rowData.index;
+    this._decodeServicePort();
+    this._launchDialogById('#modify-app-dialog');
+    this.requestUpdate();
+  }}>
              <wl-icon>apps</wl-icon>
            </wl-button>
          </div>
@@ -1167,7 +1166,7 @@
        root
      );
    }
- 
+
    /**
   * Render an installed tag for each image.
   *
@@ -1188,7 +1187,7 @@
              ${_t('environment.Installed')}
            </wl-label>
            ` :
-     html`
+    html`
            <wl-label class="installing"
              id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
                    rowData.item.name.replace('/', '-') + '-' +
@@ -1201,8 +1200,8 @@
        `
        , root);
    }
- 
- 
+
+
    /**
     *
     * Render an base image label for each image
@@ -1216,12 +1215,12 @@
        // language=HTML
        html`
          ${rowData.item.baseimage.map((image) =>
-     html`
+    html`
              <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
          `)}
          `, root);
    }
- 
+
    /**
     *
     * Render an constraint for each image
@@ -1239,7 +1238,7 @@
          ` : html``}
        `, root);
    }
- 
+
    /**
     *
     * Render digest information for each image
@@ -1258,7 +1257,7 @@
        `
        , root);
    }
- 
+
    render() {
      // language=HTML
      return html`
@@ -1293,7 +1292,7 @@
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
        </div>
        <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
          <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
@@ -1435,8 +1434,8 @@
            <p>${_t('environment.DescDownloadImage')}</p>
            <p style="margin:auto; "><span style="color:blue;">
            ${this.installImageNameList.map((el) => {
-     return html`${el}<br />`;
-   })}
+              return html`${el}<br />`;
+            })}
            </span></p>
            <p>${_t('environment.DescSignificantDownloadTime')} ${_t('dialog.ask.DoYouWantToProceed')}</p>
          </div>
@@ -1446,9 +1445,9 @@
                class="operation"
                label="${_t('button.Cancel')}"
                @click="${(e) => {
-     this._hideDialog(e);
-     this._uncheckSelectedRow();
-   }}"></mwc-button>
+                  this._hideDialog(e);
+                  this._uncheckSelectedRow();
+                }}"></mwc-button>
            <mwc-button
                unelevated
                class="operation"
@@ -1462,8 +1461,8 @@
            <p>${_t('environment.DescDeleteImage')}</p>
            <p style="margin:auto; "><span style="color:blue;">
            ${this.deleteImageNameList.map((el) => {
-     return html`${el}<br />`;
-   })}
+              return html`${el}<br />`;
+            })}
            </span></p>
            <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
          </div>
@@ -1473,9 +1472,9 @@
                class="operation"
                label="${_t('button.Cancel')}"
                @click="${(e) => {
-     this._hideDialog(e);
-     this._uncheckSelectedRow();
-   }}"></mwc-button>
+                  this._hideDialog(e);
+                  this._uncheckSelectedRow();
+                }}"></mwc-button>
            <mwc-button
                unelevated
                class="operation"
@@ -1516,8 +1515,8 @@
        </backend-ai-dialog>
      `;
    }
- }
- 
+}
+
  declare global {
    interface HTMLElementTagNameMap {
      'backend-ai-environment-list': BackendAIEnvironmentList;

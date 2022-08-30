@@ -36,6 +36,7 @@ import './lablup-codemirror';
 import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
+import './backend-ai-list-status';
 
 /**
  Backend AI Usersettings View
