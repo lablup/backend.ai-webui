@@ -205,7 +205,10 @@ export default class BackendAIAgent extends BackendAIPage {
       fields.push('schedulable');
     }
 
-    globalThis.backendaiclient.agentSummary.list(status, fields, 20, 0, 10 * 1000).then((response) => {
+    const limit = 20;
+    const offset = 0;
+    const timeout = 10 * 1000;
+    globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout).then((response) => {
       const agents = response.agent_summary_list?.items;
       if (agents !== undefined && agents.length != 0) {
         let filter;
