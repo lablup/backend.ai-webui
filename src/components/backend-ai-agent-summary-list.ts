@@ -24,7 +24,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import './backend-ai-list-status';
+import BackendAIListStatus from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -43,21 +43,22 @@ Example:
 
 @customElement('backend-ai-agent-summary-list')
 export default class BackendAIAgent extends BackendAIPage {
+  private _enableAgentSchedulable = false;
+
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
-  @property({type: Object}) list_status = Object();
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
   @property({type: Object}) agentSettingDialog = Object();
-  @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
-  @property({type: String}) list_condition = 'loading';
+  @property({type: String}) listCondition = 'loading';
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   @query('vaadin-grid') private _agentGrid;
 
   constructor() {
@@ -154,7 +155,6 @@ export default class BackendAIAgent extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.list_status = this.shadowRoot.querySelector('#list-status');
     this.notification = globalThis.lablupNotification;
     this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
   }
@@ -176,12 +176,12 @@ export default class BackendAIAgent extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+        this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
         const status = 'ALIVE';
         this._loadAgent(status);
       }, true);
     } else { // already connected
-      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+      this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
       const status = 'ALIVE';
       this._loadAgent(status);
     }
@@ -196,20 +196,10 @@ export default class BackendAIAgent extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
-    this.list_condition = 'loading';
-    this.list_status.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'architecture'];
-    switch (this.condition) {
-    case 'running':
-      status = 'ALIVE';
-      break;
-    case 'terminated':
-      status = 'TERMINATED';
-      break;
-    case 'archived':
-    default:
-      status = 'ALIVE';
-    }
+    status = this.condition === 'running' ? 'ALIVE' : 'TERMINATED';
 
     if (globalThis.backendaiclient.supports('schedulable')) {
       fields.push('schedulable');
@@ -288,9 +278,9 @@ export default class BackendAIAgent extends BackendAIPage {
       this._agentGrid.recalculateColumnWidths();
 
       if (this.agents?.length === 0) {
-        this.list_condition = 'no-data';
+        this.listCondition = 'no-data';
       } else {
-        this.list_status.hide();
+        this._listStatus?.hide();
       }
 
       if (this.active === true) {
@@ -299,7 +289,7 @@ export default class BackendAIAgent extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
-      this.list_status.hide();
+      this._listStatus?.hide();
       if (err && err.message) {
         console.log(err);
         this.notification.text = PainKiller.relieve(err.title);
@@ -484,12 +474,12 @@ export default class BackendAIAgent extends BackendAIPage {
           <vaadin-grid-column resizable auto-width header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          ${this.enableAgentSchedulable ? html`
+          ${this._enableAgentSchedulable ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
                               .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
           ` : html``}
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" status_condition="${this.list_condition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
       </div>
     `;
   }

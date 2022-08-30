@@ -66,6 +66,8 @@ type LiveStat = {
 
 @customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
+  private _enableAgentSchedulable = false;
+
   @property({type: String}) condition = 'running';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
@@ -74,7 +76,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) agentDetailDialog = Object();
   @property({type: Object}) agentSettingDialog = Object();
-  @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
@@ -204,12 +205,12 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+        this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
         const status = 'ALIVE';
         this._loadAgentList(status);
       }, true);
     } else { // already connected
-      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+      this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
       const status = 'ALIVE';
       this._loadAgentList(status);
     }
@@ -915,7 +916,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            ${this.enableAgentSchedulable ? html`
+            ${this._enableAgentSchedulable ? html`
               <mwc-icon-button class="fg blue controls-running" icon="settings"
                                @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             ` : html``}
@@ -1158,7 +1159,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                               header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
                               .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-          ${this.enableAgentSchedulable ? html`
+          ${this._enableAgentSchedulable ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
                               .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
           ` : html``}
