@@ -39,7 +39,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /**
  Backend AI User List
@@ -75,7 +75,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @property({type: Object}) userStatus = {

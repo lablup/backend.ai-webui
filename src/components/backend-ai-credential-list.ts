@@ -8,7 +8,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -77,7 +77,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: Object}) _boundAllocationRenderer = this.allocationRenderer.bind(this);
   @property({type: Object}) _boundUserIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) keypairGrid = Object();
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @query('#list-status') private _listStatus!: BackendAIListStatus;

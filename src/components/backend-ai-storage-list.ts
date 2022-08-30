@@ -45,7 +45,7 @@ import tus from '../lib/tus';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /**
  Backend AI Storage List
@@ -93,7 +93,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) deleteFileDialog = Object();
   @property({type: Object}) downloadFileDialog = Object();
   @property({type: Object}) sessionLauncher = Object();
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
   @property({type: Object}) _boundIndexRenderer = Object();
