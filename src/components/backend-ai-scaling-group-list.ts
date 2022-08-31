@@ -36,7 +36,7 @@ import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /**
  Backend AI Scaling Group List
@@ -55,7 +55,7 @@ import BackendAIListStatus from './backend-ai-list-status';
 export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this._controlRenderer.bind(this);
   @property({type: Number}) selectedIndex = 0;
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Array}) domains;
   @property({type: Array}) scalingGroups;
   @property({type: Array}) schedulerTypes;

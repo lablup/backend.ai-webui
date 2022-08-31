@@ -9,7 +9,7 @@ import {customElement, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIIndicator from './backend-ai-indicator';
 import BackendAIIndicatorPool from './backend-ai-indicator-pool';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -41,7 +41,7 @@ import {Textfield as WlTextfield} from 'weightless/textfield';
 
 @customElement('backend-ai-registry-list')
 class BackendAIRegistryList extends BackendAIPage {
-  private _listCondition: string = 'loading';
+  private _listCondition: StatusCondition = 'loading';
   private _allowed_registries: Array<object>;
   private _editMode: boolean = false;
   private _hostnames: Array<string>;

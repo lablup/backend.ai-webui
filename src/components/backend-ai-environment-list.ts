@@ -7,7 +7,7 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -81,7 +81,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
      'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
      'tpu': ['0', '1', '2']};
    @property({type: Number}) cpuValue = 0;
-   @property({type: String}) listCondition = 'loading';
+   @property({type: String}) listCondition: StatusCondition = 'loading';
    @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
    @property({type: Object}) _boundControlsRenderer = this.controlsRenderer.bind(this);
    @property({type: Object}) _boundInstallRenderer = this.installRenderer.bind(this);
