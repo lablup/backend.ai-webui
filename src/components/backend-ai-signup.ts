@@ -199,7 +199,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   init_client() {
     if (typeof this.client === 'undefined') {
-      if (this.endpoint !== '' && this.client !== {}) {
+      if (this.endpoint !== '' && this.client && Object.keys(this.client).length !== 0) {
         const clientConfig = {
           connectionMode: 'SESSION',
           apiVersionMajor: 'v4',

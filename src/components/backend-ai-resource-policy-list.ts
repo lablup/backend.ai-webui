@@ -38,7 +38,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 class BigNumber {
   static getValue() {

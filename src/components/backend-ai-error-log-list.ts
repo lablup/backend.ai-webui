@@ -34,7 +34,6 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 

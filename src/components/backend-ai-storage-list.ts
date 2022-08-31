@@ -49,7 +49,6 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 type Radio = HTMLElementTagNameMap['mwc-radio'];

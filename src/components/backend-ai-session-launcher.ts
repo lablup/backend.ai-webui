@@ -1375,7 +1375,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['startsAt'] = scheduledTime + getClientTimezoneOffset();
       }
     }
-    if (this.environ_values !== {}) {
+    if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
       config['env'] = this.environ_values;
     }
     if (this.openMPSwitch.selected === false) {
@@ -2025,7 +2025,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
         this.gpuResouceSlider.disabled = true;
         this.gpuResouceSlider.value = 0;
-        if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
+        if (this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
             if (!('cuda_device' in this.resource_templates[i]) &&
@@ -2049,7 +2049,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
-      if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
+      if (this.resource_templates_filtered.length > 0) {
         const resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
         this.resourceTemplatesSelect.layout(true).then(() => {

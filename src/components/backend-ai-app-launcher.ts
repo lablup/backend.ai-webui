@@ -567,11 +567,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
     let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, null, envs, args);
     if (!uri) {
+      this.indicator.end();
       return Promise.resolve(false);
     }
-    const allowedClientIps = (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField).value;
-    const openToPublic = this.checkOpenToPublic.checked;
-    this.checkOpenToPublic.checked = false;
+    const allowedClientIps = (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField)?.value;
+    let openToPublic = false;
+    if (this.checkOpenToPublic == null) { // Null or undefined check. When user click console button without app launcher dialog, it will be undefined.
+    } else {
+      openToPublic = this.checkOpenToPublic.checked;
+      this.checkOpenToPublic.checked = false;
+    }
+
 
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;

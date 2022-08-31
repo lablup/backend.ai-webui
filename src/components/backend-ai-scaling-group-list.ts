@@ -38,11 +38,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
-/* FIXME:
- * This type definition is a workaround for resolving both Type error and Importing error.
- */
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
-
 /**
  Backend AI Scaling Group List
 

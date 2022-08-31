@@ -46,7 +46,6 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 /**
  Backend AI Session List
@@ -1254,7 +1253,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
+    return this._terminateKernel((this.terminateSessionDialog as any).sessionId, (this.terminateSessionDialog as any).accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();

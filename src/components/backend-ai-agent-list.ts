@@ -29,11 +29,6 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
-/* FIXME:
- * This type definition is a workaround for resolving both Type error and Importing error.
- */
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
-
 /**
  Backend.AI Agent List
 

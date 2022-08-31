@@ -32,7 +32,6 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
  */
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {

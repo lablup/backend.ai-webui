@@ -588,7 +588,7 @@ export default class BackendAILogin extends BackendAIPage {
        defaultValue: false,
        value: generalConfig?.allowSignout,
      } as ConfigValueObject) as boolean;
- 
+
    // Login attempt limit number
    this.login_attempt_limit = this._getConfigValueByExists(generalConfig,
      {
@@ -617,7 +617,7 @@ export default class BackendAILogin extends BackendAIPage {
      this.apiEndpointHumanizedInput.style.display = 'none';
    } else {
      // API endpoint text value with additional styles
-     const apiEndpointText = this._getConfigValueByExists(generalConfig, 
+     const apiEndpointText = this._getConfigValueByExists(generalConfig,
        {
          valueType: 'string',
          defaultValue: '',
@@ -642,7 +642,7 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as boolean;
 
    // Default session environment value
-   this.default_session_environment = this._getConfigValueByExists(generalConfig, 
+   this.default_session_environment = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
        defaultValue: '',
@@ -650,7 +650,7 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as string;
 
    // Default session environment value
-   this.default_import_environment = this._getConfigValueByExists(generalConfig, 
+   this.default_import_environment = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
@@ -675,7 +675,7 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as string[];
 
    // Enable container commit flag
-   this._enableContainerCommit = this._getConfigValueByExists(generalConfig, 
+   this._enableContainerCommit = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
@@ -712,11 +712,11 @@ export default class BackendAILogin extends BackendAIPage {
    */
  private _initWSProxyConfigWithKeys(wsproxyConfig) {
    // wsproxy url value
-   this.proxy_url = this._getConfigValueByExists(wsproxyConfig, 
+   this.proxy_url = this._getConfigValueByExists(wsproxyConfig,
      {
        valueType: 'string',
        defaultValue: 'http://127.0.0.1:5050/',
-       value: parseInt(wsproxyConfig?.proxyURL),
+       value: wsproxyConfig?.proxyURL,
      } as ConfigValueObject) as string;
  }
 
@@ -1309,7 +1309,7 @@ export default class BackendAILogin extends BackendAIPage {
       const v = {'uuid': this.user};
 
       /**
-       * FIXME: 
+       * FIXME:
        * - Pipeline Login after WebUI Login
        * - Temporally disable pipeline login
        */
@@ -1431,7 +1431,7 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
-        
+
         // Only request pipeline logout when pipeline value is enabled
         if (this._enablePipeline) {
           globalThis.backendaiclient.pipeline.logout();

@@ -30,7 +30,6 @@ import './lablup-progress-bar';
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 
 /**
  Backend.AI Storage Proxy List

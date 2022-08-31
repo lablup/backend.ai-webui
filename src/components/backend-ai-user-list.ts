@@ -50,7 +50,6 @@ type TextField = HTMLElementTagNameMap['mwc-textfield'];
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIListStatus = HTMLElementTagNameMap['backend-ai-list-status'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
@@ -84,7 +83,6 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) keypairs;
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) userGrid = Object();
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
