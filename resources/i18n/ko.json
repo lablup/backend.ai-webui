@@ -313,7 +313,8 @@
     "CommitOnGoing": "세션 커밋 작업 진행중",
     "CommitFinished": "세션 커밋 작업 완료",
     "CommitFailed": "세션 커밋 작업 실패",
-    "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: "
+    "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
+    "EnvironmentInfo": "환경 정보"
   },
   "button": {
     "Cancel": "취소",
