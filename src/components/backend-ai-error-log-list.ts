@@ -28,7 +28,7 @@ import '@material/mwc-icon-button';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -56,7 +56,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;

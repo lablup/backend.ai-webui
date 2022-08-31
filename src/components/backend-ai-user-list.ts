@@ -40,7 +40,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -85,7 +85,7 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
   @property({type: Object}) userGrid = Object();
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @property({type: Object}) userStatus = {

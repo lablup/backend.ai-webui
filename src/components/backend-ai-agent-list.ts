@@ -25,7 +25,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIDialog from './backend-ai-dialog';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -92,7 +92,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @query('#agent-detail') agentDetailDialog!: BackendAIDialog;
   @query('#agent-setting') agentSettingDialog!: BackendAIDialog;
   @query('#schedulable-switch') schedulableToggle!: Switch;
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @query('vaadin-grid') private _agentGrid;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 

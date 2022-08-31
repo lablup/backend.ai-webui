@@ -38,7 +38,7 @@ import './backend-ai-dialog';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -123,7 +123,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) notification = Object();
   @property({type: Boolean}) enableScalingGroup = false;
-  @property({type: String}) listCondition = 'loading';
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
