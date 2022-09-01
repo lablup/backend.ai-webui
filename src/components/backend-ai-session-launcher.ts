@@ -3646,7 +3646,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       ${_t('registry.ProjectName')}
                     </div>
                     <div class="vertical layout">
-                      ${globalThis.backendaiclient.current_group}
+                      ${globalThis.backendaiclient?.current_group}
                     </div>
                   </div>
                   <div class="horizontal layout">
