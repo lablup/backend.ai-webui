@@ -56,7 +56,8 @@
       "UserName": "Имя пользователя",
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",

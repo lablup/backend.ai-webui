@@ -140,6 +140,7 @@ class Client {
   public resourcePreset: ResourcePreset;
   public vfolder: VFolder;
   public agent: Agent;
+  public agentSummary: AgentSummary;
   public keypair: Keypair;
   public image: ContainerImage;
   public utils: utils;
@@ -201,6 +202,7 @@ class Client {
     this.resourcePreset = new ResourcePreset(this);
     this.vfolder = new VFolder(this);
     this.agent = new Agent(this);
+    this.agentSummary = new AgentSummary(this);
     this.keypair = new Keypair(this);
     this.image = new ContainerImage(this);
     this.utils = new utils(this);
@@ -2125,6 +2127,51 @@ class Agent {
     } else {
       return Promise.resolve(false);
     }
+  }
+}
+
+class AgentSummary {
+  public client: any;
+
+  /**
+   * Agent API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+
+  /**
+   * List of agent summary.
+   *
+   * @param {string} status - Status to query. Should be one of 'ALIVE', 'PREPARING', 'TERMINATING' and 'TERMINATED'.
+   * @param {array} fields - Fields to query. Queryable fields are:  id, status, scaling_group, schedulable, schedulable, available_slots, occupied_slots.
+   * @param {number} limit - limit number of query items.
+   * @param {number} offset - offset for item query. Useful for pagination.
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.) 
+   */
+  async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots", "architecture"],
+              limit = 20, offset = 0, timeout:number = 0) {
+    let f = fields.join(' ');
+    if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
+      f.replace('schedulable', '');
+    }
+    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+      return Promise.resolve(false);
+    }
+    let q = `query($limit:Int!, $offset:Int!, $status:String) {
+        agent_summary_list(limit:$limit, offset:$offset, status:$status) {
+           items { ${f} }
+           total_count
+        }
+      }`;
+    let v = {
+        'limit': limit,
+        'offset': offset,
+        'status': status,
+      };
+    return this.client.query(q, v, null, timeout);
   }
 }
 
