@@ -42,7 +42,7 @@ Example:
 */
 
 @customElement('backend-ai-agent-summary-list')
-export default class BackendAIAgent extends BackendAIPage {
+export default class BackendAIAgentSummaryList extends BackendAIPage {
   private _enableAgentSchedulable = false;
 
   @property({type: String}) condition = 'running';
@@ -156,7 +156,7 @@ export default class BackendAIAgent extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
+    this.agentDetailDialog = this.shadowRoot?.querySelector('#agent-detail');
   }
 
   connectedCallback() {
@@ -485,6 +485,6 @@ export default class BackendAIAgent extends BackendAIPage {
 }
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-agent-summary-list': BackendAIAgent;
+    'backend-ai-agent-summary-list': BackendAIAgentSummaryList;
   }
 }

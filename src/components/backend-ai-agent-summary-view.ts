@@ -14,7 +14,7 @@ import '@material/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-list-status';
-import './backend-ai-agent-summary-list';
+import BackendAIAgentSummaryList from './backend-ai-agent-summary-list';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
@@ -74,13 +74,13 @@ export default class BackendAIAgentSummaryView extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (!active) {
-      this.shadowRoot.querySelector('#running-agents').active = false;
-      this.shadowRoot.querySelector('#terminated-agents').active = false;
+      (this.shadowRoot?.querySelector('#running-agents') as BackendAIAgentSummaryList).active = false;
+      (this.shadowRoot?.querySelector('#terminated-agents') as BackendAIAgentSummaryList).active = false;
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#running-agents').active = true;
-    this.shadowRoot.querySelector('#terminated-agents').active = true;
+    (this.shadowRoot?.querySelector('#running-agents') as BackendAIAgentSummaryList).active = true;
+    (this.shadowRoot?.querySelector('#terminated-agents') as BackendAIAgentSummaryList).active = true;
     this._status = 'active';
   }
 
@@ -90,11 +90,11 @@ export default class BackendAIAgentSummaryView extends BackendAIPage {
   * @param {mwc-tab} tab
   */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLDivElement).style.display = 'block';
     this._tab = tab.title;
   }
 
