@@ -137,13 +137,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
-    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
+    'information', 'github', 'import', 'unauthorized', 'pipeline', 'pipeline-job']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
   @property({type: Number}) timeoutSec = 5;
   private _useExperiment = false;
-  private _usePipeline = false; // temporally block pipeline menu
+  private _usePipeline = true; // temporally block pipeline menu
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
@@ -891,12 +891,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       break;
     // temporally block pipeline menu -> move to 404 error
     case 'pipeline':
-      // this.menuTitle = _text('webui.menu.Pipeline');
-      this._page = 'error';
+      this.menuTitle = _text('webui.menu.Pipeline');
+      // this._page = 'error';
       break;
     case 'pipeline-job':
-      // this.menuTitle = _text('webui.menu.PipelineJob');
-      this._page = 'error';
+      this.menuTitle = _text('webui.menu.PipelineJob');
+      // this._page = 'error';
       break;
     case 'statistics':
       this.menuTitle = _text('webui.menu.Statistics');
@@ -995,12 +995,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
       this.notification.text = _text('webui.CleanUpNow');
       this.notification.show();
-      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
-      //   await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
-      // }
-      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-        await globalThis.backendaiclient.logout();
+      if (globalThis.backendaiclient._config.connectionMode === 'SESSION' && this._usePipeline) {
+        await Promise.all([globalThis.backendaiclient.pipeline.logout(), globalThis.backendaiclient.logout()]);
       }
+      // if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+      //   await globalThis.backendaiclient.logout();
+      // }
       this.is_admin = false;
       this.is_superadmin = false;
       globalThis.backendaiclient = null;
@@ -1175,9 +1175,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
 
-    // temporally blcok pipeline menu
-    // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
-    // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
+    // temporally block pipeline menu
+    this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
+    this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
@@ -1357,11 +1357,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
             </mwc-list-item>
             ${this._usePipeline ? html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}" style="display:none;">
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}">
                 <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
               </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline-job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}" style="display:none;">
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline-job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}">
                 <i class="fas fa-sitemap" slot="graphic" id="pipeline-job-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.PipelineJob')}</span>
               </mwc-list-item>
@@ -1571,8 +1571,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
-                    <!--<pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
-                    <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
+                    <pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>
+                    <pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>
                     <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._page === 'environment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-environment-view>
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._page === 'settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-settings-view>

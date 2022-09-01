@@ -107,7 +107,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
   private _enableContainerCommit = false;
-  private _enablePipeline = false;
+  private _enablePipeline = true;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
   @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -682,7 +682,7 @@ export default class BackendAILogin extends BackendAIPage {
      {
        valueType: 'boolean',
        defaultValue: false,
-       value: false, // (generalConfig?.enablePipeline),
+       value: (generalConfig?.enablePipeline),
      } as ConfigValueObject) as boolean;
 
    // Connection mode value depending on Electron mode and default configuration value
@@ -1308,7 +1308,7 @@ export default class BackendAILogin extends BackendAIPage {
        * - Temporally disable pipeline login
        */
       if (this._enablePipeline) {
-        const pipelineToken = globalThis.backendaiclient.getPipelineToken();
+        const pipelineToken = globalThis.backendaiclient.pipeline.getPipelineToken();
         if (!pipelineToken) {
           const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
           const keypairs = res.keypairs;
