@@ -26,6 +26,11 @@ import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend.AI Storage Proxy List
 
@@ -47,13 +52,13 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) storageProxyDetailDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundTypeRenderer = this.typeRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#storage-proxy-detail') storageProxyDetailDialog!: BackendAIDialog;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
@@ -61,7 +66,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     this.storages = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -135,17 +140,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         .resource-indicator {
           width: 100px !important;
         }
-
       `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**

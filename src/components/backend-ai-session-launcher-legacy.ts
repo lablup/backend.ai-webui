@@ -51,6 +51,7 @@ import {
 
 @customElement('backend-ai-session-launcher-legacy')
 export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
+  shadowRoot: any;
   @query('#image-name') manualImageName;
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
@@ -1141,7 +1142,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
     if (this.mode === 'import' && this.importScript !== '') {
       config['bootstrap_script'] = this.importScript;
     }
-    if (this.environ_values !== {}) {
+    if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
       config['env'] = this.environ_values;
     }
     let kernelName: string;
@@ -1750,7 +1751,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         this.shadowRoot.querySelector('#use-gpu-checkbox').checked = false;
         this.shadowRoot.querySelector('#gpu-resource').disabled = true;
         this.shadowRoot.querySelector('#gpu-resource').value = 0;
-        if (this.resource_templates !== [] && this.resource_templates.length > 0) { // Remove mismatching templates
+        if (this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
             if (!('cuda_device' in this.resource_templates[i]) &&
@@ -1775,7 +1776,7 @@ export default class BackendAiSessionLauncherLegacy extends BackendAIPage {
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
-      if (this.resource_templates_filtered !== [] && this.resource_templates_filtered.length > 0) {
+      if (this.resource_templates_filtered.length > 0) {
         const resource = this.resource_templates_filtered[0];
         this._chooseResourceTemplate(resource);
         this.shadowRoot.querySelector('#resource-templates').layout(true).then(() => {

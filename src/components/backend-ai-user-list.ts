@@ -26,10 +26,11 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-textarea/mwc-textarea';
-import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-button';
+import '@material/mwc-textfield';
+import '@material/mwc-textarea';
+import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -40,6 +41,16 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type TextArea = HTMLElementTagNameMap['mwc-textarea'];
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
+type Switch = HTMLElementTagNameMap['mwc-switch'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI User List
@@ -69,12 +80,9 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
-  @property({type: Object}) spinner;
   @property({type: Object}) keypairs;
-  @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) userGrid = Object();
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
@@ -84,7 +92,18 @@ export default class BackendAIUserList extends BackendAIPage {
     'before-verification': 'Before Verification',
     'deleted': 'Deleted',
   };
+  @query('#user-grid') userGrid!: VaadinGrid;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
+  @query('#password') passwordInput!: TextField;
+  @query('#confirm') confirmInput!: TextField;
+  @query('#username') usernameInput!: TextField;
+  @query('#full_name') fullNameInput!: TextField;
+  @query('#description') descriptionInput!: TextArea;
+  @query('#need_password_change') needPasswordChangeSwitch!: Switch;
+  @query('#status') statusSelect!: Select;
+  @query('#signout-user-dialog') signoutUserDialog!: BackendAIDialog;
+  @query('#user-info-dialog') userInfoDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -204,7 +223,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
@@ -226,13 +244,11 @@ export default class BackendAIUserList extends BackendAIPage {
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-        this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
 
@@ -293,7 +309,7 @@ export default class BackendAIUserList extends BackendAIPage {
         return item.name;
       });
       this.userInfoGroups = groupNames;
-      this.shadowRoot.querySelector('#user-info-dialog').show();
+      this.userInfoDialog.show();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -373,6 +389,163 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param {string} value - string value
+   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
+   */
+  _markIfUnlimited(value) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
+  }
+
+  /**
+   * Toggle password visible/invisible mode.
+   *
+   * @param {HTMLElement} element - password visibility toggle component
+   */
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  /**
+   * Toggle password and confirm input field is required or not.
+   *
+   */
+  _togglePasswordInputRequired() {
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    this.passwordInput.required = (password === '' && confirm !== '') ? true : false;
+    this.confirmInput.required = (password !== '' && confirm === '') ? true : false;
+    this.passwordInput.reportValidity();
+    this.confirmInput.reportValidity();
+  }
+
+  /**
+   * Save any changes. - username, full_name, password, etc.
+   *
+   * @param {Event} event - click SaveChanges button
+   * */
+  _saveChanges(event) {
+    const username = this.usernameInput.value;
+    const full_name = this.fullNameInput.value;
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    const description = this.descriptionInput.value;
+    const status = this.statusSelect.value;
+    const need_password_change = this.needPasswordChangeSwitch.selected;
+
+    this._togglePasswordInputRequired();
+
+    if (!this.passwordInput.checkValidity() || !this.confirmInput.checkValidity()) {
+      return;
+    }
+
+    if (password !== confirm) {
+      this.notification.text = _text('environment.PasswordsDoNotMatch');
+      this.notification.show();
+      return;
+    }
+
+    const input: any = Object();
+
+    if (password !== '') {
+      input.password = password;
+    }
+
+    if (username !== this.userInfo.username) {
+      input.username = username;
+    }
+
+    if (full_name !== this.userInfo.full_name) {
+      input.full_name = full_name;
+    }
+
+    if (description !== this.userInfo.description) {
+      input.description = description;
+    }
+
+    if (need_password_change !== this.userInfo.need_password_change) {
+      input.need_password_change = need_password_change;
+    }
+
+    if (status !== this.userInfo.status) {
+      input.status = status;
+    }
+
+    if (Object.entries(input).length === 0) {
+      this._hideDialog(event);
+
+      this.notification.text = _text('environment.NoChangeMade');
+      this.notification.show();
+
+      return;
+    }
+
+    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    globalThis.backendaiclient.user.update(this.userInfo.email, input)
+      .then((res) => {
+        if (res.modify_user.ok) {
+          this.userInfoDialog.hide();
+
+          this.notification.text = _text('environment.SuccessfullyModified');
+          this.userInfo = {...this.userInfo, ...input, password: null};
+          this._refreshUserData();
+          this.passwordInput.value = '';
+          this.confirmInput.value = '';
+        } else {
+          this.notification.text = PainKiller.relieve(res.modify_user.msg);
+          this.usernameInput.value = this.userInfo.username;
+          this.descriptionInput.value = this.userInfo.description;
+        }
+        this.notification.show();
+        this.refresh();
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+
+    // if updated user info is current user, then apply it right away
+    if (this.userInfo.email === globalThis.backendaiclient.email) {
+      const event = new CustomEvent('current-user-info-changed', {detail: input});
+      document.dispatchEvent(event);
+    }
+  }
+
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  _getUsername(username = '') {
+    if (username && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = username.length - maskStartIdx;
+      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
+    }
+    return username;
+  }
+
+  /**
    * Render index to root element.
    *
    * @param {Element} root - the row details content DOM element
@@ -387,20 +560,6 @@ export default class BackendAIUserList extends BackendAIPage {
       `,
       root
     );
-  }
-
-  /**
-   * If value includes unlimited contents, mark as unlimited.
-   *
-   * @param {string} value - string value
-   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
-   */
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
   }
 
   /**
@@ -478,9 +637,9 @@ export default class BackendAIUserList extends BackendAIPage {
    * - before-verification
    * - deleted
    *
-   * @param root
-   * @param column
-   * @param rowData
+   * @param {Element} root
+   * @param {Element} column
+   * @param {Object} rowData
    */
   userStatusRenderer(root, column?, rowData?) {
     const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
@@ -489,153 +648,6 @@ export default class BackendAIUserList extends BackendAIPage {
         <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
       `, root
     );
-  }
-
-  /**
-   * Toggle password visible/invisible mode.
-   *
-   * @param {HTMLElement} element - password visibility toggle component
-   */
-  _togglePasswordVisibility(element) {
-    const isVisible = element.__on;
-    const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
-  }
-
-  /**
-   * Toggle password and confirm input field is required or not.
-   *
-   */
-  _togglePasswordInputRequired() {
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    passwordEl.required = (password === '' && confirm !== '') ? true : false;
-    confirmEl.required = (password !== '' && confirm === '') ? true : false;
-    passwordEl.reportValidity();
-    confirmEl.reportValidity();
-  }
-
-  /**
-   * Save any changes. - username, full_name, password, etc.
-   *
-   * @param {Event} event - click SaveChanges button
-   * */
-  _saveChanges(event) {
-    const username = this.shadowRoot.querySelector('#username').value;
-    const full_name = this.shadowRoot.querySelector('#full_name').value;
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    const description = this.shadowRoot.querySelector('#description').value;
-    const status = this.shadowRoot.querySelector('#status').value;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
-
-    this._togglePasswordInputRequired();
-
-    if (!passwordEl.checkValidity() || !confirmEl.checkValidity()) {
-      return;
-    }
-
-    if (password !== confirm) {
-      this.notification.text = _text('environment.PasswordsDoNotMatch');
-      this.notification.show();
-      return;
-    }
-
-    const input: any = Object();
-
-    if (password !== '') {
-      input.password = password;
-    }
-
-    if (username !== this.userInfo.username) {
-      input.username = username;
-    }
-
-    if (full_name !== this.userInfo.full_name) {
-      input.full_name = full_name;
-    }
-
-    if (description !== this.userInfo.description) {
-      input.description = description;
-    }
-
-    if (need_password_change !== this.userInfo.need_password_change) {
-      input.need_password_change = need_password_change;
-    }
-
-    if (status !== this.userInfo.status) {
-      input.status = status;
-    }
-
-    if (Object.entries(input).length === 0) {
-      this._hideDialog(event);
-
-      this.notification.text = _text('environment.NoChangeMade');
-      this.notification.show();
-
-      return;
-    }
-
-    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
-    globalThis.backendaiclient.user.update(this.userInfo.email, input)
-      .then((res) => {
-        if (res.modify_user.ok) {
-          this.shadowRoot.querySelector('#user-info-dialog').hide();
-
-          this.notification.text = _text('environment.SuccessfullyModified');
-          this.userInfo = {...this.userInfo, ...input, password: null};
-          this._refreshUserData();
-          this.shadowRoot.querySelector('#password').value = '';
-          this.shadowRoot.querySelector('#confirm').value = '';
-        } else {
-          this.notification.text = PainKiller.relieve(res.modify_user.msg);
-          this.shadowRoot.querySelector('#username').value = this.userInfo.username;
-          this.shadowRoot.querySelector('#description').value = this.userInfo.description;
-        }
-        this.notification.show();
-        this.refresh();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-
-    // if updated user info is current user, then apply it right away
-    if (this.userInfo.email === globalThis.backendaiclient.email) {
-      const event = new CustomEvent('current-user-info-changed', {detail: input});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
-   * Get user id according to configuration
-   *
-   * @param {string} userId
-   * @return {string}
-   */
-  _getUserId(userId = '') {
-    if (userId && this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
-    }
-    return userId;
-  }
-
-  _getUsername(username = '') {
-    if (username && this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = username.length - maskStartIdx;
-      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
-    }
-    return username;
   }
 
   render() {
@@ -740,7 +752,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     label="${_text('credential.Description')}"
                     placeholder="${_text('maxLength.500chars')}"
                     value="${this.userInfo.description}"
-                    id="description"></mwc-textfield>`: html``}
+                    id="description"></mwc-textarea>`: html``}
               ${this.editMode ? html`
                 <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
                   ${Object.keys(this.userStatus).map((item) => html`

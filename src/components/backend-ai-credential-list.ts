@@ -16,12 +16,13 @@ import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
+import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
-import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -80,13 +81,17 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @query('#keypair-info-dialog') keypairInfoDialog!: BackendAIDialog;
+  @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
+  @query('#policy-list') policyListSelect!: Select;
+  @query('#rate-limit') rateLimit!: TextField;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -185,13 +190,13 @@ export default class BackendAICredentialList extends BackendAIPage {
         this._refreshKeyData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-        this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
+        this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
       }, true);
     } else { // already connected
       this._refreshKeyData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      this.keypairGrid = this.shadowRoot.querySelector('#keypair-grid');
+      this.keypairGrid = this.shadowRoot?.querySelector('#keypair-grid');
     }
   }
 
@@ -306,7 +311,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     try {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
-      this.shadowRoot.querySelector('#keypair-info-dialog').show();
+      this.keypairInfoDialog.show();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -328,9 +333,9 @@ export default class BackendAICredentialList extends BackendAIPage {
       const data = await this._getKeyData(access_key);
       this.keypairInfo = data.keypair;
 
-      this.shadowRoot.querySelector('#policy-list').value = this.keypairInfo.resource_policy;
+      this.policyListSelect.value = this.keypairInfo.resource_policy;
 
-      this.shadowRoot.querySelector('#keypair-modify-dialog').show();
+      this.keypairModifyDialog.show();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -414,7 +419,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    * @param {Boolean} is_active
    */
-  _mutateKey(e, is_active) {
+  _mutateKey(e, is_active: boolean) {
     const controls = e.target.closest('#controls');
     const accessKey = controls['access-key'];
     const original: any = this.keypairs.find(this._findKeyItem, accessKey);
@@ -466,7 +471,7 @@ export default class BackendAICredentialList extends BackendAIPage {
   /**
    * Change d of any type to human readable date time.
    *
-   * @param {any} d   - string or DateTime object to convert
+   * @param {Date} d   - string or DateTime object to convert
    * @return {Date}   - Formatted date / time to be human-readable text.
    */
   _humanReadableTime(d) {
@@ -696,11 +701,10 @@ export default class BackendAICredentialList extends BackendAIPage {
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _saveKeypairModification(e) {
-    const resource_policy = this.shadowRoot.querySelector('#policy-list').value;
-    const rate_limit_element = this.shadowRoot.querySelector('#rate-limit');
-    const rate_limit = rate_limit_element.value;
+    const resource_policy = this.policyListSelect.value;
+    const rate_limit = Number(this.rateLimit.value);
 
-    if (!rate_limit_element.checkValidity()) {
+    if (!this.rateLimit.checkValidity()) {
       return;
     }
 
@@ -719,7 +723,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then((res) => {
           if (res.modify_keypair.ok) {
-            if (this.keypairInfo.resource_policy === resource_policy && this.keypairInfo.rate_limit === parseInt(rate_limit)) {
+            if (this.keypairInfo.resource_policy === resource_policy && this.keypairInfo.rate_limit === rate_limit) {
               this.notification.text = _text('credential.NoChanges');
             } else {
               this.notification.text = _text('environment.SuccessfullyModified');
@@ -741,12 +745,12 @@ export default class BackendAICredentialList extends BackendAIPage {
    */
   _adjustRateLimit() {
     const maximum_rate_limit = 50000; // the maximum value of rate limit value
-    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    const rate_limit = Number(this.rateLimit.value);
     if (rate_limit > maximum_rate_limit) {
-      this.shadowRoot.querySelector('#rate-limit').value = maximum_rate_limit;
+      this.rateLimit.value = maximum_rate_limit.toString();
     }
     if (rate_limit <= 0 ) {
-      this.shadowRoot.querySelector('#rate-limit').value = 1;
+      this.rateLimit.value = '1';
     }
   }
 

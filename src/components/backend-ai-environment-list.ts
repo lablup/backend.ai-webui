@@ -1517,8 +1517,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
    }
 }
 
- declare global {
-   interface HTMLElementTagNameMap {
-     'backend-ai-environment-list': BackendAIEnvironmentList;
-   }
- }
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-environment-list': BackendAIEnvironmentList;
+  }
+}

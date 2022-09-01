@@ -782,7 +782,7 @@ class Client {
       "clientSessionToken": sessionId,
       "architecture": architecture,
     };
-    if (resources != {}) {
+    if (resources && Object.keys(resources).length !== 0) {
       let config = {};
       if (resources['cpu']) {
         config['cpu'] = resources['cpu'];
@@ -1223,7 +1223,7 @@ class Client {
       const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
 
       // Append Authorization token for every API request to pipeline
-      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) { 
+      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) {
         const token = this.pipeline.getPipelineToken();
         hdrs.set("Authorization", `Token ${token}`);
       }
@@ -2646,14 +2646,14 @@ class ContainerImage {
     let promiseArray: Array<Promise<any>> = [];
     registry = registry.replace(":", "%3A");
     image = image.replace("/", "%2F");
-    Object.keys(input).forEach(slot_type => {
+    Object.keys(input).forEach((slot_type) => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
           "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
           "value": input[slot_type][key]
         });
         promiseArray.push(this.client._wrapWithPromise(rqst));
-      })
+      });
     });
     return Promise.all(promiseArray);
   }
@@ -2898,7 +2898,7 @@ class ComputeSession {
 
   /**
    * Request container commit for corresponding session in agent node
-   * 
+   *
    * @param sessionName - name of the session
    */
   async commitSession(sessionName: string = '') {
@@ -2908,7 +2908,7 @@ class ComputeSession {
 
   /**
    * Get status of requested container commit on agent node (on-going / finished / failed)
-   * 
+   *
    * @param sessionName - name of the session
    */
   async getCommitSessionStatus(sessionName: string = '') {
@@ -4021,7 +4021,7 @@ class Pipeline {
   }
 
   /**
-   * 
+   *
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
    *    'username': string,
@@ -4089,7 +4089,7 @@ class Pipeline {
 
   /**
    * Get pipeline with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async info(id) {
@@ -4099,7 +4099,7 @@ class Pipeline {
 
   /**
    * Create a pipeline with input
-   * 
+   *
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
    *    'name': string,
@@ -4116,7 +4116,7 @@ class Pipeline {
 
   /**
    * Update the pipeline based on input value
-   * 
+   *
    * @param {string} id - pipeline id
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
@@ -4134,8 +4134,8 @@ class Pipeline {
 
   /**
    * Delete the pipeline
-   * 
-   * @param {string} id - pipeline id 
+   *
+   * @param {string} id - pipeline id
    */
   async delete(id) {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
@@ -4144,8 +4144,8 @@ class Pipeline {
 
   /**
    * Instantiate(Run) pipeline to pipeline-job
-   * 
-   * @param {string} id - pipeline id 
+   *
+   * @param {string} id - pipeline id
    * @param {json} input - piepline specification and data. Required fields are:
    * {
    *    'name': string,
@@ -4159,10 +4159,10 @@ class Pipeline {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
- 
+
   /**
    * Get Cookie By its name if exists
-   * 
+   *
    * @param {string} name - cookie name
    * @returns {string} cookieValue
    */
@@ -4183,8 +4183,8 @@ class Pipeline {
 
   /**
    * Remove Cookie By its name if exists
-   * 
-   * @param {string} name - cookie name 
+   *
+   * @param {string} name - cookie name
    */
   _removeCookieByName(name = '') {
     if (name !== '') {
@@ -4217,7 +4217,7 @@ class PipelineJob {
 
   /**
    * Get pipeline job with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async info(id) {
@@ -4227,7 +4227,7 @@ class PipelineJob {
 
   /**
    * Stop running pipeline job with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async stop(id) {
@@ -4254,7 +4254,7 @@ class PipelineTaskInstance {
   /**
    * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
    * if not, then bring all task instances that pipeline server user created via every pipeline job
-   * 
+   *
    * @param {stirng} pipelineJobId - pipeline job id
    */
   async list(pipelineJobId = '') {
@@ -4266,7 +4266,7 @@ class PipelineTaskInstance {
 
   /**
    * Get task instance with given its id
-   * 
+   *
    * @param {string} id - task instance id
    */
   async info(id) {
@@ -4276,17 +4276,17 @@ class PipelineTaskInstance {
 
   /**
    * Create custom task instance with input
-   * 
-   * @param {json} input 
+   *
+   * @param {json} input
    */
   async create(input) {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
-  } 
+  }
 
   /**
    * Update the task instance based on input value
-   * 
+   *
    * @param {string} id - task instance id
    * @param {json} input - task-instance specification and data.
    */
@@ -4297,8 +4297,8 @@ class PipelineTaskInstance {
 
   /**
    * Delete the task-instance
-   * 
-   * @param {string} id - task instance id 
+   *
+   * @param {string} id - task instance id
    */
   async delete(id) {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");

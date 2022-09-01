@@ -32,7 +32,6 @@ declare const window: any;
 
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   public editor: any;
 
   @property({type: Object}) config = Object();
@@ -68,7 +67,7 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot.querySelector('#codemirror-editor');
+    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as any;
     if (!cm.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;
@@ -147,5 +146,11 @@ export default class LablupCodemirror extends LitElement {
         <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
       </wc-codemirror>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'lablup-codemirror': LablupCodemirror;
   }
 }

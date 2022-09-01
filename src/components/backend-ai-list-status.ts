@@ -45,7 +45,7 @@ export default class BackendAIListStatus extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

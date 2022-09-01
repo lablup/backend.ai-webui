@@ -36,7 +36,6 @@ import '../plastics/lablup-shields/lablup-shields';
 
 @customElement('backend-ai-multi-select')
 export default class BackendAIMultiSelect extends LitElement {
-
   /**
    * NOTE: number used for setting size of the list items of dropdown dynamically
    */
@@ -152,7 +151,7 @@ export default class BackendAIMultiSelect extends LitElement {
 
   /**
    * Toggle visibility of dropdown menu
-   * 
+   *
    * @param {Event} e - Click from expand/shrink icon in right-side of selected-area
    */
   _toggleMenuVisibility(e) {
@@ -167,7 +166,7 @@ export default class BackendAIMultiSelect extends LitElement {
   /**
    * Set the position of Dropdown menu
    * Used for setting the size of dropdown menu by the number of items
-   * 
+   *
    * @param {number} listCount - unit for heights to go up or down
    */
   _modifyListPosition(listCount = 0) {
@@ -183,18 +182,18 @@ export default class BackendAIMultiSelect extends LitElement {
 
   /**
    * Update selected items(buttons) according to selected items in dropdown
-   * 
+   *
    * @param {Event} e - Click from list item in dropdown menu
    */
   _updateSelection(e) {
     const selectedItemIndices = [...e.detail.index];
-    const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map(item => item.value);
+    const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map((item) => item.value);
     this.selectedItemList = selectedItems;
   }
 
   /**
    * Deselect items(buttons) and reflect the changes in dropdown.
-   * 
+   *
    * @param {Event} e - Click from selected item button in selected-area
    */
   _deselectItem(e) {
@@ -210,7 +209,7 @@ export default class BackendAIMultiSelect extends LitElement {
 
   /**
    * Deselect all selected items(buttons) and reflects the changes in selected-area
-   * 
+   *
    */
   _deselectAllItems() {
     this.comboBox.selected.forEach((item, index, array) => {

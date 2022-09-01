@@ -5,26 +5,47 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
+import LablupLoadingSpinner from './lablup-loading-spinner';
+import BackendAiResourceMonitor from './backend-ai-resource-monitor';
+import BackendAiSessionLauncher from './backend-ai-session-launcher';
+
+/**
+ * FIXME: Is it okay to get rid of import statement for unused UI component?
+ */
 import 'weightless/card';
-
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-import '@material/mwc-textfield';
-import '@material/mwc-textarea';
-import '@material/mwc-button';
-
-import './lablup-activity-panel';
 import './backend-ai-chart';
+
+/**
+ * FIXME: Repeated import statement(s) is/are needed
+ *        when using custom elements and type casting of the component at other components
+ */
+import '@material/mwc-icon-button';
+import '@material/mwc-textarea';
+import '@material/mwc-textfield';
+import '@material/mwc-select';
 import './backend-ai-resource-monitor';
 import './backend-ai-session-launcher';
+
+import {TextArea} from '@material/mwc-textarea';
+import {TextField} from '@material/mwc-textfield';
+import {Select} from '@material/mwc-select';
+
+import './lablup-activity-panel';
 import '../plastics/lablup-shields/lablup-shields';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
 import {default as PainKiller} from './backend-ai-painkiller';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+// type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+// type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
+// type BackendAISessionLauncher = HTMLElementTagNameMap['backend-ai-session-launcher'];
 
 /**
  `<backend-ai-import-view>` is a import feature of backend.ai web UI.
@@ -42,7 +63,6 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) sessionLauncher = Object();
   @property({type: String}) requestURL = '';
   @property({type: String}) queryString = '';
   @property({type: String}) environment = 'python';
@@ -57,12 +77,14 @@ export default class BackendAIImport extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
+  @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
+  @query('#notebook-url') notebookUrlInput!: TextField;
+  @query('#notebook-badge-code') notebookBadgeCodeInput!: TextArea;
+  @query('#notebook-badge-code-markdown') notebookBadgeCodeMarkdownInput!: TextArea;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -154,14 +176,14 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.sessionLauncher = this.shadowRoot.querySelector('#session-launcher');
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
-    globalThis.backendaiclient.vfolder.list_allowed_types().then((response) => {
-      this.allowed_folder_type = response;
-    });
-    this._getFolderList();
-    fetch('resources/storage_metadata.json').then(
+  }
+
+  async _initStorageInfo() {
+    this.allowed_folder_type = await globalThis.backendaiclient.vfolder.list_allowed_types();
+    await this._getFolderList();
+    await fetch('resources/storage_metadata.json').then(
       (response) => response.json()
     ).then(
       (json) => {
@@ -197,18 +219,20 @@ export default class BackendAIImport extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
+      this.resourceMonitor.removeAttribute('active');
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
+    this.resourceMonitor.setAttribute('active', 'true');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._initStorageInfo();
         this.authenticated = true;
         if (this.activeConnected) {
           this.requestUpdate();
         }
       }, true);
     } else {
+      this._initStorageInfo();
       this.authenticated = true;
       this.requestUpdate();
     }
@@ -227,7 +251,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getNotebookFromURL() {
-    const url = this.shadowRoot.querySelector('#notebook-url').value;
+    const url = this.notebookUrlInput.value;
     if (url !== '') {
       this.queryString = this.regularizeGithubURL(url);
       this.fetchNotebookURLResource(this.queryString);
@@ -241,7 +265,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   fetchNotebookURLResource(downloadURL): void {
-    this.shadowRoot.querySelector('#notebook-url').value = downloadURL;
+    this.notebookUrlInput.value = downloadURL;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._fetchNotebookURLResource(downloadURL);
@@ -268,7 +292,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getGitHubRepoFromURL() {
-    let url = this.shadowRoot.querySelector('#github-repo-url').value;
+    let url = (this.shadowRoot?.querySelector('#github-repo-url') as TextField).value;
     let tree = 'master';
     let name = '';
     // if contains .git extension, then remove it.
@@ -297,6 +321,7 @@ export default class BackendAIImport extends BackendAIPage {
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
       const repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
       const getRepoUrl = async () => {
+        // TODO need refactor
         try {
           const response = await fetch(repoUrl);
           if (response.status === 200) {
@@ -361,9 +386,9 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getGitlabRepoFromURL() {
-    let url = this.shadowRoot.querySelector('#gitlab-repo-url').value;
+    let url = (this.shadowRoot?.querySelector('#gitlab-repo-url') as TextField).value;
     let tree = 'master';
-    const getBranchName = this.shadowRoot.querySelector('#gitlab-default-branch-name').value;
+    const getBranchName = (this.shadowRoot?.querySelector('#gitlab-default-branch-name') as TextField).value;
     if (getBranchName.length > 0) {
       tree = getBranchName;
     }
@@ -442,9 +467,9 @@ export default class BackendAIImport extends BackendAIPage {
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
     if (url.includes('github.com/')) {
-      host = this.shadowRoot.querySelector('#github-add-folder-host').value;
+      host = (this.shadowRoot?.querySelector('#github-add-folder-host') as Select).value;
     } else {
-      host = this.shadowRoot.querySelector('#gitlab-add-folder-host').value;
+      host = (this.shadowRoot?.querySelector('#gitlab-add-folder-host') as Select).value;
     }
     name = await this._checkFolderNameAlreadyExists(name, url);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
@@ -500,7 +525,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   createNotebookBadge() {
-    const url = this.shadowRoot.querySelector('#notebook-badge-url').value;
+    const url = (this.shadowRoot?.querySelector('#notebook-badge-url') as TextField).value;
     const rawURL = this.regularizeGithubURL(url);
     const badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL = '';
@@ -508,8 +533,8 @@ export default class BackendAIImport extends BackendAIPage {
     if (url === '') {
       this.notification.text = _text('import.NoNotebookCode');
       this.notification.show();
-      this.shadowRoot.querySelector('#notebook-badge-code').value = '';
-      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = '';
+      this.notebookBadgeCodeInput.value = '';
+      this.notebookBadgeCodeMarkdownInput.value = '';
     } else {
       if (globalThis.isElectron) {
         baseURL = 'https://cloud.backend.ai/github?';
@@ -522,8 +547,8 @@ export default class BackendAIImport extends BackendAIPage {
       }
       const fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
       const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
-      this.shadowRoot.querySelector('#notebook-badge-code').value = fullText;
-      this.shadowRoot.querySelector('#notebook-badge-code-markdown').value = fullTextMarkdown;
+      this.notebookBadgeCodeInput.value = fullText;
+      this.notebookBadgeCodeMarkdownInput.value = fullTextMarkdown;
     }
   }
 
@@ -554,7 +579,6 @@ export default class BackendAIImport extends BackendAIPage {
           const tmpInputElement = document.createElement('input');
           tmpInputElement.type = 'text';
           tmpInputElement.value = copyText;
-
           document.body.appendChild(tmpInputElement);
           tmpInputElement.select();
           document.execCommand('copy'); // copy operation
@@ -577,7 +601,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   urlTextfieldChanged(e, buttonIdValue, message?) {
-    const button = this.shadowRoot.querySelector(`#${buttonIdValue}`);
+    const button = this.shadowRoot?.querySelector(`#${buttonIdValue}`) as TextField;
     if (e.target.value !== '' && e.currentTarget.checkValidity()) {
       button.removeAttribute('disabled');
       this.setAttribute(message, '');

@@ -6,7 +6,7 @@
 import {get as _text, translate as _t} from 'lit-translate';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -31,6 +31,11 @@ import {marked} from 'marked';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
 
 /**
  `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
@@ -79,13 +84,14 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Object}) invitations = Object();
+  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
   constructor() {
     super();
     this.invitations = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -283,7 +289,7 @@ export default class BackendAISummary extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.update_checker = this.shadowRoot.querySelector('#update-checker');
+    this.update_checker = this.shadowRoot?.querySelector('#update-checker');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._readAnnouncement();
@@ -302,10 +308,10 @@ export default class BackendAISummary extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
+      this.resourceMonitor.removeAttribute('active');
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
+    this.resourceMonitor.setAttribute('active', 'true');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;

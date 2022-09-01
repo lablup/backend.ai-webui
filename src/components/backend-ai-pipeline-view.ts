@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -32,14 +32,19 @@ import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
+type BackendAIPipelineCreate = HTMLElementTagNameMap['backend-ai-pipeline-create'];
+type BackendAIPipelineList = HTMLElementTagNameMap['backend-ai-pipeline-list'];
+type BackendAIPipelineComponentView = HTMLElementTagNameMap['backend-ai-pipeline-component-view'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 @customElement('backend-ai-pipeline-view')
 export default class BackendAIPipelineView extends BackendAIPage {
-  // Elements
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
-  @property({type: Object}) pipelineCreate = Object();
-  @property({type: Object}) pipelineList = Object();
-  @property({type: Object}) pipelineComponent = Object();
 
   @property({type: String}) _status = 'inactive';
   @property({type: String}) componentCreateMode = 'create';
@@ -52,6 +57,12 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   @property({type: Object}) _dragSource = Object();
   @property({type: Object}) _dragTarget = Object();
+  @query('backend-ai-pipeline-create') pipelineCreate!: BackendAIPipelineCreate;
+  @query('backend-ai-pipeline-list') pipelineList!: BackendAIPipelineList;
+  @query('backend-ai-pipeline-component-view') pipelineComponent!: BackendAIPipelineComponentView;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#codemirror-dialog') codemirrorDialog!: BackendAIDialog;
+  @query('#codemirror-editor') codemirrorEditor!: LablupCodemirror;
 
   constructor() {
     super();
@@ -111,11 +122,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.pipelineCreate = this.shadowRoot.querySelector('backend-ai-pipeline-create');
-    this.pipelineList = this.shadowRoot.querySelector('backend-ai-pipeline-list');
-    this.pipelineComponent = this.shadowRoot.querySelector('backend-ai-pipeline-component-view');
     this.notification = globalThis.lablupNotification;
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
 
     this._initEventHandlers();
   }
@@ -134,16 +141,17 @@ export default class BackendAIPipelineView extends BackendAIPage {
   }
 
   _initEventHandlers() {
-    const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
-    dialog.addEventListener('didShow', () => {
-      this.shadowRoot.querySelector('#codemirror-editor').refresh();
+    this.codemirrorDialog.addEventListener('didShow', () => {
+      this.codemirrorEditor.refresh();
     });
-    this.pipelineCreate.addEventListener('backend-ai-pipeline-created', (e) => {
+    // TODO need typing for custom event
+    this.pipelineCreate.addEventListener('backend-ai-pipeline-created', (e: any) => {
       e.stopPropagation();
       const folderName = e.detail;
       this.pipelineList.changePipeline(folderName);
     });
-    this.pipelineCreate.addEventListener('backend-ai-pipeline-updated', (e) => {
+    // TODO need typing for custom event
+    this.pipelineCreate.addEventListener('backend-ai-pipeline-updated', (e: any) => {
       e.stopPropagation();
       const folderName = e.detail;
       this.pipelineList.changePipeline(folderName);
@@ -152,7 +160,8 @@ export default class BackendAIPipelineView extends BackendAIPage {
       e.stopPropagation();
       this.pipelineList.deselectPipeline();
     });
-    this.pipelineList.addEventListener('backend-ai-pipeline-changed', (e) => {
+    // TODO need typing for custom event
+    this.pipelineList.addEventListener('backend-ai-pipeline-changed', (e: any) => {
       e.stopPropagation();
       this.pipelineComponent.pipelineSelectedName = e.detail.pipelineSelectedName;
       this.pipelineComponent.pipelineSelectedConfig = e.detail.pipelineSelectedConfig;
@@ -182,8 +191,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     this.spinner.show();
     const component = this.pipelineComponents[this.selectedComponentIndex];
     const filepath = `${component.path}/main.py`; // TODO: hard-coded file name
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
-    const code = editor.getValue();
+    const code = this.codemirrorEditor.getValue();
     const blob = new Blob([code], {type: 'plain/text'});
     await this._uploadFile(filepath, blob, this.pipelineFolderName);
     this.pipelineComponents[this.selectedComponentIndex].executed = false;
@@ -209,8 +217,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
 
   _hideCodeDialog() {
     this.selectedComponentIndex = -1;
-    const codemirrorEl = this.shadowRoot.querySelector('#codemirror-dialog');
-    codemirrorEl.hide();
+    this.codemirrorDialog.hide();
   }
 
   async _saveCodeAndCloseDialog() {
