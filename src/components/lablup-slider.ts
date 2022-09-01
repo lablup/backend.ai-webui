@@ -32,8 +32,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-slider')
 export default class LablupSlider extends LitElement {
-  public shadowRoot: any; // ShadowRoot
-
   @property({type: Number}) step;
   @property({type: Number}) value;
   @property({type: Number}) max;

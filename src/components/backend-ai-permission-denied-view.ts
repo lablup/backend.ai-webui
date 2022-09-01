@@ -30,11 +30,7 @@ import {navigate} from '../backend-ai-app';
 export default class BackendAIPermissionDeniedView extends BackendAIPage {
   @property({type: Number}) error_code = 401;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

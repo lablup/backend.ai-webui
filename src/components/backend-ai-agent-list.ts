@@ -15,7 +15,7 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
-import '@material/mwc-switch';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
@@ -24,6 +24,7 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIDialog from './backend-ai-dialog';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
@@ -67,13 +68,12 @@ type LiveStat = {
 @customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
   @property({type: String}) condition = 'running';
+  @property({type: String}) list_condition = 'loading';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) agentDetailDialog = Object();
-  @property({type: Object}) agentSettingDialog = Object();
   @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
@@ -84,15 +84,14 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#agent-detail') agentDetailDialog!: BackendAIDialog;
+  @query('#agent-setting') agentSettingDialog!: BackendAIDialog;
+  @query('#schedulable-switch') schedulableToggle!: Switch;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @query('vaadin-grid') private _agentGrid;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -183,12 +182,6 @@ export default class BackendAIAgentList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
-    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**
@@ -942,8 +935,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    */
   _showConfigDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
-    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
-    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
+    this.schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
     this.agentSettingDialog.show();
     return;
   }
@@ -959,7 +951,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _modifyAgentSetting() {
-    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
+    const schedulable = this.schedulableToggle.selected;
     if (this.agentDetail?.schedulable !== schedulable) {
       globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
         this.notification.text = _text('agent.AgentSettingUpdated');

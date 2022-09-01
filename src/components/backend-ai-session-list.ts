@@ -15,17 +15,18 @@ import '@vaadin/vaadin-icons/vaadin-icons';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
-import 'weightless/checkbox';
+import {Checkbox} from 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
-import 'weightless/textfield';
-import 'weightless/tooltip/tooltip';
+import 'weightless/tooltip';
+import {Textfield} from 'weightless/textfield';
+import {Tooltip} from 'weightless/tooltip/tooltip';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu';
+import {Menu} from '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -38,6 +39,13 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 
 /**
  Backend AI Session List
@@ -86,8 +94,6 @@ type CommitSessionStatus = 'ready' | 'ongoing';
 type SessionType = 'INTERACTIVE' | 'BATCH';
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
-  public shadowRoot: any;
-
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
@@ -114,11 +120,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _connectionMode = 'API';
-  @property({type: Object}) _grid = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) terminateSessionDialog = Object();
-  @property({type: Object}) terminateSelectedSessionsDialog = Object();
-  @property({type: Object}) sessionStatusInfoDialog = Object();
   @property({type: Boolean}) enableScalingGroup = false;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) refreshTimer = Object();
@@ -146,6 +148,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Number}) _APIMajorVersion = 5;
   @property({type: Object}) selectedSessionStatus = Object();
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-grid') _grid!: VaadinGrid;
+  @query('#access-key-filter') accessKeyFilterInput!: Textfield;
+  @query('#multiple-action-buttons') multipleActionButtons!: HTMLDivElement;
+  @query('#access-key-filter-helper-text') accessKeyFilterHelperText!: HTMLSpanElement;
+  @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;
+  @query('#terminate-selected-sessions-dialog') terminateSelectedSessionsDialog!: BackendAIDialog;
+  @query('#status-detail-dialog') sessionStatusInfoDialog!: BackendAIDialog;
+  @query('#work-dialog') workDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
@@ -158,7 +169,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     this.terminationQueue = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -441,7 +452,6 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._grid = this.shadowRoot.querySelector('#list-grid');
     this.refreshTimer = null;
     fetch('resources/image_metadata.json').then(
       (response) => response.json()
@@ -467,9 +477,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
-    this.terminateSessionDialog = this.shadowRoot.querySelector('#terminate-session-dialog');
-    this.terminateSelectedSessionsDialog = this.shadowRoot.querySelector('#terminate-selected-sessions-dialog');
-    this.sessionStatusInfoDialog = this.shadowRoot.querySelector('#status-detail-dialog');
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshWorkDialogUI(e));
     document.addEventListener('backend-ai-clear-timeout', () => {
@@ -488,11 +495,11 @@ export default class BackendAiSessionList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         if (!globalThis.backendaiclient.is_admin) {
           // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-          this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
-          this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
-          this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
+          this.accessKeyFilterInput.style.display = 'none';
+          this.accessKeyFilterHelperText.style.display = 'none';
+          (this.shadowRoot?.querySelector('vaadin-grid') as HTMLElement).style.height = 'calc(100vh - 225px)!important';
         } else {
-          this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
+          this.accessKeyFilterInput.style.display = 'block';
         }
         if (globalThis.backendaiclient.APIMajorVersion < 5) {
           this.sessionNameField = 'sess_id';
@@ -509,13 +516,13 @@ export default class BackendAiSessionList extends BackendAIPage {
       }, true);
     } else { // already connected
       if (!globalThis.backendaiclient.is_admin) {
-        this.shadowRoot.querySelector('#access-key-filter').style.display = 'none';
-        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'none';
+        this.accessKeyFilterInput.style.display = 'none';
+        this.accessKeyFilterHelperText.style.display = 'none';
         // this.shadowRoot.querySelector('#access-key-filter').parentNode.removeChild(this.shadowRoot.querySelector('#access-key-filter'));
-        this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 225px)!important';
+        (this.shadowRoot?.querySelector('vaadin-grid') as HTMLElement).style.height = 'calc(100vh - 225px)!important';
       } else {
-        this.shadowRoot.querySelector('#access-key-filter').style.display = 'block';
-        this.shadowRoot.querySelector('#access-key-filter-helper-text').style.display = 'block';
+        this.accessKeyFilterInput.style.display = 'block';
+        this.accessKeyFilterHelperText.style.display = 'block';
       }
       if (globalThis.backendaiclient.APIMajorVersion < 5) {
         this.sessionNameField = 'sess_id';
@@ -802,11 +809,10 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Event} e
    * */
   _refreshWorkDialogUI(e) {
-    const work_dialog = this.shadowRoot.querySelector('#work-dialog');
     if (Object.prototype.hasOwnProperty.call(e.detail, 'mini-ui') && e.detail['mini-ui'] === true) {
-      work_dialog.classList.add('mini_ui');
+      this.workDialog.classList.add('mini_ui');
     } else {
-      work_dialog.classList.remove('mini_ui');
+      this.workDialog.classList.remove('mini_ui');
     }
   }
 
@@ -1033,12 +1039,13 @@ export default class BackendAiSessionList extends BackendAIPage {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
       setTimeout(() => {
-        this.shadowRoot.querySelector('#work-title').innerHTML = `${sessionName} (${sessionUuid})`;
-        this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
-        this.shadowRoot.querySelector('#work-dialog').sessionUuid = sessionUuid;
-        this.shadowRoot.querySelector('#work-dialog').sessionName = sessionName;
-        this.shadowRoot.querySelector('#work-dialog').accessKey = accessKey;
-        this.shadowRoot.querySelector('#work-dialog').show();
+        (this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement).innerHTML = `${sessionName} (${sessionUuid})`;
+        (this.shadowRoot?.querySelector('#work-area') as HTMLDivElement).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+        // TODO define extended type for custom properties
+        (this.workDialog as any).sessionUuid = sessionUuid;
+        (this.workDialog as any).sessionName = sessionName;
+        this.workDialog.accessKey = accessKey;
+        this.workDialog.show();
       }, 100);
     }).catch((err) => {
       if (err && err.message) {
@@ -1053,14 +1060,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _refreshLogs() {
-    const sessionUuid = this.shadowRoot.querySelector('#work-dialog').sessionUuid;
-    const sessionName = this.shadowRoot.querySelector('#work-dialog').sessionName;
+    // TODO define extended type for custom properties
+    const sessionUuid = (this.workDialog as any).sessionUuid;
+    const sessionName = (this.workDialog as any).sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
-    const accessKey = this.shadowRoot.querySelector('#work-dialog').accessKey;
+    const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const ansi_up = new AnsiUp();
       const logs = ansi_up.ansi_to_html(req.result.logs);
-      this.shadowRoot.querySelector('#work-area').innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
+      (this.shadowRoot?.querySelector('#work-area') as HTMLDivElement).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -1086,8 +1094,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     return globalThis.appLauncher.runTerminal(sessionUuid);
   }
 
-  async _getCommitSessionStatus(sessionName: string = '') {
-    let isOnProgress: boolean = false;
+  async _getCommitSessionStatus(sessionName = '') {
+    let isOnProgress = false;
     if (sessionName !== '') {
       globalThis.backendaiclient.computeSession.getCommitSessionStatus(sessionName).then((res) =>{
         // console.log(res);
@@ -1172,7 +1180,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     );
   }
 
-  _removeCommitSessionFromTasker(taskId: string = '') {
+  _removeCommitSessionFromTasker(taskId = '') {
     globalThis.tasker.remove(taskId);
   }
 
@@ -1189,7 +1197,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     globalThis.backendaioptions.set('container_commit_sessions', JSON.stringify(containerCommitSessionList));
   }
 
-  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId: string = '', taskId: string = '') {
+  _removeFinishedContainerCommitInfoFromLocalStorage(sessionId = '', taskId = '') {
     let containerCommitSessionList = this._getCurrentContainerCommitInfoListFromLocalStorage();
     containerCommitSessionList = containerCommitSessionList.filter((commitSessionInfo) => {
       return (commitSessionInfo.session.id !== sessionId && commitSessionInfo.taskId !== taskId);
@@ -1216,8 +1224,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     const sessionName = controls['session-name'];
     const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
-    this.terminateSessionDialog.sessionName = sessionName;
-    this.terminateSessionDialog.sessionId = sessionId;
+    // TODO define extended type for custom properties
+    (this.terminateSessionDialog as any).sessionName = sessionName;
+    (this.terminateSessionDialog as any).sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -1236,14 +1245,15 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   _terminateSessionWithCheck(forced = false) {
-    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
+    // TODO define extended type for custom properties
+    if (this.terminationQueue.includes((this.terminateSessionDialog as any).sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
+    return this._terminateKernel((this.terminateSessionDialog as any).sessionId, (this.terminateSessionDialog as any).accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1271,7 +1281,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = this.shadowRoot.querySelectorAll('wl-checkbox.list-check');
+    const elm = Array.from(this.shadowRoot?.querySelectorAll<Checkbox>('wl-checkbox.list-check') as NodeListOf<Checkbox>);
     [...elm].forEach((checkbox) => {
       checkbox.removeAttribute('checked');
     });
@@ -1287,7 +1297,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then((response) => {
       this.terminateSelectedSessionsDialog.hide();
       this._clearCheckboxes();
-      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
+      this.multipleActionButtons.style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
@@ -1312,7 +1322,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     return Promise.all(terminateSessionQueue).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
-      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
+      this.multipleActionButtons.style.display = 'none';
       this.notification.text = _text('session.SessionsTerminated');
       this.notification.show();
     }).catch((err) => {
@@ -1367,7 +1377,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     dialog.hide();
 
     if (dialog.id === 'ssh-dialog') {
-      const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
+      const downloadLinkEl = this.shadowRoot?.querySelector('#sshkey-download-link') as HTMLAnchorElement;
       globalThis.URL.revokeObjectURL(downloadLinkEl.href);
     }
   }
@@ -1389,14 +1399,14 @@ export default class BackendAiSessionList extends BackendAIPage {
    * */
   _createMountedFolderDropdown(e, mounts) {
     const menuButton: HTMLElement = e.target;
-    const menu = document.createElement('mwc-menu') as any;
+    const menu = document.createElement('mwc-menu') as Menu;
     menu.anchor = menuButton;
     menu.className = 'dropdown-menu';
     menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
     menu.setAttribute('open', '');
     menu.setAttribute('fixed', '');
-    menu.setAttribute('x', 10);
-    menu.setAttribute('y', 15);
+    menu.setAttribute('x', '10');
+    menu.setAttribute('y', '15');
 
     if (mounts.length >= 1) {
       mounts.map((key, index) => {
@@ -1428,7 +1438,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    */
   _showTooltip(elementId = '') {
     if (elementId) {
-      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      const tooltip = this.shadowRoot?.querySelector(`#${elementId}`) as Tooltip;
       tooltip.open = true;
     }
   }
@@ -1440,7 +1450,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    */
   _hideTooltip(elementId = '') {
     if (elementId) {
-      const tooltip = this.shadowRoot.querySelector(`#${elementId}`);
+      const tooltip = this.shadowRoot?.querySelector(`#${elementId}`) as Tooltip;
       tooltip.open = false;
     }
   }
@@ -1448,7 +1458,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
-    const statusDetailEl = this.shadowRoot.querySelector('#status-detail');
+    const statusDetailEl = this.shadowRoot?.querySelector('#status-detail') as HTMLDivElement;
 
     statusDetailEl.innerHTML = `
     <div class="vertical layout justified start">
@@ -2157,9 +2167,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       this._selected_items.splice(exist, 1);
     }
     if (this._selected_items.length > 0) {
-      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'block';
+      this.multipleActionButtons.style.display = 'block';
     } else {
-      this.shadowRoot.querySelector('#multiple-action-buttons').style.display = 'none';
+      this.multipleActionButtons.style.display = 'none';
     }
   }
 
@@ -2309,7 +2319,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     `;
   }
 
-  _parseSessionInfoToCommitSessionInfo(kernelImageStr: string = '', sessionName: string = '', sessionId: string = '') {
+  _parseSessionInfoToCommitSessionInfo(kernelImageStr = '', sessionName = '', sessionId = '') {
     const emptyKernelImageArr = ['', ''];
     const [environment, rawVersion] = kernelImageStr ? kernelImageStr.split(':') : emptyKernelImageArr;
     const [version, ...tags] = rawVersion ? rawVersion.split('-') : emptyKernelImageArr;

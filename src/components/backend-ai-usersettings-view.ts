@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 import {store} from '../store';
@@ -26,9 +26,9 @@ import 'weightless/tab-group';
 import 'weightless/icon';
 import 'weightless/button';
 
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-button/mwc-button';
+import '@material/mwc-tab-bar';
+import {Tab} from '@material/mwc-tab';
+import '@material/mwc-button';
 
 import './backend-ai-dialog';
 import './lablup-activity-panel';
@@ -37,6 +37,12 @@ import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
 import './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Usersettings View
@@ -53,13 +59,12 @@ import './backend-ai-list-status';
 
 @customElement('backend-ai-usersettings-view')
 export default class BackendAiUserSettingsView extends BackendAIPage {
-  public spinner: any;
-
   @property({type: Object}) images = Object();
   @property({type: Object}) options = Object();
   @property({type: Object}) _activeTab = Object();
-  @property({type: Object}) clearLogsDialog = Object();
   @property({type: Object}) logGrid = Object();
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#clearlogs-dialog') clearLogsDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -77,7 +82,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     return 'backend-ai-usersettings-view';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -245,10 +250,8 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     } else { // already connected
       this.updateSettings();
     }
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
     // this._activeTab = "general";
-    this.clearLogsDialog = this.shadowRoot.querySelector('#clearlogs-dialog');
     document.addEventListener('backend-ai-usersettings-logs', () => {
       this._viewStateChanged(true);
     });
@@ -267,12 +270,12 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     const tab = params.tab;
     if (tab && tab === 'logs') {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="logs"]');
+        const tabEl = this.shadowRoot?.querySelector('mwc-tab[title="logs"]') as Tab;
         tabEl.click();
       }, 0);
     } else {
       globalThis.setTimeout(() => {
-        const tabEl = this.shadowRoot.querySelector('mwc-tab[title="general"]');
+        const tabEl = this.shadowRoot?.querySelector('mwc-tab[title="general"]') as Tab;
         tabEl.click();
       }, 0);
     }
@@ -328,7 +331,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
    * @param {EventTarget} tab - clicked tab
    * */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -336,7 +339,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     if (this._activeTab === 'logs') {
       this._refreshLogs();
     }
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
   }
 }
 

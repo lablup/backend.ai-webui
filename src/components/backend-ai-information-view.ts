@@ -56,11 +56,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
