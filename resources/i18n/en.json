@@ -312,7 +312,8 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists"
     },
-    "EnterValidSessionName": "EnterValidSessionName"
+    "EnterValidSessionName": "EnterValidSessionName",
+    "EnvironmentInfo": "Environment Info"
   },
   "button": {
     "Cancel": "Cancel",
