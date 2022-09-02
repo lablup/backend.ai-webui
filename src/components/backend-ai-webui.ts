@@ -129,7 +129,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
-    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
+    'information', 'github', 'import', 'react-test', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
@@ -1409,6 +1409,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'react-test'}" @click="${() => this._moveTo('/react-test')}" ?disabled="${this.blockedMenuitem.includes('react-test')}">
+              <i class="fas fa-vials" slot="graphic" id="react-test-menu-icon"></i>
+              <span class="full-menu">React Test</span>
+            </mwc-list-item>
             ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map((item) => html`
             <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
               <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
@@ -1473,7 +1477,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220830</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220902</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1497,7 +1501,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220830</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220902</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1624,6 +1628,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${this._page === 'edu-applauncher'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>
                     <backend-ai-error-view class="page" name="error" ?active="${this._page === 'error'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-error-view>
                     <backend-ai-permission-denied-view class="page" name="unauthorized" ?active="${this._page === 'unauthorized'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-permission-denied-view>
+                    <backend-ai-react-test-view class="page" name="react-test" ?active="${this._page === 'react-test'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-react-test-view>
                   </div>
                 </section>
               </div>
