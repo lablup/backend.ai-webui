@@ -3560,7 +3560,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               </mwc-select>
               <div class="horizontal layout center flex center-justified">
                 <mwc-list multi>
-                  <mwc-list-item class="resource-type">
+                  <mwc-list-item class="resource-type" style="pointer-events: none;">
                     <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
                   </mwc-list-item>
                   <li divider role="separator"></li>
