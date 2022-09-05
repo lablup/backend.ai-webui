@@ -76,7 +76,7 @@ export default class ChartJs extends LitElement {
   }
 
   public firstUpdated(): void {
-    if (this.type != '' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
+    if (this.type != '' && typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
       this._initializeChart();
     }
     if (this.height && this.width) {
