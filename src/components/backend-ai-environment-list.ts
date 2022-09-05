@@ -121,9 +121,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // language=CSS
       css`
          vaadin-grid {
+           border: 0;
            font-size: 14px;
-           height: calc(100vh - 235px);
+           height: calc(100vh - 225px);
          }
+         h4 {
+          font-weight: 200;
+          font-size: 14px;
+          margin: 0px;
+          padding: 5px 15px 5px 20px;
+        }
          wl-button > wl-icon {
            --icon-size: 24px;
            padding: 0;
@@ -1141,24 +1148,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            <wl-button fab flat inverted
              class="fg blue controls-running"
              @click=${() => {
-    this.selectedIndex = rowData.index;
-    this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
-    this._launchDialogById('#modify-image-dialog');
-    this.requestUpdate();
-  }}>
+                this.selectedIndex = rowData.index;
+                this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
+                this._launchDialogById('#modify-image-dialog');
+                this.requestUpdate();
+              }}>
              <wl-icon>settings</wl-icon>
            </wl-button>
            <wl-button fab flat inverted
              class="fg pink controls-running"
              @click=${() => {
-    if (this.selectedIndex !== rowData.index) {
-      this._clearRows();
-    }
-    this.selectedIndex = rowData.index;
-    this._decodeServicePort();
-    this._launchDialogById('#modify-app-dialog');
-    this.requestUpdate();
-  }}>
+                if (this.selectedIndex !== rowData.index) {
+                  this._clearRows();
+                }
+                this.selectedIndex = rowData.index;
+                this._decodeServicePort();
+                this._launchDialogById('#modify-app-dialog');
+                this.requestUpdate();
+              }}>
              <wl-icon>apps</wl-icon>
            </wl-button>
          </div>
@@ -1186,8 +1193,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                      rowData.item.tag.replace(/\./gi, '-')}">
              ${_t('environment.Installed')}
            </wl-label>
-           ` :
-    html`
+           ` : html`
            <wl-label class="installing"
              id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
                    rowData.item.name.replace('/', '-') + '-' +
@@ -1214,8 +1220,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-         ${rowData.item.baseimage.map((image) =>
-    html`
+         ${rowData.item.baseimage.map((image) => html`
              <lablup-shields app="" color="blue" ui="round" description="${image}"></lablup-shields>
          `)}
          `, root);
@@ -1261,11 +1266,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-       <div class="horizontal layout flex end-justified" style="margin:10px;">
-         <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
-         <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
-       </div>
-       <div class="list-wrapper">
+      <h4 class="horizontal flex center center-justified layout">
+        <span>${_t('environment.Images')}</span>
+        <span class="flex"></span>
+        <mwc-button raised label="${_t('environment.Install')}" class="operation" id="install-image" icon="get_app" @click="${this.openInstallImageDialog}"></mwc-button>
+        <mwc-button disabled label="${_t('environment.Delete')}" class="operation temporarily-hide" id="delete-image" icon="delete" @click="${this.openDeleteImageDialog}"></mwc-button>
+      </h4>
+      <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
           <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
@@ -1293,7 +1300,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
-       </div>
+      </div>
        <backend-ai-dialog id="modify-image-dialog" fixed backdrop blockscrolling>
          <span slot="title">${_t('environment.ModifyImageResourceLimit')}</span>
          <div slot="content">
