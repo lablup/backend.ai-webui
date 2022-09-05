@@ -14,8 +14,13 @@ import '@material/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-list-status';
-import BackendAIAgentSummaryList from './backend-ai-agent-summary-list';
+import './backend-ai-agent-summary-list';
 import {BackendAiStyles} from './backend-ai-general-styles';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIAgentSummaryList = HTMLElementTagNameMap['backend-ai-agent-summary-list'];
 
 /**
 Backend.AI Agent Summary view page
