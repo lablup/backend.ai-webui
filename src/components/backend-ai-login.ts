@@ -459,15 +459,15 @@ export default class BackendAILogin extends BackendAIPage {
                                         valueObj.value === null);
     let extraConditions;
     switch (typeof valueObj.defaultValue) {
-      case 'number':
-        extraConditions = isNaN(valueObj.value as number);
-        // if any condition check fails return value will be defaultValue
-        return (defaultConditions || extraConditions) ? valueObj.defaultValue : valueObj.value;
-      case 'boolean':
-      case 'string':
-      default: // includes array
-        return defaultConditions ? valueObj.defaultValue : valueObj.value;
-        break;
+    case 'number':
+      extraConditions = isNaN(valueObj.value as number);
+      // if any condition check fails return value will be defaultValue
+      return (defaultConditions || extraConditions) ? valueObj.defaultValue : valueObj.value;
+    case 'boolean':
+    case 'string':
+    default: // includes array
+      return defaultConditions ? valueObj.defaultValue : valueObj.value;
+      break;
     }
   }
 
@@ -525,280 +525,280 @@ export default class BackendAILogin extends BackendAIPage {
        defaultValue: false,
        value: generalConfig?.debug,
      } as ConfigValueObject) as boolean;
-   if (globalThis.backendaiwebui.debug) {
-     console.log('Debug flag is set to true');
-   }
+    if (globalThis.backendaiwebui.debug) {
+      console.log('Debug flag is set to true');
+    }
 
-   // Signup support flag
-   this.signup_support = this._getConfigValueByExists(generalConfig,
+    // Signup support flag
+    this.signup_support = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.signupSupport,
      } as ConfigValueObject) as boolean;
-   // Signup support flag
-   if (this.signup_support) {
-     (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
-   }
+    // Signup support flag
+    if (this.signup_support) {
+      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
+    }
 
-   // Signup support flag
-   this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+    // Signup support flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowAnonymousChangePassword,
      } as ConfigValueObject) as boolean;
 
-   // Allow change Sign-in mode flag
-   this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+    // Allow change Sign-in mode flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowChangeSigninMode,
      } as ConfigValueObject) as boolean;
 
-   // Allow change Sign-in mode flag
-   this.allow_project_resource_monitor = this._getConfigValueByExists(generalConfig,
+    // Allow change Sign-in mode flag
+    this.allow_project_resource_monitor = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowProjectResourceMonitor,
      } as ConfigValueObject) as boolean;
 
-   // Allow manual image name for session flag
-   this.allow_manual_image_name_for_session = this._getConfigValueByExists(generalConfig,
+    // Allow manual image name for session flag
+    this.allow_manual_image_name_for_session = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowManualImageNameForSession,
      } as ConfigValueObject) as boolean;
 
-   // Always enqueue compute session flag
-   this.always_enqueue_compute_session = this._getConfigValueByExists(generalConfig,
+    // Always enqueue compute session flag
+    this.always_enqueue_compute_session = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.alwaysEnqueueComputeSession,
      } as ConfigValueObject) as boolean;
 
-   // Allow Sign out flag
-   this.allow_signout = this._getConfigValueByExists(generalConfig,
+    // Allow Sign out flag
+    this.allow_signout = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowSignout,
      } as ConfigValueObject) as boolean;
 
-   // Login attempt limit number
-   this.login_attempt_limit = this._getConfigValueByExists(generalConfig,
+    // Login attempt limit number
+    this.login_attempt_limit = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'number',
        defaultValue: this.login_attempt_limit, // default value has been already assigned in property declaration
        value: parseInt(generalConfig?.loginAttemptLimit),
      } as ConfigValueObject) as number;
 
-   // Login block time number
-   this.login_block_time = this._getConfigValueByExists(generalConfig,
+    // Login block time number
+    this.login_block_time = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'number',
        defaultValue: this.login_block_time, // default value has been already assigned in property declaration
        value: parseInt(generalConfig?.loginBlockTime),
      } as ConfigValueObject) as number;
 
-   // API endpoint value with additional styles
-   this.api_endpoint = this._getConfigValueByExists(generalConfig,
+    // API endpoint value with additional styles
+    this.api_endpoint = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
        defaultValue: '',
        value: generalConfig?.apiEndpoint
      } as ConfigValueObject) as string;
-   if (this.api_endpoint === '') {
-     this.apiEndpointContainer.style.display = 'flex';
-     this.apiEndpointHumanizedInput.style.display = 'none';
-   } else {
-     // API endpoint text value with additional styles
-     const apiEndpointText = this._getConfigValueByExists(generalConfig,
+    if (this.api_endpoint === '') {
+      this.apiEndpointContainer.style.display = 'flex';
+      this.apiEndpointHumanizedInput.style.display = 'none';
+    } else {
+      // API endpoint text value with additional styles
+      const apiEndpointText = this._getConfigValueByExists(generalConfig,
        {
          valueType: 'string',
          defaultValue: '',
          value: generalConfig?.apiEndpointText
        } as ConfigValueObject) as string;
-     if (apiEndpointText === '') {
-       this.apiEndpointContainer.style.display = 'flex';
-       this.apiEndpointHumanizedInput.style.display = 'none';
-       (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
-     } else {
-       this.apiEndpointInput.disabled = true;
-       this.apiEndpointHumanizedInput.disabled = true;
-     }
-   }
+      if (apiEndpointText === '') {
+        this.apiEndpointContainer.style.display = 'flex';
+        this.apiEndpointHumanizedInput.style.display = 'none';
+        (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
+      } else {
+        this.apiEndpointInput.disabled = true;
+        this.apiEndpointHumanizedInput.disabled = true;
+      }
+    }
 
-   // Allow signup without confirmation flag
-   this.allowSignupWithoutConfirmation = this._getConfigValueByExists(generalConfig,
+    // Allow signup without confirmation flag
+    this.allowSignupWithoutConfirmation = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.allowSignupWithoutConfirmation,
      } as ConfigValueObject) as boolean;
 
-   // Default session environment value
-   this.default_session_environment = this._getConfigValueByExists(generalConfig,
+    // Default session environment value
+    this.default_session_environment = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
        defaultValue: '',
        value: generalConfig?.defaultSessionEnvironment,
      } as ConfigValueObject) as string;
 
-   // Default session environment value
-   this.default_import_environment = this._getConfigValueByExists(generalConfig,
+    // Default session environment value
+    this.default_import_environment = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
        defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
        value: generalConfig?.defaultImportEnvironment,
      } as ConfigValueObject) as string;
 
-   // Mask user info flag
-   this.maskUserInfo = this._getConfigValueByExists(generalConfig,
+    // Mask user info flag
+    this.maskUserInfo = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: generalConfig?.maskUserInfo,
      } as ConfigValueObject) as boolean;
 
-   // Single sign-on vendors array
-   this.singleSignOnVendors = this._getConfigValueByExists(generalConfig,
+    // Single sign-on vendors array
+    this.singleSignOnVendors = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'array',
        defaultValue: [] as string[],
        // sanitize whitespace on user-input after splitting
-       value: (generalConfig?.singleSignOnVendors) ? generalConfig?.singleSignOnVendors.split(',').map(el => el.trim()) : [],
+       value: (generalConfig?.singleSignOnVendors) ? generalConfig?.singleSignOnVendors.split(',').map((el) => el.trim()) : [],
      } as ConfigValueObject) as string[];
 
-   // Enable container commit flag
-   this._enableContainerCommit = this._getConfigValueByExists(generalConfig,
+    // Enable container commit flag
+    this._enableContainerCommit = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: (generalConfig?.enableContainerCommit),
      } as ConfigValueObject) as boolean;
 
-   // Enable pipeline flag
-   // FIXME: temporally disable pipeline feature in manual
-   this._enablePipeline = this._getConfigValueByExists(generalConfig,
+    // Enable pipeline flag
+    // FIXME: temporally disable pipeline feature in manual
+    this._enablePipeline = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: false, // (generalConfig?.enablePipeline),
      } as ConfigValueObject) as boolean;
 
-   // Connection mode value depending on Electron mode and default configuration value
-   const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
-   if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
-     this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
-   } else {
-     this.connection_mode = this._getConfigValueByExists(generalConfig,
+    // Connection mode value depending on Electron mode and default configuration value
+    const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
+    if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
+      this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
+    } else {
+      this.connection_mode = this._getConfigValueByExists(generalConfig,
        {
          valueType: 'boolean',
          defaultValue: this.connection_mode,
          value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
        } as ConfigValueObject) as ConnectionMode;
-   }
- }
+    }
+  }
 
   /**
    * Initialize global key with value from wsproxy section in config file
    *
    * @param {object} wsproxyConfig
    */
- private _initWSProxyConfigWithKeys(wsproxyConfig) {
-   // wsproxy url value
-   this.proxy_url = this._getConfigValueByExists(wsproxyConfig,
+  private _initWSProxyConfigWithKeys(wsproxyConfig) {
+    // wsproxy url value
+    this.proxy_url = this._getConfigValueByExists(wsproxyConfig,
      {
        valueType: 'string',
        defaultValue: 'http://127.0.0.1:5050/',
        value: wsproxyConfig?.proxyURL,
      } as ConfigValueObject) as string;
- }
+  }
 
   /**
    * Initialize global key with value from resources section in config file
    *
    * @param {object} resourcesConfig
    */
- private _initResourcesConfigWithKeys(resourcesConfig) {
-   // Open port to public flag
-   this.openPortToPublic = this._getConfigValueByExists(resourcesConfig,
+  private _initResourcesConfigWithKeys(resourcesConfig) {
+    // Open port to public flag
+    this.openPortToPublic = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
        value: resourcesConfig?.openPortToPublic,
      } as ConfigValueObject) as boolean;
 
-   // Max CPU cores per container number
-   this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
+    // Max CPU cores per container number
+    this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: 64,
        value: parseInt(resourcesConfig?.maxCPUCoresPerContainer ?? ''),
      } as ConfigValueObject) as number;
 
-   // Max Memory per container number
-   this.maxMemoryPerContainer = this._getConfigValueByExists(resourcesConfig,
+    // Max Memory per container number
+    this.maxMemoryPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: 16,
        value: parseInt(resourcesConfig?.maxMemoryPerContainer),
      } as ConfigValueObject) as number;
 
-   // Max CUDA devices per container number
-   this.maxCUDADevicesPerContainer = this._getConfigValueByExists(resourcesConfig,
+    // Max CUDA devices per container number
+    this.maxCUDADevicesPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: 16,
        value: parseInt(resourcesConfig?.maxCUDADevicesPerContainer),
      } as ConfigValueObject) as number;
 
-   // Max CUDA shares per container number
-   this.maxCUDASharesPerContainer = this._getConfigValueByExists(resourcesConfig,
+    // Max CUDA shares per container number
+    this.maxCUDASharesPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: 16,
        value: parseInt(resourcesConfig?.maxCUDASharesPerContainer),
      } as ConfigValueObject) as number;
 
-   // Max CUDA shares per container number
-   this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig,
+    // Max CUDA shares per container number
+    this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: 2,
        value: parseFloat(resourcesConfig?.maxShmPerContainerr),
      } as ConfigValueObject) as number;
 
-   // Max File Upload size number
-   const unlimitedValueOnFileUpload: number = -1;
-   this.maxFileUploadSize = this._getConfigValueByExists(resourcesConfig,
+    // Max File Upload size number
+    const unlimitedValueOnFileUpload = -1;
+    this.maxFileUploadSize = this._getConfigValueByExists(resourcesConfig,
      {
        valueType: 'number',
        defaultValue: unlimitedValueOnFileUpload,
        value: parseInt(resourcesConfig?.maxFileUploadSize),
      } as ConfigValueObject) as number;
- }
+  }
 
   /**
    * Initialize global key with value from environments section in config file
    *
    * @param {object} environmentsConfig
    */
- private _initEnvironmentsConfigWithKeys(environmentsConfig) {
-   // Allow image list array
-   this.allow_image_list = this._getConfigValueByExists(environmentsConfig,
+  private _initEnvironmentsConfigWithKeys(environmentsConfig) {
+    // Allow image list array
+    this.allow_image_list = this._getConfigValueByExists(environmentsConfig,
      {
        valueType: 'array',
        defaultValue: [] as string[],
        // sanitize whitespace on user-input after splitting
-       value: (environmentsConfig?.allowlist) ? environmentsConfig?.allowlist.split(',').map(el => el.trim()) : [],
+       value: (environmentsConfig?.allowlist) ? environmentsConfig?.allowlist.split(',').map((el) => el.trim()) : [],
      } as ConfigValueObject) as string[];
- }
+  }
 
   /**
    * Open loginPanel.
