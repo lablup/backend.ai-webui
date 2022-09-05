@@ -2374,7 +2374,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
                                      .renderer="${this._boundStatusRenderer}">
           </vaadin-grid-filter-column>
-          <vaadin-grid-column width=${this._isContainerCommitEnabled ? "260px": "210px"} flex-grow="0" resizable header="${_t('general.Control')}"
+          <vaadin-grid-column width=${this._isContainerCommitEnabled ? '260px': '210px'} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>

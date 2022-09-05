@@ -178,6 +178,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 179px);
         }
     `];
   }
