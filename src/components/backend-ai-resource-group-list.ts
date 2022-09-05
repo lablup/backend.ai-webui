@@ -213,7 +213,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: var(--list-height, calc(100vh - 246px));
+          height: calc(100vh - 225px);
         }
 
         vaadin-item {

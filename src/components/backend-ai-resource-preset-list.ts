@@ -77,6 +77,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 225px);
         }
 
         wl-button > wl-icon {
