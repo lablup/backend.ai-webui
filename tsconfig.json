@@ -15,6 +15,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
+    "jsx": "react",
     "resolveJsonModule": true,
     "typeRoots": [
       "./src/types",

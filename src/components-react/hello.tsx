@@ -6,15 +6,17 @@ import styles from "./hello.css";
 const Hello = () => {
   const [count, setCount] = useState(0);
   return (
-    <div>
-      <p className={styles.helloTest}>You clicked {count} times</p>
-      <button onClick={() => setCount(count + 1)}>
-        Click me
-      </button>
-    </div>
+    <>
+      <style>{styles}</style>
+      <div>
+        <p className={'helloTest'}>You clicked {count} times</p>
+        <button onClick={() => setCount(count + 1)}>
+          Click me
+        </button>
+      </div>
+    </>
   );
 };
-console.log(styles);
 
 const BackendAiReactTestInternalView = reactToWebComponent((Hello as any), (React as any), (ReactDOM as any), {
   shadow: "open",

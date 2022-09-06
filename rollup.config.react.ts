@@ -4,6 +4,7 @@ import { nodeResolve } from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import autoprefixer from 'autoprefixer';
 import postcss from 'rollup-plugin-postcss';
+import css from "rollup-plugin-import-css";
 
 export default {
   //preserveModules: true,
@@ -22,13 +23,14 @@ export default {
       presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
       extensions: [".ts", ".tsx"],
     }),
-    postcss({
-      plugins: [autoprefixer()],
-      sourceMap: true,
-      modules: true,
-      extract: false,
-      minimize: true
-    }),
+    css(),
+    //postcss({
+    //  plugins: [autoprefixer()],
+    //  sourceMap: true,
+    //  modules: true,
+    //  extract: false,
+    //  minimize: true
+    //}),
     typescript({
       tsconfig: "./tsconfig.react.json",
       outDir: 'src/components-react/dist'
