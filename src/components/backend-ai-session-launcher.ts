@@ -2079,7 +2079,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.sessionResouceSlider.disabled = false;
         this.sharedMemoryResouceSlider.disabled = false;
         this.launchButton.disabled = false;
-        (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'block';
+        (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'flex';
         if (this.cluster_support) {
           this.clusterSizeSlider.disabled = false;
         }
@@ -2632,7 +2632,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         item.style.zIndex = (6 - i).toString();
         container.appendChild(item);
       }
-      this.shadowRoot?.querySelector('#total-allocation-pane')?.appendChild(container);
+      (this.shadowRoot?.querySelector('#total-allocation-pane') as HTMLDivElement).appendChild(container);
     }
   }
 
