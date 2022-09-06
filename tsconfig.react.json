@@ -21,6 +21,7 @@
       "./src/types",
       "./node_modules/@types"
     ],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": false,
