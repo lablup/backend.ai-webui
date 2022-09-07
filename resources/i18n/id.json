@@ -543,7 +543,9 @@
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
       "FolderUsing": "__NOT_TRANSLATED__",
-      "NoFolderToDisplay": "__NOT_TRANSLATED__"
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",

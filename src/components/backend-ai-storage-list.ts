@@ -1244,6 +1244,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
+            title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
           ></mwc-icon-button>
 
@@ -1252,6 +1253,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="folder_open"
+                title=${_t('data.folders.OpenAFolder')}
                 @click="${(e) =>
     this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
                 rowData.item.is_owner ||
@@ -1275,6 +1277,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
                 icon="share"
+                title=${_t('data.explorer.ShareFolder')}
                 @click="${(e) => this._shareFolderDialog(e)}"
               ></mwc-icon-button>
             ` :
@@ -1286,6 +1289,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg cyan controls-running"
                 icon="perm_identity"
+                title=${_t('data.explorer.ModifyPermissions')}
                 @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
               ></mwc-icon-button>
             ` :
@@ -1296,6 +1300,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
                 icon="create"
+                title=${_t('data.folders.Rename')}
                 @click="${(e) => this._renameFolderDialog(e)}"
               ></mwc-icon-button>
             ` :
@@ -1306,6 +1311,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg blue controls-running"
                 icon="settings"
+                title=${_t('data.folders.FolderOptionUpdate')}
                 @click="${(e) => this._modifyFolderOptionDialog(e)}"
               ></mwc-icon-button>
             ` :
@@ -1316,6 +1322,7 @@ export default class BackendAiStorageList extends BackendAIPage {
               <mwc-icon-button
                 class="fg red controls-running"
                 icon="delete"
+                title=${_t('data.folders.Delete')}
                 @click="${(e) => this._deleteFolderDialog(e)}"
               ></mwc-icon-button>
             ` :

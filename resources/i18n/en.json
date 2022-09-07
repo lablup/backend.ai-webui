@@ -508,6 +508,8 @@
       "CloneAFolder": "Clone a folder",
       "LeaveAFolder": "Leave a folder",
       "DeleteAFolder": "Delete a folder",
+      "OpenAFolder": "Open a folder",
+      "FolderInfo": "Info",
       "TypeFolderNameToDelete": "Type folder name to delete",
       "TypeFolderNameToLeave": "Type folder name to leave",
       "Delete": "Delete",
