@@ -1066,6 +1066,7 @@
     "CancelLogin": "Cancel Login",
     "SignoutFinished": "Signout finished.",
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
+    "APIEndpointStartWith": "API Endpoint must start with http:// or https://.",
     "PleaseWait": "Please wait to login.",
     "ConnectingToCluster": "Connecting to Backend.AI Cluster...",
     "ForgotPassword": "Forgot password?",
