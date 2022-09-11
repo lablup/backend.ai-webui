@@ -1214,6 +1214,9 @@ export default class BackendAILogin extends BackendAIPage {
       this._enableUserInput();
       if (showError) {
         this.notification.text = PainKiller.relieve('Endpoint is unreachable. Please check the connection or endpoint');
+        if (!this.api_endpoint.toLowerCase().startsWith('http://') && !this.api_endpoint.toLowerCase().startsWith('https://')) {
+          this.notification.text = _text('login.APIEndpointStartWith');
+        }
         this.notification.show();
       }
       return Promise.resolve(false);
