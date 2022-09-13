@@ -53,7 +53,11 @@
       "Experiments": "Туршилт",
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
-      "UserName": "Хэрэглэгчийн нэр"
+      "UserName": "Хэрэглэгчийн нэр",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -129,6 +133,7 @@
       "Environments": "Environment-үүд",
       "Start": "Эхлэл",
       "FolderToMount": "Холбох фолдер",
+      "FolderToMountList": "Холбох фолдер",
       "ResourceAllocation": "Нөөцийн хуваарилалт",
       "NoSuitablePreset": "Тохирох урьдчилсан тохиргоо байхгүй байна",
       "Advanced": "Дэвшилтэт",
@@ -207,7 +212,7 @@
       "ConfirmAndLaunch": "Шалгасан тул эхлүүлж болно",
       "FolderAliasOverlapping": "Фолдерын хоч нэр давхцалт",
       "NoEnvConfigured": "Environment тохируулагдаагүй байна",
-      "FolderAlias": "Фолдерын хоч нэр",
+      "FolderAlias": "хавтас зам & Фолдерын хоч нэр",
       "NoAvailableFolderToMount": "Холбох боломжтой фолдер байхгүй байна.",
       "MountedFolders": "Холбогдсон фолдерууд",
       "EnvironmentVariablePaneTitle": "Environment хувьсагч тохируулах (заавал биш)",
@@ -218,7 +223,18 @@
       "(Automatic)": "__NOT_TRANSLATED__",
       "NumOpenMPthreads": "__NOT_TRANSLATED__",
       "NumOpenBLASthreads": "__NOT_TRANSLATED__",
-      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__"
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -271,7 +287,36 @@
     "UseYourFavoriteVNCApp": "Өөрийн дуртай VNC програмаа ашиглаарай",
     "XRDPconnection": "RDP холболт",
     "UseYourFavoriteMSTSCApp": "Дуртай MS Remote Desktop програмаа ашиглаарай",
-    "OnlyOneFolderAttached": "__NOT_TRANSLATED__"
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "зурвас",
+    "EnvironmentInfo": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -301,7 +346,8 @@
     "Generate": "Үүсгэх",
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
-    "ForceTerminate": "Хүчээр цуцлах"
+    "ForceTerminate": "Хүчээр цуцлах",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -316,7 +362,16 @@
     "Running": "Ажиллаж байна",
     "BackendType": "Арын төрөл",
     "Capabilities": "Чадвар",
-    "NoNetworkSignal": "Сүлжээний дохио байхгүй."
+    "NoNetworkSignal": "Сүлжээний дохио байхгүй.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "цөм",
@@ -408,7 +463,11 @@
     "UserAccountCreatedError": "Энэ данс аль хэдийн бүртгэгдсэн байна.",
     "KeypairCreated": "Түлхүүр хослолыг амжилттай үүсгэсэн.",
     "UserNotFound": "Дараах хэрэглэгчийн ID олдсонгүй тул итгэмжлэл үүсгэх амжилтгүй боллоо.",
-    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай."
+    "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -479,7 +538,14 @@
       "Edit": "Засах",
       "EditDelete": "Засах + Устгах",
       "KickOut": "Хэрэглэгчийг хөө",
-      "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу."
+      "CannotDeleteFolder": "Нэг буюу хэд хэдэн хэсэгт суулгасан фолдерыг устгах боломжгүй. Эхлээд хуралдааныг зогсооно уу.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -523,7 +589,8 @@
       "FileBrowserSessionRunningAlready": "Filebrowser-ийг дэмждэг Session аль хэдийн ажиллаж байна. Энэ хуралдааныг ашиглан фолдер (ууд) байршуулна уу.",
       "NotEnoughResourceForFileBrowserSession": "Filebrowser-д зориулж Session үүсгэх хангалттай нөөц байхгүй (cpu: 1 Core, mem: 0.5GB). боломжтой нөөцийг шалгана уу.",
       "NoImagesSupportingFileBrowser": "Файл хөтөчийг дэмжих зураг хараахан алга байна. Фолдер хөтөчийг дэмждэг дор хаяж нэг буюу түүнээс дээш дүрс оруулах шаардлагатай.",
-      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу."
+      "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",
@@ -551,7 +618,8 @@
       "DoYouWantToProceed": "Та үргэлжлүүлэхийг хүсч байна уу?"
     },
     "title": {
-      "LetsDouble-Check": "Давхар шалгуулъя"
+      "LetsDouble-Check": "Давхар шалгуулъя",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Алдаа гарлаа",
     "error": {
@@ -605,7 +673,9 @@
     "SuccessfullyModified": "Амжилттай өөрчилсөн",
     "ProblemOccurred": "Асуудал гарсан",
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
-    "NoChangeMade": "Өөрчлөлт ороогүй"
+    "NoChangeMade": "Өөрчлөлт ороогүй",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -625,7 +695,9 @@
     "MinimumMemUnit": "Санах ой нь 1 ГБ-аас эхэлдэг",
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Хуваалцсан санах ой (GB)"
+    "SharedMemory": "Хуваалцсан санах ой (GB)",
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -677,7 +749,8 @@
     "Edit_ShellScriptTitle_1": "Засах",
     "Edit_ShellScriptTitle_2": " бүрхүүлийн скрипт",
     "AutoLogout": "Автоматаар гарах",
-    "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт)."
+    "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
@@ -698,7 +771,8 @@
     "RequestUrl": "Url хүсэх",
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
-    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан."
+    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",
@@ -723,7 +797,9 @@
     "SuccessfullyUpdated": "Нөөцийн бодлогыг амжилттай шинэчилсэн.",
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
-    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:"
+    "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -755,7 +831,10 @@
     "RegistryUpdateFailed": "Бүртгэлийн шинэчлэлт амжилтгүй боллоо.",
     "RescanImages": "Зургуудыг дахин шалгаж байна ...",
     "RescanFailed": "Дахин шалгаж чадсангүй.",
-    "PleaseSelectOption": "Нэг сонголтыг сонгоно уу."
+    "PleaseSelectOption": "Нэг сонголтыг сонгоно уу.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -781,7 +860,12 @@
     "EnterValidResourceGroupName": "Зөв нөөцийн бүлгийн нэрийг оруулна уу",
     "ResourceGroupNameRequired": "Нөөцийн бүлгийн нэр шаардлагатай.",
     "ResourceGroupAlreadyExist": "Ижил нэртэй нөөцийн бүлэг аль хэдийн бий болсон.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
+    "TimeoutSeconds": "Секунд",
+    "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",
@@ -999,7 +1083,10 @@
     "InvalidChangePasswordToken": "Буруу Token",
     "InvalidChangePasswordTokenMessage": "Нууц үгийг өөрчлөхийн тулд гаргасан токенд алдаа гарсан байна. Нууц үгээ өөрчлөхийн тулд өөр имэйл илгээж, дахин оролдоно уу.",
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
-    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна."
+    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    }
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
@@ -1081,7 +1168,14 @@
     "FolderName": "Импортын фолдерын нэр:",
     "NotebookBadgeCodeHTML": "Jupyter Notebook-ийн код (HTML)",
     "NotebookBadgeCodeMarkdown": "Jupyter Notebook-ийн код (Markdown)",
-    "Installed": "Суулгасан"
+    "Installed": "Суулгасан",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Энэ сарын статистик",
@@ -1140,6 +1234,7 @@
     "20chars": "(хамгийн ихдээ 20 тэмдэгт)",
     "40chars": "(хамгийн ихдээ 40 тэмдэгт)",
     "64chars": "(хамгийн ихдээ 64 тэмдэгт)",
+    "200chars": "(хамгийн ихдээ 200 тэмдэгт)",
     "255chars": "(хамгийн ихдээ 255 тэмдэгт)",
     "500chars": "(хамгийн ихдээ 500 тэмдэгт)",
     "512chars": "(хамгийн ихдээ 512 тэмдэгт)",

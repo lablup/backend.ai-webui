@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
@@ -30,11 +30,7 @@ import {navigate} from '../backend-ai-app';
 export default class BackendAIPermissionDeniedView extends BackendAIPage {
   @property({type: Number}) error_code = 401;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

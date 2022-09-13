@@ -130,7 +130,7 @@ class Manager extends EventEmitter {
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
       const protocol = req.query.protocol || 'http';
       let gateway;
-      let ip = "127.0.0.1"; //FIXME: Update needed
+      let ip = this.listen_ip;
       //let port = undefined;
       if (this.proxies.hasOwnProperty(p)) {
         gateway = this.proxies[p];
@@ -173,10 +173,34 @@ class Manager extends EventEmitter {
         }
       }
 
-      let proxy_target = "http://localhost:" + port;
-      if (protocol === 'tcp') {
+      let proxy_target = "http://" + this.proxyBaseHost + ":" + port;
+      if (app == 'sftp') {
         logger.debug('proxy target: ' + proxy_target);
-        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + `/${app}?port=` + port + "&dummy=1"});
+        res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/sftp?port=" + port + "&dummy=1"});
+      } else if (app == 'sshd') {
+        logger.debug('proxy target: ' + proxy_target);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/sshd?port=" + port + "&dummy=1"
+        });
+      } else if (app == 'vnc') {
+        logger.debug('proxy target: ' + proxy_target);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/vnc?port=" + port + "&dummy=1"
+        });
+      } else if (app == 'xrdp') {
+        logger.debug('proxy target: ' + proxy_target);
+        res.send({
+          "code": 200,
+          "proxy": proxy_target,
+          "port": port,
+          "url": this.baseURL + "/xrdp?port=" + port + "&dummy=1"
+        });
       } else {
         res.send({"code": 200, "proxy": proxy_target, "url": this.baseURL + "/redirect?port=" + port});
       }
@@ -225,16 +249,19 @@ class Manager extends EventEmitter {
 
     this.app.get('/sftp', (req, res) => {
       let port = req.query.port;
-      let url = "sftp://upload@127.0.0.1:" + port;
-      res.send(htmldeco("Connect with your own SFTP", "host: 127.0.0.1<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"));
+      let url = "sftp://upload@" + this.proxyBaseHost + ":" + port;
+      res.send(htmldeco(
+        "Connect with your own SFTP",
+        "host: " + this.proxyBaseHost + "<br/>port: " + port + "<br/>username:upload<br/>URL : <a href=\"" + url + "\">" + url + "</a>"
+      ));
     });
 
     this.app.get('/redirect', (req, res) => {
       let port = req.query.port;
       let path = req.query.redirect || "";
-      path.replace("<proxy-host>", this.listen_ip);
+      path.replace("<proxy-host>", this.proxyBaseHost);
       path.replace("<port-number>", port);
-      res.redirect("http://" + this.listen_ip + ":" + port + path)
+      res.redirect("http://" + this.proxyBaseHost + ":" + port + path)
     });
   }
 

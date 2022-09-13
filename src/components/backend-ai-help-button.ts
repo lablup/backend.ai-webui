@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
 import {css, CSSResultGroup, html} from 'lit';
@@ -43,11 +43,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     'usersettings': 'user_settings/user_settings.html'
   };
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [css`
     mwc-icon-button {
       color: white;
@@ -57,10 +53,6 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   firstUpdated() {
     this.currentPage;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   get currentPage() {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -14,6 +14,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) images;
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
+  @property({type: Object}) imageArchitectures = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
@@ -107,7 +108,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     return 'backend-ai-resource-broker';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [];
   }
 
@@ -363,22 +364,26 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    * Update virtual folder list. Also divide automount folders from general ones.
    *
    */
-  async updateVirtualFolderList() {
+  async updateVirtualFolderList(userEmail = null) {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id());
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
+    const allowedHosts = vhostInfo.allowed;
+    const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];
       value.forEach((item) => {
-        if (item.name.startsWith('.')) {
-          item.disabled = true;
-          item.name = item.name + ' (Automount folder)';
-          automountFolders.push(item);
-        } else {
-          selectableFolders.push(item);
+        if (allowedHosts.includes(item.host) || !item.is_owner) { // folder within allowed host or shared folder
+          if (item.name.startsWith('.')) {
+            item.disabled = true;
+            item.name = item.name + ' (Automount folder)';
+            automountFolders.push(item);
+          } else {
+            selectableFolders.push(item);
+          }
         }
       });
       this.vfolders = selectableFolders.concat(automountFolders);
@@ -699,7 +704,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
    */
   async _refreshImageList() {
     const fields = [
-      'name', 'humanized_name', 'tag', 'registry', 'digest', 'installed',
+      'name', 'humanized_name', 'tag', 'registry', 'architecture', 'digest', 'installed',
       'resource_limits { key min max }', 'labels { key value }'
     ];
     return globalThis.backendaiclient.image.list(fields, true, false).then((response) => {
@@ -710,14 +715,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supports = {};
       this.supportImages = {};
       this.imageRequirements = {};
-      const privateImages: Object = {};
+      this.imageArchitectures = {};
+      const privateImages: object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
         const supportsKey = `${item.registry}/${item.name}`;
         if (!(supportsKey in this.supports)) {
           this.supports[supportsKey] = [];
         }
-        this.supports[supportsKey].push(item.tag);
+        // check if tag already exists since we can have multiple images with same tag and different architecture
+        if (this.supports[supportsKey].indexOf(item.tag) === -1) {
+          this.supports[supportsKey].push(item.tag);
+        }
         let imageName: string;
         const specs: string[] = item.name.split('/');
         if (specs.length === 1) {
@@ -744,6 +753,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         this.resourceLimits[`${supportsKey}:${item.tag}`] = item.resource_limits;
         this.imageRequirements[`${supportsKey}:${item.tag}`] = {};
+        if (!this.imageArchitectures[`${supportsKey}:${item.tag}`]) {
+          this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
+        }
+        this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
@@ -800,7 +813,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   _cap(text) {
-    text = text.replace(/^./, text[0].toUpperCase());
+    if (!text.includes('/')) {
+      text = text.replace(/^./, text[0].toUpperCase());
+    }
     return text;
   }
 
@@ -825,9 +840,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (specs.length == 2) {
         prefix = '';
         kernelName = specs[1];
-      } else {
-        prefix = specs[1];
-        kernelName = specs[2];
+      } else if (specs.length > 2) {
+        prefix = specs.slice(1, specs.length-1).join('/');
+        kernelName = specs[specs.length - 1];
       }
       let alias = this.aliases[item];
       let basename;

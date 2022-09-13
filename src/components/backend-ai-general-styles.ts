@@ -200,6 +200,35 @@ export const BackendAiStyles = [
       margin: 60px;
     }
 
+    backend-ai-multi-select {
+      /* override for mwc-list */
+      --select-primary-theme: var(--general-sidebar-color);
+      --select-secondary-theme: var(--general-checkbox-color);
+      --select-background-color: var(#E7EBEE, #efefef);
+      --select-background-border-radius: 5px;
+      --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+
+      /* override for selected-area */
+      --select-title-font-size: 10px;
+      --selected-area-border-radius: 5px;
+      --selected-area-border: none;
+      --selected-area-padding: 5px;
+      --selected-area-min-height: 24px;
+      --selected-area-height: 100%;
+
+      /* override for selected-item */
+      --selected-item-font-family: var(--general-font-family);
+      --selected-item-theme-color: #C8CED7;
+      --selected-item-theme-font-color: #182739;
+      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-unelevated-theme-color: #C8CED7;
+      --selected-item-outlined-theme-font-color: black;
+      --selected-item-unelevated-theme-font-color: black;
+      --selected-item-font-size: 14px;
+      --selected-item-text-transform: none;
+    }
+
+
     wl-icon.tiny {
       --icon-size: 12px;
     }
@@ -504,7 +533,7 @@ export const BackendAiStyles = [
     mwc-button, mwc-button[unelevated] {
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
       --mdc-typography-font-family: var(--general-font-family);
     }
 
@@ -549,14 +578,11 @@ export const BackendAiStyles = [
       --mdc-select-outlined-hover-border-color: var(--general-select-color);
       --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
       --mdc-select-fill-color: transparent;
-      --mdc-select-disabled-fill-color: transparent;
       --mdc-select-ink-color: black;
       --mdc-select-label-ink-color: black;
       --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
-      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
       --mdc-select-dropdown-icon-color: #747474;
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
-      --mdc-select-disabled-dropdown-icon-color: #747474;
     }
 
     .bg-blue {
@@ -849,5 +875,32 @@ export const BackendAiStyles = [
 
     .temporarily-hide {
       display: none !important;
+    }
+
+    div.list-wrapper {
+      height: auto;
+    }
+
+    div.blank-box {
+      padding: 3rem 0;
+    }
+
+    div.blank-box-medium {
+      padding: 8.8rem 0;
+    }
+
+    div.blank-box-large {
+      padding: 11.3rem 0;
+    }
+
+    div.list-wrapper {
+      position: relative;
+    }
+
+    span.list-message {
+      font-size: 20px;
+      font-weight: 200;
+      display: block;
+      color: #999999;
     }
   `];

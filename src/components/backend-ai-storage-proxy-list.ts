@@ -1,11 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -22,8 +21,15 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend.AI Storage Proxy List
@@ -42,23 +48,25 @@ import './lablup-progress-bar';
 export default class BackendAIStorageProxyList extends BackendAIPage {
   @property({type: String}) condition = 'running';
   @property({type: Array}) storages;
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) storagesObject = Object();
   @property({type: Object}) storageProxyDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) storageProxyDetailDialog = Object();
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundTypeRenderer = this.typeRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundCapabilitiesRenderer = this.capabilitiesRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#storage-proxy-detail') storageProxyDetailDialog!: BackendAIDialog;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
   constructor() {
     super();
     this.storages = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -68,7 +76,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: var(--list-height, calc(100vh - 200px));
+          height: calc(100vh - 179px);
         }
 
         mwc-icon {
@@ -132,17 +140,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         .resource-indicator {
           width: 100px !important;
         }
-
       `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.storageProxyDetailDialog = this.shadowRoot.querySelector('#storage-proxy-detail');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**
@@ -173,6 +175,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     if (this.active !== true) {
       return;
     }
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     globalThis.backendaiclient.storageproxy.list(['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage']).then((response) => {
       const storage_volumes = response.storage_volume_list.items;
       const storages: Array<any> = [];
@@ -190,7 +194,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         });
       }
       this.storages = storages;
-      const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
+      if (this.storages.length == 0) {
+        this.listCondition = 'no-data';
+      } else {
+        this._listStatus?.hide();
+      } const event = new CustomEvent('backend-ai-storage-proxy-updated', {});
       this.dispatchEvent(event);
       if (this.active === true) {
         setTimeout(() => {
@@ -198,6 +206,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
+      this._listStatus?.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -436,7 +445,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment" 
+          <mwc-icon-button class="fg blue controls-running" icon="assignment"
                           ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
         </div>`, root
@@ -450,23 +459,26 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+    <div class="list-wrapper">
       <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.storages}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
-                            .renderer="${this._boundTypeRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
-                            .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
-                            .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+                    .items="${this.storages}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="100px" resizable header="${_t('agent.BackendType')}"
+                              .renderer="${this._boundTypeRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="60px" header="${_t('agent.Resources')}"
+                              .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Capabilities')}"
+                              .renderer="${this._boundCapabilitiesRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="storage-proxy-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">

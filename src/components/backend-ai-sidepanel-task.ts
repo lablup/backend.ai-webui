@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -31,8 +31,6 @@ import {
  */
 @customElement('backend-ai-sidepanel-task')
 export default class BackendAiSidepanelTask extends BackendAIPage {
-  public shadowRoot: any;
-
   @property({type: Boolean}) active = true;
   @property({type: Array}) tasks = [];
 
@@ -44,7 +42,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAIWebUIStyles,
       IronFlex,
@@ -66,6 +64,15 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
         mwc-list {
           padding: 0;
           margin: 0;
+        }
+
+        mwc-list-item {
+          height: 100%;
+          margin-bottom: 10px;
+        }
+
+        .title {
+          white-space: pre-wrap;
         }
       `
     ];
@@ -89,9 +96,12 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     case 'image':
       return 'extension';
       break;
+    case 'commit':
+      return 'archive';
+      break;
     case 'general':
     default:
-      return 'widget';
+      return 'widgets';
       break;
     }
   }
@@ -106,7 +116,7 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     html`
           <mwc-list-item graphic="icon" twoline>
             <mwc-icon id="summary-menu-icon" slot="graphic" id="activities-icon" class="fg black">${this._taskIcon(item.tasktype)}</mwc-icon>
-            <span>${item.tasktitle}</span>
+            <span class="title">${item.tasktitle}</span>
             <span slot="secondary">${_t('sidepanel.Running')}</span>
           </mwc-list-item>
           <li divider role="separator"></li>`)}
@@ -129,19 +139,12 @@ export default class BackendAiSidepanelTask extends BackendAIPage {
     document.addEventListener('backend-ai-task-changed', () => this.refresh());
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
-  async refresh() {
+  refresh() {
     this.tasks = globalThis.tasker.taskstore;
-    await this.requestUpdate();
+    this.requestUpdate();
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'backend-ai-task-view': BackendAiSidepanelTask;

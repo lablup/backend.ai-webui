@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
@@ -43,11 +43,7 @@ import {
 export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -109,7 +105,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#usage-list').setAttribute('active', true);
+    (this.shadowRoot?.querySelector('#usage-list') as HTMLElement).setAttribute('active', 'true');
     this._status = 'active';
   }
 
@@ -119,18 +115,18 @@ export default class BackendAIStatisticsView extends BackendAIPage {
    * @param {EventTarget} tab - usage tab to want to show
    * */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
 
-    for (const el of els) {
+    for (const el of Array.from(els)) {
       el.style.display = 'none';
     }
 
-    this.shadowRoot.querySelector('#' + tab.title + '-stat').style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title + '-stat') as HTMLElement).style.display = 'block';
 
     els.forEach((e) => {
       e.children[0].removeAttribute('active');
     });
-    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute('active', true);
+    (this.shadowRoot?.querySelector(`#${tab.title}-list`) as HTMLElement).setAttribute('active', 'true');
   }
 
   render() {

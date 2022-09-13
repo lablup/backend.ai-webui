@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -28,11 +28,7 @@ import {
 export default class BackendAIErrorLogView extends BackendAIPage {
   @property({type: Object}) _lists = Object();
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -51,7 +47,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._lists = this.shadowRoot.querySelectorAll('backend-ai-session-list');
+    this._lists = this.shadowRoot?.querySelectorAll('backend-ai-session-list');
   }
 
   render() {

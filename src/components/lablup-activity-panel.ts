@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/button';
+import {Button} from 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 
@@ -28,7 +28,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('lablup-activity-panel')
 export default class LablupActivityPanel extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: String}) title = '';
   @property({type: String}) message = '';
   @property({type: String}) panelId = '';
@@ -48,11 +47,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) noheader = false;
   @property({type: Boolean}) scrollableY = false;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       IronFlex,
       IronFlexAlignment,
@@ -145,56 +140,58 @@ export default class LablupActivityPanel extends LitElement {
 
   firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
-      const button = this.shadowRoot.getElementById('button');
-      this.shadowRoot.querySelector('h4').removeChild(button);
-    }
-    if (this.autowidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.width = 'auto';
-    } else {
-      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + '%' : this.width + 'px';
+      const button = this.shadowRoot?.getElementById('button') as Button;
+      this.shadowRoot?.querySelector('h4')?.removeChild(button);
     }
 
+    const card = this.shadowRoot?.querySelector('.card') as HTMLDivElement;
+    const header = this.shadowRoot?.querySelector('#header') as HTMLHeadingElement;
+
+    if (this.autowidth) {
+      card.style.width = 'auto';
+    } else {
+      card.style.width = this.widthpct !== 0 ? this.widthpct + '%' : this.width + 'px';
+    }
 
     if (this.minwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + 'px';
+      card.style.minWidth = this.minwidth + 'px';
     }
+
     if (this.maxwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.maxwidth + 'px';
+      card.style.minWidth = this.maxwidth + 'px';
     }
-    if (this.horizontalsize) {
-      if (this.horizontalsize == '2x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 28) + 'px';
-      }
-      if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 56) + 'px';
-      }
-      if (this.horizontalsize == '4x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 84) + 'px';
-      }
+
+    if (this.horizontalsize === '2x') {
+      card.style.width = (this.width * 2 + 28) + 'px';
+    } else if (this.horizontalsize === '3x') {
+      card.style.width = (this.width * 3 + 56) + 'px';
+    } else if (this.horizontalsize == '4x') {
+      card.style.width = (this.width * 4 + 84) + 'px';
     }
-    (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + 'px';
+
+    card.style.margin = this.marginWidth + 'px';
     if (this.headerColor !== '') {
-      this.shadowRoot.querySelector('#header').style.backgroundColor = this.headerColor;
+      header.style.backgroundColor = this.headerColor;
     }
-    if (this.narrow === true) {
-      this.shadowRoot.querySelector('div.card > div').style.margin = '0';
-      this.shadowRoot.querySelector('div.card > h4').style.marginBottom = '0';
+
+    if (this.narrow) {
+      (this.shadowRoot?.querySelector('div.card > div') as HTMLDivElement).style.margin = '0';
+      header.style.marginBottom = '0';
     }
+
     if (this.height > 0) {
       this.height == 130 ?
-        this.shadowRoot.querySelector('div.card').style.height = 'fit-content' :
-        this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
+        card.style.height = 'fit-content' :
+        card.style.height = this.height + 'px';
     }
-    if (this.noheader === true) {
-      this.shadowRoot.querySelector('#header').style.display = 'none';
-    }
-    if (this.scrollableY) {
-      this.shadowRoot.querySelector('.card').style.overflowY = 'auto';
-    }
-  }
 
-  connectedCallback() {
-    super.connectedCallback();
+    if (this.noheader) {
+      header.style.display = 'none';
+    }
+
+    if (this.scrollableY) {
+      card.style.overflowY = 'auto';
+    }
   }
 
   _removePanel() {

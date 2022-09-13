@@ -1,6 +1,6 @@
 /*
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 //import Chart from '../lib/Chart.min';
 import Chart from 'chart.js/auto';
@@ -26,12 +26,12 @@ export default class ChartJs extends LitElement {
         }
       }
       this.chart.options = this.options;
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
         this.updateChart();
       }
 
     } else {
-      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && this.data != {} && this.options != {}) {
+      if (typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && this.type !== '' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
         this._initializeChart();
       }
     }
@@ -76,7 +76,7 @@ export default class ChartJs extends LitElement {
   }
 
   public firstUpdated(): void {
-    if (this.type != '' && this.data != {} && this.options != {}) {
+    if (this.type != '' && typeof this.data !== 'undefined' && typeof this.options !== 'undefined' && Object.keys(this.data).length !== 0 && Object.keys(this.options).length !== 0) {
       this._initializeChart();
     }
     if (this.height && this.width) {

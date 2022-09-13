@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -23,7 +23,6 @@ import 'weightless/card';
 import '@material/mwc-icon/mwc-icon';
 
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 /**
  Backend.AI Information View
@@ -57,11 +56,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

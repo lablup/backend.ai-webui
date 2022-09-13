@@ -1,22 +1,22 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import 'weightless/icon';
 import 'weightless/card';
 import '@material/mwc-checkbox';
-import '@material/mwc-button';
-import '@material/mwc-textfield';
+import {Button} from '@material/mwc-button';
+import {TextField} from '@material/mwc-textfield';
 import '@material/mwc-icon-button-toggle';
 import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import '../lib/backend.ai-client-es6';
+import {Client} from '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -25,6 +25,12 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import {BackendAIPage} from './backend-ai-page';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type LablupTermsOfService = HTMLElementTagNameMap['lablup-terms-of-service'];
 
 /**
  Backend.AI Signup feature for GUI Console
@@ -48,18 +54,21 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({type: String}) errorMsg = '';
   @property({type: String}) endpoint = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) signupPanel = Object();
-  @property({type: Object}) blockPanel = Object();
   @property({type: Object}) client;
   @property({type: String}) TOSlanguage = 'en';
-  @property({type: Object}) TOSdialog = Object();
   @property({type: Boolean}) allowSignupWithoutConfirmation;
+  @query('#id_user_email') userEmailInput!: TextField;
+  @query('#id_user_name') userNameInput!: TextField;
+  @query('#id_token') tokenInput!: TextField;
+  @query('#id_password1') passwordInput!: TextField;
+  @query('#id_password2') passwordConfirmInput!: TextField;
+  @query('#signup-button') signupButton!: Button;
+  @query('#signup-panel') signupPanel!: BackendAIDialog;
+  @query('#block-panel') blockPanel!: BackendAIDialog;
+  @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
+  @query('#block-panel') TOSdialog!: LablupTermsOfService;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -105,7 +114,7 @@ export default class BackendAiSignup extends BackendAIPage {
           mwc-button {
             background-image: none;
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-button[unelevated] {
@@ -119,7 +128,7 @@ export default class BackendAiSignup extends BackendAIPage {
             --mdc-button-disabled-outline-color: var(--general-button-background-color);
             --mdc-button-disabled-ink-color: var(--general-button-background-color);
             --mdc-theme-primary: var(--general-button-background-color);
-            --mdc-on-theme-primary: var(--general-button-background-color);
+            --mdc-theme-on-primary: var(--general-button-color);
           }
 
           mwc-checkbox {
@@ -129,11 +138,8 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.signupPanel = this.shadowRoot.querySelector('#signup-panel');
-    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
-    this.TOSdialog = this.shadowRoot.querySelector('#terms-of-service');
-    const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
+    const textfields = Array.from(this.shadowRoot?.querySelectorAll('mwc-textfield') as NodeListOf<TextField>);
     for (const textfield of textfields) {
       this._addInputValidator(textfield);
     }
@@ -162,7 +168,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
       this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
-      this.TOSdialog.title = _t('webui.menu.TermsOfService');
+      this.TOSdialog.title = _t('webui.menu.TermsOfService') as string;
       this.TOSdialog.tosEntry = 'terms-of-service';
       this.TOSdialog.open();
     }
@@ -172,7 +178,7 @@ export default class BackendAiSignup extends BackendAIPage {
     if (this.TOSdialog.show === false) {
       this.TOSdialog.tosContent = '';
       this.TOSdialog.tosLanguage = globalThis.backendaioptions.get('language');
-      this.TOSdialog.title = _t('webui.menu.PrivacyPolicy');
+      this.TOSdialog.title = _t('webui.menu.PrivacyPolicy') as string;
       this.TOSdialog.tosEntry = 'privacy-policy';
       this.TOSdialog.open();
     }
@@ -193,7 +199,7 @@ export default class BackendAiSignup extends BackendAIPage {
 
   init_client() {
     if (typeof this.client === 'undefined') {
-      if (this.endpoint !== '' && this.client !== {}) {
+      if (this.endpoint !== '' && this.client && Object.keys(this.client).length !== 0) {
         const clientConfig = {
           connectionMode: 'SESSION',
           apiVersionMajor: 'v4',
@@ -201,7 +207,7 @@ export default class BackendAiSignup extends BackendAIPage {
           _apiVersion: 'v4.20190615',
           endpoint: this.endpoint
         };
-        this.client = new ai.backend.Client(
+        this.client = new Client(
           clientConfig,
           `Backend.AI Console.`,
         );
@@ -229,41 +235,41 @@ export default class BackendAiSignup extends BackendAIPage {
 
   _clearUserInput() {
     this._toggleInputField(true);
-    let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    let inputFields = [this.userEmailInput, this.tokenInput, this.passwordInput, this.passwordConfirmInput];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el) => el !== this.tokenInput);
     }
-    inputFields.forEach((el: string) => {
-      this.shadowRoot.querySelector(el).value = '';
+    inputFields.forEach((el) => {
+      el.value = '';
     });
-    this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.Signup');
+    (this.shadowRoot?.querySelector('#signup-button-message') as HTMLSpanElement).innerHTML = _text('signup.Signup');
   }
 
   _toggleInputField(isActive: boolean) {
-    let inputFields: Array<string> = ['#id_user_name', '#id_token', '#signup-button'];
+    let inputFields = [this.userNameInput, this.tokenInput, this.signupButton];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el) => el !== this.tokenInput);
     }
-    inputFields.forEach((el: string) => {
+    inputFields.forEach((el) => {
       if (isActive) {
-        this.shadowRoot.querySelector(el).removeAttribute('disabled');
+        el.removeAttribute('disabled');
       } else {
-        this.shadowRoot.querySelector(el).removeAttribute('disabled', 'true');
+        el.setAttribute('disabled', 'true');
       }
     });
   }
 
   _signup() {
-    let inputFields: Array<string> = ['#id_user_email', '#id_token', '#id_password1', '#id_password2'];
+    let inputFields = [this.userEmailInput, this.tokenInput, this.passwordInput, this.passwordConfirmInput];
     if (this.allowSignupWithoutConfirmation) {
-      inputFields = inputFields.filter((el: string) => el !== '#id_token')
+      inputFields = inputFields.filter((el) => el !== this.tokenInput);
     }
-    const inputFieldsValidity: Array<boolean> = inputFields.map((el: string) => {
-      this.shadowRoot.querySelector(el).reportValidity();
-      return this.shadowRoot.querySelector(el).checkValidity();
+    const inputFieldsValidity = inputFields.map((el) => {
+      el.reportValidity();
+      return el.checkValidity();
     });
 
-    const approved = (this.shadowRoot.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
+    const approved = (this.shadowRoot?.querySelector('#approve-terms-of-service') as HTMLInputElement).checked;
     if (approved === false) {
       this.notification.text = _text('signup.RequestAgreementTermsOfService');
       this.notification.show();
@@ -274,10 +280,10 @@ export default class BackendAiSignup extends BackendAIPage {
     if (inputFieldsValidity.includes(false)) {
       return;
     }
-    const token = (this.shadowRoot.querySelector('#id_token') as HTMLInputElement)?.value;
-    const user_email = (this.shadowRoot.querySelector('#id_user_email') as HTMLInputElement).value;
-    const user_name = (this.shadowRoot.querySelector('#id_user_name') as HTMLInputElement).value;
-    const password = (this.shadowRoot.querySelector('#id_password1') as HTMLInputElement).value;
+    const token = this.tokenInput.value;
+    const user_email = this.userEmailInput.value;
+    const user_name = this.userNameInput.value;
+    const password = this.passwordInput.value;
     this.notification.text = _text('signup.Processing');
     this.notification.show();
     const body = {
@@ -293,14 +299,14 @@ export default class BackendAiSignup extends BackendAIPage {
     const rqst = this.client.newSignedRequest('POST', `/auth/signup`, body);
     this.client._wrapWithPromise(rqst).then((response) => {
       this._toggleInputField(false);
-      this.shadowRoot.querySelector('#signup-button-message').innerHTML = _text('signup.SignupSucceeded');
+      (this.shadowRoot?.querySelector('#signup-button-message') as HTMLSpanElement).innerHTML = _text('signup.SignupSucceeded');
       this.notification.text = _text('signup.SignupSucceeded');
       this.notification.show();
       setTimeout(() => {
         this.signupPanel.hide();
         this._clearUserInput();
-        if(!this.allowSignupWithoutConfirmation) {
-          this.shadowRoot.querySelector('#email-sent-dialog').show();
+        if (!this.allowSignupWithoutConfirmation) {
+          this.emailSentDialog.show();
         }
       }, 1000);
     }).catch((e) => {
@@ -332,17 +338,16 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _validateEmail() {
-    const emailInput = this.shadowRoot.querySelector('#id_user_email');
-    emailInput.validityTransform = (newValue, nativeValidity) => {
+    this.userEmailInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          emailInput.validationMessage = _text('signup.EmailInputRequired');
+          this.userEmailInput.validationMessage = _text('signup.EmailInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          emailInput.validationMessage = _text('signup.InvalidEmail');
+          this.userEmailInput.validationMessage = _text('signup.InvalidEmail');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -351,12 +356,13 @@ export default class BackendAiSignup extends BackendAIPage {
       } else {
         // custom validation for email address using regex
         const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-        const isValid = regex.exec(emailInput.value);
+        const isValid = regex.exec(this.userEmailInput.value);
         if (!isValid) {
-          emailInput.validationMessage = _text('signup.InvalidEmail');
+          this.userEmailInput.validationMessage = _text('signup.InvalidEmail');
         }
         return {
-          valid: isValid,
+          // TODO clear return required
+          valid: !!isValid,
           customError: !isValid
         };
       }
@@ -364,19 +370,17 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _validatePassword1() {
-    const passwordInput = this.shadowRoot.querySelector('#id_password1');
-    const password2Input = this.shadowRoot.querySelector('#id_password2');
-    password2Input.reportValidity();
-    passwordInput.validityTransform = (newValue, nativeValidity) => {
+    this.passwordConfirmInput.reportValidity();
+    this.passwordInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          this.passwordInput.validationMessage = _text('signup.PasswordInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          this.passwordInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -392,17 +396,16 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   _validatePassword2() {
-    const password2Input = this.shadowRoot.querySelector('#id_password2');
-    password2Input.validityTransform = (newValue, nativeValidity) => {
+    this.passwordConfirmInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          this.passwordConfirmInput.validationMessage = _text('signup.PasswordInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          this.passwordConfirmInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -410,10 +413,9 @@ export default class BackendAiSignup extends BackendAIPage {
         }
       } else {
         // custom validation for password input match
-        const passwordInput = this.shadowRoot.querySelector('#id_password1');
-        const isMatched = (passwordInput.value === password2Input.value);
+        const isMatched = (this.passwordInput.value === this.passwordConfirmInput.value);
         if (!isMatched) {
-          password2Input.validationMessage = _text('signup.PasswordNotMatched');
+          this.passwordConfirmInput.validationMessage = _text('signup.PasswordNotMatched');
         }
         return {
           valid: isMatched,
@@ -433,8 +435,8 @@ export default class BackendAiSignup extends BackendAIPage {
     return html`
       <backend-ai-dialog id="signup-panel" fixed blockscrolling persistent disablefocustrap>
         <span slot="title">${this.allowSignupWithoutConfirmation ? html`
-          ${_t('signup.Signup')}` : 
-            html`${_t('signup.SignupBETA')}
+          ${_t('signup.Signup')}` :
+    html`${_t('signup.SignupBETA')}
           `}
         </span>
         <div slot="content" class="vertical flex layout">

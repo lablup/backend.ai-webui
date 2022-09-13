@@ -129,6 +129,7 @@
       "Environments": "Ympäristöt",
       "Start": "alkaa",
       "FolderToMount": "Asennettava kansio",
+      "FolderToMountList": "Asennettava kansio",
       "ResourceAllocation": "Resurssien kohdentaminen",
       "NoSuitablePreset": "Ei sopivaa esiasetusta",
       "Advanced": "Pitkälle kehittynyt",
@@ -763,7 +764,10 @@
     "ResourceGroupDeleted": "Resurssiryhmä poistettu",
     "EnterValidResourceGroupName": "Anna kelvollinen resurssiryhmän nimi",
     "ResourceGroupNameRequired": "Resurssiryhmän nimi vaaditaan.",
-    "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa."
+    "ResourceGroupAlreadyExist": "Samanniminen resurssiryhmä on jo olemassa.",
+    "SetSchedulerOptions": "Aseta ajoitusasetukset",
+    "TimeoutSeconds": "Sekuntia",
+    "ResourceGroupDetail": "Resurssiryhmän tiedot"
   },
   "maintenance": {
     "General": "Kenraali",
@@ -1053,7 +1057,14 @@
     "FolderName": "Tuodun kansion nimi:",
     "NotebookBadgeCodeHTML": "Muistikirjan tunnus (HTML)",
     "NotebookBadgeCodeMarkdown": "Muistikirjan tunnuskoodi (Markdown)",
-    "Installed": "Asennettu"
+    "Installed": "Asennettu",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Tämän kuukauden tilastot",
@@ -1112,6 +1123,7 @@
     "20chars": "(enintään 20 merkkiä)",
     "40chars": "(enintään 40 merkkiä)",
     "64chars": "(enintään 64 merkkiä)",
+    "200chars": "(enintään 200 merkkiä)",
     "255chars": "(enintään 255 merkkiä)",
     "500chars": "(enintään 500 merkkiä)",
     "512chars": "(enintään 512 merkkiä)",

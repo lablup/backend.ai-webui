@@ -1,13 +1,13 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import 'weightless/button';
-import 'weightless/dialog';
+import {Dialog} from 'weightless/dialog';
 import 'weightless/icon';
 
 /**
@@ -27,20 +27,14 @@ import 'weightless/icon';
  */
 @customElement('backend-ai-splash')
 export default class BackendAISplash extends LitElement {
-  public shadowRoot: any; // ShadowRoot
-  @property({type: Object}) dialog = Object();
   @property({type: String}) edition = 'Open Source';
   @property({type: String}) license = 'Subscription';
   @property({type: String}) validUntil = '';
   @property({type: String}) version = '';
   @property({type: String}) managerVersion = '';
+  @query('wl-dialog') dialog!: Dialog;
 
-
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -94,14 +88,6 @@ export default class BackendAISplash extends LitElement {
       `];
   }
 
-  firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('wl-dialog');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
   show() {
     this.edition = globalThis.packageEdition;
     this.validUntil = globalThis.packageValidUntil;
@@ -128,8 +114,8 @@ export default class BackendAISplash extends LitElement {
     return html`
       <wl-dialog id="splash-panel" fixed backdrop blockscrolling persistent>
         <div class="splash-header">
-          <img src="manifest/backend.ai-text.svg" style="height:50px;padding:35px 20px;" />
-          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${() => this.hide()}">
+          <img src="manifest/backend.ai-text.svg" style="height: 50px; padding: 35px 20px;" alt="backend.ai" />
+          <wl-button style="position:absolute;top:0;right:0;" fab flat inverted @click="${this.hide}">
             <wl-icon>close</wl-icon>
           </wl-button>
         </div>
@@ -146,7 +132,7 @@ export default class BackendAISplash extends LitElement {
           </ul>
           <ul>
             <li>Powered by <a target="_blank" href="https://github.com/lablup/backend.ai/blob/master/LICENSE">open-source software</a></li>
-            <li class="copyright">Copyright &copy; 2015-2021 Lablup Inc.</li>
+            <li class="copyright">Copyright &copy; 2015-2022 Lablup Inc.</li>
             <li class="release-note">
               <a target="_blank" href="https://github.com/lablup/backend.ai-webui/releases/tag/v${this.version}">Release Note</a>
               <a target="_blank" href="https://github.com/lablup/backend.ai-webui/blob/main/LICENSE">License</a>

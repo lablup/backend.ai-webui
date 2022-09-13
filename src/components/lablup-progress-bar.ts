@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -29,7 +29,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-progress-bar')
 export default class LablupProgressBar extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) progressBar;
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
@@ -105,9 +104,9 @@ export default class LablupProgressBar extends LitElement {
   }
 
   firstUpdated() {
-    this.progressBar = this.shadowRoot.querySelector('#front');
-    this.frontDesc = this.shadowRoot.querySelector('#front');
-    this.backDesc = this.shadowRoot.querySelector('#back');
+    this.progressBar = this.shadowRoot?.querySelector('#front');
+    this.frontDesc = this.shadowRoot?.querySelector('#front');
+    this.backDesc = this.shadowRoot?.querySelector('#back');
     this.progressBar.style.clipPath = 'inset(0 0 0 0%)';
   }
 
