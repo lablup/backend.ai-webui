@@ -554,13 +554,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
 
-    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group', 'service_ports'], sessionUuid);
     if (kInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
 
       this.notification.show();
       return Promise.resolve(false);
+    }
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
+    if (servicePortInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+
+      this.notification.show();
+      return Promise.resolve(false);      
     }
 
     // Apply v1 when executing in electron mode
@@ -594,6 +602,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
+    uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
       method: 'GET',
