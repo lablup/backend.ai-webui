@@ -1436,7 +1436,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         ${rowData.item.is_owner ? html`
-          <div class="horizontal center-justified center layout">
+          <div class="horizontal center-justified center layout" style="pointer-events: none;">
             <mwc-icon-button class="fg green" icon="done"></mwc-icon-button>
           </div>`: html``}
       `, root
