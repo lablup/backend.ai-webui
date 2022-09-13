@@ -102,6 +102,10 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
+    this.app.get('/status', (req, res) => {
+      res.send({'api_version': 'v1'})
+    })
+
     this.app.get('/proxy/:token/:sessionId', (req, res) => {
       let sessionId = req.params["sessionId"];
       if (!this._config) {
