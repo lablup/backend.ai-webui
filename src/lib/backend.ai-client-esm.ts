@@ -30,7 +30,7 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-  constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
+  constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
@@ -117,9 +117,9 @@ class ClientConfig {
    */
   static createFromEnv() {
     return new this(
-      process.env.BACKEND_ACCESS_KEY,
-      process.env.BACKEND_SECRET_KEY,
-      process.env.BACKEND_ENDPOINT
+      process.env.BACKEND_ACCESS_KEY ?? '',
+      process.env.BACKEND_SECRET_KEY ?? '',
+      process.env.BACKEND_ENDPOINT ?? ''
     );
   }
 }
@@ -182,11 +182,11 @@ class Client {
    * @param {ClientConfig} config - the API client-side configuration
    * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
    */
-  constructor(config, agentSignature) {
+  constructor(config: ClientConfig, agentSignature: string) {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.11.0';
+    this.clientVersion = '22.09.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -266,7 +266,7 @@ class Client {
     let errorDesc = '';
     let resp, body, requestTimer;
     try {
-      if (rqst.method == 'GET') {
+      if (rqst.method === 'GET') {
         rqst.body = undefined;
       }
       if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
@@ -411,7 +411,7 @@ class Client {
         previous_log = previous_log.slice(1, 3000);
       }
     }
-    let log_stack = Array();
+    let log_stack = [];
     if (typeof (resp) === 'undefined') {
       resp = {
         status: 'No status',
@@ -774,7 +774,7 @@ class Client {
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    * @param {string} architecture - image architecture
   */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
+  async createIfNotExists(kernelType: string, sessionId: string, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
     if (typeof sessionId === 'undefined' || sessionId === null)
       sessionId = this.generateSessionId();
     let params = {
@@ -1056,7 +1056,7 @@ class Client {
    * @param {string} mode - either "query", "batch", "input", or "continue"
    * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
    */
-  async execute(sessionId, runId, mode, code, opts, timeout = 0) {
+  async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
     let params = {
       "mode": mode,
       "code": code,
@@ -1087,7 +1087,7 @@ class Client {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
-  async rename(sessionId, newId) {
+  async rename(sessionId: string, newId: string) {
     let params = {
       'name': newId
     }
@@ -1095,7 +1095,7 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async shutdown_service(sessionId, service_name) {
+  async shutdown_service(sessionId: string, service_name: string) {
     let params = {
       'service_name': service_name
     };
@@ -1104,7 +1104,7 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async upload(sessionId, path, fs) {
+  async upload(sessionId: string, path, fs) {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
@@ -1112,7 +1112,7 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async download(sessionId, files) {
+  async download(sessionId: string, files) {
     let params = {
       'files': files
     };
@@ -1271,6 +1271,15 @@ class Client {
     return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
   }
 
+  /**
+   * Crate new Public request.
+   * Use this for authorized public APIs.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {string} urlPrefix - prefix to bind at the beginning of URL
+  */
   newPublicRequest(method, queryString, body, urlPrefix) {
     let d = new Date();
     let hdrs = new Headers({
