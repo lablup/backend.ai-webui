@@ -7,6 +7,29 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
 
+type colorType = {
+  colorB: string,
+  colorT: string | undefined
+};
+
+type colorSchemeType = {
+  [index: string]: colorType
+  "brightgreen": colorType
+  "lightgreen": colorType
+  "green": colorType
+  "darkgreen": colorType
+  "yellow": colorType
+  "yellowgreen": colorType
+  "orange": colorType
+  "red": colorType
+  "blue": colorType
+  "purple": colorType
+  "lightblue": colorType
+  "grey": colorType
+  "gray": colorType
+  "lightgrey": colorType
+  "lightgray": colorType
+};
 /**
  `<lablup-shields>` is a complement webcomponent of shields.io
 
@@ -22,12 +45,8 @@ export default class LablupShields extends LitElement {
   @property({type: String}) app = '';
   @property({type: String}) description = '';
   @property({type: String}) color = 'green';
-  @property({type: String}) appColor = 'grey';
+  @property({type: String}) appColor = "grey";
   @property({type: String}) ui = 'flat';
-
-  constructor() {
-    super();
-  }
 
   static get styles() {
     return [
@@ -59,25 +78,26 @@ export default class LablupShields extends LitElement {
         }
       `];
   }
-
+    
   get _colorScheme() {
-    return {
+    const colorPalette: colorSchemeType = {
       "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
       "lightgreen": {"colorB": "#f3f5d0", "colorT": "#222222"},
-      "green": {"colorB": "#97ca00"},
-      "darkgreen": {"colorB": "#457b3b"},
-      "yellow": {"colorB": "#dfb317"},
-      "yellowgreen": {"colorB": "#a4a61d"},
-      "orange": {"colorB": "#fe7d37"},
-      "red": {"colorB": "#e05d44"},
-      "blue": {"colorB": "#007ec6"},
-      "purple": {"colorB": "#ab47bc"},
+      "green": {"colorB": "#97ca00", "colorT": "#cccccc"},
+      "darkgreen": {"colorB": "#457b3b", "colorT": "#cccccc"},
+      "yellow": {"colorB": "#dfb317", "colorT": "#cccccc"},
+      "yellowgreen": {"colorB": "#a4a61d", "colorT": "#cccccc"},
+      "orange": {"colorB": "#fe7d37", "colorT": "#cccccc"},
+      "red": {"colorB": "#e05d44", "colorT": "#cccccc"},
+      "blue": {"colorB": "#007ec6", "colorT": "#cccccc"},
+      "purple": {"colorB": "#ab47bc", "colorT": "#cccccc"},
       "lightblue": {"colorB": "#caedfc", "colorT": "#222222"},
-      "grey": {"colorB": "#555555"},
-      "gray": {"colorB": "#555555"},
-      "lightgrey": {"colorB": "#9f9f9f"},
-      "lightgray": {"colorB": "#9f9f9f"}
-    }
+      "grey": {"colorB": "#555555", "colorT": "#cccccc"},
+      "gray": {"colorB": "#555555", "colorT": "#cccccc"},
+      "lightgrey": {"colorB": "#9f9f9f", "colorT": "#cccccc"},
+      "lightgray": {"colorB": "#9f9f9f", "colorT": "#cccccc"}
+    };
+    return colorPalette;
   }
 
   render() {
@@ -108,7 +128,7 @@ export default class LablupShields extends LitElement {
     super.connectedCallback();
   }
 
-  attributeChangedCallback(name, oldval, newval) {
+  attributeChangedCallback(name: string, oldval: any, newval: any) {
     super.attributeChangedCallback(name, oldval, newval);
     if (name == 'app') {
       this.app = newval;
@@ -120,7 +140,7 @@ export default class LablupShields extends LitElement {
     }
   }
 
-  updated(changedProps) {
+  updated(changedProps: any) {
     if (changedProps.has("color")) {
       this._colorChanged();
     }
