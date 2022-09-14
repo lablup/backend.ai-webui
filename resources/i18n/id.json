@@ -347,7 +347,8 @@
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
     "ForceTerminate": "Hentikan paksa",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Atur Ulang"
   },
   "agent": {
     "Endpoint": "Titik akhir",

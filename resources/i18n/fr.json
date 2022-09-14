@@ -347,7 +347,8 @@
     "Continue": "Continuer",
     "GoBackToSummaryPage": "Revenir à la page Résumé",
     "ForceTerminate": "Forcer l'arrêt",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Réinitialisation"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
