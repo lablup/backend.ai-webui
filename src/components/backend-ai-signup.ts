@@ -203,7 +203,7 @@ export default class BackendAiSignup extends BackendAIPage {
         const clientConfig = new ClientConfig('', '', this.endpoint, 'SESSION');
         this.client = new Client(
           clientConfig,
-          `Backend.AI Console.`,
+          `Backend.AI WebUI.`,
         );
       }
     }
