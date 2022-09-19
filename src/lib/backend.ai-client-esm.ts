@@ -8,6 +8,19 @@ Licensed under MIT
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
 
+
+type requestInfo = {
+  method: string,
+  headers: Headers,
+  mode?: RequestMode | undefined,
+  body?: any | undefined,
+  cache?: RequestCache | undefined,
+  uri: string,
+  credentials?: RequestCredentials | undefined,
+  signal?:AbortController["signal"] | undefined,
+};
+
+
 class ClientConfig {
   public _apiVersionMajor: string;
   public _apiVersion: string;
@@ -30,7 +43,7 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-  constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
+  constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
@@ -42,9 +55,9 @@ class ClientConfig {
     if (connectionMode === 'API') { // API mode
       // dynamic configs
       if (accessKey === undefined || accessKey === null)
-        throw 'You must set accessKey! (either as argument or environment variable)';
+        throw new Error('You must set accessKey! (either as argument or environment variable)');
       if (secretKey === undefined || secretKey === null)
-        throw 'You must set secretKey! (either as argument or environment variable)';
+        throw new Error('You must set secretKey! (either as argument or environment variable)');
       this._accessKey = accessKey;
       this._secretKey = secretKey;
       this._userId = '';
@@ -52,9 +65,9 @@ class ClientConfig {
     } else { // Session mode
       // dynamic configs
       if (accessKey === undefined || accessKey === null)
-        throw 'You must set user id! (either as argument or environment variable)';
+        throw new Error('You must set user id! (either as argument or environment variable)');
       if (secretKey === undefined || secretKey === null)
-        throw 'You must set password! (either as argument or environment variable)';
+        throw new Error('You must set password! (either as argument or environment variable)');
       this._accessKey = '';
       this._secretKey = '';
       this._userId = accessKey;
@@ -117,9 +130,9 @@ class ClientConfig {
    */
   static createFromEnv() {
     return new this(
-      process.env.BACKEND_ACCESS_KEY,
-      process.env.BACKEND_SECRET_KEY,
-      process.env.BACKEND_ENDPOINT
+      process.env.BACKEND_ACCESS_KEY ?? '',
+      process.env.BACKEND_SECRET_KEY ?? '',
+      process.env.BACKEND_ENDPOINT ?? ''
     );
   }
 }
@@ -182,11 +195,11 @@ class Client {
    * @param {ClientConfig} config - the API client-side configuration
    * @param {string} agentSignature - an extra string that will be appended to User-Agent headers when making API requests
    */
-  constructor(config, agentSignature) {
+  constructor(config: ClientConfig, agentSignature: string) {
     this.code = null;
     this.sessionId = null;
     this.kernelType = null;
-    this.clientVersion = '20.11.0';
+    this.clientVersion = '22.09.0';
     this.agentSignature = agentSignature;
     if (config === undefined) {
       this._config = ClientConfig.createFromEnv();
@@ -252,21 +265,21 @@ class Client {
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
-   * @param {Request} rqst - Request object to send
+   * @param {requestInfo} rqst - Request object to send
    * @param {Boolean} rawFile - True if it is raw request
    * @param {AbortController.signal} signal - Request signal to abort fetch
    * @param {number} timeout - Custom timeout (sec.) If no timeout is given, default timeout is used.
    * @param {number} retry - an integer to retry this request
    * @param {Object} opts - Options
    */
-  async _wrapWithPromise(rqst, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
+  async _wrapWithPromise(rqst: requestInfo, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
     let errorDesc = '';
     let resp, body, requestTimer;
     try {
-      if (rqst.method == 'GET') {
+      if (rqst.method === 'GET') {
         rqst.body = undefined;
       }
       if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
@@ -290,23 +303,16 @@ class Client {
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
       if (rawFile === false && contentType === null) {
-        if (resp.blob === undefined)
-          body = await resp.buffer();  // for node-fetch
-        else
-          body = await resp.blob();
-      } else if (rawFile === false && (contentType.startsWith('application/json') ||
-          contentType.startsWith('application/problem+json'))) {
+        body = await resp.blob();
+      } else if (rawFile === false && (contentType?.startsWith('application/json') ||
+          contentType?.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
-      } else if (rawFile === false && contentType.startsWith('text/')) {
+      } else if (rawFile === false && contentType?.startsWith('text/')) {
         body = await resp.text();
       } else {
-        if (resp.blob === undefined) {
-          body = await resp.buffer();  // for node-fetch
-        } else {
-          body = await resp.blob();
-        }
+        body = await resp.blob();
       }
       errorType = Client.ERR_SERVER;
       if (!resp.ok) {
@@ -318,7 +324,7 @@ class Client {
         return this._wrapWithPromise(rqst, rawFile, signal, timeout, retry - 1, opts);
       }
       let error_message;
-      if (typeof err == 'object' && err.constructor === Object && 'title' in err) {
+      if (typeof err == 'object' && err?.constructor === Object && 'title' in err) {
         error_message = err.title; // formatted message
       } else {
         error_message = err;
@@ -411,7 +417,7 @@ class Client {
         previous_log = previous_log.slice(1, 3000);
       }
     }
-    let log_stack = Array();
+    let log_stack : Record<string, unknown>[] = [];
     if (typeof (resp) === 'undefined') {
       resp = {
         status: 'No status',
@@ -774,8 +780,8 @@ class Client {
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    * @param {string} architecture - image architecture
   */
-  async createIfNotExists(kernelType, sessionId, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
-    if (typeof sessionId === 'undefined' || sessionId === null)
+  async createIfNotExists(kernelType: string, sessionId: string, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
+    if (typeof sessionId === 'undefined' || sessionId === null || sessionId === '')
       sessionId = this.generateSessionId();
     let params = {
       "lang": kernelType,
@@ -1056,7 +1062,7 @@ class Client {
    * @param {string} mode - either "query", "batch", "input", or "continue"
    * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
    */
-  async execute(sessionId, runId, mode, code, opts, timeout = 0) {
+  async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
     let params = {
       "mode": mode,
       "code": code,
@@ -1068,7 +1074,7 @@ class Client {
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  createKernel(kernelType, sessionId = undefined, resources = {}, timeout = 0) {
+  createKernel(kernelType, sessionId: string = '', resources = {}, timeout = 0) {
     return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
   }
 
@@ -1087,7 +1093,7 @@ class Client {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
-  async rename(sessionId, newId) {
+  async rename(sessionId: string, newId: string) {
     let params = {
       'name': newId
     }
@@ -1095,7 +1101,7 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async shutdown_service(sessionId, service_name) {
+  async shutdown_service(sessionId: string, service_name: string) {
     let params = {
       'service_name': service_name
     };
@@ -1104,7 +1110,7 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async upload(sessionId, path, fs) {
+  async upload(sessionId: string, path, fs) {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
@@ -1112,7 +1118,7 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async download(sessionId, files) {
+  async download(sessionId: string, files) {
     let params = {
       'files': files
     };
@@ -1248,13 +1254,12 @@ class Client {
         requestBody = this.getEncodedPayload(requestBody);
       }
     }
-
     let requestInfo = {
       method: method,
-      headers: hdrs,
-      cache: 'default',
+      headers: hdrs as Headers,
+      cache: 'default' as RequestCache,
       body: requestBody,
-      uri: uri
+      uri: uri as string
     };
     return requestInfo;
   }
@@ -1271,7 +1276,16 @@ class Client {
     return this.newPublicRequest(method, queryString, body, this._config.apiVersionMajor);
   }
 
-  newPublicRequest(method, queryString, body, urlPrefix) {
+  /**
+   * Crate new Public request.
+   * Use this for authorized public APIs.
+   *
+   * @param {string} method - the HTTP method
+   * @param {string} queryString - the URI path and GET parameters
+   * @param {any} body - an object that will be encoded as JSON in the request body
+   * @param {string} urlPrefix - prefix to bind at the beginning of URL
+  */
+  newPublicRequest(method: string, queryString: string, body: any, urlPrefix = '') {
     let d = new Date();
     let hdrs = new Headers({
       "Content-Type": "application/json",
@@ -1284,9 +1298,9 @@ class Client {
     //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
       method: method,
-      headers: hdrs,
-      mode: 'cors',
-      cache: 'default',
+      headers: hdrs as Headers,
+      mode: 'cors' as RequestMode,
+      cache: 'default' as RequestCache,
       uri: ''
     };
     if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
@@ -2149,7 +2163,7 @@ class AgentSummary {
    * @param {array} fields - Fields to query. Queryable fields are:  id, status, scaling_group, schedulable, schedulable, available_slots, occupied_slots.
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
-   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.) 
+   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots", "architecture"],
               limit = 20, offset = 0, timeout:number = 0) {
