@@ -1,5 +1,5 @@
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.3.0)
 ====================================================================
 
 (C) Copyright 2016-2022 Lablup Inc.
@@ -7,7 +7,7 @@ Licensed under MIT
 */
 /*jshint esnext: true */
 import CryptoES from 'crypto-es';
-
+//var CryptoES = require("crypto-js"); /* Exclude for ES6 */
 
 type requestInfo = {
   method: string,
@@ -4492,7 +4492,7 @@ const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
 };
-/*
+/* For Node.JS library
 // for use like "ai.backend.Client"
 module.exports.backend = backend;
 // for classical uses
@@ -4502,5 +4502,6 @@ module.exports.ClientConfig = ClientConfig;
 module.exports.BackendAIClient = Client;
 module.exports.BackendAIClientConfig = ClientConfig;
 */
+/* For ESModule export */
 export {backend, Client, ClientConfig}
 export default backend;

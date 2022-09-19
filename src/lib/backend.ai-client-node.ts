@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.9.0)
 ====================================================================
 
 (C) Copyright 2016-2022 Lablup Inc.
@@ -19,6 +19,17 @@ const querystring = require('querystring');
 interface Window {
   backendaiclient: any;
 }
+
+type requestInfo = {
+  method: string,
+  headers: Headers,
+  mode?: RequestMode | undefined,
+  body?: any | undefined,
+  cache?: RequestCache | undefined,
+  uri: string,
+  credentials?: RequestCredentials | undefined,
+  signal?:AbortController["signal"] | undefined,
+};
 
 class ClientConfig {
   public _apiVersionMajor: string;
@@ -42,7 +53,7 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-  constructor(accessKey, secretKey, endpoint, connectionMode = 'API') {
+   constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
