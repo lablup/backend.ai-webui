@@ -102,6 +102,10 @@ class Manager extends EventEmitter {
       res.send(rtn);
     });
 
+    this.app.get('/status', (req, res) => {
+      res.send({'api_version': 'v1'})
+    })
+
     this.app.get('/proxy/:token/:sessionId', (req, res) => {
       let sessionId = req.params["sessionId"];
       if (!this._config) {
@@ -128,6 +132,7 @@ class Manager extends EventEmitter {
       let p = sessionId + "|" + app;
       let args = req.query.args ? JSON.parse(decodeURI(req.query.args)) : {};
       let envs = req.query.envs ? JSON.parse(decodeURI(req.query.envs)) : {};
+      const protocol = req.query.protocol || 'http';
       let gateway;
       let ip = this.listen_ip;
       //let port = undefined;

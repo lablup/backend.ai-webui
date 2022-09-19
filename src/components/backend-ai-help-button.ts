@@ -43,11 +43,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     'usersettings': 'user_settings/user_settings.html'
   };
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [css`
     mwc-icon-button {
       color: white;
@@ -57,10 +53,6 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   firstUpdated() {
     this.currentPage;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   get currentPage() {

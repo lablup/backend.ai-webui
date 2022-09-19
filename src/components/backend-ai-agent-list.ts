@@ -15,7 +15,7 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
-import '@material/mwc-switch';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
@@ -24,7 +24,8 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus from './backend-ai-list-status';
+import BackendAIDialog from './backend-ai-dialog';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -66,14 +67,15 @@ type LiveStat = {
 
 @customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
+  private _enableAgentSchedulable = false;
+
   @property({type: String}) condition = 'running';
+  @property({type: String}) list_condition = 'loading';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) agentDetailDialog = Object();
-  @property({type: Object}) agentSettingDialog = Object();
   @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
@@ -84,15 +86,14 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
-  @property({type: String}) listCondition = 'loading';
+  @query('#agent-detail') agentDetailDialog!: BackendAIDialog;
+  @query('#agent-setting') agentSettingDialog!: BackendAIDialog;
+  @query('#schedulable-switch') schedulableToggle!: Switch;
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @query('vaadin-grid') private _agentGrid;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -109,7 +110,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         .agent-detail-title {
           font-size: 8px;
-          width: 35px;
+          width: 42px;
         }
 
         div.indicator,
@@ -177,18 +178,13 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
+          height: calc(100vh - 179px);
         }
     `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
-    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**
@@ -204,29 +200,26 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-        const status = 'ALIVE';
-        this._loadAgentList(status);
+        this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+        this._loadAgentList();
       }, true);
     } else { // already connected
-      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-      const status = 'ALIVE';
-      this._loadAgentList(status);
+      this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+      this._loadAgentList();
     }
   }
 
   /**
    * Load an agents list with agent's backend.ai information.
-   *
-   * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList(status = 'running') {
+  _loadAgentList() {
     if (this.active !== true) {
       return;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
     let fields: Array<string>;
+    let status;
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
@@ -252,7 +245,8 @@ export default class BackendAIAgentList extends BackendAIPage {
       fields.push('schedulable');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
+    const timeout = 10 * 1000;
+    globalThis.backendaiclient.agent.list(status, fields, timeout).then((response) => {
       const agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;
@@ -320,7 +314,6 @@ export default class BackendAIAgentList extends BackendAIPage {
               }
               agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
               agents[objectKey].total_cuda_fgpu_percent = (agents[objectKey].used_cuda_fgpu_slots_ratio * 100).toFixed(2);
-
             }
             if ('rocm.device' in available_slots) {
               agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
@@ -429,7 +422,7 @@ export default class BackendAIAgentList extends BackendAIPage {
 
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList(status);
+          this._loadAgentList();
         }, 15000);
       }
     }).catch((err) => {
@@ -916,7 +909,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            ${this.enableAgentSchedulable ? html`
+            ${this._enableAgentSchedulable ? html`
               <mwc-icon-button class="fg blue controls-running" icon="settings"
                                @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             ` : html``}
@@ -942,8 +935,7 @@ export default class BackendAIAgentList extends BackendAIPage {
    */
   _showConfigDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
-    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
-    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
+    this.schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
     this.agentSettingDialog.show();
     return;
   }
@@ -959,7 +951,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   _modifyAgentSetting() {
-    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
+    const schedulable = this.schedulableToggle.selected;
     if (this.agentDetail?.schedulable !== schedulable) {
       globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
         this.notification.text = _text('agent.AgentSettingUpdated');
@@ -1159,7 +1151,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                               header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
                               .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-          ${this.enableAgentSchedulable ? html`
+          ${this._enableAgentSchedulable ? html`
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
                               .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
           ` : html``}

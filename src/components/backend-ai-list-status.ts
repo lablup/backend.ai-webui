@@ -26,11 +26,18 @@ import './lablup-loading-dots';
  @element backend-ai-list-status
  */
 
+/**
+* Status of the list component
+* - loading: loading status before completing data fetch. show `lablup-loading-dots`
+* - no-data: in case the result of fetch is an empty value. show message.
+*/
+type StatusCondition = 'loading' | 'no-data';
+
 @customElement('backend-ai-list-status')
 export default class BackendAIListStatus extends BackendAIPage {
   @property({type: Object}) listStatus = Object();
   @property({type: String}) message = 'There is nothing to display';
-  @property({type: String}) statusCondition = 'loading';
+  @property({type: String}) statusCondition: StatusCondition = 'loading';
   @property({type: Object}) dots = Object();
   @property({type: Boolean}) active = true;
 
@@ -38,7 +45,7 @@ export default class BackendAIListStatus extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -58,10 +65,10 @@ export default class BackendAIListStatus extends BackendAIPage {
     // language=HTML
     return html`
       <div class="vertical layout center flex" id="status">
-        ${this.statusCondition == 'loading' ? html`
+        ${this.statusCondition === 'loading' ? html`
           <lablup-loading-dots id="loading-dots"></lablup-loading-dots>
         ` : html`
-          ${this.statusCondition == 'no-data' ? html`
+          ${this.statusCondition === 'no-data' ? html`
             <span class="list-message">${this.message}</span>
           ` : html``}
         `}
@@ -111,3 +118,5 @@ declare global {
     'backend-ai-list-status': BackendAIListStatus;
   }
 }
+
+export {StatusCondition};

@@ -56,7 +56,8 @@
       "UserName": "Имя пользователя",
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
@@ -314,7 +315,8 @@
     "CommitFinished": "__NOT_TRANSLATED__",
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
-    "Message": "сообщение"
+    "Message": "сообщение",
+    "EnvironmentInfo": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -541,7 +543,9 @@
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
       "FolderUsing": "__NOT_TRANSLATED__",
-      "NoFolderToDisplay": "__NOT_TRANSLATED__"
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",

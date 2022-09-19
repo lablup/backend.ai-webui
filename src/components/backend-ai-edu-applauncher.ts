@@ -4,7 +4,7 @@
  */
 import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -19,6 +19,11 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
 
 import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIAppLauncher = HTMLElementTagNameMap['backend-ai-app-launcher'];
 
 /**
  Backend.AI Education App Launcher.
@@ -43,6 +48,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
+  @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -167,8 +173,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _createEduSession() {
-    const appLauncher = this.shadowRoot.querySelector('#app-launcher');
-    appLauncher.indicator = await globalThis.lablupIndicator.start();
+    this.appLauncher.indicator = await globalThis.lablupIndicator.start();
 
     // Query current user's compute session in the current group.
     const fields = [
@@ -186,7 +191,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     //       This API should be used when there is only one group, 'default'.
     let sessions;
     try {
-      appLauncher.indicator.set(20, _text('eduapi.QueryingExisitingComputeSession'));
+      this.appLauncher.indicator.set(20, _text('eduapi.QueryingExisitingComputeSession'));
       sessions = await globalThis.backendaiclient.computeSession.list(fields, statuses, accessKey, 30, 0);
     } catch (err) {
       console.error(err);
@@ -239,7 +244,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         } else {
           sessionId = null;
         }
-        appLauncher.indicator.set(50, _text('eduapi.FoundExistingComputeSession'));
+        this.appLauncher.indicator.set(50, _text('eduapi.FoundExistingComputeSession'));
       } else {
         // this.notification.text = `You have existing session can launch ${requestedApp}`;
         // this.notification.show(true);
@@ -256,7 +261,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
     if (launchNewSession) { // no existing compute session. create one.
       console.log('Creating a new session ...');
-      appLauncher.indicator.set(40, _text('eduapi.FindingSessionTemplate'));
+      this.appLauncher.indicator.set(40, _text('eduapi.FindingSessionTemplate'));
       let sessionTemplates;
       try {
         sessionTemplates = await globalThis.backendaiclient.sessionTemplate.list(false);
@@ -289,7 +294,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const resources = mounts ? {mounts} : {};
         let response;
         try {
-          appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
+          this.appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
           response = await globalThis.backendaiclient.createSessionFromTemplate(templateId, null, null, resources, 20000);
         } catch (err) {
           console.error(err);
@@ -328,7 +333,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         }
       }
     }
-    appLauncher.indicator.set(100, _text('eduapi.ComputeSessionPrepared'));
+    this.appLauncher.indicator.set(100, _text('eduapi.ComputeSessionPrepared'));
 
     // Launch app.
     if (sessionId) {
@@ -340,14 +345,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   }
 
   async _openServiceApp(sessionId, appName) {
-    const appLauncher = this.shadowRoot.querySelector('#app-launcher');
-    appLauncher.indicator = await globalThis.lablupIndicator.start();
+    this.appLauncher.indicator = await globalThis.lablupIndicator.start();
     console.log(`launching ${appName} from session ${sessionId} ...`);
-    appLauncher._open_wsproxy(sessionId, appName, null, null)
+    this.appLauncher._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
         if (resp.url) {
-          await appLauncher._connectToProxyWorker(resp.url, '');
-          appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
+          await this.appLauncher._connectToProxyWorker(resp.url, '');
+          this.appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
             globalThis.open(resp.url, '_self');
             // globalThis.open(resp.url);

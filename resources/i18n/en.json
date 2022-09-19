@@ -8,6 +8,7 @@
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
+      "AgentSummary": "Agent Summary",
       "PipelineJob": "Pipeline Job (Beta)",
       "Statistics": "Statistics",
       "Help": "Help",
@@ -311,7 +312,8 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists"
     },
-    "EnterValidSessionName": "EnterValidSessionName"
+    "EnterValidSessionName": "EnterValidSessionName",
+    "EnvironmentInfo": "Environment Info"
   },
   "button": {
     "Cancel": "Cancel",
@@ -506,6 +508,8 @@
       "CloneAFolder": "Clone a folder",
       "LeaveAFolder": "Leave a folder",
       "DeleteAFolder": "Delete a folder",
+      "OpenAFolder": "Open a folder",
+      "FolderInfo": "Info",
       "TypeFolderNameToDelete": "Type folder name to delete",
       "TypeFolderNameToLeave": "Type folder name to leave",
       "Delete": "Delete",

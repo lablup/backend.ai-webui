@@ -7,7 +7,7 @@ import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 
-type AdditionalTaskRequest = 'remove-later' | 'remove-immediately'; 
+type AdditionalTaskRequest = 'remove-later' | 'remove-immediately';
 
 class Task {
   tasktitle: string;
@@ -44,8 +44,6 @@ class Task {
  */
 @customElement('backend-ai-tasker')
 export default class BackendAiTasker extends LitElement {
-  public shadowRoot: any;
-
   @property({type: Object}) indicator;
   @property({type: Array}) taskstore;
   @property({type: Array}) finished;

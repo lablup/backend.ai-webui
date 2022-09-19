@@ -23,7 +23,6 @@ registerTranslateConfig({
 });
 
 export class BackendAIPage extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
   @property({type: Boolean}) active = false;
@@ -53,14 +52,6 @@ export class BackendAIPage extends LitElement {
     return this.active;
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-  }
-
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
@@ -71,6 +62,7 @@ export class BackendAIPage extends LitElement {
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
+
   /**
    * Hide the backend.ai dialog.
    *

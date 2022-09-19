@@ -6,14 +6,14 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button/mwc-icon-button';
-import '@material/mwc-menu/mwc-menu';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
+import {TextField} from '@material/mwc-textfield';
+import '@material/mwc-list';
+import '@material/mwc-icon-button';
+import {Menu} from '@material/mwc-menu';
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
+import '@material/mwc-button';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/tab';
 import 'weightless/tab-group';
@@ -39,6 +39,14 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAICredentialList = HTMLElementTagNameMap['backend-ai-credential-list'];
+type BackendAIUserList = HTMLElementTagNameMap['backend-ai-user-list'];
+type BackendAIResourcePolicyList = HTMLElementTagNameMap['backend-ai-resource-policy-list'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend.AI Credential view page
 
@@ -52,10 +60,10 @@ import {
  */
 @customElement('backend-ai-credential-view')
 export default class BackendAICredentialView extends BackendAIPage {
-  @property({type: Object}) cpu_resource = {};
-  @property({type: Object}) ram_resource = {};
-  @property({type: Object}) gpu_resource = {};
-  @property({type: Object}) fgpu_resource = {};
+  @property({type: Object}) cpu_resource!: TextField;
+  @property({type: Object}) ram_resource!: TextField;
+  @property({type: Object}) gpu_resource!: TextField;
+  @property({type: Object}) fgpu_resource!: TextField;
   @property({type: Object}) concurrency_limit = {};
   @property({type: Object}) idle_timeout = {};
   @property({type: Object}) session_lifetime = {};
@@ -72,14 +80,30 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) new_secret_key = '';
   @property({type: String}) _activeTab = 'users';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) exportToCsvDialog = Object();
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @query('#active-credential-list') activeCredentialList!: BackendAICredentialList;
+  @query('#inactive-credential-list') inactiveCredentialList!: BackendAICredentialList;
+  @query('#active-user-list') activeUserList!: BackendAIUserList;
+  @query('#resource-policy-list') resourcePolicyList!: BackendAIResourcePolicyList;
+  @query('#dropdown-area') dropdownArea!: HTMLDivElement;
+  @query('#rate-limit') rateLimit!: Select;
+  @query('#resource-policy') resourcePolicy!: Select;
+  @query('#id_user_email') userEmailInput!: TextField;
+  @query('#id_new_policy_name') newPolicyNameInput!: TextField;
+  @query('#id_new_user_id') userIdInput!: TextField;
+  @query('#id_user_confirm') userPasswordConfirmInput!: TextField;
+  @query('#id_user_name') userNameInput!: TextField;
+  @query('#id_user_password') userPasswordInput!: TextField;
+  @query('#new-keypair-dialog') newKeypairDialog!: BackendAIDialog;
+  @query('#new-policy-dialog') newPolicyDialog!: BackendAIDialog;
+  @query('#new-user-dialog') newUserDialog!: BackendAIDialog;
+  @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
+  @query('#export-file-name') exportFileNameInput!: TextField;
+  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
-  @query('#id_new_policy_name') newPolicyName;
-  @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
 
   constructor() {
     super();
@@ -87,7 +111,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     this.resource_policy_names = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -286,19 +310,18 @@ export default class BackendAICredentialView extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-credential-refresh', () => {
-      this.shadowRoot.querySelector('#active-credential-list').refresh();
-      this.shadowRoot.querySelector('#inactive-credential-list').refresh();
+      this.activeCredentialList.refresh();
+      this.inactiveCredentialList.refresh();
     }, true);
 
-    this.shadowRoot.querySelectorAll('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
     });
-    const userIdInput = this.shadowRoot.querySelector('#id_new_user_id');
-    this._addInputValidator(userIdInput);
+    this._addInputValidator(this.userIdInput);
     // monkeypatch for height calculation.
-    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
+    this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
   }
 
   /**
@@ -329,7 +352,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this._updateInputStatus(this.session_lifetime);
     }
     this.vfolder_max_limit['value'] = 10;
-    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
     this._defaultFileName = this._getDefaultCSVFileName();
   }
 
@@ -341,13 +363,13 @@ export default class BackendAICredentialView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-policy-list').active = false;
-      this.shadowRoot.querySelector('#active-user-list').active = false;
+      this.resourcePolicyList.active = false;
+      this.activeUserList.active = false;
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#resource-policy-list').active = true;
-    this.shadowRoot.querySelector('#active-user-list').active = true;
+    this.resourcePolicyList.active = true;
+    this.activeUserList.active = true;
     this._status = 'active';
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -365,10 +387,10 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   async _launchKeyPairDialog() {
     await this._getResourcePolicies();
-    this.shadowRoot.querySelector('#new-keypair-dialog').show();
+    this.newKeypairDialog.show();
 
     // initialize user_id
-    this.shadowRoot.querySelector('#id_new_user_id').value = '';
+    this.userIdInput.value = '';
   }
 
   /**
@@ -388,12 +410,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _launchResourcePolicyDialog() {
     Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
-      this.newPolicyName.mdcFoundation.setValid(true);
-      this.newPolicyName.isUiValid = true;
-      this.newPolicyName.value = '';
+      // TODO remove protected properties usage
+      (this.newPolicyNameInput as any).mdcFoundation.setValid(true);
+      (this.newPolicyNameInput as any).isUiValid = true;
+      this.newPolicyNameInput.value = '';
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
-      this.shadowRoot.querySelector('#new-policy-dialog').show();
+      this.newPolicyDialog.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -407,7 +430,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Launch an user add dialog.
    */
   _launchUserAddDialog() {
-    this.shadowRoot.querySelector('#new-user-dialog').show();
+    this.newUserDialog.show();
   }
 
   /**
@@ -427,11 +450,11 @@ export default class BackendAICredentialView extends BackendAIPage {
       const policyNames = globalThis.backendaiclient.utils.gqlToList(response.keypair_resource_policies, 'name');
       this.resource_policies = policies;
       this.resource_policy_names = policyNames;
-      this.shadowRoot.querySelector('#resource-policy').layout(true).then(()=>{
-        this.shadowRoot.querySelector('#resource-policy').select(0);
+      this.resourcePolicy.layout(true).then(()=>{
+        this.resourcePolicy.select(0);
       });
-      this.shadowRoot.querySelector('#rate-limit').layout(true).then(()=>{
-        this.shadowRoot.querySelector('#rate-limit').select(0);
+      this.rateLimit.layout(true).then(()=>{
+        this.rateLimit.select(0);
       });
     });
   }
@@ -442,13 +465,12 @@ export default class BackendAICredentialView extends BackendAIPage {
   _addKeyPair() {
     const is_active = true;
     const is_admin = false;
-    const user_idEl = this.shadowRoot.querySelector('#id_new_user_id');
     let user_id = '';
 
-    if (!user_idEl.checkValidity()) {
+    if (!this.userIdInput.checkValidity()) {
       return;
     } else {
-      user_id = user_idEl.value;
+      user_id = this.userIdInput.value;
     }
     /* deprecate empty user_id regarded as superadmin email */
     // user_id = globalThis.backendaiclient.email;
@@ -461,16 +483,16 @@ export default class BackendAICredentialView extends BackendAIPage {
         resource_policy, rate_limit, access_key, secret_key).then(response => {
     */
 
-    const resource_policy = this.shadowRoot.querySelector('#resource-policy').value;
-    const rate_limit = this.shadowRoot.querySelector('#rate-limit').value;
+    const resource_policy = this.resourcePolicy.value;
+    const rate_limit = this.rateLimit.value;
     // Read resources
     globalThis.backendaiclient.keypair.add(user_id, is_active, is_admin,
       resource_policy, rate_limit).then((response) => {
       if (response.create_keypair.ok) {
-        this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+        this.newKeypairDialog.hide();
         this.notification.text = _text('credential.KeypairCreated');
         this.notification.show();
-        this.shadowRoot.querySelector('#active-credential-list').refresh();
+        this.activeCredentialList.refresh();
       } else if (response.create_keypair.msg) {
         const id_requested = response.create_keypair.msg.split(':')[1];
         this.notification.text = _text('credential.UserNotFound') + id_requested;
@@ -482,7 +504,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#new-keypair-dialog').hide();
+        this.newKeypairDialog.hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -546,26 +568,26 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add a new resource policy.
    */
   _addResourcePolicy() {
-    if (!this.newPolicyName.checkValidity()) {
-      this.newPolicyName.reportValidity();
+    if (!this.newPolicyNameInput.checkValidity()) {
+      this.newPolicyNameInput.reportValidity();
       return;
     }
     try {
-      this.newPolicyName.checkValidity();
-      const name = this.newPolicyName.value;
+      this.newPolicyNameInput.checkValidity();
+      const name = this.newPolicyNameInput.value;
       if (name === '') {
         throw new Error(_text('resourcePolicy.PolicyNameEmpty'));
       }
       const input = this._readResourcePolicyInput();
       globalThis.backendaiclient.resourcePolicy.add(name, input).then((response) => {
-        this.shadowRoot.querySelector('#new-policy-dialog').hide();
+        this.newPolicyDialog.hide();
         this.notification.text = _text('resourcePolicy.SuccessfullyCreated');
         this.notification.show();
-        this.shadowRoot.querySelector('#resource-policy-list').refresh();
+        this.resourcePolicyList.refresh();
       }).catch((err) => {
         console.log(err);
         if (err && err.message) {
-          this.shadowRoot.querySelector('#new-policy-dialog').hide();
+          this.newPolicyDialog.hide();
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
           this.notification.show(true, err);
@@ -581,18 +603,13 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add an user with user information.
    */
   _addUser() {
-    const emailEl = this.shadowRoot.querySelector('#id_user_email');
-    const nameEl = this.shadowRoot.querySelector('#id_user_name');
-    const passwordEl = this.shadowRoot.querySelector('#id_user_password');
-    const confirmEl = this.shadowRoot.querySelector('#id_user_confirm');
-
-    const email = emailEl.value;
+    const email = this.userEmailInput.value;
     // if name value is empty, it will be covered by the username of email address.
-    const name = nameEl.value !== '' ? nameEl.value : email.split('@')[0];
-    const password = passwordEl.value;
+    const name = this.userNameInput.value !== '' ? this.userNameInput.value : email.split('@')[0];
+    const password = this.userPasswordInput.value;
 
     // if any input value is invalid, it returns.
-    if (!emailEl.checkValidity() || !passwordEl.checkValidity() || !confirmEl.checkValidity()) {
+    if (!this.userEmailInput.checkValidity() || !this.userPasswordInput.checkValidity() || !this.userPasswordConfirmInput.checkValidity()) {
       return;
     }
 
@@ -614,21 +631,21 @@ export default class BackendAICredentialView extends BackendAIPage {
         return Promise.resolve(globalThis.backendaiclient.user.create(email, {...input, 'group_ids': [default_id]}));
       })
       .then((res) => {
-        this.shadowRoot.querySelector('#new-user-dialog').hide();
+        this.newUserDialog.hide();
         if (res['create_user'].ok) {
           this.notification.text = _text('credential.UserAccountCreated');
 
-          this.shadowRoot.querySelector('#active-user-list').refresh();
+          this.activeUserList.refresh();
         } else {
           // console.error(res['create_user'].msg);
           this.notification.text = _text('credential.UserAccountCreatedError');
         }
         this.notification.show();
 
-        this.shadowRoot.querySelector('#id_user_email').value = '';
-        this.shadowRoot.querySelector('#id_user_name').value = '';
-        this.shadowRoot.querySelector('#id_user_password').value = '';
-        this.shadowRoot.querySelector('#id_user_confirm').value = '';
+        this.userEmailInput.value = '';
+        this.userNameInput.value = '';
+        this.userPasswordInput.value = '';
+        this.userPasswordConfirmInput.value = '';
       });
   }
 
@@ -636,7 +653,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Disable the page.
    */
   disablePage() {
-    const els = this.shadowRoot.querySelectorAll('.admin');
+    const els = this.shadowRoot?.querySelectorAll<HTMLElement>('.admin') as NodeListOf<HTMLElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
@@ -645,15 +662,15 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param {any} tab - Tab webcomponent
+   * @param {EventTarget} tab - Tab webcomponent
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
     let tabKeyword;
     let innerTab;
     // show inner tab(active) after selecting outer tab
@@ -661,7 +678,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     case 'user-lists':
     case 'credential-lists':
       tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
-      innerTab = this.shadowRoot.querySelector('wl-tab[value=active-' + tabKeyword + ']');
+      innerTab = this.shadowRoot?.querySelector('wl-tab[value=active-' + tabKeyword + ']');
       innerTab.checked = true;
       this._showList(innerTab);
       break;
@@ -673,16 +690,16 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * Display the list.
    *
-   * @param {any} list - List webcomponent
+   * @param {EventTarget} list - List webcomponent
    */
   _showList(list) {
-    const els = this.shadowRoot.querySelectorAll('.list-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLElement>('.list-content') as NodeListOf<HTMLElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + list.value).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + list.value) as HTMLElement).style.display = 'block';
     const event = new CustomEvent('user-list-updated', {});
-    this.shadowRoot.querySelector('#' + list.value).dispatchEvent(event);
+    this.shadowRoot?.querySelector('#' + list.value)?.dispatchEvent(event);
   }
 
   /**
@@ -761,10 +778,9 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Add validator to policy input.
    */
   _addValidatorToPolicyInput() {
-    const policy_info = this.shadowRoot.querySelector('#id_new_policy_name');
-    policy_info.validityTransform = (value, nativeValidity) => {
+    this.newPolicyNameInput.validityTransform = (value, nativeValidity) => {
       if (!nativeValidity) {
-        policy_info.validationMessage = _text('credential.validation.PolicyName');
+        this.newPolicyNameInput.validationMessage = _text('credential.validation.PolicyName');
         return {
           valid: false,
           valueMissing: true
@@ -772,19 +788,19 @@ export default class BackendAICredentialView extends BackendAIPage {
       }
       if (!nativeValidity.valid) {
         if (nativeValidity.patternMismatch) {
-          policy_info.validationMessage = _text('credential.validation.LetterNumber-_dot');
+          this.newPolicyNameInput.validationMessage = _text('credential.validation.LetterNumber-_dot');
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid
           };
         } else if (nativeValidity.valueMissing) {
-          policy_info.validationMessage = _text('credential.validation.PolicyName');
+          this.newPolicyNameInput.validationMessage = _text('credential.validation.PolicyName');
           return {
             valid: nativeValidity.valid,
             valueMissing: !nativeValidity.valid
           };
         } else {
-          policy_info.validationMessage = _text('credential.validation.LetterNumber-_dot');
+          this.newPolicyNameInput.validationMessage = _text('credential.validation.LetterNumber-_dot');
           return {
             valid: nativeValidity.valid,
             patternMismatch: !nativeValidity.valid,
@@ -793,7 +809,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       } else {
         const isValid = !this.resource_policy_names.includes(value);
         if (!isValid) {
-          policy_info.validationMessage = _text('credential.validation.NameAlreadyExists');
+          this.newPolicyNameInput.validationMessage = _text('credential.validation.NameAlreadyExists');
         }
         return {
           valid: isValid,
@@ -832,31 +848,30 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Export user list and credential lists and resource policy lists to csv.
    */
   _exportToCSV() {
-    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
-    if (!fileNameEl.validity.valid) {
+    if (!this.exportFileNameInput.validity.valid) {
       return;
     }
     let users; let credential_active; let credential_inactive; let credential; let resource_policy;
     switch (this._activeTab) {
     case 'user-lists':
-      users = this.shadowRoot.querySelector('#active-user-list')['users'];
+      users = this.activeUserList.users;
       users.map((obj) => { // filtering unnecessary key
         ['password', 'need_password_change'].forEach((key) => delete obj[key]);
       });
-      JsonToCsv.exportToCsv(fileNameEl.value, users);
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, users);
       break;
     case 'credential-lists':
-      credential_active = this.shadowRoot.querySelector('#active-credential-list')['keypairs'];
-      credential_inactive = this.shadowRoot.querySelector('#inactive-credential-list')['keypairs'];
+      credential_active = this.activeCredentialList.keypairs;
+      credential_inactive = this.inactiveCredentialList.keypairs;
       credential = credential_active.concat(credential_inactive);
       credential.map((obj)=> { // filtering unnecessary key
         ['is_admin'].forEach((key) => delete obj[key]);
       });
-      JsonToCsv.exportToCsv(fileNameEl.value, credential);
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, credential);
       break;
     case 'resource-policy-lists':
-      resource_policy = this.shadowRoot.querySelector('#resource-policy-list')['resourcePolicy'];
-      JsonToCsv.exportToCsv(fileNameEl.value, resource_policy);
+      resource_policy = this.resourcePolicyList.resourcePolicy;
+      JsonToCsv.exportToCsv(this.exportFileNameInput.value, resource_policy);
       break;
     }
     this.notification.text = _text('session.DownloadingCSVFile');
@@ -869,17 +884,17 @@ export default class BackendAICredentialView extends BackendAIPage {
    * container per session limit, vforder capacity and vfolder max limit.
    */
   _getResourceInfo() {
-    this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
-    this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
-    this.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    this.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
-    this.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
-    this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
-    this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
-    this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
-    this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
+    this.cpu_resource = this.shadowRoot?.querySelector('#cpu-resource') as TextField;
+    this.ram_resource = this.shadowRoot?.querySelector('#ram-resource') as TextField;
+    this.gpu_resource = this.shadowRoot?.querySelector('#gpu-resource') as TextField;
+    this.fgpu_resource = this.shadowRoot?.querySelector('#fgpu-resource') as TextField;
+    this.concurrency_limit = this.shadowRoot?.querySelector('#concurrency-limit') as TextField;
+    this.idle_timeout = this.shadowRoot?.querySelector('#idle-timeout') as TextField;
+    this.container_per_session_limit = this.shadowRoot?.querySelector('#container-per-session-limit') as TextField;
+    this.vfolder_capacity = this.shadowRoot?.querySelector('#vfolder-capacity-limit') as TextField;
+    this.vfolder_max_limit = this.shadowRoot?.querySelector('#vfolder-count-limit') as TextField;
     if (this.enableSessionLifetime) {
-      this.session_lifetime = this.shadowRoot.querySelector('#session-lifetime');
+      this.session_lifetime = this.shadowRoot?.querySelector('#session-lifetime') as TextField;
     }
   }
 
@@ -900,7 +915,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * @param {Event} e - event from dropdown component.
    */
   _toggleDropdown(e) {
-    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const menu = this.shadowRoot?.querySelector('#dropdown-menu') as Menu;
     const button = e.target;
     menu.anchor = button;
     if (!menu.open) {
@@ -909,19 +924,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _validatePassword1() {
-    const passwordInput = this.shadowRoot.querySelector('#id_user_password');
-    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
-    password2Input.reportValidity();
-    passwordInput.validityTransform = (newValue, nativeValidity) => {
+    this.userPasswordConfirmInput.reportValidity();
+    this.userPasswordInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          this.userPasswordInput.validationMessage = _text('signup.PasswordInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          passwordInput.validationMessage = _text('signup.PasswordInvalid');
+          this.userPasswordInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -937,17 +950,16 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   _validatePassword2() {
-    const password2Input = this.shadowRoot.querySelector('#id_user_confirm');
-    password2Input.validityTransform = (newValue, nativeValidity) => {
+    this.userPasswordConfirmInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          this.userPasswordConfirmInput.validationMessage = _text('signup.PasswordInputRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          password2Input.validationMessage = _text('signup.PasswordInvalid');
+          this.userPasswordConfirmInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -955,10 +967,9 @@ export default class BackendAICredentialView extends BackendAIPage {
         }
       } else {
         // custom validation for password input match
-        const passwordInput = this.shadowRoot.querySelector('#id_user_password');
-        const isMatched = (passwordInput.value === password2Input.value);
+        const isMatched = (this.userPasswordInput.value === this.userPasswordConfirmInput.value);
         if (!isMatched) {
-          password2Input.validationMessage = _text('signup.PasswordNotMatched');
+          this.userPasswordConfirmInput.validationMessage = _text('signup.PasswordNotMatched');
         }
         return {
           valid: isMatched,
