@@ -1,7 +1,24 @@
 # Changelog
 
-## v22.09.0 (22/08/2022)
- * Release update to match 22.09 branch
+## v22.09.1 (19/09/2022)
+
+## v22.09.0 (31/08/2022)
+## What's Changed
+* fix: add validation check and enable button only valid status in import and run page by @mihilt in https://github.com/lablup/backend.ai-webui/pull/1400
+* hotfix: don't show the Environments Images list by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1431
+* fix: automatically set the height of `list-wrapper`, which wraps grids, to avoid the height mismatch between the two elements by @lizable in https://github.com/lablup/backend.ai-webui/pull/1436
+* feature: display richer agent information by @lizable in https://github.com/lablup/backend.ai-webui/pull/1435
+* fix: CUDA utilization was displayed as `Infinity` by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1437
+* fix: disable container commit when session is batch type by @lizable in https://github.com/lablup/backend.ai-webui/pull/1438
+* Feature: refactor pipeline by @lizable in https://github.com/lablup/backend.ai-webui/pull/1221
+* refactor: temporally block pages related to pipeline menu by @lizable in https://github.com/lablup/backend.ai-webui/pull/1440
+* hotfix: remove wrong parsing number logic in initial configuration by @lizable in https://github.com/lablup/backend.ai-webui/pull/1444
+* bugfix: list status unrecognized by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1441
+
+## New Contributors
+* @mihilt made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1400
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.7...v22.09.0
 
 
 ## v22.03.7 (22/08/2022)
