@@ -1066,6 +1066,8 @@
     "ClickToUseID": "Click To Use ID",
     "EndpointHistory": "Endpoint History",
     "NoEndpointSaved": "No endpoint saved.",
+    "EndpointInfo": "About Endpoint",
+    "DescEndpoint": "<p>In API ENDPOINT, the URL of Backend.AI Webserver, which relays the request to the Manager, should be entered.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "CancelLogin": "Cancel Login",
     "SignoutFinished": "Signout finished.",
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",

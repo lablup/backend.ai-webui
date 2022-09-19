@@ -1087,7 +1087,9 @@
     "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
     "SingleSignOn": {
       "LoginWithSAML": "__NOT_TRANSLATED__"
-    }
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",

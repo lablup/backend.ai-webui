@@ -1087,7 +1087,9 @@
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "SingleSignOn": {
       "LoginWithSAML": "__NOT_TRANSLATED__"
-    }
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",
