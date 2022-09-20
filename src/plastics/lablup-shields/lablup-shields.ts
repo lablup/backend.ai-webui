@@ -45,7 +45,7 @@ export default class LablupShields extends LitElement {
   @property({type: String}) app = '';
   @property({type: String}) description = '';
   @property({type: String}) color = 'green';
-  @property({type: String}) appColor = "grey";
+  @property({type: String}) appColor = 'grey';
   @property({type: String}) ui = 'flat';
 
   static get styles() {
@@ -76,9 +76,9 @@ export default class LablupShields extends LitElement {
           border-top-right-radius: 4px;
           border-bottom-right-radius: 4px;
         }
-      `];
+    `];
   }
-    
+
   get _colorScheme() {
     const colorPalette: colorSchemeType = {
       "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
