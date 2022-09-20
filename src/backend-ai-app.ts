@@ -10,9 +10,9 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Record<string, unknown> = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/agent-summary', '/experiment', '/data', '/pipeline', '/pipeline-job', '/statistics', '/usersettings',
+  if (!['/summary', '/job', '/agent-summary', '/experiment', '/data', '/pipeline', '/pipeline-job', '/statistics', '/usersettings',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
-    '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
+    '/maintenance', '/information', '/github', '/import'].includes(path)) { // Fallback for Electron Shell/Windows OS
     const fragments = path.split(/[/]+/);
     if (fragments.length > 1 && fragments[0] === '') {
       path = fragments[1];

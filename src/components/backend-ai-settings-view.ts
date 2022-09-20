@@ -265,6 +265,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window>
       <div class="horizontal layout wrap">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
           <div slot="message" class="horizontal wrap layout">
@@ -562,6 +563,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
           </div>
         </backend-ai-dialog>
       </div>
+      </backend-ai-window>
     `;
   }
 

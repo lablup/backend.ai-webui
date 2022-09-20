@@ -24,6 +24,7 @@ import './backend-ai-dialog';
 import './backend-ai-environment-list';
 import './backend-ai-resource-preset-list';
 import './backend-ai-registry-list';
+import './backend-ai-window';
 
 /**
  Backend.AI Environment View
@@ -157,6 +158,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window>
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
@@ -178,6 +180,8 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
+      </backend-ai-window>
+
     `;
   }
 }

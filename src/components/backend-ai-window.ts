@@ -21,6 +21,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posZ = 1000;
 
   @query('#window') win!: HTMLDivElement;
+  @query('#content') content!: HTMLDivElement;
 
   constructor() {
     super();
@@ -42,6 +43,7 @@ export default class BackendAIWindow extends LitElement {
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
           box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
           position:absolute;
+          overflow-y: hidden;
           z-index: 1000;
         }
 
@@ -95,13 +97,19 @@ export default class BackendAIWindow extends LitElement {
     return false;
   }
   close_window() {
-
+    console.log(this.content.firstChild);
   }
+
   minimize_window() {
 
   }
-  maximize_window() {
 
+  maximize_window() {
+    this.win.style.width = '100%';
+    this.win.style.height = 'calc(100vh - 100px)';
+    this.win.style.overflowY = 'hidden';
+    this.win.style.marginLeft = '0px';
+    this.win.style.marginTop = '0px';
   }
 
   load_window_position() {
@@ -121,6 +129,7 @@ export default class BackendAIWindow extends LitElement {
     if (this.posY !== 0) {
       this.win.style.marginTop = this.posY + 'px';
     }
+    this.win.style.height = 'calc(100vh - 100px)';
     this.win.style.zIndex = this.posZ.toString();
   }
 
@@ -130,14 +139,14 @@ export default class BackendAIWindow extends LitElement {
       <div id="window" class="window" draggable="true">
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <div class="button-area">
-            <mwc-icon-button id="button" icon="close"></mwc-icon-button>
+            <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
             <mwc-icon-button icon="minimize"></mwc-icon-button>
-            <mwc-icon-button icon="fullscreen"></mwc-icon-button>
+            <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
           </div>
           <span><slot name="title"></slot></span>
           <div class="flex"></div>
         </h4>
-        <div class="content">
+        <div id="content" class="content">
           <slot></slot>
         </div>
       </div>
