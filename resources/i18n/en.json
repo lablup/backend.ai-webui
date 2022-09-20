@@ -405,7 +405,7 @@
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
     "RateLimitInputRequired": "Input required.",
-    "InvalidRateLimitValue": "InvalidRateLimitValue",
+    "InvalidRateLimitValue": "Input a valid Rate Limit value.",
     "WarningLessRateLimit": "If the Rate Limit value is small, API operations such as login may be blocked.",
     "Users": "Users",
     "exportCSV": "export CSV",
