@@ -282,7 +282,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   dragover(event) {
     event.stopPropagation();
     event.preventDefault();
-    return false;
   }
 
   async connectedCallback() {
@@ -1167,7 +1166,40 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         }
       }
       if (this.plugins['menuitem'].includes(this._page)) {
-        // TODO specify type for web components ffrom variable
+        // TODO specify type for web components from variable
+        const component = this.shadowRoot?.querySelector(this._page) as any;
+        component.active = true;
+        component.setAttribute('active', true);
+        component.render();
+      }
+    }
+  }
+
+  /**
+   * Open component with url.
+   *
+   * @param {string} url
+   */
+  _openInsetWindow(url) {
+    const page = url.split('/')[1];
+    if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
+      store.dispatch(navigate(decodeURIComponent('/error')));
+      this._page = 'error';
+      return;
+    }
+    globalThis.history.pushState({}, '', url);
+    store.dispatch(navigate(decodeURIComponent(url), {}));
+    if ('menuitem' in this.plugins) {
+      for (const item of this.plugins.menuitem) {
+        if (item !== this._page) {
+          // TODO specify type for web components from variable
+          const component = this.shadowRoot?.querySelector(item) as any;
+          component.active = false;
+          component.removeAttribute('active');
+        }
+      }
+      if (this.plugins['menuitem'].includes(this._page)) {
+        // TODO specify type for web components from variable
         const component = this.shadowRoot?.querySelector(this._page) as any;
         component.active = true;
         component.setAttribute('active', true);
@@ -1447,7 +1479,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ${this.is_superadmin ?
     html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._openInsetWindow('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>

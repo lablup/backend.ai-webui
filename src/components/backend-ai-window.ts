@@ -18,6 +18,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posY = 0;
   @property({type: Number}) distX = 0;
   @property({type: Number}) distY = 0;
+  @property({type: Number}) posZ = 1000;
 
   @query('#window') win!: HTMLDivElement;
 
@@ -38,16 +39,18 @@ export default class BackendAIWindow extends LitElement {
           margin: 14px;
           padding: 0;
           border-radius: 5px;
-          box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
+          /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
           position:absolute;
           z-index: 1000;
         }
+
         div.window > h4 {
           background-color: #FFFFFF;
           color: #000000;
           font-size: 14px;
           font-weight: 400;
-          height: 48px;
+          height: 32px;
           padding: 5px 0;
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
@@ -56,7 +59,13 @@ export default class BackendAIWindow extends LitElement {
           white-space: nowrap;
           text-overflow: ellipsis;
           overflow: hidden;
+          cursor: move;
         }
+        .button-area {
+          margin-left: 15px;
+          margin-right: 15px;
+        }
+
         mwc-icon-button {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
@@ -76,7 +85,7 @@ export default class BackendAIWindow extends LitElement {
     event.preventDefault();
     this.posX = event.pageX;
     this.posY = event.pageY;
-    this.win.style.marginLeft = this.posX + this.distX + 'px';
+    this.win.style.marginLeft = Math.max(this.posX + this.distX, -50) + 'px';
     this.win.style.marginTop = Math.max(this.posY + this.distY, 10) + 'px';
   }
 
@@ -112,6 +121,7 @@ export default class BackendAIWindow extends LitElement {
     if (this.posY !== 0) {
       this.win.style.marginTop = this.posY + 'px';
     }
+    this.win.style.zIndex = this.posZ.toString();
   }
 
   render() {
@@ -119,10 +129,11 @@ export default class BackendAIWindow extends LitElement {
     return html`
       <div id="window" class="window" draggable="true">
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
-          <mwc-icon-button id="button" icon="close"></mwc-icon-button>
-          <mwc-icon-button icon="minimize"></mwc-icon-button>
-          <mwc-icon-button icon="fullscreen"></mwc-icon-button>
-
+          <div class="button-area">
+            <mwc-icon-button id="button" icon="close"></mwc-icon-button>
+            <mwc-icon-button icon="minimize"></mwc-icon-button>
+            <mwc-icon-button icon="fullscreen"></mwc-icon-button>
+          </div>
           <span><slot name="title"></slot></span>
           <div class="flex"></div>
         </h4>

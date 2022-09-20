@@ -16,6 +16,9 @@ import './lablup-activity-panel';
 import './backend-ai-agent-list';
 import './backend-ai-storage-proxy-list';
 import './backend-ai-resource-group-list';
+
+import './backend-ai-window';
+
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 type Status = 'active' | 'inactive';
@@ -113,6 +116,7 @@ export default class BackendAIAgentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window>
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
@@ -146,6 +150,7 @@ export default class BackendAIAgentView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
+      </backend-ai-window>
     `;
   }
 }
