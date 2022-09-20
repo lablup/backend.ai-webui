@@ -803,7 +803,6 @@ export default class BackendAICredentialList extends BackendAIPage {
           this.notification.show();
         });
     }
-    this.keypairModifyDialog.closeWithConfirmation = false;
     this.closeDialog('keypair-modify-dialog');
   }
 
