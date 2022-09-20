@@ -13,20 +13,27 @@ import '@material/mwc-icon-button';
 
 @customElement('backend-ai-window')
 export default class BackendAIWindow extends LitElement {
+  @property({type: String}) name = '';
   @property({type: Boolean}) active = false;
-  @property({type: Number}) posX = 0;
-  @property({type: Number}) posY = 0;
+  @property({type: Number}) mousePosX = 0;
+  @property({type: Number}) mousePosY = 0;
   @property({type: Number}) distX = 0;
   @property({type: Number}) distY = 0;
+  @property({type: Number}) posX = 0;
+  @property({type: Number}) posY = 0;
   @property({type: Number}) posZ = 1000;
+  @property({type: Number}) winWidth = 0;
+  @property({type: Number}) winHeight = 0;
 
   @query('#window') win!: HTMLDivElement;
   @query('#content') content!: HTMLDivElement;
+  @query('#mock') mock!: HTMLDivElement;
 
   constructor() {
     super();
     this.active = false;
   }
+
   static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
@@ -43,8 +50,12 @@ export default class BackendAIWindow extends LitElement {
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
           box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
           position:absolute;
-          overflow-y: hidden;
           z-index: 1000;
+        }
+
+        div.mock {
+          position:absolute;
+          z-index: 2000;
         }
 
         div.window > h4 {
@@ -53,7 +64,7 @@ export default class BackendAIWindow extends LitElement {
           font-size: 14px;
           font-weight: 400;
           height: 32px;
-          padding: 5px 0;
+          padding: 5px 0 0 0;
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
           border-bottom: 1px solid #DDD;
@@ -63,6 +74,7 @@ export default class BackendAIWindow extends LitElement {
           overflow: hidden;
           cursor: move;
         }
+
         .button-area {
           margin-left: 15px;
           margin-right: 15px;
@@ -72,46 +84,90 @@ export default class BackendAIWindow extends LitElement {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
         }
+
+        #content {
+          box-sizing: border-box;
+          overflow:scroll;
+          position:relative;
+          border-radius: 0 0 5px 5px;
+        }
       `]
   };
 
-  dragStart(event) {
-    this.posX = event.pageX;
-    this.posY = event.pageY;
-    this.distX = event.target.offsetLeft - this.posX;
-    this.distY = event.target.offsetTop - this.posY;
+  dragStart(e) {
+    e.stopPropagation();
+    this.mousePosX = e.pageX;
+    this.mousePosY = e.pageY;
+    this.distX = this.win.offsetLeft - this.mousePosX;
+    this.distY = this.win.offsetTop - this.mousePosY;
+    console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
+    console.log(this.win.offsetLeft, this.win.offsetTop);
+
+    this.win.style.border = "3px dotted #ccc";
+    e.dataTransfer.effectAllowed = 'move';
+    this.content.style.opacity = '0';
+    /*
+    this.mock.style.width = this.winWidth.toString() + 'px';
+    this.mock.style.height = this.winHeight.toString() + 'px';
+    this.mock.style.border = "none";
+    this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
+    this.mock.style.display = 'block';*/
   }
 
-  drop(event) {
-    event.stopPropagation();
-    event.preventDefault();
-    this.posX = event.pageX;
-    this.posY = event.pageY;
-    this.win.style.marginLeft = Math.max(this.posX + this.distX, -50) + 'px';
-    this.win.style.marginTop = Math.max(this.posY + this.distY, 10) + 'px';
+  dragend(e) {
+    e.stopPropagation();
+    e.preventDefault();
+    this.mousePosX = e.pageX;
+    this.mousePosY = e.pageY;
+    //this.moveWin(Math.max(this.mousePosX + this.distX, 10), Math.max(this.mousePosY + this.distY, 10));
+    this.win.style.marginLeft = Math.max(this.mousePosX + this.distX, 10) + 'px';
+    this.win.style.marginTop = Math.max(this.mousePosY + this.distY, 10) + 'px';
+    //console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
+    //console.log(this.win.offsetLeft, this.win.offsetTop);
+    this.content.style.opacity = '1';
+    this.win.style.border = "none";
   }
 
   dragover(e) {
-    e.stopPropagation();
     e.preventDefault();
-    return false;
+  }
+
+  dragleave(e) {
+    e.preventDefault();
+  }
+
+  drag(e) {
+    e.preventDefault();
+    //console.log(e.clientX,e.clientY);
+    this.moveMock(this.win.offsetLeft, this.win.offsetTop);
+    //this.moveWin(e.pageX + this.distX, e.pageY - this.distY);
+  }
+
+  moveMock(xPos, yPos) {
+    this.mock.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+  }
+
+  moveWin(xPos, yPos) {
+      this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
   close_window() {
     console.log(this.content.firstChild);
   }
 
   minimize_window() {
-
   }
 
   maximize_window() {
     this.win.style.width = '100%';
     this.win.style.height = 'calc(100vh - 100px)';
-    this.win.style.overflowY = 'hidden';
     this.win.style.marginLeft = '0px';
     this.win.style.marginTop = '0px';
+    this.readWinSize();
   }
-
+  readWinSize() {
+    this.winWidth = this.win.offsetWidth;
+    this.winHeight = this.win.offsetHeight;
+  }
   load_window_position() {
 
   }
@@ -120,17 +176,22 @@ export default class BackendAIWindow extends LitElement {
   }
 
   firstUpdated() {
+    console.log(globalThis.backenaiwindow);
     this.win.addEventListener('dragstart', this.dragStart.bind(this));
     this.win.addEventListener('dragover', this.dragover.bind(this));
-    this.win.addEventListener('dragend', this.drop.bind(this));
+    this.win.addEventListener('drag', this.drag.bind(this));
+    this.win.addEventListener('dragleave', this.dragleave.bind(this));
+    this.win.addEventListener('dragend', this.dragend.bind(this));
     if (this.posX !== 0) {
       this.win.style.marginLeft = this.posX + 'px';
     }
     if (this.posY !== 0) {
       this.win.style.marginTop = this.posY + 'px';
     }
-    this.win.style.height = 'calc(100vh - 100px)';
+    this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
     this.win.style.zIndex = this.posZ.toString();
+    this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
+    this.readWinSize();
   }
 
   render() {
@@ -150,6 +211,25 @@ export default class BackendAIWindow extends LitElement {
           <slot></slot>
         </div>
       </div>
+      <div id="mock" style="display:none;"></div>
     `;
   }
 }
+
+export class BackendAIWindowManager extends LitElement {
+  @property({type: Object}) windows : Record<string, BackendAIWindow> = {};
+
+  _addWindow(win: BackendAIWindow) {
+    if(!Object.keys(this.windows).includes(win.name)) {
+      this.windows[win.name] = win;
+    }
+    console.log(this.windows);
+  }
+
+  _removeWindow(win: BackendAIWindow) {
+    if(Object.keys(this.windows).includes(win.name)) {
+      delete this.windows[win.name];
+    }
+  }
+}
+

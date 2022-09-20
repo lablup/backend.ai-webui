@@ -69,7 +69,7 @@ registerTranslateConfig({
 globalThis.backendaioptions = new BackendAISettingsStore;
 globalThis.tasker = new BackendAITasker;
 globalThis.backendaiutils = new BackendAICommonUtils;
-
+//globalThis.backendaiwindow
 /**
  Backend.AI Web UI
 
@@ -126,6 +126,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
+  @property({type: Array}) _activePages: string[] = [];
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
@@ -890,8 +891,30 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           view = modified_view;
         }
       }
+      console.log(this._page);
       this._page = view;
+      this._activatePage(this._page);
       this._updateSidebar(view);
+    }
+  }
+
+  _isPageActive(page: string) {
+    return this._activePages.includes(page);
+  }
+
+  _activatePage(page: string) {
+    if(!this._activePages.includes(page)) {
+      this._activePages.push(page);
+    }
+    console.log(this._activePages);
+  }
+
+  _deactivatePage(page: string) {
+    if(this._activePages.includes(page)) {
+      let result: string[] = this._activePages.filter(function(elm){
+        return elm != page;
+      });
+      this._activePages = result;
     }
   }
 
@@ -1412,7 +1435,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
+          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}" multi>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
@@ -1479,11 +1502,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ${this.is_superadmin ?
     html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._openInsetWindow('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('agent')}" @click="${() => this._openInsetWindow('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'settings'}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._activePages.includes('settings')}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Configurations')}</span>
                 </mwc-list-item>
