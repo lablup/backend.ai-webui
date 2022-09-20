@@ -1409,7 +1409,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
-            ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url))).map((item) => html`
+            ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url) && item.menuitem !== '')).map((item) => html`
             <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
               <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
               <span class="full-menu">${item.menuitem}</span>
@@ -1450,7 +1450,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Information')}</span>
                 </mwc-list-item>
-                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url))).map((item) => html`
+                ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url) && item.menuitem !== '')).map((item) => html`
                 <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
                   <span class="full-menu">${item.menuitem}</span>
