@@ -8,7 +8,7 @@ import {customElement, property} from 'lit/decorators.js';
 import {Button} from 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
-
+import './backend-ai-window';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
@@ -38,7 +38,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Number}) width = 350;
   @property({type: Number}) widthpct = 0;
   @property({type: Number}) height = 0;
-  @property({type: Number}) marginWidth = 14;
+  @property({type: Number}) marginWidth = 5;
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
@@ -57,10 +57,8 @@ export default class LablupActivityPanel extends LitElement {
           display: block;
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          margin: 14px;
+          margin: 0;
           padding: 0;
-          border-radius: 5px;
-          box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
           width: 280px;
         }
 
@@ -70,7 +68,7 @@ export default class LablupActivityPanel extends LitElement {
           font-size: 14px;
           font-weight: 400;
           height: 48px;
-          padding: 5px 15px 5px 20px;
+          padding: 5px 0;
           margin: 0 0 10px 0;
           border-radius: 5px 5px 0 0;
           border-bottom: 1px solid #DDD;
@@ -85,7 +83,6 @@ export default class LablupActivityPanel extends LitElement {
         }
 
         div.card > div {
-          margin: 20px;
           padding-bottom: .5rem;
           font-size: 12px;
           overflow-wrap:break-word;
@@ -123,18 +120,14 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
-        <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
-          <span>${this.title}</span>
-          <div class="flex"></div>
-          <wl-button id="button" fab flat inverted @click="${() => this._removePanel()}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
-        </h4>
-        <div class="${this.disabled ? `disabled` : `enabled`}">
-          <slot name="message"></slot>
+      <backend-ai-window>
+        <span slot="title">${this.title}</span>
+        <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
+          <div class="${this.disabled ? `disabled` : `enabled`}">
+            <slot name="message"></slot>
+          </div>
         </div>
-      </div>
+      </backend-ai-window>
     `;
   }
 
