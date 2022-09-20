@@ -26,6 +26,7 @@ import './backend-ai-session-launcher';
 import './backend-ai-release-check';
 import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
+import './backend-ai-window';
 import {marked} from 'marked';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -468,7 +469,9 @@ export default class BackendAISummary extends BackendAIPage {
           </div>
         ` : html``}
         <div class="horizontal wrap layout">
-          <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
+          <backend-ai-window>
+            <span slot="title">${_t('summary.StartMenu')}</span>
+            <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
             <div slot="message">
               <img src="/resources/images/launcher-background.png" style="width:300px;margin-bottom:30px;"/>
               <div class="horizontal center-justified layout wrap">
@@ -492,6 +495,8 @@ export default class BackendAISummary extends BackendAIPage {
               </div>
             </div>
           </lablup-activity-panel>
+          </backend-ai-window>
+
           <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" narrow height="500">
             <div slot="message">
                 <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>

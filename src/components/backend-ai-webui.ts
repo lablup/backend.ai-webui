@@ -270,6 +270,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this._updateFullname(input.full_name);
       }
     });
+    this.appPage.addEventListener('dragover', this.dragover.bind(this));
+    this.appPage.addEventListener('drop', this.drop.bind(this));
+  }
+
+  drop(event) {
+    event.stopPropagation();
+    event.preventDefault();
+  }
+
+  dragover(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    return false;
   }
 
   async connectedCallback() {
@@ -1601,7 +1614,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <div class="content" style="box-sizing:border-box; padding:14px;">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
-                  <div id="app-page">
+                  <div id="app-page" style="position:relative;">
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
