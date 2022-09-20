@@ -88,7 +88,10 @@ export default class BackendAIWindow extends LitElement {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
         }
-
+        .frame {
+          cursor: move;
+          background-color: red;
+        }
         #content {
           box-sizing: border-box;
           overflow:scroll;
@@ -217,11 +220,16 @@ export default class BackendAIWindow extends LitElement {
     return result;
   }
 
+  setToTop() {
+    this.posZ = 10000;
+    this.win.style.zIndex = this.posZ.toString();
+  }
+
   render() {
     // language=HTML
     return html`
       <div id="window" class="window" draggable="true">
-        <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
+        <h4 id="header" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
           <div class="button-area">
             <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
             <mwc-icon-button icon="minimize"></mwc-icon-button>
@@ -230,9 +238,14 @@ export default class BackendAIWindow extends LitElement {
           <span><slot name="title"></slot></span>
           <div class="flex"></div>
         </h4>
-        <div id="content" class="content">
-          <slot></slot>
+        <div class="flex horizontal layout">
+          <div class="frame" draggable="true" style="width:5px;"></div>
+          <div id="content" class="content flex" draggable="false">
+            <slot></slot>
+          </div>
+          <div class="frame" draggable="true" style="width:5px;"></div>
         </div>
+        <div class="frame" draggable="true" style="height:5px;"></div>
       </div>
       <div id="mock" style="display:none;"></div>
     `;

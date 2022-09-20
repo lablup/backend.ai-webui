@@ -3,8 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-import '@material/mwc-icon-button';
+import {customElement, state} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 
 /**
@@ -15,7 +14,7 @@ import BackendAIWindow from './backend-ai-window';
  */
 @customElement('backend-ai-window-manager')
 export default class BackendAIWindowManager extends LitElement {
-  @property({type: Object}) windows : Record<string, BackendAIWindow> = {};
+  @state() protected windows : Record<string, BackendAIWindow> = {};
 
   count() {
     return Object.keys(this.windows).length;
