@@ -1,3 +1,7 @@
+/**
+ @license
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -151,7 +155,9 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
   close_window() {
-    console.log(this.content.firstChild);
+    globalThis.backendaiwindowmanager.removeWindow(this);
+
+//    console.log(this.content.firstChild);
   }
 
   minimize_window() {
@@ -184,17 +190,31 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragend', this.dragend.bind(this));
     if (this.posX !== 0) {
       this.win.style.marginLeft = this.posX + 'px';
+    } else {
+      this.win.style.marginLeft = globalThis.backendaiwindowmanager.count() * 30 + 'px';
     }
     if (this.posY !== 0) {
       this.win.style.marginTop = this.posY + 'px';
+    } else {
+      this.win.style.marginTop = globalThis.backendaiwindowmanager.count() * 30 + 'px';
     }
     this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
     this.win.style.zIndex = this.posZ.toString();
     this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
     this.readWinSize();
-    this.name = 'qwe';
+    this.name = this.setName();
     console.log(globalThis.backendaiwindowmanager);
     globalThis.backendaiwindowmanager.addWindow(this);
+  }
+
+  setName() {
+    let result: string = '';
+    const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength: number = characters.length;
+    for ( let i = 0; i < 8; i++ ) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   render() {

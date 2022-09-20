@@ -1,7 +1,7 @@
 /**
  Backend.AI base view page for Single-page application
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  */
 import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
 import {LitElement} from 'lit';

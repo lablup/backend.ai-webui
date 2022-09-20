@@ -1,17 +1,25 @@
+/**
+ @license
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ */
 import {LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 import '@material/mwc-icon-button';
 import BackendAIWindow from './backend-ai-window';
+
 /**
- Backend AI Window
+ Backend AI Window Manager
 
  @group Backend.AI Web UI
- @element backend-ai-window
+ @element backend-ai-window-manager
  */
-
 @customElement('backend-ai-window-manager')
 export default class BackendAIWindowManager extends LitElement {
   @property({type: Object}) windows : Record<string, BackendAIWindow> = {};
+
+  count() {
+    return Object.keys(this.windows).length;
+  }
 
   addWindow(win: BackendAIWindow) {
     if(!Object.keys(this.windows).includes(win.name)) {
