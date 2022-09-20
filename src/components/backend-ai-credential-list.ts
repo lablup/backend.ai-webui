@@ -335,6 +335,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       this.keypairInfo = data.keypair;
 
       this.policyListSelect.value = this.keypairInfo.resource_policy;
+      this.rateLimit.value = this.keypairInfo.rate_limit.toString();
 
       this.keypairModifyDialog.show();
     } catch (err) {
@@ -696,25 +697,91 @@ export default class BackendAICredentialList extends BackendAIPage {
       `, root);
   }
 
+  _validateRateLimit() {
+    // this._adjustRateLimit();
+    const warningRateLimit = 100;
+    const maximumRateLimit = 50000; // the maximum value of rate limit value
+
+    this.rateLimit.validityTransform = (newValue, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          this.rateLimit.validationMessage = _text('credential.RateLimitInputRequired');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else if (nativeValidity.rangeOverflow) {
+          this.rateLimit.value = newValue = maximumRateLimit.toString();
+          this.rateLimit.validationMessage = _text('credential.RateLimitValidation');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else if (nativeValidity.rangeUnderflow) {
+          this.rateLimit.value = newValue = '1';
+          this.rateLimit.validationMessage = _text('credential.RateLimitValidation');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        } else {
+          this.rateLimit.validationMessage = _text('credential.InvalidRateLimitValue');
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        if (newValue.length !== 0 && !isNaN(Number(newValue)) && Number(newValue) < warningRateLimit) {
+          this.rateLimit.validationMessage = _text('credential.WarningLessRateLimit');
+          return {
+            valid: !nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+        return {
+          valid: nativeValidity.valid,
+          customError: !nativeValidity.valid
+        };
+      }
+    };
+  }
+
+  openDialog(id) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
+  }
+
+  closeDialog(id) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
+  }
+
   /**
    * Save a keypair modification.
    *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   * @param {boolean} confirm - Save keypair info even if rateLimit is less the warningRateLimit if `confirm` is true.
    */
-  _saveKeypairModification(e) {
-    const resource_policy = this.policyListSelect.value;
-    const rate_limit = Number(this.rateLimit.value);
+  _saveKeypairModification(confirm = false) {
+    const resourcePolicy = this.policyListSelect.value;
+    const rateLimit = Number(this.rateLimit.value);
+    const warningRateLimit = 100;
 
     if (!this.rateLimit.checkValidity()) {
-      return;
+      if (rateLimit < warningRateLimit && confirm) {
+        // Do nothing
+      } else if (rateLimit < warningRateLimit && !confirm) {
+        this.openDialog('keypair-confirmation');
+        return;
+      } else {
+        return;
+      }
     }
 
     let input = {};
-    if (resource_policy !== this.keypairInfo.resource_policy) {
-      input = {...input, resource_policy};
+    if (resourcePolicy !== this.keypairInfo.resource_policy) {
+      input = {...input, resource_policy: resourcePolicy};
     }
-    if (rate_limit !== this.keypairInfo.rate_limit) {
-      input = {...input, rate_limit};
+    if (rateLimit !== this.keypairInfo.rate_limit) {
+      input = {...input, rate_limit: rateLimit};
     }
 
     if (Object.entries(input).length === 0) {
@@ -724,7 +791,7 @@ export default class BackendAICredentialList extends BackendAIPage {
       globalThis.backendaiclient.keypair.mutate(this.keypairInfo.access_key, input)
         .then((res) => {
           if (res.modify_keypair.ok) {
-            if (this.keypairInfo.resource_policy === resource_policy && this.keypairInfo.rate_limit === rate_limit) {
+            if (this.keypairInfo.resource_policy === resourcePolicy && this.keypairInfo.rate_limit === rateLimit) {
               this.notification.text = _text('credential.NoChanges');
             } else {
               this.notification.text = _text('environment.SuccessfullyModified');
@@ -736,8 +803,13 @@ export default class BackendAICredentialList extends BackendAIPage {
           this.notification.show();
         });
     }
+    this.keypairModifyDialog.closeWithConfirmation = false;
+    this.closeDialog('keypair-modify-dialog');
+  }
 
-    this._hideDialog(e);
+  _confirmAndSaveKeypairModification() {
+    this.closeDialog('keypair-confirmation');
+    this._saveKeypairModification(true);
   }
 
   /**
@@ -745,12 +817,12 @@ export default class BackendAICredentialList extends BackendAIPage {
    *
    */
   _adjustRateLimit() {
-    const maximum_rate_limit = 50000; // the maximum value of rate limit value
-    const rate_limit = Number(this.rateLimit.value);
-    if (rate_limit > maximum_rate_limit) {
-      this.rateLimit.value = maximum_rate_limit.toString();
+    const maximumRateLimit = 50000; // the maximum value of rate limit value
+    const rateLimit = Number(this.rateLimit.value);
+    if (rateLimit > maximumRateLimit) {
+      this.rateLimit.value = maximumRateLimit.toString();
     }
-    if (rate_limit <= 0 ) {
+    if (rateLimit <= 0 ) {
       this.rateLimit.value = '1';
     }
   }
@@ -889,7 +961,8 @@ export default class BackendAICredentialList extends BackendAIPage {
                 label="${_t('credential.RateLimit')}"
                 validationMessage="${_t('credential.RateLimitValidation')}"
                 helper="${_t('credential.RateLimitValidation')}"
-                @change=${() => this._adjustRateLimit()}
+                @change="${() => this._validateRateLimit()}"
+                @input="${() => this._validateRateLimit()}"
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>
@@ -900,7 +973,27 @@ export default class BackendAICredentialList extends BackendAIPage {
               id="keypair-modify-save"
               icon="check"
               label="${_t('button.SaveChanges')}"
-              @click="${(e) => this._saveKeypairModification(e)}"></mwc-button>
+              @click="${() => this._saveKeypairModification()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="keypair-confirmation" warning fixed>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('credential.WarningLessRateLimit')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              label="${_text('button.Cancel')}"
+              @click="${(e) => this._hideDialog(e)}"
+              style="width:auto;margin-right:10px;">
+          </mwc-button>
+          <mwc-button
+              unelevated
+              label="${_text('button.DismissAndProceed')}"
+              @click="${() => this._confirmAndSaveKeypairModification()}"
+              style="width:auto;">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
     `;

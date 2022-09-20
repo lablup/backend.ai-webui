@@ -467,7 +467,10 @@
     "Status": "__NOT_TRANSLATED__",
     "UserStatus": "__NOT_TRANSLATED__",
     "NoCredentialToDisplay": "__NOT_TRANSLATED__",
-    "NoUserToDisplay": "__NOT_TRANSLATED__"
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
