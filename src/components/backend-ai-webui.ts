@@ -48,6 +48,7 @@ import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
+import BackendAIWindowManager from './backend-ai-window-manager';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 import './lablup-notification';
@@ -69,7 +70,7 @@ registerTranslateConfig({
 globalThis.backendaioptions = new BackendAISettingsStore;
 globalThis.tasker = new BackendAITasker;
 globalThis.backendaiutils = new BackendAICommonUtils;
-//globalThis.backendaiwindow
+globalThis.backendaiwindowmanager = new BackendAIWindowManager;
 /**
  Backend.AI Web UI
 

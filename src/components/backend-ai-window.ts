@@ -192,6 +192,9 @@ export default class BackendAIWindow extends LitElement {
     this.win.style.zIndex = this.posZ.toString();
     this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
     this.readWinSize();
+    this.name = 'qwe';
+    console.log(globalThis.backendaiwindowmanager);
+    globalThis.backendaiwindowmanager.addWindow(this);
   }
 
   render() {
@@ -215,21 +218,3 @@ export default class BackendAIWindow extends LitElement {
     `;
   }
 }
-
-export class BackendAIWindowManager extends LitElement {
-  @property({type: Object}) windows : Record<string, BackendAIWindow> = {};
-
-  _addWindow(win: BackendAIWindow) {
-    if(!Object.keys(this.windows).includes(win.name)) {
-      this.windows[win.name] = win;
-    }
-    console.log(this.windows);
-  }
-
-  _removeWindow(win: BackendAIWindow) {
-    if(Object.keys(this.windows).includes(win.name)) {
-      delete this.windows[win.name];
-    }
-  }
-}
-
