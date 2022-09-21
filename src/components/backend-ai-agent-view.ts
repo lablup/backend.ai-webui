@@ -116,7 +116,7 @@ export default class BackendAIAgentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window>
+      <backend-ai-window defaultWidth="80%">
         <span slot="title">${_t('webui.menu.ComputationResources')}</span>
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">

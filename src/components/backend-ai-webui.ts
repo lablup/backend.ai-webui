@@ -1507,20 +1507,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._activePages.includes('settings')}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('settings')}" @click="${() => this._moveTo('/settings')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-cog" slot="graphic" id="configurations-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Configurations')}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'maintenance'}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('maintenance')}" @click="${() => this._moveTo('/maintenance')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-wrench" slot="graphic" id="maintenance-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Maintenance')}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'information'}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('information')}" @click="${() => this._moveTo('/information')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-info-circle" slot="graphic" id="information-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Information')}</span>
                 </mwc-list-item>
                 ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-superadmin'].includes(item.url) && item.menuitem !== '')).map((item) => html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive(item.url)}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
                   <span class="full-menu">${item.menuitem}</span>
                 </mwc-list-item>

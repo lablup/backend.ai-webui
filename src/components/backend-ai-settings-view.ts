@@ -24,6 +24,7 @@ import {Select} from '@material/mwc-select';
 import {TextField} from '@material/mwc-textfield';
 import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-list/mwc-list-item';
+import './backend-ai-window';
 
 import './lablup-activity-panel';
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -266,6 +267,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-window>
+      <span slot="title">${_t('webui.menu.Configurations')}</span>
       <div class="horizontal layout wrap">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
           <div slot="message" class="horizontal wrap layout">

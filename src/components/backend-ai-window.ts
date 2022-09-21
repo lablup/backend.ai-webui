@@ -5,9 +5,15 @@
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, state, query} from 'lit/decorators.js';
 import '@material/mwc-icon-button';
 
+type windowInfo = {
+  posX: number,
+  posY: number,
+  width: number,
+  height: number
+}
 /**
  Backend AI Window
 
@@ -19,15 +25,22 @@ import '@material/mwc-icon-button';
 export default class BackendAIWindow extends LitElement {
   @property({type: String}) name = '';
   @property({type: Boolean}) active = false;
-  @property({type: Number}) mousePosX = 0;
-  @property({type: Number}) mousePosY = 0;
-  @property({type: Number}) distX = 0;
-  @property({type: Number}) distY = 0;
   @property({type: Number}) posX = 0;
   @property({type: Number}) posY = 0;
   @property({type: Number}) posZ = 1000;
-  @property({type: Number}) winWidth = 0;
-  @property({type: Number}) winHeight = 0;
+  @property({type: String}) defaultWidth = '';
+  @property({type: Boolean}) isFullScreen = false;
+
+  @state() protected lastWindowInfo: windowInfo = {
+    posX: 0,
+    posY: 0,
+    width: 0,
+    height: 0
+  };
+  @state() protected mousePosX: number = 0;
+  @state() protected mousePosY: number = 0;
+  @state() protected distX: number = 0;
+  @state() protected distY: number = 0;
 
   @query('#window') win!: HTMLDivElement;
   @query('#content') content!: HTMLDivElement;
@@ -54,6 +67,8 @@ export default class BackendAIWindow extends LitElement {
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
           box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
           position:absolute;
+          resize: both;
+          overflow: hidden;
           z-index: 1000;
         }
 
@@ -61,7 +76,6 @@ export default class BackendAIWindow extends LitElement {
           position:absolute;
           z-index: 2000;
         }
-
         div.window > h4 {
           background-color: #FFFFFF;
           color: #000000;
@@ -98,6 +112,12 @@ export default class BackendAIWindow extends LitElement {
           position:relative;
           border-radius: 0 0 5px 5px;
         }
+        #resize-guide {
+          position:absolute;
+          bottom:0;
+          right:0;
+          color: #666666;
+        }
       `]
   };
 
@@ -107,6 +127,7 @@ export default class BackendAIWindow extends LitElement {
     this.mousePosY = e.pageY;
     this.distX = this.win.offsetLeft - this.mousePosX;
     this.distY = this.win.offsetTop - this.mousePosY;
+    this.keepLastWindowInfo();
     console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
     console.log(this.win.offsetLeft, this.win.offsetTop);
 
@@ -167,16 +188,39 @@ export default class BackendAIWindow extends LitElement {
   }
 
   maximize_window() {
-    this.win.style.width = '100%';
-    this.win.style.height = 'calc(100vh - 100px)';
-    this.win.style.marginLeft = '0px';
-    this.win.style.marginTop = '0px';
-    this.readWinSize();
+    if (this.isFullScreen === false) {
+      this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
+    } else {
+
+    }
   }
-  readWinSize() {
-    this.winWidth = this.win.offsetWidth;
-    this.winHeight = this.win.offsetHeight;
+  setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
+    this.keepLastWindowInfo();
+    this.win.style.marginLeft = posX;
+    this.win.style.marginTop = posY;
+    if (width) {
+      this.win.style.width = width;
+    }
+    if (height) {
+      this.win.style.height = height;
+    }
+    return true;
   }
+
+  get currentWindowInfo() : windowInfo {
+    return {
+      posX: this.win.offsetLeft,
+      posY: this.win.offsetTop,
+      width: this.win.offsetWidth,
+      height: this.win.offsetHeight
+    };
+  }
+
+  keepLastWindowInfo() {
+    this.lastWindowInfo = this.currentWindowInfo;
+    return true;
+  }
+
   load_window_position() {
 
   }
@@ -185,7 +229,6 @@ export default class BackendAIWindow extends LitElement {
   }
 
   firstUpdated() {
-    console.log(globalThis.backenaiwindow);
     this.win.addEventListener('dragstart', this.dragStart.bind(this));
     this.win.addEventListener('dragover', this.dragover.bind(this));
     this.win.addEventListener('drag', this.drag.bind(this));
@@ -202,12 +245,26 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.marginTop = globalThis.backendaiwindowmanager.count() * 30 + 'px';
     }
     this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
-    this.win.style.zIndex = this.posZ.toString();
+    if (this.posZ !== 1000) {
+      this.win.style.zIndex = this.posZ.toString();
+    } else {
+      this.win.style.zIndex = (globalThis.backendaiwindowmanager.count() * 10).toString();
+    }
+    console.log(this.win.style.zIndex);
+    if (this.defaultWidth !== '') {
+      this.win.style.width = this.defaultWidth;
+    }
     this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
-    this.readWinSize();
     this.name = this.setName();
     console.log(globalThis.backendaiwindowmanager);
     globalThis.backendaiwindowmanager.addWindow(this);
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-reorder', (e: CustomEvent) => {
+      if(e.detail !== this.name) {
+        this.posZ = this.posZ - 1;
+        this.win.style.zIndex = this.posZ.toString();
+      }
+    });
   }
 
   setName() {
@@ -221,7 +278,9 @@ export default class BackendAIWindow extends LitElement {
   }
 
   setToTop() {
-    this.posZ = 10000;
+    const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
+    document.dispatchEvent(event);
+    this.posZ = globalThis.backendaiwindowmanager.count() * 10 + 1;
     this.win.style.zIndex = this.posZ.toString();
   }
 
@@ -238,14 +297,10 @@ export default class BackendAIWindow extends LitElement {
           <span><slot name="title"></slot></span>
           <div class="flex"></div>
         </h4>
-        <div class="flex horizontal layout">
-          <div class="frame" draggable="true" style="width:5px;"></div>
-          <div id="content" class="content flex" draggable="false">
-            <slot></slot>
-          </div>
-          <div class="frame" draggable="true" style="width:5px;"></div>
+        <mwc-icon-button id="resize-guide" icon="south_east"></mwc-icon-button>
+        <div id="content" class="content flex" draggable="false">
+          <slot></slot>
         </div>
-        <div class="frame" draggable="true" style="height:5px;"></div>
       </div>
       <div id="mock" style="display:none;"></div>
     `;
