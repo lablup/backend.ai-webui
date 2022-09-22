@@ -783,7 +783,7 @@ export default class BackendAILogin extends BackendAIPage {
      {
        valueType: 'number',
        defaultValue: 2,
-       value: parseFloat(resourcesConfig?.maxShmPerContainerr),
+       value: parseFloat(resourcesConfig?.maxShmPerContainer),
      } as ConfigValueObject) as number;
 
     // Max File Upload size number
