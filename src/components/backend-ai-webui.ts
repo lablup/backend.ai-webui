@@ -1671,20 +1671,20 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page" style="position:relative;">
-                    <backend-ai-summary-view class="page" name="summary" ?active="$this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
+                    <backend-ai-summary-view class="page" name="summary" ?active="${true || this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
-                    <backend-ai-agent-view class="page" name="agent" ?active="${true || this._page === 'agent'}"></backend-ai-agent-view>
+                    <backend-ai-agent-view class="page" name="agent" ?active="${this._isPageActive('agent')}"></backend-ai-agent-view>
                     <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${this._page === 'agent-summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
                     <!--<pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
                     <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
                     <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
-                    <backend-ai-environment-view class="page" name="environment" ?active="${true || this._page === 'environment'}"></backend-ai-environment-view>
-                    <backend-ai-settings-view class="page" name="settings" ?active="${true || this._page === 'settings'}"></backend-ai-settings-view>
+                    <backend-ai-environment-view class="page" name="environment" ?active="${this._isPageActive('environment')}"></backend-ai-environment-view>
+                    <backend-ai-settings-view class="page" name="settings" ?active="${this._isPageActive('settings')}"></backend-ai-settings-view>
                     <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
                     <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
