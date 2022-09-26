@@ -120,7 +120,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Maintenance')}">
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Maintenance')}"  defaultWidth="380px" defaultHeight="570px" name="maintenance">
       <div class="horizontal wrap layout">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">

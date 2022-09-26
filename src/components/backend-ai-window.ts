@@ -29,6 +29,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posY = 0;
   @property({type: Number}) posZ = 1000;
   @property({type: String}) defaultWidth = '80%';
+  @property({type: String}) defaultHeight = '';
   @property({type: String}) title = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
@@ -303,9 +304,12 @@ export default class BackendAIWindow extends LitElement {
     } else {
       this.win.style.zIndex = (globalThis.backendaiwindowmanager.count() * 10).toString();
     }
-    console.log(this.win.style.zIndex);
     this.win.style.width = this.defaultWidth;
-    this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
+    if (this.defaultHeight !== '') {
+      this.win.style.height = this.defaultHeight;
+    } else {
+      this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
+    }
     if (this.name === '') {
       this.name = this.setName();
     }

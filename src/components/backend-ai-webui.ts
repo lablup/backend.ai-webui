@@ -274,6 +274,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
     this.appPage.addEventListener('dragover', this.dragover.bind(this));
     this.appPage.addEventListener('drop', this.drop.bind(this));
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-added', (e: CustomEvent) => {
+      this._activatePage(e.detail);
+    })
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-removed', (e: CustomEvent) => {
+      this._deactivatePage(e.detail);
+    })
   }
 
   drop(event) {
@@ -878,12 +886,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
   }
 
-  _menuSelected(e) {
+  _menuSelected(e) { // ignores events
     e.stopPropagation();
     e.preventDefault();
-    //this.requestUpdate();
-    //console.log("menu selected", e.target);
-    //e.target.requestUpdate()
     // Reserved for future use.
   }
 
@@ -919,6 +924,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _deactivatePage(page: string) {
+    console.log('DEACTIVATING', page);
     if(this._activePages.includes(page)) {
       console.log('deactivate Page called', page);
       const index = this._activePages.indexOf(page);
@@ -1054,8 +1060,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (this._isPageActive(element.value)) {
         console.log(' menu selected',element.value);
         element.selected = true;
-        element.requestUpdate();
+      } else {
+        console.log(' menu deselected',element.value);
+        element.selected = false;
       }
+      element.requestUpdate();
     });
   }
 
@@ -1488,49 +1497,49 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @action="${(e)=>this._menuSelected(e)}" @selected="${(e) => this._menuSelected(e)}" multi>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}" value="summary">
+            <mwc-list-item graphic="icon" ?selected="${this._isPageActive('summary')}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}" value="summary">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}" value="job">
+            <mwc-list-item graphic="icon" ?selected="${this._isPageActive('job')}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}" value="job">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
             ${this._useExperiment ? html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}" value="experiment">
+              <mwc-list-item graphic="icon" ?selected="${this._isPageActive('experiment')}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}" value="experiment">
                 <i class="fas fa-flask" slot="graphic"></i>
                 <span class="full-menu">${_t('webui.menu.Experiments')}</span>
               </mwc-list-item>` : html``}
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'github' || this._page === 'import'}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}"  value="import">
+              <mwc-list-item graphic="icon" ?selected="${this._isPageActive('github') || this._isPageActive('import')}" @click="${() => this._moveTo('/import')}" ?disabled="${this.blockedMenuitem.includes('import')}"  value="import">
                 <i class="fas fa-play" slot="graphic" id="import-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Import&Run')}</span>
               </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'data'}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}" value="data">
+            <mwc-list-item graphic="icon" ?selected="${this._isPageActive('data')}" @click="${() => this._moveTo('/data')}" ?disabled="${this.blockedMenuitem.includes('data')}" value="data">
               <i class="fas fa-cloud-upload-alt" slot="graphic" id="data-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Data&Storage')}</span>
             </mwc-list-item>
             ${this._usePipeline ? html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline'}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}"  value="pipeline" style="display:none;">
+              <mwc-list-item graphic="icon" ?selected="${this._isPageActive('pipeline')}" @click="${() => this._moveTo('/pipeline')}" ?disabled="${this.blockedMenuitem.includes('pipeline')}"  value="pipeline" style="display:none;">
                 <i class="fas fa-stream" slot="graphic" id="pipeline-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.Pipeline')}</span>
               </mwc-list-item>
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'pipeline-job'}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}" value="pipeline-job" style="display:none;">
+              <mwc-list-item graphic="icon" ?selected="${this._isPageActive('pipeline-job')}" @click="${() => this._moveTo('/pipeline-job')}" ?disabled="${this.blockedMenuitem.includes('pipeline-job')}" value="pipeline-job" style="display:none;">
                 <i class="fas fa-sitemap" slot="graphic" id="pipeline-job-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.PipelineJob')}</span>
               </mwc-list-item>
             ` : html``}
             ${this.isHideAgents ? html`` : html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'agent-summary'}" @click="${() => this._moveTo('/agent-summary')}" ?disabled="${this.blockedMenuitem.includes('agent-summary')}" value="agent-summary">
+              <mwc-list-item graphic="icon" ?selected="${this._isPageActive('agent-summary')}" @click="${() => this._moveTo('/agent-summary')}" ?disabled="${this.blockedMenuitem.includes('agent-summary')}" value="agent-summary">
                 <i class="fas fa-server" slot="graphic" id="agent-summary-menu-icon"></i>
                 <span class="full-menu">${_t('webui.menu.AgentSummary')}</span>
               </mwc-list-item>
             `}
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'statistics'}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}" value="statistics">
+            <mwc-list-item graphic="icon" ?selected="${this._isPageActive('statistics')}" @click="${() => this._moveTo('/statistics')}" ?disabled="${this.blockedMenuitem.includes('statistics')}" value="statistics">
               <i class="fas fa-chart-bar" slot="graphic" id="statistics-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Statistics')}</span>
             </mwc-list-item>
             ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-user'].includes(item.url) && item.menuitem !== '')).map((item) => html`
-            <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}" value="${item.url}">
+            <mwc-list-item graphic="icon" ?selected="${this._isPageActive(item.url)}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}" value="${item.url}">
               <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
               <span class="full-menu">${item.menuitem}</span>
             </mwc-list-item>
@@ -1538,7 +1547,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             ${this.is_admin ?
     html`
                 <h3 class="full-menu">${_t('webui.menu.Administration')}</h3>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'credential'}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}" value="credential">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('credential')}" @click="${() => this._moveTo('/credential')}" ?disabled="${!this.is_admin}" value="credential">
                   <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Users')}</span>
                 </mwc-list-item>
@@ -1547,7 +1556,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <span class="full-menu">${_t('webui.menu.Environments')}</span>
                 </mwc-list-item>` : html``}
                 ${'page' in this.plugins ? this.plugins['page'].filter((item) => (this.plugins['menuitem-admin'].includes(item.url))).map((item) => html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === item.url}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}" value="${item.url}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive(item.url)}" @click="${() => this._moveTo('/'+ item.url)}" ?disabled="${!this.is_admin}" value="${item.url}">
                   <i class="fas fa-puzzle-piece" slot="graphic" id="${item}-menu-icon"></i>
                   <span class="full-menu">${item.menuitem}</span>
                 </mwc-list-item>

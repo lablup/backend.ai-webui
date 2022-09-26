@@ -27,6 +27,8 @@ export default class BackendAIWindowManager extends LitElement {
   addWindow(win: BackendAIWindow) {
     if(!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
+      const event = new CustomEvent('backend-ai-window-added', {'detail': win.name});
+      document.dispatchEvent(event);
     }
     console.log("Active windows:", this.windows);
   }
@@ -34,6 +36,8 @@ export default class BackendAIWindowManager extends LitElement {
   removeWindow(win: BackendAIWindow) {
     if(Object.keys(this.windows).includes(win.name)) {
       delete this.windows[win.name];
+      const event = new CustomEvent('backend-ai-window-removed', {'detail': win.name});
+      document.dispatchEvent(event);
     }
   }
 }
