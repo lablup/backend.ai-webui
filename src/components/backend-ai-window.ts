@@ -185,17 +185,20 @@ export default class BackendAIWindow extends LitElement {
   }
 
   minimize_window() {
+    console.log('minimize');
   }
 
   maximize_window() {
     if (this.isFullScreen === false) {
+      this.keepLastWindowInfo();
       this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
+      this.isFullScreen = true;
     } else {
-
+      this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
+      this.isFullScreen = false;
     }
   }
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
-    this.keepLastWindowInfo();
     this.win.style.marginLeft = posX;
     this.win.style.marginTop = posY;
     if (width) {
@@ -290,7 +293,7 @@ export default class BackendAIWindow extends LitElement {
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
           <div class="button-area">
             <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="minimize"></mwc-icon-button>
+            <mwc-icon-button icon="minimize" @click="${()=>this.minimize_window()}"></mwc-icon-button>
             <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
           </div>
           <span><slot name="title"></slot></span>
