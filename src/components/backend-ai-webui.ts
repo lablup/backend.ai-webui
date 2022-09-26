@@ -1671,7 +1671,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page" style="position:relative;">
-                    <backend-ai-summary-view class="page" name="summary" ?active="${true || this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
+                    <backend-ai-summary-view class="page" name="summary" ?active="${this._isPageActive('summary')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->

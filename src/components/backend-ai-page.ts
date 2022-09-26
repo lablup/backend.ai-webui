@@ -6,6 +6,7 @@
 import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
 import {LitElement} from 'lit';
 import {property} from 'lit/decorators.js';
+import BackendAIWindow from './backend-ai-window';
 
 /**
  Backend AI Page
@@ -25,13 +26,29 @@ registerTranslateConfig({
 export class BackendAIPage extends LitElement {
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true,
+    hasChanged(newVal: boolean, oldVal: boolean) {
+      if (typeof oldVal !== 'undefined' && oldVal !== newVal) {
+        console.log(`Is changed to ${newVal}, from ${oldVal}`);
+      }
+      return newVal;
+    },
+  }) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
+  @property({type: String}) is; // Component name
 
   constructor() {
     super();
     this.active = false;
     this.tasker = globalThis.tasker;
+  }
+
+  protected firstUpdated() {
+    let windowNode: BackendAIWindow | null | undefined = this.shadowRoot?.querySelector('backend-ai-window');
+    if(windowNode) {
+      console.log('window presents!');
+      console.log(windowNode.getAttribute('name'));
+    }
   }
 
   get activeConnected() {
@@ -55,9 +72,11 @@ export class BackendAIPage extends LitElement {
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
+      console.log('change to active', this.is);
       this._viewStateChanged(true);
     } else if (name === 'active') {
       this.active = false;
+      console.log('change to deactive');
       this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);

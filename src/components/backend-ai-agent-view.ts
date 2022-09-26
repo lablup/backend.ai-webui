@@ -70,6 +70,7 @@ export default class BackendAIAgentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');

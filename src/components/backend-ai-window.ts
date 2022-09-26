@@ -24,7 +24,7 @@ type windowInfo = {
 @customElement('backend-ai-window')
 export default class BackendAIWindow extends LitElement {
   @property({type: String}) name = '';
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Number}) posX = 0;
   @property({type: Number}) posY = 0;
   @property({type: Number}) posZ = 1000;
@@ -178,13 +178,25 @@ export default class BackendAIWindow extends LitElement {
   moveWin(xPos, yPos) {
       this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
-  close_window() {
-    globalThis.backendaiwindowmanager.removeWindow(this);
 
-//    console.log(this.content.firstChild);
+  close_window() {
+    //globalThis.backendaiwindowmanager.removeWindow(this);
+    //let slots = this.shadowRoot?.querySelectorAll('slot');
+    //if (slots) {
+    //  console.log((slots[1] as HTMLSlotElement).assignedElements());
+    //}
+  }
+
+  activate_window() {
+    this.active = true;
+  }
+
+  deactivate_window() {
+    this.active = false;
   }
 
   minimize_window() {
+    this.active = false;
     console.log('minimize');
   }
 
@@ -257,7 +269,7 @@ export default class BackendAIWindow extends LitElement {
     this.win.style.width = this.defaultWidth;
     this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
     this.name = this.setName();
-    console.log(globalThis.backendaiwindowmanager);
+    //console.log(globalThis.backendaiwindowmanager);
     globalThis.backendaiwindowmanager.addWindow(this);
     // @ts-ignore
     document.addEventListener('backend-ai-window-reorder', (e: CustomEvent) => {

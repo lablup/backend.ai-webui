@@ -266,7 +266,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window>
+      <backend-ai-window ?active="${this.active}">
       <span slot="title">${_t('webui.menu.Configurations')}</span>
       <div class="horizontal layout wrap">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth>
@@ -570,6 +570,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
