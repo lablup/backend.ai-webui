@@ -121,6 +121,7 @@ export default class BackendAIWindow extends LitElement {
       `]
   };
 
+  // D&D support
   dragStart(e) {
     e.stopPropagation();
     this.mousePosX = e.pageX;
@@ -179,10 +180,28 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 
-  close_window() {
-    this.deactivate_window();
+  // Activation observer
+  updated(changedProperties: Map<any, any>) {
+    changedProperties.forEach((oldVal, propName) => {
+      if (['active'].includes(propName)) {
+        if (this.active === true){  // Show window
+          this.show_window();
+        } else if (this.active === false) {  // Hide window
+          this.hide_window();
+        }
+      }
+    });
+  }
+  // Window visualization. Do not handle manually.
+  show_window() {
+    this.win.style.display = 'block';
   }
 
+  hide_window() {
+    this.win.style.display = 'none';
+  }
+
+  // Window activation
   activate_window() {
     this.active = true;
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
@@ -193,6 +212,12 @@ export default class BackendAIWindow extends LitElement {
     this.active = false;
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
     this.dispatchEvent(event);
+    globalThis.backendaiwindowmanager.removeWindow(this);
+  }
+
+  // Button controls
+  close_window() {
+    this.deactivate_window();
   }
 
   minimize_window() {
@@ -210,6 +235,7 @@ export default class BackendAIWindow extends LitElement {
       this.isFullScreen = false;
     }
   }
+  // Window dimension
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
     this.win.style.marginLeft = posX;
     this.win.style.marginTop = posY;

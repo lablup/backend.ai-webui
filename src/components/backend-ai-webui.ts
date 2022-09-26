@@ -879,6 +879,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _menuSelected(e) {
+    e.preventDefault();
     // Reserved for future use.
   }
 

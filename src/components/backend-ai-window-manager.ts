@@ -24,7 +24,7 @@ export default class BackendAIWindowManager extends LitElement {
     if(!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
     }
-    console.log(this.windows);
+    console.log("Active windows:", this.windows);
   }
 
   removeWindow(win: BackendAIWindow) {

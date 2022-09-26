@@ -29,7 +29,7 @@ export class BackendAIPage extends LitElement {
   @property({type: Boolean, reflect: true,
     hasChanged(newVal: boolean, oldVal: boolean) {
       if (typeof oldVal !== 'undefined' && oldVal !== newVal) {
-        console.log(`Is changed to ${newVal}, from ${oldVal}`);
+        console.log(`Backend.AI Page is changed to ${newVal}, from ${oldVal}`);
       }
       return newVal;
     },
@@ -47,8 +47,6 @@ export class BackendAIPage extends LitElement {
   protected firstUpdated() {
     let windowNode: BackendAIWindow | null | undefined = this.shadowRoot?.querySelector('backend-ai-window');
     if(windowNode) {
-      console.log('window presents!');
-      console.log(windowNode.getAttribute("posX"));
       this.windowNode = windowNode;
       this.windowNode.addEventListener('backend-ai-active-changed', (e)=>this._changeActiveState(e));
     }
@@ -83,11 +81,9 @@ export class BackendAIPage extends LitElement {
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
-      console.log('change to active', this.is);
       this._viewStateChanged(true);
     } else if (name === 'active') {
       this.active = false;
-      console.log('change to deactive');
       this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
