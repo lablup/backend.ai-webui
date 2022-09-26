@@ -27,6 +27,8 @@ import './backend-ai-dialog';
 import './backend-ai-multi-select';
 import './backend-ai-resource-policy-list';
 import './backend-ai-user-list';
+import './backend-ai-window';
+
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import JsonToCsv from '../lib/json_to_csv';
@@ -998,6 +1000,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.UserCredentials&Policies')}">
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
@@ -1319,6 +1322,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    </backend-ai-window>
     `;
   }
 }

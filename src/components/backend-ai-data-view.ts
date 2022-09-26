@@ -35,6 +35,7 @@ import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
+import './backend-ai-window';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -305,6 +306,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Data&Storage')}">
       <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
@@ -513,6 +515,7 @@ export default class BackendAIData extends BackendAIPage {
           <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
         </div>
       </backend-ai-dialog>
+    </backend-ai-window>
     `;
   }
 
