@@ -36,6 +36,7 @@ export class BackendAIPage extends LitElement {
   }) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) is; // Component name
+  @property({type: BackendAIWindow}) windowNode;
 
   constructor() {
     super();
@@ -47,7 +48,17 @@ export class BackendAIPage extends LitElement {
     let windowNode: BackendAIWindow | null | undefined = this.shadowRoot?.querySelector('backend-ai-window');
     if(windowNode) {
       console.log('window presents!');
-      console.log(windowNode.getAttribute('name'));
+      console.log(windowNode.getAttribute("posX"));
+      this.windowNode = windowNode;
+      this.windowNode.addEventListener('backend-ai-active-changed', (e)=>this._changeActiveState(e));
+    }
+  }
+
+  _changeActiveState(e) {
+    if (e.detail === true) {
+      this.active = true;
+    } else {
+      this.active = false;
     }
   }
 

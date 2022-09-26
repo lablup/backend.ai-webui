@@ -180,19 +180,19 @@ export default class BackendAIWindow extends LitElement {
   }
 
   close_window() {
-    //globalThis.backendaiwindowmanager.removeWindow(this);
-    //let slots = this.shadowRoot?.querySelectorAll('slot');
-    //if (slots) {
-    //  console.log((slots[1] as HTMLSlotElement).assignedElements());
-    //}
+    this.deactivate_window();
   }
 
   activate_window() {
     this.active = true;
+    const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
+    this.dispatchEvent(event);
   }
 
   deactivate_window() {
     this.active = false;
+    const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
+    this.dispatchEvent(event);
   }
 
   minimize_window() {
