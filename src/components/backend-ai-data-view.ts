@@ -306,7 +306,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Data&Storage')}">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Data&Storage')}" name="data">
       <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">

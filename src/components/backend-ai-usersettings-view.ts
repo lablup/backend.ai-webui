@@ -185,7 +185,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}" name="usersettings">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">

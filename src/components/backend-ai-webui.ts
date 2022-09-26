@@ -886,11 +886,18 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     });
   }
 
+  _menuAction(e) { // ignores events
+    e.stopPropagation();
+    e.preventDefault();
+    this.sidebarMenu.toggle(e.detail.index); // Workaround. This routine toggles again to nullify user click change.
+  }
+
   _menuSelected(e) { // ignores events
     e.stopPropagation();
     e.preventDefault();
     // Reserved for future use.
   }
+
 
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
@@ -919,6 +926,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     if(!this._activePages.includes(page)) {
       console.log('activate Page called', page);
       this._activePages.push(page);
+      this._updateSidebarSelection();
     }
     console.log(this._activePages);
   }
@@ -931,6 +939,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       if (index > -1) { // only splice array when item is found
         this._activePages.splice(index, 1); // 2nd parameter means remove one item only
       }
+      console.log(this._activePages);
+      this._updateSidebarSelection();
     }
   }
 
@@ -940,13 +950,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._activatePage(page);
       //this._updateSidebar(page);
       //this.sidebarMenu.layout();
-      this._updateSidebarSelection();
       this.requestUpdate();
     } else {
       this._deactivatePage(page);
       //this._updateSidebar(page);
       //this.sidebarMenu.layout();
-      this._updateSidebarSelection();
       this.requestUpdate();
     }
   }
@@ -1054,9 +1062,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.menuTitle = _text('webui.NOTFOUND');
     }
   }
+
   _updateSidebarSelection() {
-    let a  = this.sidebarMenu.querySelectorAll('mwc-list-item');
-    a.forEach(element => {
+    let list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
+    list.forEach(element => {
       if (this._isPageActive(element.value)) {
         console.log(' menu selected',element.value);
         element.selected = true;
@@ -1064,8 +1073,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         console.log(' menu deselected',element.value);
         element.selected = false;
       }
-      element.requestUpdate();
     });
+    this.sidebarMenu.requestUpdate();
   }
 
   /**
@@ -1496,7 +1505,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @action="${(e)=>this._menuSelected(e)}" @selected="${(e) => this._menuSelected(e)}" multi>
+          <mwc-list id="sidebar-menu" class="sidebar list" @action="${(e)=>this._menuAction(e)}" @selected="${(e) => this._menuSelected(e)}" multi>
             <mwc-list-item graphic="icon" ?selected="${this._isPageActive('summary')}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}" value="summary">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>

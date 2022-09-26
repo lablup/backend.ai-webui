@@ -454,7 +454,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Sessions')}">
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Sessions')}" name="job">
       <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
         <div slot="message">
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>

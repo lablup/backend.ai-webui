@@ -133,7 +133,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Statistics')}">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Statistics')}" name="statistics">
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="tab horizontal center layout">
