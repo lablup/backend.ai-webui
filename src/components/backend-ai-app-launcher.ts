@@ -13,6 +13,7 @@ import {TextField} from '@material/mwc-textfield';
 import 'macro-carousel';
 
 import BackendAIDialog from './backend-ai-dialog';
+import './backend-ai-window';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -568,7 +569,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
 
       this.notification.show();
-      return Promise.resolve(false);      
+      return Promise.resolve(false);
     }
 
     // Apply v1 when executing in electron mode
@@ -681,7 +682,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+              //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
             }, 1000);
@@ -854,7 +856,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(response.url, '_blank');
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url);
+              //globalThis.open(response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");
               // console.log(sessionUuid);

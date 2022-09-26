@@ -33,6 +33,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) title = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
+  @property({type: URL}) url;
 
   @state() protected lastWindowInfo: windowInfo = {
     posX: 0,
@@ -46,7 +47,7 @@ export default class BackendAIWindow extends LitElement {
   @state() protected distY: number = 0;
 
   @query('#window') win!: HTMLDivElement;
-  @query('#content') content!: HTMLDivElement;
+  @query('#content') contents!: HTMLDivElement;
   @query('#mock') mock!: HTMLDivElement;
   @query('#resize-guide') resizeGuide!: HTMLDivElement;
 
@@ -141,7 +142,7 @@ export default class BackendAIWindow extends LitElement {
 
     this.win.style.border = "3px dotted #ccc";
     e.dataTransfer.effectAllowed = 'move';
-    this.content.style.opacity = '0';
+    this.contents.style.opacity = '0';
     /*
     this.mock.style.width = this.winWidth.toString() + 'px';
     this.mock.style.height = this.winHeight.toString() + 'px';
@@ -160,7 +161,7 @@ export default class BackendAIWindow extends LitElement {
     this.win.style.marginTop = Math.max(this.mousePosY + this.distY, 10) + 'px';
     //console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
     //console.log(this.win.offsetLeft, this.win.offsetTop);
-    this.content.style.opacity = '1';
+    this.contents.style.opacity = '1';
     this.win.style.border = "none";
   }
 
@@ -230,14 +231,13 @@ export default class BackendAIWindow extends LitElement {
 
   minimize_window() {
     if (this.isMinimized) {
-      this.content.style.display = 'block';
+      this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
       this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
       this.isMinimized = false;
     } else {
-      //this.hide_window();
       this.keepLastWindowInfo();
-      this.content.style.display = 'none';
+      this.contents.style.display = 'none';
       this.resizeGuide.style.display = 'none';
       this.win.style.height = '37px';
       this.win.style.width = '200px';
@@ -248,7 +248,7 @@ export default class BackendAIWindow extends LitElement {
   maximize_window() {
     if (this.isFullScreen === false) {
       this.keepLastWindowInfo();
-      this.content.style.display = 'block';
+      this.contents.style.display = 'block';
       this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
       this.isFullScreen = true;
     } else {
@@ -289,6 +289,13 @@ export default class BackendAIWindow extends LitElement {
 
   save_window_position() {
   }
+  // Embed external page
+  loadURL(url) {
+    let urlContent = document.createElement("IFRAME");
+    urlContent.setAttribute("src", url);
+    //console.log(this.shadowRoot?.querySelector('#content'));
+    this.contents.appendChild(urlContent);
+  }
 
   firstUpdated() {
     this.win.addEventListener('dragstart', this.dragStart.bind(this));
@@ -316,7 +323,7 @@ export default class BackendAIWindow extends LitElement {
     if (this.defaultHeight !== '') {
       this.win.style.height = this.defaultHeight;
     } else {
-      this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
+      this.contents.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
     }
     if (this.name === '') {
       this.name = this.setName();

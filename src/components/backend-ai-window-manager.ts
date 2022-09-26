@@ -24,6 +24,17 @@ export default class BackendAIWindowManager extends LitElement {
     return Object.keys(this.windows).includes(name);
   }
 
+  addWindowWithURL(url: string) {
+    //let win =document.createElement('backend-ai-window');
+    //const html = `<backen-ai-window active=true title="test"></backend-ai-window>`;
+    //document.body.insertAdjacentHTML("beforeend" , html);
+    //win.loadURL(url);
+    //win.active = true;
+    //win.title = "test";
+    //console.log( win);
+    //this.addWindow(win);
+  }
+
   addWindow(win: BackendAIWindow) {
     if(!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
