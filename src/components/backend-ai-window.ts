@@ -48,6 +48,7 @@ export default class BackendAIWindow extends LitElement {
   @query('#window') win!: HTMLDivElement;
   @query('#content') content!: HTMLDivElement;
   @query('#mock') mock!: HTMLDivElement;
+  @query('#resize-guide') resizeGuide!: HTMLDivElement;
 
   constructor() {
     super();
@@ -132,7 +133,9 @@ export default class BackendAIWindow extends LitElement {
     this.mousePosY = e.pageY;
     this.distX = this.win.offsetLeft - this.mousePosX;
     this.distY = this.win.offsetTop - this.mousePosY;
-    this.keepLastWindowInfo();
+    if (!this.isMinimized) {
+      this.keepLastWindowInfo();
+    }
     console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
     console.log(this.win.offsetLeft, this.win.offsetTop);
 
@@ -227,14 +230,19 @@ export default class BackendAIWindow extends LitElement {
 
   minimize_window() {
     if (this.isMinimized) {
+      this.content.style.display = 'block';
+      this.resizeGuide.style.display = 'block';
+      this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
+      this.isMinimized = false;
     } else {
       //this.hide_window();
+      this.keepLastWindowInfo();
       this.content.style.display = 'none';
+      this.resizeGuide.style.display = 'none';
       this.win.style.height = '37px';
       this.win.style.width = '200px';
+      this.isMinimized = true;
     }
-    //this.active = false;
-    console.log('minimize');
   }
 
   maximize_window() {
