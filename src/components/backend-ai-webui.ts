@@ -881,7 +881,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   _menuSelected(e) {
     e.stopPropagation();
     e.preventDefault();
-
+    //this.requestUpdate();
+    console.log("menu selected", e.target);
+    e.target.requestUpdate()
     // Reserved for future use.
   }
 
@@ -1617,6 +1619,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
+              <div style="background-image:url('resources/bg1.jpg');width:100%;height:100vh;background-position:fixed;position:fixed;background-size:cover;backdrop-filter: blur(25px);"></div>
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
@@ -1721,8 +1724,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <!--<backend-ai-pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-pipeline-view>-->
                     <backend-ai-environment-view class="page" name="environment" ?active="${this._isPageActive('environment')}"></backend-ai-environment-view>
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._isPageActive('settings')}"></backend-ai-settings-view>
-                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
-                    <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
+                    <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._isPageActive('maintenance')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
+                    <backend-ai-information-view class="page" name="information" ?active="${this._isPageActive('information')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
                     <backend-ai-statistics-view class="page" name="statistics" ?active="${this._isPageActive('statistics')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>

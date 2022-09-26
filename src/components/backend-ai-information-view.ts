@@ -21,7 +21,7 @@ import 'weightless/icon';
 import 'weightless/card';
 
 import '@material/mwc-icon/mwc-icon';
-
+import './backend-ai-window';
 import './lablup-activity-panel';
 
 /**
@@ -150,6 +150,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Information')}">
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">
@@ -298,8 +299,9 @@ export default class BackendAiInformationView extends BackendAIPage {
               </div>
             </div>
           </div>
-        </div>
-      </lablup-activity-panel>
+        </lablup-activity-panel>
+      </div>
+      </backend-ai-window>
     `;
   }
 

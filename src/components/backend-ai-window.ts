@@ -67,7 +67,8 @@ export default class BackendAIWindow extends LitElement {
           padding: 0;
           border-radius: 5px;
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
-          box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+          /*box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;*/
+          box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
           position:absolute;
           resize: both;
           overflow: hidden;
@@ -208,6 +209,7 @@ export default class BackendAIWindow extends LitElement {
     this.active = true;
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
     this.dispatchEvent(event);
+    globalThis.backendaiwindowmanager.addWindow(this);
   }
 
   deactivate_window() {
