@@ -158,8 +158,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window>
-        <span slot="title">${_t('webui.menu.Environments')}</span>
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Environments')}">
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
@@ -181,8 +180,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           </div>
         </div>
       </lablup-activity-panel>
-      </backend-ai-window>
-
+    </backend-ai-window>
     `;
   }
 }

@@ -29,7 +29,9 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posY = 0;
   @property({type: Number}) posZ = 1000;
   @property({type: String}) defaultWidth = '80%';
+  @property({type: String}) title = '';
   @property({type: Boolean}) isFullScreen = false;
+  @property({type: Boolean}) isMinimized = false;
 
   @state() protected lastWindowInfo: windowInfo = {
     posX: 0,
@@ -221,13 +223,21 @@ export default class BackendAIWindow extends LitElement {
   }
 
   minimize_window() {
-    this.active = false;
+    if (this.isMinimized) {
+    } else {
+      //this.hide_window();
+      this.content.style.display = 'none';
+      this.win.style.height = '37px';
+      this.win.style.width = '200px';
+    }
+    //this.active = false;
     console.log('minimize');
   }
 
   maximize_window() {
     if (this.isFullScreen === false) {
       this.keepLastWindowInfo();
+      this.content.style.display = 'block';
       this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
       this.isFullScreen = true;
     } else {
@@ -334,7 +344,7 @@ export default class BackendAIWindow extends LitElement {
             <mwc-icon-button icon="minimize" @click="${()=>this.minimize_window()}"></mwc-icon-button>
             <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
           </div>
-          <span><slot name="title"></slot></span>
+          <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
         </h4>
         <mwc-icon-button id="resize-guide" icon="south_east"></mwc-icon-button>

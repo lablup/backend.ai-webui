@@ -879,7 +879,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _menuSelected(e) {
+    e.stopPropagation();
     e.preventDefault();
+
     // Reserved for future use.
   }
 
@@ -895,17 +897,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
       console.log(this._page);
       this._page = view;
-      this._activatePage(this._page);
+      this._toggleActivePage(this._page);
       this._updateSidebar(view);
     }
   }
 
   _isPageActive(page: string) {
+    console.log('isPageActive test: '+page, this._activePages.includes(page));
     return this._activePages.includes(page);
   }
 
   _activatePage(page: string) {
     if(!this._activePages.includes(page)) {
+      console.log('activate Page called', page);
       this._activePages.push(page);
     }
     console.log(this._activePages);
@@ -913,10 +917,35 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _deactivatePage(page: string) {
     if(this._activePages.includes(page)) {
-      let result: string[] = this._activePages.filter(function(elm){
-        return elm != page;
-      });
-      this._activePages = result;
+      console.log('deactivate Page called', page);
+      const index = this._activePages.indexOf(page);
+      if (index > -1) { // only splice array when item is found
+        this._activePages.splice(index, 1); // 2nd parameter means remove one item only
+      }
+    }
+  }
+
+  _toggleActivePage(page: string) {
+    console.log('Toggle Active Page');
+    if(!this._activePages.includes(page)) {
+      this._activatePage(page);
+      //this._updateSidebar(page);
+      //this.sidebarMenu.layout();
+      this.requestUpdate();
+    } else {
+      this._deactivatePage(page);
+      //this._updateSidebar(page);
+      //this.sidebarMenu.layout();
+      this.requestUpdate();
+    }
+  }
+
+  _togglePage(page: string) {
+    console.log('toggle');
+    if(!this._activePages.includes(page)) {
+      return this._activatePage(page);
+    } else {
+      return this._deactivatePage(page);
     }
   }
 
@@ -1173,12 +1202,18 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} url
    */
   _moveTo(url) {
+    console.log('moveTo called');
     const page = url.split('/')[1];
     if (!this.availablePages.includes(page) && (this.is_admin && !this.adminOnlyPages.includes(page))) {
       store.dispatch(navigate(decodeURIComponent('/error')));
       this._page = 'error';
       return;
     }
+    if (page === this._page) {
+      console.log('Same page');
+      return this._toggleActivePage(page);
+    }
+    console.log(page, this._page);
     globalThis.history.pushState({}, '', url);
     store.dispatch(navigate(decodeURIComponent(url), {}));
     if ('menuitem' in this.plugins) {
@@ -1492,7 +1527,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <i class="fas fa-address-card" slot="graphic" id="user-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Users')}</span>
                 </mwc-list-item>
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'environment'}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('environment')}" @click="${() => this._moveTo('/environment')}" ?disabled="${!this.is_admin}">
                   <i class="fas fa-microchip" slot="graphic" id="environments-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Environments')}</span>
                 </mwc-list-item>` : html``}
@@ -1504,7 +1539,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ${this.is_superadmin ?
     html`
-                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('agent')}" @click="${() => this._openInsetWindow('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._isPageActive('agent')}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>
@@ -1674,7 +1709,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                   <div id="app-page" style="position:relative;">
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._isPageActive('summary')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
-                    <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+                    <backend-ai-session-view class="page" name="job" ?active="${this._isPageActive('job')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
@@ -1688,7 +1723,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-settings-view class="page" name="settings" ?active="${this._isPageActive('settings')}"></backend-ai-settings-view>
                     <backend-ai-maintenance-view class="page" name="maintenance" ?active="${this._page === 'maintenance'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-maintenance-view>
                     <backend-ai-information-view class="page" name="information" ?active="${this._page === 'information'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-information-view>
-                    <backend-ai-statistics-view class="page" name="statistics" ?active="${this._page === 'statistics'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
+                    <backend-ai-statistics-view class="page" name="statistics" ?active="${this._isPageActive('statistics')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-statistics-view>
                     <backend-ai-email-verification-view class="page" name="email-verification" ?active="${this._page === 'verify-email'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-email-verification-view>
                     <backend-ai-change-forgot-password-view class="page" name="change-forgot-password" ?active="${this._page === 'change-password'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-change-forgot-password-view>
                     <backend-ai-edu-applauncher class="page" name="edu-applauncher" ?active="${this._page === 'edu-applauncher'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-edu-applauncher>

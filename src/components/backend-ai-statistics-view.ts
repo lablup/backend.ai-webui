@@ -16,6 +16,7 @@ import 'weightless/tab';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
+import './backend-ai-window';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-usage-list.js';
@@ -132,6 +133,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Statistics')}">
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="tab horizontal center layout">
@@ -146,6 +148,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
+      </backend-ai-window>
       `;
   }
 }

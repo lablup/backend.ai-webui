@@ -37,6 +37,7 @@ import './lablup-loading-spinner';
 import './backend-ai-error-log-list';
 import './backend-ai-usersettings-general-list';
 import './backend-ai-list-status';
+import './backend-ai-window';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -184,6 +185,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
@@ -239,6 +241,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               @click="${() => this._removeLogMessage()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    </backend-ai-window>
     `;
   }
 

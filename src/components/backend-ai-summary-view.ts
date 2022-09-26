@@ -461,7 +461,7 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
-      <backend-ai-window>
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Summary')}">
       <div class="item" elevation="1">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">
@@ -470,7 +470,6 @@ export default class BackendAISummary extends BackendAIPage {
           </div>
         ` : html``}
         <div class="horizontal wrap layout">
-          <span slot="title">${_t('summary.StartMenu')}</span>
             <lablup-activity-panel title="${_t('summary.StartMenu')}" elevation="1" height="500">
             <div slot="message">
               <img src="/resources/images/launcher-background.png" style="width:300px;margin-bottom:30px;"/>

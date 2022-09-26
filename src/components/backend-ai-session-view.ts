@@ -21,6 +21,7 @@ import '@material/mwc-icon-button';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-tab-bar';
 import '@material/mwc-tab';
+import './backend-ai-window';
 
 import './lablup-activity-panel';
 import './backend-ai-session-launcher';
@@ -453,6 +454,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Sessions')}">
       <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
         <div slot="message">
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
@@ -541,6 +543,7 @@ export default class BackendAiSessionView extends BackendAIPage {
                       @click="${this._exportToCSV}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    </backend-ai-window>
     `;
   }
 }

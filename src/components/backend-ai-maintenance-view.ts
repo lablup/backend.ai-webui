@@ -21,6 +21,8 @@ import 'weightless/button';
 import 'weightless/icon';
 import 'weightless/card';
 
+import './backend-ai-window';
+
 import {Button} from '@material/mwc-button/mwc-button';
 
 import './lablup-activity-panel';
@@ -118,6 +120,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Maintenance')}">
       <div class="horizontal wrap layout">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">
@@ -169,6 +172,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
+    </backend-ai-window>
     `;
   }
 

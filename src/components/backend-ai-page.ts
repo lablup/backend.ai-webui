@@ -81,9 +81,11 @@ export class BackendAIPage extends LitElement {
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
+      this.windowNode?.setAttribute('active', true);
       this._viewStateChanged(true);
     } else if (name === 'active') {
       this.active = false;
+      this.windowNode?.setAttribute('active', false);
       this._viewStateChanged(false);
     }
     super.attributeChangedCallback(name, oldval, newval);
