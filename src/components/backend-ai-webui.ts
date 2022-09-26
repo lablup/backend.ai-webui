@@ -906,6 +906,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _isPageActive(page: string) {
     //console.log('isPageActive test: '+page, this._activePages.includes(page));
+    //return globalThis.backendaiwindowmanager.has(page);
     return this._activePages.includes(page);
   }
 
@@ -1486,7 +1487,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
             <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
-          <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}" multi>
+          <mwc-list id="sidebar-menu" class="sidebar list" @action="${(e)=>this._menuSelected(e)}" @selected="${(e) => this._menuSelected(e)}" multi>
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}" value="summary">
               <i class="fas fa-th-large" slot="graphic" id="summary-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Summary')}</span>
@@ -1723,11 +1724,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page" style="position:relative;">
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._isPageActive('summary')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
-                    <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
+                    <backend-ai-import-view class="page" name="import" ?active="${this._isPageActive('github') || this._isPageActive('import')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._isPageActive('job')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
-                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
-                    <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
+                    <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._isPageActive('usersettings')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
+                    <backend-ai-credential-view class="page" name="credential" ?active="${this._isPageActive('credential')}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._isPageActive('agent')}"></backend-ai-agent-view>
                     <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${this._page === 'agent-summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>

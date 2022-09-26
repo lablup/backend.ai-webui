@@ -306,7 +306,9 @@ export default class BackendAIWindow extends LitElement {
     console.log(this.win.style.zIndex);
     this.win.style.width = this.defaultWidth;
     this.content.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
-    this.name = this.setName();
+    if (this.name === '') {
+      this.name = this.setName();
+    }
     //console.log(globalThis.backendaiwindowmanager);
     globalThis.backendaiwindowmanager.addWindow(this);
     // @ts-ignore

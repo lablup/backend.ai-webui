@@ -20,6 +20,10 @@ export default class BackendAIWindowManager extends LitElement {
     return Object.keys(this.windows).length;
   }
 
+  has(name) {
+    return Object.keys(this.windows).includes(name);
+  }
+
   addWindow(win: BackendAIWindow) {
     if(!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
