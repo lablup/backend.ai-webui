@@ -110,21 +110,21 @@ export default class BackendAIWindow extends LitElement {
           --mdc-icon-size: 16px;
           --mdc-icon-button-size: 24px;
         }
-        .frame {
-          cursor: move;
-          background-color: red;
-        }
+
         #content {
           box-sizing: border-box;
           overflow:scroll;
           position:relative;
           border-radius: 0 0 5px 5px;
         }
+
         #resize-guide {
           position:absolute;
           bottom:0;
           right:0;
           color: #666666;
+          --mdc-icon-size: 24px;
+          --mdc-icon-button-size: 32px;
         }
       `]
   };
@@ -134,7 +134,7 @@ export default class BackendAIWindow extends LitElement {
     e.stopPropagation();
     this.mousePosX = e.pageX;
     this.mousePosY = e.pageY;
-    this.distX = this.win.offsetLeft - this.mousePosX;
+    this.distX = this.win.offsetLeft - this.mousePosX; /* Diff between mouse axis and window axis */
     this.distY = this.win.offsetTop - this.mousePosY;
     if (!this.isMinimized) {
       this.keepLastWindowInfo();
@@ -148,9 +148,8 @@ export default class BackendAIWindow extends LitElement {
     this.contents.style.opacity = '0';
     this.win.style.backgroundColor = 'transparent';
 
-    /*
-    this.mock.style.width = this.winWidth.toString() + 'px';
-    this.mock.style.height = this.winHeight.toString() + 'px';
+    /*this.mock.style.width = this.win.offsetWidth.toString() + 'px';
+    this.mock.style.height = this.win.offsetHeight.toString() + 'px';
     this.mock.style.border = "none";
     this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
     this.mock.style.display = 'block';*/
@@ -159,32 +158,29 @@ export default class BackendAIWindow extends LitElement {
   dragend(e) {
     e.stopPropagation();
     e.preventDefault();
+    this.win.style.border = "none";
     this.mousePosX = e.pageX;
     this.mousePosY = e.pageY;
-    //this.moveWin(Math.max(this.mousePosX + this.distX, 10), Math.max(this.mousePosY + this.distY, 10));
-    this.win.style.left = Math.max(this.mousePosX + this.distX, 10) + 'px';
-    this.win.style.top = Math.max(this.mousePosY + this.distY, 10) + 'px';
-    //console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
-    //console.log(this.win.offsetLeft, this.win.offsetTop);
-    this.win.style.border = "none";
+    this.win.style.left = Math.max(this.mousePosX + this.distX, 1) + 'px';
+    this.win.style.top = Math.max(this.mousePosY + this.distY, 1) + 'px';
     this.titlebar.style.opacity = '1';
     this.contents.style.opacity = '1';
     this.win.style.background = 'var(--card-background-color, #ffffff)';
   }
 
   dragover(e) {
+    e.stopPropagation();
     e.preventDefault();
   }
 
   dragleave(e) {
+    e.stopPropagation();
     e.preventDefault();
   }
 
   drag(e) {
+    e.stopPropagation();
     e.preventDefault();
-    //console.log(e.clientX,e.clientY);
-    this.moveMock(this.win.offsetLeft, this.win.offsetTop);
-    //this.moveWin(e.pageX + this.distX, e.pageY - this.distY);
   }
 
   moveMock(xPos, yPos) {
@@ -239,14 +235,10 @@ export default class BackendAIWindow extends LitElement {
 
   minimize_window() {
     if (this.isMinimized) {
-      this.contents.style.display = 'block';
-      this.resizeGuide.style.display = 'block';
       this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
       this.isMinimized = false;
     } else {
       this.keepLastWindowInfo();
-      this.contents.style.display = 'none';
-      this.resizeGuide.style.display = 'none';
       this.win.style.height = '37px';
       this.win.style.width = '200px';
       this.isMinimized = true;
@@ -298,6 +290,19 @@ export default class BackendAIWindow extends LitElement {
   save_window_position() {
   }
 
+  resized() {
+    if (this.isFullScreen === true) {
+      this.isFullScreen = false;
+      this.keepLastWindowInfo();
+    }
+    if (this.win.offsetHeight < 38) {
+      this.contents.style.display = 'none';
+      this.resizeGuide.style.display = 'none';
+    } else {
+      this.contents.style.display = 'block';
+      this.resizeGuide.style.display = 'block';
+    }
+  }
   // Embed external page
   loadURL(url) {
     let urlContent = document.createElement("IFRAME");
@@ -312,6 +317,7 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('drag', this.drag.bind(this));
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
+    new ResizeObserver((obj) => {this.resized()}).observe(this.win);
     if (this.posX !== 0) {
       this.win.style.left = this.posX + 'px';
     } else {
@@ -379,7 +385,7 @@ export default class BackendAIWindow extends LitElement {
           <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
         </h4>
-        <mwc-icon-button id="resize-guide" icon="south_east"></mwc-icon-button>
+        <mwc-icon-button id="resize-guide" icon="south_east" disabled></mwc-icon-button>
         <div id="content" class="content flex" draggable="false">
           <slot></slot>
         </div>
