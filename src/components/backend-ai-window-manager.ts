@@ -16,7 +16,7 @@ import './backend-ai-window';
 @customElement('backend-ai-window-manager')
 export default class BackendAIWindowManager extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
-
+  @state() protected zOrder : string[] = [];
   count() {
     return Object.keys(this.windows).length;
   }
@@ -25,36 +25,27 @@ export default class BackendAIWindowManager extends LitElement {
     return Object.keys(this.windows).includes(name);
   }
 
-  addWindowWithURL(url: string) {
-    //this.shadowRoot.appendChild();
-    console.log('Add window with URL:', url);
+  addWindowWithURL(url: string, title: string | undefined) {
     let div = document.createElement('div');
-    let winTemplate = `<backend-ai-window active=true title="test"></backend-ai-window>`;
+    let winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
     div.innerHTML = winTemplate;
     let win : BackendAIWindow | null = div.querySelector('backend-ai-window');
-    win?.setAttribute('title',"test3");
+    if (title) {
+      win?.setAttribute('title', title);
+    }
     let urlContent = document.createElement("IFRAME");
     urlContent.setAttribute("src", url);
     urlContent.setAttribute("width", '100%');
     urlContent.setAttribute("height", '100%');
-
     win?.appendChild(urlContent);
-
-    //win?.loadURL(url);
     const event = new CustomEvent('backend-ai-window-append', {'detail': div});
     document.dispatchEvent(event);
-
-    //document.body.appendChild(div); //document.body.insertAdjacentHTML("beforeend" , html);
-    //win.loadURL(url);
-    //win.active = true;
-    //win.title = "test";
-    //console.log( win);
-    //this.addWindow(win);
   }
 
   addWindow(win: BackendAIWindow) {
     if(!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
+      this.zOrder.push(win.name);
       const event = new CustomEvent('backend-ai-window-added', {'detail': win.name});
       document.dispatchEvent(event);
     }
@@ -64,9 +55,30 @@ export default class BackendAIWindowManager extends LitElement {
   removeWindow(win: BackendAIWindow) {
     if(Object.keys(this.windows).includes(win.name)) {
       delete this.windows[win.name];
+      const index = this.zOrder.indexOf(win.name);
+      if (index > -1) {
+        this.zOrder.splice(index, 1);
+      }
       const event = new CustomEvent('backend-ai-window-removed', {'detail': win.name});
       document.dispatchEvent(event);
     }
+  }
+  constructor() {
+    super();
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-reorder', (e: CustomEvent) => {
+      let name = e.detail;
+      const index = this.zOrder.indexOf(name);
+      if (index > -1) {
+        this.zOrder.splice(index, 1);
+      }
+      this.zOrder.push(name);
+      console.log(this.zOrder);
+      for (let [index, name] of this.zOrder.entries()) {
+        console.log(name, index);
+        this.windows[name].setPosZ(index);
+      }
+    });
   }
   render() {
     // language=HTML

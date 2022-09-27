@@ -343,15 +343,12 @@ export default class BackendAIWindow extends LitElement {
     if (this.name === '') {
       this.name = this.setName();
     }
-    //console.log(globalThis.backendaiwindowmanager);
     globalThis.backendaiwindowmanager.addWindow(this);
-    // @ts-ignore
-    document.addEventListener('backend-ai-window-reorder', (e: CustomEvent) => {
-      if(e.detail !== this.name) {
-        this.posZ = this.posZ - (this.posZ % 10);
-        this.win.style.zIndex = this.posZ.toString();
-      }
-    });
+  }
+
+  setPosZ(value) {
+    this.posZ = 1000 + (value * 10);
+    this.win.style.zIndex = this.posZ.toString();
   }
 
   setName() {
@@ -367,9 +364,6 @@ export default class BackendAIWindow extends LitElement {
   setToTop() {
     const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
     document.dispatchEvent(event);
-    this.posZ = globalThis.backendaiwindowmanager.count() * 10 + 1;
-    this.win.style.zIndex = this.posZ.toString();
-    console.log(this.posZ);
   }
 
   render() {

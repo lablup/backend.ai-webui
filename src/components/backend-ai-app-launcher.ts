@@ -682,7 +682,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -812,7 +812,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(response.url + urlPostfix);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid)
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -858,7 +858,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Terminal - ' + sessionUuid)
               //globalThis.open(response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");
@@ -941,7 +941,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this._hideTensorboardDialog();
         button.removeAttribute('disabled');
         setTimeout(() => {
-          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid)
           //globalThis.open(response.url + urlPostfix, '_blank');
           console.log(appName + ' proxy loaded: ');
           console.log(sessionUuid);
