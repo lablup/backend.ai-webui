@@ -52,25 +52,10 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          wl-tab-group {
-              --tab-group-indicator-bg: var(--paper-yellow-600);
-          }
-
-          wl-tab {
-              --tab-color: #666;
-              --tab-color-hover: #222;
-              --tab-color-hover-filled: #222;
-              --tab-color-active: var(--paper-yellow-900);
-              --tab-color-active-hover: var(--paper-yellow-900);
-              --tab-color-active-filled: #ccc;
-              --tab-bg-active: var(--paper-yellow-200);
-              --tab-bg-filled: var(--paper-yellow-200);
-              --tab-bg-active-hover: var(--paper-yellow-200);
-          }
-
           h3.tab {
             background-color: var(--general-tabbar-background-color);
-            border-radius: 5px 5px 0px 0px;
+            /*border-radius: 5px 5px 0px 0px;*/
+            border-radius: 0;
             margin: 0px auto;
           }
 
@@ -99,10 +84,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
           @media screen and (max-width: 805px) {
             mwc-tab, mwc-button {
               --mdc-typography-button-font-size: 10px;
-            }
-
-            wl-tab {
-              width: 5px;
             }
           }
       `
@@ -159,7 +140,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
     // language=HTML
     return html`
     <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Environments')}" name="environment">
-      <lablup-activity-panel noheader narrow autowidth>
+      <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>

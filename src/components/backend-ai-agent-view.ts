@@ -50,7 +50,8 @@ export default class BackendAIAgentView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
           margin: 0 auto;
         }
 
@@ -118,7 +119,7 @@ export default class BackendAIAgentView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-window defaultWidth="80%" active="${this.active}" title="${_t('webui.menu.ComputationResources')}" name="agent">
-      <lablup-activity-panel noheader narrow autowidth>
+      <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal center layout">
             <mwc-tab-bar>

@@ -168,7 +168,8 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
           margin: 0 auto;
         }
 
@@ -1001,7 +1002,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.UserCredentials&Policies')}" name="credential">
-      <lablup-activity-panel noheader narrow autowidth>
+      <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
            <mwc-tab-bar>

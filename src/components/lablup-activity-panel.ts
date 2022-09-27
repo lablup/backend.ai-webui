@@ -43,6 +43,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) pinned = false;
   @property({type: Boolean}) disabled = false;
   @property({type: Boolean}) narrow = false;
+  @property({type: Boolean}) attachInner = false;
   @property({type: Boolean}) noheader = false;
   @property({type: Boolean}) scrollableY = false;
 
@@ -175,6 +176,11 @@ export default class LablupActivityPanel extends LitElement {
 
     if (this.narrow) {
       (this.shadowRoot?.querySelector('div.card > div') as HTMLDivElement).style.margin = '0';
+      header.style.marginBottom = '0';
+    }
+
+    if (this.attachInner) {
+      (this.shadowRoot?.querySelector('div.card') as HTMLDivElement).style.margin = '0';
       header.style.marginBottom = '0';
     }
 
