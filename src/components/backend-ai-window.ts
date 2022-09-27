@@ -36,6 +36,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) title = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
+  @property({type: Boolean}) isTop = false;
   @property({type: URL}) url;
 
   @state() protected lastWindowInfo: windowInfo = {
@@ -366,14 +367,16 @@ export default class BackendAIWindow extends LitElement {
   }
 
   setToTop() {
-    const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
-    document.dispatchEvent(event);
+    if (!this.isTop) {
+      const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
+      document.dispatchEvent(event);
+    }
   }
 
   render() {
     // language=HTML
     return html`
-      <div id="window" class="window" draggable="true">
+      <div id="window" class="window" draggable="true" @click="${()=>{this.setToTop()}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
           <div class="button-area">
             <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
