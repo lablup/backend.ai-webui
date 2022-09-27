@@ -153,7 +153,8 @@ export default class BackendAIWindow extends LitElement {
     this.contents.style.opacity = '0';
     this.win.style.backgroundColor = 'transparent';
 
-    /*this.mock.style.width = this.win.offsetWidth.toString() + 'px';
+    /* Reserved for future animated windows.
+    this.mock.style.width = this.win.offsetWidth.toString() + 'px';
     this.mock.style.height = this.win.offsetHeight.toString() + 'px';
     this.mock.style.border = "none";
     this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
@@ -210,15 +211,31 @@ export default class BackendAIWindow extends LitElement {
     });
   }
   // Window visualization. Do not handle manually.
+  /**
+   *  Show current window.
+   *  This method only shows window, without changing internal workflow, including background jobs.
+   */
   show_window() {
     this.win.style.display = 'block';
   }
 
+  /**
+   *  Hide current window.
+   *  This method only hides window, without changing internal workflow, including background jobs.
+   */
   hide_window() {
     this.win.style.display = 'none';
   }
 
   // Window activation
+  /**
+   *  Activate current window.
+   *
+   *  This method activates window. Activation includes
+   *    - Turn on `active` flag
+   *    - Emit `backend-ai-active-changed` event
+   *    - Register current window to window manager.
+   */
   activate_window() {
     this.active = true;
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
@@ -226,6 +243,14 @@ export default class BackendAIWindow extends LitElement {
     globalThis.backendaiwindowmanager.addWindow(this);
   }
 
+  /**
+   *  Deactivate current window.
+   *
+   *  This method deactivates window. Deactivation includes
+   *    - Turn off `active` flag
+   *    - Emit `backend-ai-active-changed` event
+   *    - Remove current window from window manager.
+   */
   deactivate_window() {
     this.active = false;
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
@@ -295,6 +320,10 @@ export default class BackendAIWindow extends LitElement {
   save_window_position() {
   }
 
+  /**
+   *  Callback when window is resized.
+   *
+   */
   resized() {
     if (this.isFullScreen === true) {
       this.isFullScreen = false;
@@ -307,13 +336,6 @@ export default class BackendAIWindow extends LitElement {
       this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
     }
-  }
-  // Embed external page
-  loadURL(url) {
-    let urlContent = document.createElement("IFRAME");
-    urlContent.setAttribute("src", url);
-    console.log(this.shadowRoot?.querySelector('#content'));
-    this.contents.appendChild(urlContent);
   }
 
   firstUpdated() {
