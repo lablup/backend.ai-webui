@@ -306,6 +306,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {

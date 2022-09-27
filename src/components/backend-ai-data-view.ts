@@ -520,6 +520,7 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     this.folderLists = this.shadowRoot?.querySelectorAll('backend-ai-storage-list');
     fetch('resources/storage_metadata.json').then(

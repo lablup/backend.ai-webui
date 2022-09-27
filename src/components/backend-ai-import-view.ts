@@ -176,6 +176,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
   }

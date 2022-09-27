@@ -177,6 +177,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
 

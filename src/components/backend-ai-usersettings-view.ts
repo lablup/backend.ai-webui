@@ -246,6 +246,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
       document.addEventListener('backend-ai-connected', () => {
         this.updateSettings();

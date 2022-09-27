@@ -289,6 +289,7 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot?.querySelector('#update-checker');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {

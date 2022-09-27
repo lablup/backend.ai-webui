@@ -237,6 +237,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
   }
 

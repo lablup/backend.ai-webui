@@ -258,8 +258,8 @@ export default class BackendAIWindow extends LitElement {
   }
   // Window dimension
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
-    this.win.style.marginLeft = posX;
-    this.win.style.marginTop = posY;
+    this.win.style.left = posX;
+    this.win.style.top = posY;
     if (width) {
       this.win.style.width = width;
     }
@@ -305,14 +305,14 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     if (this.posX !== 0) {
-      this.win.style.marginLeft = this.posX + 'px';
+      this.win.style.left = this.posX + 'px';
     } else {
-      this.win.style.marginLeft = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
     }
     if (this.posY !== 0) {
-      this.win.style.marginTop = this.posY + 'px';
+      this.win.style.top = this.posY + 'px';
     } else {
-      this.win.style.marginTop = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
     }
     this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
     if (this.posZ !== 1000) {

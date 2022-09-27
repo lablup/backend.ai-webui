@@ -183,6 +183,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   firstUpdated() {
+    super.firstUpdated();
     this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-session-list-refreshed', () => {
       this.runningJobs.refreshList(true, false);
