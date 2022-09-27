@@ -277,11 +277,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // @ts-ignore
     document.addEventListener('backend-ai-window-added', (e: CustomEvent) => {
       this._activatePage(e.detail);
-    })
+    });
     // @ts-ignore
     document.addEventListener('backend-ai-window-removed', (e: CustomEvent) => {
       this._deactivatePage(e.detail);
+    });
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-append', (e: CustomEvent) => {
+      this._addWindowToDesktop(e.detail);
     })
+
+
   }
 
   drop(event) {
@@ -958,7 +964,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.requestUpdate();
     }
   }
-
+  _addWindowToDesktop(win) {
+    console.log('append to desktop', win);
+    this.appPage.appendChild(win);
+  }
   _togglePage(page: string) {
     console.log('toggle');
     if(!this._activePages.includes(page)) {

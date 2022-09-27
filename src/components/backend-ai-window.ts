@@ -89,7 +89,7 @@ export default class BackendAIWindow extends LitElement {
           font-weight: 400;
           height: 32px;
           padding: 5px 0 0 0;
-          margin: 0 0 10px 0;
+          margin: 0 0 0 0;
           border-radius: 5px 5px 0 0;
           border-bottom: 1px solid #DDD;
           display: flex;
@@ -289,11 +289,12 @@ export default class BackendAIWindow extends LitElement {
 
   save_window_position() {
   }
+
   // Embed external page
   loadURL(url) {
     let urlContent = document.createElement("IFRAME");
     urlContent.setAttribute("src", url);
-    //console.log(this.shadowRoot?.querySelector('#content'));
+    console.log(this.shadowRoot?.querySelector('#content'));
     this.contents.appendChild(urlContent);
   }
 

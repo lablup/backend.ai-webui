@@ -811,7 +811,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
+              console.log(response.url + urlPostfix);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+              //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
             }, 1000);
@@ -939,7 +941,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this._hideTensorboardDialog();
         button.removeAttribute('disabled');
         setTimeout(() => {
-          globalThis.open(response.url + urlPostfix, '_blank');
+          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix);
+          //globalThis.open(response.url + urlPostfix, '_blank');
           console.log(appName + ' proxy loaded: ');
           console.log(sessionUuid);
         }, 1000);
@@ -1054,7 +1057,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
+      <backend-ai-dialog id="app-dialog" fixed narrowLayout>
         <div slot="title" class="horizontal layout center">
           <span>App</span>
         </div>
@@ -1097,7 +1100,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="ssh-dialog" fixed backdrop>
+      <backend-ai-dialog id="ssh-dialog" fixed>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
@@ -1141,7 +1144,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="vnc-dialog" fixed backdrop>
+      <backend-ai-dialog id="vnc-dialog" fixed>
         <span slot="title">${_t('session.VNCconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.UseYourFavoriteVNCApp')}</div>
@@ -1152,7 +1155,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="xrdp-dialog" fixed backdrop>
+      <backend-ai-dialog id="xrdp-dialog" fixed>
         <span slot="title">${_t('session.XRDPconnection')}</span>
         <div slot="content" style="padding:15px;">
           <div style="padding:15px 0;">${_t('session.UseYourFavoriteMSTSCApp')}</div>
@@ -1163,7 +1166,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </section>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed backdrop>
+      <backend-ai-dialog id="app-launch-confirmation-dialog" warning fixed>
         <span slot="title">${_t('session.applauncher.AppMustBeRun')}</span>
         <div slot="content" class="vertical layout">
           <p>${_t('session.applauncher.AppMustBeRunDialog')}</p>
@@ -1180,7 +1183,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="terminal-guide" fixed backdrop>
+      <backend-ai-dialog id="terminal-guide" fixed>
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>
