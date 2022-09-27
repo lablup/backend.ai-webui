@@ -15,14 +15,17 @@ type windowInfo = {
   height: number
 }
 /**
- Backend AI Window
+ Backend AI Window Shell
+
+ This component encapsulates another component as a window form.
+ Also, this component communicates with backend-ai-window-manager to implement window composition.
 
  @group Backend.AI Web UI
  @element backend-ai-window
  */
-
 @customElement('backend-ai-window')
 export default class BackendAIWindow extends LitElement {
+ // Can be set when initializing window
   @property({type: String}) name = '';
   @property({type: Boolean, reflect: true}) active = false;
   @property({type: Number}) posX = 0;

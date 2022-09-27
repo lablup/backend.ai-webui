@@ -466,7 +466,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --component-width: 400px;
           --component-height: 640px;
           --component-max-height: 640px;
-          z-index: 100;
+          z-index: 10000;
         }
 
         .resource-button.iron-selected {

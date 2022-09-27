@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-import {LitElement, html} from 'lit';
+import {LitElement} from 'lit';
 import {customElement, state} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
@@ -17,6 +17,7 @@ import './backend-ai-window';
 export default class BackendAIWindowManager extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
   @state() protected zOrder : string[] = [];
+
   count() {
     return Object.keys(this.windows).length;
   }
@@ -63,6 +64,7 @@ export default class BackendAIWindowManager extends LitElement {
       document.dispatchEvent(event);
     }
   }
+
   constructor() {
     super();
     // @ts-ignore
@@ -73,17 +75,10 @@ export default class BackendAIWindowManager extends LitElement {
         this.zOrder.splice(index, 1);
       }
       this.zOrder.push(name);
-      console.log(this.zOrder);
       for (let [index, name] of this.zOrder.entries()) {
-        console.log(name, index);
-        this.windows[name].setPosZ(index);
+        this.windows[name]?.setPosZ(index);
       }
     });
-  }
-  render() {
-    // language=HTML
-    return html`
-    `;
   }
 }
 
