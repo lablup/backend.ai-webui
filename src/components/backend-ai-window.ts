@@ -47,6 +47,7 @@ export default class BackendAIWindow extends LitElement {
   @state() protected distY: number = 0;
 
   @query('#window') win!: HTMLDivElement;
+  @query('#titlebar') titlebar!: HTMLDivElement;
   @query('#content') contents!: HTMLDivElement;
   @query('#mock') mock!: HTMLDivElement;
   @query('#resize-guide') resizeGuide!: HTMLDivElement;
@@ -66,7 +67,7 @@ export default class BackendAIWindow extends LitElement {
         div.window {
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          margin: 14px;
+          margin: 0;
           padding: 0;
           border-radius: 5px;
           /*box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;*/
@@ -82,6 +83,7 @@ export default class BackendAIWindow extends LitElement {
           position:absolute;
           z-index: 2000;
         }
+
         div.window > h4 {
           background-color: #FFFFFF;
           color: #000000;
@@ -137,12 +139,15 @@ export default class BackendAIWindow extends LitElement {
     if (!this.isMinimized) {
       this.keepLastWindowInfo();
     }
-    console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
-    console.log(this.win.offsetLeft, this.win.offsetTop);
+    console.log("Window location: "+ (this.mousePosX + this.distX), this.mousePosY + this.distY);
+    console.log("Window offset location: " + this.win.offsetLeft, this.win.offsetTop);
 
     this.win.style.border = "3px dotted #ccc";
+    this.titlebar.style.opacity = '0';
     e.dataTransfer.effectAllowed = 'move';
     this.contents.style.opacity = '0';
+    this.win.style.backgroundColor = 'transparent';
+
     /*
     this.mock.style.width = this.winWidth.toString() + 'px';
     this.mock.style.height = this.winHeight.toString() + 'px';
@@ -157,12 +162,14 @@ export default class BackendAIWindow extends LitElement {
     this.mousePosX = e.pageX;
     this.mousePosY = e.pageY;
     //this.moveWin(Math.max(this.mousePosX + this.distX, 10), Math.max(this.mousePosY + this.distY, 10));
-    this.win.style.marginLeft = Math.max(this.mousePosX + this.distX, 10) + 'px';
-    this.win.style.marginTop = Math.max(this.mousePosY + this.distY, 10) + 'px';
+    this.win.style.left = Math.max(this.mousePosX + this.distX, 10) + 'px';
+    this.win.style.top = Math.max(this.mousePosY + this.distY, 10) + 'px';
     //console.log(this.mousePosX + this.distX, this.mousePosY + this.distY);
     //console.log(this.win.offsetLeft, this.win.offsetTop);
-    this.contents.style.opacity = '1';
     this.win.style.border = "none";
+    this.titlebar.style.opacity = '1';
+    this.contents.style.opacity = '1';
+    this.win.style.background = 'var(--card-background-color, #ffffff)';
   }
 
   dragover(e) {
@@ -193,6 +200,7 @@ export default class BackendAIWindow extends LitElement {
     changedProperties.forEach((oldVal, propName) => {
       if (['active'].includes(propName)) {
         if (this.active === true){  // Show window
+          this.activate_window();
           this.show_window();
         } else if (this.active === false) {  // Hide window
           this.hide_window();
@@ -362,7 +370,7 @@ export default class BackendAIWindow extends LitElement {
     // language=HTML
     return html`
       <div id="window" class="window" draggable="true">
-        <h4 id="header" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
+        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
           <div class="button-area">
             <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
             <mwc-icon-button icon="minimize" @click="${()=>this.minimize_window()}"></mwc-icon-button>

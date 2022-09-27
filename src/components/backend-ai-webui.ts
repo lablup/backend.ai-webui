@@ -944,7 +944,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   _deactivatePage(page: string) {
     console.log('DEACTIVATING', page);
     if(this._activePages.includes(page)) {
-      console.log('deactivate Page called', page);
       let result: string[] = this._activePages.filter(function(elm){
          return elm != page;
       });
