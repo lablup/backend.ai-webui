@@ -7,12 +7,13 @@ import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/snackbar';
-import 'weightless/button';
-import 'weightless/icon';
+import '@material/mwc-snackbar';
+import '@material/mwc-icon-button';
+import '@material/mwc-button';
 
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
+import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 /**
  Lablup Notification
@@ -23,7 +24,7 @@ import {store} from '../store';
 
  <lablup-notification></lablup-notification>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-notification
  */
 
@@ -61,23 +62,11 @@ export default class LablupNotification extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       // language=CSS
+      BackendAIWebUIStyles,
       css`
-        wl-snackbar {
-          position: fixed;
-          right: 20px;
-          font-size: 16px;
-          font-weight: 400;
-          font-family: 'Ubuntu', Roboto, sans-serif;
-          z-index: 12345678;
-        }
-
-        wl-button {
-          --button-font-size: 11px;
-          --button-fab-size: 12px;
-        }
-
-        wl-icon {
-          --icon-size: 10px;
+        mwc-snackbar {
+          --mdc-typography-body2-font-family: var(--general-font-family);
+          --mdc-snackbar-action-color: #64dc17;
         }
       `];
   }
@@ -138,14 +127,14 @@ export default class LablupNotification extends LitElement {
   }
 
   /**
-   * When click the close_button, hide dialog(wl-snackbar).
+   * When click the close_button, hide dialog(mwc-snackbar).
    *
    * @param {Event} e - Click the close_button
    * */
   _hideNotification(e) {
     const hideButton = e.target;
-    const dialog = hideButton.closest('wl-snackbar');
-    dialog.hide();
+    const dialog = hideButton.closest('mwc-snackbar');
+    dialog.close();
   }
 
   /**
@@ -180,12 +169,9 @@ export default class LablupNotification extends LitElement {
    * @param{HTMLElement} notification - Notification webcomponent
    * */
   _createCloseButton(notification) {
-    const button = document.createElement('wl-button');
-    button.setAttribute('slot', 'action');
-    button.setAttribute('flat', '');
-    button.setAttribute('fab', '');
-    button.addEventListener('click', this._hideNotification.bind(this));
-    button.innerHTML = '<wl-icon>close</wl-icon>';
+    const button = document.createElement('mwc-icon-button');
+    button.setAttribute('slot', 'dismiss');
+    button.setAttribute('icon', 'close');
     notification.appendChild(button);
   }
 
@@ -196,28 +182,26 @@ export default class LablupNotification extends LitElement {
    * @param {object} log - Log object that contains detail information
    * */
   async show(persistent = false, log: Record<string, unknown> = Object()) {
-    const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
+    const snackbar = document.querySelector('mwc-snackbar[timeoutMs=\'-1\']');
     if (snackbar) {
       this.notifications = [] as any; // Reset notifications
       document.body.removeChild(snackbar);
     }
     this.gc();
-    const notification = document.createElement('wl-snackbar');
-    notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
-    if (this.detail != '') {
-      notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
-    }
+    const notification = document.createElement('mwc-snackbar');
+    notification.labelText = this.text;
+    /*if (this.detail != '') {
+      notification.labelText = this.text;// + '<div style="display:none;"> : ' + this.detail + '</div>';
+    }*/
     if (Object.keys(log).length !== 0) {
       console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
     }
 
     if (this.detail !== '') {
-      const more_button = document.createElement('wl-button');
+      const more_button = document.createElement('mwc-button');
       more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
-      more_button.setAttribute('flat', '');
-      more_button.setAttribute('fab', '');
       more_button.style.width = 80 + 'px';
       if (this.url != '') {
         more_button.innerHTML = _text('notification.Visit');
@@ -226,22 +210,22 @@ export default class LablupNotification extends LitElement {
         more_button.innerHTML = _text('notification.SeeDetail');
         more_button.addEventListener('click', this._moreNotification.bind(this));
       }
-      // more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";
       notification.appendChild(more_button);
     }
     this.detail = ''; // Reset the temporary detail scripts
     this.url = '';
+      notification.setAttribute('leading', '');
     if (persistent === false) {
-      notification.setAttribute('hideDelay', '3000');
+      notification.setAttribute('timeoutMs', '3000');
     } else {
-      notification.setAttribute('persistent', 'true');
+      notification.setAttribute('timeoutMs', '-1');
       this._createCloseButton(notification);
     }
     notification.setAttribute('backdrop', '');
     notification.style.bottom = (20 + 55 * this.step) + 'px';
     notification.style.position = 'fixed';
-    (notification.querySelector('span') as any).style.overflowX = 'hidden';
-    (notification.querySelector('span') as any).style.maxWidth = '70vw';
+    //(notification.querySelector('span') as any).style.overflowX = 'hidden';
+    //(notification.querySelector('span') as any).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
