@@ -83,6 +83,7 @@ export default class BackendAIWindow extends LitElement {
           resize: both;
           overflow: hidden;
           z-index: 1000;
+          /*transition: visibility 1s, opacity 0.5s linear;*/
         }
 
         div.mock {
@@ -106,7 +107,7 @@ export default class BackendAIWindow extends LitElement {
           overflow: hidden;
           cursor: move;
         }
-
+        div.window > h4 > img,
         div.window > h4 > span {
           margin-left: 15px;
         }
@@ -222,7 +223,7 @@ export default class BackendAIWindow extends LitElement {
    *  This method only shows window, without changing internal workflow, including background jobs.
    */
   show_window() {
-    this.win.style.display = 'block';
+    this.win.style.visibility = 'visible';
   }
 
   /**
@@ -230,7 +231,7 @@ export default class BackendAIWindow extends LitElement {
    *  This method only hides window, without changing internal workflow, including background jobs.
    */
   hide_window() {
-    this.win.style.display = 'none';
+    this.win.style.visibility = 'hidden';
     console.log(this.active);
   }
 
@@ -286,7 +287,7 @@ export default class BackendAIWindow extends LitElement {
   maximize_window() {
     if (this.isFullScreen === false) {
       this.keepLastWindowInfo();
-      this.contents.style.display = 'block';
+      this.contents.style.visibility = 'visible';
       this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
       this.isFullScreen = true;
     } else {
@@ -344,6 +345,7 @@ export default class BackendAIWindow extends LitElement {
       this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
     }
+    this.contents.style.height = 'calc('+ this.win.offsetHeight + 'px - 38px)';
   }
 
   firstUpdated() {
@@ -408,6 +410,9 @@ export default class BackendAIWindow extends LitElement {
     return html`
       <div id="window" class="window" draggable="true" @click="${()=>{this.setToTop()}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
+          ${this.icon ? html`
+            <img src="${this.icon}" />
+          `: html``}
           <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
           <div class="button-area">

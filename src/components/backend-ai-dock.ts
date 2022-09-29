@@ -90,6 +90,7 @@ export default class BackendAIDock extends LitElement {
 
   setToTop(name) {
     globalThis.backendaiwindowmanager.windows[name].setToTop();
+    globalThis.backendaiwindowmanager.windows[name].show_window();
   }
 
   render() {
