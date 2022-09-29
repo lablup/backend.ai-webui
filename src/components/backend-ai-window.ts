@@ -36,6 +36,8 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
   @property({type: String}) type : windowType = 'win';
+  @property({type: String}) group = '';
+  @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
   @property({type: String}) icon = '';
   @property({type: Boolean}) isFullScreen = false;
@@ -56,6 +58,7 @@ export default class BackendAIWindow extends LitElement {
 
   @query('#window') win!: HTMLDivElement;
   @query('#titlebar') titlebar!: HTMLDivElement;
+  @query('#ribbon') ribbon!: HTMLDivElement;
   @query('#content') contents!: HTMLDivElement;
   @query('#mock') mock!: HTMLDivElement;
   @query('#resize-guide') resizeGuide!: HTMLDivElement;
@@ -103,7 +106,7 @@ export default class BackendAIWindow extends LitElement {
           padding: 5px 0 0 0;
           margin: 0 0 0 0;
           border-radius: 5px 5px 0 0;
-          border-bottom: 1px solid #DDD;
+          border-bottom: 0; /*1px solid #DDD;*/
           display: flex;
           white-space: nowrap;
           text-overflow: ellipsis;
@@ -142,6 +145,18 @@ export default class BackendAIWindow extends LitElement {
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 32px;
         }
+
+        #ribbon {
+          width: 0;
+          height: 5px;
+          background-color: transparent;
+          position: absolute;
+          top: 0;
+          right: 100px;
+          transition: all 0.2s;
+          cursor: pointer;
+        }
+
         @keyframes fadeIn {
           0% { opacity: 0; }
           100% { opacity: 1; }
@@ -329,6 +344,13 @@ export default class BackendAIWindow extends LitElement {
     };
   }
 
+  get ribbonColor() {
+    let stringUniqueHash = [...this.group].reduce((acc, char) => {
+        return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return `hsl(${stringUniqueHash % 360}, 95%, 35%)`;
+  }
+
   keepLastWindowInfo() {
     this.lastWindowInfo = this.currentWindowInfo;
     return true;
@@ -392,6 +414,13 @@ export default class BackendAIWindow extends LitElement {
     if (this.name === '') {
       this.name = this.setName();
     }
+    this.groupColor = this.ribbonColor;
+    if (this.group === '') {
+      this.ribbon.style.display = 'none';
+    } else {
+      this.ribbon.style.border = 'solid 10px ' + this.groupColor;
+      this.ribbon.style.borderBottom = 'solid 10px transparent';
+    }
     globalThis.backendaiwindowmanager.addWindow(this);
   }
 
@@ -427,6 +456,7 @@ export default class BackendAIWindow extends LitElement {
           `: html``}
           <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
+          <div id="ribbon" class="ribbon"></div>
           <div class="button-area">
             <mwc-icon-button icon="remove" @click="${()=>this.minimize_window()}"></mwc-icon-button>
             <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>

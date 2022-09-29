@@ -692,7 +692,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, icon);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -827,7 +827,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(response.url + urlPostfix);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, icon);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -874,7 +874,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(this.appTemplate['ttyd'].src);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Console - ' + (sessionName ? sessionName : sessionUuid), './resources/icons/terminal.svg');
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Console - ' + (sessionName ? sessionName : sessionUuid), sessionUuid, './resources/icons/terminal.svg');
               //globalThis.open(response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");
@@ -942,6 +942,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const appName = this.appController['app-name'];
       const sessionUuid = this.appController['session-uuid'];
       const urlPostfix = this.appController['url-postfix'];
+      const icon = this.appController['icon-src'];
       this.indicator = await globalThis.lablupIndicator.start();
       this.indicator.set(50, 'Shutdown TensorBoard instance if exist...');
       await globalThis.backendaiclient.shutdown_service(sessionUuid, 'tensorboard');
@@ -957,7 +958,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this._hideTensorboardDialog();
         button.removeAttribute('disabled');
         setTimeout(() => {
-          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid)
+          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, sessionUuid, icon);
           //globalThis.open(response.url + urlPostfix, '_blank');
           console.log(appName + ' proxy loaded: ');
           console.log(sessionUuid);

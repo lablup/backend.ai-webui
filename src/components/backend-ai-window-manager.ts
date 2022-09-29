@@ -38,7 +38,7 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
-  addWindowWithURL(url: string, title: string | undefined, icon: string | undefined) {
+  addWindowWithURL(url: string, title: string | undefined, group: string = '', icon: string | undefined) {
     let div = document.createElement('div');
     let winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
     div.innerHTML = winTemplate;
@@ -49,6 +49,7 @@ export default class BackendAIWindowManager extends LitElement {
     if (icon) {
       win?.setAttribute('icon', icon);
     }
+    win?.setAttribute('group', group);
     let urlContent = document.createElement("IFRAME");
     urlContent.setAttribute("src", url);
     urlContent.setAttribute("width", '100%');

@@ -47,7 +47,7 @@ export class BackendAIPage extends LitElement {
   protected firstUpdated() {
     // TODO: multi-window support
     let windowNode: BackendAIWindow | null | undefined = this.shadowRoot?.querySelector('backend-ai-window');
-    console.log("found window node");
+    //console.log("found window node");
     if(windowNode) {
       this.windowNode = windowNode;
       this.windowNode.addEventListener('backend-ai-active-changed', (e)=>this._changeActiveState(e));

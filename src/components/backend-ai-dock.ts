@@ -16,6 +16,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 @customElement('backend-ai-dock')
 export default class BackendAIDock extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
+  @state() protected dockOrder : string[] = [];
   @property({type: Boolean, reflect: true}) active = false;
   @query('#dock') dock!: HTMLDivElement;
 
@@ -52,13 +53,25 @@ export default class BackendAIDock extends LitElement {
           padding: 8px;
         }
 
-        mwc-icon-button[isTop]:after {
+        mwc-icon-button:before {
           content: '';
           width: 4px;
+          height: 4px;
+          position: absolute;
+          top: 6px;
+          margin-left: 30px;
+          border-radius: 2px;
+          background-color: var(--indicator-color);
+          z-index:10000;
+        }
+
+        mwc-icon-button[isTop]:after {
+          content: '';
+          width: 12px;
+          height: 4px;
           position: absolute;
           top: 70px;
-          right: 38px;
-          height: 4px;
+          margin-left: -38px;
           border-radius: 2px;
           background-color: var(--general-sidebar-selected-color,#72EB51);
           z-index:10000;
@@ -79,6 +92,8 @@ export default class BackendAIDock extends LitElement {
   }
   updateDockWidth() {
     let count = 0;
+    this.dockOrder = globalThis.backendaiwindowmanager.zOrder;
+    this.dockOrder.sort();
     globalThis.backendaiwindowmanager.zOrder.forEach(name => {
       if (globalThis.backendaiwindowmanager.windows[name]?.icon) {
         count = count + 1;
@@ -93,18 +108,27 @@ export default class BackendAIDock extends LitElement {
     globalThis.backendaiwindowmanager.windows[name].show_window();
   }
 
+  groupColor(group) {
+    let stringUniqueHash = [...group].reduce((acc, char) => {
+        return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return `hsl(${stringUniqueHash % 360}, 95%, 35%)`;
+  }
+
   render() {
     // language=HTML
     return html`
       <div id="dock" class="dock">
-        ${globalThis.backendaiwindowmanager.zOrder.map(name =>
+        ${this.dockOrder.map(name =>
           globalThis.backendaiwindowmanager.windows[name]?.icon ?
             globalThis.backendaiwindowmanager.windows[name].icon.includes('/') ?
                html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
+                                     style="--indicator-color:${globalThis.backendaiwindowmanager.windows[name].groupColor}"
                                      @click="${()=>{this.setToTop(name)}}"
                                      ?isTop=${globalThis.backendaiwindowmanager.windows[name].isTop}><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" />
                </mwc-icon-button>`:
                html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
+                                     style="--indicator-color:${globalThis.backendaiwindowmanager.windows[name].groupColor}"
                                      @click="${()=>{this.setToTop(name)}}"
                                      icon="${globalThis.backendaiwindowmanager.windows[name].icon}"></mwc-icon-button>`
             : html ``)};
