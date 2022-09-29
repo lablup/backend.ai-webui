@@ -39,7 +39,6 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) timestamp = '';
   @property({type: Object}) indicator;
   @property({type: Array}) notifications;
-  @property({type: Array}) notificationstore;
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
@@ -52,7 +51,6 @@ export default class LablupNotification extends LitElement {
       desktop_notification: true
     };
     this.notifications = [];
-    this.notificationstore = [];
   }
 
   static get is() {
@@ -202,7 +200,6 @@ export default class LablupNotification extends LitElement {
       const more_button = document.createElement('mwc-button');
       more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
-      more_button.style.width = 80 + 'px';
       if (this.url != '') {
         more_button.innerHTML = _text('notification.Visit');
         more_button.addEventListener('click', this._openURL.bind(this, this.url));
@@ -214,7 +211,9 @@ export default class LablupNotification extends LitElement {
     }
     this.detail = ''; // Reset the temporary detail scripts
     this.url = '';
-      notification.setAttribute('leading', '');
+    notification.setAttribute('leading', '');
+    notification.setAttribute('stacked', '');
+
     if (persistent === false) {
       notification.setAttribute('timeoutMs', '3000');
     } else {
@@ -296,9 +295,6 @@ export default class LablupNotification extends LitElement {
       const event = new CustomEvent('backend-ai-notification-changed', {});
       document.dispatchEvent(event);
     }
-    // if (this.notificationstore.length > 5000) {
-    //   this.notificationstore = this.notificationstore.slice(1, 5000);
-    // }
     let logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     if (logs.length > 3000) {
       logs = logs.slice(0, 2999);

@@ -89,7 +89,8 @@ export default class BackendAiSessionView extends BackendAIPage {
       css`
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0 0;
+          /*border-radius: 5px 5px 0 0;*/
+          border-radius: 0;
         }
         mwc-tab-bar {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
@@ -202,14 +203,14 @@ export default class BackendAiSessionView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.resourceMonitor.removeAttribute('active');
+      this.resourceMonitor?.removeAttribute('active');
       this._status = 'inactive';
       for (let x = 0; x < this.sessionList.length; x++) {
         this.sessionList[x].removeAttribute('active');
       }
       return;
     }
-    this.resourceMonitor.setAttribute('active', 'true');
+    this.resourceMonitor?.setAttribute('active', 'true');
     this.runningJobs.setAttribute('active', 'true');
     this._status = 'active';
   }
@@ -456,14 +457,14 @@ export default class BackendAiSessionView extends BackendAIPage {
     // language=HTML
     return html`
     <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Sessions')}" name="job">
-      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
+<!--      <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
         <div slot="message">
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>
         </div>
-      </lablup-activity-panel>
+      </lablup-activity-panel>-->
       <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" style="display:none;">
       </lablup-activity-panel>
-      <lablup-activity-panel elevation="1" autowidth narrow noheader>
+      <lablup-activity-panel elevation="1" autowidth narrow noheader attachInner>
         <div slot="message">
           <h3 class="tab horizontal center layout" style="margin-top:0;margin-bottom:0;">
             <div class="scroll hide-scrollbar">

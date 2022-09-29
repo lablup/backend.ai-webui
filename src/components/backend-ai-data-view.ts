@@ -160,7 +160,8 @@ export default class BackendAIData extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
+          /*border-radius: 5px 5px 0px 0px;*/
+          border-radius: 0;
           margin: 0px auto;
         }
 
@@ -331,7 +332,7 @@ export default class BackendAIData extends BackendAIPage {
             </div>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+        <lablup-activity-panel elevation="1" noheader narrow autowidth attachInner>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
               <mwc-tab-bar>

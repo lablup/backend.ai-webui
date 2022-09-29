@@ -120,6 +120,7 @@ export default class BackendAIWindow extends LitElement {
           box-sizing: border-box;
           overflow:scroll;
           position:relative;
+          height: calc(100% - 142px);
           border-radius: 0 0 5px 5px;
         }
 
@@ -203,6 +204,7 @@ export default class BackendAIWindow extends LitElement {
       if (['active'].includes(propName)) {
         if (this.active === true){  // Show window
           this.activate_window();
+          this.setToTop();
           this.show_window();
         } else if (this.active === false) {  // Hide window
           this.hide_window();
@@ -365,7 +367,8 @@ export default class BackendAIWindow extends LitElement {
     if (this.defaultHeight !== '') {
       this.win.style.height = this.defaultHeight;
     } else {
-      this.contents.style.height = 'calc(100vh - 152px - ' + this.win.offsetTop + 'px)';
+      console.log(this.win.offsetHeight);
+      this.contents.style.height = 'calc('+ this.win.offsetHeight + 'px - 38px)';
     }
     if (this.name === '') {
       this.name = this.setName();
