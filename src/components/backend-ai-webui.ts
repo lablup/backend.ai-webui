@@ -50,6 +50,7 @@ import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
 import BackendAIWindowManager from './backend-ai-window-manager';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import './backend-ai-dock';
 
 import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
@@ -1799,6 +1800,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
+      <backend-ai-dock></backend-ai-dock>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>

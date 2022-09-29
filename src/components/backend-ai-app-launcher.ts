@@ -132,6 +132,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+          z-index:10000;
         }
 
         #allowed-client-ips-container {
