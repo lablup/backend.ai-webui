@@ -47,6 +47,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
+  @property({type: Number}) vscodePort = 0;
   @property({type: String}) tensorboardPath = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
@@ -66,6 +67,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#terminal-guide') terminalGuideDialog!: BackendAIDialog;
   @query('#vnc-dialog') vncDialog!: BackendAIDialog;
   @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
+  @query('#vscode-dialog') vscodeDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -131,6 +133,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+        }
+
+        #vscode-dialog {
+          --component-width: 330px;
         }
 
         #allowed-client-ips-container {
@@ -414,6 +420,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
+    if (!appServices.includes('vscode')) {
+      this.appSupportList.push({ // Force push terminal
+        'name': 'vscode',
+        'title': 'VS Code',
+        'category': '2.Development',
+        'redirect': '',
+        'src': './resources/icons/vscode.svg'
+      });
+    }
     appServices.forEach((elm) => {
       if (!(elm in this.appTemplate)) {
         this.appTemplate[elm] = [];
@@ -647,8 +662,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
+    console.log('appName: ' + appName);
     const envs = null;
     let args = null;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -665,6 +682,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return;
     }
 
+    if (appName === 'vscode') {
+      this._openVSCodeDialog();
+      return;
+    }
+
     if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
       this.indicator = await globalThis.lablupIndicator.start();
@@ -675,15 +697,22 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      if (appName === 'vscode') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd'
+      }
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
+              console.log(sendAppName + " proxy loaded: ");
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -754,6 +783,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = config['url-postfix'];
     const envs = null;
     const args = null;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -761,6 +791,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (urlPostfix === undefined || urlPostfix === null) {
       urlPostfix = '';
     }
+
+    console.log('runApp');
+    console.log('appName:' + appName);
+    console.log('sessionUuid:' + sessionUuid);
+    console.log('urlPostfix:' + urlPostfix);
 
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
@@ -783,11 +818,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
+      if (appName === 'vscode') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd';
+      }
       const userPort = parseInt(this.appPort.value);
       if (this.checkPreferredPort && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
@@ -806,12 +848,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.xrdpPort = response.port;
             this._openXRDPDialog();
+          } else if (appName === 'vscode') {
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.vscodePort = response.port;
+            this._readTempPasswd(sessionUuid);
+            this._openVSCodeDialog();
+            setTimeout(() => {
+              this.indicator.end();
+            }, 1000);
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
+              console.log(appName + " proxy loaded: ");
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -837,6 +887,22 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
+   * Read temp password
+   * 
+   * @param {string} sessionUuid
+   */
+  async _readTempPasswd(sessionUuid) {
+    const file = '/home/work/.password';
+    const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
+    // TODO: This blob has additional leading letters in front of key texts.
+    //       Manually trim those letters.
+    const rawText = await blob.text();
+    const index = rawText.indexOf('-----');
+    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
+    alert(trimmedBlob.text();
+  }
+
+  /**
    * Run terminal with session name.
    *
    * @param {string} sessionUuid
@@ -856,8 +922,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
-              // console.log("Terminal proxy loaded: ");
-              // console.log(sessionUuid);
+              console.log("Terminal proxy loaded: ");
+              console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -899,6 +965,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _openTensorboardDialog() {
     this.tensorboardDialog.show();
+  }
+
+  /**
+   * Open a VS Code dialog.
+   */
+  _openVSCodeDialog() {
+    this.vscodeDialog.show();
   }
 
   /**
@@ -945,6 +1018,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       button.removeAttribute('disabled');
     }
   }
+
 
   /**
    * Open a guide for terminal
@@ -1116,7 +1190,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="tensorboard-dialog" fixed>
         <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
-          <div>${_t('session.InputTensorboardPath')}</div>
+        <div>${_t('session.InputTensorboardPath')}</div>
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
@@ -1181,6 +1255,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="vscode-dialog" fixed backdrop>
+        <span slot="title">VSCode connection</span>
+        <div slot="content" style="padding:15px 0;">
+          <div style="padding:15px 0;">${_t('session.VSCodeDescription')}</div>
+          <section class="vertical layout wrap start start-justified">
+            <h4>${_t('session.ConnectionInformation')}</h4>
+            <div><span>VSCODE port: ${this.vscodePort}</div>
+            <div><span>VSCODE URL:</span> <a href="">vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodePort}/home/work</a>
+            </div>
+          </section>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodePort}/home/work">
+            <mwc-button unelevated fullwidth>${_t('DownloadSSHKey')}</mwc-button>
+          </a>
+        </div>
       </backend-ai-dialog>
     `;
   }
