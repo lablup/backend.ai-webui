@@ -2258,7 +2258,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   _renderCommitSessionConfirmationDialog(commitSessionInfo: CommitSessionInfo) {
     // language=HTML
     return html`
-      <backend-ai-dialog id="commit-session-dialog" fixed backdrop>
+      <backend-ai-dialog id="commit-session-dialog" fixed>
         <span slot="title">${_t('session.CommitSession')}</span>
         <div slot="content" class="vertical layout center flex">
           <span style="font-size:14px;margin:auto 20px;">${_t('session.DescCommitSession')}</span>

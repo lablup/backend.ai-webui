@@ -26,13 +26,16 @@ export default class BackendAIWindowManager extends LitElement {
     return Object.keys(this.windows).includes(name);
   }
 
-  addWindowWithURL(url: string, title: string | undefined) {
+  addWindowWithURL(url: string, title: string | undefined, icon: string | undefined) {
     let div = document.createElement('div');
     let winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
     div.innerHTML = winTemplate;
     let win : BackendAIWindow | null = div.querySelector('backend-ai-window');
     if (title) {
       win?.setAttribute('title', title);
+    }
+    if (icon) {
+      win?.setAttribute('icon', icon);
     }
     let urlContent = document.createElement("IFRAME");
     urlContent.setAttribute("src", url);

@@ -388,6 +388,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
       param['file-name'] = controls['filename'];
+      param['icon-src'] = controls['icon-src'];
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
@@ -648,6 +649,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
+    let icon = param['icon-src'];
     const envs = null;
     let args = null;
     if (appName === undefined || appName === null) {
@@ -659,6 +661,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     if ('args' in param) {
       args = param['args'];
+    }
+    if (icon === undefined || icon === null) {
+      icon = '';
     }
 
     if (appName === 'tensorboard') {
@@ -682,7 +687,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -725,6 +730,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const controls = controller.closest('#app-dialog');
       this.appController['session-uuid'] = controls.getAttribute('session-uuid');
       this.appController['url-postfix'] = controller['url-postfix'];
+      this.appController['icon-src'] = controller['icon-src'];
       this._openAppLaunchConfirmationDialog(e);
     } else {
       return this._runThisApp(e);
@@ -742,6 +748,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const controls = controller.closest('#app-dialog');
     this.appController['session-uuid'] = controls.getAttribute('session-uuid');
     this.appController['url-postfix'] = controller['url-postfix'];
+    this.appController['icon-src'] = controller['icon-src'];
     return this._runApp(this.appController);
   }
 
@@ -754,6 +761,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const appName = config['app-name'];
     const sessionUuid = config['session-uuid'];
     let urlPostfix = config['url-postfix'];
+    let icon = config['icon-src'];
     const envs = null;
     const args = null;
     if (appName === undefined || appName === null) {
@@ -812,7 +820,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(response.url + urlPostfix);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid)
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -1069,7 +1077,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               ` : html`
                 <div class="vertical layout center center-justified app-icon">
                   <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
-                                   .url-postfix="${item.redirect}"
+                                   .url-postfix="${item.redirect}" .icon-src="${item.src}"
                                    @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
                     <img src="${item.src}"/>
                   </mwc-icon-button>

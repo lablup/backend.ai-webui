@@ -34,6 +34,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
   @property({type: String}) title = '';
+  @property({type: String}) icon = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
   @property({type: Boolean}) isTop = false;
