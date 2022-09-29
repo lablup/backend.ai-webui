@@ -44,7 +44,7 @@ export default class BackendAIDock extends LitElement {
           right: 10px;
           bottom: 10px;
           height: 80px;
-          width: 0;
+          width: 10px;
           overflow: hidden;
           z-index: 9999;
         }
@@ -61,23 +61,35 @@ export default class BackendAIDock extends LitElement {
     this.active = true;
     // @ts-ignore
     document.addEventListener('backend-ai-window-reorder', () => {
-      let count = 0;
-      globalThis.backendaiwindowmanager.zOrder.forEach(name => {
-        if (globalThis.backendaiwindowmanager.windows[name]?.icon) {
-          count = count + 1;
-        }
-      });
-      this.dock.style.width = count * 80 + 'px';
-      this.requestUpdate();
+      this.updateDockWidth();
+    });
+    // @ts-ignore
+    document.addEventListener('backend-ai-window-removed', () => {
+      this.updateDockWidth();
     });
   }
+  updateDockWidth() {
+    let count = 0;
+    globalThis.backendaiwindowmanager.zOrder.forEach(name => {
+      if (globalThis.backendaiwindowmanager.windows[name]?.icon) {
+        count = count + 1;
+      }
+    });
+    this.dock.style.width = (count * 80) + 'px';
+    this.requestUpdate();
+  }
+
+  setToTop(name) {
+    globalThis.backendaiwindowmanager.windows[name].setToTop();
+  }
+
   render() {
     // language=HTML
     return html`
       <div id="dock" class="dock">
         ${globalThis.backendaiwindowmanager.zOrder.map(name =>
           globalThis.backendaiwindowmanager.windows[name]?.icon ?
-            html`<mwc-icon-button><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" /></mwc-icon-button>` : html``
+            html`<mwc-icon-button @click="${()=>{this.setToTop(name)}}"><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" /></mwc-icon-button>` : html``
         )}
       </div>
     `;
