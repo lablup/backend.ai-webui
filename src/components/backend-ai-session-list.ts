@@ -1091,7 +1091,8 @@ export default class BackendAiSessionList extends BackendAIPage {
     const controller = e.target;
     const controls = controller.closest('#controls');
     const sessionUuid = controls['session-uuid'];
-    return globalThis.appLauncher.runTerminal(sessionUuid);
+    const sessionName = controls['session-name'];
+    return globalThis.appLauncher.runTerminal(sessionUuid, sessionName);
   }
 
   async _getCommitSessionStatus(sessionName = '') {

@@ -380,12 +380,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   _showAppLauncher(controls) {
     const sessionUuid = controls['session-uuid'];
+    const sessionName = controls['session-name'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
       param['session-uuid'] = sessionUuid;
+      param['session-name'] = sessionName;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
       param['file-name'] = controls['filename'];
@@ -466,6 +468,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
+    this.dialog.setAttribute('session-name', sessionName);
     this.dialog.setAttribute('access-key', accessKey);
     this.dialog.show();
     return;
@@ -648,6 +651,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _runAppWithParameters(param) {
     const sessionUuid = param['session-uuid'];
+    const sessionName = param['session-name'];
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
     let icon = param['icon-src'];
@@ -688,7 +692,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             await this._connectToProxyWorker(response.url, urlPostfix);
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, icon);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -748,6 +752,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.appController['app-name'] = controller['app-name'];
     const controls = controller.closest('#app-dialog');
     this.appController['session-uuid'] = controls.getAttribute('session-uuid');
+    this.appController['session-name'] = controls.getAttribute('session-name');
     this.appController['url-postfix'] = controller['url-postfix'];
     this.appController['icon-src'] = controller['icon-src'];
     return this._runApp(this.appController);
@@ -761,6 +766,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   async _runApp(config) {
     const appName = config['app-name'];
     const sessionUuid = config['session-uuid'];
+    const sessionName = config['session-name'];
     let urlPostfix = config['url-postfix'];
     let icon = config['icon-src'];
     const envs = null;
@@ -821,7 +827,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(response.url + urlPostfix);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, icon);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, icon);
               //globalThis.open(response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
@@ -854,7 +860,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    *
    * @param {string} sessionUuid
    */
-  async runTerminal(sessionUuid: string) {
+  async runTerminal(sessionUuid: string, sessionName: string | undefined) {
     const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
     if (!isVisible || isVisible === 'true') {
       this._openTerminalGuideDialog();
@@ -868,7 +874,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(this.appTemplate['ttyd'].src);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Terminal - ' + sessionUuid, './resources/icons/terminal.svg');
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Console - ' + (sessionName ? sessionName : sessionUuid), './resources/icons/terminal.svg');
               //globalThis.open(response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");

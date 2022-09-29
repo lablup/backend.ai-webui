@@ -84,6 +84,7 @@ export default class BackendAIWindow extends LitElement {
           overflow: hidden;
           z-index: 1000;
           /*transition: visibility 1s, opacity 0.5s linear;*/
+          animation: fadeIn 0.3s;
         }
 
         div.mock {
@@ -123,7 +124,8 @@ export default class BackendAIWindow extends LitElement {
 
         #content {
           box-sizing: border-box;
-          overflow:scroll;
+          overflow-y:scroll;
+          overflow-x:hidden;
           position:relative;
           height: calc(100% - 142px);
           border-radius: 0 0 5px 5px;
@@ -136,6 +138,14 @@ export default class BackendAIWindow extends LitElement {
           color: #666666;
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 32px;
+        }
+        @keyframes fadeIn {
+          0% { opacity: 0; }
+          100% { opacity: 1; }
+        }
+        @keyframes fadeOut {
+          0% { opacity: 1; }
+          100% { opacity: 0; }
         }
       `]
   };
@@ -232,7 +242,6 @@ export default class BackendAIWindow extends LitElement {
    */
   hide_window() {
     this.win.style.visibility = 'hidden';
-    console.log(this.active);
   }
 
   // Window activation
@@ -411,7 +420,7 @@ export default class BackendAIWindow extends LitElement {
       <div id="window" class="window" draggable="true" @click="${()=>{this.setToTop()}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
           ${this.icon ? html`
-            <img src="${this.icon}" />
+            <img src="${this.icon}" style="width: 24px; height: 24px;"/>
           `: html``}
           <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
