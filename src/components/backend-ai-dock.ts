@@ -6,7 +6,6 @@ import {LitElement, CSSResultGroup, html, css} from 'lit';
 import {customElement, state, property, query} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
 /**
  Backend AI Dock
@@ -27,8 +26,6 @@ export default class BackendAIDock extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
       // language=CSS
       css`
         #dock {
@@ -53,6 +50,18 @@ export default class BackendAIDock extends LitElement {
           --mdc-icon-size: 48px;
           --mdc-icon-button-size: 64px;
           padding: 8px;
+        }
+
+        mwc-icon-button[isTop]:after {
+          content: '';
+          width: 4px;
+          position: absolute;
+          top: 70px;
+          right: 38px;
+          height: 4px;
+          border-radius: 2px;
+          background-color: var(--general-sidebar-selected-color,#72EB51);
+          z-index:10000;
         }
       `]
   };
@@ -89,8 +98,15 @@ export default class BackendAIDock extends LitElement {
       <div id="dock" class="dock">
         ${globalThis.backendaiwindowmanager.zOrder.map(name =>
           globalThis.backendaiwindowmanager.windows[name]?.icon ?
-            html`<mwc-icon-button @click="${()=>{this.setToTop(name)}}"><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" /></mwc-icon-button>` : html``
-        )}
+            globalThis.backendaiwindowmanager.windows[name].icon.includes('/') ?
+               html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
+                                     @click="${()=>{this.setToTop(name)}}"
+                                     ?isTop=${globalThis.backendaiwindowmanager.windows[name].isTop}><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" />
+               </mwc-icon-button>`:
+               html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
+                                     @click="${()=>{this.setToTop(name)}}"
+                                     icon="${globalThis.backendaiwindowmanager.windows[name].icon}"></mwc-icon-button>`
+            : html ``)};
       </div>
     `;
   }

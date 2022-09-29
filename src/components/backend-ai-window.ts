@@ -107,6 +107,9 @@ export default class BackendAIWindow extends LitElement {
           cursor: move;
         }
 
+        div.window > h4 > span {
+          margin-left: 15px;
+        }
         .button-area {
           margin-left: 15px;
           margin-right: 15px;
@@ -228,6 +231,7 @@ export default class BackendAIWindow extends LitElement {
    */
   hide_window() {
     this.win.style.display = 'none';
+    console.log(this.active);
   }
 
   // Window activation
@@ -272,8 +276,9 @@ export default class BackendAIWindow extends LitElement {
       this.isMinimized = false;
     } else {
       this.keepLastWindowInfo();
-      this.win.style.height = '37px';
-      this.win.style.width = '200px';
+      this.hide_window();
+      //this.win.style.height = '37px';
+      //this.win.style.width = '200px';
       this.isMinimized = true;
     }
   }
@@ -368,7 +373,6 @@ export default class BackendAIWindow extends LitElement {
     if (this.defaultHeight !== '') {
       this.win.style.height = this.defaultHeight;
     } else {
-      console.log(this.win.offsetHeight);
       this.contents.style.height = 'calc('+ this.win.offsetHeight + 'px - 38px)';
     }
     if (this.name === '') {
@@ -404,13 +408,13 @@ export default class BackendAIWindow extends LitElement {
     return html`
       <div id="window" class="window" draggable="true" @click="${()=>{this.setToTop()}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
-          <div class="button-area">
-            <mwc-icon-button id="button" icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="minimize" @click="${()=>this.minimize_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
-          </div>
           <span><slot name="title">${this.title}</slot></span>
           <div class="flex"></div>
+          <div class="button-area">
+            <mwc-icon-button icon="remove" @click="${()=>this.minimize_window()}"></mwc-icon-button>
+            <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
+            <mwc-icon-button icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
+          </div>
         </h4>
         <mwc-icon-button id="resize-guide" icon="south_east" disabled></mwc-icon-button>
         <div id="content" class="content flex" draggable="false">

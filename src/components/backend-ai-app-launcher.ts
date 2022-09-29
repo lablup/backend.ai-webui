@@ -867,7 +867,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Terminal - ' + sessionUuid)
+              console.log(this.appTemplate['ttyd'].src);
+              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Terminal - ' + sessionUuid, './resources/icons/terminal.svg');
               //globalThis.open(response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");

@@ -52,6 +52,7 @@ export const BackendAiStyles = [
       --general-tabbar-button-color: var(--general-sidebar-selected-color);
       --general-textfield-selected-color: #27824F;
       --general-textfield-idle-color: #27824F;
+      --general-select-background-color: #E7EBEE;
       --general-dropdown-color: var(--general-sidebar-color);
       --general-checkbox-color: var(--general-textfield-selected-color);
       --general-textarea-color: var(--general-textfield-selected-color);
@@ -62,7 +63,7 @@ export const BackendAiStyles = [
       --general-button-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
-      --general-switch-on-background-color: #E3E7D8; 
+      --general-switch-on-background-color: #E3E7D8;
       --general-slider-color: var(--general-textfield-selected-color);
       --general-dialog-background-color: #ffffff;
       --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
@@ -173,29 +174,6 @@ export const BackendAiStyles = [
       border-radius: 6px;
       background-color: #464646;
     }
-
-    .paper-header {
-      height: 60px;
-      font-size: 16px;
-      line-height: 60px;
-      padding: 0 10px;
-      color: white;
-      transition: height 0.2s;
-    }
-
-    .paper-header a {
-      color: white;
-    }
-
-    .paper-header.tall {
-      height: 120px;
-    }
-
-    .paper-header.medium-tall {
-      height: 100px;
-      line-height: 50px;
-    }
-
     .cover {
       margin: 60px;
     }
@@ -204,7 +182,7 @@ export const BackendAiStyles = [
       /* override for mwc-list */
       --select-primary-theme: var(--general-sidebar-color);
       --select-secondary-theme: var(--general-checkbox-color);
-      --select-background-color: var(#E7EBEE, #efefef);
+      --select-background-color: var(--general-select-background-color, #efefef);
       --select-background-border-radius: 5px;
       --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
 
@@ -315,7 +293,7 @@ export const BackendAiStyles = [
       --mdc-icon-button-size: 30px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-400);
       color: var(--general-button-background-color);
-      box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
       border-radius: 5px;
     }
 

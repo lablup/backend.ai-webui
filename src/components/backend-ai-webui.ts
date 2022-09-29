@@ -953,7 +953,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._updateSidebarSelection();
     }
   }
-
+  /* Toggle page activation. If it is already actived but not shown,
+   *
+   */
   _toggleActivePage(page: string) {
     console.log('Toggle Active Page');
     if(!this._activePages.includes(page)) {
@@ -961,6 +963,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       //this._updateSidebar(page);
       //this.sidebarMenu.layout();
       this.requestUpdate();
+    } else if(this._activePages.includes(page)) { // Already activated but hidden.
+      globalThis.backendaiwindowmanager.showWindow(page);
     } else {
       this._deactivatePage(page);
       //this._updateSidebar(page);

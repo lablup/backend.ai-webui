@@ -26,6 +26,18 @@ export default class BackendAIWindowManager extends LitElement {
     return Object.keys(this.windows).includes(name);
   }
 
+  showWindow(name) {
+    if (Object.keys(this.windows).includes(name)) {
+      this.windows[name].show_window();
+    }
+  }
+
+  hideWindow(name) {
+    if (Object.keys(this.windows).includes(name)) {
+      this.windows[name].hide_window();
+    }
+  }
+
   addWindowWithURL(url: string, title: string | undefined, icon: string | undefined) {
     let div = document.createElement('div');
     let winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
@@ -42,6 +54,7 @@ export default class BackendAIWindowManager extends LitElement {
     urlContent.setAttribute("width", '100%');
     urlContent.setAttribute("height", '100%');
     win?.appendChild(urlContent);
+    console.log(icon);
     const event = new CustomEvent('backend-ai-window-append', {'detail': div});
     document.dispatchEvent(event);
   }

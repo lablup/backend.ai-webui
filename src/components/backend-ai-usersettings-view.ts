@@ -132,8 +132,9 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
 
         h3.tab {
           background-color: var(--general-tabbar-background-color);
-          border-radius: 5px 5px 0px 0px;
-          margin: 0px auto;
+          /*border-radius: 5px 5px 0px 0px;*/
+          border-radius: 0;
+          margin: 0 auto;
         }
 
         mwc-tab-bar {
@@ -187,7 +188,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     return html`
       <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}" name="usersettings">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-        <lablup-activity-panel noheader narrow autowidth>
+        <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
             <mwc-tab-bar>
