@@ -32,7 +32,7 @@ export default class BackendAIIndicator extends LitElement {
         wl-dialog {
           position: fixed;
           right: 20px;
-          bottom: 20px;
+          top: 90px;
           z-index: 9000;
           --dialog-height: auto;
           --dialog-width: 250px;

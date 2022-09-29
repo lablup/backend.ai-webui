@@ -14,6 +14,8 @@ type windowInfo = {
   width: number,
   height: number
 }
+type windowType = 'win' | 'widget';
+
 /**
  Backend AI Window Shell
 
@@ -33,6 +35,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posZ = 1000;
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
+  @property({type: String}) type : windowType = 'win';
   @property({type: String}) title = '';
   @property({type: String}) icon = '';
   @property({type: Boolean}) isFullScreen = false;
@@ -82,7 +85,6 @@ export default class BackendAIWindow extends LitElement {
           position:absolute;
           resize: both;
           overflow: hidden;
-          z-index: 1000;
           /*transition: visibility 1s, opacity 0.5s linear;*/
           animation: fadeIn 0.3s;
         }
@@ -136,6 +138,7 @@ export default class BackendAIWindow extends LitElement {
           bottom:0;
           right:0;
           color: #666666;
+          z-index: 1;
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 32px;
         }
