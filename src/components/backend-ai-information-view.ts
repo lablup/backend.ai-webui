@@ -283,7 +283,7 @@ export default class BackendAiInformationView extends BackendAIPage {
                 <div class="description">${_t('information.DescLicenseKey')}
                 </div>
               </div>
-              <div class="horizontal center end-justified layout setting-label monospace indicator">
+              <div class="horizontal center end-justified layout setting-label">
                 <p class="label">${this.license_key}</p>
               </div>
             </div>

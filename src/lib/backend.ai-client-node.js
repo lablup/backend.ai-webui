@@ -1,6 +1,6 @@
 'use babel';
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ES6 (v22.3.0)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.9.0)
 ====================================================================
 
 (C) Copyright 2016-2022 Lablup Inc.
@@ -692,7 +692,7 @@ class Client {
      * @param {object} resources - Per-session resource
      * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
      */
-    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0, architecture = undefined) {
+    async createIfNotExists(kernelType, sessionId, resources = {}, timeout = 0, architecture = '') {
         if (typeof sessionId === 'undefined' || sessionId === null)
             sessionId = this.generateSessionId();
         let params = {
@@ -3659,17 +3659,20 @@ class Pipeline {
     }
     async logout() {
         const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
-        let result;
         try {
-            result = await this.client._wrapWithPromise(rqst);
+            await this.client._wrapWithPromise(rqst);
             this._removeCookieByName(this.tokenName);
         }
         catch (err) {
             console.log(err);
             throw {
                 "title": "Pipeline Logout Failed.",
-                "message": "Pipeline Loout failed. Check information and pipeline server status."
+                "message": "Pipeline Logout failed. Check information and pipeline server status."
             };
+        }
+        finally {
+            // remove cookie anyway
+            this._removeCookieByName(this.tokenName);
         }
     }
     async check_login() {

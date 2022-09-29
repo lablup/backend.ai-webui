@@ -114,7 +114,8 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-apple-$(BUILD_DATE).dmg ./app/backend.ai-desktop-$(BUILD_VERSION)-$(site)-macos-apple.dmg
 endif
-win: dep
+win: win_intel win_arm64
+win_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js win x64
 	cd app; zip ./backend.ai-desktop-win32-x64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-x64"
@@ -123,16 +124,16 @@ ifeq ($(site),main)
 else
 	mv ./app/backend.ai-desktop-win32-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-x64-$(BUILD_VERSION)-$(site).zip
 endif
-linux: linux_intel linux_arm64
-linux_arm64: dep
+win_arm64: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
-	node ./app-packager.js linux arm64
-	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
+	node ./app-packager.js win arm64
+	cd app; zip ./backend.ai-desktop-win32-arm64-$(BUILD_DATE).zip -r "./Backend.AI Desktop-win32-arm64"
 ifeq ($(site),main)
-	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
+	mv ./app/backend.ai-desktop-win32-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-win32-arm64.zip
 else
-	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-arm64-$(BUILD_VERSION)-$(site).zip
+	mv ./app/backend.ai-desktop-win32-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-arm64-$(BUILD_VERSION)-$(site).zip
 endif
+linux: linux_intel linux_arm64
 linux_intel: dep
 	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
 	node ./app-packager.js linux x64
@@ -141,6 +142,15 @@ ifeq ($(site),main)
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-x64.zip
 else
 	mv ./app/backend.ai-desktop-linux-x64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-x64-$(BUILD_VERSION)-$(site).zip
+endif
+linux_arm64: dep
+	cp ./configs/$(site).toml ./build/electron-app/app/config.toml
+	node ./app-packager.js linux arm64
+	cd app; zip -r -9 ./backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip "./Backend.AI Desktop-linux-arm64"
+ifeq ($(site),main)
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-$(BUILD_VERSION)-linux-arm64.zip
+else
+	mv ./app/backend.ai-desktop-linux-arm64-$(BUILD_DATE).zip ./app/backend.ai-desktop-linux-arm64-$(BUILD_VERSION)-$(site).zip
 endif
 build_docker: compile
 	docker build -t backend.ai-webui:$(BUILD_DATE) .
