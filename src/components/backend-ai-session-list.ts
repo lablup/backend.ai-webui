@@ -2346,7 +2346,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </wl-button>
         </div>
         <span class="flex"></span>
-        <div class="vertical layout">
+        <div class="vertical layout" style="display:none;">
           <wl-textfield id="access-key-filter" type="search" maxLength="64"
                       label="${_t('general.AccessKey')}" no-label-float .value="${this.filterAccessKey}"
                       style="display:none;margin-right:20px;"
