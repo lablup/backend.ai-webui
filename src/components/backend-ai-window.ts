@@ -161,7 +161,7 @@ export default class BackendAIWindow extends LitElement {
           top: 0;
           right: 0px;
           z-index:1;
-          transition: all 0.2s;
+          /*transition: all 0.2s;*/
           cursor: pointer;
           /*right: 100px;
           border-bottom: solid 10px transparent;*/
