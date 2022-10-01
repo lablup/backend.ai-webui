@@ -3,8 +3,7 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {LitElement} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
-import BackendAIWindow from './backend-ai-window';
+import {customElement} from 'lit/decorators.js';
 import './backend-ai-window';
 
 /**

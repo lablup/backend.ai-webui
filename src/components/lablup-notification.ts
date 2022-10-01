@@ -14,6 +14,7 @@ import '@material/mwc-button';
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Lablup Notification
@@ -60,9 +61,11 @@ export default class LablupNotification extends LitElement {
   static get styles(): CSSResultGroup {
     return [
       // language=CSS
+      BackendAiStyles,
       BackendAIWebUIStyles,
       css`
         mwc-snackbar {
+          --mdc-typography-font-family: var(--general-font-family);
           --mdc-typography-body2-font-family: var(--general-font-family);
           --mdc-snackbar-action-color: #64dc17;
         }
@@ -228,8 +231,11 @@ export default class LablupNotification extends LitElement {
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
-    notification.style.fontFamily = '\'Ubuntu\', Roboto, sans-serif';
+    //notification.style.fontFamily = '\'Ubuntu\', Roboto, sans-serif';
     notification.style.zIndex = '12345678';
+    // TODO : change to use --general-font-family variable.
+    notification.style.setProperty('--mdc-typography-body2-font-family','Ubuntu, Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif');
+    notification.style.setProperty('--mdc-snackbar-action-color','#64dc17');
     const d = new Date();
     notification.setAttribute('created', d.toLocaleString());
     document.body.appendChild(notification);

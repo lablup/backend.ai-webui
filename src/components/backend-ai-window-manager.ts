@@ -82,21 +82,44 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
+  annotateWindow(win: BackendAIWindow) {
+    if(Object.keys(this.windows).includes(win.name)) {
+      // @ts-ignore
+      for (let [index, name] of this.zOrder.entries()) {
+        if (name === win.name) {
+          this.windows[name].win.style.opacity = '1';
+        } else {
+          this.windows[name].win.style.opacity = '0.1';
+        }
+      }
+    }
+  }
+
+  deannotateWindow() {
+    // @ts-ignore
+    for (let [index, name] of this.zOrder.entries()) {
+      this.windows[name].win.style.opacity = '1';
+    }
+  }
+
+  reorderWindow(e) {
+    let name = e.detail;
+    const index = this.zOrder.indexOf(name);
+    if (index > -1) {
+      this.zOrder.splice(index, 1);
+    }
+    this.zOrder.push(name);
+    for (let [index, name] of this.zOrder.entries()) {
+      this.windows[name]?.setPosZ(index);
+      this.windows[name]?.removeAttribute('isTop');
+    }
+    this.windows[name]?.setAttribute('isTop', '');
+  }
   constructor() {
     super();
     // @ts-ignore
     document.addEventListener('backend-ai-window-reorder', (e: CustomEvent) => {
-      let name = e.detail;
-      const index = this.zOrder.indexOf(name);
-      if (index > -1) {
-        this.zOrder.splice(index, 1);
-      }
-      this.zOrder.push(name);
-      for (let [index, name] of this.zOrder.entries()) {
-        this.windows[name]?.setPosZ(index);
-        this.windows[name]?.removeAttribute('isTop');
-      }
-      this.windows[name]?.setAttribute('isTop', '');
+      this.reorderWindow(e);
     });
   }
 }

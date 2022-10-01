@@ -22,6 +22,7 @@ import 'weightless/tooltip';
 import {Textfield} from 'weightless/textfield';
 import {Tooltip} from 'weightless/tooltip/tooltip';
 
+import '@material/mwc-checkbox';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
@@ -272,6 +273,14 @@ export default class BackendAiSessionList extends BackendAIPage {
 
         mwc-textfield {
           width: 100%;
+        }
+
+        mwc-checkbox {
+          --mdc-checkbox-size: 12px;
+          --mdc-checkbox-state-layer-size:12px;
+          --mdc-checkbox-ripple-size: 16px;
+          --mdc-checkbox-touch-target-size: 16px;
+          --mdc-checkbox-state-layer-size:16px;
         }
 
         lablup-shields.right-below-margin {
@@ -893,6 +902,13 @@ export default class BackendAiSessionList extends BackendAIPage {
     return value / 1024;
   }
 
+  _textToColor(text: string) {
+    let stringUniqueHash = [...text].reduce((acc, char) => {
+        return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return `hsl(${stringUniqueHash % 360}, 95%, 35%)`;
+  }
+
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -1282,7 +1298,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = Array.from(this.shadowRoot?.querySelectorAll<Checkbox>('wl-checkbox.list-check') as NodeListOf<Checkbox>);
+    const elm = Array.from(this.shadowRoot?.querySelectorAll<Checkbox>('mwc-checkbox.list-check') as NodeListOf<Checkbox>);
     [...elm].forEach((checkbox) => {
       checkbox.removeAttribute('checked');
     });
@@ -2185,7 +2201,10 @@ export default class BackendAiSessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+            <mwc-checkbox class="list-check"
+                         style="--mdc-checkbox-unchecked-color: ${this._textToColor(rowData.item.session_id)};"
+                         ?checked="${rowData.item.checked === true}"
+                         @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
         `, root
       );
     } else {

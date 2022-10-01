@@ -55,12 +55,12 @@ export default class BackendAIDock extends LitElement {
 
         mwc-icon-button:before {
           content: '';
-          width: 4px;
-          height: 4px;
+          width: 6px;
+          height: 6px;
           position: absolute;
-          top: 6px;
-          margin-left: 30px;
-          border-radius: 2px;
+          top: 5px;
+          margin-left: 29px;
+          border-radius: 3px;
           background-color: var(--indicator-color);
           z-index:10000;
         }
@@ -125,11 +125,15 @@ export default class BackendAIDock extends LitElement {
                html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
                                      style="--indicator-color:${globalThis.backendaiwindowmanager.windows[name].groupColor}"
                                      @click="${()=>{this.setToTop(name)}}"
+                                     @mouseover="${()=>{globalThis.backendaiwindowmanager.annotateWindow(globalThis.backendaiwindowmanager.windows[name])}}"
+                                     @mouseout="${()=>{globalThis.backendaiwindowmanager.deannotateWindow()}}"
                                      ?isTop=${globalThis.backendaiwindowmanager.windows[name].isTop}><img src="${globalThis.backendaiwindowmanager.windows[name].icon}" />
                </mwc-icon-button>`:
                html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
                                      style="--indicator-color:${globalThis.backendaiwindowmanager.windows[name].groupColor}"
                                      @click="${()=>{this.setToTop(name)}}"
+                                     @mouseover="${()=>{globalThis.backendaiwindowmanager.annotateWindow(globalThis.backendaiwindowmanager.windows[name])}}"
+                                     @mouseout="${()=>{globalThis.backendaiwindowmanager.deannotateWindow()}}"
                                      icon="${globalThis.backendaiwindowmanager.windows[name].icon}"></mwc-icon-button>`
             : html ``)};
       </div>

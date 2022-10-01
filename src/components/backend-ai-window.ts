@@ -58,6 +58,7 @@ export default class BackendAIWindow extends LitElement {
 
   @query('#window') win!: HTMLDivElement;
   @query('#titlebar') titlebar!: HTMLDivElement;
+  @query('#titlebar-center') titlebarCenter!: HTMLDivElement;
   @query('#ribbon') ribbon!: HTMLDivElement;
   @query('#content') contents!: HTMLDivElement;
   @query('#mock') mock!: HTMLDivElement;
@@ -76,7 +77,6 @@ export default class BackendAIWindow extends LitElement {
       // language=CSS
       css`
         div.window {
-          background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
           margin: 0;
           padding: 0;
@@ -98,7 +98,6 @@ export default class BackendAIWindow extends LitElement {
         }
 
         div.window > h4 {
-          background-color: #FFFFFF;
           color: #000000;
           font-size: 14px;
           font-weight: 400;
@@ -112,10 +111,16 @@ export default class BackendAIWindow extends LitElement {
           text-overflow: ellipsis;
           overflow: hidden;
           cursor: move;
+          background: var(--card-background-color, #ffffff);
+        }
+
+        #titlebarCenter {
+          background-color: transparent!important;
         }
         div.window > h4 > img,
         div.window > h4 > span {
           margin-left: 15px;
+          z-index:2;
         }
         .button-area {
           margin-left: 15px;
@@ -128,6 +133,7 @@ export default class BackendAIWindow extends LitElement {
         }
 
         #content {
+          background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
           overflow-y:scroll;
           overflow-x:hidden;
@@ -147,14 +153,18 @@ export default class BackendAIWindow extends LitElement {
         }
 
         #ribbon {
-          width: 0;
-          height: 5px;
+          width: 8px;
+          height: 37px;
           background-color: transparent;
           position: absolute;
+          border-radius: 0 5px 0 0;
           top: 0;
-          right: 100px;
+          right: 0px;
+          z-index:1;
           transition: all 0.2s;
           cursor: pointer;
+          /*right: 100px;
+          border-bottom: solid 10px transparent;*/
         }
 
         @keyframes fadeIn {
@@ -418,8 +428,13 @@ export default class BackendAIWindow extends LitElement {
     if (this.group === '') {
       this.ribbon.style.display = 'none';
     } else {
-      this.ribbon.style.border = 'solid 10px ' + this.groupColor;
-      this.ribbon.style.borderBottom = 'solid 10px transparent';
+      //this.ribbon.style.display = 'none';
+      //this.ribbon.style.border = 'solid 10px ' + this.groupColor;
+
+      this.ribbon.style.background = this.groupColor;
+
+      //this.titlebar.style.backgroundColor = this.groupColor;
+      //this.titlebar.style.borderBottom = 'solid 5px ' + this.groupColor;
     }
     globalThis.backendaiwindowmanager.addWindow(this);
   }
@@ -454,8 +469,8 @@ export default class BackendAIWindow extends LitElement {
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>
           `: html``}
-          <span><slot name="title">${this.title}</slot></span>
-          <div class="flex"></div>
+          <span id="title"><slot name="title">${this.title}</slot></span>
+          <div id="titlebar-center" class="flex"></div>
           <div id="ribbon" class="ribbon"></div>
           <div class="button-area">
             <mwc-icon-button icon="remove" @click="${()=>this.minimize_window()}"></mwc-icon-button>
