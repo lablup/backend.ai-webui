@@ -42,6 +42,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) icon = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
+  @property({type: Boolean}) isChangingSizeByButton = false;
   @property({type: Boolean}) isTop = false;
   @property({type: URL}) url;
 
@@ -394,7 +395,7 @@ export default class BackendAIWindow extends LitElement {
    *
    */
   resized() {
-    /* if (this.isFullScreen) {
+    /* if (this.isFullScreen) { // when shrinking from full screen to window
       this.isFullScreen = false;
       this.keepLastWindowInfo();
     }*/
