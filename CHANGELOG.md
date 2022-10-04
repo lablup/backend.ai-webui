@@ -1,7 +1,51 @@
 # Changelog
 
-## v22.09.0 (22/08/2022)
- * Release update to match 22.09 branch
+## v22.09.1 (19/09/2022)
+## What's Changed
+* update: lit and mwc-components to the latest version by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1445
+* refactor: use type alias for `listCondition` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1447
+* feature: add extra information in the last page of session launcher by @mihilt in https://github.com/lablup/backend.ai-webui/pull/1427
+* update: typing shadowRoot from any type by @Jaewoook in https://github.com/lablup/backend.ai-webui/pull/1359
+* feature: add agent summary page by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1439
+* fix: rename `BackendAIAgent` to `BackendAIAgentSummaryList` and add detail typings by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1449
+* fix: remove animation of buttons that do not trigger other events by @jangjichang in https://github.com/lablup/backend.ai-webui/pull/1454
+* style: unify style of the list by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1456
+* fix: add type-check before initializing chart by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1459
+* hotfix: add type definition to show `agent-summary-list` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1457
+* update: node.js base version to 18 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1461
+* style: total allocation pane is too big by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1463
+* fix: add title to show what the Control icons do by @di-uni in https://github.com/lablup/backend.ai-webui/pull/1465
+* fix: cluster size slider to be active by cluster mode selection by @Jaewoook in https://github.com/lablup/backend.ai-webui/pull/1356
+* feature: send target app's protocol (http or tcp) when starting wsproxy by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1211
+* fix: remove animations from which events do not occur by @suyeon12 in https://github.com/lablup/backend.ai-webui/pull/1472
+* style: adjust the License Key button size by @ky3vin in https://github.com/lablup/backend.ai-webui/pull/1477
+* fix: add helper dialog for endpoint by @di-uni in https://github.com/lablup/backend.ai-webui/pull/1473
+
+## New Contributors
+* @jangjichang made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1454
+* @di-uni made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1465
+* @suyeon12 made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1472
+* @ky3vin made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1477
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.0...v22.09.1
+
+## v22.09.0 (31/08/2022)
+## What's Changed
+* fix: add validation check and enable button only valid status in import and run page by @mihilt in https://github.com/lablup/backend.ai-webui/pull/1400
+* hotfix: don't show the Environments Images list by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1431
+* fix: automatically set the height of `list-wrapper`, which wraps grids, to avoid the height mismatch between the two elements by @lizable in https://github.com/lablup/backend.ai-webui/pull/1436
+* feature: display richer agent information by @lizable in https://github.com/lablup/backend.ai-webui/pull/1435
+* fix: CUDA utilization was displayed as `Infinity` by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1437
+* fix: disable container commit when session is batch type by @lizable in https://github.com/lablup/backend.ai-webui/pull/1438
+* Feature: refactor pipeline by @lizable in https://github.com/lablup/backend.ai-webui/pull/1221
+* refactor: temporally block pages related to pipeline menu by @lizable in https://github.com/lablup/backend.ai-webui/pull/1440
+* hotfix: remove wrong parsing number logic in initial configuration by @lizable in https://github.com/lablup/backend.ai-webui/pull/1444
+* bugfix: list status unrecognized by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1441
+
+## New Contributors
+* @mihilt made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1400
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.7...v22.09.0
 
 
 ## v22.03.7 (22/08/2022)

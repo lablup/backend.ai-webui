@@ -6,6 +6,7 @@
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import '@material/mwc-button';
 import '@material/mwc-icon';
@@ -112,6 +113,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
   private _enableContainerCommit = false;
   private _enablePipeline = true;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -124,6 +127,7 @@ export default class BackendAILogin extends BackendAIPage {
   @query('#id_password') passwordInput!: TextField;
   @query('#id_api_key') apiKeyInput!: TextField;
   @query('#id_secret_key') secretKeyInput!: TextField;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -249,6 +253,14 @@ export default class BackendAILogin extends BackendAIPage {
         #endpoint-button {
           padding-left: 3px;
           background-color: rgb(250, 250, 250);
+        }
+
+        #help-description {
+          --component-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
         }
 
         .login-input {
@@ -771,7 +783,7 @@ export default class BackendAILogin extends BackendAIPage {
      {
        valueType: 'number',
        defaultValue: 2,
-       value: parseFloat(resourcesConfig?.maxShmPerContainerr),
+       value: parseFloat(resourcesConfig?.maxShmPerContainer),
      } as ConfigValueObject) as number;
 
     // Max File Upload size number
@@ -1491,6 +1503,15 @@ export default class BackendAILogin extends BackendAIPage {
     (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
   }
 
+  private _showEndpointDescription(e?) {
+    if (e != undefined) {
+      e.stopPropagation();
+    }
+    this._helpDescriptionTitle = _text('login.EndpointInfo');
+    this._helpDescription = _text('login.DescEndpoint');
+    this.helpDescriptionDialog.show();
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1582,6 +1603,7 @@ export default class BackendAILogin extends BackendAIPage {
                       value="${this.api_endpoint}"
                       @keyup="${this._submitIfEnter}">
                   </mwc-textfield>
+                  <mwc-icon-button icon="info" class="fg grey info" @click="${(e) => this._showEndpointDescription(e)}"></mwc-icon-button>
                 </div>
                 <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
                     maxLength="2048" style="display:none;"
@@ -1684,6 +1706,12 @@ export default class BackendAILogin extends BackendAIPage {
             </mwc-button>
           </div>
         ` : html``}
+      </backend-ai-dialog>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:10px;">
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
       </backend-ai-dialog>
       <backend-ai-signup id="signup-dialog"></backend-ai-signup>
     `;

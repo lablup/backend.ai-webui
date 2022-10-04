@@ -1067,6 +1067,8 @@
     "ClickToUseID": "ID 사용",
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
+    "EndpointInfo": "엔드포인트 안내",
+    "DescEndpoint": "<p>엔트포인트에는 Manager로의 연결을 중계하는 Backend.AI Webserver가 작동하고 있는 URL을 작성해주시면 됩니다.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "CancelLogin": "로그인 취소",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
