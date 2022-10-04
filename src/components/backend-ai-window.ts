@@ -328,16 +328,19 @@ export default class BackendAIWindow extends LitElement {
     } else {
       this.keepLastWindowInfo();
       this.hide_window();
-      //this.win.style.height = '37px';
-      //this.win.style.width = '200px';
+      // this.win.style.height = '37px';
+      // this.win.style.width = '200px';
       this.isMinimized = true;
     }
   }
 
   maximize_window() {
-    if (this.isFullScreen === false) {
+    console.log(this.isFullScreen);
+    if (!this.isFullScreen) {
+      console.log('is not a full screen');
       this.keepLastWindowInfo();
       this.contents.style.visibility = 'visible';
+      console.log('is now a full screen', this.isFullScreen);
       this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
       this.isFullScreen = true;
     } else {
@@ -368,8 +371,8 @@ export default class BackendAIWindow extends LitElement {
   }
 
   get ribbonColor() {
-    let stringUniqueHash = [...this.group].reduce((acc, char) => {
-        return char.charCodeAt(0) + ((acc << 5) - acc);
+    const stringUniqueHash = [...this.group].reduce((acc, char) => {
+      return char.charCodeAt(0) + ((acc << 5) - acc);
     }, 0);
     return `hsl(${stringUniqueHash % 360}, 95%, 35%)`;
   }
@@ -391,10 +394,10 @@ export default class BackendAIWindow extends LitElement {
    *
    */
   resized() {
-    if (this.isFullScreen === true) {
+    /* if (this.isFullScreen) {
       this.isFullScreen = false;
       this.keepLastWindowInfo();
-    }
+    }*/
     if (this.win.offsetHeight < 38) {
       this.contents.style.display = 'none';
       this.resizeGuide.style.display = 'none';
@@ -411,7 +414,7 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('drag', this.drag.bind(this));
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
-    new ResizeObserver((obj) => {this.resized()}).observe(this.win);
+    new ResizeObserver((obj) => this.resized()).observe(this.win);
     if (this.posX !== 0) {
       this.win.style.left = this.posX + 'px';
     } else {
