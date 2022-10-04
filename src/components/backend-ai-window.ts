@@ -191,31 +191,37 @@ export default class BackendAIWindow extends LitElement {
     console.log("Window location: "+ (this.mousePosX + this.distX), this.mousePosY + this.distY);
     console.log("Window offset location: " + this.win.offsetLeft, this.win.offsetTop);
 
-    this.win.style.border = "3px dotted #ccc";
+    /*
+    this.win.style.border = '0'; //3px dotted #ccc";
     this.titlebar.style.opacity = '0';
     e.dataTransfer.effectAllowed = 'move';
     this.contents.style.opacity = '0';
-    this.win.style.backgroundColor = 'transparent';
+    this.win.style.backgroundColor = 'transparent';*/
+    this.win.style.opacity = '0';
 
-    /* Reserved for future animated windows.
+    /* Reserved for future animated windows. */
     this.mock.style.width = this.win.offsetWidth.toString() + 'px';
     this.mock.style.height = this.win.offsetHeight.toString() + 'px';
-    this.mock.style.border = "none";
+    this.mock.style.border = '3px dotted #ccc';
+    this.mock.style.position = 'absolute';
     this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
-    this.mock.style.display = 'block';*/
+    this.mock.style.display = 'block';
   }
 
   dragend(e) {
     e.stopPropagation();
     e.preventDefault();
-    this.win.style.border = "none";
     this.mousePosX = e.pageX;
     this.mousePosY = e.pageY;
     this.win.style.left = Math.max(this.mousePosX + this.distX, 1) + 'px';
     this.win.style.top = Math.max(this.mousePosY + this.distY, 1) + 'px';
+    /*
+    this.win.style.border = 'none';
     this.titlebar.style.opacity = '1';
     this.contents.style.opacity = '1';
-    this.win.style.background = 'var(--card-background-color, #ffffff)';
+    this.win.style.background = 'var(--card-background-color, #ffffff)';*/
+    this.win.style.opacity = '1';
+    this.mock.style.display = 'none';
   }
 
   dragover(e) {
@@ -231,14 +237,21 @@ export default class BackendAIWindow extends LitElement {
   drag(e) {
     e.stopPropagation();
     e.preventDefault();
+    if (this.mousePosX != e.pageX && this.mousePosY != e.pageY) {
+      this.mousePosX = e.pageX;
+      this.mousePosY = e.pageY;
+      this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
+    }
   }
 
   moveMock(xPos, yPos) {
-    this.mock.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    // this.mock.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    this.mock.style.left = Math.max(xPos, 1) + 'px';
+    this.mock.style.top = Math.max(yPos, 1) + 'px';
   }
 
   moveWin(xPos, yPos) {
-      this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
   }
 
   // Activation observer
