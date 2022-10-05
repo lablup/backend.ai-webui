@@ -17,7 +17,6 @@ import {BackendAIPage} from './backend-ai-page';
 export default class BackendAiSettingsStore extends BackendAIPage {
   @property({type: Object}) options = Object();
 
-
   constructor() {
     super();
     this.options = { // Default option.

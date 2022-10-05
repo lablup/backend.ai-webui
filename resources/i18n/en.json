@@ -8,6 +8,8 @@
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
+      "AgentSummary": "Agent Summary",
+      "PipelineJob": "Pipeline Job (Beta)",
       "Statistics": "Statistics",
       "Help": "Help",
       "Settings": "Settings",
@@ -53,7 +55,9 @@
       "Experiments": "Experiments",
       "Menu": "Menu",
       "Run": "Run",
-      "UserName": "User Name"
+      "UserName": "User Name",
+      "PleaseChangeYourPassword": "Please change your password.",
+      "PasswordChangePlace": "Click the person icon on the top bar and go to the \"My Account\" menu."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -228,7 +232,8 @@
       "(Automatic)": "(Automatic)",
       "NumOpenMPthreads": "Number of OpenMP threads",
       "NumOpenBLASthreads": "Number of OpenBLAS threads",
-      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization"
+      "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
+      "Architecture": "Architecture"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -243,6 +248,12 @@
     "Status": "Status",
     "StatusInfo": "Status Info",
     "StatusDetail": "Detail",
+    "CommitSession": "Commit Session",
+    "DescCommitSession": "You are about to commit container corresponding to the session below: ",
+    "CommitOnGoing": "Commit on progress...",
+    "CommitFinished": "Commit session operation finished.",
+    "CommitFailed": "Commit session operation failed",
+    "Message": "Message",
     "TotalRetries": "Total Retries",
     "LastTry": "Last Try",
     "Control": "Control",
@@ -251,6 +262,7 @@
     "Starts": "Starts",
     "Reservation": "Reservation",
     "Agent": "Agent",
+    "Architecture": "Architecture",
     "Usage": "Usage",
     "OpenToPublic": "Open app to public",
     "AllowedClientIps": "Allowed client IPs",
@@ -267,6 +279,7 @@
     "ExportCSVFile": "Export CSV File",
     "ResourceGroup": "Resource Group",
     "NoLogs": "No logs.",
+    "NoSessionToDisplay": "No sessions to display",
     "CreationFailed": "Session creation failed. Please try again in few minutes.",
     "applauncher": {
       "AppMustBeRun": "Start only when the app is already running",
@@ -277,6 +290,7 @@
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
     "DefaultTensorboardPath": "/home/work/logs",
+    "AlreadyTerminatingSession": "Already terminating the session.",
     "SessionTerminated": "Session terminated.",
     "SessionsTerminated": "Sessions terminated.",
     "NoSession": "No session.",
@@ -298,7 +312,8 @@
       "EnterValidSessionName": "Enter valid session name",
       "SessionNameAlreadyExist": "Session name already exists"
     },
-    "EnterValidSessionName": "EnterValidSessionName"
+    "EnterValidSessionName": "EnterValidSessionName",
+    "EnvironmentInfo": "Environment Info"
   },
   "button": {
     "Cancel": "Cancel",
@@ -328,13 +343,17 @@
     "Generate": "Generate",
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
-    "ForceTerminate": "Force Terminate"
+    "ForceTerminate": "Force Terminate",
+    "Commit": "Commit"
   },
   "agent": {
     "Endpoint": "Endpoint",
     "Region": "Region",
+    "Utilization": "Utilization",
+    "Architecture": "Architecture",
     "Starts": "Starts",
     "Resources": "Resources",
+    "Allocation": "Allocation",
     "Connected": "Connected",
     "Terminated": "Terminated",
     "Maintaining": "Maintaining",
@@ -343,10 +362,12 @@
     "DetailedInformation": "Detailed Information",
     "AgentSetting": "Agent Settings",
     "AgentSettingUpdated": "Agent Setting Updated.",
+    "NoAvailableLiveStat": "No available live stat",
     "NoChanges": "No changes.",
     "Running": "Running",
     "BackendType": "Backend Type",
     "Capabilities": "Capabilities",
+    "NoAgentToDisplay": "No Agents to display",
     "NoNetworkSignal": "No network signals."
   },
   "general": {
@@ -420,6 +441,8 @@
     "Description": "Description",
     "Days": "Days",
     "NoChanges": "No changes were made",
+    "NoUserToDisplay": "No Users to display",
+    "NoCredentialToDisplay": "No Credentials to display",
     "FileName": "File name",
     "validation": {
       "InvalidEmailAddress": "Invalid Email Address.",
@@ -485,6 +508,8 @@
       "CloneAFolder": "Clone a folder",
       "LeaveAFolder": "Leave a folder",
       "DeleteAFolder": "Delete a folder",
+      "OpenAFolder": "Open a folder",
+      "FolderInfo": "Info",
       "TypeFolderNameToDelete": "Type folder name to delete",
       "TypeFolderNameToLeave": "Type folder name to leave",
       "Delete": "Delete",
@@ -513,6 +538,7 @@
       "EditDelete": "Edit+Delete",
       "KickOut": "Kick out user",
       "CannotDeleteFolder": "Cannot delete folder mounted in one or more sessions. Please terminate the session first.",
+      "NoFolderToDisplay": "No Folders to display",
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
@@ -559,7 +585,8 @@
       "ExecuteFileBrowser": "Execute filebrowser",
       "FileBrowserSessionRunningAlready": "The session supporting filebrowser is already running. Please upload folder(s) using that session.",
       "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
-      "NoImagesSupportingFileBrowser": "There is no images supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "NoImagesSupportingFileBrowser": "There is no image supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
+      "ReadOnlyFolderOnFileBrowser": "Opening read-only folder in filebrowser, only downloading file(s)/folder(s) are allowed.",
       "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
     },
     "invitation": {
@@ -588,6 +615,7 @@
       "DoYouWantToProceed": "Do you want to proceed?"
     },
     "title": {
+      "Notice": "Notice",
       "LetsDouble-Check": "Let's Double-check"
     },
     "ErrorOccurred": "Error Occurred",
@@ -602,6 +630,7 @@
     "DescProblemOccurred": "Problem occurred during installation",
     "DescServicePortModified": "Service port successfully modified",
     "Registry": "Registry",
+    "Architecture": "Architecture",
     "Namespace": "Namespace",
     "Language": "Language",
     "Version": "Version",
@@ -635,6 +664,7 @@
     "SelectedImagesAlreadyInstalled": "Selected Image(s) are already installed or None. Please check again.",
     "SelectedImagesNotInstalled": "Selected Images(s) are not installed. Please check again.",
     "Disabled": "disabled",
+    "NoImageToDisplay": "No Images to display",
     "NoResourcesForImage": "Not Enough resources for pulling the image. Image name: ",
     "InstallingImage": "Installing: ",
     "TakesTime": ". It takes time so have a cup of coffee!",
@@ -655,9 +685,11 @@
     "PresetName": "Preset Name",
     "AboutToDeletePreset": "You are about to delete this preset:",
     "NoPresetName": "Input preset name",
+    "NoResourcePresetToDisplay": "No Resource Presets to display",
     "MemoryShouldBeLargerThanSHMEM": "Memory should be larger than shared memory",
     "Created": "Resource preset created",
     "Updated": "Resource preset updated",
+    "Deleted": "Resource preset is successfully deleted.",
     "MinimumCPUUnit": "CPU starts with 1 core",
     "MinimumMemUnit": "Memory starts with 1 GB",
     "MinimumShmemUnit": "The minimum unit for shared memory is 0.01 GB.",
@@ -736,6 +768,7 @@
     "RequestUrl": "Request Url",
     "Parameters": "Parameters",
     "ErrorType": "Error Type",
+    "NoLogToDisplay": "No Logs to display",
     "LogMessageRemoved": "Log Messages have been removed."
   },
   "resourcePolicy": {
@@ -751,6 +784,7 @@
     "ContainerPerSession": "Container Per Session",
     "IdleTimeoutSec": "Idle timeout (sec.)",
     "ConcurrentJobs": "Concurrent Jobs",
+    "MaxSessionLifeTime": "Session Lifetime (sec.)",
     "Capacity": "Capacity",
     "Folders": "Folders",
     "Name": "Name",
@@ -761,6 +795,7 @@
     "SuccessfullyUpdated": "Resource policy successfully updated.",
     "SuccessfullyDeleted": "Resource policy successfully deleted.",
     "PolicyNameEmpty": "Policy name should not be empty.",
+    "NoResourcePolicyToDisplay": "No Resource Policies to display",
     "AboutToDeleteResourcePolicy": "You are about to delete this resource policy: "
   },
   "registry": {
@@ -794,8 +829,10 @@
     "RegistryUpdateFailed": "Registry update failed.",
     "RescanImages": "Rescanning Images...",
     "RescanFailed": "Rescan Failed.",
+    "NoRegistryToDisplay": "No Registries to display",
+    "ModifyRegistryConfigurations": "Modify registry configurations",
     "RegistrySuccessfullyModified": "Registry successfully modified.",
-    "PleaseSelectOption": "PleaseSelectOption"
+    "PleaseSelectOption": "Please Select Option"
   },
   "resourceGroup": {
     "ResourceGroups": "Resource Groups",
@@ -810,7 +847,7 @@
     "SelectDomain": "Select Domain",
     "ModifyResourceGroup": "Modify Resource Group",
     "TypeResourceGroupNameToDelete": "Type resource group name to delete",
-    "ResourceGroupName": "ResourceGroupName",
+    "ResourceGroupName": "Resource Group Name",
     "Active": "Active",
     "SelectScheduler": "Select Scheduler",
     "NochangesMade": "No changes made",
@@ -821,7 +858,12 @@
     "EnterValidResourceGroupName": "Enter valid Resource group name",
     "ResourceGroupNameRequired": "Resource group name is required.",
     "ResourceGroupAlreadyExist": "A resource group with the same name already exists.",
-    "WsproxyAddress": "WSProxy Server Address"
+    "WsproxyAddress": "WSProxy Server Address",
+    "SetSchedulerOptions": "Set Scheduler Options",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Resource Group Detail",
+    "RetriesToSkip": "Times",
+    "NoGroupToDisplay": "NoGroupToDisplay"
   },
   "maintenance": {
     "General": "General",
@@ -1023,6 +1065,8 @@
     "ClickToUseID": "Click To Use ID",
     "EndpointHistory": "Endpoint History",
     "NoEndpointSaved": "No endpoint saved.",
+    "EndpointInfo": "About Endpoint",
+    "DescEndpoint": "<p>In API ENDPOINT, the URL of Backend.AI Webserver, which relays the request to the Manager, should be entered.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "CancelLogin": "Cancel Login",
     "SignoutFinished": "Signout finished.",
     "APIEndpointEmpty": "API Endpoint is empty. Please specify API endpoint to login.",
@@ -1038,7 +1082,10 @@
     "InvalidChangePasswordToken": "Invalid Token",
     "InvalidChangePasswordTokenMessage": "Issued token to change password has error. Please send another email for changing password and try again.",
     "PleaseInputLoginInfo": "Please input ID and password for login.",
-    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while."
+    "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
+    "SingleSignOn": {
+      "LoginWithSAML": "Login with SAML"
+    }
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

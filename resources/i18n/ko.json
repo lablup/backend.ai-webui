@@ -7,7 +7,9 @@
       "Sessions": "세션",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
-      "Pipeline": "파이프라인(베타)",
+      "AgentSummary": "자원 요약",
+      "Pipeline": "파이프라인 (베타)",
+      "PipelineJob": "파이프라인 잡 (베타)",
       "Statistics": "통계",
       "Help": "도움말",
       "Settings": "설정",
@@ -53,7 +55,9 @@
       "Experiments": "실험",
       "Menu": "메뉴",
       "Run": "실행",
-      "UserName": "사용자"
+      "UserName": "사용자",
+      "PleaseChangeYourPassword": "비밀번호를 변경해주세요.",
+      "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요."
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -228,7 +232,8 @@
       "(Automatic)": "(자동설정)",
       "NumOpenMPthreads": "OpenMP 쓰레드 수",
       "NumOpenBLASthreads": "OpenBLAS 쓰레드 수",
-      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용"
+      "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용",
+      "Architecture": "아키텍쳐"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -243,6 +248,7 @@
     "Status": "상태",
     "StatusInfo": "상태 정보",
     "StatusDetail": "상세 정보",
+    "Message": "메세지",
     "TotalRetries": "생성 시도 횟수",
     "LastTry": "최근 시도한 시간",
     "Control": "제어",
@@ -267,6 +273,7 @@
     "ExportCSVFile": "CSV 파일 내보내기",
     "ResourceGroup": "자원 그룹",
     "NoLogs": "로그가 없습니다.",
+    "NoSessionToDisplay": "세션 정보가 없습니다.",
     "CreationFailed": "세션 생성에 실패하였습니다. 잠시 후 다시 시도해주세요.",
     "applauncher": {
       "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
@@ -277,7 +284,7 @@
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",
     "DefaultTensorboardPath": "/home/work/logs",
-    "SessionTerminated": "세선을 중지했습니다.",
+    "SessionTerminated": "세션을 중지했습니다.",
     "SessionsTerminated": "세션들을 중지했습니다.",
     "NoSession": "세션이 없습니다.",
     "DownloadingCSVFile": "CSV 파일을 내려받습니다.",
@@ -292,12 +299,23 @@
     "OnlyOneFolderAttached": "하나의 폴더만 연결되어 있습니다.",
     "NoLogMsgAvailable": "현재 표시할 수 있는 로그 메시지가 없습니다.",
     "SessionRenamed": "세션 이름이 변경되었습니다",
+    "SessionNameRequired": "세션 이름을 입력해주세요",
+    "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
+    "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다",
+    "Architecture": "아키텍쳐",
     "Validation": {
       "SessionNameRequired": "세션 이름을 입력해주세요",
       "SluggedStrings": "최소 4자 이상의 고유문자열로 입력해주세요",
       "EnterValidSessionName": "올바른 세션 이름을 입력해주세요",
       "SessionNameAlreadyExist": "같은 이름의 세션이 이미 있습니다"
-    }
+    },
+    "AlreadyTerminatingSession": "이미 종료중인 세션입니다",
+    "CommitSession": "세션을 이미지로 커밋하기",
+    "CommitOnGoing": "세션 커밋 작업 진행중",
+    "CommitFinished": "세션 커밋 작업 완료",
+    "CommitFailed": "세션 커밋 작업 실패",
+    "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
+    "EnvironmentInfo": "환경 정보"
   },
   "button": {
     "Cancel": "취소",
@@ -327,7 +345,8 @@
     "Generate": "생성하기",
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
-    "ForceTerminate": "강제 종료"
+    "ForceTerminate": "강제 종료",
+    "Commit": "커밋하기"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -346,7 +365,12 @@
     "Running": "실행중",
     "BackendType": "백엔드",
     "Capabilities": "지원기능",
-    "NoNetworkSignal": "네트워크 신호 없음"
+    "NoAgentToDisplay": "에이전트 정보가 없습니다.",
+    "NoNetworkSignal": "네트워크 신호 없음",
+    "Architecture": "아키텍쳐",
+    "Utilization": "사용량",
+    "NoAvailableLiveStat": "표시할 사용량 없음",
+    "Allocation": "할당 정보"
   },
   "general": {
     "cores": "코어",
@@ -420,6 +444,8 @@
     "Days": "일",
     "NoChanges": "변경 사항이 없습니다.",
     "FileName": "파일 명",
+    "NoUserToDisplay": "사용자 정보가 없습니다.",
+    "NoCredentialToDisplay": "자격 증명 정보가 없습니다.",
     "validation": {
       "InvalidEmailAddress": "잘못된 이메일 주소 형식입니다.",
       "PolicyName": "정책 이름이 필요합니다.",
@@ -484,6 +510,8 @@
       "CloneAFolder": "폴더 복사",
       "LeaveAFolder": "초대된 폴더 나가기",
       "DeleteAFolder": "폴더 삭제",
+      "OpenAFolder": "폴더 열기",
+      "FolderInfo": "폴더 정보",
       "TypeFolderNameToDelete": "삭제 확인을 위해 폴더 이름을 입력하세요",
       "TypeFolderNameToLeave": "연결 해제 확인을 위해 폴더 이름을 입력하세요",
       "Delete": "삭제",
@@ -512,6 +540,7 @@
       "EditDelete": "수정 및 삭제",
       "KickOut": "권한 회수",
       "CannotDeleteFolder": "폴더가 하나 이상의 세션에 마운트 되어있어 삭제할 수 없습니다. 세션 종료 후 삭제가 가능합니다.",
+      "NoFolderToDisplay": "폴더 정보가 없습니다.",
       "FolderUsage": "폴더 사용량",
       "FolderUsing": "사용량",
       "FolderQuota": "가용량",
@@ -559,7 +588,8 @@
       "FileBrowserSessionRunningAlready": "파일브라우저용 세션이 이미 실행중입니다. 해당 세션에서 폴더를 업로드 할 수 있습니다.",
       "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오.",
       "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
-      "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요."
+      "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요.",
+      "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
@@ -587,7 +617,8 @@
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
     },
     "title": {
-      "LetsDouble-Check": "한 번 더 확인합시다"
+      "LetsDouble-Check": "한 번 더 확인합시다",
+      "Notice": "안내"
     },
     "ErrorOccurred": "문제가 발생했습니다",
     "error": {
@@ -634,6 +665,7 @@
     "SelectedImagesAlreadyInstalled": "선택된 이미지가 없거나 이미 설치 완료되었습니다. 다시 한 번 확인해주시기 바랍니다.",
     "SelectedImagesNotInstalled": "선택된 이미지가 없거나 설치되지 않아 삭제할 수 없습니다. 다시 한 번 확인해주시기 바랍니다.",
     "Disabled": "사용 안함",
+    "NoImageToDisplay": "이미지 정보가 없습니다.",
     "NoResourcesForImage": "이미지를 가져오기 위해 필요한 최소한의 자원이 없거나 지원되지 않습니다. 이미지명: ",
     "InstallingImage": "다운로드 중인 이미지: ",
     "TakesTime": ". 시간이 다소 소요되오니 커피 한 잔의 여유를 즐기시며 잠시 기다려 주세요.",
@@ -641,7 +673,8 @@
     "SuccessfullyModified": "성공적으로 수정되었습니다.",
     "ProblemOccurred": "문제가 발생했습니다.",
     "PasswordsDoNotMatch": "변경할 비밀번호와 비밀번호 확인란의 값이 일치해야 합니다.",
-    "NoChangeMade": "변경된 부분이 없습니다."
+    "NoChangeMade": "변경된 부분이 없습니다.",
+    "Architecture": "아키텍쳐"
   },
   "resourcePreset": {
     "ResourcePresets": "자원 프리셋",
@@ -654,6 +687,7 @@
     "PresetName": "자원 프리셋 이름",
     "AboutToDeletePreset": "아래의 자원 프리셋을 삭제하려고 합니다:",
     "NoPresetName": "자원 프리셋의 이름을 입력하십시오",
+    "NoResourcePresetToDisplay": "자원 프리셋 정보가 없습니다.",
     "MemoryShouldBeLargerThanSHMEM": "메모리는 공유메모리보다 커야 합니다",
     "Created": "자원 프리셋이 생성되었습니다",
     "Updated": "자원 프리셋에 수정되었습니다",
@@ -661,7 +695,8 @@
     "MinimumMemUnit": "메모리 최소 단위: 1 GB",
     "MinimumShmemUnit": "공유메모리 최소 단위는 0.01 GB 입니다.",
     "RAM": "메모리 (GB)",
-    "SharedMemory": "공유메모리 (GB)"
+    "SharedMemory": "공유메모리 (GB)",
+    "Deleted": "자원 프리셋을 성공적으로 삭제하였습니다"
   },
   "usersettings": {
     "General": "일반",
@@ -735,6 +770,7 @@
     "RequestUrl": "요청 주소",
     "Parameters": "파라미터",
     "ErrorType": "에러 종류",
+    "NoLogToDisplay": "로그 정보가 없습니다.",
     "LogMessageRemoved": "로그 메시지가 삭제되었습니다."
   },
   "resourcePolicy": {
@@ -760,7 +796,9 @@
     "SuccessfullyUpdated": "자원 정책이 성공적으로 갱신되었습니다.",
     "SuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "PolicyNameEmpty": "자원 정책명은 필수 입력입니다.",
-    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: "
+    "NoResourcePolicyToDisplay": "자원 정책 정보가 없습니다.",
+    "AboutToDeleteResourcePolicy": "아래의 자원 정책을 삭제하려고 합니다: ",
+    "MaxSessionLifeTime": "세션 최대 실행시간"
   },
   "registry": {
     "Hostname": "호스트명",
@@ -793,8 +831,10 @@
     "RegistryUpdateFailed": "레지스트리 업데이트가 실패하였습니다.",
     "RescanImages": "이미지 리스캔중...",
     "RescanFailed": "리스캔 작업이 실패하였습니다.",
+    "NoRegistryToDisplay": "레지스트리 정보가 없습니다.",
+    "ModifyRegistryConfigurations": "레지스트리 환경 설정 수정",
     "RegistrySuccessfullyModified": "레지스트리가 성공적으로 수정되었습니다.",
-    "PleaseSelectOption": "__NOT_TRANSLATED__"
+    "PleaseSelectOption": "옵션을 선택하세요"
   },
   "resourceGroup": {
     "ResourceGroups": "자원 그룹",
@@ -820,7 +860,12 @@
     "EnterValidResourceGroupName": "올바른 자원 그룹 명을 입력해주세요.",
     "ResourceGroupNameRequired": "자원 그룹 이름이 필요합니다.",
     "ResourceGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
-    "WsproxyAddress": "WSProxy 서버 주소"
+    "WsproxyAddress": "WSProxy 서버 주소",
+    "SetSchedulerOptions": "스케쥴러 옵션 설정",
+    "TimeoutSeconds": "초",
+    "ResourceGroupDetail": "자원 그룹 세부 정보",
+    "RetriesToSkip": "회",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "일반",
@@ -1022,6 +1067,8 @@
     "ClickToUseID": "ID 사용",
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
+    "EndpointInfo": "엔드포인트 안내",
+    "DescEndpoint": "<p>엔트포인트에는 Manager로의 연결을 중계하는 Backend.AI Webserver가 작동하고 있는 URL을 작성해주시면 됩니다.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "CancelLogin": "로그인 취소",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",
@@ -1037,7 +1084,10 @@
     "InvalidChangePasswordToken": "토큰 오류",
     "InvalidChangePasswordTokenMessage": "비밀번호 변경을 위해 발급된 토큰에 오류가 있습니다. 비밀번호 변경 이메일을 다시 보내고 시도해 보십시오.",
     "PleaseInputLoginInfo": "로그인을 위한 ID 와 PW를 입력해주세요.",
-    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다."
+    "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
+    "SingleSignOn": {
+      "LoginWithSAML": "SAML 로그인"
+    }
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",
@@ -1176,7 +1226,7 @@
     "ResourcePolicyAlreadyExist": "같은 이름의 자원 정책이 이미 있습니다.",
     "ScalingGroupAlreadyExist": "같은 이름의 자원 그룹이 이미 있습니다.",
     "ResourceLimitExceed": "자원 제한을 초과했습니다. 가용 자원량을 확인하세요.",
-    "SmallerResourceThenImageRequires": "요청한 자원가 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
+    "SmallerResourceThenImageRequires": "요청한 자원이 이미지가 요구하는 자원보다 적습니다. 자원를 보다 크게 해서 시도해보세요.",
     "LoginSucceededManagerNotResponding": "로그인은 성공하였으나 매니저 서버가 응답하지 않습니다.",
     "UserNameAlreadyExist": "이미 사용하고 있는 사용자명입니다.",
     "ResourcePolicyStillReferenced": "이 자원 정책을 사용하고 있는 자격 증명이 있습니다.",

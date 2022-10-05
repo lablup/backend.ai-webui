@@ -23,7 +23,6 @@ import 'weightless/card';
 import '@material/mwc-icon/mwc-icon';
 
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 /**
  Backend.AI Information View
@@ -57,11 +56,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   @property({type: Boolean}) account_changed = true;
   @property({type: Boolean}) use_ssl = true;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -288,7 +283,7 @@ export default class BackendAiInformationView extends BackendAIPage {
                 <div class="description">${_t('information.DescLicenseKey')}
                 </div>
               </div>
-              <div class="horizontal center end-justified layout setting-label monospace indicator">
+              <div class="horizontal center end-justified layout setting-label">
                 <p class="label">${this.license_key}</p>
               </div>
             </div>

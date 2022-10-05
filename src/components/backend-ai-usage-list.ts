@@ -5,10 +5,11 @@
 
 import {translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
+import {Select} from '@material/mwc-select';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
@@ -60,6 +61,7 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
   @property({type: Number}) elapsedDays = 0;
+  @query('#period-selector') periodSelec!: Select;
   public data: any;
 
   constructor() {
@@ -67,7 +69,7 @@ export default class BackendAIUsageList extends BackendAIPage {
     this.data = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -107,7 +109,8 @@ export default class BackendAIUsageList extends BackendAIPage {
     } else {
       this.active = false;
       this._menuChanged(false);
-      this.shadowRoot.querySelectorAll('backend-ai-chart').forEach((e) => {
+      // TODO define clear type for component
+      this.shadowRoot?.querySelectorAll('backend-ai-chart').forEach((e: any) => {
         e.wipe();
       });
     }
@@ -123,16 +126,13 @@ export default class BackendAIUsageList extends BackendAIPage {
   async _menuChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelectorAll('backend-ai-chart').forEach((e) => {
+      // TODO define clear type for component
+      this.shadowRoot?.querySelectorAll('backend-ai-chart').forEach((e: any) => {
         e.wipe();
       });
       return;
     }
     this.init();
-  }
-
-  firstUpdated() {
-    // this.init();
   }
 
   async _viewStateChanged(active: boolean) {
@@ -147,16 +147,16 @@ export default class BackendAIUsageList extends BackendAIPage {
         this._getUserInfo();
         this.init();
         setTimeout(() => {
-          const periodSelector = this.shadowRoot.querySelector('#period-selector');
-          periodSelector.selectedText = periodSelector.selected.textContent.trim();
+          // TODO remove protected field assignment
+          (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim() ?? '';
         }, 100);
       }, true);
     } else { // already connected
       this._getUserInfo();
       this.init();
       setTimeout(() => {
-        const periodSelector = this.shadowRoot.querySelector('#period-selector');
-        periodSelector.selectedText = periodSelector.selected.textContent.trim();
+        // TODO remove protected field assignment
+        (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim();
       }, 100);
     }
   }
@@ -186,7 +186,8 @@ export default class BackendAIUsageList extends BackendAIPage {
         this.updating = true;
         this.readUserStat()
           .then((res) => {
-            this.shadowRoot.querySelectorAll('backend-ai-chart').forEach((chart) => {
+            // TODO define clear type for component
+            this.shadowRoot?.querySelectorAll('backend-ai-chart').forEach((chart: any) => {
               chart.init();
             });
             this.updating = false;
@@ -201,7 +202,8 @@ export default class BackendAIUsageList extends BackendAIPage {
       this.updating = true;
       this.readUserStat()
         .then((res) => {
-          this.shadowRoot.querySelectorAll('backend-ai-chart').forEach((chart) => {
+          // TODO define clear type for component
+          this.shadowRoot?.querySelectorAll('backend-ai-chart').forEach((chart: any) => {
             chart.init();
           });
           this.updating = false;
@@ -290,7 +292,7 @@ export default class BackendAIUsageList extends BackendAIPage {
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
         <h3 class="horizontal center layout">
           <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:130px; border:1px solid #ccc;"
+              id="period-selector" style="width:150px; border:1px solid #ccc;"
               @change="${(e) => {
     this.pulldownChange(e);
   }}">

@@ -2,11 +2,14 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-const {remote, ipcRenderer} = require('electron');
+const {ipcRenderer} = require('electron');
 const url = require('url');
 const path = require('path');
 let TabGroup;
-if (remote.process.env.serveMode === 'dev') {
+let serveMode = 'dev';
+let siteDescription = 'TEST';
+let debugMode = true;
+if (serveMode === 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
   TabGroup = require("./tab");
   //TabGroup = require("electron-tabs");
@@ -19,8 +22,8 @@ if (remote.process.env.serveMode === 'dev') {
 }
 const dragula = require("dragula");
 
-if (remote.process.env.siteDescription !== '') {
-  document.querySelector('#description').innerHTML = remote.process.env.siteDescription;
+if (siteDescription !== '') {
+  document.querySelector('#description').innerHTML = siteDescription;
 }
 
 mainURL = url.format({
@@ -109,7 +112,7 @@ mainAppTab.on("webview-ready", (tab) => {
 let mainWebView = mainAppTab.webview;
 mainWebView.addEventListener('dom-ready', (e) => {
   mainWebView.executeJavaScript('window.__local_proxy="' + window.__local_proxy + '";');
-  if (remote.debugMode === true) {
+  if (debugMode === true) {
     mainWebView.openDevTools();
   }
   let mainWebViewWebContents = mainWebView.getWebContents();
@@ -165,7 +168,7 @@ function newTabWindow(event, url, frameName, disposition, options, additionalFea
   tab.on("webview-ready", (tab) => {
   });
   newTabWebView.addEventListener('dom-ready', (e) => {
-    if (remote.debugMode === true) {
+    if (debugMode === true) {
       e.target.openDevTools();
     }
     let newTabContents = e.target.getWebContents();

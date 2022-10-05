@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-const {app, Menu, shell, BrowserWindow, protocol, clipboard, dialog, ipcMain} = require('electron');
+const {app, Menu, shell, protocol, BrowserWindow, clipboard, dialog, ipcMain} = require('electron');
 process.env.electronPath = app.getAppPath();
 function isDev() {
   return process.argv[2] == '--dev';
@@ -27,7 +27,8 @@ if (process.env.serveMode == 'dev') {
   versions = require('./version');
   es6Path = npjoin(__dirname, 'build/electron-app/app'); // ES6 module loader with custom protocol
   electronPath = npjoin(__dirname, 'build/electron-app');
-  mainIndex = 'build/electron-app/app/index.html';
+  //mainIndex = 'build/electron-app/app/index.html';
+  mainIndex = 'app.html';
 } else {
   ProxyManager = require('./app/wsproxy/wsproxy.js');
   versions = require('./app/version');
@@ -331,6 +332,7 @@ function createWindow() {
     webPreferences: {
       nativeWindowOpen: true,
       nodeIntegration: true,
+      enableRemoteModule: true,
       webviewTag: true,
       preload: path.join(electronPath, 'preload.js'),
       devTools: (debugMode === true),
@@ -432,6 +434,7 @@ function newPopupWindow(event, url, frameName, disposition, options, additionalF
   Object.assign(options.webPreferences, {
     preload: '',
     isBrowserView: false,
+    enableRemoteModule: true,
     javascript: true
   });
   if (frameName === 'modal') {

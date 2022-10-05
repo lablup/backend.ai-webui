@@ -6,11 +6,9 @@
 import {get as _text, translate as _t} from 'lit-translate';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-
-import './lablup-loading-spinner';
 
 import 'weightless/card';
 import 'weightless/icon';
@@ -33,6 +31,11 @@ import {marked} from 'marked';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor'];
 
 /**
  `<backend-ai-summary-view>` is a Summary panel of backend.ai web UI.
@@ -77,18 +80,18 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Object}) invitations = Object();
+  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
   constructor() {
     super();
     this.invitations = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -156,7 +159,7 @@ export default class BackendAISummary extends BackendAIPage {
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
 
@@ -285,9 +288,8 @@ export default class BackendAISummary extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.update_checker = this.shadowRoot.querySelector('#update-checker');
+    this.update_checker = this.shadowRoot?.querySelector('#update-checker');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._readAnnouncement();
@@ -306,10 +308,10 @@ export default class BackendAISummary extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
+      this.resourceMonitor.removeAttribute('active');
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', 'true');
+    this.resourceMonitor.setAttribute('active', 'true');
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
@@ -458,7 +460,6 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="item" elevation="1">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">

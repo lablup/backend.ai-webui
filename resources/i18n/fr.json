@@ -53,7 +53,11 @@
       "Experiments": "Expériences",
       "Menu": "Menu",
       "Run": "Exécuter",
-      "UserName": "Nom d'utilisateur"
+      "UserName": "Nom d'utilisateur",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -229,7 +233,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -296,12 +301,22 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "Message",
+    "EnvironmentInfo": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -331,7 +346,8 @@
     "Generate": "produire",
     "Continue": "Continuer",
     "GoBackToSummaryPage": "Revenir à la page Résumé",
-    "ForceTerminate": "Forcer l'arrêt"
+    "ForceTerminate": "Forcer l'arrêt",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -350,7 +366,12 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -444,7 +465,9 @@
     "UserNotFound": "La création des identifiants a échoué, car l'ID utilisateur suivant est introuvable :",
     "UserIDRequired": "L'ID utilisateur est requis.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",
@@ -519,7 +542,10 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -563,7 +589,8 @@
       "FileBrowserSessionRunningAlready": "La session prenant en charge le navigateur de fichiers est déjà en cours d'exécution. Veuillez télécharger le(s) dossier(s) en utilisant cette session.",
       "NotEnoughResourceForFileBrowserSession": "Pas assez de ressources (cpu : 1 Core, mem : 0,5 Go) pour créer la session pour le navigateur de fichiers. veuillez vérifier les ressources disponibles.",
       "NoImagesSupportingFileBrowser": "Il n'y a pas encore d'images prenant en charge le navigateur de fichiers. Au moins une ou plusieurs images prenant en charge le navigateur de fichiers sont requises pour télécharger le(s) dossier(s).",
-      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers."
+      "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Entrer l'adresse e-mail",
@@ -591,7 +618,8 @@
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
     },
     "title": {
-      "LetsDouble-Check": "Vérifions deux fois"
+      "LetsDouble-Check": "Vérifions deux fois",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Erreur est survenue",
     "error": {
@@ -645,7 +673,9 @@
     "SuccessfullyModified": "Modifié avec succès",
     "ProblemOccurred": "Un problème est survenu",
     "PasswordsDoNotMatch": "Le mot de passe et la confirmation ne correspondent pas.",
-    "NoChangeMade": "__NOT_TRANSLATED__"
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Préréglages de ressources",
@@ -665,7 +695,9 @@
     "MinimumMemUnit": "La mémoire commence avec 1 Go",
     "MinimumShmemUnit": "L'unité minimale pour la mémoire partagée est de 0,01 Go.",
     "RAM": "RAM (Go)",
-    "SharedMemory": "Mémoire partagée (Go)"
+    "SharedMemory": "Mémoire partagée (Go)",
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Général",
@@ -739,7 +771,8 @@
     "RequestUrl": "URL de demande",
     "Parameters": "Paramètres",
     "ErrorType": "Type d'erreur",
-    "LogMessageRemoved": "Les messages de journal ont été supprimés."
+    "LogMessageRemoved": "Les messages de journal ont été supprimés.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Ressources",
@@ -764,7 +797,9 @@
     "SuccessfullyUpdated": "Stratégie de ressources mise à jour avec succès.",
     "SuccessfullyDeleted": "La stratégie de ressources a bien été supprimée.",
     "PolicyNameEmpty": "Le nom de la stratégie ne doit pas être vide.",
-    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :"
+    "AboutToDeleteResourcePolicy": "Vous êtes sur le point de supprimer cette stratégie de ressources :",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nom d'hôte",
@@ -798,7 +833,8 @@
     "RescanFailed": "Échec de la réanalyse.",
     "PleaseSelectOption": "Veuillez sélectionner une option.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Groupes de ressources",
@@ -824,7 +860,12 @@
     "EnterValidResourceGroupName": "Entrez un nom de groupe de ressources valide",
     "ResourceGroupNameRequired": "Le nom du groupe de ressources est requis.",
     "ResourceGroupAlreadyExist": "Un groupe de ressources du même nom existe déjà.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Définir les options du planificateur",
+    "TimeoutSeconds": "Seconds",
+    "ResourceGroupDetail": "Détail du groupe de ressources",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",
@@ -1042,7 +1083,12 @@
     "InvalidChangePasswordToken": "jeton invalide",
     "InvalidChangePasswordTokenMessage": "Le jeton émis pour changer le mot de passe a une erreur. Veuillez envoyer un autre e-mail pour changer le mot de passe et réessayer.",
     "PleaseInputLoginInfo": "Veuillez saisir l'identifiant et le mot de passe pour vous connecter.",
-    "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps."
+    "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",

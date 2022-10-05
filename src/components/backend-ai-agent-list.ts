@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
@@ -15,7 +15,7 @@ import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
 import '@material/mwc-icon-button';
-import '@material/mwc-switch';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-icon/mwc-icon';
@@ -24,6 +24,8 @@ import '@material/mwc-icon/mwc-icon';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIDialog from './backend-ai-dialog';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
 
@@ -40,65 +42,75 @@ import './lablup-progress-bar';
  @element backend-ai-agent-list
  */
 
+/* Custom type for live stat of agent node
+ *  - cpu_util
+ *  - mem_util
+ *  - cuda_util (optional)
+ */
+type LiveStat = {
+  cpu_util: {
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+  mem_util: {
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+  cuda_util?: { // optional
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+};
+
 @customElement('backend-ai-agent-list')
 export default class BackendAIAgentList extends BackendAIPage {
+  private _enableAgentSchedulable = false;
+
   @property({type: String}) condition = 'running';
+  @property({type: String}) list_condition = 'loading';
   @property({type: Boolean}) useHardwareMetadata = false;
   @property({type: Array}) agents = [];
   @property({type: Object}) agentsObject = Object();
   @property({type: Object}) agentDetail = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) agentDetailDialog = Object();
-  @property({type: Object}) agentSettingDialog = Object();
   @property({type: Boolean}) enableAgentSchedulable = false;
   @property({type: Object}) _boundEndpointRenderer = this.endpointRenderer.bind(this);
   @property({type: Object}) _boundRegionRenderer = this.regionRenderer.bind(this);
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
+  @property({type: Object}) _boundUtilizationRenderer = this.utilizationRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
   @property({type: String}) filter = '';
+  @query('#agent-detail') agentDetailDialog!: BackendAIDialog;
+  @query('#agent-setting') agentSettingDialog!: BackendAIDialog;
+  @query('#schedulable-switch') schedulableToggle!: Switch;
+  @property({type: String}) listCondition: StatusCondition = 'loading';
+  @query('vaadin-grid') private _agentGrid;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       // language=CSS
       css`
-        vaadin-grid {
-          border: 0;
-          font-size: 14px;
-          height: var(--list-height, calc(100vh - 200px));
+        .progress-bar-section {
+          height: 20px;
         }
 
-        mwc-icon {
-          --mdc-icon-size: 16px;
+        .resource-indicator {
+          width: 100px !important;
         }
 
-        mwc-icon.schedulable {
-          --mdc-icon-size: 24px;
-        }
-
-        img.indicator-icon {
-          width: 16px !important;
-          height: 16px !important;
-        }
-
-        paper-icon-button {
-          --paper-icon-button: {
-            width: 25px;
-            height: 25px;
-            min-width: 25px;
-            min-height: 25px;
-            padding: 3px;
-            margin-right: 5px;
-          };
+        .agent-detail-title {
+          font-size: 8px;
+          width: 42px;
         }
 
         div.indicator,
@@ -109,57 +121,70 @@ export default class BackendAIAgentList extends BackendAIPage {
 
         backend-ai-dialog#agent-detail {
           --component-max-width: 90%;
-          --component-min-width: 350px;
+          --component-min-width: 400px;
         }
 
         backend-ai-dialog {
           --component-width: 350px;
         }
 
+        img.indicator-icon {
+          width: 16px !important;
+          height: 16px !important;
+        }
+
 
         lablup-progress-bar {
-          --progress-bar-width: 100px;
+          --progress-bar-width: 70px;
           border-radius: 3px;
           height: 10px;
           --mdc-theme-primary: #3677eb;
           --mdc-linear-progress-buffer-color: #98be5a;
-        }
-
-        lablup-progress-bar.cpu {
-          --progress-bar-height: 5px;
           margin-bottom: 0;
         }
 
+        lablup-progress-bar.cpu {
+          --progress-bar-height: 7px;
+        }
+
         lablup-progress-bar.cuda {
+          --progress-bar-width: 80px;
           --progress-bar-height: 15px;
           margin-bottom: 5px;
         }
 
         lablup-progress-bar.mem {
+          --progress-bar-width: 100px;
           --progress-bar-height: 15px;
-          --progress-bar-width: 100%;
-          margin-bottom: 0;
+        }
+
+        lablup-progress-bar.utilization {
+          --progress-bar-width: 80px;
+          margin-left: 10px;
         }
 
         lablup-shields {
           margin: 1px;
         }
 
-        .resource-indicator {
-          width: 100px !important;
+        mwc-icon {
+          --mdc-icon-size: 16px;
         }
 
-      `];
+        mwc-icon.schedulable {
+          --mdc-icon-size: 24px;
+        }
+
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 179px);
+        }
+    `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.agentDetailDialog = this.shadowRoot.querySelector('#agent-detail');
-    this.agentSettingDialog = this.shadowRoot.querySelector('#agent-setting');
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   /**
@@ -175,42 +200,41 @@ export default class BackendAIAgentList extends BackendAIPage {
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-        const status = 'ALIVE';
-        this._loadAgentList(status);
+        this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+        this._loadAgentList();
       }, true);
     } else { // already connected
-      this.enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
-      const status = 'ALIVE';
-      this._loadAgentList(status);
+      this._enableAgentSchedulable = globalThis.backendaiclient.supports('schedulable');
+      this._loadAgentList();
     }
   }
 
   /**
    * Load an agents list with agent's backend.ai information.
-   *
-   * @param {string} status - The agent's backend.ai client status.
    */
-  _loadAgentList(status = 'running') {
+  _loadAgentList() {
     if (this.active !== true) {
       return;
     }
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     let fields: Array<string>;
+    let status;
     switch (this.condition) {
     case 'running':
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'live_stat', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'terminated':
       status = 'TERMINATED';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
       break;
     case 'archived':
     default:
       status = 'ALIVE';
-      fields = ['id', 'status', 'version', 'addr', 'region', 'compute_plugins', 'first_contact',
+      fields = ['id', 'status', 'version', 'addr', 'architecture', 'region', 'compute_plugins', 'first_contact',
         'lost_at', 'status_changed', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots', 'scaling_group'];
     }
     if (this.useHardwareMetadata && globalThis.backendaiclient.supports('hardware-metadata')) {
@@ -221,7 +245,8 @@ export default class BackendAIAgentList extends BackendAIPage {
       fields.push('schedulable');
     }
 
-    globalThis.backendaiclient.agent.list(status, fields, 10 * 1000).then((response) => {
+    const timeout = 10 * 1000;
+    globalThis.backendaiclient.agent.list(status, fields, timeout).then((response) => {
       const agents = response.agents;
       if (agents !== undefined && agents.length != 0) {
         let filter;
@@ -250,10 +275,12 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].cpu_total_usage_ratio = agents[objectKey].used_cpu_slots / agents[objectKey].cpu_slots;
               agents[objectKey].cpu_current_usage_ratio = (agents[objectKey].current_cpu_percent / agents[objectKey].cpu_slots) / 100.0;
               agents[objectKey].current_cpu_percent = agents[objectKey].current_cpu_percent.toFixed(2);
+              agents[objectKey].total_cpu_percent = (agents[objectKey].cpu_total_usage_ratio * 100).toFixed(2);
             } else {
               agents[objectKey].current_cpu_percent = 0;
               agents[objectKey].cpu_total_usage_ratio = 0;
               agents[objectKey].cpu_current_usage_ratio = 0;
+              agents[objectKey].total_cpu_percent = (agents[objectKey].cpu_total_usage_ratio * 100).toFixed(2);
             }
             if (agent.mem_cur_bytes !== null) {
               agents[objectKey].current_mem_bytes = agent.mem_cur_bytes;
@@ -266,6 +293,8 @@ export default class BackendAIAgentList extends BackendAIPage {
             agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
             agents[objectKey].mem_current_usage_ratio = agents[objectKey].current_mem / agents[objectKey].mem_slots;
             agents[objectKey].current_mem = agents[objectKey].current_mem.toFixed(2);
+            agents[objectKey].total_mem_percent = (agents[objectKey].mem_total_usage_ratio * 100).toFixed(2);
+
             if ('cuda.device' in available_slots) {
               agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
               if ('cuda.device' in occupied_slots) {
@@ -274,6 +303,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_cuda_gpu_slots = 0;
               }
               agents[objectKey].used_cuda_gpu_slots_ratio = agents[objectKey].used_cuda_gpu_slots / agents[objectKey].cuda_gpu_slots;
+              agents[objectKey].total_cuda_gpu_percent = (agents[objectKey].used_cuda_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda.shares' in available_slots) {
               agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
@@ -283,6 +313,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_cuda_fgpu_slots = 0;
               }
               agents[objectKey].used_cuda_fgpu_slots_ratio = agents[objectKey].used_cuda_fgpu_slots / agents[objectKey].cuda_fgpu_slots;
+              agents[objectKey].total_cuda_fgpu_percent = (agents[objectKey].used_cuda_fgpu_slots_ratio * 100).toFixed(2);
             }
             if ('rocm.device' in available_slots) {
               agents[objectKey].rocm_gpu_slots = parseInt(available_slots['rocm.device']);
@@ -292,6 +323,7 @@ export default class BackendAIAgentList extends BackendAIPage {
                 agents[objectKey].used_rocm_gpu_slots = 0;
               }
               agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
+              agents[objectKey].total_rocm_gpu_percent = (agents[objectKey].used_rocm_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda' in compute_plugins) {
               const cuda_plugin = compute_plugins['cuda'];
@@ -376,6 +408,13 @@ export default class BackendAIAgentList extends BackendAIPage {
         });
       }
       this.agents = agents;
+      this._agentGrid.recalculateColumnWidths();
+
+      if (this.agents.length == 0) {
+        this.listCondition = 'no-data';
+      } else {
+        this._listStatus?.hide();
+      }
       if (this.agentDetailDialog.open) { // refresh the data
         this.agentDetail = this.agentsObject[this.agentDetail['id']];
         this.agentDetailDialog.updateComplete;
@@ -383,10 +422,11 @@ export default class BackendAIAgentList extends BackendAIPage {
 
       if (this.active === true) {
         setTimeout(() => {
-          this._loadAgentList(status);
+          this._loadAgentList();
         }, 15000);
       }
     }).catch((err) => {
+      this._listStatus?.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
@@ -524,8 +564,8 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${rowData.item.id}</div>
-        <div class="indicator monospace">${rowData.item.addr}</div>
+        <div style="white-space:pre-wrap;">${rowData.item.id}</div>
+        <div class="indicator monospace" style="white-space:pre-wrap;">${rowData.item.addr}</div>
       `, root
     );
   }
@@ -590,7 +630,7 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="horizontal start-justified center layout">
+        <div class="horizontal start-justified center layout wrap">
           <img src="/resources/icons/${icon}.png" style="width:32px;height:32px;"/>
           <lablup-shields app="${location}" color="${color}"
                           description="${platform}" ui="round"></lablup-shields>
@@ -628,7 +668,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Terminated')}" color="yellow"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     } else {
@@ -640,7 +679,6 @@ export default class BackendAIAgentList extends BackendAIPage {
             <span>${this._humanReadableDate(rowData.item.first_contact)}</span>
             <lablup-shields app="${_t('agent.Running')}" color="darkgreen"
                             description="${elapsed}" ui="round"></lablup-shields>
-
           </div>`, root
       );
     }
@@ -659,46 +697,44 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div class="layout flex">
           ${rowData.item.cpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <mwc-icon class="fg green">developer_board</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.cpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cpu_slots}/${rowData.item.cpu_slots}</span>
                 <span class="indicator">${_t('general.cores')}</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_current_usage_ratio}"
-                                   buffer="${rowData.item.cpu_total_usage_ratio}"
-                                   description="${rowData.item.current_cpu_percent}%"></lablup-progress-bar>
+              <lablup-progress-bar id="cpu-usage-bar" progress="${rowData.item.cpu_total_usage_ratio}"
+                                   description="${rowData.item.total_cpu_percent}%"></lablup-progress-bar>
             </div>` : html``}
           ${rowData.item.mem_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <mwc-icon class="fg green">memory</mwc-icon>
-                <span style="padding-left:5px;">${rowData.item.mem_slots}</span>
-                <span class="indicator">GB</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_mem_slots}/${rowData.item.mem_slots}</span>
+                <span class="indicator">GiB</span>
               </div>
               <span class="flex"></span>
-              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_current_usage_ratio}"
-                                   buffer="${rowData.item.mem_total_usage_ratio}"
-                                   description="${rowData.item.current_mem}GB"></lablup-progress-bar>
+              <lablup-progress-bar id="mem-usage-bar" progress="${rowData.item.mem_total_usage_ratio}"
+                                   description="${rowData.item.total_mem_percent}%"></lablup-progress-bar>
             </div>` : html``}
           ${rowData.item.cuda_gpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
-                <span style="padding-left:5px;">${rowData.item.cuda_gpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cuda_gpu_slots}/${rowData.item.cuda_gpu_slots}</span>
                 <span class="indicator">GPU</span>
               </div>
               <span class="flex"></span>
               <lablup-progress-bar id="gpu-bar" progress="${rowData.item.used_cuda_gpu_slots_ratio}"
-                                   description="${rowData.item.used_cuda_gpu_slots}"></lablup-progress-bar>
+                                   description="${rowData.item.total_cuda_gpu_percent}%"></lablup-progress-bar>
             </div>
           ` : html``}
           ${rowData.item.cuda_fgpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg"/>
-                <span style="padding-left:5px;">${rowData.item.cuda_fgpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_cuda_fgpu_slots}/${rowData.item.cuda_fgpu_slots}</span>
                 <span class="indicator">fGPU</span>
               </div>
               <span class="flex"></span>
@@ -707,10 +743,10 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           ` : html``}
           ${rowData.item.rocm_gpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/ROCm.png"/>
-                <span style="padding-left:5px;">${rowData.item.rocm_gpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_rocm_gpu_slots}/${rowData.item.rocm_gpu_slots}</span>
                 <span class="indicator">ROCm</span>
               </div>
               <span class="flex"></span>
@@ -719,10 +755,10 @@ export default class BackendAIAgentList extends BackendAIPage {
             </div>
           ` : html``}
           ${rowData.item.tpu_slots ? html`
-            <div class="layout horizontal center flex">
+            <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
                 <img class="indicator-icon fg green" src="/resources/icons/tpu.svg"/>
-                <span style="padding-left:5px;">${rowData.item.tpu_slots}</span>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_tpu_slots}/${rowData.item.tpu_slots}</span>
                 <span class="indicator">TPU</span>
               </div>
               <span class="flex"></span>
@@ -753,6 +789,67 @@ export default class BackendAIAgentList extends BackendAIPage {
           `}
         </div>`, root
     );
+  }
+
+  utilizationRenderer(root, column?, rowData?) {
+    if (rowData.item.status === 'ALIVE') {
+      let liveStat: LiveStat = {
+        cpu_util: {capacity: 0, current: 0, ratio: 0},
+        mem_util: {capacity: 0, current: 0, ratio: 0},
+      };
+      if (rowData.item.live_stat.node.cuda_util) {
+        liveStat = Object.assign(liveStat, {
+          cuda_util: {capacity: 0, current: 0, ratio: 0},
+        });
+        liveStat.cuda_util!.capacity = parseFloat(rowData.item.live_stat.node.cuda_util.capacity ?? 0);
+        liveStat.cuda_util!.current = parseFloat(rowData.item.live_stat.node.cuda_util.current);
+        // NOTE: cuda_util.capacity is reported as 0 from the server. In that case,
+        //       we manually set it to 100 to properly display the GPU utilization.
+        // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
+        let cudaUtilCapacity;
+        if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
+          cudaUtilCapacity = 100;
+        } else {
+          cudaUtilCapacity = liveStat.cuda_util!.capacity;
+        }
+        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+      }
+      if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
+        const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;
+        liveStat.cpu_util.capacity = parseFloat(rowData.item.live_stat.node.cpu_util.capacity);
+        liveStat.cpu_util.current = parseFloat(rowData.item.live_stat.node.cpu_util.current);
+        liveStat.cpu_util.ratio = (liveStat.cpu_util.current / liveStat.cpu_util.capacity / numCores) || 0;
+        liveStat.mem_util.capacity = parseInt(rowData.item.live_stat.node.mem.capacity);
+        liveStat.mem_util.current = parseInt(rowData.item.live_stat.node.mem.current);
+        liveStat.mem_util.ratio = (liveStat.mem_util.current / liveStat.mem_util.capacity) || 0;
+      }
+      render(
+        // language=HTML
+        html`
+            <div>
+              <div class="layout horizontal justified flex progress-bar-section">
+                <span style="margin-right:5px;">CPU</span>
+                <lablup-progress-bar class="utilization" progress="${liveStat.cpu_util.ratio}" description="${(liveStat.cpu_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+              </div>
+              <div class="layout horizontal justified flex progress-bar-section">
+                <span style="margin-right:5px;">MEM</span>
+                <lablup-progress-bar class="utilization" progress="${liveStat.mem_util.ratio}" description="${BackendAIAgentList.bytesToGiB(liveStat.mem_util.current)}/${BackendAIAgentList.bytesToGiB(liveStat.mem_util.capacity)} GiB"></lablup-progress-bar>
+              </div>
+              ${liveStat.cuda_util ? html`
+                <div class="layout horizontal justified flex progress-bar-section">
+                  <span style="margin-right:5px;">GPU</span>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                </div>
+              ` : html``}
+            </div>
+        `, root
+      );
+    } else {
+      render(
+        // language=HTML
+        html`${_t('agent.NoAvailableLiveStat')}`, root
+      );
+    }
   }
 
   /**
@@ -812,7 +909,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <mwc-icon-button class="fg green controls-running" icon="assignment"
                            @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
-            ${this.enableAgentSchedulable ? html`
+            ${this._enableAgentSchedulable ? html`
               <mwc-icon-button class="fg blue controls-running" icon="settings"
                                @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             ` : html``}
@@ -838,19 +935,23 @@ export default class BackendAIAgentList extends BackendAIPage {
    */
   _showConfigDialog(agentId) {
     this.agentDetail = this.agentsObject[agentId];
-    const schedulableToggle = this.shadowRoot.querySelector('#schedulable-switch');
-    schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
+    this.schedulableToggle.selected = this.agentDetail?.schedulable ?? false;
     this.agentSettingDialog.show();
     return;
   }
 
 
-  _bytesToMB(value) {
+  _bytesToMiB(value) {
     return Number(value / (1024 * 1024)).toFixed(1);
   }
 
+  static bytesToGiB(num, digits=2) {
+    if (!num) return num;
+    return (num / 2 ** 30).toFixed(digits);
+  }
+
   _modifyAgentSetting() {
-    const schedulable = this.shadowRoot.querySelector('#schedulable-switch').selected;
+    const schedulable = this.schedulableToggle.selected;
     if (this.agentDetail?.schedulable !== schedulable) {
       globalThis.backendaiclient.agent.update(this.agentDetail.id, {'schedulable': schedulable}).then( (res) => {
         this.notification.text = _text('agent.AgentSettingUpdated');
@@ -869,164 +970,142 @@ export default class BackendAIAgentList extends BackendAIPage {
     }
   }
 
-  render() {
+  _renderAgentDetailDialog() {
     // language=HTML
     return html`
-      <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                   .items="${this.agents}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-column resizable width="80px" header="${_t('agent.Endpoint')}" .renderer="${this._boundEndpointRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="100px" resizable header="${_t('agent.Region')}"
-                            .renderer="${this._boundRegionRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable width="140px" header="${_t('agent.Resources')}"
-                            .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column width="100px" resizable path="scaling_group"
-                                 header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="130px" flex-grow="0" resizable header="${_t('agent.Status')}"
-                            .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
-        ${this.enableAgentSchedulable ? html`
-        <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
-                          .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
-        ` : html``}
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-                            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
       <backend-ai-dialog id="agent-detail" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.DetailedInformation')}</span>
         <div slot="content">
-          <div class="horizontal start start-justified layout">
-            ${this.agentDetail?.cpu_util_live ?
-    html`
+          <div class="horizontal start around-justified layout flex">
+            ${this.agentDetail?.cpu_util_live ? html`
+              <div class="vertical layout start-justified flex">
+                <h3>CPU</h3>
+                ${this.agentDetail.cpu_util_live.map((item) => html`
+                  <div class="horizontal start-justified center layout" style="padding:0 5px;">
+                    <div class="agent-detail-title">CPU${item.num}</div>
+                    <lablup-progress-bar
+                        class="cpu"
+                        progress="${item.pct / 100.0}"
+                    ></lablup-progress-bar>
+                  </div>`)}
+              </div>` : html``}
+              <div class="vertical layout start-justified flex">
+                <h3>Memory</h3>
                 <div>
-                  <h3>CPU</h3>
-                  <div class="horizontal wrap layout" style="max-width:600px;">
-                    ${this.agentDetail.cpu_util_live.map((item) => html`
-                      <div class="horizontal start-justified center layout" style="padding:0 5px;">
-                        <div style="font-size:8px;width:35px;">CPU${item.num}</div>
-                        <lablup-progress-bar class="cpu"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
-                        ></lablup-progress-bar>
-                      </div>`)}
+                  <lablup-progress-bar
+                      class="mem"
+                      progress="${this.agentDetail.mem_current_usage_ratio}"
+                      description="${this.agentDetail.current_mem}GiB/${this.agentDetail.mem_slots}GiB"
+                  ></lablup-progress-bar>
+                </div>
+                <h3>Network</h3>
+                ${this.agentDetail?.live_stat?.node ? html`
+                  <div class="horizontal layout justified" style="width:100px;">
+                    <span>TX: </span>
+                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
                   </div>
-                </div>` : html``}
-            <div>
-              <h3>Memory</h3>
-              <div>
-                <lablup-progress-bar class="mem"
-                                     progress="${this.agentDetail.mem_current_usage_ratio}"
-                                     description="${this.agentDetail.current_mem}GB/${this.agentDetail.mem_slots}GB"
-                ></lablup-progress-bar>
+                  <div class="horizontal layout justified flex" style="width:100px;">
+                    <span>RX: </span>
+                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
+                  </div>
+                ` : html`
+                  <p>${_t('agent.NoNetworkSignal')}</p>
+                `}
               </div>
-              <h3>Network</h3>
-              ${this.agentDetail?.live_stat?.node ? html`
-                <div>TX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MB</div>
-              ` : html`
-                <p>${_t('agent.NoNetworkSignal')}</p>
-              `}
-            </div>
-            ${this.agentDetail?.cuda_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.cuda_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>CUDA Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.cuda_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.cuda_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">CUDA${item.idx}</div>
+                      <div class="agent-detail-title">CUDA${item.idx}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.rocm_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.rocm_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>ROCm Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.rocm_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.rocm_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">ROCm${item.num}</div>
+                      <div class="agent-detail-title">ROCm${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
-            ${this.agentDetail?.tpu_util_live ?
-    html`
-                <div style="margin-left:10px;">
+              ${this.agentDetail?.tpu_util_live ? html`
+                <div class="vertical layout start-justified flex">
                   <h3>TPU Devices</h3>
                   <h4>Utilization</h4>
                   ${this.agentDetail.tpu_util_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
                   <h4>Memory</h4>
                   ${this.agentDetail.tpu_mem_live.map((item) => html`
                     <div class="horizontal start-justified center layout">
-                      <div style="font-size:8px;width:35px;">TPU${item.num}</div>
+                      <div class="agent-detail-title">TPU${item.num}</div>
                       <div class="horizontal start-justified center layout">
-                        <lablup-progress-bar class="cuda"
-                                             progress="${item.pct / 100.0}"
-                                             description=""
+                        <lablup-progress-bar
+                            class="cuda"
+                            progress="${item.pct / 100.0}"
                         ></lablup-progress-bar>
                       </div>
                     </div>`)}
-
                 </div>` : html``}
           </div>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
             unelevated
-            id="close-button"
             icon="check"
             label="${_t('button.Close')}"
             @click="${(e) => this._hideDialog(e)}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    `;
+  }
+
+  _renderAgentSettingDialog() {
+    // language=HTML
+    return html`
       <backend-ai-dialog id="agent-setting" fixed backdrop blockscrolling persistent scrollable>
         <span slot="title">${_t('agent.AgentSetting')}</span>
         <div slot="content" class="horizontal layout justified center">
@@ -1036,12 +1115,53 @@ export default class BackendAIAgentList extends BackendAIPage {
         <div slot="footer" class="horizontal end-justified flex layout">
         <mwc-button
           unelevated
-          id="update-agent-setting-button"
           icon="check"
           label="${_t('button.Update')}"
           @click="${() => this._modifyAgentSetting()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+    `;
+  }
+
+  render() {
+    // language=HTML
+    return html`
+      <div class="list-wrapper">
+        <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
+                    .items="${this.agents}">
+          <vaadin-grid-column width="30px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column resizable width="100px" header="${_t('agent.Endpoint')}"
+                              .renderer="${this._boundEndpointRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column auto-width resizable header="${_t('agent.Region')}"
+                              .renderer="${this._boundRegionRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column auto-width flex-grow="0" resizable path="architecture" header="${_t('agent.Architecture')}">
+          </vaadin-grid-sort-column>
+          <vaadin-grid-column resizable auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
+                              .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
+                              .renderer="${this._boundUtilizationRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable auto-width flex-grow="0" path="scaling_group"
+                              header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
+          <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
+                              .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
+          ${this._enableAgentSchedulable ? html`
+          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
+                              .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+          ` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>
+      </div>
+      ${this._renderAgentDetailDialog()}
+      ${this._renderAgentSettingDialog()}
     `;
   }
 }

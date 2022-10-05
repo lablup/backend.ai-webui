@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "El grupo de recursos se eliminó correctamente",
     "EnterValidResourceGroupName": "Ingrese un nombre de grupo de recursos válido",
     "ResourceGroupNameRequired": "Se requiere el nombre del grupo de recursos.",
-    "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre."
+    "ResourceGroupAlreadyExist": "Ya existe un grupo de recursos con el mismo nombre.",
+    "SetSchedulerOptions": "Establecer opciones del programador",
+    "TimeoutSeconds": "Segundos",
+    "ResourceGroupDetail": "Detalle del grupo de recursos"
   },
   "maintenance": {
     "General": "General",

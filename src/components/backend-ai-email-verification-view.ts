@@ -6,7 +6,7 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
@@ -18,6 +18,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Email Verification View
@@ -41,7 +43,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   @property({type: Object}) successDialog = Object();
   @property({type: Object}) failDialog = Object();
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -69,11 +71,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.webUIShell = document.querySelector('#webui-shell');
     this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
-    this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
+    this.successDialog = this.shadowRoot?.querySelector('#verification-success-dialog');
+    this.failDialog = this.shadowRoot?.querySelector('#verification-fail-dialog');
 
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    this.client = new Client(
       this.clientConfig,
       'Backend.AI Web UI.',
     );
@@ -122,7 +124,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    * Send verification code to use email.
    */
   async sendVerificationCode() {
-    const emailEl = this.shadowRoot.querySelector('#email');
+    const emailEl = this.shadowRoot?.querySelector('#email') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
       await this.client.cloud.send_verification_email(emailEl.value);
@@ -179,5 +181,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-email-verification-view': BackendAIEmailVerificationView;
   }
 }

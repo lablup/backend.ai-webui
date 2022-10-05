@@ -53,7 +53,11 @@
       "Experiments": "Eksperimen",
       "Menu": "Menu",
       "Run": "Jalankan",
-      "UserName": "Nama Pengguna"
+      "UserName": "Nama Pengguna",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -229,7 +233,8 @@
       "InteractiveMode": "__NOT_TRANSLATED__",
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
-      "ScheduleTime": "__NOT_TRANSLATED__"
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -296,12 +301,22 @@
     "StatusInfo": "__NOT_TRANSLATED__",
     "Interactive": "__NOT_TRANSLATED__",
     "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
     "Validation": {
       "SessionNameRequired": "__NOT_TRANSLATED__",
       "EnterValidSessionName": "__NOT_TRANSLATED__",
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
-    }
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "Pesan",
+    "EnvironmentInfo": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -331,7 +346,8 @@
     "Generate": "Hasilkan",
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
-    "ForceTerminate": "Hentikan paksa"
+    "ForceTerminate": "Hentikan paksa",
+    "Commit": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -350,7 +366,12 @@
     "AgentSettingUpdated": "__NOT_TRANSLATED__",
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
-    "AgentSetting": "__NOT_TRANSLATED__"
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -444,7 +465,9 @@
     "UserNotFound": "Pembuatan kredensial gagal, karena ID pengguna berikut tidak dapat ditemukan : ",
     "UserIDRequired": "ID pengguna diperlukan.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",
@@ -519,7 +542,10 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -563,7 +589,8 @@
       "FileBrowserSessionRunningAlready": "Sesi dengan filebrowser sudah berjalan. Harap unggah folder menggunakan sesi itu.",
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
-      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser."
+      "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",
@@ -591,7 +618,8 @@
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"
     },
     "title": {
-      "LetsDouble-Check": "Mari Periksa Kembali"
+      "LetsDouble-Check": "Mari Periksa Kembali",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Terjadi Galat",
     "error": {
@@ -645,7 +673,9 @@
     "SuccessfullyModified": "Berhasil dimodifikasi",
     "ProblemOccurred": "Masalah terjadi",
     "PasswordsDoNotMatch": "Password dan Konfirmasi tidak cocok.",
-    "NoChangeMade": "Tidak ada perubahan yang dibuat"
+    "NoChangeMade": "Tidak ada perubahan yang dibuat",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Preset Sumber Daya",
@@ -665,7 +695,9 @@
     "MinimumMemUnit": "Memori dimulai dengan 1 GB",
     "MinimumShmemUnit": "Unit minimum untuk memori bersama adalah 0,01 GB.",
     "RAM": "RAM (GB)",
-    "SharedMemory": "Memori bersama (GB)"
+    "SharedMemory": "Memori bersama (GB)",
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Umum",
@@ -739,7 +771,8 @@
     "RequestUrl": "Request URL",
     "Parameters": "Parameter",
     "ErrorType": "Jenis Galat",
-    "LogMessageRemoved": "Pesan Log telah dihapus."
+    "LogMessageRemoved": "Pesan Log telah dihapus.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Sumber daya",
@@ -764,7 +797,9 @@
     "SuccessfullyUpdated": "Kebijakan sumber daya berhasil diperbarui.",
     "SuccessfullyDeleted": "Kebijakan sumber daya berhasil dihapus.",
     "PolicyNameEmpty": "Nama kebijakan wajib diisi.",
-    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:"
+    "AboutToDeleteResourcePolicy": "Anda akan menghapus kebijakan sumber daya ini:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Nama host",
@@ -798,7 +833,8 @@
     "RescanFailed": "Pemindaian Ulang Gagal.",
     "PleaseSelectOption": "Silakan pilih salah satu opsi.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Grup Sumber Daya",
@@ -824,7 +860,12 @@
     "EnterValidResourceGroupName": "Masukkan nama grup Sumber Daya yang valid",
     "ResourceGroupNameRequired": "Nama grup sumber daya wajib diisi.",
     "ResourceGroupAlreadyExist": "Grup sumber daya dengan nama yang sama sudah ada.",
-    "WsproxyAddress": "__NOT_TRANSLATED__"
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Setel Opsi Penjadwal",
+    "TimeoutSeconds": "Detik",
+    "ResourceGroupDetail": "Detail Grup Sumber Daya",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Umum",
@@ -1042,7 +1083,12 @@
     "InvalidChangePasswordToken": "Token Tidak Valid",
     "InvalidChangePasswordTokenMessage": "Ada kesalahan pada token yang dikeluarkan untuk mengubah kata sandi. Silakan kirim email lain untuk mengubah kata sandi dan coba lagi.",
     "PleaseInputLoginInfo": "Silakan masukkan ID dan password untuk login.",
-    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu."
+    "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",

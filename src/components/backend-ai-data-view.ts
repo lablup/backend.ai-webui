@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
@@ -13,12 +13,11 @@ import {BackendAIPage} from './backend-ai-page';
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
-import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-textfield';
-
+import {TextField} from '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -36,12 +35,16 @@ import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend.AI Data View
@@ -73,7 +76,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
@@ -90,14 +92,13 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
   @property({type: Object}) storageProxyInfo = Object();
+  @property({type: String}) folderType = 'user';
+  @query('#add-folder-name') addFolderNameInput!: TextField;
+  @query('#clone-folder-name') cloneFolderNameInput!: TextField;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -229,18 +230,23 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 172.5px;
+          --mdc-select-disabled-ink-color: #cccccc;
         }
 
-        mwc-select.full-width {
+        mwc-select.full-width.fixed-position {
           width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 345px;
         }
 
-        mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 314px; // default width
-        }
-
-        mwc-select.fixed-position > mwc-list-item {
-          width: 140px; // default width
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 172.5px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
@@ -299,7 +305,6 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">
@@ -369,7 +374,8 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}"
+                        @change=${this._toggleFolderTypeInput} required>
               ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
@@ -378,12 +384,11 @@ export default class BackendAIData extends BackendAIPage {
               ` : html``}
             </mwc-select>
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
-            </div>
           ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
@@ -512,9 +517,8 @@ export default class BackendAIData extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
+    this.folderLists = this.shadowRoot?.querySelectorAll('backend-ai-storage-list');
     fetch('resources/storage_metadata.json').then(
       (response) => response.json()
     ).then(
@@ -652,17 +656,21 @@ export default class BackendAIData extends BackendAIPage {
     };
   }
 
+  _toggleFolderTypeInput() {
+    this.folderType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
+  }
+
   /**
    * display tabs
    *
    * @param {object} tab
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title + '-folder-lists').style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title + '-folder-lists') as HTMLDivElement).style.display = 'block';
     this._activeTab = tab.title;
   }
 
@@ -671,15 +679,14 @@ export default class BackendAIData extends BackendAIPage {
    */
   async _cloneFolderDialog() {
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    nameEl.value = ''; // reset folder name
+    this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as string[]).includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
-    this.shadowRoot.querySelector('#clone-folder-name').value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
+    this.cloneFolderNameInput.value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
     this.openDialog('clone-folder-dialog');
   }
 
@@ -688,8 +695,7 @@ export default class BackendAIData extends BackendAIPage {
    */
   async _addFolderDialog() {
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    nameEl.value = ''; // reset folder name
+    this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
     if ((this.allowed_folder_type as string[]).includes('group')) {
@@ -704,12 +710,12 @@ export default class BackendAIData extends BackendAIPage {
     this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
-  openDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+  openDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
-  closeDialog(id) {
-    this.shadowRoot.querySelector('#' + id).hide();
+  closeDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**
@@ -729,7 +735,7 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
-    const desc = this.shadowRoot.querySelector('#help-description');
+    const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
   }
 
@@ -741,14 +747,13 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    const name = nameEl.value;
-    const host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
+    const name = this.addFolderNameInput.value;
+    const host = (this.shadowRoot?.querySelector('#add-folder-host') as Select).value;
+    let ownershipType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
     let group;
-    const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
-    const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
-    const cloneableEl = this.shadowRoot.querySelector('#add-folder-cloneable');
+    const usageModeEl = this.shadowRoot?.querySelector('#add-folder-usage-mode') as Select;
+    const permissionEl = this.shadowRoot?.querySelector('#add-folder-permission') as Select;
+    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as any;
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -758,7 +763,7 @@ export default class BackendAIData extends BackendAIPage {
     if (ownershipType === 'user') {
       group = '';
     } else {
-      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
+      group = this.is_admin ? (this.shadowRoot?.querySelector('#add-folder-group') as Select).value : globalThis.backendaiclient.current_group;
     }
     if (usageModeEl) {
       usageMode = usageModeEl.value;
@@ -783,8 +788,8 @@ export default class BackendAIData extends BackendAIPage {
     if (cloneableEl) {
       cloneable = cloneableEl.checked;
     }
-    nameEl.reportValidity();
-    if (nameEl.checkValidity()) {
+    this.addFolderNameInput.reportValidity();
+    if (this.addFolderNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
@@ -807,13 +812,12 @@ export default class BackendAIData extends BackendAIPage {
    *
    */
   async _cloneFolder() {
-    const nameEl = this.shadowRoot.querySelector('#clone-folder-name');
-    const name = await this._checkFolderNameAlreadyExists(nameEl.value, true);
-    const host = this.shadowRoot.querySelector('#clone-folder-host').value;
-    let ownershipType = this.shadowRoot.querySelector('#clone-folder-type').value;
-    const usageModeEl = this.shadowRoot.querySelector('#clone-folder-usage-mode');
-    const permissionEl = this.shadowRoot.querySelector('#clone-folder-permission');
-    const cloneableEl = this.shadowRoot.querySelector('#clone-folder-cloneable');
+    const name = await this._checkFolderNameAlreadyExists(this.cloneFolderNameInput.value, true);
+    const host = (this.shadowRoot?.querySelector('#clone-folder-host') as Select).value;
+    let ownershipType = (this.shadowRoot?.querySelector('#clone-folder-type') as Select).value;
+    const usageModeEl = this.shadowRoot?.querySelector<Select>('#clone-folder-usage-mode');
+    const permissionEl = this.shadowRoot?.querySelector<Select>('#clone-folder-permission');
+    const cloneableEl = this.shadowRoot?.querySelector<Switch>('#clone-folder-cloneable');
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -847,8 +851,8 @@ export default class BackendAIData extends BackendAIPage {
       }
     }
     cloneable = cloneableEl ? cloneableEl.selected : false;
-    nameEl.reportValidity();
-    if (nameEl.checkValidity()) {
+    this.cloneFolderNameInput.reportValidity();
+    if (this.cloneFolderNameInput.checkValidity()) {
       const input = {
         'cloneable': cloneable,
         'permission': permission,
@@ -878,17 +882,16 @@ export default class BackendAIData extends BackendAIPage {
    * Validate folder name.
    */
   _validateFolderName() {
-    const folderName = this.shadowRoot.querySelector('#add-folder-name');
-    folderName.validityTransform = (newValue, nativeValidity) => {
+    this.addFolderNameInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          folderName.validationMessage = _text('data.FolderNameRequired');
+          this.addFolderNameInput.validationMessage = _text('data.FolderNameRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.addFolderNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -897,13 +900,13 @@ export default class BackendAIData extends BackendAIPage {
       } else {
         // custom validation for folder name using regex
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/\s]/gi;
-        let isValid = !regex.test(folderName.value);
+        let isValid = !regex.test(this.addFolderNameInput.value);
         if (!isValid) {
-          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.addFolderNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
         }
-        if (folderName.value.length > 64) {
+        if (this.addFolderNameInput.value.length > 64) {
           isValid = false;
-          folderName.validationMessage = _text('data.FolderNameTooLong');
+          this.addFolderNameInput.validationMessage = _text('data.FolderNameTooLong');
         }
         return {
           valid: isValid,

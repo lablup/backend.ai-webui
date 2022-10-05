@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "Kumpulan sumber berjaya dipadamkan",
     "EnterValidResourceGroupName": "Masukkan nama kumpulan Sumber yang sah",
     "ResourceGroupNameRequired": "Nama kumpulan sumber diperlukan.",
-    "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada."
+    "ResourceGroupAlreadyExist": "Kumpulan sumber dengan nama yang sama sudah ada.",
+    "SetSchedulerOptions": "Tetapkan Pilihan Penjadual",
+    "TimeoutSeconds": "Detik",
+    "ResourceGroupDetail": "Perincian Kumpulan Sumber"
   },
   "maintenance": {
     "General": "Am",

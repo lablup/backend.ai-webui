@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "Kaynak grubu başarıyla silindi",
     "EnterValidResourceGroupName": "Geçerli Kaynak grubu adını girin",
     "ResourceGroupNameRequired": "Kaynak grubu adı gerekli.",
-    "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var."
+    "ResourceGroupAlreadyExist": "Aynı ada sahip bir kaynak grubu zaten var.",
+    "SetSchedulerOptions": "Zamanlayıcı Seçeneklerini Ayarla",
+    "TimeoutSeconds": "saniye",
+    "ResourceGroupDetail": "Kaynak Grubu Ayrıntısı"
   },
   "maintenance": {
     "General": "Genel",
