@@ -44,6 +44,7 @@ import './backend-ai-resource-broker';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
+import './backend-ai-desktop';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
@@ -1667,7 +1668,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <div style="background-image:url('resources/bg1.jpg');width:100%;height:100vh;background-position:fixed;position:fixed;background-size:cover;backdrop-filter: blur(25px);"></div>
+              <backend-ai-desktop></backend-ai-desktop>
               <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>

@@ -504,3 +504,8 @@ export default class BackendAIWindow extends LitElement {
     `;
   }
 }
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-window': BackendAIWindow;
+  }
+}
