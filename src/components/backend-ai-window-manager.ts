@@ -109,7 +109,7 @@ export default class BackendAIWindowManager extends LitElement {
       this.zOrder.splice(index, 1);
     }
     this.zOrder.push(name);
-    for (let [index, name] of this.zOrder.entries()) {
+    for (const [index, name] of this.zOrder.entries()) {
       this.windows[name]?.setPosZ(index);
       this.windows[name]?.removeAttribute('isTop');
     }
