@@ -27,7 +27,7 @@ type windowType = 'win' | 'widget';
  */
 @customElement('backend-ai-window')
 export default class BackendAIWindow extends LitElement {
- // Can be set when initializing window
+  // Can be set when initializing window
   @property({type: String}) name = '';
   @property({type: Boolean, reflect: true}) active = false;
   @property({type: Number}) posX = 0;
@@ -35,7 +35,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: Number}) posZ = 1000;
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
-  @property({type: String}) type : windowType = 'win';
+  @property({type: String}) type: windowType = 'win';
   @property({type: String}) group = '';
   @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
@@ -86,7 +86,7 @@ export default class BackendAIWindow extends LitElement {
           /*box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;*/
           /*box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;*/
           box-shadow: rgba(0, 0, 0, 0.25) 0px 14px 28px, rgba(0, 0, 0, 0.22) 0px 10px 10px;
-          position:absolute;
+          position: absolute;
           resize: both;
           overflow: hidden;
           /*transition: visibility 1s, opacity 0.5s linear;*/
@@ -94,7 +94,7 @@ export default class BackendAIWindow extends LitElement {
         }
 
         div.mock {
-          position:absolute;
+          position: absolute;
           z-index: 2000;
         }
 
@@ -116,13 +116,15 @@ export default class BackendAIWindow extends LitElement {
         }
 
         #titlebarCenter {
-          background-color: transparent!important;
+          background-color: transparent !important;
         }
+
         div.window > h4 > img,
         div.window > h4 > span {
           margin-left: 15px;
-          z-index:2;
+          z-index: 2;
         }
+
         .button-area {
           margin-left: 15px;
           margin-right: 15px;
@@ -136,17 +138,17 @@ export default class BackendAIWindow extends LitElement {
         #content {
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          overflow-y:scroll;
-          overflow-x:hidden;
-          position:relative;
+          overflow-y: scroll;
+          overflow-x: hidden;
+          position: relative;
           height: calc(100% - 142px);
           border-radius: 0 0 5px 5px;
         }
 
         #resize-guide {
-          position:absolute;
-          bottom:0;
-          right:0;
+          position: absolute;
+          bottom: 0;
+          right: 0;
           color: #666666;
           z-index: 1;
           --mdc-icon-size: 24px;
@@ -161,7 +163,7 @@ export default class BackendAIWindow extends LitElement {
           border-radius: 0 5px 0 0;
           top: 0;
           right: 0px;
-          z-index:1;
+          z-index: 1;
           /*transition: all 0.2s;*/
           cursor: pointer;
           /*right: 100px;
@@ -169,14 +171,23 @@ export default class BackendAIWindow extends LitElement {
         }
 
         @keyframes fadeIn {
-          0% { opacity: 0; }
-          100% { opacity: 1; }
+          0% {
+            opacity: 0;
+          }
+          100% {
+            opacity: 1;
+          }
         }
+
         @keyframes fadeOut {
-          0% { opacity: 1; }
-          100% { opacity: 0; }
+          0% {
+            opacity: 1;
+          }
+          100% {
+            opacity: 0;
+          }
         }
-      `]
+      `];
   };
 
   // D&D support
@@ -189,8 +200,8 @@ export default class BackendAIWindow extends LitElement {
     if (!this.isMinimized) {
       this.keepLastWindowInfo();
     }
-    console.log("Window location: "+ (this.mousePosX + this.distX), this.mousePosY + this.distY);
-    console.log("Window offset location: " + this.win.offsetLeft, this.win.offsetTop);
+    console.log('Window location: ' + (this.mousePosX + this.distX), this.mousePosY + this.distY);
+    console.log('Window offset location: ' + this.win.offsetLeft, this.win.offsetTop);
 
     /*
     this.win.style.border = '0'; //3px dotted #ccc";
@@ -252,14 +263,14 @@ export default class BackendAIWindow extends LitElement {
   }
 
   moveWin(xPos, yPos) {
-    this.win.style.transform = "translate3d(" + xPos + "px, " + yPos + "px, 0)";
+    this.win.style.transform = 'translate3d(' + xPos + 'px, ' + yPos + 'px, 0)';
   }
 
   // Activation observer
   updated(changedProperties: Map<any, any>) {
     changedProperties.forEach((oldVal, propName) => {
       if (['active'].includes(propName)) {
-        if (this.active === true){  // Show window
+        if (this.active === true) {  // Show window
           this.activate_window();
           this.setToTop();
           this.show_window();
@@ -269,6 +280,7 @@ export default class BackendAIWindow extends LitElement {
       }
     });
   }
+
   // Window visualization. Do not handle manually.
   /**
    *  Show current window.
@@ -349,6 +361,7 @@ export default class BackendAIWindow extends LitElement {
       this.isFullScreen = false;
     }
   }
+
   // Window dimension
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
     this.win.style.left = posX;
@@ -362,7 +375,7 @@ export default class BackendAIWindow extends LitElement {
     return true;
   }
 
-  get currentWindowInfo() : windowInfo {
+  get currentWindowInfo(): windowInfo {
     return {
       posX: this.win.offsetLeft,
       posY: this.win.offsetTop,
@@ -406,7 +419,7 @@ export default class BackendAIWindow extends LitElement {
       this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
     }
-    this.contents.style.height = 'calc('+ this.win.offsetHeight + 'px - 38px)';
+    this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
   }
 
   firstUpdated() {
@@ -436,7 +449,7 @@ export default class BackendAIWindow extends LitElement {
     if (this.defaultHeight !== '') {
       this.win.style.height = this.defaultHeight;
     } else {
-      this.contents.style.height = 'calc('+ this.win.offsetHeight + 'px - 38px)';
+      this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
     }
     if (this.name === '') {
       this.name = this.setName();
@@ -465,7 +478,7 @@ export default class BackendAIWindow extends LitElement {
     let result: string = '';
     const characters: string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength: number = characters.length;
-    for ( let i = 0; i < 8; i++ ) {
+    for (let i = 0; i < 8; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
     return result;
@@ -481,18 +494,22 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="window" draggable="true" @click="${()=>{this.setToTop()}}">
-        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;"  @click="${()=>{this.setToTop()}}">
+      <div id="window" class="window" draggable="true" @click="${() => {
+        this.setToTop();
+      }}">
+        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {
+          this.setToTop();
+        }}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>
-          `: html``}
+          ` : html``}
           <span id="title"><slot name="title">${this.title}</slot></span>
           <div id="titlebar-center" class="flex"></div>
           <div id="ribbon" class="ribbon"></div>
           <div class="button-area">
-            <mwc-icon-button icon="remove" @click="${()=>this.minimize_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="fullscreen"  @click="${()=>this.maximize_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="close" @click="${()=>this.close_window()}"></mwc-icon-button>
+            <mwc-icon-button icon="remove" @click="${() => this.minimize_window()}"></mwc-icon-button>
+            <mwc-icon-button icon="fullscreen" @click="${() => this.maximize_window()}"></mwc-icon-button>
+            <mwc-icon-button icon="close" @click="${() => this.close_window()}"></mwc-icon-button>
           </div>
         </h4>
         <mwc-icon-button id="resize-guide" icon="south_east" disabled></mwc-icon-button>

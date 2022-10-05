@@ -6,6 +6,7 @@ import {css, CSSResultGroup, html, LitElement, PropertyValues} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+
 /**
  Backend AI Desktop
 
@@ -16,8 +17,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  */
 @customElement('backend-ai-desktop')
 export default class BackendAIDesktop extends LitElement {
-
-  @property({type: String}) backgroundURL = 'resources/bg1.jpg';
+  @property({type: String}) backgroundURL = 'resources/images/background-01.jpg';
   @query('#background') background!: HTMLDivElement;
 
   constructor() {
@@ -32,11 +32,11 @@ export default class BackendAIDesktop extends LitElement {
       // language=CSS
       css`
         #background {
-          width:100%;
-          height:100vh;
-          background-position:fixed;
-          position:fixed;
-          background-size:cover;
+          width: 100%;
+          height: 100vh;
+          background-position: top left;
+          position: fixed;
+          background-size: cover;
           backdrop-filter: blur(25px);
         }
       `];
