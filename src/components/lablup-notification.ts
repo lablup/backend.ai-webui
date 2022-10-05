@@ -218,7 +218,7 @@ export default class LablupNotification extends LitElement {
     notification.setAttribute('stacked', '');
 
     if (persistent === false) {
-      notification.setAttribute('timeoutMs', '3000');
+      notification.setAttribute('timeoutMs', '4000');
     } else {
       notification.setAttribute('timeoutMs', '-1');
       this._createCloseButton(notification);
