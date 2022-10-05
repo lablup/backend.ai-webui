@@ -38,11 +38,11 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
-  addWindowWithURL(url: string, title: string | undefined, group: string = '', icon: string | undefined) {
-    let div = document.createElement('div');
-    let winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
+  addWindowWithURL(url: string, title: string | undefined, group = '', icon: string | undefined) {
+    const div = document.createElement('div');
+    const winTemplate = `<backend-ai-window active=true></backend-ai-window>`;
     div.innerHTML = winTemplate;
-    let win : BackendAIWindow | null = div.querySelector('backend-ai-window');
+    const win : BackendAIWindow | null = div.querySelector('backend-ai-window');
     if (title) {
       win?.setAttribute('title', title);
     }
@@ -50,28 +50,27 @@ export default class BackendAIWindowManager extends LitElement {
       win?.setAttribute('icon', icon);
     }
     win?.setAttribute('group', group);
-    let urlContent = document.createElement("IFRAME");
-    urlContent.setAttribute("src", url);
-    urlContent.setAttribute("width", '100%');
-    urlContent.setAttribute("height", '100%');
+    const urlContent = document.createElement('IFRAME');
+    urlContent.setAttribute('src', url);
+    urlContent.setAttribute('width', '100%');
+    urlContent.setAttribute('height', '100%');
     win?.appendChild(urlContent);
-    console.log(icon);
     const event = new CustomEvent('backend-ai-window-append', {'detail': div});
     document.dispatchEvent(event);
   }
 
   addWindow(win: BackendAIWindow) {
-    if(!Object.keys(this.windows).includes(win.name)) {
+    if (!Object.keys(this.windows).includes(win.name)) {
       this.windows[win.name] = win;
       this.zOrder.push(win.name);
       const event = new CustomEvent('backend-ai-window-added', {'detail': win.name});
       document.dispatchEvent(event);
     }
-    console.log("Active windows:", this.windows);
+    console.log('Active windows:', this.windows);
   }
 
   removeWindow(win: BackendAIWindow) {
-    if(Object.keys(this.windows).includes(win.name)) {
+    if (Object.keys(this.windows).includes(win.name)) {
       delete this.windows[win.name];
       const index = this.zOrder.indexOf(win.name);
       if (index > -1) {
@@ -83,9 +82,9 @@ export default class BackendAIWindowManager extends LitElement {
   }
 
   annotateWindow(win: BackendAIWindow) {
-    if(Object.keys(this.windows).includes(win.name)) {
+    if (Object.keys(this.windows).includes(win.name)) {
       // @ts-ignore
-      for (let [index, name] of this.zOrder.entries()) {
+      for (const [index, name] of this.zOrder.entries()) {
         if (name === win.name) {
           this.windows[name].win.style.opacity = '1';
         } else {
@@ -97,13 +96,13 @@ export default class BackendAIWindowManager extends LitElement {
 
   deannotateWindow() {
     // @ts-ignore
-    for (let [index, name] of this.zOrder.entries()) {
+    for (const [index, name] of this.zOrder.entries()) {
       this.windows[name].win.style.opacity = '1';
     }
   }
 
   reorderWindow(e) {
-    let name = e.detail;
+    const name = e.detail;
     const index = this.zOrder.indexOf(name);
     if (index > -1) {
       this.zOrder.splice(index, 1);
