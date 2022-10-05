@@ -494,12 +494,8 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="window" draggable="true" @click="${() => {
-        this.setToTop();
-      }}">
-        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {
-          this.setToTop();
-        }}">
+      <div id="window" class="window" draggable="true" @click="${() => {this.setToTop();}}">
+        <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>
           ` : html``}
