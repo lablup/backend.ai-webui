@@ -84,7 +84,7 @@ export class BackendAIPage extends LitElement {
 
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
-      console.log("attribute changed to page");
+      //console.log("attribute changed to page");
       this.active = true;
       this.windowNode?.setAttribute('active', '');
       this._viewStateChanged(true);

@@ -287,7 +287,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // @ts-ignore
     document.addEventListener('backend-ai-window-append', (e: CustomEvent) => {
       this._addWindowToDesktop(e.detail);
-    })
+    });
   }
 
   drop(event) {
@@ -1081,10 +1081,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _updateSidebarSelection() {
     let list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
-    console.log("real top item is", globalThis.backendaiwindowmanager.topWindowName);
-    //console.log("now the top item is", this._page);
+    let topPage: string | null = globalThis.backendaiwindowmanager.topWindowName;
+    if (!topPage) {
+      topPage = this._page;
+    }
+    console.log("---- update sidebar selection:", topPage);
     list.forEach(element => {
-      if (globalThis.backendaiwindowmanager.topWindowName === element.value) {
+      if (topPage === element.value) {
         element.classList.add("top");
       } else {
         element.classList.remove("top");

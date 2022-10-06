@@ -44,7 +44,7 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
-  get topWindowName(): string | null {
+  get topWindowName(): string | null { // TODO: it lazy loads. Therefore it is not a newest value.
     console.log("top Window: ", this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1]);
     return this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1];
   }
