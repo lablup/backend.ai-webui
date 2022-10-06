@@ -38,6 +38,12 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
+  topWindow(name) {
+    if (Object.keys(this.windows).includes(name)) {
+      this.windows[name].setToTop();
+    }
+  }
+
   addWindowWithURL(url: string, title: string | undefined, group = '', icon: string | undefined) {
     const div = document.createElement('div');
     const winTemplate = `<backend-ai-window active=true></backend-ai-window>`;

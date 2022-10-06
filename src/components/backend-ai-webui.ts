@@ -917,7 +917,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           view = modified_view;
         }
       }
-      console.log(this._page);
+      console.log('toggle:', this._page);
       this._page = view;
       this._toggleActivePage(this._page);
       this._updateSidebar(view);
@@ -961,15 +961,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     console.log('Toggle Active Page');
     if(!this._activePages.includes(page)) {
       this._activatePage(page);
-      //this._updateSidebar(page);
-      //this.sidebarMenu.layout();
       this.requestUpdate();
     } else if(this._activePages.includes(page)) { // Already activated but hidden.
       globalThis.backendaiwindowmanager.showWindow(page);
+      globalThis.backendaiwindowmanager.topWindow(page);
+      this._updateSidebarSelection();
     } else {
       this._deactivatePage(page);
-      //this._updateSidebar(page);
-      //this.sidebarMenu.layout();
       this.requestUpdate();
     }
   }
@@ -1083,12 +1081,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _updateSidebarSelection() {
     let list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
+    console.log("now the top item is", this._page);
     list.forEach(element => {
+      if (this._page === element.value) {
+        element.classList.add("top");
+      } else {
+        element.classList.remove("top");
+      }
       if (this._isPageActive(element.value)) {
-        //console.log(' menu selected',element.value);
         element.selected = true;
       } else {
-        //console.log(' menu deselected',element.value);
         element.selected = false;
       }
     });

@@ -127,6 +127,16 @@ export const BackendAIWebUIStyles = [
     }
 
     mwc-list.sidebar mwc-list-item[selected] {
+      color: #949494;
+      background: var(--general-sidebar-selected-background-color, #23252b);
+      border-left: var(--general-sidebar-selected-border-left);
+      padding-left: 29px; /* 32px - 3px */
+      border-right: 0;
+      padding-right: 11px;
+      font-weight: 900;
+    }
+
+    mwc-list.sidebar mwc-list-item.top {
       color: var(--general-sidebar-selected-color, #949494);
       background: var(--general-sidebar-selected-background-color, #23252b);
       border-left: var(--general-sidebar-selected-border-left);
