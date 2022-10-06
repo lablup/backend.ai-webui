@@ -1,8 +1,12 @@
 // Preload script for electron environment
-const {ipcRenderer} = require('electron');
+const {contextBridge, ipcRenderer} = require('electron');
 global.appRoot = window.appRoot = __dirname;
 
 process.once('loaded', () => {
+  contextBridge.exposeInMainWorld('electronAPI', {
+    appSettings: (callback) => ipcRenderer.on('app-settings', callback)
+  });
+
   ipcRenderer.on('proxy-ready', (event, proxy_url) => {
     window.__local_proxy = proxy_url;
   });

@@ -337,7 +337,7 @@ function createWindow() {
       preload: path.join(electronPath, 'preload.js'),
       devTools: (debugMode === true),
       worldSafeExecuteJavaScript: false,
-      contextIsolation: false
+      contextIsolation: true
     }
   });
   // and load the index.html of the app.
@@ -377,6 +377,13 @@ function createWindow() {
     });
   }
   mainContent = mainWindow.webContents;
+  let info = {
+    debugMode: debugMode,
+    siteDescription: process.env.siteDescription,
+    serveMode: process.env.serveMode
+  };
+  mainWindow.webContents.send('app-settings', info);
+
   if (debugMode === true) {
     devtools = new BrowserWindow();
     mainWindow.webContents.setDevToolsWebContents(devtools.webContents);
@@ -512,6 +519,6 @@ app.on('web-contents-created', (event, contents) => {
     delete webPreferences.preloadURL;
     //webPreferences.nativeWindowOpen = true;
     // Disable Node.js integration
-    webPreferences.nodeIntegration = false;
+    webPreferences.nodeIntegration = true;
   });
 });

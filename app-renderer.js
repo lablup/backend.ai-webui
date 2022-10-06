@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 const {ipcRenderer} = require('electron');
 const url = require('url');
@@ -9,6 +9,12 @@ let TabGroup;
 let serveMode = 'dev';
 let siteDescription = 'TEST';
 let debugMode = true;
+window.electronAPI.appSettings((event, settings) => {
+  serveMode = settings['serveMode'];
+  let siteDescription = settings['siteDescription'];
+  let debugMode = settings['debugMode'];
+});
+
 if (serveMode === 'dev') {
   mainIndex = 'build/electron-app/app/index.html';
   TabGroup = require("./tab");
