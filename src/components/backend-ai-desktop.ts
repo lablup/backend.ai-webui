@@ -37,7 +37,6 @@ export default class BackendAIDesktop extends LitElement {
           background-position: top left;
           position: fixed;
           background-size: cover;
-          backdrop-filter: blur(25px);
         }
       `];
   }

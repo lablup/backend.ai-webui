@@ -99,7 +99,7 @@ export default class BackendAIDock extends LitElement {
         count = count + 1;
       }
     });
-    this.dock.style.width = (count * 80) + 'px';
+    this.dock.style.width = ((count + 1) * 80 + (count ? 10: 0)) + 'px';
     this.requestUpdate();
   }
 
@@ -135,7 +135,10 @@ export default class BackendAIDock extends LitElement {
                                      @mouseover="${()=>{globalThis.backendaiwindowmanager.annotateWindow(globalThis.backendaiwindowmanager.windows[name])}}"
                                      @mouseout="${()=>{globalThis.backendaiwindowmanager.deannotateWindow()}}"
                                      icon="${globalThis.backendaiwindowmanager.windows[name].icon}"></mwc-icon-button>`
-            : html ``)};
+            : html ``)}
+            <mwc-icon-button area-label="Widget">
+              <img src="resources/icons/widget.svg" />
+            </mwc-icon-button>
       </div>
     `;
   }
