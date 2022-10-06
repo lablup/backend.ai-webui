@@ -139,7 +139,8 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Environments')}" name="environment">
+    <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Environments')}" name="environment"
+                       icon="resources/menu_icons/environments.svg">
       <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal center layout">

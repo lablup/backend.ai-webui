@@ -1001,7 +1001,8 @@ export default class BackendAICredentialView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.UserCredentials&Policies')}" name="credential">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.UserCredentials&Policies')}" name="credential"
+                             icon="resources/menu_icons/user.svg">
       <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">

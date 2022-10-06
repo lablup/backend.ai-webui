@@ -150,7 +150,8 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Information')}" defaultWidth="800px" name="information">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Information')}" defaultWidth="800px" name="information"
+                       icon="resources/menu_icons/info.svg">
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">

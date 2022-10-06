@@ -618,7 +618,8 @@ export default class BackendAIImport extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Import&Run')}" name="import">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Import&Run')}" name="import"
+                       icon="resources/menu_icons/import.svg">
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">

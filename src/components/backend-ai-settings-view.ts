@@ -266,7 +266,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Configurations')}" name="settings">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Configurations')}" name="settings"
+                             icon="resources/menu_icons/settings.svg">
       <div class="horizontal layout wrap">
         <lablup-activity-panel title="${_t('settings.Image')}" autowidth attachInner>
           <div slot="message" class="horizontal wrap layout">
