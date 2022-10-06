@@ -288,6 +288,7 @@ export default class BackendAIWindow extends LitElement {
    */
   show_window() {
     this.win.style.visibility = 'visible';
+    this.contents.style.visibility = 'visible';
   }
 
   /**
@@ -296,6 +297,7 @@ export default class BackendAIWindow extends LitElement {
    */
   hide_window() {
     this.win.style.visibility = 'hidden';
+    this.contents.style.visibility = 'hidden';
   }
 
   // Window activation
