@@ -12,6 +12,7 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
+      z-index: 2000;
       background-image: url('/resources/images/loading-background-large.jpg');
       background-repeat: no-repeat;
       background-attachment: fixed;
