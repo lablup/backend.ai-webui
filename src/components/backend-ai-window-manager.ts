@@ -38,10 +38,15 @@ export default class BackendAIWindowManager extends LitElement {
     }
   }
 
-  topWindow(name) {
+  makeTopWindow(name) {
     if (Object.keys(this.windows).includes(name)) {
       this.windows[name].setToTop();
     }
+  }
+
+  get topWindowName(): string | null {
+    console.log("top Window: ", this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1]);
+    return this.zOrder.length == 0 ? null : this.zOrder[this.zOrder.length - 1];
   }
 
   addWindowWithURL(url: string, title: string | undefined, group = '', icon: string | undefined) {

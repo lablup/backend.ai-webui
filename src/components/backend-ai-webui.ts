@@ -288,8 +288,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('backend-ai-window-append', (e: CustomEvent) => {
       this._addWindowToDesktop(e.detail);
     })
-
-
   }
 
   drop(event) {
@@ -964,17 +962,19 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.requestUpdate();
     } else if(this._activePages.includes(page)) { // Already activated but hidden.
       globalThis.backendaiwindowmanager.showWindow(page);
-      globalThis.backendaiwindowmanager.topWindow(page);
+      globalThis.backendaiwindowmanager.makeTopWindow(page);
       this._updateSidebarSelection();
     } else {
       this._deactivatePage(page);
       this.requestUpdate();
     }
   }
+
   _addWindowToDesktop(win) {
     console.log('append to desktop', win);
     this.appPage.appendChild(win);
   }
+
   _togglePage(page: string) {
     console.log('toggle');
     if(!this._activePages.includes(page)) {
@@ -1081,9 +1081,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   _updateSidebarSelection() {
     let list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
-    console.log("now the top item is", this._page);
+    console.log("real top item is", globalThis.backendaiwindowmanager.topWindowName);
+    //console.log("now the top item is", this._page);
     list.forEach(element => {
-      if (this._page === element.value) {
+      if (globalThis.backendaiwindowmanager.topWindowName === element.value) {
         element.classList.add("top");
       } else {
         element.classList.remove("top");

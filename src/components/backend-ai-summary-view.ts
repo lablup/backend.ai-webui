@@ -462,7 +462,8 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
-      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Summary')}" name="summary">
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Summary')}" name="summary"
+                       icon="resources/menu_icons/summary.svg">
       <div class="item" elevation="1">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal center layout wrap flex">
