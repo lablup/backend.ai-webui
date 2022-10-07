@@ -313,7 +313,9 @@
       "SessionNameAlreadyExist": "Session name already exists"
     },
     "EnterValidSessionName": "EnterValidSessionName",
-    "EnvironmentInfo": "Environment Info"
+    "EnvironmentInfo": "Environment Info",
+    "VSCodeRemoteConnection": "Connect Visual Studio Code Remote",
+    "VSCodeRemoteDescription": "If you want to run Visual Studio Code remote, need to enter a password"
   },
   "button": {
     "Cancel": "Cancel",
@@ -1188,6 +1190,7 @@
     "Minutes": "m"
   },
   "DownloadSSHKey": "Download SSH Key",
+  "OpenVSCodeRemote": "open Visual Studio Code for Remote",
   "license": {
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",

@@ -316,7 +316,9 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "зурвас",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -1256,5 +1258,6 @@
   "explorer": {
     "ValueRequired": "Утга Шаардлагатай",
     "InputTooShort": "Хэт богино байна"
-  }
+  },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__"
 }

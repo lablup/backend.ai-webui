@@ -136,7 +136,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         #vscode-dialog {
-          --component-width: 330px;
+          --component-width: 400px;
         }
 
         #allowed-client-ips-container {
@@ -224,6 +224,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           background-color: #f9f9f9;
           padding: 0px 3px;
           display: inline-block;
+        }
+
+        input#vscode-password {
+          border: none;
+          background: none;
+          pointer-events: none;
+          width: 300px;
         }
 
         @media screen and (max-width: 810px) {
@@ -420,7 +427,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
-    if (!appServices.includes('vscode')) {
+    if (globalThis.isElectron && !appServices.includes('vscode')) {
       this.appSupportList.push({ // Force push terminal
         'name': 'vscode',
         'title': 'VS Code',
@@ -697,7 +704,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      if (appName === 'vscode') {
+      if (globalThis.isElectron && appName === 'vscode') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
@@ -818,7 +825,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      if (appName === 'vscode') {
+      if (globalThis.isElectron && appName === 'vscode') {
         port = globalThis.backendaioptions.get('custom_ssh_port', 0);
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
@@ -892,14 +899,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readTempPasswd(sessionUuid) {
+    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-password') as HTMLInputElement;
     const file = '/home/work/.password';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
-    // TODO: This blob has additional leading letters in front of key texts.
-    //       Manually trim those letters.
     const rawText = await blob.text();
-    const index = rawText.indexOf('-----');
-    const trimmedBlob = await blob.slice(index, blob.size, blob.type);
-    alert(trimmedBlob.text();
+    vscodePasswordEl.value=rawText;
   }
 
   /**
@@ -1257,19 +1261,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="footer"></div>
       </backend-ai-dialog>
       <backend-ai-dialog id="vscode-dialog" fixed backdrop>
-        <span slot="title">VSCode connection</span>
+        <span slot="title">${_t('session.VSCodeRemoteConnection')}</span>
         <div slot="content" style="padding:15px 0;">
-          <div style="padding:15px 0;">${_t('session.VSCodeDescription')}</div>
+          <div style="padding:15px 0;">${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>VSCODE port: ${this.vscodePort}</div>
-            <div><span>VSCODE URL:</span> <a href="">vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodePort}/home/work</a>
+            <div><span>VSCODE Remote Password:</span>
+              <input type="text" id="vscode-password" readonly />
             </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodePort}/home/work">
-            <mwc-button unelevated fullwidth>${_t('DownloadSSHKey')}</mwc-button>
+            <mwc-button unelevated fullwidth>${_t('OpenVSCodeRemote')}</mwc-button>
           </a>
         </div>
       </backend-ai-dialog>

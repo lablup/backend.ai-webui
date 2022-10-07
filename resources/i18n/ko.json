@@ -315,7 +315,9 @@
     "CommitFinished": "세션 커밋 작업 완료",
     "CommitFailed": "세션 커밋 작업 실패",
     "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
-    "EnvironmentInfo": "환경 정보"
+    "EnvironmentInfo": "환경 정보",
+    "VSCodeRemoteConnection": "Visual Studio Code 원격 연결",
+    "VSCodeRemoteDescription": "Visual Studioe Code에 원격 연결로 작업합니다."
   },
   "button": {
     "Cancel": "취소",
@@ -1256,5 +1258,6 @@
   "explorer": {
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
-  }
+  },
+  "OpenVSCodeRemote": "원격으로 Visual Studio Code 열기"
 }
