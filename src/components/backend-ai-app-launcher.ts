@@ -718,8 +718,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(sendAppName + " proxy loaded: ");
-              console.log(sessionUuid);
+              // console.log(sendAppName + " proxy loaded: ");
+              // console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -799,11 +799,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       urlPostfix = '';
     }
 
-    console.log('runApp');
-    console.log('appName:' + appName);
-    console.log('sessionUuid:' + sessionUuid);
-    console.log('urlPostfix:' + urlPostfix);
-
     if (appName === 'tensorboard') {
       this._openTensorboardDialog();
       return;
@@ -867,8 +862,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              console.log(appName + " proxy loaded: ");
-              console.log(sessionUuid);
+              // console.log(appName + " proxy loaded: ");
+              // console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -926,8 +921,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             setTimeout(() => {
               globalThis.open(response.url, '_blank');
               this.indicator.end();
-              console.log("Terminal proxy loaded: ");
-              console.log(sessionUuid);
+              // console.log("Terminal proxy loaded: ");
+              // console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -1022,7 +1017,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       button.removeAttribute('disabled');
     }
   }
-
 
   /**
    * Open a guide for terminal
