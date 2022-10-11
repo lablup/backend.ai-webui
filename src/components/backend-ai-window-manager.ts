@@ -82,6 +82,10 @@ export default class BackendAIWindowManager extends LitElement {
 
   removeWindow(win: BackendAIWindow) {
     if (Object.keys(this.windows).includes(win.name)) {
+      if (this.windows[win.name].group !== '' && this.windows[win.name].group !== 'system') {
+        this.windows[win.name].remove();
+      }
+      //this.windows[win.name].remove();
       delete this.windows[win.name];
       const index = this.zOrder.indexOf(win.name);
       if (index > -1) {
