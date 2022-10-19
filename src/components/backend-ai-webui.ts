@@ -1516,26 +1516,21 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
-                <div slot="navigationIcon" class="vertical-line" style="height:35px;"></div>
-                <div class="horizontal layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;padding-top:10px;">
+                <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
+                <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;">
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
                   <p class="user-name">${this._getUsername()}</p>
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
                 </div>
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
-                    <div style="height:48px;">
-                      <div class="horizontal center center-justified layout">
-                        <p id="project">${_t('webui.menu.Project')}</p>
-                        <div id="group-select-box"></div>
-                      </div>
+                    <div class="horizontal center center-justified layout">
+                      <p id="project">${_t('webui.menu.Project')}</p>
+                      <div id="group-select-box"></div>
                     </div>
-                    <div class="vertical-line" style="height:35px;"></div>
-                    <div class="horizontal center layout">
-                      <div class="vertical layout center" style="position:relative;padding-top:10px;">
-                        <span class="email" style="color:#8c8484;font-size:12px;line-height:22px;text-align:left;-webkit-font-smoothing:antialiased;margin:auto 10px;">
-                          ${_t('webui.menu.UserName')}
-                        </span>
+                    <div class="vertical-line" style="height:20px;margin:0;"></div>
+                    <div class="horizontal flex center layout">
+                      <div class="vertical layout center" style="position:relative;right:50px;">
                         <mwc-menu id="dropdown-menu" class="user-menu">
                           ${this.domain !== 'default' && this.domain !== '' ? html`
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
@@ -1572,7 +1567,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                           </mwc-list-item>
                         </mwc-menu>
                       </div>
-                      <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0px auto 10px; padding-top:10px;">
+                      <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0 auto 10px;">
                         ${this._getUsername()}
                       </span>
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
