@@ -1537,8 +1537,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                               ${this.domain}
                           </mwc-list-item>
                           ` : html``}
-                          <mwc-list-item class="horizontal layout start center" style="border-bottom:1px solid #ccc;">
+                          <mwc-list-item class="horizontal layout start center">
                               <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
+                              <span class="dropdown-menu-name">${this._getUsername()}</span>
+                          </mwc-list-item>
+                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+                              <mwc-icon class="dropdown-menu">email</mwc-icon>
                               <span class="dropdown-menu-name">${this._getUserId()}</span>
                           </mwc-list-item>
                           <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
