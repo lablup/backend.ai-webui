@@ -3458,7 +3458,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <wl-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical layout">
-                <mwc-list multi rootTabbable>
+                <mwc-list>
                   <mwc-list-item hasMeta class="resource-type">
                     <div>CPU</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
@@ -3467,22 +3467,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
                     <lablup-slider id="cpu-resource" class="cpu" step="1"
-                                   pin snaps expand editable markers
+                                   pin snaps expand editable markers tabindex="0"
                                    @change="${(e) => this._applyResourceValueChanges(e)}"
                                    marker_limit="${this.marker_limit}"
                                    suffix="${_text('session.launcher.Core')}"
                                    min="${this.cpu_metric.min}" max="${this.cpu_metric.max}"
                                    value="${this.cpu_request}"></lablup-slider>
-                    </mwc-list-item>
+                  </mwc-list-item>
                   <mwc-list-item hasMeta class="resource-type">
                     <div>RAM</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
                                      @click="${(e) => this._showResourceDescription(e, 'mem')}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
-                  <mwc-list-item  class="slider-list-item">
+                  <mwc-list-item class="slider-list-item">
                     <lablup-slider id="mem-resource" class="mem"
-                                   pin snaps expand step=0.05 editable markers
+                                   pin snaps expand step=0.05 editable markers tabindex="0"
                                    @change="${(e) => {
                                      this._applyResourceValueChanges(e);
                                      this._updateShmemLimit();
@@ -3491,15 +3491,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                    min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                    value="${this.mem_request}"></lablup-slider>
                   </mwc-list-item>
-                <mwc-list-item hasMeta class="resource-type">
-                  <div>${_t('session.launcher.SharedMemory')}</div>
-                  <mwc-icon-button slot="meta" icon="info" class="fg info"
-                    @click="${(e) => this._showResourceDescription(e, 'shmem')}"></mwc-icon-button>
-                </mwc-list-item>
-                <li divider role="separator"></li>
-                <mwc-list-item class="slider-list-item">
-                  <lablup-slider id="shmem-resource" class="mem"
-                                 pin snaps step="0.0125" editable markers
+                  <mwc-list-item hasMeta class="resource-type">
+                    <div>${_t('session.launcher.SharedMemory')}</div>
+                    <mwc-icon-button slot="meta" icon="info" class="fg info"
+                      @click="${(e) => this._showResourceDescription(e, 'shmem')}"></mwc-icon-button>
+                  </mwc-list-item>
+                  <li divider role="separator"></li>
+                  <mwc-list-item class="slider-list-item">
+                    <lablup-slider id="shmem-resource" class="mem"
+                                 pin snaps step="0.0125" editable markers tabindex="0"
                                  @change="${(e) => {
                                    this._applyResourceValueChanges(e);
                                    this._updateShmemLimit();
@@ -3507,35 +3507,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                  marker_limit="${this.marker_limit}" suffix="GB"
                                  min="0.0625" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
-                </mwc-list-item>
-                <mwc-list-item hasMeta class="resource-type">
-                  <div>GPU</div>
-                  <mwc-icon-button slot="meta" icon="info" class="fg info"
-                    @click="${(e) => this._showResourceDescription(e, 'gpu')}"></mwc-icon-button>
+                  </mwc-list-item>
+                  <mwc-list-item hasMeta class="resource-type">
+                    <div>GPU</div>
+                    <mwc-icon-button slot="meta" icon="info" class="fg info"
+                      @click="${(e) => this._showResourceDescription(e, 'gpu')}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
-                  <lablup-slider id="gpu-resource" class="gpu"
-                                 pin snaps editable markers step="${this.gpu_step}"
-                                 @change="${(e) => this._applyResourceValueChanges(e)}"
-                                 marker_limit="${this.marker_limit}" suffix="GPU"
-                                 min="0.0" max="${this.cuda_device_metric.max}"
-                                 value="${this.gpu_request}"></lablup-slider>
-                </mwc-list-item>
-                <mwc-list-item hasMeta class="resource-type">
-                  <div>${_t('webui.menu.Sessions')}</div>
-                  <mwc-icon-button slot="meta" icon="info" class="fg info"
-                    @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
+                    <lablup-slider id="gpu-resource" class="gpu"
+                                   pin snaps editable markers step="${this.gpu_step}"
+                                   @change="${(e) => this._applyResourceValueChanges(e)}"
+                                   marker_limit="${this.marker_limit}" suffix="GPU"
+                                   min="0.0" max="${this.cuda_device_metric.max}"
+                                   value="${this.gpu_request}"></lablup-slider>
+                  </mwc-list-item>
+                  <mwc-list-item hasMeta class="resource-type">
+                    <div>${_t('webui.menu.Sessions')}</div>
+                    <mwc-icon-button slot="meta" icon="info" class="fg info"
+                      @click="${(e) => this._showResourceDescription(e, 'session')}"></mwc-icon-button>
                   </mwc-list-item>
                   <li divider role="separator"></li>
                   <mwc-list-item class="slider-list-item">
-                  <lablup-slider id="session-resource" class="session"
-                                 pin snaps editable markers step="1"
-                                 @change="${(e) => this._applyResourceValueChanges(e)}"
-                                 marker_limit="${this.marker_limit}" suffix="#"
-                                 min="1" max="${this.concurrency_limit}"
-                                 value="${this.session_request}"></lablup-slider>
-                </mwc-list-item>
+                    <lablup-slider id="session-resource" class="session"
+                                   pin snaps editable markers step="1"
+                                   @change="${(e) => this._applyResourceValueChanges(e)}"
+                                   marker_limit="${this.marker_limit}" suffix="#"
+                                   min="1" max="${this.concurrency_limit}"
+                                   value="${this.session_request}"></lablup-slider>
+                  </mwc-list-item>
                 </mwc-list>
               </div>
             </wl-expansion>

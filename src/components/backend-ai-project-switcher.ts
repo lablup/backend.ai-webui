@@ -18,6 +18,16 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import {get as _text} from 'lit-translate/util';
 
+/**
+ Backend AI Project Switcher
+
+ Example:
+
+ <backend-ai-project-switcher></backend-ai-project-switcher>
+
+ @group Backend.AI Web UI
+ @element backend-ai-project-switcher
+ */
 @customElement('backend-ai-project-switcher')
 export default class BackendAIProjectSwitcher extends LitElement {
   @property({type: Array}) groups = [];

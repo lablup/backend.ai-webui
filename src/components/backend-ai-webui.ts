@@ -1475,10 +1475,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
                     <backend-ai-project-switcher></backend-ai-project-switcher>
-                    <div class="horizontal center center-justified layout">
-                      <p id="project">${_t('webui.menu.Project')}</p>
-                      <div id="group-select-box"></div>
-                    </div>
                     <div class="vertical-line" style="height:20px;margin:0;"></div>
                     <div class="horizontal flex center layout">
                       <div class="vertical layout center" style="position:relative;right:50px;">
