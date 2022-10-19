@@ -1,6 +1,33 @@
 # Changelog
 
 ## v22.09.1 (19/09/2022)
+## What's Changed
+* update: lit and mwc-components to the latest version by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1445
+* refactor: use type alias for `listCondition` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1447
+* feature: add extra information in the last page of session launcher by @mihilt in https://github.com/lablup/backend.ai-webui/pull/1427
+* update: typing shadowRoot from any type by @Jaewoook in https://github.com/lablup/backend.ai-webui/pull/1359
+* feature: add agent summary page by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1439
+* fix: rename `BackendAIAgent` to `BackendAIAgentSummaryList` and add detail typings by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1449
+* fix: remove animation of buttons that do not trigger other events by @jangjichang in https://github.com/lablup/backend.ai-webui/pull/1454
+* style: unify style of the list by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1456
+* fix: add type-check before initializing chart by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1459
+* hotfix: add type definition to show `agent-summary-list` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1457
+* update: node.js base version to 18 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1461
+* style: total allocation pane is too big by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1463
+* fix: add title to show what the Control icons do by @di-uni in https://github.com/lablup/backend.ai-webui/pull/1465
+* fix: cluster size slider to be active by cluster mode selection by @Jaewoook in https://github.com/lablup/backend.ai-webui/pull/1356
+* feature: send target app's protocol (http or tcp) when starting wsproxy by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1211
+* fix: remove animations from which events do not occur by @suyeon12 in https://github.com/lablup/backend.ai-webui/pull/1472
+* style: adjust the License Key button size by @ky3vin in https://github.com/lablup/backend.ai-webui/pull/1477
+* fix: add helper dialog for endpoint by @di-uni in https://github.com/lablup/backend.ai-webui/pull/1473
+
+## New Contributors
+* @jangjichang made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1454
+* @di-uni made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1465
+* @suyeon12 made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1472
+* @ky3vin made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1477
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.0...v22.09.1
 
 ## v22.09.0 (31/08/2022)
 ## What's Changed

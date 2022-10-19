@@ -109,8 +109,15 @@ When enabling debug mode, It will show certain features used for debugging in bo
    - Enable creating session with manual image name
 
 ### Debugging in app(electron)
-🚧 WIP 🚧
+If you want to run the app(electron) in debugging mode, you have to first [initialize](#initializing) and [build the Electron app](#building-electron-app).
 
+If you have initialized and built the app(electron), please run the app(electron) in debugging mode with this command:
+
+```console
+$ make test_electron
+```
+
+You can debug the app.
 
 ## Branches
 
