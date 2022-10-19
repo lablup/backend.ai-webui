@@ -2268,7 +2268,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _setClusterMode(e) {
     this.cluster_mode = e.target.value;
-    this.updateResourceAllocationPane();
+    // Resource pane refresh is disabled to prevent resource slider reset.
+    // this.updateResourceAllocationPane();
   }
 
   /**
