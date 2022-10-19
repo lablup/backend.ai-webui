@@ -1578,15 +1578,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                       <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
                         <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
                       </mwc-icon-button>
-                      <div class="vertical-line" style="height:35px;"></div>
-                      <div class="horizontal layout center" style="margin:auto 10px;padding-top:10px;">
-                        <span class="log_out" style="font-size:12px;margin:auto 0px;color:#8c8484;">
-                          ${_t('webui.menu.LogOut')}
-                        </span>
-                        <mwc-icon-button @click="${() => this.logout()}" style="padding-bottom:5px;">
-                          <i class="fas fa-sign-out-alt fa-xs" style="color:#8c8484;"></i>
-                        </mwc-icon-button>
-                      </div>
                     </div>
                   </div>
                   <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
