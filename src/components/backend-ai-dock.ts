@@ -30,7 +30,7 @@ export default class BackendAIDock extends LitElement {
       // language=CSS
       css`
         #dock {
-          background: rgba(255,255,255,0.1);
+          background: rgba(192,192,192,0.1);
           backdrop-filter: blur(10px);
           color: #efefef;
           box-sizing: border-box;

@@ -40,6 +40,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
   @property({type: String}) icon = '';
+  @property({type: String}) titleBarColor = '';
   @property({type: Boolean}) isFullScreen = false;
   @property({type: Boolean}) isMinimized = false;
   @property({type: Boolean}) isChangingSizeByButton = false;
@@ -456,6 +457,9 @@ export default class BackendAIWindow extends LitElement {
     if (this.name === '') {
       this.name = this.setName();
     }
+    if (this.titleBarColor !== '' && this._validateHexColor(this.titleBarColor)) {
+      this.titlebar.style.backgroundColor = this.titleBarColor;
+    }
     this.groupColor = this.ribbonColor;
     if (this.group === '') {
       this.ribbon.style.display = 'none';
@@ -491,6 +495,11 @@ export default class BackendAIWindow extends LitElement {
       const event = new CustomEvent('backend-ai-window-reorder', {'detail': this.name});
       document.dispatchEvent(event);
     }
+  }
+
+  _validateHexColor(str: string) {
+    const reg=/^#([0-9a-f]{3}){1,2}$/i;
+    return reg.test(str);
   }
 
   render() {
