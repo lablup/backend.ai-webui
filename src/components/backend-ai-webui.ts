@@ -44,6 +44,7 @@ import './backend-ai-resource-broker';
 import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
+import './backend-ai-project-switcher';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
@@ -104,7 +105,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: String}) edition = 'Open Source';
   @property({type: String}) validUntil = '';
   @property({type: Array}) groups = [];
-  @property({type: String}) current_group = '';
   @property({type: Object}) plugins = Object();
   @property({type: String}) _page = '';
   @property({type: String}) _lazyPage = '';
@@ -409,7 +409,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this.is_superadmin = false;
     }
     this._refreshUserInfoPanel();
-    globalThis.backendaiutils._writeRecentProjectGroup(this.current_group);
     document.body.style.backgroundImage = 'none';
     this.appBody.style.visibility = 'visible';
 
@@ -618,43 +617,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this.current_group = globalThis.backendaiutils._readRecentProjectGroup();
     this._showRole();
-    globalThis.backendaiclient.current_group = this.current_group;
-    this.groups = globalThis.backendaiclient.groups;
-    const groupSelectionBox = this.shadowRoot?.getElementById('group-select-box');
-    // Detached from template to support live-update after creating new group (will need it)
-    if (groupSelectionBox?.hasChildNodes()) {
-      groupSelectionBox?.removeChild(groupSelectionBox.firstChild as ChildNode);
-    }
-    const div = document.createElement('div');
-    div.className = 'horizontal center center-justified layout';
-    const select = document.createElement('mwc-select');
-    select.id = 'group-select';
-    select.value = this.current_group;
-    // select.style = 'width: auto;max-width: 200px;';
-    select.style.width = 'auto';
-    select.style.maxWidth = '200px';
-    select.addEventListener('selected', (e) => this.changeGroup(e));
-    let opt = document.createElement('mwc-list-item');
-    opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _text('webui.menu.SelectProject');
-    opt.style.borderBottom = '1px solid #ccc';
-    select.appendChild(opt);
-    this.groups.map((group) => {
-      opt = document.createElement('mwc-list-item');
-      opt.value = group;
-      if (this.current_group === group) {
-        opt.selected = true;
-      } else {
-        opt.selected = false;
-      }
-      opt.innerHTML = group;
-      select.appendChild(opt);
-    });
-    // select.updateOptions();
-    div.appendChild(select);
-    groupSelectionBox?.appendChild(div);
   }
 
   /**
@@ -1071,19 +1034,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   updateTitleColor(backgroundColorVal: string, colorVal: string) {
     (this.shadowRoot?.querySelector('#main-toolbar') as HTMLElement).style.setProperty('--mdc-theme-primary', backgroundColorVal);
     (this.shadowRoot?.querySelector('#main-toolbar') as HTMLElement).style.color = colorVal;
-  }
-
-  /**
-   * Change the backend.ai client's current group.
-   *
-   * @param {Event} e - Dispatches from the native input event each time the input changes.
-   */
-  changeGroup(e) {
-    globalThis.backendaiclient.current_group = e.target.value;
-    this.current_group = globalThis.backendaiclient.current_group;
-    globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
-    const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
-    document.dispatchEvent(event);
   }
 
   /**
@@ -1524,6 +1474,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
+                    <backend-ai-project-switcher></backend-ai-project-switcher>
                     <div class="horizontal center center-justified layout">
                       <p id="project">${_t('webui.menu.Project')}</p>
                       <div id="group-select-box"></div>
