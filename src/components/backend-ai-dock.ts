@@ -41,15 +41,15 @@ export default class BackendAIDock extends LitElement {
           position:absolute;
           right: 10px;
           bottom: 10px;
-          height: 80px;
+          height: 64px;
           width: 10px;
           overflow: hidden;
           z-index: 9999;
         }
 
         mwc-icon-button {
-          --mdc-icon-size: 48px;
-          --mdc-icon-button-size: 64px;
+          --mdc-icon-size: 36px;
+          --mdc-icon-button-size: 48px;
           padding: 8px;
         }
 
@@ -59,7 +59,7 @@ export default class BackendAIDock extends LitElement {
           height: 6px;
           position: absolute;
           top: 5px;
-          margin-left: 29px;
+          margin-left: 21px;
           border-radius: 3px;
           background-color: var(--indicator-color);
           z-index:10000;
@@ -70,8 +70,8 @@ export default class BackendAIDock extends LitElement {
           width: 12px;
           height: 4px;
           position: absolute;
-          top: 70px;
-          margin-left: -38px;
+          top: 54px;
+          margin-left: -29px;
           border-radius: 2px;
           background-color: var(--general-sidebar-selected-color,#72EB51);
           z-index:10000;
@@ -99,7 +99,7 @@ export default class BackendAIDock extends LitElement {
         count = count + 1;
       }
     });
-    this.dock.style.width = ((count + 1) * 80 + (count ? 10: 0)) + 'px';
+    this.dock.style.width = ((count + 1) * 64 + (count ? 4: 0)) + 'px';
     this.requestUpdate();
   }
 
