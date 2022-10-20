@@ -74,6 +74,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) is_connected = false;
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
+  @property({type: Boolean}) hideEnvDialog = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
   @property({type: String}) newSessionDialogTitle = '';
@@ -753,10 +754,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 0px 30px;
         }
 
-        #modify-env-dialog div.row {
+        #modify-env-dialog div.row, #modify-env-dialog div.header {
           display: grid;
           grid-template-columns: 4fr 4fr 1fr;
-          margin-bottom: 10px;
+        }
+
+        #modify-env-dialog div[slot="footer"] {
+          display: flex;
+          margin-left: auto;
+          gap: 15px;
+        }
+
+        #modify-env-container mwc-textfield {
+          width: 90%;
+          margin: auto 5px;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-text-field-hover-line-color: transparent;
+          --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
+        }
+
+        #env-add-btn {
+          margin: 20px auto 10px auto;
+        }
+
+        #delete-all-button {
+          --mdc-theme-primary: var(--paper-red-600);
+        }
+
+        .minus-btn {
+          --mdc-icon-size: 20px;
+          color: #27824F;
         }
 
         .environment-variables-container h4 {
@@ -918,15 +945,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const currentEnv = {};
       const container = this.shadowRoot?.querySelector('#modify-env-container');
-      const rows = container?.querySelectorAll('.row:not(.header)');
+      const rows = container?.querySelectorAll('.row');
 
       // allow any input in variable or value
       const nonempty = (row) => Array.prototype.filter.call(
-        row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+        row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
       ).length <= 1;
 
       const encodeRow = (row) => {
-        const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
+        const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value);
         currentEnv[items[0]] = items[1];
         return items;
       };
@@ -953,6 +980,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       };
 
       if (!isEquivalent(currentEnv, this.environ_values)) {
+        this.hideEnvDialog = true;
         this.openDialog('env-config-confirmation');
       } else {
         this.modifyEnvDialog.closeWithConfirmation = false;
@@ -2785,10 +2813,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {string} value - environment variable value
    */
   _appendEnvRow(name = '', value = '') {
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
+    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
     const lastChild = container?.children[container.children.length - 1];
     const div = this._createEnvRow(name, value);
-    container?.insertBefore(div, lastChild?.nextSibling as ChildNode);
+    container?.insertBefore(div, lastChild as ChildNode);
   }
   /**
    * Create a row in the environment variable list.
@@ -2800,29 +2828,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _createEnvRow(name = '', value = '') {
     const div = document.createElement('div');
-    div.setAttribute('class', 'row extra');
+    div.setAttribute('class', 'horizontal layout center row');
 
-    const env = document.createElement('wl-textfield');
-    env.setAttribute('type', 'text');
+    const env = document.createElement('mwc-textfield');
     env.setAttribute('value', name);
 
-    const val = document.createElement('wl-textfield');
-    val.setAttribute('type', 'text');
+    const val = document.createElement('mwc-textfield');
     val.setAttribute('value', value);
 
-    const button = document.createElement('wl-button');
-    button.setAttribute('class', 'fg pink');
-    button.setAttribute('fab', '');
-    button.setAttribute('flat', '');
-    button.addEventListener('click', (e) => this._removeEnvItem(e));
+    const removeButton = document.createElement('mwc-icon-button');
+    removeButton.setAttribute('icon', 'remove');
+    removeButton.setAttribute('class', 'green minus-btn');
+    removeButton.addEventListener('click', (e) => this._removeEnvItem(e));
 
-    const icon = document.createElement('wl-icon');
-    icon.innerHTML = 'remove';
-    button.appendChild(icon);
-
-    div.appendChild(env);
-    div.appendChild(val);
-    div.appendChild(button);
+    div.append(env);
+    div.append(val);
+    div.append(removeButton);
     return div;
   }
 
@@ -2841,12 +2862,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Remove empty env input fields
    */
   _removeEmptyEnv() {
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row.extra');
+    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
+    const rows = container?.querySelectorAll('.row') as NodeListOf<HTMLDivElement>;
     const empty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('mwc-textfield'), (tf) => tf.value === ''
     ).length === 2;
-    Array.prototype.filter.call(rows, (row) => empty(row)).map((row) => row.parentNode.removeChild(row));
+    Array.prototype.filter.call(rows, (row) => empty(row)).map((row, idx) => {
+      if (idx !== 0 || this.environ.length > 0) {
+        row.parentNode.removeChild(row);
+      }
+    });
   }
 
   /**
@@ -2865,18 +2890,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * load environment variables for current session
    */
   _loadEnv() {
-    this.environ.forEach((item: any, index) => {
-      const firstIndex = 0;
-      if (index === firstIndex) {
-        const container = this.shadowRoot?.querySelector('#modify-env-container');
-        const firstRow = container?.querySelector('.row:not(.header)');
-        const envFields = firstRow?.querySelectorAll('wl-textfield');
-        Array.prototype.forEach.call(envFields, (elem: any, index) => {
-          elem.value = (index === firstIndex) ? item.name : item.value;
-        });
-      } else {
-        this._appendEnvRow(item.name, item.value);
-      }
+    this.environ.forEach((item: any) => {
+      this._appendEnvRow(item.name, item.value);
     });
   }
 
@@ -2891,14 +2906,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    * Close confirmation dialog and environment variable dialog and reset the environment variable and value
-   *
    */
   _closeAndResetEnvInput() {
-    this._clearRows();
-    this._loadEnv();
+    this._clearRows(true);
     this.closeDialog('env-config-confirmation');
-    this.modifyEnvDialog.closeWithConfirmation = false;
-    this.modifyEnvDialog.hide();
+    if (this.hideEnvDialog) {
+      this._loadEnv();
+      this.modifyEnvDialog.closeWithConfirmation = false;
+      this.modifyEnvDialog.hide();
+    }
   }
 
   /**
@@ -2909,10 +2925,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const container = this.shadowRoot?.querySelector('#modify-env-container');
     const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
     ).length === 0;
     const encodeRow = (row) => {
-      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value);
+      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value);
       this.environ_values[items[0]] = items[1];
       return items;
     };
@@ -2930,26 +2946,41 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.environ = [];
     this.environ_values = {};
     if (this.modifyEnvDialog !== null) {
-      this._clearRows();
+      this._clearRows(true);
     }
   }
 
   /**
    * Clear rows from the environment variable.
+   * @param {Boolean} force - Whether removing all rows except first row or not.
    */
-  _clearRows() {
+  _clearRows(force = false) {
     const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
+    const rows = container?.querySelectorAll('.row') as NodeListOf<Element>;
     const firstRow = rows[0];
 
+    // show confirm dialog if not empty.
+    if (!force) {
+      const nonempty = (row) => Array.prototype.filter.call(
+        row.querySelectorAll('mwc-textfield'), (item) => item.value.length > 0
+      ).length > 0;
+      if (Array.prototype.filter.call(rows, (row) => nonempty(row)).length > 0) {
+        this.hideEnvDialog = false;
+        this.openDialog('env-config-confirmation');
+        return;
+      }
+    }
+
     // remain first row element and clear values
-    firstRow.querySelectorAll('wl-textfield').forEach((tf) => {
+    firstRow?.querySelectorAll('mwc-textfield').forEach((tf) => {
       tf.value = '';
     });
 
     // delete extra rows
-    container?.querySelectorAll('.row.extra').forEach((e) => {
-      e.remove();
+    rows.forEach((e, idx) => {
+      if (idx !== 0) {
+        e.remove();
+      }
     });
   }
 
@@ -3808,32 +3839,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <mwc-icon-button icon="info" @click="${(e) => this._showEnvConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
         </span>
         <div slot="content" id="modify-env-container">
-          <div class="row header">
+          <div class="horizontal layout center flex justified header">
             <div> ${_t('session.launcher.EnvironmentVariable')} </div>
             <div> ${_t('session.launcher.EnvironmentVariableValue')} </div>
           </div>
-          ${this.environ.forEach((item: any, index) =>
-    html`
-      <div class="row">
-        <wl-textfield type="text" value=${item.name}></wl-textfield>
-        <wl-textfield type="text" value=${item.value}></wl-textfield>
-        <wl-button fab flat class="fg pink" @click=${(e) => this._removeEnvItem(e)}>
-          <wl-icon>remove</wl-icon>
-        </wl-button>
-      </div>
-    `)}
-          <div class="row">
-            <wl-textfield type="text"></wl-textfield>
-            <wl-textfield type="text"></wl-textfield>
-            <wl-button fab flat class="fg pink" @click=${()=>this._appendEnvRow()}>
-              <wl-icon>add</wl-icon>
-            </wl-button>
+          <div id="modify-env-fields-container" class="layout center">
+            ${this.environ.forEach((item: any) => html`
+                <div class="horizontal layout center row">
+                  <mwc-textfield value="${item.name}"></mwc-textfield>
+                  <mwc-textfield value="${item.value}"></mwc-textfield>
+                  <mwc-icon-button class="green minus-btn" icon="remove"
+                    @click="${(e) => this._removeEnvItem(e)}"></mwc-icon-button>
+                </div>
+              `)}
+            <div class="horizontal layout center row">
+              <mwc-textfield></mwc-textfield>
+              <mwc-textfield></mwc-textfield>
+              <mwc-icon-button class="green minus-btn" icon="remove"
+                @click="${(e) => this._removeEnvItem(e)}"></mwc-icon-button>
+            </div>
           </div>
+          <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
+              @click="${() => this._appendEnvRow()}">Add</mwc-button>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal layout">
           <mwc-button
+              id="delete-all-button"
+              slot="footer"
               icon="delete"
-              label="${_text('button.DeleteAll')}"
+              label="${_text('button.Reset')}"
               @click="${()=>this._clearRows()}"></mwc-button>
           <mwc-button
               unelevated

@@ -347,7 +347,8 @@
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
     "ForceTerminate": "Хүчээр цуцлах",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Дахин тохируулах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
