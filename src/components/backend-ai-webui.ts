@@ -45,6 +45,8 @@ import './backend-ai-sidepanel-notification';
 import './backend-ai-sidepanel-task';
 import './backend-ai-splash';
 import './backend-ai-project-switcher';
+import './backend-ai-user-dropdown-menu';
+
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
@@ -191,6 +193,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     } else {
       configPath = '../../config.toml';
       document.addEventListener('backend-ai-logout', () => this.logout(false));
+      document.addEventListener('backend-ai-show-splash', () => this._showSplash());
     }
     globalThis.addEventListener('beforeunload', function(event) {
       globalThis.backendaioptions.set('last_window_close_time', new Date().getTime() / 1000);
@@ -1475,6 +1478,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 <div slot="actionItems" style="margin:0;">
                   <div class="horizontal flex center layout">
                     <backend-ai-project-switcher></backend-ai-project-switcher>
+                    <div class="vertical-line" style="height:20px;margin:0;"></div>
+                    <backend-ai-user-dropdown-menu></backend-ai-user-dropdown-menu>
                     <div class="vertical-line" style="height:20px;margin:0;"></div>
                     <div class="horizontal flex center layout">
                       <div class="vertical layout center" style="position:relative;right:50px;">
