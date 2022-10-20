@@ -619,7 +619,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.user_id = globalThis.backendaiclient.email;
     this.full_name = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this._showRole();
   }
 
   /**
@@ -1007,16 +1006,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       name = globalThis.backendaiutils._maskString(name, '*', maskStartIdx, maskLength);
     }
     return name;
-  }
-
-  _getRole(user_id) {
-    const fields = ['role'];
-    return globalThis.backendaiclient.user.get(user_id, fields);
-  }
-
-  async _showRole() {
-    const data = await this._getRole(this.user_id);
-    this.roleInfo = data.user;
   }
 
   _showSplash() {
