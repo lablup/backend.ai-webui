@@ -1119,7 +1119,30 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div class="indicator" @click="[[_folderExplorer()]]" .folder-id="${rowData.item.name}">${rowData.item.name}</div>
+        <div
+          id="controls"
+          class="layout flex horizontal start-justified center wrap"
+          folder-id="${rowData.item.id}"
+          folder-name="${rowData.item.name}"
+          folder-type="${rowData.item.type}"
+        >
+          ${this._hasPermission(rowData.item, 'r') ?
+    html`
+              <mwc-icon-button
+                class="fg blue controls-running"
+                icon="folder_open"
+                title=${_t('data.folders.OpenAFolder')}
+                @click="${(e) =>
+    this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
+                rowData.item.is_owner ||
+                (rowData.item.type === 'group' && this.is_admin)))}"
+                .folder-id="${rowData.item.name}"></mwc-icon-button>
+            ` :
+    html``}
+          <div @click="${(e) => this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
+                  rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin)))}"
+               .folder-id="${rowData.item.name}" style="cursor:pointer;">${rowData.item.name}</div>
+        </div>
       `, root
     );
   }
@@ -1247,21 +1270,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
           ></mwc-icon-button>
-
-          ${this._hasPermission(rowData.item, 'r') ?
-    html`
-              <mwc-icon-button
-                class="fg blue controls-running"
-                icon="folder_open"
-                title=${_t('data.folders.OpenAFolder')}
-                @click="${(e) =>
-    this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                rowData.item.is_owner ||
-                (rowData.item.type === 'group' && this.is_admin)))}"
-                .folder-id="${rowData.item.name}"></mwc-icon-button>
-            ` :
-    html``
-}
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
     html`
             <mwc-icon-button
