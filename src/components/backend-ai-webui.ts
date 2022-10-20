@@ -87,7 +87,6 @@ globalThis.backendaiutils = new BackendAICommonUtils;
  @group Backend.AI Web UI
  @element backend-ai-webui
  */
-
 @customElement('backend-ai-webui')
 export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) hasLoadedStrings = false;
@@ -270,7 +269,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     document.addEventListener('current-user-info-changed', (e: any) => {
       if (globalThis.backendaiclient.supports('change-user-name')) {
         const input = e.detail;
-        this._updateFullname(input.full_name);
+        this.full_name = input;
       }
     });
   }
@@ -394,7 +393,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     // TODO need more clear type for mwc-list-item
-    (this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
+    //(this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
@@ -631,203 +630,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       this._page = 'summary';
       navigate(decodeURIComponent('/'));
     }
-  }
-
-  /**
-   * Open the user preference dialog.
-   */
-  async _openUserPrefDialog() {
-    this._showKeypairInfo();
-    const dialog = this.shadowRoot?.querySelector<BackendAIDialog>('#user-preference-dialog');
-    dialog?.show();
-  }
-
-  /**
-   * Hide the user preference dialog.
-   */
-  _hideUserPrefDialog() {
-    this.shadowRoot?.querySelector<BackendAIDialog>('#user-preference-dialog')?.hide();
-  }
-
-  _togglePasswordVisibility(element) {
-    const isVisible = element.__on;
-    const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
-  }
-
-  _validatePassword1() {
-    // TODO define type for custom property
-    const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as any;
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
-    password2Input.reportValidity();
-    passwordInput.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.valueMissing) {
-          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
-          };
-        } else {
-          passwordInput.validationMessage = _text('signup.PasswordInvalid');
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
-          };
-        }
-      } else {
-        return {
-          valid: nativeValidity.valid,
-          customError: !nativeValidity.valid
-        };
-      }
-    };
-  }
-
-  _validatePassword2() {
-    // TODO define type for custom property
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
-    password2Input.validityTransform = (newValue, nativeValidity) => {
-      if (!nativeValidity.valid) {
-        if (nativeValidity.valueMissing) {
-          password2Input.validationMessage = _text('signup.PasswordInputRequired');
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
-          };
-        } else {
-          password2Input.validationMessage = _text('signup.PasswordInvalid');
-          return {
-            valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
-          };
-        }
-      } else {
-        // custom validation for password input match
-        const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as TextField;
-        const isMatched = (passwordInput.value === password2Input.value);
-        if (!isMatched) {
-          password2Input.validationMessage = _text('signup.PasswordNotMatched');
-        }
-        return {
-          valid: isMatched,
-          customError: !isMatched
-        };
-      }
-    };
-  }
-
-  /**
-   * Validate User input in password automatically, and show error message if any input error occurs.
-   */
-  _validatePassword() {
-    this._validatePassword1();
-    this._validatePassword2();
-  }
-
-  /**
-   * Update the user information including full_name of user and password
-   */
-  _updateUserInformation() {
-    if (globalThis.backendaiclient.supports('change-user-name')) {
-      this._updateFullname();
-    }
-    this._updateUserPassword();
-  }
-
-  /**
-   * Update the full_name of user information
-   *
-   * @param {string} newFullname - Name to be modified
-   */
-  async _updateFullname(newFullname = '') {
-    newFullname = newFullname === '' ? (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value : newFullname;
-    if (newFullname.length > 64) {
-      this.notification.text = _text('webui.menu.FullNameInvalid');
-      this.notification.show();
-      return;
-    }
-    // if user input in full name is not null and not same as the original full name, then it updates.
-    if (globalThis.backendaiclient.supports('change-user-name')) {
-      if (newFullname && (newFullname !== this.full_name)) {
-        globalThis.backendaiclient.update_full_name(this.user_id, newFullname).then((resp) => {
-          this.notification.text = _text('webui.menu.FullnameUpdated');
-          this.notification.show();
-          this.full_name = globalThis.backendaiclient.full_name = newFullname;
-          (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.full_name;
-        }).catch((err) => {
-          if (err && err.message) {
-            this.notification.text = err.message;
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-            return;
-          } else if (err && err.title) {
-            this.notification.text = err.title;
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-            return;
-          }
-        });
-      }
-    } else {
-      this.notification.text = _text('error.APINotSupported');
-      this.notification.show();
-    }
-  }
-
-  /**
-   * Update the user password.
-   */
-  async _updateUserPassword() {
-    const dialog = this.shadowRoot?.querySelector('#user-preference-dialog');
-    const oldPassword = (dialog?.querySelector('#pref-original-password') as TextField).value;
-    const newPassword1El = dialog?.querySelector('#pref-new-password') as TextField;
-    const newPassword2El = dialog?.querySelector('#pref-new-password2') as TextField;
-
-    // no update in user's password
-    if (!oldPassword && !newPassword1El.value && !newPassword2El.value) {
-      this._hideUserPrefDialog();
-      return;
-    }
-
-    if (!oldPassword) {
-      this.notification.text = _text('webui.menu.InputOriginalPassword');
-      this.notification.show();
-      return;
-    }
-    // TODO define type for custom property
-    if (!newPassword1El.value || !(newPassword1El as any).validity.valid) {
-      this.notification.text = _text('webui.menu.InvalidPasswordMessage');
-      this.notification.show();
-      return;
-    }
-    if (newPassword1El.value !== newPassword2El.value) {
-      this.notification.text = _text('webui.menu.NewPasswordMismatch');
-      this.notification.show();
-      return;
-    }
-    const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
-    p.then((resp) => {
-      this.notification.text = _text('webui.menu.PasswordUpdated');
-      this.notification.show();
-      this._hideUserPrefDialog();
-    }).catch((err) => {
-      if (err && err.message) {
-        this.notification.text = err.message;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        return;
-      } else if (err && err.title) {
-        this.notification.text = err.title;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        return;
-      }
-    }).finally(() => { // remove input value again
-      (this.shadowRoot?.querySelector('#pref-original-password') as TextField).value = '';
-      (this.shadowRoot?.querySelector('#pref-new-password') as TextField).value = '';
-      (this.shadowRoot?.querySelector('#pref-new-password2') as TextField).value = '';
-    });
   }
 
   _menuSelected(e) {
@@ -1117,32 +919,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   /**
-   * Move to user's log page.
-   */
-  _moveToLogPage() {
-    const currentPage = globalThis.location.toString().split(/[/]+/).pop();
-    globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
-    if (currentPage && currentPage === 'usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings-logs', {});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
-   * Move to user settings page.
-   */
-  _moveToUserSettingsPage() {
-    const currentPage = globalThis.location.toString().split(/[/]+/).pop();
-    globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
-    if (currentPage && currentPage === 'usersettings') {
-      const event = new CustomEvent('backend-ai-usersettings', {});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
    * Add tool tips by create popovers.
    */
   async addTooltips() {
@@ -1233,22 +1009,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return name;
   }
 
-  /**
-   *  Get user id according to configuration
-   *
-   *  @return {string} userId
-   */
-  _getUserId() {
-    let userId = this.user_id;
-    // mask user id(email) only when the configuration is enabled
-    if (this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
-    }
-    return userId;
-  }
-
   _getRole(user_id) {
     const fields = ['role'];
     return globalThis.backendaiclient.user.get(user_id, fields);
@@ -1259,32 +1019,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     this.roleInfo = data.user;
   }
 
-  _getKeypairInfo(user_id) {
-    const fields = ['access_key', 'secret_key'];
-    const is_active = true;
-    return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
-  }
-
-  async _showKeypairInfo() {
-    const data = await this._getKeypairInfo(this.user_id);
-    this.keyPairInfo = data;
-    this.keyPairInfo.keypairs.reverse();
-  }
-
-  async _showSecretKey(e) {
-    const secret_key = this.shadowRoot?.querySelector<TextField>('#secretkey')!;
-    for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
-      if (e.target.selected.value == this.keyPairInfo.keypairs[i].access_key) {
-        secret_key.value = this.keyPairInfo.keypairs[i].secret_key;
-        break;
-      }
-    }
-  }
-
-  // @eventOptions({})
   _showSplash() {
-    console.dir(this.splash);
-    console.dir(typeof this.splash);
     this.splash.show();
   }
 
@@ -1480,56 +1215,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-project-switcher></backend-ai-project-switcher>
                     <div class="vertical-line" style="height:20px;margin:0;"></div>
                     <backend-ai-user-dropdown-menu></backend-ai-user-dropdown-menu>
-                    <div class="vertical-line" style="height:20px;margin:0;"></div>
-                    <div class="horizontal flex center layout">
-                      <div class="vertical layout center" style="position:relative;right:50px;">
-                        <mwc-menu id="dropdown-menu" class="user-menu">
-                          ${this.domain !== 'default' && this.domain !== '' ? html`
-                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              ${this.domain}
-                          </mwc-list-item>
-                          ` : html``}
-                          <mwc-list-item class="horizontal layout start center">
-                              <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
-                              <span class="dropdown-menu-name">${this._getUsername()}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">email</mwc-icon>
-                              <span class="dropdown-menu-name">${this._getUserId()}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
-                              <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
-                              <span class="dropdown-menu-name">${this.roleInfo.role}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" @click="${this._showSplash}">
-                              <mwc-icon class="dropdown-menu">info</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
-                              <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.MyAccount')}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
-                              <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.Preferences')}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
-                              <mwc-icon class="dropdown-menu">assignment</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.LogsErrors')}</span>
-                          </mwc-list-item>
-                          <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
-                              <mwc-icon class="dropdown-menu">logout</mwc-icon>
-                              <span class="dropdown-menu-name">${_t('webui.menu.LogOut')}</span>
-                          </mwc-list-item>
-                        </mwc-menu>
-                      </div>
-                      <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0 auto 10px;">
-                        ${this._getUsername()}
-                      </span>
-                      <mwc-icon-button id="dropdown-button" @click="${() => this._toggleDropdown()}" style="font-size: 0.5rem;">
-                        <i class="fas fa-user-alt fa-xs" style="color:#8c8484;"></i>
-                      </mwc-icon-button>
-                    </div>
                   </div>
                   <div id="password-change-request" class="horizontal layout center end-justified" style="display:${this.needPasswordChange ? 'flex' : 'none'};">
                     <span>${_t('webui.menu.PleaseChangeYourPassword')} (${_t('webui.menu.PasswordChangePlace')})</span>
@@ -1593,66 +1278,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>
-      <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
-        <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
-        <div slot="content" class="layout vertical" style="width:300px;">
-          <mwc-textfield id="pref-original-name" type="text"
-              label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
-              value="${this.full_name}"
-              helper="${_t('maxLength.64chars')}">
-          </mwc-textfield>
-        </div>
-        <div slot="content" class="layout vertical" style="width:300px">
-          <mwc-select id="access-key-select" class="fixed-position" fixedMenuPosition required
-                      label="${_t('general.AccessKey')}"
-                      @selected="${(e) => this._showSecretKey(e)}">
-            ${this.keyPairInfo.keypairs?.map((item) => html`
-              <mwc-list-item value="${item.access_key}" ?selected=${this.loggedAccount.access_key === item.access_key}>
-                ${item.access_key}
-              </mwc-list-item>`)}
-          </mwc-select>
-          <mwc-textfield id="secretkey" disabled type="text"
-              label="${_t('general.SecretKey')}"
-              style="margin-bottom:20px; margin-top:20px;" value="" readonly>
-          </mwc-textfield>
-        </div>
-        <div slot="content" class="layout vertical" style="width:300px;">
-          <mwc-textfield id="pref-original-password" type="password"
-              label="${_t('webui.menu.OriginalPassword')}" maxLength="64"
-              style="margin-bottom:20px;">
-          </mwc-textfield>
-          <div class="horizontal flex layout">
-            <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
-                type="password" maxLength="64"
-                auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
-                @change="${this._validatePassword}">
-            </mwc-textfield>
-            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
-            </mwc-icon-button-toggle>
-          </div>
-          <div class="horizontal flex layout">
-            <mwc-textfield id="pref-new-password2" label="${_t('webui.menu.NewPasswordAgain')}"
-                type="password" maxLength="64"
-                @change="${this._validatePassword}">
-            </mwc-textfield>
-            <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
-              </mwc-icon-button-toggle>
-          </div>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <div class="flex"></div>
-          <mwc-button
-              label="${_t('webui.menu.Cancel')}"
-              @click="${this._hideUserPrefDialog}"></mwc-button>
-          <mwc-button
-              unelevated
-              label="${_t('webui.menu.Update')}"
-              @click="${this._updateUserInformation}"></mwc-button>
-        </div>
-      </backend-ai-dialog>
       <backend-ai-app-launcher id="app-launcher"></backend-ai-app-launcher>
       <backend-ai-resource-broker id="resource-broker" ?active="${this.is_connected}"></backend-ai-resource-broker>
     `;

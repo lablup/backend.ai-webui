@@ -48,8 +48,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Array}) groups = [];
   @property({type: String}) current_group = '';
   @property({type: Object}) notification;
-  @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
   @property({type: Boolean}) isUserInfoMaskEnabled = true;
+
+  @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
   @query('#dropdown-menu') dropdownMenu: Menu | undefined;
   @query('#user-preference-dialog') userPreferenceDialog: BackendAIDialog | undefined;
 
@@ -188,6 +189,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           this.notification.show();
           this.full_name = globalThis.backendaiclient.full_name = newFullname;
           (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.full_name;
+          const event = new CustomEvent('current-user-info-changed', {'detail': this.full_name});
+          document.dispatchEvent(event);
         }).catch((err) => {
           if (err && err.message) {
             this.notification.text = err.message;
