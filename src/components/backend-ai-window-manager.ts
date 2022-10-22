@@ -7,6 +7,8 @@ import {customElement, state} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
 
+type viewType = 'win' | 'tab';
+
 /**
  Backend AI Window Manager
 
@@ -17,6 +19,7 @@ import './backend-ai-window';
 export default class BackendAIWindowManager extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
   @state() protected zOrder : string[] = [];
+  @state() protected mode : viewType = 'win';
 
   count() {
     return Object.keys(this.windows).length;
@@ -129,6 +132,13 @@ export default class BackendAIWindowManager extends LitElement {
     }
     this.windows[name]?.setAttribute('isTop', '');
   }
+
+  setViewType(viewType : viewType = 'win') {
+    for (const [index, name] of this.zOrder.entries()) {
+      this.windows[name]?.setViewType(viewType);
+    }
+  }
+
   constructor() {
     super();
     // @ts-ignore

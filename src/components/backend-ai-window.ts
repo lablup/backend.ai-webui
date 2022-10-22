@@ -15,6 +15,7 @@ type windowInfo = {
   height: number
 }
 type windowType = 'win' | 'widget';
+type viewType = 'win' | 'tab';
 
 /**
  Backend AI Window Shell
@@ -36,6 +37,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
   @property({type: String}) type: windowType = 'win';
+  @property({type: String}) viewType: viewType = 'win';
   @property({type: String}) group = '';
   @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
@@ -478,6 +480,10 @@ export default class BackendAIWindow extends LitElement {
   setPosZ(value) {
     this.posZ = 1000 + (value * 10);
     this.win.style.zIndex = this.posZ.toString();
+  }
+
+  setViewType(viewType: viewType = 'win') {
+    this.viewType = viewType;
   }
 
   setName() {
