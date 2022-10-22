@@ -313,7 +313,8 @@
       "SessionNameAlreadyExist": "Session name already exists"
     },
     "EnterValidSessionName": "EnterValidSessionName",
-    "EnvironmentInfo": "Environment Info"
+    "EnvironmentInfo": "Environment Info",
+    "KeypairDetail": "Keypair Detail"
   },
   "button": {
     "Cancel": "Cancel",
