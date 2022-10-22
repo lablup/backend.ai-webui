@@ -37,7 +37,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
   @property({type: String}) type: windowType = 'win';
-  @property({type: String}) viewType: viewType = 'win';
+  @property({type: String}) viewType: viewType = 'tab';
   @property({type: String}) group = '';
   @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
@@ -80,7 +80,7 @@ export default class BackendAIWindow extends LitElement {
       IronFlexAlignment,
       // language=CSS
       css`
-        div.window {
+        div.win {
           box-sizing: border-box;
           margin: 0;
           padding: 0;
@@ -101,7 +101,7 @@ export default class BackendAIWindow extends LitElement {
           z-index: 2000;
         }
 
-        div.window > h4 {
+        div.win > h4 {
           color: #000000;
           font-size: 14px;
           font-weight: 400;
@@ -122,10 +122,39 @@ export default class BackendAIWindow extends LitElement {
           background-color: transparent !important;
         }
 
-        div.window > h4 > img,
-        div.window > h4 > span {
+        div.win > h4 > img,
+        div.win > h4 > span {
           margin-left: 15px;
           z-index: 2;
+        }
+
+        div.tab {
+          box-sizing: border-box;
+          margin: 0;
+          padding: 0;
+          border-radius: 0;
+          box-shadow: none;
+          position: absolute;
+          resize: both;
+          overflow: hidden;
+          animation: fadeIn 0.3s;
+        }
+
+        div.tab > h4 {
+          color: #000000;
+          font-size: 14px;
+          font-weight: 400;
+          height: 32px;
+          padding: 0;
+          margin: 0;
+          border-radius: 0;
+          border-bottom: 0; /*1px solid #DDD;*/
+          display: flex;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          cursor: move;
+          background: var(--card-background-color, #ffffff);
         }
 
         .button-area {
@@ -145,7 +174,13 @@ export default class BackendAIWindow extends LitElement {
           overflow-x: hidden;
           position: relative;
           height: calc(100% - 142px);
+        }
+        div.win #content {
           border-radius: 0 0 5px 5px;
+        }
+
+        div.tab #content {
+          border-radius: 0;
         }
 
         #resize-guide {
@@ -434,28 +469,35 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
-    if (this.posX !== 0) {
-      this.win.style.left = this.posX + 'px';
-    } else {
-      this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+    if (this.viewType === 'win') {
+      if (this.posX !== 0) {
+        this.win.style.left = this.posX + 'px';
+      } else {
+        this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      }
+      if (this.posY !== 0) {
+        this.win.style.top = this.posY + 'px';
+      } else {
+        this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      }
+      this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
+      this.win.style.width = this.defaultWidth;
+      if (this.defaultHeight !== '') {
+        this.win.style.height = this.defaultHeight;
+      } else {
+        this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+      }
+    } else { // Tab mode
+      this.win.style.left = '0px';
+      this.win.style.top = '0px';
+      this.win.style.height ='calc(100vh - 64px)';
     }
-    if (this.posY !== 0) {
-      this.win.style.top = this.posY + 'px';
-    } else {
-      this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
-    }
-    this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();
     } else {
       this.win.style.zIndex = (globalThis.backendaiwindowmanager.count() * 10).toString();
     }
-    this.win.style.width = this.defaultWidth;
-    if (this.defaultHeight !== '') {
-      this.win.style.height = this.defaultHeight;
-    } else {
-      this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
-    }
+
     if (this.name === '') {
       this.name = this.setName();
     }
@@ -511,7 +553,7 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="window" draggable="true" @click="${() => {this.setToTop();}}">
+      <div id="window" class="${this.viewType}" draggable="true" @click="${() => {this.setToTop();}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>

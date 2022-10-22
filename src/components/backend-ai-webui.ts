@@ -1761,7 +1761,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 </div>
               </mwc-top-app-bar-fixed>
 
-              <div class="content" style="box-sizing:border-box; padding:14px;">
+              <div class="content" style="box-sizing:border-box; padding:0;">
                 <div id="navbar-top" class="navbar-top horizontal flex layout wrap"></div>
                 <section role="main" id="content" class="container layout vertical center">
                   <div id="app-page" style="position:relative;">
