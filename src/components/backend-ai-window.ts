@@ -564,6 +564,12 @@ export default class BackendAIWindow extends LitElement {
     }
   }
 
+  setTabOrder(order: number = 0) {
+    if (this.shadowRoot?.querySelector('div.tab > h4')) {
+      this.shadowRoot.querySelector('div.tab > h4').style.marginLeft = (order * 200) + 'px';
+    }
+  }
+
   _validateHexColor(str: string) {
     const reg=/^#([0-9a-f]{3}){1,2}$/i;
     return reg.test(str);
