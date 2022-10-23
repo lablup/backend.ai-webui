@@ -531,7 +531,7 @@ export const BackendAIWebUIStyles = [
       overflow: visible;
       --mdc-theme-on-primary: black;
       --mdc-theme-primary: rgba(247, 246, 246, 1);
-      border-bottom: 1px solid #dbdbdb;
+      border-bottom: 0; /*1px solid #dbdbdb;*/
     }
 
     #main-toolbar > p {

@@ -3,10 +3,11 @@
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement, PropertyValues} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+type viewType = 'win' | 'tab';
 /**
  Backend AI Desktop
 
@@ -19,6 +20,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 export default class BackendAIDesktop extends LitElement {
   @property({type: String}) backgroundURL = 'resources/images/background-01.jpg';
   @query('#background') background!: HTMLDivElement;
+  @state() protected viewType : viewType = 'tab';
 
   constructor() {
     super();
@@ -43,7 +45,11 @@ export default class BackendAIDesktop extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
-    this.background.style.backgroundImage = 'url(' + this.backgroundURL + ')';
+    if (this.viewType === 'win') {
+      this.background.style.backgroundImage = 'url(' + this.backgroundURL + ')';
+    } else { // Tab mode
+      this.background.style.background = '#ccc';
+    }
   }
 
   render() {

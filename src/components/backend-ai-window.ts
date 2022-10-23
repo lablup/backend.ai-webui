@@ -123,7 +123,9 @@ export default class BackendAIWindow extends LitElement {
         }
 
         div.win > h4 > img,
-        div.win > h4 > span {
+        div.win > h4 > span,
+        div.tab > h4 > img,
+        div.tab > h4 > span {
           margin-left: 15px;
           z-index: 2;
         }
@@ -145,6 +147,7 @@ export default class BackendAIWindow extends LitElement {
           font-size: 14px;
           font-weight: 400;
           height: 32px;
+          width: 200px;
           padding: 0;
           margin: 0;
           border-radius: 0;
@@ -175,12 +178,17 @@ export default class BackendAIWindow extends LitElement {
           position: relative;
           height: calc(100% - 142px);
         }
+
         div.win #content {
           border-radius: 0 0 5px 5px;
         }
 
         div.tab #content {
           border-radius: 0;
+        }
+        div.tab #minimize-button,
+        div.tab #maximize-button {
+          display: none;
         }
 
         #resize-guide {
@@ -191,6 +199,10 @@ export default class BackendAIWindow extends LitElement {
           z-index: 1;
           --mdc-icon-size: 24px;
           --mdc-icon-button-size: 32px;
+        }
+
+        div.tab #resize-guide {
+          display: none!important;
         }
 
         #ribbon {
@@ -491,6 +503,7 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.left = '0px';
       this.win.style.top = '0px';
       this.win.style.height ='calc(100vh - 64px)';
+      this.win.style.width = 'calc(100%)';
     }
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();
@@ -562,8 +575,8 @@ export default class BackendAIWindow extends LitElement {
           <div id="titlebar-center" class="flex"></div>
           <div id="ribbon" class="ribbon"></div>
           <div class="button-area">
-            <mwc-icon-button icon="remove" @click="${() => this.minimize_window()}"></mwc-icon-button>
-            <mwc-icon-button icon="fullscreen" @click="${() => this.maximize_window()}"></mwc-icon-button>
+            <mwc-icon-button id="minimize-button" icon="remove" @click="${() => this.minimize_window()}"></mwc-icon-button>
+            <mwc-icon-button id="maximize-button" icon="fullscreen" @click="${() => this.maximize_window()}"></mwc-icon-button>
             <mwc-icon-button icon="close" @click="${() => this.close_window()}"></mwc-icon-button>
           </div>
         </h4>
