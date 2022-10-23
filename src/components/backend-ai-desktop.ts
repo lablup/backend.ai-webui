@@ -48,7 +48,7 @@ export default class BackendAIDesktop extends LitElement {
     if (this.viewType === 'win') {
       this.background.style.backgroundImage = 'url(' + this.backgroundURL + ')';
     } else { // Tab mode
-      this.background.style.background = '#ccc';
+      this.background.style.background = '#dedede';
     }
   }
 

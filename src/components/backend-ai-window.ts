@@ -185,6 +185,7 @@ export default class BackendAIWindow extends LitElement {
 
         div.tab #content {
           border-radius: 0;
+          margin-bottom: 0;
         }
         div.tab #minimize-button,
         div.tab #maximize-button {
@@ -471,7 +472,11 @@ export default class BackendAIWindow extends LitElement {
       this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
     }
-    this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+    if (this.viewType === 'win') {
+      this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+    } else {
+      this.contents.style.height = 'calc(100vh - 64px - 32px)';
+    }
   }
 
   firstUpdated() {
@@ -504,6 +509,7 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.top = '0px';
       this.win.style.height ='calc(100vh - 64px)';
       this.win.style.width = 'calc(100%)';
+      this.contents.style.height = 'calc(100vh - 64px - 32px)';
     }
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();
