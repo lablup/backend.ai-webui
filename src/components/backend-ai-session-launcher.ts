@@ -3565,12 +3565,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 `)}
               </mwc-select>
               <div class="horizontal layout center flex center-justified">
-                <mwc-list multi>
+                <div>
                   <mwc-list-item class="resource-type" style="pointer-events: none;">
                     <div class="resource-type">${_t('session.launcher.ClusterSize')}</div>
                   </mwc-list-item>
-                  <li divider role="separator"></li>
-                  <mwc-list-item class="slider-list-item">
+                  <hr class="separator" />
+                  <div class="slider-list-item">
                     <lablup-slider id="cluster-size" class="cluster"
                                    pin snaps expand editable markers step="1"
                                    marker_limit="${this.marker_limit}"
@@ -3578,8 +3578,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                    value="${this.cluster_size}"
                                    @change="${(e) => this._applyResourceValueChanges(e, false)}"
                                    suffix="${this.cluster_mode === 'single-node' ? _text('session.launcher.Container') : _text('session.launcher.Node')}"></lablup-slider>
-                  </mwc-list-item>
-                </mwc-list>
+                  </div>
+                </div>
               </div>
             ` : html``}
             <wl-expansion name="hpc-option-group">
