@@ -407,19 +407,19 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <div class="vertical layout center" style="position:relative;right:50px;">
           <mwc-menu id="dropdown-menu" class="user-menu">
             ${this.domain !== 'default' && this.domain !== '' ? html`
-            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
                 ${this.domain}
             </mwc-list-item>
             ` : html``}
-            <mwc-list-item class="horizontal layout start center">
+            <mwc-list-item class="horizontal layout start center" style="pointer-events:none;">
                 <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                 <span class="dropdown-menu-name">${this._getUsername()}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
                 <mwc-icon class="dropdown-menu">email</mwc-icon>
                 <span class="dropdown-menu-name">${this._getUserId()}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;">
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
                 <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                 <span class="dropdown-menu-name">${this.roleInfo.role}</span>
             </mwc-list-item>
