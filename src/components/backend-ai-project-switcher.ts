@@ -31,7 +31,7 @@ import {get as _text} from 'lit-translate/util';
 @customElement('backend-ai-project-switcher')
 export default class BackendAIProjectSwitcher extends LitElement {
   @property({type: Array}) groups = [];
-  @property({type: String}) current_group = '';
+  @property({type: String}) currentGroup = '';
 
   @query('#group-select-box') groupSelectionBox: HTMLDivElement | undefined;
 
@@ -52,11 +52,11 @@ export default class BackendAIProjectSwitcher extends LitElement {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserGroupSelector();
-        globalThis.backendaiutils._writeRecentProjectGroup(this.current_group);
+        globalThis.backendaiutils._writeRecentProjectGroup(this.currentGroup);
       }, true);
     } else {
       this._refreshUserGroupSelector();
-      globalThis.backendaiutils._writeRecentProjectGroup(this.current_group);
+      globalThis.backendaiutils._writeRecentProjectGroup(this.currentGroup);
     }
   }
   /**
@@ -66,15 +66,15 @@ export default class BackendAIProjectSwitcher extends LitElement {
    */
   changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
-    this.current_group = globalThis.backendaiclient.current_group;
+    this.currentGroup = globalThis.backendaiclient.current_group;
     globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
   }
 
   _refreshUserGroupSelector(): void {
-    this.current_group = globalThis.backendaiutils._readRecentProjectGroup();
-    globalThis.backendaiclient.current_group = this.current_group;
+    this.currentGroup = globalThis.backendaiutils._readRecentProjectGroup();
+    globalThis.backendaiclient.current_group = this.currentGroup;
     this.groups = globalThis.backendaiclient.groups;
     // Detached from template to support live-update after creating new group (will need it)
     if (this.groupSelectionBox?.hasChildNodes()) {
@@ -84,7 +84,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
     div.className = 'horizontal center center-justified layout';
     const select = document.createElement('mwc-select');
     select.id = 'group-select';
-    select.value = this.current_group;
+    select.value = this.currentGroup;
     // select.style = 'width: auto;max-width: 200px;';
     select.style.width = 'auto';
     select.style.maxWidth = '200px';
@@ -97,7 +97,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
     this.groups.map((group) => {
       opt = document.createElement('mwc-list-item');
       opt.value = group;
-      if (this.current_group === group) {
+      if (this.currentGroup === group) {
         opt.selected = true;
       } else {
         opt.selected = false;
