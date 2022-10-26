@@ -36,17 +36,13 @@ import {TextField} from '@material/mwc-textfield';
  */
 @customElement('backend-ai-user-dropdown-menu')
 export default class BackendAiUserDropdownMenu extends LitElement {
-  @property({type: String}) user_id = 'DISCONNECTED';
-  @property({type: String}) full_name = 'DISCONNECTED';
+  @property({type: String}) userId = 'DISCONNECTED';
+  @property({type: String}) fullName = 'DISCONNECTED';
   @property({type: String}) domain = 'CLICK TO CONNECT';
-  @property({type: Boolean}) is_connected = false;
-  @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean}) is_superadmin = false;
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
   @property({type: Array}) groups = [];
-  @property({type: String}) current_group = '';
   @property({type: Object}) notification;
   @property({type: Boolean}) isUserInfoMaskEnabled = true;
 
@@ -83,8 +79,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * Refresh the user information panel.
    */
   _refreshUserInfoPanel(): void {
-    this.user_id = globalThis.backendaiclient.email;
-    this.full_name = globalThis.backendaiclient.full_name;
+    this.userId = globalThis.backendaiclient.email;
+    this.fullName = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this._showRole();
@@ -96,7 +92,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = this.full_name ? this.full_name : this.user_id;
+    let name = this.fullName ? this.fullName : this.userId;
     // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
@@ -114,7 +110,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    *  @return {string} userId
    */
   _getUserId() {
-    let userId = this.user_id;
+    let userId = this.userId;
     // mask user id(email) only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
@@ -129,7 +125,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showRole() {
-    const data = await this._getRole(this.user_id);
+    const data = await this._getRole(this.userId);
     this.roleInfo = data.user;
   }
 
@@ -140,7 +136,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showKeypairInfo() {
-    const data = await this._getKeypairInfo(this.user_id);
+    const data = await this._getKeypairInfo(this.userId);
     this.keyPairInfo = data;
     this.keyPairInfo.keypairs.reverse();
   }
@@ -183,13 +179,13 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     }
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
-      if (newFullname && (newFullname !== this.full_name)) {
-        globalThis.backendaiclient.update_full_name(this.user_id, newFullname).then((resp) => {
+      if (newFullname && (newFullname !== this.fullName)) {
+        globalThis.backendaiclient.update_full_name(this.userId, newFullname).then((resp) => {
           this.notification.text = _text('webui.menu.FullnameUpdated');
           this.notification.show();
-          this.full_name = globalThis.backendaiclient.full_name = newFullname;
-          (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.full_name;
-          const event = new CustomEvent('current-user-info-changed', {'detail': this.full_name});
+          this.fullName = globalThis.backendaiclient.full_name = newFullname;
+          (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.fullName;
+          const event = new CustomEvent('current-user-info-changed', {'detail': this.fullName});
           document.dispatchEvent(event);
         }).catch((err) => {
           if (err && err.message) {
@@ -457,7 +453,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       <div slot="content" class="layout vertical" style="width:300px;">
         <mwc-textfield id="pref-original-name" type="text"
             label="${_t('webui.menu.FullName')}" maxLength="64" autofocus
-            value="${this.full_name}"
+            value="${this.fullName}"
             helper="${_t('maxLength.64chars')}">
         </mwc-textfield>
       </div>
