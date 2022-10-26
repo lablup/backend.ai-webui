@@ -627,7 +627,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri = await this._getProxyURL(sessionUuid);
-    url = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
     const rqst_proxy = {
       method: 'GET',
       app: app,
