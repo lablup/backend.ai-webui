@@ -347,7 +347,8 @@
     "Continue": "Lanjutkan",
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
     "ForceTerminate": "Hentikan paksa",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Atur Ulang"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -1086,7 +1087,9 @@
     "TooManyAttempt": "Ada terlalu banyak upaya login. Upaya login telah diblokir untuk sementara waktu.",
     "SingleSignOn": {
       "LoginWithSAML": "__NOT_TRANSLATED__"
-    }
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Pendaftaran (khusus undangan Beta)",

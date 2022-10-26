@@ -347,7 +347,8 @@
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
     "ForceTerminate": "Принудительно завершить",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Перезагрузить"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -1086,7 +1087,9 @@
     "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
     "SingleSignOn": {
       "LoginWithSAML": "__NOT_TRANSLATED__"
-    }
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",

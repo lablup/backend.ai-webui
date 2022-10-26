@@ -347,7 +347,8 @@
     "Continue": "Continuer",
     "GoBackToSummaryPage": "Revenir à la page Résumé",
     "ForceTerminate": "Forcer l'arrêt",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Réinitialisation"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -1086,7 +1087,9 @@
     "TooManyAttempt": "Il y a eu trop de tentatives de connexion. Les tentatives de connexion sont bloquées depuis un certain temps.",
     "SingleSignOn": {
       "LoginWithSAML": "__NOT_TRANSLATED__"
-    }
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Inscription (invitation bêta uniquement)",
