@@ -669,7 +669,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const sessionUuid = param['session-uuid'];
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
-    console.log('appName: ' + appName);
     const envs = null;
     let args = null;
     let sendAppName = appName;
@@ -718,8 +717,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(sendAppName + " proxy loaded: ");
-              // console.log(sessionUuid);
             }, 1000);
           }
         });
@@ -1260,7 +1257,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>VSCODE Remote Password:</span>
+            <div><span>VS Code Remote Password:</span>
               <input type="text" id="vscode-password" readonly />
             </div>
           </section>
