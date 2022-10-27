@@ -27,7 +27,6 @@ import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
-import {TextField} from '@material/mwc-textfield';
 
 import toml from 'markty-toml';
 
@@ -48,7 +47,6 @@ import './backend-ai-project-switcher';
 import './backend-ai-user-dropdown-menu';
 
 import BackendAICommonUtils from './backend-ai-common-utils';
-import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAITasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
