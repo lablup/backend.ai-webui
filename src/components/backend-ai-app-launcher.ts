@@ -136,7 +136,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         #vscode-dialog {
-          --component-width: 400px;
+          --component-width: 450px;
         }
 
         #allowed-client-ips-container {
@@ -226,11 +226,35 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: inline-block;
         }
 
-        input#vscode-password {
-          border: none;
-          background: none;
-          pointer-events: none;
-          width: 300px;
+        mwc-textfield#vscode-password {
+          width: 360px;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        .vscode-password {
+          min-height: 100px;
+          overflow-y: scroll;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          scrollbar-width: none; /* firefox */
+        }
+
+        wl-button.vscode-password {
+          display: inline-block;
+          margin: 10px;
+        }
+
+        wl-button.copy {
+          --button-font-size: 10px;
+          display: inline-block;
+          max-width: 15px !important;
+          max-height: 15px !important;
+        }
+
+        wl-icon#vscode-password-icon {
+          color: var(--paper-indigo-700);
         }
 
         @media screen and (max-width: 810px) {
@@ -1117,6 +1141,39 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Copy Remote VS Code password to clipboard
+   *
+   * @param {string} vscodePassword - ssh(remote VS Code) access password
+   * */
+   _copyVSCodePassword(vscodePassword: string) {
+    if (vscodePassword !== '') {
+      const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
+      if (copyText.length == 0) {
+        this.notification.text = _text('usersettings.NoExistingVSCodePassword');
+        this.notification.show();
+      } else {
+        if (navigator.clipboard !== undefined) { // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then( () => {
+            this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
+            this.notification.show();
+          }, (err) => {
+            console.error('Could not copy text: ', err);
+          });
+        } else { // other browsers
+          const tmpInputElement = document.createElement('input');
+          tmpInputElement.type = 'text';
+          tmpInputElement.value = copyText;
+
+          document.body.appendChild(tmpInputElement);
+          tmpInputElement.select();
+          document.execCommand('copy'); // copy operation
+          document.body.removeChild(tmpInputElement);
+        }
+      }
+    }
+  }
+
   render() {
     // language=HTML
     return html`
@@ -1257,8 +1314,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>VS Code Remote Password:</span>
-              <input type="text" id="vscode-password" readonly />
+            <div slot="content">
+              <span>VS Code Remote Password:</span>
+              <mwc-textfield
+              readonly
+              class="vscode-password"
+              id="vscode-password"></mwc-textfield>
+          <mwc-icon-button
+              id="copy-vscode-password-button"
+              icon="content_copy"
+              @click="${() => this._copyVSCodePassword('#vscode-password')}"></mwc-icon-button>
             </div>
           </section>
         </div>
