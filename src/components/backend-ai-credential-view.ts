@@ -997,12 +997,17 @@ export default class BackendAICredentialView extends BackendAIPage {
   }
 
   async _runAction() {
-    const action = location.search.split('action=')[1];
+    const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
+    const isActionExist = regex.test(location.search);
 
-    switch (action) {
-      case 'add':
-        await this._launchKeyPairDialog();
-        break;
+    if(isActionExist) {
+      const action = location.search.split('action=')[1];
+
+      switch (action) {
+        case 'add':
+          await this._launchKeyPairDialog();
+          break;
+      }
     }
   }
 
