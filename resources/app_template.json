@@ -151,7 +151,7 @@
         "name": "vnc-web",
         "title": "VNC (Web)",
         "category": "6.Desktop Environment",
-        "redirect": "/vnc.html?host=<proxy-host>&port=<port-number>&password=backendai&autoconnect=true",
+        "redirect": "",
         "src": "./resources/icons/novnc.svg"
       }
     ],

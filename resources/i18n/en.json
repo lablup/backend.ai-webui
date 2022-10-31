@@ -346,7 +346,8 @@
     "Continue": "Continue",
     "GoBackToSummaryPage": "Go back to Summary page",
     "ForceTerminate": "Force Terminate",
-    "Commit": "Commit"
+    "Commit": "Commit",
+    "Reset": "Reset"
   },
   "agent": {
     "Endpoint": "Endpoint",

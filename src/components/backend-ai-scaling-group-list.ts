@@ -61,6 +61,14 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
   @property({type: Array}) schedulerTypes;
   @property({type: Number}) _totalScalingGroupCount = 0;
 
+  @property({type: Object}) _boundNameRenderer = this._nameRenderer.bind(this);
+  @property({type: Object}) _boundDescriptionRenderer = this._descriptionRenderer.bind(this);
+  @property({type: Object}) _boundDriverRenderer = this._driverRenderer.bind(this);
+  @property({type: Object}) _boundDriverOptsRenderer = this._driverOptsRenderer.bind(this);
+  @property({type: Object}) _boundSchedulerRenderer = this._schedulerRenderer.bind(this);
+  @property({type: Object}) _boundSchedulerOptsRenderer = this._schedulerOptsRenderer.bind(this);
+
+
   @query('#scaling-group-name') scalingGroupName!: TextField;
   @query('#scaling-group-description') scalingGroupDescription!: TextArea;
   @query('#scaling-group-domain') scalingGroupDomain!: Select;
@@ -237,6 +245,58 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
     render(
       html`
         <div>${idx}</div>
+      `,
+      root
+    );
+  }
+
+  _nameRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.name}</div>
+      `,
+      root
+    );
+  }
+
+  _descriptionRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.description}</div>
+      `,
+      root
+    );
+  }
+  _driverRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.driver}</div>
+      `,
+      root
+    );
+  }
+  _driverOptsRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.driver_opts}</div>
+      `,
+      root
+    );
+  }
+
+  _schedulerRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.scheduler}</div>
+      `,
+      root
+    );
+  }
+
+  _schedulerOptsRenderer(root, column, rowData) {
+    render(
+      html`
+        <div>${rowData.item.scheduler_opts}</div>
       `,
       root
     );
@@ -456,37 +516,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
         <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Job list" .items="${this.scalingGroups}">
           <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}">
-            <template>
-              <div> [[item.name]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" .renderer=${this._boundNameRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}">
-            <template>
-              <div> [[item.description]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" .renderer=${this._boundDescriptionRenderer}>
           </vaadin-grid-column>
           <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}">
-            <template>
-              <div> [[item.driver]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" .renderer=${this._boundDriverRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}">
-            <template>
-              <div> [[item.driver_opts]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.DriverOptions')}" .renderer=${this._boundDriverOptsRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}">
-            <template>
-              <div> [[item.scheduler]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" .renderer=${this._boundSchedulerRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}">
-            <template>
-              <div> [[item.scheduler_opts]] </div>
-            </template>
+          <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.SchedulerOptions')}" .renderer=${this._boundSchedulerOptsRenderer}>
           </vaadin-grid-column>
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
           </vaadin-grid-column>

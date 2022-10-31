@@ -349,7 +349,8 @@
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
     "ForceTerminate": "Принудительно завершить",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Перезагрузить"
   },
   "agent": {
     "Endpoint": "Конечная точка",
