@@ -531,12 +531,12 @@ export default class BackendAISummary extends BackendAIPage {
                                 @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
                             <span class="flex"></span>
                           </div>
-                          </div>
                         </div>
                       </lablup-activity-panel>`) : html`
                       <p>${_text('summary.NoInvitations')}</p>`
 }
                   </div>
+                </div>
               </lablup-activity-panel>
             </div>
           </div>
@@ -545,7 +545,7 @@ export default class BackendAISummary extends BackendAIPage {
               <div class="horizontal layout wrap">
                 <div class="vertical layout">
                   <div class="line"></div>
-                  <div class="horizontal layout flex wrap">
+                  <div class="horizontal layout flex wrap center-justified">
                     <lablup-activity-panel class="footer-menu" noheader autowidth style="display: none;">
                       <div slot="message" class="vertical layout center start-justified flex upper-lower-space">
                         <h3 style="margin-top:0px;">${_t('summary.CurrentVersion')}</h3>
@@ -580,27 +580,28 @@ export default class BackendAISummary extends BackendAIPage {
                     </lablup-activity-panel>
                     ${this.is_superadmin ? html`
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                        <a href="/agent">
-                          <div class="layout horizontal center center-justified flex" style="font-size:14px;">
-                            <i class="fas fa-box larger left-end-icon"></i>
-                            <span>${_t('summary.CheckResources')}</span>
+                    <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
+                      <a href="/agent">
+                        <div class="layout horizontal center center-justified flex" style="font-size:14px;">
+                          <i class="fas fa-box larger left-end-icon"></i>
+                          <span>${_t('summary.CheckResources')}</span>
+                          <i class="fas fa-chevron-right right-end-icon"></i>
+                        </div>
+                      </a>
+                    </div>
+                  </lablup-activity-panel>
+                  <lablup-activity-panel class="footer-menu" noheader autowidth>
+                    <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
+                        <a href="/settings">
+                          <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
+                            <i class="fas fa-desktop larger left-end-icon"></i>
+                            <span>${_t('summary.ChangeSystemSetting')}</span>
                             <i class="fas fa-chevron-right right-end-icon"></i>
                           </div>
                         </a>
-                      </div>
-                    </lablup-activity-panel>
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="/settings">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-desktop larger left-end-icon"></i>
-                              <span>${_t('summary.ChangeSystemSetting')}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                      </div>
-                    </lablup-activity-panel>` : html``}
+                    </div>
+                  </lablup-activity-panel>` : html``}
+
                     <lablup-activity-panel class="footer-menu" noheader autowidth>
                       <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
                           <a href="/maintenance">
@@ -612,44 +613,11 @@ export default class BackendAISummary extends BackendAIPage {
                           </a>
                       </div>
                     </lablup-activity-panel>
-                    ${!globalThis.isElectron ? html`
-                      <lablup-activity-panel class="footer-menu" noheader autowidth>
-                        <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                          <a href="https://github.com/lablup/backend.ai-webui/releases/tag/v${globalThis.packageVersion}" target="_blank">
-                            <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                              <i class="fas fa-download larger left-end-icon"></i>
-                              <span>${_t('summary.Download')}</span>
-                              <i class="fas fa-chevron-right right-end-icon"></i>
-                            </div>
-                          </a>
-                        </div>
-                      </lablup-activity-panel>
-                    ` : html``}
                   </div>
                 </div>
               </div>
-            </div>` : html``}
-            ${!globalThis.isElectron && !this.is_admin ? html`
-              <div class="horizontal layout wrap">
-                <div class="vertical layout">
-                  <div class="line"></div>
-                  <div class="horizontal layout flex wrap center-justified">
-                    <lablup-activity-panel class="footer-menu" noheader autowidth>
-                      <div slot="message" class="layout horizontal center center-justified flex upper-lower-space">
-                        <a href="https://github.com/lablup/backend.ai-webui/releases/tag/v${globalThis.packageVersion}" target="_blank">
-                          <div class="layout horizontal center center-justified flex"  style="font-size:14px;">
-                            <i class="fas fa-download larger left-end-icon"></i>
-                            <span>${_t('summary.Download')}</span>
-                            <i class="fas fa-chevron-right right-end-icon"></i>
-                          </div>
-                        </a>
-                      </div>
-                    </lablup-activity-panel>
-                  </div>
-                </div>
-              </div>
-            ` : html``}
-          </div>
+          </div>` : html``}
+        </div>
       </div>
     <backend-ai-release-check id="update-checker"></backend-ai-release-check>
   `;

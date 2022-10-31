@@ -57,7 +57,8 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "Download": "скачать"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
@@ -108,8 +109,7 @@
     "NoInvitations": "Нет приглашений для отображения.",
     "AcceptSharedVFolder": "Теперь вы можете получить доступ к папке:",
     "DeclineSharedVFolder": "Папка приглашения удалена:",
-    "connectingToCluster": "Подключение к Backend.AI кластеру ...",
-    "Download": "скачать"
+    "connectingToCluster": "Подключение к Backend.AI кластеру ..."
   },
   "session": {
     "launcher": {

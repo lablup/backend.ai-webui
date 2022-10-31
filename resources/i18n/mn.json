@@ -57,7 +57,8 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "Download": "татаж авах"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -108,8 +109,7 @@
     "NoInvitations": "Үзүүлэх урилга байхгүй байна.",
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",
     "DeclineSharedVFolder": "Энэхүү фолдерын уралгыг устгалаа:",
-    "connectingToCluster": "Backend.AI кластерт холбогдож байна ...",
-    "Download": "татаж авах"
+    "connectingToCluster": "Backend.AI кластерт холбогдож байна ..."
   },
   "session": {
     "launcher": {
