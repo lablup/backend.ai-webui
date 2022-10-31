@@ -338,7 +338,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (sessionUuid) {
       const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
       if (wsproxyVersion !== 'v1') {
-        url += `${wsproxyVersion}/`;
+        url = new URL(`${wsproxyVersion}/`, url).href;
       }
     }
     return url;
@@ -633,7 +633,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri = await this._getProxyURL(sessionUuid);
-    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
     const rqst_proxy = {
       method: 'GET',
       app: app,
