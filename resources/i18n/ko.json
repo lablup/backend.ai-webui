@@ -11,7 +11,6 @@
       "Pipeline": "파이프라인 (베타)",
       "PipelineJob": "파이프라인 잡 (베타)",
       "Statistics": "통계",
-      "Download": "다운로드",
       "Help": "도움말",
       "Settings": "설정",
       "Administration": "관리",
@@ -109,7 +108,8 @@
     "NoInvitations": "초대 받은 폴더가 없습니다.",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 명: ",
     "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: ",
-    "connectingToCluster": "Backend.AI 클러스터에 연결중..."
+    "connectingToCluster": "Backend.AI 클러스터에 연결중...",
+    "Download": "다운로드"
   },
   "session": {
     "launcher": {

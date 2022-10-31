@@ -11,7 +11,6 @@
       "AgentSummary": "Agent Summary",
       "PipelineJob": "Pipeline Job (Beta)",
       "Statistics": "Statistics",
-      "Download": "Download",
       "Help": "Help",
       "Settings": "Settings",
       "Administration": "Administration",
@@ -109,7 +108,8 @@
     "NoInvitations": "There is no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
     "DeclineSharedVFolder": "Folder invitation is deleted: ",
-    "connectingToCluster": "Connecting to Backend.AI Cluster..."
+    "connectingToCluster": "Connecting to Backend.AI Cluster...",
+    "Download": "Download"
   },
   "session": {
     "launcher": {

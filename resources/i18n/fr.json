@@ -57,8 +57,7 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__",
-      "Download": "Télécharger"
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -109,7 +108,8 @@
     "NoInvitations": "Il n'y a pas d'invitations à afficher.",
     "AcceptSharedVFolder": "Vous pouvez maintenant accéder au dossier :",
     "DeclineSharedVFolder": "L'invitation au dossier est supprimée :",
-    "connectingToCluster": "Connexion au cluster Backend.AI..."
+    "connectingToCluster": "Connexion au cluster Backend.AI...",
+    "Download": "Télécharger"
   },
   "session": {
     "launcher": {

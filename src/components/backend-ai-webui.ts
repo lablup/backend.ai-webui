@@ -915,11 +915,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
   }
 
-  showDownloadPage() {
-    const version = globalThis.packageVersion;
-    window.open(`https://github.com/lablup/backend.ai-webui/releases/tag/v${version}`, '_blank');
-  }
-
   /**
    * Add tool tips by create popovers.
    */
@@ -933,7 +928,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
     this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
-    this._createPopover('.download-link-menu-icon', _text('webui.menu.Download'));
     this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
     if (this.is_admin) {
@@ -1158,7 +1152,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-                <mwc-icon-button class="download-link-menu-icon fg white" icon="download" slot="graphic" style="margin-left:4px;" @click="${() => this.showDownloadPage()}"></mwc-icon-button>
                 <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
               </div>
             </footer>
@@ -1183,7 +1176,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
-              <mwc-icon-button class="download-link-menu-icon fg white" icon="download" slot="graphic" style="margin-left:4px;" @click="${() => this.showDownloadPage()}"></mwc-icon-button>
               <mwc-icon-button id="usersettings-menu-icon" icon="settings" slot="graphic" class="fg ${this._page === 'usersettings' ? 'yellow' : 'white'}" style="margin-left:4px;" @click="${() => this._moveTo('/usersettings')}"></mwc-icon-button>
             </div>
           </footer>

@@ -57,8 +57,7 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__",
-      "Download": "Unduh"
+      "AgentSummary": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -109,7 +108,8 @@
     "NoInvitations": "Tidak ada undangan untuk ditampilkan.",
     "AcceptSharedVFolder": "Anda sekarang dapat mengakses folder: ",
     "DeclineSharedVFolder": "Undangan folder dihapus: ",
-    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI..."
+    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI...",
+    "Download": "Unduh"
   },
   "session": {
     "launcher": {

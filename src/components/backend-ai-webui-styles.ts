@@ -544,7 +544,7 @@ export const BackendAIWebUIStyles = [
       left: 0;
       bottom: 0 !important; /* Workaround to prevent miscalculated height */
       text-align: center;
-      height: 150px;
+      height: 100px;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
     }
