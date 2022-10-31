@@ -35,6 +35,7 @@ import '../plastics/lablup-shields/lablup-shields';
 import './lablup-progress-bar';
 import './backend-ai-dialog';
 
+import JsonToCsv from '../lib/json_to_csv';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -1047,6 +1048,31 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.workDialog.accessKey = accessKey;
         this.workDialog.show();
       }, 100);
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _downloadLogs() {
+    const sessionUuid = (this.workDialog as any).sessionUuid;
+    const sessionName = (this.workDialog as any).sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
+    const accessKey = this.workDialog.accessKey;
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
+      let logs = req.result.logs;
+      if (typeof logs === 'string') {
+        logs = logs.replace(/,/g, ';'); // string with comma(,) -> semi-colon(;)
+      }
+      JsonToCsv.exportToCsv(sessionName, [{'logs': logs}]);
+      this.notification.text = _text('session.DownloadingCSVFile');
+      this.notification.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -2417,7 +2443,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
-        <div slot="action">
+        <div slot="action" class="horizontal layout center">
+          <mwc-icon-button fab flat inverted icon="download" @click="${() => this._downloadLogs()}">
+          </mwc-icon-button>
           <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
           </mwc-icon-button>
         </div>
