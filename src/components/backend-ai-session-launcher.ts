@@ -2541,9 +2541,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const name = item.kernelname;
     if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
       // TODO define extended type for custom properties
-      (this.helpDescriptionDialog as any)._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
-      (this.helpDescriptionDialog as any)._helpDescription = this.resourceBroker.imageInfo[name].description;
-      (this.helpDescriptionDialog as any)._helpDescriptionIcon = item.icon;
+      this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
+      this._helpDescription = this.resourceBroker.imageInfo[name].description || _text('session.launcher.NoDescriptionFound');
+      this._helpDescriptionIcon = item.icon;
       this.helpDescriptionDialog.show();
     } else {
       if (name in this.imageInfo) {
@@ -2603,6 +2603,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     e.stopPropagation();
     this._helpDescriptionTitle = _text('session.launcher.EnvironmentVariableTitle');
     this._helpDescription = _text('session.launcher.DescSetEnv');
+    this._helpDescriptionIcon = '';
     this.helpDescriptionDialog.show();
   }
 
