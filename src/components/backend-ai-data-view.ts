@@ -386,7 +386,7 @@ export default class BackendAIData extends BackendAIPage {
             ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
           ` : html``}
