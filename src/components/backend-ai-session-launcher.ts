@@ -2540,7 +2540,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     e.stopPropagation();
     const name = item.kernelname;
     if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
-      // TODO define extended type for custom properties
       this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
       this._helpDescription = this.resourceBroker.imageInfo[name].description || _text('session.launcher.NoDescriptionFound');
       this._helpDescriptionIcon = item.icon;
