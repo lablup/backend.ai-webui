@@ -351,7 +351,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.plugins['menuitem-superadmin'] = [];
         const pluginLoaderQueue = [] as any[];
         for (const page of config.plugin.page.split(',')) {
-          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+          pluginLoaderQueue.push(Promise.resolve().then((module) => {
             const pageItem = document.createElement(page) as any;
             pageItem.classList.add('page');
             pageItem.setAttribute('name', page);
@@ -391,7 +391,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     // TODO need more clear type for mwc-list-item
-    //(this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
+    // (this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
@@ -1148,7 +1148,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.2.220928</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.09.2.221102</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1172,7 +1172,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.2.220928</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.09.2.221102</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
