@@ -108,8 +108,7 @@
     "NoInvitations": "There is no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
     "DeclineSharedVFolder": "Folder invitation is deleted: ",
-    "connectingToCluster": "Connecting to Backend.AI Cluster...",
-    "DownloadWebUIApp": "Download Backend.AI Web UI App"
+    "connectingToCluster": "Connecting to Backend.AI Cluster..."
   },
   "session": {
     "launcher": {
@@ -314,8 +313,7 @@
       "SessionNameAlreadyExist": "Session name already exists"
     },
     "EnterValidSessionName": "EnterValidSessionName",
-    "EnvironmentInfo": "Environment Info",
-    "KeypairDetail": "Keypair Detail"
+    "EnvironmentInfo": "Environment Info"
   },
   "button": {
     "Cancel": "Cancel",

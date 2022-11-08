@@ -1,16 +1,16 @@
-maintenance:dependencies:
+maintenance:
   - scripts/**/*
 
-field:UI / UX:
+UI / UX:
   - resources/fonts/*
   - resources/icons/*
   - resources/*.css
   - src/plastics/**/*
   - resources/i18n/*
 
-field:library / SDK:
+library / SDK:
   - resources/lib/**/*
   - resources/wsproxy/**/*
 
-field:localization:
+localization:
   - resources/i18n/*

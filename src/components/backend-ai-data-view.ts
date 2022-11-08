@@ -74,7 +74,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
-  @property({type: Array}) allowed_folder_type:string[] = [];
+  @property({type: Array}) allowed_folder_type = [];
   @property({type: Object}) notification = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
@@ -374,19 +374,19 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !this.allowed_folder_type.includes('group')) ? '100%': '50%'}"
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}"
                         @change=${this._toggleFolderTypeInput} required>
-              ${this.allowed_folder_type.includes('user') ? html`
+              ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!this.allowed_folder_type.includes('user')}">${_t('data.Project')}</mwc-list-item>
+              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-select>
-            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
-                  <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
+                  <mwc-list-item value="${item.name}" ?disabled=${(this.allowed_folder_type as string[]).includes('group')} ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
           ` : html``}
@@ -450,15 +450,15 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="clone-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !this.allowed_folder_type.includes('group')) ? '100%': '50%'}">
-              ${this.allowed_folder_type.includes('user') ? html`
+                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
+              ${(this.allowed_folder_type as string[]).includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!this.allowed_folder_type.includes('user')}">${_t('data.Project')}</mwc-list-item>
+              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-select>
-            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
                 <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
                   ${(this.allowedGroups as any).map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
@@ -682,7 +682,7 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if (this.allowed_folder_type.includes('group')) {
+    if ((this.allowed_folder_type as string[]).includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
@@ -698,7 +698,7 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
-    if (this.allowed_folder_type.includes('group')) {
+    if ((this.allowed_folder_type as string[]).includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }

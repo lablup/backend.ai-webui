@@ -2444,7 +2444,6 @@ export default class BackendAiStorageList extends BackendAIPage {
             setTimeout(() => {
               this.uploadFiles = [];
               this.uploadFilesExist = false;
-              this.fileUploadCount = this.fileUploadCount - 1;
             }, 1000);
             return;
           }

@@ -562,7 +562,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
-    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app);
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
     if (servicePortInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text

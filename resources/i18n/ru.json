@@ -108,8 +108,7 @@
     "NoInvitations": "Нет приглашений для отображения.",
     "AcceptSharedVFolder": "Теперь вы можете получить доступ к папке:",
     "DeclineSharedVFolder": "Папка приглашения удалена:",
-    "connectingToCluster": "Подключение к Backend.AI кластеру ...",
-    "DownloadWebUIApp": "__NOT_TRANSLATED__"
+    "connectingToCluster": "Подключение к Backend.AI кластеру ..."
   },
   "session": {
     "launcher": {

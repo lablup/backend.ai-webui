@@ -108,8 +108,7 @@
     "NoInvitations": "Үзүүлэх урилга байхгүй байна.",
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",
     "DeclineSharedVFolder": "Энэхүү фолдерын уралгыг устгалаа:",
-    "connectingToCluster": "Backend.AI кластерт холбогдож байна ...",
-    "DownloadWebUIApp": "__NOT_TRANSLATED__"
+    "connectingToCluster": "Backend.AI кластерт холбогдож байна ..."
   },
   "session": {
     "launcher": {

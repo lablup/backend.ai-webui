@@ -327,7 +327,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   /**
    * If admin comes, prepare the user list page.
    */
-  async _preparePage() {
+  _preparePage() {
     if (globalThis.backendaiclient.is_admin !== true) {
       this.disablePage();
     } else {
@@ -353,7 +353,6 @@ export default class BackendAICredentialView extends BackendAIPage {
     }
     this.vfolder_max_limit['value'] = 10;
     this._defaultFileName = this._getDefaultCSVFileName();
-    await this._runAction();
   }
 
   /**
@@ -994,21 +993,6 @@ export default class BackendAICredentialView extends BackendAIPage {
   _gBToByte(value = 0) {
     const gigabyte = Math.pow(2, 30);
     return Math.round(gigabyte * value);
-  }
-
-  async _runAction() {
-    const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
-    const isActionExist = regex.test(location.search);
-
-    if(isActionExist) {
-      const action = location.search.split('action=')[1];
-
-      switch (action) {
-        case 'add':
-          await this._launchKeyPairDialog();
-          break;
-      }
-    }
   }
 
   render() {
