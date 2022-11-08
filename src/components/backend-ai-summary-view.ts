@@ -563,7 +563,7 @@ export default class BackendAISummary extends BackendAIPage {
                   <span>${_t('summary.UploadFiles')}</span>
                 </a>
                 ${this.is_admin ? html`
-                  <a href="/credential" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
+                  <a href="/credential?action=add" class="vertical center center-justified layout start-menu-items" style="border-left:1px solid #ccc;">
                     <i class="fas fa-key fa-2x"></i>
                     <span>${_t('summary.CreateANewKeypair')}</span>
                   </a>

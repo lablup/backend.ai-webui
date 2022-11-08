@@ -63,6 +63,7 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
+import '../plugins/saml-login';
 
 registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
@@ -352,6 +353,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         const pluginLoaderQueue = [] as any[];
         for (const page of config.plugin.page.split(',')) {
           pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
+          pluginLoaderQueue.push(Promise.resolve().then((module) => {
             const pageItem = document.createElement(page) as any;
             pageItem.classList.add('page');
             pageItem.setAttribute('name', page);
@@ -1148,7 +1150,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.2.220928</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.09.2.221102</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1172,7 +1174,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.2.220928</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.09.2.221102</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
