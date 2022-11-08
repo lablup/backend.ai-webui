@@ -391,7 +391,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     // TODO need more clear type for mwc-list-item
-    // (this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
+    //(this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
