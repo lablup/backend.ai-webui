@@ -108,7 +108,8 @@
     "NoInvitations": "Tidak ada undangan untuk ditampilkan.",
     "AcceptSharedVFolder": "Anda sekarang dapat mengakses folder: ",
     "DeclineSharedVFolder": "Undangan folder dihapus: ",
-    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI..."
+    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
