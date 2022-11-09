@@ -108,7 +108,8 @@
     "NoInvitations": "초대 받은 폴더가 없습니다.",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 명: ",
     "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: ",
-    "connectingToCluster": "Backend.AI 클러스터에 연결중..."
+    "connectingToCluster": "Backend.AI 클러스터에 연결중...",
+    "DownloadWebUIApp": "Backend.AI Web UI 앱 다운로드"
   },
   "session": {
     "launcher": {

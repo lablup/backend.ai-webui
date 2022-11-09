@@ -84,11 +84,31 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Object}) invitations = Object();
+  @property({type: Object}) appDownloadMap;
+  @property({type: String}) appDownloadUrl;
+  @property({type: String}) downloadAppOS = '';
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
 
   constructor() {
     super();
     this.invitations = [];
+    this.appDownloadMap = {
+      Linux: {
+        os: 'linux',
+        architecture: ['arm64', 'x64'],
+        extension: 'zip',
+      },
+      MacOS: {
+        os: 'macos',
+        architecture: ['intel', 'apple'],
+        extension: 'dmg',
+      },
+      Windows: {
+        os: 'win32',
+        architecture: ['arm64', 'x64'],
+        extension: 'zip',
+      }
+    };
   }
 
   static get styles(): CSSResultGroup {
@@ -262,6 +282,46 @@ export default class BackendAISummary extends BackendAIPage {
           margin-right: 11px;
         }
 
+        #download-app-os-select-box {
+          height: 80px;
+          padding-top: 20px;
+          padding-left: 20px;
+          background-color: #F6F6F6;
+          margin-bottom: 15px;
+        }
+
+        #download-app-os-select-box mwc-select {
+          width: 305px;
+          height: 58px;
+          border: 0.1em solid #ccc;
+          font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-typography-subtitle1-font-size: 14px;
+          --mdc-typography-subtitle1-font-color: rgb(24, 24, 24);
+          --mdc-typography-subtitle1-font-weight: 400;
+          --mdc-typography-subtitle1-line-height: 16px;
+          --mdc-select-fill-color: rgba(255, 255, 255, 1.0);
+          --mdc-select-label-ink-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-disabled-ink-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-dropdown-icon-color: rgba(24, 24, 24, 1.0);
+          --mdc-select-focused-dropdown-icon-color: rgba(24, 24, 24, 0.87);
+          --mdc-select-disabled-dropdown-icon-color: rgba(24, 24, 24, 0.87);
+          --mdc-select-idle-line-color: transparent;
+          --mdc-select-hover-line-color: transparent;
+          --mdc-select-ink-color: rgb(24, 24, 24);
+          --mdc-select-outlined-idle-border-color: rgba(24, 24, 24, 0.42);
+          --mdc-select-outlined-hover-border-color: rgba(24, 24, 24, 0.87);
+          --mdc-theme-surface: white;
+          --mdc-list-vertical-padding: 5px;
+          --mdc-list-side-padding: 10px;
+          --mdc-menu-item-height: 28px;
+          --mdc-list-item__primary-text: {
+            height: 20px;
+            color: #222222;
+          };
+          margin-bottom: 5px;
+        }
+
         lablup-activity-panel.inner-panel:hover {
           --card-background-color: var(--general-sidepanel-color);
         }
@@ -290,6 +350,7 @@ export default class BackendAISummary extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this.update_checker = this.shadowRoot?.querySelector('#update-checker');
+    this._getUserOS();
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._readAnnouncement();
@@ -297,6 +358,13 @@ export default class BackendAISummary extends BackendAIPage {
     } else {
       this._readAnnouncement();
     }
+  }
+
+  _getUserOS() {
+    this.downloadAppOS = 'MacOS';
+    if (navigator.userAgent.indexOf('Mac')!=-1) this.downloadAppOS = 'MacOS';
+    if (navigator.userAgent.indexOf('Win')!=-1) this.downloadAppOS = 'Windows';
+    if (navigator.userAgent.indexOf('Linux')!=-1) this.downloadAppOS = 'Linux';
   }
 
   _refreshConsoleUpdateInformation() {
@@ -319,6 +387,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
         this.webui_version = globalThis.packageVersion;
+        this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
 
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();
@@ -331,6 +400,7 @@ export default class BackendAISummary extends BackendAIPage {
       this.authenticated = true;
       this.manager_version = globalThis.backendaiclient.managerVersion;
       this.webui_version = globalThis.packageVersion;
+      this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
       this._refreshConsoleUpdateInformation();
       this._refreshInvitations();
       // let event = new CustomEvent("backend-ai-resource-refreshed", {"detail": {}});
@@ -456,6 +526,20 @@ export default class BackendAISummary extends BackendAIPage {
     return str.replace(/(<([^>]+)>)/gi, '');
   }
 
+  _updateSelectedDownloadAppOS(e) {
+    this.downloadAppOS = e.target.value;
+  }
+
+  _downloadApplication(e) {
+    let downloadLink = '';
+    const architecture = e.target.innerText.toLowerCase();
+    const pkgVersion = globalThis.packageVersion;
+    const os = this.appDownloadMap[this.downloadAppOS]['os'];
+    const extension = this.appDownloadMap[this.downloadAppOS]['extension'];
+    downloadLink = `${this.appDownloadUrl}/v${pkgVersion}/backend.ai-desktop-${pkgVersion}-${os}-${architecture}.${extension}`;
+    window.open(downloadLink, '_blank');
+  }
+
   render() {
     // language=HTML
     return html`
@@ -499,46 +583,72 @@ export default class BackendAISummary extends BackendAIPage {
           </lablup-activity-panel>
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
-            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="220">
-                <div slot="message">
-                  ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
-                </div>
-              </lablup-activity-panel>
-              <lablup-activity-panel title="${_t('summary.Invitation')}" elevation="1" height="220" scrollableY>
-                  <div slot="message">
-                    ${this.invitations.length > 0 ? this.invitations.map((invitation, index) => html`
-                      <lablup-activity-panel class="inner-panel" noheader autowidth elevation="0" height="130">
-                        <div slot="message">
-                          <div class="wrap layout">
-                          <h3 style="padding-top:10px;">From ${invitation.inviter}</h3>
-                          <span class="invitation_folder_name">${_t('summary.FolderName')}: ${invitation.vfolder_name}</span>
-                          <div class="horizontal center layout">
-                            ${_t('summary.Permission')}:
-                            ${[...invitation.perm].map((c) => {
-    return html`
-                                <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
-                                        description="${c.toUpperCase()}" ui="flat"></lablup-shields>`;
-  })}
-                          </div>
-                          <div style="margin:15px auto;" class="horizontal layout end-justified">
-                            <mwc-button
-                                outlined
-                                label="${_t('summary.Decline')}"
-                                @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
-                            <mwc-button
-                                unelevated
-                                label="${_t('summary.Accept')}"
-                                @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
-                            <span class="flex"></span>
-                          </div>
-                        </div>
-                      </lablup-activity-panel>`) : html`
-                      <p>${_text('summary.NoInvitations')}</p>`
-}
+            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="245">
+              <div slot="message">
+                ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
+              </div>
+            </lablup-activity-panel>
+            <lablup-activity-panel title="${_t('summary.Invitation')}" elevation="1" height="245" scrollableY>
+              <div slot="message">
+                ${this.invitations.length > 0 ? this.invitations.map((invitation, index) => html`
+                  <lablup-activity-panel class="inner-panel" noheader autowidth elevation="0" height="130">
+                    <div slot="message">
+                      <div class="wrap layout">
+                      <h3 style="padding-top:10px;">From ${invitation.inviter}</h3>
+                      <span class="invitation_folder_name">${_t('summary.FolderName')}: ${invitation.vfolder_name}</span>
+                      <div class="horizontal center layout">
+                        ${_t('summary.Permission')}:
+                        ${[...invitation.perm].map((c) => html`
+                            <lablup-shields app="" color="${['green', 'blue', 'red'][['r', 'w', 'd'].indexOf(c)]}"
+                                description="${c.toUpperCase()}" ui="flat"></lablup-shields>
+                        `)}
+                      </div>
+                      <div style="margin:15px auto;" class="horizontal layout end-justified">
+                        <mwc-button
+                            outlined
+                            label="${_t('summary.Decline')}"
+                            @click="${(e) => this._deleteInvitation(e, invitation)}"></mwc-button>
+                        <mwc-button
+                            unelevated
+                            label="${_t('summary.Accept')}"
+                            @click="${(e) => this._acceptInvitation(e, invitation)}"></mwc-button>
+                        <span class="flex"></span>
+                      </div>
+                    </div>
                   </div>
+                </lablup-activity-panel>`) : html`
+                <p>${_text('summary.NoInvitations')}</p>`
+}
+              </div>
+            </lablup-activity-panel>
+          </div>
+          ${!globalThis.isElectron ? html`
+            <lablup-activity-panel title="${_t('summary.DownloadWebUIApp')}" elevation="1" narrow height="245">
+              <div slot="message">
+                <div id="download-app-os-select-box" class="horizontal layout start-justified">
+                  <mwc-select @selected="${(e) => this._updateSelectedDownloadAppOS(e)}">
+                    ${Object.keys(this.appDownloadMap).map((item) => html`
+                      <mwc-list-item
+                          value="${item}"
+                          ?selected="${item === this.downloadAppOS}">
+                        ${item}
+                      </mwc-list-item>
+                    `)}
+                  </mwc-select>
                 </div>
-              </lablup-activity-panel>
-            </div>
+                <div class="horizontal layout center center-justified">
+                  ${this.downloadAppOS && this.appDownloadMap[this.downloadAppOS]['architecture'].map((arch) => html`
+                    <mwc-button
+                        raised
+                        style="margin:10px;flex-basis:50%;"
+                        @click="${(e) => this._downloadApplication(e)}">
+                        ${arch}
+                    </mwc-button>
+                  `)}
+                </div>
+              </div>
+            </lablup-activity-panel>
+          ` : html``}
           </div>
           <div class="vertical layout">
             ${this.is_admin ? html`

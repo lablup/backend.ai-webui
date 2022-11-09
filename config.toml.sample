@@ -21,6 +21,7 @@ maskUserInfo = false                    # If true, then account information in h
 #singleSignOnVendors = "saml"           # Comma-separated list of vendors that support single sign-on.
 enableContainerCommit = false           # If true, then user can request container commit corres ponding to the session in running status
 hideAgents = true                       # If false, show the `Agent Summary` menu in the sidebar.
+appDownloadUrl = ""                     # URL to download the electron app. If blank, https://github.com/lablup/backend.ai-webui/releases/download will be used.
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
