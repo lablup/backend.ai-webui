@@ -387,6 +387,7 @@ export default class BackendAISummary extends BackendAIPage {
         this.authenticated = true;
         this.manager_version = globalThis.backendaiclient.managerVersion;
         this.webui_version = globalThis.packageVersion;
+        this.appDownloadUrl = globalThis.backendaiclient._config.appDownloadUrl;
 
         if (this.activeConnected) {
           this._refreshConsoleUpdateInformation();

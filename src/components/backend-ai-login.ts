@@ -468,7 +468,7 @@ export default class BackendAILogin extends BackendAIPage {
     const defaultConditions: boolean = (parentsKey === undefined ||
                                         valueObj.value === undefined ||
                                         typeof valueObj.value === 'undefined' ||
-                                        valueObj.value === '' ||
+                                        valueObj.value === '' || valueObj.value === '""' ||
                                         valueObj.value === null);
     let extraConditions;
     switch (typeof valueObj.defaultValue) {
@@ -699,8 +699,8 @@ export default class BackendAILogin extends BackendAIPage {
     this.appDownloadUrl = this._getConfigValueByExists(generalConfig,
       {
         valueType: 'string',
-        defaultValue: 'github',
-        value: (generalConfig?.appDownloadUrl === 'github' ? 'https://github.com/lablup/backend.ai-webui/releases/download' : generalConfig?.appDownloadUrl),
+        defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
+        value: (generalConfig?.appDownloadUrl),
       } as ConfigValueObject) as string;
 
     // Enable pipeline flag
@@ -881,6 +881,7 @@ export default class BackendAILogin extends BackendAIPage {
           'general.apiEndpoint',
           'general.apiEndpointText',
           'general.siteDescription',
+          'general.appDownloadUrl',
           'wsproxy',
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
