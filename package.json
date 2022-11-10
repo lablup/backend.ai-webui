@@ -109,7 +109,7 @@
     "cli-color": "^2.0.3",
     "cors": "^2.8.5",
     "crypto-js": "^4.1.1",
-    "electron": "^14.2.9",
+    "electron": "^18.3.7",
     "electron-installer-debian": "^3.1.0",
     "electron-installer-dmg": "^4.0.0",
     "electron-packager": "^16.0.0",
