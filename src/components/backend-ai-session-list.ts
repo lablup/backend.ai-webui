@@ -1067,7 +1067,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
       const logs = req.result.logs;
       globalThis.backendaiutils.exportToTxt(sessionName, logs);
-      this.notification.text = _text('session.DownloadingCSVFile');
+      this.notification.text = _text('session.DownloadingSessionLogs');
       this.notification.show();
     }).catch((err) => {
       if (err && err.message) {

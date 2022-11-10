@@ -316,7 +316,8 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "зурвас",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
