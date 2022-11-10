@@ -108,7 +108,8 @@
     "NoInvitations": "There is no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
     "DeclineSharedVFolder": "Folder invitation is deleted: ",
-    "connectingToCluster": "Connecting to Backend.AI Cluster..."
+    "connectingToCluster": "Connecting to Backend.AI Cluster...",
+    "DownloadWebUIApp": "Download Backend.AI Web UI App"
   },
   "session": {
     "launcher": {
@@ -466,7 +467,8 @@
     "UserAccountCreatedError": "This account has already been registered.",
     "KeypairCreated": "Keypair successfully created.",
     "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
-    "UserIDRequired": "User ID is required."
+    "UserIDRequired": "User ID is required.",
+    "KeypairDetail": "Keypair Detail"
   },
   "data": {
     "Folders": "Folders",
