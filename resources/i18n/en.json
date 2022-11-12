@@ -315,7 +315,7 @@
     },
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
-    "KeypairDetail": "Keypair Detail"
+    "DownloadingSessionLogs": "Downloading session logs."
   },
   "button": {
     "Cancel": "Cancel",
@@ -467,7 +467,8 @@
     "UserAccountCreatedError": "This account has already been registered.",
     "KeypairCreated": "Keypair successfully created.",
     "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
-    "UserIDRequired": "User ID is required."
+    "UserIDRequired": "User ID is required.",
+    "KeypairDetail": "Keypair Detail"
   },
   "data": {
     "Folders": "Folders",
