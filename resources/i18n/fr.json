@@ -108,7 +108,8 @@
     "NoInvitations": "Il n'y a pas d'invitations à afficher.",
     "AcceptSharedVFolder": "Vous pouvez maintenant accéder au dossier :",
     "DeclineSharedVFolder": "L'invitation au dossier est supprimée :",
-    "connectingToCluster": "Connexion au cluster Backend.AI..."
+    "connectingToCluster": "Connexion au cluster Backend.AI...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -316,7 +317,8 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "Message",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",

@@ -1075,6 +1075,28 @@ export default class BackendAiSessionList extends BackendAIPage {
     });
   }
 
+  _downloadLogs() {
+    const sessionUuid = (this.workDialog as any).sessionUuid;
+    const sessionName = (this.workDialog as any).sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
+    const accessKey = this.workDialog.accessKey;
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
+      const logs = req.result.logs;
+      globalThis.backendaiutils.exportToTxt(sessionName, logs);
+      this.notification.text = _text('session.DownloadingSessionLogs');
+      this.notification.show();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+  }
+
   _refreshLogs() {
     // TODO define extended type for custom properties
     const sessionUuid = (this.workDialog as any).sessionUuid;
@@ -2437,7 +2459,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
-        <div slot="action">
+        <div slot="action" class="horizontal layout center">
+          <mwc-icon-button fab flat inverted icon="download" @click="${() => this._downloadLogs()}">
+          </mwc-icon-button>
           <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
           </mwc-icon-button>
         </div>
