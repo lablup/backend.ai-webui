@@ -534,12 +534,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    * @param {object} rowData
    */
   storageNodesRenderer(root, column?, rowData?) {
+    const allowedVFolderHostsInfo = JSON.parse(rowData.item.allowed_vfolder_hosts);
     render(
       // language=HTML
       html`
       <div class="layout horizontal center flex">
         <div class="vertical start layout around-justified">
-          ${rowData.item.allowed_vfolder_hosts.map((host) => html`
+          ${Object.keys(allowedVFolderHostsInfo).map((host) => html`
             <lablup-shields app="" color="darkgreen" ui="round" description="${host}" style="margin-bottom:3px;"></lablup-shields>`
           )}
         </div>
