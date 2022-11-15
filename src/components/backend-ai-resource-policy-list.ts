@@ -58,6 +58,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @property({type: Boolean}) enableParsingStoragePermissions = false;
   @property({type: Object}) _boundResourceRenderer = Object();
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -563,15 +564,21 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+        this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
         this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
-        this._getVfolderPermissions();
+        if (this.enableParsingStoragePermissions) {
+          this._getVfolderPermissions();
+        }
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+      this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
-      this._getVfolderPermissions();
+      if (this.enableParsingStoragePermissions) {
+        this._getVfolderPermissions();
+      }
     }
   }
 
@@ -610,7 +617,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
-    const allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
+    let allowedStorageHosts; 
+    if (this.enableParsingStoragePermissions) {
+      allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
+    } else {
+      allowedStorageHosts = resourcePolicy.allowed_vfolder_hosts;
+    }
     this.newPolicyName.value = policyName;
     this.current_policy_name = policyName;
     this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
@@ -735,7 +747,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts_with_permissions = this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList);
+    let vfolder_hosts;
+    if (this.enableParsingStoragePermissions) {
+      vfolder_hosts = JSON.stringify(this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList));
+    } else {
+      vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    }
     this._validateUserInput(this.cpuResource);
     this._validateUserInput(this.ramResource);
     this._validateUserInput(this.gpuResource);
@@ -770,7 +787,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'idle_timeout': this.idleTimeout.value,
       'max_vfolder_count': this.vfolderCountLimitInput.value,
       'max_vfolder_size': this._gBToByte(Number(this.vfolderCapacityLimit.value)),
-      'allowed_vfolder_hosts': JSON.stringify(vfolder_hosts_with_permissions),
+      'allowed_vfolder_hosts': vfolder_hosts,
     };
 
     if (this.enableSessionLifetime) {

@@ -572,6 +572,7 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('22.09')) {
       this._features['image-commit'] = true;
+      this._features['fine-grained-storage-permissions'] = true;
     }
   }
 
@@ -2239,8 +2240,10 @@ class StorageProxy {
   }
 
   async getAllPermissions() {
-    const rqst = this.client.newSignedRequest('GET', `/acl`, null);
-    return this.client._wrapWithPromise(rqst);
+    if (this.client.supports('fine-grained-storage-permissions')) {
+      const rqst = this.client.newSignedRequest('GET', `/acl`, null);
+      return this.client._wrapWithPromise(rqst);
+    }
   }
 }
 

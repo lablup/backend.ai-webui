@@ -83,6 +83,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @property({type: Boolean}) enableParsingStoragePermissions = false;
   @query('#active-credential-list') activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list') inactiveCredentialList!: BackendAICredentialList;
   @query('#active-user-list') activeUserList!: BackendAIUserList;
@@ -376,13 +377,19 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+        this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
         this._preparePage();
-        this._getVfolderPermissions();
+        if (this.enableParsingStoragePermissions) {
+          this._getVfolderPermissions();
+        }
       });
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+      this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
       this._preparePage();
-      this._getVfolderPermissions();
+      if (this.enableParsingStoragePermissions) {
+        this._getVfolderPermissions();
+      }
     }
   }
 
@@ -548,7 +555,12 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts_with_permissions = this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList);
+    let vfolder_hosts;
+    if (this.enableParsingStoragePermissions) {
+      vfolder_hosts = JSON.stringify(this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList));
+    } else {
+      vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    }
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -583,7 +595,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
       'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
-      'allowed_vfolder_hosts': JSON.stringify(vfolder_hosts_with_permissions)
+      'allowed_vfolder_hosts': vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
