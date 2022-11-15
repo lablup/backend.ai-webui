@@ -2237,6 +2237,11 @@ class StorageProxy {
     let v = {'vfolder_host': host};
     return this.client.query(q, v);
   }
+
+  async getAllPermissions() {
+    const rqst = this.client.newSignedRequest('GET', `/acl`, null);
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class Keypair {
