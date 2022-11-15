@@ -83,11 +83,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
+  @state() private vfolderPermissions;
 
   constructor() {
     super();
     this.all_vfolder_hosts = [];
-    this.allowed_vfolder_hosts = [];
+    this.allowed_vfolder_hosts = {};
+    this.vfolderPermissions = [];
     this.resource_policy_names = [];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
   }
@@ -562,12 +564,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
         this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
+        this._getVfolderPermissions();
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
+      this._getVfolderPermissions();
     }
+  }
+
+  /**
+   * Get All grantable permissions per action on storage hosts and vfolder
+   */
+  _getVfolderPermissions() {
+    globalThis.backendaiclient.storageproxy.getAllPermissions().then((res) => {
+      this.vfolderPermissions = res.vfolder_host_permission_list;
+    });
   }
 
   _launchResourcePolicyDialog(e) {
@@ -596,6 +609,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
+    const allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
     this.newPolicyName.value = policyName;
     this.current_policy_name = policyName;
     this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
@@ -623,7 +637,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     this.vfolderCountLimitInput.value = resourcePolicy.max_vfolder_count;
     this.vfolderCapacityLimit.value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
-    this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
+    this.allowed_vfolder_hosts = allowedStorageHosts;
   }
 
   _refreshPolicyData() {
@@ -702,9 +716,25 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return Math.round(gigabyte * value);
   }
 
+  /**
+   * Parse simple allowed vfodler host list with fine-grained permissions
+   * 
+   * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
+   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   */
+  _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
+    const obj = {};
+    storageList.forEach((storage) => {
+      Object.assign(obj, {
+        [storage]: this.vfolderPermissions
+      });
+    });
+    return obj;
+  }
+
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    const vfolder_hosts_with_permissions = this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList);
     this._validateUserInput(this.cpuResource);
     this._validateUserInput(this.ramResource);
     this._validateUserInput(this.gpuResource);
@@ -739,7 +769,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'idle_timeout': this.idleTimeout.value,
       'max_vfolder_count': this.vfolderCountLimitInput.value,
       'max_vfolder_size': this._gBToByte(Number(this.vfolderCapacityLimit.value)),
-      'allowed_vfolder_hosts': vfolder_hosts
+      'allowed_vfolder_hosts': JSON.stringify(vfolder_hosts_with_permissions),
     };
 
     if (this.enableSessionLifetime) {

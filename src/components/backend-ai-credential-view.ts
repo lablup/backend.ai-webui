@@ -104,6 +104,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
+  @state() private vfolderPermissions;
 
   constructor() {
     super();
@@ -376,11 +377,38 @@ export default class BackendAICredentialView extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
         this._preparePage();
+        this._getVfolderPermissions();
       });
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
       this._preparePage();
+      this._getVfolderPermissions();
     }
+  }
+
+  /**
+   * Get All grantable permissions per action on storage hosts and vfolder
+   */
+  _getVfolderPermissions() {
+    globalThis.backendaiclient.storageproxy.getAllPermissions().then((res) => {
+      this.vfolderPermissions = res.vfolder_host_permission_list;
+    });
+  }
+
+  /**
+   * Parse simple allowed vfodler host list with fine-grained permissions
+   * 
+   * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
+   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   */
+  _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
+    const obj = {};
+    storageList.forEach((storage) => {
+      Object.assign(obj, {
+        [storage]: this.vfolderPermissions
+      });
+    });
+    return obj;
   }
 
   /**
@@ -520,7 +548,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    const vfolder_hosts_with_permissions = this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList);
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -555,7 +583,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
       'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
-      'allowed_vfolder_hosts': vfolder_hosts
+      'allowed_vfolder_hosts': JSON.stringify(vfolder_hosts_with_permissions)
     };
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
