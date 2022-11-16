@@ -620,7 +620,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
-    let allowedStorageHosts; 
+    let allowedStorageHosts;
     if (this.enableParsingStoragePermissions) {
       allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
     } else {
@@ -734,7 +734,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   /**
    * Parse simple allowed vfodler host list with fine-grained permissions
-   * 
+   *
    * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
    * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
    */
