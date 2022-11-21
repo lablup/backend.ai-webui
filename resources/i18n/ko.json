@@ -108,7 +108,8 @@
     "NoInvitations": "초대 받은 폴더가 없습니다.",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 명: ",
     "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: ",
-    "connectingToCluster": "Backend.AI 클러스터에 연결중..."
+    "connectingToCluster": "Backend.AI 클러스터에 연결중...",
+    "DownloadWebUIApp": "Backend.AI Web UI 앱 다운로드"
   },
   "session": {
     "launcher": {
@@ -315,7 +316,8 @@
     "CommitFinished": "세션 커밋 작업 완료",
     "CommitFailed": "세션 커밋 작업 실패",
     "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
-    "EnvironmentInfo": "환경 정보"
+    "EnvironmentInfo": "환경 정보",
+    "DownloadingSessionLogs": "세션 로그를 다운받습니다."
   },
   "button": {
     "Cancel": "취소",
@@ -346,7 +348,8 @@
     "Continue": "계속",
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
     "ForceTerminate": "강제 종료",
-    "Commit": "커밋하기"
+    "Commit": "커밋하기",
+    "Reset": "초기화"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -402,9 +405,9 @@
     "ConcurrentSessions": "동시 세션수",
     "active": "활성",
     "concurrentsessions": "동시 세션수",
-    "RateLimit": "Rate Limit",
-    "RateLimitValidation": "Rate Limit 값은 0보다 크고 50000 이하 여야 합니다.",
-    "RateLimitFor15min": "15분 동안 Rate Limiting",
+    "RateLimit": "최대 요청수",
+    "RateLimitValidation": "최대 요청수 값은 0보다 크고 50000 이하 여야 합니다.",
+    "RateLimitFor15min": "15분 동안의 최대 요청수",
     "for900seconds": "(900초당)",
     "RateLimitInputRequired": "Rate Limit 값을 입력해주세요.",
     "InvalidRateLimitValue": "올바른 Rate Limit 값을 입력해주세요.",
@@ -469,7 +472,8 @@
     "UserAccountCreatedError": "이미 가입한 이력이 있는 사용자 입니다.",
     "KeypairCreated": "키페어가 성공적으로 생성되었습니다.",
     "UserNotFound": "다음 사용자 계정을 찾을 수 없어 자격 증명 생성에 실패하였습니다. : ",
-    "UserIDRequired": "사용자 계정(email)은 필수 입력입니다."
+    "UserIDRequired": "사용자 계정(email)은 필수 입력입니다.",
+    "KeypairDetail": "키페어 정보"
   },
   "data": {
     "Folders": "폴더",
@@ -1070,6 +1074,8 @@
     "ClickToUseID": "ID 사용",
     "EndpointHistory": "엔드포인트 기록",
     "NoEndpointSaved": "저장된 엔드포인트가 없습니다.",
+    "EndpointInfo": "엔드포인트 안내",
+    "DescEndpoint": "<p>엔트포인트에는 Manager로의 연결을 중계하는 Backend.AI Webserver가 작동하고 있는 URL을 작성해주시면 됩니다.</p><p>e.g., http://127.0.0.1:8090/</p>",
     "CancelLogin": "로그인 취소",
     "SignoutFinished": "탈퇴가 완료되었습니다.",
     "APIEndpointEmpty": "API Endpoint 가 지정되지 않았습니다. 로그인을 위해 앤드포인트를 지정하세요.",

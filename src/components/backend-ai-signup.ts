@@ -16,7 +16,7 @@ import './lablup-terms-of-service';
 import './backend-ai-dialog';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import {Client} from '../lib/backend.ai-client-esm';
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -66,7 +66,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @query('#signup-panel') signupPanel!: BackendAIDialog;
   @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
-  @query('#block-panel') TOSdialog!: LablupTermsOfService;
+  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
 
   static get styles(): CSSResultGroup {
     return [
@@ -200,16 +200,10 @@ export default class BackendAiSignup extends BackendAIPage {
   init_client() {
     if (typeof this.client === 'undefined') {
       if (this.endpoint !== '' && this.client && Object.keys(this.client).length !== 0) {
-        const clientConfig = {
-          connectionMode: 'SESSION',
-          apiVersionMajor: 'v4',
-          apiVersion: 'v4.20190615',
-          _apiVersion: 'v4.20190615',
-          endpoint: this.endpoint
-        };
+        const clientConfig = new ClientConfig('', '', this.endpoint, 'SESSION');
         this.client = new Client(
           clientConfig,
-          `Backend.AI Console.`,
+          `Backend.AI WebUI.`,
         );
       }
     }

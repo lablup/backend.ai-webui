@@ -37,12 +37,13 @@ import {
 /**
  Backend.AI Credential List
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-credential-list
  */
 
 class UnableToDeleteKeypairException extends Error {
   public title: string;
+
   constructor(message: string) {
     super(message);
     Object.setPrototypeOf(this, UnableToDeleteKeypairException.prototype);
@@ -207,7 +208,7 @@ export default class BackendAICredentialList extends BackendAIPage {
    * @param {string} user_id
    * @return {void}
    */
-  _refreshKeyData(user_id: null|string = null) {
+  _refreshKeyData(user_id: null | string = null) {
     let is_active = true;
     switch (this.condition) {
     case 'active':
@@ -521,10 +522,10 @@ export default class BackendAICredentialList extends BackendAIPage {
   keyageRenderer(root, column?, rowData?) {
     render(
       html`
-            <div class="layout vertical">
-              <span>${rowData.item.elapsed} ${_t('credential.Days')}</span>
-              <span class="indicator">(${rowData.item.created_at_formatted})</span>
-            </div>
+        <div class="layout vertical">
+          <span>${rowData.item.elapsed} ${_t('credential.Days')}</span>
+          <span class="indicator">(${rowData.item.created_at_formatted})</span>
+        </div>
       `, root
     );
   }
@@ -539,23 +540,26 @@ export default class BackendAICredentialList extends BackendAIPage {
   controlRenderer(root, column?, rowData?) {
     render(
       html`
-            <div id="controls" class="layout horizontal flex center"
-                 .access-key="${rowData.item.access_key}">
-              <mwc-icon-button class="fg green" icon="assignment" fab flat inverted @click="${(e) => this._showKeypairDetail(e)}">
-              </mwc-icon-button>
-              <mwc-icon-button class="fg blue" icon="settings" fab flat inverted @click="${(e) => this._modifyResourcePolicy(e)}">
-              </mwc-icon-button>
-              ${this.isAdmin && this._isActive() ? html`
-                <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
-                </mwc-icon-button>
-                <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted @click="${(e) => this._deleteKey(e)}">
-                </mwc-icon-button>
-              ` : html``}
-              ${this._isActive() === false ? html`
-                <mwc-icon-button class="fg blue" icon="redo" fab flat inverted @click="${(e) => this._reuseKey(e)}">
-                </mwc-icon-button>
-              ` : html``}
-            </div>
+        <div id="controls" class="layout horizontal flex center"
+             .access-key="${rowData.item.access_key}">
+          <mwc-icon-button class="fg green" icon="assignment" fab flat inverted
+                           @click="${(e) => this._showKeypairDetail(e)}">
+          </mwc-icon-button>
+          <mwc-icon-button class="fg blue" icon="settings" fab flat inverted
+                           @click="${(e) => this._modifyResourcePolicy(e)}">
+          </mwc-icon-button>
+          ${this.isAdmin && this._isActive() ? html`
+            <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
+            </mwc-icon-button>
+            <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted
+                             @click="${(e) => this._deleteKey(e)}">
+            </mwc-icon-button>
+          ` : html``}
+          ${this._isActive() === false ? html`
+            <mwc-icon-button class="fg blue" icon="redo" fab flat inverted @click="${(e) => this._reuseKey(e)}">
+            </mwc-icon-button>
+          ` : html``}
+        </div>
       `, root
     );
   }
@@ -571,7 +575,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="monospace">${rowData.item.access_key}</div>
+        <div class="monospace">${rowData.item.access_key}</div>
       `, root
     );
   }
@@ -587,12 +591,12 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        ${rowData.item.is_admin? html`
+        <div class="layout horizontal center flex">
+          ${rowData.item.is_admin ? html`
             <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
           ` : html``}
-        <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-      </div>
+          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+        </div>
       `, root
     );
   }
@@ -666,18 +670,18 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       // language=HTML
       html`
-      <div class="layout horizontal center flex">
-        <div class="vertical start layout">
-          <div style="font-size:11px;width:40px;">
-            ${rowData.item.concurrency_used} / ${rowData.item.concurrency_limit}
+        <div class="layout horizontal center flex">
+          <div class="vertical start layout">
+            <div style="font-size:11px;width:40px;">
+              ${rowData.item.concurrency_used} / ${rowData.item.concurrency_limit}
+            </div>
+            <span class="indicator">Sess.</span>
           </div>
-          <span class="indicator">Sess.</span>
+          <div class="vertical start layout">
+            <span style="font-size:8px">${rowData.item.rate_limit} <span class="indicator">req./15m.</span></span>
+            <span style="font-size:8px">${rowData.item.num_queries} <span class="indicator">queries</span></span>
+          </div>
         </div>
-        <div class="vertical start layout">
-          <span style="font-size:8px">${rowData.item.rate_limit} <span class="indicator">req./15m.</span></span>
-          <span style="font-size:8px">${rowData.item.num_queries} <span class="indicator">queries</span></span>
-        </div>
-      </div>
       `, root
     );
   }
@@ -861,24 +865,33 @@ export default class BackendAICredentialList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Credential list"
-                    id="keypair-grid" .items="${this.keypairs}">
-          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-          <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
-          <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin" .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
-          <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at" .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
-          <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}" .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}" .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+                     id="keypair-grid" .items="${this.keypairs}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable
+                                     .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable
+                                     .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
+          <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin"
+                                   .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at"
+                                   .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}"
+                              .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}"
+                              .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
+          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}"
+                              .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}"
+                                message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
-        <span slot="title">Keypair Detail</span>
+        <span slot="title">${_t('credential.KeypairDetail')}</span>
         <div slot="action" class="horizontal end-justified flex layout">
-        ${this.keypairInfo.is_admin ? html`
-          <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+          ${this.keypairInfo.is_admin ? html`
+            <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
           ` : html``}
           <lablup-shields app="" description="user" ui="flat"></lablup-shields>
         </div>
@@ -888,7 +901,7 @@ export default class BackendAICredentialList extends BackendAIPage {
               <h4>${_t('credential.Information')}</h4>
               <div role="listbox" style="margin: 0;">
                 <vaadin-item>
-                  <div><strong>User ID</strong></div>
+                  <div><strong>${_t('credential.UserID')}</strong></div>
                   <div secondary>${this.keypairInfo.user_id}</div>
                 </vaadin-item>
                 <vaadin-item>
@@ -940,16 +953,16 @@ export default class BackendAICredentialList extends BackendAIPage {
 
         <div slot="content" class="vertical layout">
           <div class="vertical layout center-justified">
-              <mwc-select
-                  id="policy-list"
-                  label="${_t('credential.SelectPolicy')}">
-                  ${Object.keys(this.resourcePolicy).map((rp) =>
-    html`
-                      <mwc-list-item value=${this.resourcePolicy[rp].name}>
-                        ${this.resourcePolicy[rp].name}
-                      </mwc-list-item>`
-  )}
-              </mwc-select>
+            <mwc-select
+              id="policy-list"
+              label="${_t('credential.SelectPolicy')}">
+              ${Object.keys(this.resourcePolicy).map((rp) =>
+                html`
+                  <mwc-list-item value=${this.resourcePolicy[rp].name}>
+                    ${this.resourcePolicy[rp].name}
+                  </mwc-list-item>`
+              )}
+            </mwc-select>
           </div>
           <div class="vertical layout center-justified">
             <mwc-textfield
@@ -961,7 +974,6 @@ export default class BackendAICredentialList extends BackendAIPage {
                 validationMessage="${_t('credential.RateLimitValidation')}"
                 helper="${_t('credential.RateLimitValidation')}"
                 @change="${() => this._validateRateLimit()}"
-                @input="${() => this._validateRateLimit()}"
                 value="${this.keypairInfo.rate_limit}"></mwc-textfield>
           </div>
         </div>

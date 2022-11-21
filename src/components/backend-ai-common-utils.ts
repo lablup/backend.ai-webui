@@ -126,6 +126,30 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     return [obj1, obj2].reduce(_merge, {});
   }
 
+  /**
+   * Export string to txt file
+   *
+   * @param {String} fileName - file name to save
+   * @param {String} str - contents string
+   */
+  exportToTxt(fileName: string, str: string) {
+    if (!str || str.length === 0) {
+      return;
+    }
+    const blob = new Blob([str], {type: 'text/plain;charset=utf-8'});
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      // Browsers that support HTML5 download attribute
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName + '.txt');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   render() {
     // language=HTML
     return html`

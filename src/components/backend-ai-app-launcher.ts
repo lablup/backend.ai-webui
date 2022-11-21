@@ -336,7 +336,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (sessionUuid) {
       const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
       if (wsproxyVersion !== 'v1') {
-        url += `${wsproxyVersion}/`;
+        url = new URL(`${wsproxyVersion}/`, url).href;
       }
     }
     return url;
@@ -562,13 +562,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
-    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app);
     if (servicePortInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
 
       this.notification.show();
-      return Promise.resolve(false);      
+      return Promise.resolve(false);
     }
 
     // Apply v1 when executing in electron mode
@@ -627,7 +627,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri = await this._getProxyURL(sessionUuid);
-    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
     const rqst_proxy = {
       method: 'GET',
       app: app,
@@ -784,7 +784,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
       const userPort = parseInt(this.appPort.value);
-      if (this.checkPreferredPort && userPort) {
+      if (this.checkPreferredPort.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
