@@ -66,7 +66,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @query('#signup-panel') signupPanel!: BackendAIDialog;
   @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
-  @query('#block-panel') TOSdialog!: LablupTermsOfService;
+  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
 
   static get styles(): CSSResultGroup {
     return [
