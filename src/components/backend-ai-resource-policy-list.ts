@@ -58,7 +58,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
-  @property({type: Boolean}) enableParsingStoragePermissions = false;
   @property({type: Object}) _boundResourceRenderer = Object();
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
@@ -84,13 +83,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
-  @state() private vfolderPermissions;
 
   constructor() {
     super();
     this.all_vfolder_hosts = [];
-    this.allowed_vfolder_hosts = {};
-    this.vfolderPermissions = [];
+    this.allowed_vfolder_hosts = [];
     this.resource_policy_names = [];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
   }
@@ -535,16 +532,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    * @param {object} rowData
    */
   storageNodesRenderer(root, column?, rowData?) {
-    let allowedVFolderHostsInfo = JSON.parse(rowData.item.allowed_vfolder_hosts);
-    if (this.enableParsingStoragePermissions) {
-      allowedVFolderHostsInfo = Object.keys(allowedVFolderHostsInfo);
-    }
     render(
       // language=HTML
       html`
       <div class="layout horizontal center flex">
         <div class="vertical start layout around-justified">
-          ${allowedVFolderHostsInfo.map((host) => html`
+          ${rowData.item.allowed_vfolder_hosts.map((host) => html`
             <lablup-shields app="" color="darkgreen" ui="round" description="${host}" style="margin-bottom:3px;"></lablup-shields>`
           )}
         </div>
@@ -567,31 +560,14 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-        this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
         this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
-        if (this.enableParsingStoragePermissions) {
-          this._getVfolderPermissions();
-        }
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
-      this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
-      if (this.enableParsingStoragePermissions) {
-        this._getVfolderPermissions();
-      }
     }
-  }
-
-  /**
-   * Get All grantable permissions per action on storage hosts and vfolder
-   */
-  _getVfolderPermissions() {
-    globalThis.backendaiclient.storageproxy.getAllPermissions().then((res) => {
-      this.vfolderPermissions = res.vfolder_host_permission_list;
-    });
   }
 
   _launchResourcePolicyDialog(e) {
@@ -620,12 +596,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     this.resource_policy_names = Object.keys(resourcePolicies);
     const resourcePolicy = resourcePolicies[policyName];
-    let allowedStorageHosts;
-    if (this.enableParsingStoragePermissions) {
-      allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
-    } else {
-      allowedStorageHosts = resourcePolicy.allowed_vfolder_hosts;
-    }
     this.newPolicyName.value = policyName;
     this.current_policy_name = policyName;
     this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
@@ -653,7 +623,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
     this.vfolderCountLimitInput.value = resourcePolicy.max_vfolder_count;
     this.vfolderCapacityLimit.value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
-    this.allowed_vfolder_hosts = allowedStorageHosts;
+    this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
   }
 
   _refreshPolicyData() {
@@ -732,30 +702,9 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return Math.round(gigabyte * value);
   }
 
-  /**
-   * Parse simple allowed vfodler host list with fine-grained permissions
-   *
-   * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
-   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
-   */
-  _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
-    const obj = {};
-    storageList.forEach((storage) => {
-      Object.assign(obj, {
-        [storage]: this.vfolderPermissions
-      });
-    });
-    return obj;
-  }
-
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    let vfolder_hosts;
-    if (this.enableParsingStoragePermissions) {
-      vfolder_hosts = JSON.stringify(this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList));
-    } else {
-      vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
-    }
+    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
     this._validateUserInput(this.cpuResource);
     this._validateUserInput(this.ramResource);
     this._validateUserInput(this.gpuResource);
@@ -790,7 +739,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'idle_timeout': this.idleTimeout.value,
       'max_vfolder_count': this.vfolderCountLimitInput.value,
       'max_vfolder_size': this._gBToByte(Number(this.vfolderCapacityLimit.value)),
-      'allowed_vfolder_hosts': vfolder_hosts,
+      'allowed_vfolder_hosts': vfolder_hosts
     };
 
     if (this.enableSessionLifetime) {
