@@ -147,6 +147,7 @@ class Client {
   public _managerVersion: any;
   public _apiVersion: any;
   public _apiVersionMajor: any;
+  public _loginSessionId: string | null;
   public is_admin: boolean;
   public is_superadmin: boolean;
   public kernelPrefix: any;
@@ -197,7 +198,7 @@ class Client {
    */
   constructor(config: ClientConfig, agentSignature: string) {
     this.code = null;
-    this.sessionId = null;
+    this.sessionId = null; // TODO: check and remove.
     this.kernelType = null;
     this.clientVersion = '22.09.0';
     this.agentSignature = agentSignature;
@@ -244,6 +245,11 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 5000;
+    if (localStorage.getItem('backendaiwebui.sessionid')) {
+      this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
+    } else {
+      this._loginSessionId = '';
+    }
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -299,6 +305,10 @@ class Client {
       resp = await fetch(rqst.uri, rqst);
       if (typeof requestTimer !== "undefined") {
         clearTimeout(requestTimer);
+      }
+      let loginSessionId = resp.headers.get('X-BackendAI-SessionID'); // Login session ID handler
+      if (loginSessionId) {
+        this._loginSessionId = loginSessionId;
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
@@ -455,7 +465,7 @@ class Client {
       // Deprecated backendaiconsole.* should also be cleared here.
       Object.entries(localStorage)
           .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiwebui
           .map((x) => localStorage.removeItem(x));         // remove filtered keys
 
       // Will not throw exception here since the request should be proceeded
@@ -609,7 +619,7 @@ class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
-        this._config._session_id = result.session_id;
+        this._config._session_id = result.session_id; // TODO: change to X-BackendAI-SessionID header-version. use this._loginSessionId instead.
         //console.log("login succeed");
       } else {
         //console.log("login failed");
@@ -643,8 +653,12 @@ class Client {
           return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
         }
         await this.get_manager_version();
+        if (this._loginSessionId !== null && this._loginSessionId !== '') {
+          localStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        }
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
+        localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
           return Promise.resolve({fail_reason: result.data.details});
         } else {
@@ -680,6 +694,7 @@ class Client {
     if (currentLogs) {
        localStorage.removeItem('backendaiwebui.logs');
     }
+    localStorage.removeItem('backendaiwebui.sessionid');
     return this._wrapWithPromise(rqst);
   }
 
@@ -1254,6 +1269,10 @@ class Client {
         hdrs.set('X-BackendAI-Encoded', 'true');
         requestBody = this.getEncodedPayload(requestBody);
       }
+    }
+    // Add session id header for non-cookie environment.
+    if (this._loginSessionId !== '') {
+      hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
     }
     let requestInfo = {
       method: method,
