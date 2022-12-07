@@ -43,6 +43,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
   @property({type: String}) escapeKeyAction = 'close';
+  @property({type: Boolean}) stickyTitle = false;
 
   @query('#dialog') protected dialog;
 
@@ -117,6 +118,16 @@ export default class BackendAiDialog extends LitElement {
           height: 20px;
           border-bottom: 1px solid #DDD !important;
         }
+
+        .sticky {
+          position: sticky;
+          position: -webkit-sticky;
+          position: -moz-sticky;
+          position: -ms-sticky;
+          position: -o-sticky;
+          top: 0;
+          z-index: 10;
+        }
       `];
   }
 
@@ -124,6 +135,9 @@ export default class BackendAiDialog extends LitElement {
     this.open = this.dialog.open;
     if (this.persistent) {
       this.dialog.scrimClickAction = '';
+    }
+    if (this.stickyTitle) {
+      (this.shadowRoot?.querySelector('h3') as HTMLElement).classList.add('sticky');
     }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;

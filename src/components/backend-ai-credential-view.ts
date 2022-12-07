@@ -85,6 +85,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @property({type: String}) _defaultFileName = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @property({type: Boolean}) enableParsingStoragePermissions = false;
   @query('#active-credential-list') activeCredentialList!: BackendAICredentialList;
   @query('#inactive-credential-list') inactiveCredentialList!: BackendAICredentialList;
   @query('#active-user-list') activeUserList!: BackendAIUserList;
@@ -106,6 +107,7 @@ export default class BackendAICredentialView extends BackendAIPage {
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
   @state() private all_vfolder_hosts;
   @state() private default_vfolder_host = '';
+  @state() private vfolderPermissions;
 
   constructor() {
     super();
@@ -378,12 +380,45 @@ export default class BackendAICredentialView extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+        this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
         this._preparePage();
+        if (this.enableParsingStoragePermissions) {
+          this._getVfolderPermissions();
+        }
       });
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+      this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
       this._preparePage();
+      if (this.enableParsingStoragePermissions) {
+        this._getVfolderPermissions();
+      }
     }
+  }
+
+  /**
+   * Get All grantable permissions per action on storage hosts and vfolder
+   */
+  _getVfolderPermissions() {
+    globalThis.backendaiclient.storageproxy.getAllPermissions().then((res) => {
+      this.vfolderPermissions = res.vfolder_host_permission_list;
+    });
+  }
+
+  /**
+   * Parse simple allowed vfodler host list with fine-grained permissions
+   *
+   * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
+   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   */
+  _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
+    const obj = {};
+    storageList.forEach((storage) => {
+      Object.assign(obj, {
+        [storage]: this.vfolderPermissions
+      });
+    });
+    return obj;
   }
 
   /**
@@ -523,7 +558,12 @@ export default class BackendAICredentialView extends BackendAIPage {
    */
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    let vfolder_hosts;
+    if (this.enableParsingStoragePermissions) {
+      vfolder_hosts = JSON.stringify(this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList));
+    } else {
+      vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
+    }
     this._validateUserInput(this.cpu_resource);
     this._validateUserInput(this.ram_resource);
     this._validateUserInput(this.gpu_resource);
@@ -558,7 +598,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
       'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
-      'allowed_vfolder_hosts': vfolder_hosts
+      'allowed_vfolder_hosts': vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
       this._validateUserInput(this.session_lifetime);
