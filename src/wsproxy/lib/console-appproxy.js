@@ -42,8 +42,13 @@ module.exports = (proxy = class Proxy {
     let requestBody = '';
     let hdrs = {
       "Content-Type": "application/json",
-      "Cookie" : "AIOHTTP_SESSION=" + this._env.session
     };
+    logger.debug(`authenticating with manager by ${this._env.auth_mode} mode`)
+    if (this._env.auth_mode === "cookie") {
+      hdrs.Cookie = "AIOHTTP_SESSION=" + this._env.session;
+    } else {
+      hdrs['X-BackendAI-SessionID'] = this._env.session;
+    }
     return hdrs;
   }
 
