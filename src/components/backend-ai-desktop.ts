@@ -20,7 +20,7 @@ type viewType = 'win' | 'tab';
 export default class BackendAIDesktop extends LitElement {
   @property({type: String}) backgroundURL = 'resources/images/background-01.jpg';
   @query('#background') background!: HTMLDivElement;
-  @state() protected viewType : viewType = 'tab';
+  @state() protected viewType : viewType = 'win';
 
   constructor() {
     super();

@@ -587,7 +587,7 @@ export default class BackendAISummary extends BackendAIPage {
           </lablup-activity-panel>
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
-            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="245">
+            <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="1x" height="245">
               <div slot="message">
                 ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
               </div>

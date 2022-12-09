@@ -657,6 +657,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     }
   }
 
+  _menuSelected(e) {
+    // Reserved for future use.
+    return true;
+  }
+
+  _menuAction(e) {
+    // Reserved for future use.
+    return true;
+  }
+
   updated(changedProps: any) {
     if (changedProps.has('_page')) {
       let view: string = this._page;
