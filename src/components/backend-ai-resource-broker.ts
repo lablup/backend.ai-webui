@@ -647,52 +647,41 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
 
-      let enqueueSession = false;
-      if (globalThis.backendaiclient._config.always_enqueue_compute_session === true) {
-        enqueueSession = true;
-      }
-      if (response.presets) {
-        const presets = response.presets;
-        const availablePresets: any = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            for (const [slotKey, slotName] of Object.entries(slotList)) {
-              if (slotKey in item.resource_slots) {
+      const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
+      const availablePresets = response.presets.map((item) => {
+        if (item.allocatable === true) {
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots) {
+              item[slotName] = item.resource_slots[slotKey];
+            }
+          }
+        } else if (enqueueSession) {
+          // Even if allocatable is false, if enqueueSession is true,
+          // allocatable is determined based on when no resources are allocated.
+          item.allocatable = true;
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots && slotName in total_resource_group_slot) {
+              if (item.resource_slots[slotKey] <= total_resource_group_slot[slotName]) {
                 item[slotName] = item.resource_slots[slotKey];
-              }
-            }
-          } else if (enqueueSession) {
-            // Even if allocatable is false, if enqueueSession is true,
-            // allocatable is determined based on when no resources are allocated.
-            item.allocatable = true;
-            for (const [slotKey, slotName] of Object.entries(slotList)) {
-              if (slotKey in item.resource_slots && slotName in total_resource_group_slot) {
-                if (item.resource_slots[slotKey] <= total_resource_group_slot[slotName]) {
-                  item[slotName] = item.resource_slots[slotKey];
-                } else {
-                  item.allocatable = false;
-                  break;
-                }
+              } else {
+                item.allocatable = false;
+                break;
               }
             }
           }
-
-          // Change to binary unit
-          item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-          if (item.shared_memory) {
-            item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
-          } else {
-            item.shmem = null;
-          }
-          if (item.allocatable) {
-            availablePresets.push(item);
-          }
-        });
-        availablePresets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
-        this.resource_templates = availablePresets;
-        if (this.resource_templates_filtered.length === 0) {
-          this.resource_templates_filtered = this.resource_templates;
         }
+        // Change to binary unit
+        item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+        if (item.shared_memory) {
+          item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
+        } else {
+          item.shmem = null;
+        }
+        return item;
+      }).filter((item) => item.allocatable).sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
+      this.resource_templates = availablePresets;
+      if (this.resource_templates_filtered.length === 0) {
+        this.resource_templates_filtered = this.resource_templates;
       }
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
