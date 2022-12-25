@@ -661,8 +661,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           item.allocatable = true;
           for (const [slotKey, slotName] of Object.entries(slotList)) {
             if (slotKey in item.resource_slots && slotName in total_resource_group_slot) {
-              if (item.resource_slots[slotKey] <= total_resource_group_slot[slotName]) {
-                item[slotName] = item.resource_slots[slotKey];
+              const resourceSlot = slotKey === 'mem' ? globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g') : item.resource_slots[slotKey];
+              const totalResourceGroupSlot = total_resource_group_slot[slotName];
+              if (resourceSlot <= totalResourceGroupSlot) {
+                item[slotName] = resourceSlot;
               } else {
                 item.allocatable = false;
                 break;
