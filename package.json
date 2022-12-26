@@ -97,6 +97,7 @@
     "browserify": "^17.0.0",
     "buffer": "^6.0.3",
     "cli-color": "^2.0.3",
+    "commander": "^9.4.1",
     "cors": "^2.8.5",
     "electron": "^22.0.0",
     "electron-installer-debian": "^3.1.0",
