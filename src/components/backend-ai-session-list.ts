@@ -990,7 +990,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: proxyURL + `proxy/${token}/${sessionId}`
+      uri: new URL(`proxy/${token}/${sessionId}`, proxyURL).href
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -998,7 +998,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
+            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href
             credentials: 'include',
             mode: 'cors'
           };
