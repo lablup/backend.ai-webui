@@ -5,26 +5,25 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
+import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import '@material/mwc-button';
 import '@material/mwc-icon';
+import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button';
-import '@material/mwc-menu';
+import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
-import '@material/mwc-textfield';
+import {TextField} from '@material/mwc-textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
 import './backend-ai-signup';
 import {default as PainKiller} from './backend-ai-painkiller';
 
-import * as aiSDK from '../lib/backend.ai-client-es6';
+// import * as aiSDK from '../lib/backend.ai-client-es6';
+import * as ai from '../lib/backend.ai-client-esm';
+
 import {
   IronFlex,
   IronFlexAlignment,
@@ -34,9 +33,25 @@ import {
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+type BackendAISignup = HTMLElementTagNameMap['backend-ai-signup'];
+
 declare global {
-  const ai: typeof aiSDK;
+  const ai: any;
 }
+
+type ConnectionMode = 'SESSION' | 'API';
+
+type ConfigValueType = 'boolean' | 'number' | 'string' | 'array';
+
+type ConfigValueObject = {
+  valueType: ConfigValueType;
+  defaultValue: boolean | number | string | Array<string>;
+  value: boolean | number | string | Array<string>;
+};
 
 /**
  Backend.AI Login for GUI Console
@@ -53,6 +68,8 @@ declare global {
  */
 @customElement('backend-ai-login')
 export default class BackendAILogin extends BackendAIPage {
+  shadowRoot!: ShadowRoot | null;
+
   @property({type: String}) api_key = '';
   @property({type: String}) secret_key = '';
   @property({type: String}) user_id = '';
@@ -64,18 +81,16 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) default_import_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
-  @property({type: String}) connection_mode = 'SESSION';
+  @property({type: String}) appDownloadUrl;
+  @property({type: String}) connection_mode = 'SESSION' as ConnectionMode;
   @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
   @property({type: String}) email;
   @property({type: Object}) config = Object();
-  @property({type: Object}) loginPanel;
-  @property({type: Object}) signoutPanel;
-  @property({type: Object}) blockPanel;
   @property({type: Boolean}) is_connected = false;
-  @property({type: Object}) clientConfig;
-  @property({type: Object}) client;
+  @property({type: Object}) clientConfig: ai.ClientConfig | undefined;
+  @property({type: Object}) client: ai.Client | undefined;
   @property({type: Object}) notification;
   @property({type: Object}) user_groups;
   @property({type: Boolean}) signup_support = false;
@@ -84,6 +99,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_signout = false;
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
+  @property({type: Boolean}) always_enqueue_compute_session = false;
   @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
@@ -93,10 +109,26 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
+  @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
   @property({type: Object}) logoutTimerBeforeOneMin;
   @property({type: Object}) logoutTimer;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  private _enableContainerCommit = false;
+  private _enablePipeline = false;
+  @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#signout-panel') signoutPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#block-panel') blockPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
+  @query('#id_api_endpoint_container') apiEndpointContainer!: HTMLDivElement;
+  @query('#id_api_endpoint') apiEndpointInput!: TextField;
+  @query('#id_api_endpoint_humanized') apiEndpointHumanizedInput!: TextField;
+  @query('#id_user_id') userIdInput!: TextField;
+  @query('#id_password') passwordInput!: TextField;
+  @query('#id_api_key') apiKeyInput!: TextField;
+  @query('#id_secret_key') secretKeyInput!: TextField;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -104,7 +136,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.endpoints = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -139,6 +171,8 @@ export default class BackendAILogin extends BackendAIPage {
         }
 
         .endpoint-text {
+          --mdc-text-field-idle-line-color: rgba(0, 0, 0, 0);
+          --mdc-text-field-hover-line-color:rgba(0, 0, 0, 0);
           --mdc-text-field-disabled-line-color: rgba(0, 0, 0, 0.0);
         }
 
@@ -168,7 +202,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-button {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         mwc-button[unelevated] {
@@ -182,16 +216,52 @@ export default class BackendAILogin extends BackendAIPage {
           --mdc-button-disabled-outline-color: var(--general-button-background-color);
           --mdc-button-disabled-ink-color: var(--general-button-background-color);
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
         }
 
         h3 small {
           --button-font-size: 12px;
         }
 
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
+        .title-img {
+          height: 35px;
+          padding: 15px 0 15px 5px;
+        }
+
+        #change-signin-area > #change-signin-message {
+          font-size: 12px;
+          margin: 5px 10px;
+          text-align: center;
+          font-weight: 400;
+        }
+
+        #session-login-form.block {
+          display: block;
+        }
+
+        #session-login-form.none {
+          display: none;
+        }
+
+        #api-login-form.block {
+          display: block;
+        }
+
+        #api-login-form.none {
+          display: none;
+        }
+
+        #endpoint-button {
+          padding-left: 3px;
+          background-color: rgb(250, 250, 250);
+        }
+
+        #help-description {
+          --component-width: 350px;
+        }
+
+        #help-description p {
+          padding: 5px !important;
         }
 
         .login-input {
@@ -221,6 +291,34 @@ export default class BackendAILogin extends BackendAIPage {
 
         .login-form {
           position: relative;
+        }
+
+        #additional-action-area {
+          margin-top: 2em;
+        }
+
+        #additional-action-area > #signup-area {
+          width: 100%;
+        }
+
+        #signup-area > #signup-message {
+          font-size: 12px;
+          margin: 0 10px;
+          text-align: center;
+        }
+
+        #additional-action-area > span {
+          min-width: 1em;
+        }
+
+        #change-password-area {
+          width: 100%;
+        }
+
+        #change-password-area > #change-password-message {
+          font-size: 12px;
+          margin:0 10px;
+          text-align: center;
         }
 
         .waiting-animation {
@@ -345,9 +443,6 @@ export default class BackendAILogin extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.loginPanel = this.shadowRoot.querySelector('#login-panel');
-    this.signoutPanel = this.shadowRoot.querySelector('#signout-panel');
-    this.blockPanel = this.shadowRoot.querySelector('#block-panel');
     this.notification = globalThis.lablupNotification;
     this.endpoints = globalThis.backendaioptions.get('endpoints', []);
   }
@@ -356,9 +451,9 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Change the signin mode with SESSION or API
    * */
-  _changeSigninMode() {
+  private _changeSigninMode() {
     if (this.change_signin_support === true) {
-      if (this.connection_mode == 'SESSION') {
+      if (this.connection_mode === 'SESSION') {
         this.connection_mode = 'API';
         localStorage.setItem('backendaiwebui.connection_mode', 'API');
       } else {
@@ -369,6 +464,31 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
+  private _getConfigValueByExists(parentsKey, valueObj: ConfigValueObject) {
+    const defaultConditions: boolean = (parentsKey === undefined ||
+                                        valueObj.value === undefined ||
+                                        typeof valueObj.value === 'undefined' ||
+                                        valueObj.value === '' || valueObj.value === '""' ||
+                                        valueObj.value === null);
+    let extraConditions;
+    switch (typeof valueObj.defaultValue) {
+    case 'number':
+      extraConditions = isNaN(valueObj.value as number);
+      // if any condition check fails return value will be defaultValue
+      return (defaultConditions || extraConditions) ? valueObj.defaultValue : valueObj.value;
+    case 'boolean':
+    case 'string':
+    default: // includes array
+      return defaultConditions ? valueObj.defaultValue : valueObj.value;
+      break;
+    }
+  }
+
+  /**
+   * Refresh global value used in Backend.Ai WebUI read from config file with keys
+   *
+   * @param {object} config
+   */
   refreshWithConfig(config) {
     if (typeof config.plugin === 'undefined' || typeof config.plugin.login === 'undefined' || config.plugin.login === '') {
       this._enableUserInput();
@@ -391,153 +511,314 @@ export default class BackendAILogin extends BackendAIPage {
         }
       });
     }
-    if (typeof config.general === 'undefined' || typeof config.general.debug === 'undefined' || config.general.debug === '') {
-      globalThis.backendaiwebui.debug = false;
-    } else if (config.general.debug === true) {
-      globalThis.backendaiwebui.debug = true;
+
+    /**
+     * Assign Configuration as global value from config file (config.toml)
+     * - ends with flag means the value is true or false (usually use `false` as a default)
+     * - ends with number means the value is positive number with zero
+     * - ends with value means the value is string
+     * - ends with array means the value is array of string
+     */
+    this._initGeneralConfigWithKeys(config.general);
+    this._initWSProxyConfigWithKeys(config.wsproxy);
+    this._initResourcesConfigWithKeys(config.resources);
+    this._initEnvironmentsConfigWithKeys(config.environments);
+  }
+
+  /**
+   * Initialize global key with value from general section in config file
+   *
+   * @param {object} generalConfig
+   */
+  private _initGeneralConfigWithKeys(generalConfig) {
+    // Debug flag
+    globalThis.backendaiwebui.debug = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.debug,
+     } as ConfigValueObject) as boolean;
+    if (globalThis.backendaiwebui.debug) {
       console.log('Debug flag is set to true');
     }
-    if (typeof config.general === 'undefined' || typeof config.general.signupSupport === 'undefined' || config.general.signupSupport === '' || config.general.signupSupport == false) {
-      this.signup_support = false;
-    } else {
-      this.signup_support = true;
-      (this.shadowRoot.querySelector('#signup-dialog') as any).active = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowAnonymousChangePassword === 'undefined' || config.general.allowAnonymousChangePassword === '' || config.general.allowAnonymousChangePassword == false) {
-      this.allowAnonymousChangePassword = false;
-    } else {
-      this.allowAnonymousChangePassword = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowChangeSigninMode === 'undefined' || config.general.allowChangeSigninMode === '' || config.general.allowChangeSigninMode == false) {
-      this.change_signin_support = false;
-    } else {
-      this.change_signin_support = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowProjectResourceMonitor === 'undefined' || config.general.allowProjectResourceMonitor === '' || config.general.allowProjectResourceMonitor == false) {
-      this.allow_project_resource_monitor = false;
-    } else {
-      this.allow_project_resource_monitor = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowManualImageNameForSession === 'undefined' || config.general.allowManualImageNameForSession === '' || config.general.allowManualImageNameForSession == false) {
-      this.allow_manual_image_name_for_session = false;
-    } else {
-      this.allow_manual_image_name_for_session = true;
+
+    // Signup support flag
+    this.signup_support = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.signupSupport,
+     } as ConfigValueObject) as boolean;
+    // Signup support flag
+    if (this.signup_support) {
+      (this.shadowRoot?.querySelector('#signup-dialog') as HTMLElementTagNameMap['backend-ai-signup']).active = true;
     }
 
-    if (typeof config.resources === 'undefined' || typeof config.resources.openPortToPublic === 'undefined' || config.resources.openPortToPublic === '' || config.resources.openPortToPublic == false) {
-      this.openPortToPublic = false;
+    // Signup support flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowAnonymousChangePassword,
+     } as ConfigValueObject) as boolean;
+
+    // Allow change Sign-in mode flag
+    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowChangeSigninMode,
+     } as ConfigValueObject) as boolean;
+
+    // Allow change Sign-in mode flag
+    this.allow_project_resource_monitor = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowProjectResourceMonitor,
+     } as ConfigValueObject) as boolean;
+
+    // Allow manual image name for session flag
+    this.allow_manual_image_name_for_session = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowManualImageNameForSession,
+     } as ConfigValueObject) as boolean;
+
+    // Always enqueue compute session flag
+    this.always_enqueue_compute_session = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.alwaysEnqueueComputeSession,
+     } as ConfigValueObject) as boolean;
+
+    // Allow Sign out flag
+    this.allow_signout = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowSignout,
+     } as ConfigValueObject) as boolean;
+
+    // Login attempt limit number
+    this.login_attempt_limit = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'number',
+       defaultValue: this.login_attempt_limit, // default value has been already assigned in property declaration
+       value: parseInt(generalConfig?.loginAttemptLimit),
+     } as ConfigValueObject) as number;
+
+    // Login block time number
+    this.login_block_time = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'number',
+       defaultValue: this.login_block_time, // default value has been already assigned in property declaration
+       value: parseInt(generalConfig?.loginBlockTime),
+     } as ConfigValueObject) as number;
+
+    // API endpoint value with additional styles
+    this.api_endpoint = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'string',
+       defaultValue: '',
+       value: generalConfig?.apiEndpoint
+     } as ConfigValueObject) as string;
+    if (this.api_endpoint === '') {
+      this.apiEndpointContainer.style.display = 'flex';
+      this.apiEndpointHumanizedInput.style.display = 'none';
     } else {
-      this.openPortToPublic = true;
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCPUCoresPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCPUCoresPerContainer))) {
-      this.maxCPUCoresPerContainer = 64;
-    } else {
-      this.maxCPUCoresPerContainer = parseInt(config.resources.maxCPUCoresPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxMemoryPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxMemoryPerContainer))) {
-      this.maxMemoryPerContainer = 16;
-    } else {
-      this.maxMemoryPerContainer = parseInt(config.resources.maxMemoryPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDADevicesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDADevicesPerContainer))) {
-      this.maxCUDADevicesPerContainer = 16;
-    } else {
-      this.maxCUDADevicesPerContainer = parseInt(config.resources.maxCUDADevicesPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxCUDASharesPerContainer === 'undefined' || isNaN(parseInt(config.resources.maxCUDASharesPerContainer))) {
-      this.maxCUDASharesPerContainer = 16;
-    } else {
-      this.maxCUDASharesPerContainer = parseInt(config.resources.maxCUDASharesPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxShmPerContainer === 'undefined' || isNaN(parseFloat(config.resources.maxShmPerContainer))) {
-      this.maxShmPerContainer = 2;
-    } else {
-      this.maxShmPerContainer = parseFloat(config.resources.maxShmPerContainer);
-    }
-    if (typeof config.resources === 'undefined' || typeof config.resources.maxFileUploadSize === 'undefined' || config.resources.maxFileUploadSize === '') {
-      this.maxFileUploadSize = -1;
-    } else {
-      this.maxFileUploadSize = parseInt(config.resources.maxFileUploadSize);
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignout === 'undefined' || config.general.allowSignout === '' || config.general.allowSignout == false) {
-      this.allow_signout = false;
-    } else {
-      this.allow_signout = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.loginAttemptLimit === 'undefined' || config.general.loginAttemptLimit === '') {
-    } else {
-      this.login_attempt_limit = parseInt(config.general.loginAttemptLimit);
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.loginBlockTime === 'undefined' || config.general.loginBlockTime === '') {
-    } else {
-      this.login_block_time = parseInt(config.general.loginBlockTime);
-    }
-    if (typeof config.wsproxy === 'undefined' || typeof config.wsproxy.proxyURL === 'undefined' || config.wsproxy.proxyURL === '') {
-      this.proxy_url = 'http://127.0.0.1:5050/';
-    } else {
-      this.proxy_url = config.wsproxy.proxyURL;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.apiEndpoint === 'undefined' || config.general.apiEndpoint === '') {
-      (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
-      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
-    } else {
-      this.api_endpoint = config.general.apiEndpoint;
-      if (typeof config.general === 'undefined' || typeof config.general.apiEndpointText === 'undefined' || config.general.apiEndpointText === '') {
-        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'flex';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'none';
-        (this.shadowRoot.querySelector('#endpoint-button') as any).disabled = 'true';
+      // API endpoint text value with additional styles
+      const apiEndpointText = this._getConfigValueByExists(generalConfig,
+       {
+         valueType: 'string',
+         defaultValue: '',
+         value: generalConfig?.apiEndpointText
+       } as ConfigValueObject) as string;
+      if (apiEndpointText === '') {
+        this.apiEndpointContainer.style.display = 'flex';
+        this.apiEndpointHumanizedInput.style.display = 'none';
+        (this.shadowRoot?.querySelector('#endpoint-button') as IconButton).disabled = true;
       } else {
-        (this.shadowRoot.querySelector('#id_api_endpoint_container') as any).style.display = 'none';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).style.display = 'block';
-        (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).value = config.general.apiEndpointText;
+        this.apiEndpointInput.disabled = true;
+        this.apiEndpointHumanizedInput.disabled = true;
       }
-      (this.shadowRoot.querySelector('#id_api_endpoint') as any).disabled = true;
-      (this.shadowRoot.querySelector('#id_api_endpoint_humanized') as any).disabled = true;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.allowSignupWithoutConfirmation === 'undefined' || config.general.allowSignupWithoutConfirmation === '' || config.general.allowSignupWithoutConfirmation == false) {
-      this.allowSignupWithoutConfirmation = false;
-    } else {
-      this.allowSignupWithoutConfirmation = true;
     }
 
-    if (typeof config.general === 'undefined' || typeof config.general.defaultSessionEnvironment === 'undefined' || config.general.defaultSessionEnvironment === '') {
-      this.default_session_environment = '';
-    } else {
-      this.default_session_environment = config.general.defaultSessionEnvironment;
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.defaultImportEnvironment === 'undefined' || config.general.defaultImportEnvironment === '') {
-      this.default_import_environment = 'index.docker.io/lablup/python:3.8-ubuntu18.04';
-    } else {
-      this.default_import_environment = config.general.defaultImportEnvironment;
-    }
-    if (typeof config.environments === 'undefined' || typeof config.environments.allowlist === 'undefined' || config.environments.allowlist === '') {
-      this.allow_image_list = [];
-    } else {
-      this.allow_image_list = config.environments.allowlist.split(',');
-    }
-    if (typeof config.general === 'undefined' || typeof config.general.maskUserInfo === 'undefined' || config.general.maskUserInfo === '') {
-      this.maskUserInfo = false;
-    } else {
-      this.maskUserInfo = config.general.maskUserInfo;
-    }
+    // Allow signup without confirmation flag
+    this.allowSignupWithoutConfirmation = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.allowSignupWithoutConfirmation,
+     } as ConfigValueObject) as boolean;
+
+    // Default session environment value
+    this.default_session_environment = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'string',
+       defaultValue: '',
+       value: generalConfig?.defaultSessionEnvironment,
+     } as ConfigValueObject) as string;
+
+    // Default session environment value
+    this.default_import_environment = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'string',
+       defaultValue: 'cr.backend.ai/stable/python', // 'index.docker.io/lablup/python:3.8-ubuntu18.04'
+       value: generalConfig?.defaultImportEnvironment,
+     } as ConfigValueObject) as string;
+
+    // Mask user info flag
+    this.maskUserInfo = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: generalConfig?.maskUserInfo,
+     } as ConfigValueObject) as boolean;
+
+    // Single sign-on vendors array
+    this.singleSignOnVendors = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'array',
+       defaultValue: [] as string[],
+       // sanitize whitespace on user-input after splitting
+       value: (generalConfig?.singleSignOnVendors) ? generalConfig?.singleSignOnVendors.split(',').map((el) => el.trim()) : [],
+     } as ConfigValueObject) as string[];
+
+    // Enable container commit flag
+    this._enableContainerCommit = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: (generalConfig?.enableContainerCommit),
+     } as ConfigValueObject) as boolean;
+
+    // Application download path value
+    this.appDownloadUrl = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'string',
+        defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
+        value: (generalConfig?.appDownloadUrl),
+      } as ConfigValueObject) as string;
+
+    // Enable pipeline flag
+    // FIXME: temporally disable pipeline feature in manual
+    this._enablePipeline = this._getConfigValueByExists(generalConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: false, // (generalConfig?.enablePipeline),
+     } as ConfigValueObject) as boolean;
+
+    // Connection mode value depending on Electron mode and default configuration value
     const connection_mode: string | null = localStorage.getItem('backendaiwebui.connection_mode');
-    if (globalThis.isElectron && connection_mode !== null && connection_mode != '' && connection_mode != '""') {
-      if (connection_mode === 'SESSION') {
-        this.connection_mode = 'SESSION';
-      } else {
-        this.connection_mode = 'API';
-      }
+    if (globalThis.isElectron && connection_mode !== null && connection_mode !== '' && connection_mode !== '""') {
+      this.connection_mode = (connection_mode === 'SESSION') ? 'SESSION' : 'API';
     } else {
-      if (typeof config.general === 'undefined' || typeof config.general.connectionMode === 'undefined' || config.general.connectionMode === '') {
-        this.connection_mode = 'SESSION';
-      } else {
-        if (config.general.connectionMode.toUpperCase() === 'SESSION') {
-          this.connection_mode = 'SESSION';
-        } else {
-          this.connection_mode = 'API';
-        }
-      }
+      this.connection_mode = this._getConfigValueByExists(generalConfig,
+       {
+         valueType: 'boolean',
+         defaultValue: this.connection_mode,
+         value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
+       } as ConfigValueObject) as ConnectionMode;
     }
+  }
+
+  /**
+   * Initialize global key with value from wsproxy section in config file
+   *
+   * @param {object} wsproxyConfig
+   */
+  private _initWSProxyConfigWithKeys(wsproxyConfig) {
+    // wsproxy url value
+    this.proxy_url = this._getConfigValueByExists(wsproxyConfig,
+     {
+       valueType: 'string',
+       defaultValue: 'http://127.0.0.1:5050/',
+       value: wsproxyConfig?.proxyURL,
+     } as ConfigValueObject) as string;
+  }
+
+  /**
+   * Initialize global key with value from resources section in config file
+   *
+   * @param {object} resourcesConfig
+   */
+  private _initResourcesConfigWithKeys(resourcesConfig) {
+    // Open port to public flag
+    this.openPortToPublic = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'boolean',
+       defaultValue: false,
+       value: resourcesConfig?.openPortToPublic,
+     } as ConfigValueObject) as boolean;
+
+    // Max CPU cores per container number
+    this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 64,
+       value: parseInt(resourcesConfig?.maxCPUCoresPerContainer ?? ''),
+     } as ConfigValueObject) as number;
+
+    // Max Memory per container number
+    this.maxMemoryPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxMemoryPerContainer),
+     } as ConfigValueObject) as number;
+
+    // Max CUDA devices per container number
+    this.maxCUDADevicesPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxCUDADevicesPerContainer),
+     } as ConfigValueObject) as number;
+
+    // Max CUDA shares per container number
+    this.maxCUDASharesPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 16,
+       value: parseInt(resourcesConfig?.maxCUDASharesPerContainer),
+     } as ConfigValueObject) as number;
+
+    // Max CUDA shares per container number
+    this.maxShmPerContainer = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: 2,
+       value: parseFloat(resourcesConfig?.maxShmPerContainer),
+     } as ConfigValueObject) as number;
+
+    // Max File Upload size number
+    const unlimitedValueOnFileUpload = -1;
+    this.maxFileUploadSize = this._getConfigValueByExists(resourcesConfig,
+     {
+       valueType: 'number',
+       defaultValue: unlimitedValueOnFileUpload,
+       value: parseInt(resourcesConfig?.maxFileUploadSize),
+     } as ConfigValueObject) as number;
+  }
+
+  /**
+   * Initialize global key with value from environments section in config file
+   *
+   * @param {object} environmentsConfig
+   */
+  private _initEnvironmentsConfigWithKeys(environmentsConfig) {
+    // Allow image list array
+    this.allow_image_list = this._getConfigValueByExists(environmentsConfig,
+     {
+       valueType: 'array',
+       defaultValue: [] as string[],
+       // sanitize whitespace on user-input after splitting
+       value: (environmentsConfig?.allowlist) ? environmentsConfig?.allowlist.split(',').map((el) => el.trim()) : [],
+     } as ConfigValueObject) as string[];
   }
 
   /**
@@ -587,22 +868,30 @@ export default class BackendAILogin extends BackendAIPage {
     this.blockPanel.hide();
   }
 
-  _trimChar(str, char) {
-    return str.replace(/^\|+|\|+$/g, '');
-  }
-
   /**
    * Load configuration file from the WebServer when using Session mode.
    *
    * */
-  _loadConfigFromWebServer() {
+  private _loadConfigFromWebServer() {
     if (!window.location.href.startsWith(this.api_endpoint)) {
       // Override configs with Webserver's config.
       const webuiEl = document.querySelector('backend-ai-webui');
       if (webuiEl) {
+        const fieldsToExclude = [
+          'general.apiEndpoint',
+          'general.apiEndpointText',
+          'general.siteDescription',
+          'general.appDownloadUrl',
+          'wsproxy',
+        ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
-        webuiEl._parseConfig(webserverConfigURL).then(() => {
-          this.refreshWithConfig(webuiEl.config);
+        webuiEl._parseConfig(webserverConfigURL, true).then((config) => {
+          fieldsToExclude.forEach((key) => {
+            globalThis.backendaiutils.deleteNestedKeyFromObject(config, key);
+          });
+          const mergedConfig = globalThis.backendaiutils.mergeNestedObjects(webuiEl.config, config);
+          webuiEl.config = mergedConfig;
+          this.refreshWithConfig(mergedConfig);
         });
       }
     }
@@ -613,20 +902,22 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  login(showError = true) {
+  async login(showError = true) {
     if (this.api_endpoint === '') {
-      const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
-      if (api_endpoint != null) {
+      const api_endpoint = localStorage.getItem('backendaiwebui.api_endpoint');
+      if (api_endpoint !== null) {
         this.api_endpoint = api_endpoint.replace(/^"+|"+$/g, '');
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION') {
-      this._loadConfigFromWebServer();
+    if (this.connection_mode === 'SESSION' as ConnectionMode) {
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
       this._connectUsingSession(showError);
-    } else if (this.connection_mode === 'API') {
+    } else if (this.connection_mode === 'API' as ConnectionMode) {
       // this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-      this._connectUsingAPI(showError);
+      await this._connectUsingAPI(showError);
     } else {
       this.open();
     }
@@ -635,13 +926,15 @@ export default class BackendAILogin extends BackendAIPage {
   async check_login(showError = true) {
     if (this.api_endpoint === '') {
       const api_endpoint: any = localStorage.getItem('backendaiwebui.api_endpoint');
-      if (api_endpoint != null) {
+      if (api_endpoint !== null) {
         this.api_endpoint = api_endpoint.replace(/^"+|"+$/g, '');
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
     if (this.connection_mode === 'SESSION') {
-      this._loadConfigFromWebServer();
+      if (globalThis.isElectron) {
+        this._loadConfigFromWebServer();
+      }
       return this._checkLoginUsingSession();
     } else if (this.connection_mode === 'API') {
       return Promise.resolve(false);
@@ -655,7 +948,7 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @param {boolean} showError
    * */
-  async _checkLoginUsingSession(showError = true) {
+  private async _checkLoginUsingSession(showError = true) {
     if (this.api_endpoint === '') {
       return Promise.resolve(false);
     }
@@ -670,7 +963,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async ()=>{
-      const isLogon = await this.client.check_login();
+      const isLogon = await this.client?.check_login();
       return Promise.resolve(isLogon);
     });
   }
@@ -681,35 +974,49 @@ export default class BackendAILogin extends BackendAIPage {
    * @param {boolean} showError
    * */
   async _logoutSession(showError = true) {
-    return this.client.logout();
+    return this.client?.logout();
   }
 
   signout() {
     this.signoutPanel.show();
   }
 
+  async loginWithSAML() {
+    const rqst = this.client?.newUnsignedRequest('POST', '/saml/login', null);
+    const form = document.createElement('form');
+    const redirect_to = document.createElement('input');
+    form.appendChild(redirect_to);
+    document.body.appendChild(form);
+    form.setAttribute('method', 'POST');
+    form.setAttribute('action', rqst?.uri as string); // TODO: need to check its behavior.
+    redirect_to.setAttribute('type', 'hidden');
+    redirect_to.setAttribute('name', 'redirect_to');
+    redirect_to.setAttribute('value', window.location.href);
+    form.submit();
+  }
+
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
-  _showSignupDialog() {
+  private _showSignupDialog() {
     this.api_endpoint = this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
       this.notification.show();
       return;
     }
-    const signupDialog = this.shadowRoot.querySelector('#signup-dialog');
+    const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup;
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
     signupDialog.open();
   }
 
-  _showChangePasswordEmailDialog() {
-    this.shadowRoot.querySelector('#change-password-confirm-dialog').show();
+  private _showChangePasswordEmailDialog() {
+    (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as BackendAIDialog).show();
   }
 
-  async _sendChangePasswordEmail() {
-    const emailEl = this.shadowRoot.querySelector('#password-change-email');
+  private async _sendChangePasswordEmail() {
+    const emailEl = this.shadowRoot?.querySelector('#password-change-email') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
       // Create an anonymous client.
@@ -720,7 +1027,7 @@ export default class BackendAILogin extends BackendAIPage {
       );
 
       await client.cloud.send_password_change_email(emailEl.value);
-      this.shadowRoot.querySelector('#change-password-confirm-dialog').hide();
+      (this.shadowRoot?.querySelector('#change-password-confirm-dialog') as BackendAIDialog).hide();
       this.notification.text = _text('signup.EmailSent');
       this.notification.show();
     } catch (e) {
@@ -730,30 +1037,23 @@ export default class BackendAILogin extends BackendAIPage {
     }
   }
 
-  _cancelLogin(e) {
+  private _cancelLogin(e) {
     this._hideDialog(e);
     this.open();
   }
 
-  _validate_data(value) {
-    if (value != undefined && value != null && value != '') {
-      return true;
-    }
-    return false;
+  private _submitIfEnter(e) {
+    if (e.keyCode === 13) this._login();
   }
 
-  _submitIfEnter(e) {
-    if (e.keyCode == 13) this._login();
+  private _signoutIfEnter(e) {
+    if (e.keyCode === 13) this._signout();
   }
 
-  _signoutIfEnter(e) {
-    if (e.keyCode == 13) this._signout();
-  }
-
-  _signout() {
-    const user_id = (this.shadowRoot.querySelector('#id_signout_user_id') as any).value;
-    const password = (this.shadowRoot.querySelector('#id_signout_password') as any).value;
-    this.client.signout(user_id, password).then((response) => {
+  private _signout() {
+    const user_id = (this.shadowRoot?.querySelector('#id_signout_user_id') as TextField).value;
+    const password = (this.shadowRoot?.querySelector('#id_signout_password') as TextField).value;
+    this.client?.signout(user_id, password).then((response) => {
       this.notification.text = _text('login.SignoutFinished');
       this.notification.show();
       const event = new CustomEvent('backend-ai-logout', {'detail': ''});
@@ -776,7 +1076,25 @@ export default class BackendAILogin extends BackendAIPage {
     });
   }
 
-  _login() {
+  async _token_login(sToken) {
+    // If token is delivered as a querystring, just save it as cookie.
+    document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+    try {
+      const loginSuccess = await this.client?.token_login();
+      if (!loginSuccess) {
+        this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
+        this.notification.show(true);
+      }
+      window.location.href = '/';
+    } catch (err) {
+      console.error(err);
+      this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
+      this.notification.show(true, err);
+      window.location.href = '/';
+    }
+  }
+
+  private _login() {
     const loginAttempt = globalThis.backendaioptions.get('login_attempt', 0, 'general');
     const lastLogin = globalThis.backendaioptions.get('last_login', Math.floor(Date.now() / 1000), 'general');
     const currentTime = Math.floor(Date.now() / 1000);
@@ -793,20 +1111,20 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaioptions.set('login_attempt', loginAttempt + 1, 'general');
     }
 
-    this.api_endpoint = (this.shadowRoot.querySelector('#id_api_endpoint') as any).value;
-    this.api_endpoint = this.api_endpoint.replace(/\/+$/, '');
+    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '');
     if (this.api_endpoint === '') {
       this.notification.text = _text('login.APIEndpointEmpty');
       this.notification.show();
       return;
     }
+
+    this._disableUserInput();
     if (this.connection_mode === 'SESSION') {
-      this._disableUserInput();
-      this.user_id = (this.shadowRoot.querySelector('#id_user_id') as any).value;
-      this.password = (this.shadowRoot.querySelector('#id_password') as any).value;
+      this.user_id = this.userIdInput.value;
+      this.password = this.passwordInput.value;
 
       // show error message when id or password input is empty
-      if (this.user_id === '' || this.user_id === 'undefined' || this.password === '' || this.password === 'undefined') {
+      if (!this.user_id || this.user_id === 'undefined' || !this.password || this.password === 'undefined') {
         this.notification.text = _text('login.PleaseInputLoginInfo');
         this.notification.show();
         this._enableUserInput();
@@ -814,10 +1132,16 @@ export default class BackendAILogin extends BackendAIPage {
         this._connectUsingSession(true);
       }
     } else {
-      this._disableUserInput();
-      this.api_key = (this.shadowRoot.querySelector('#id_api_key') as any).value;
-      this.secret_key = (this.shadowRoot.querySelector('#id_secret_key') as any).value;
-      this._connectUsingAPI(true);
+      this.api_key = this.apiKeyInput.value;
+      this.secret_key = this.secretKeyInput.value;
+
+      if (!this.api_key || this.api_key === 'undefined' || !this.secret_key || this.secret_key === 'undefined') {
+        this.notification.text = _text('login.PleaseInputLoginInfo');
+        this.notification.show();
+        this._enableUserInput();
+      } else {
+        this._connectUsingAPI(true);
+      }
     }
   }
 
@@ -842,23 +1166,37 @@ export default class BackendAILogin extends BackendAIPage {
       this.clientConfig,
       `Backend.AI Console.`,
     );
-    return this.client.get_manager_version().then(async ()=>{
-      const isLogon = await this.client.check_login();
+    return this.client.get_manager_version().then(async () => {
+      const isLogon = await this.client?.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
-        this.client.login().then((response) => {
+
+        // TODO: This is a temporary solution to automatically logs a user in
+        // via SSO response.
+        // If token is delivered as a querystring, login with the token.
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const sToken = urlParams.get('sToken') || null;
+        if (sToken !== null) {
+          this._token_login(sToken);
+          return;
+        }
+
+        this.client?.login().then((response) => {
           if (response === false) {
             this.open();
-            if (this.user_id != '' && this.password != '') {
+            if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve('Login information mismatch. Please check your login information.');
               this.notification.show();
             }
+            return Promise.resolve(false);
           } else if (response.fail_reason) {
             this.open();
-            if (this.user_id != '' && this.password != '') {
+            if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
             }
+            return Promise.resolve(false);
           } else {
             this.is_connected = true;
             return this._connectGQL();
@@ -881,7 +1219,6 @@ export default class BackendAILogin extends BackendAIPage {
               } else {
                 this.notification.text = PainKiller.relieve('Login failed. Check login information.');
               }
-              console.log(err);
             }
             this.notification.show();
           }
@@ -909,8 +1246,9 @@ export default class BackendAILogin extends BackendAIPage {
    * Connect GQL when API mode.
    *
    * @param {boolean} showError
+   * @return {Promise}
    * */
-  _connectUsingAPI(showError = true) {
+  private _connectUsingAPI(showError = true) {
     this.clientConfig = new ai.backend.ClientConfig(
       this.api_key,
       this.secret_key,
@@ -921,8 +1259,12 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     this.client.ready = false;
-    this.client.get_manager_version().then((response) => {
+    return this.client.get_manager_version().then((response) => {
       return this._connectGQL(showError);
+    }).catch((err) => {
+      // FIXME need error handling logic and message prompt
+      console.log(err);
+      this._enableUserInput();
     });
   }
 
@@ -930,13 +1272,14 @@ export default class BackendAILogin extends BackendAIPage {
    * Call _connectViaGQL() to connect to GQL.
    *
    * @param {boolean} showError
+   * @return {Promise}
    * */
-  _connectGQL(showError = true) {
+  private _connectGQL(showError = true) {
     // Test connection
     if (this.loginPanel.open !== true) {
       this.block();
     }
-    new Promise(() => {
+    return new Promise(() => {
       const currentTime = Math.floor(Date.now() / 1000);
       globalThis.backendaioptions.set('last_login', currentTime, 'general');
       globalThis.backendaioptions.set('login_attempt', 0, 'general');
@@ -973,19 +1316,40 @@ export default class BackendAILogin extends BackendAIPage {
    *
    * @return {Void}
    * */
-  _connectViaGQL() {
+  private _connectViaGQL() {
     const fields = ['user_id', 'resource_policy', 'user'];
     const q = `query { keypair { ${fields.join(' ')} } }`;
     const v = {};
-    return this.client.query(q, v).then((response) => {
+    return this.client?.query(q, v).then(async (response) => {
       this.is_connected = true;
       globalThis.backendaiclient = this.client;
       const resource_policy = response['keypair'].resource_policy;
       globalThis.backendaiclient.resource_policy = resource_policy;
       this.user = response['keypair'].user;
-      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}'];
+      const fields = ['username', 'email', 'full_name', 'is_active', 'role', 'domain_name', 'groups {name, id}', 'need_password_change'];
       const q = `query { user{ ${fields.join(' ')} } }`;
       const v = {'uuid': this.user};
+
+      /**
+       * FIXME:
+       * - Pipeline Login after WebUI Login
+       * - Temporally disable pipeline login
+       */
+      if (this._enablePipeline) {
+        const pipelineToken = globalThis.backendaiclient.getPipelineToken();
+        if (!pipelineToken) {
+          const res = await globalThis.backendaiclient.keypair.list(this.user_id, ['access_key', 'secret_key'], true);
+          const keypairs = res.keypairs;
+          const loginInfo = {
+            username: this.user_id,
+            password: this.password,
+            // use first keypair
+            access_key: keypairs[0].access_key,
+            secret_key: keypairs[0].secret_key,
+          };
+          await globalThis.backendaiclient.pipeline.login(loginInfo);
+        }
+      }
       return globalThis.backendaiclient.query(q, v);
     }).then((response) => {
       const email = response['user'].email;
@@ -999,6 +1363,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient.full_name = response['user'].full_name;
       globalThis.backendaiclient.is_admin = false;
       globalThis.backendaiclient.is_superadmin = false;
+      globalThis.backendaiclient.need_password_change = response['user'].need_password_change;
 
       if (['superadmin', 'admin'].includes(role)) {
         globalThis.backendaiclient.is_admin = true;
@@ -1007,7 +1372,7 @@ export default class BackendAILogin extends BackendAIPage {
         globalThis.backendaiclient.is_superadmin = true;
       }
       return globalThis.backendaiclient.group.list(true, false, ['id', 'name', 'description', 'is_active']);
-    }).then((response) => {
+    }).then(async (response) => {
       const groups = response.groups;
       const user_group_ids = this.user_groups.map(({id}) => id);
       if (groups !== null) {
@@ -1038,6 +1403,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.default_import_environment = this.default_import_environment;
       globalThis.backendaiclient._config.allow_project_resource_monitor = this.allow_project_resource_monitor;
       globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
+      globalThis.backendaiclient._config.always_enqueue_compute_session = this.always_enqueue_compute_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;
@@ -1047,6 +1413,9 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maxFileUploadSize = this.maxFileUploadSize;
       globalThis.backendaiclient._config.allow_image_list = this.allow_image_list;
       globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
+      globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
+      globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
+      globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1085,7 +1454,12 @@ export default class BackendAILogin extends BackendAIPage {
         // When authorization failed, it is highly likely that session cookie
         // is used which tried to use non-existent API keypairs
         console.log('automatic logout ...');
-        this.client.logout();
+
+        // Only request pipeline logout when pipeline value is enabled
+        if (this._enablePipeline) {
+          globalThis.backendaiclient.pipeline.logout();
+        }
+        this.client?.logout();
       }
       this._enableUserInput();
     });
@@ -1098,19 +1472,21 @@ export default class BackendAILogin extends BackendAIPage {
     localStorage.removeItem('backendaiwebui.login.password');
   }
 
-  _toggleEndpoint() {
-    const endpoint_list = this.shadowRoot.querySelector('#endpoint-list');
-    const endpoint_button = this.shadowRoot.querySelector('#endpoint-button');
+  private _toggleEndpoint() {
+    const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
+    const endpoint_button = this.shadowRoot?.querySelector('#endpoint-button') as IconButton;
     endpoint_list.anchor = endpoint_button;
     endpoint_list.open = !endpoint_list.open;
   }
 
-  _updateEndpoint() {
-    const endpoint_list = this.shadowRoot.querySelector('#endpoint-list');
-    this.api_endpoint = endpoint_list.selected.value;
+  private _updateEndpoint() {
+    const endpoint_list = this.shadowRoot?.querySelector('#endpoint-list') as Menu;
+    if (endpoint_list.selected && !(endpoint_list.selected instanceof Array)) {
+      this.api_endpoint = endpoint_list.selected.value;
+    }
   }
 
-  _deleteEndpoint(endpoint) {
+  private _deleteEndpoint(endpoint) {
     const idx = this.endpoints.indexOf(endpoint);
     if (idx > -1) {
       this.endpoints.splice(idx, 1);
@@ -1119,26 +1495,35 @@ export default class BackendAILogin extends BackendAIPage {
     this.requestUpdate();
   }
 
-  _disableUserInput() {
+  private _disableUserInput() {
     if (this.connection_mode === 'SESSION') {
-      this.shadowRoot.querySelector('#id_user_id').disabled = true;
-      this.shadowRoot.querySelector('#id_password').disabled = true;
+      this.userIdInput.disabled = true;
+      this.passwordInput.disabled = true;
     } else {
-      this.shadowRoot.querySelector('#id_user_id').disabled = true;
-      this.shadowRoot.querySelector('#id_password').disabled = true;
+      this.apiKeyInput.disabled = true;
+      this.secretKeyInput.disabled = true;
     }
-    this.shadowRoot.querySelector('.waiting-animation').style.display = 'flex';
+    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
   }
 
-  _enableUserInput() {
-    this.shadowRoot.querySelector('#id_user_id').disabled = false;
-    this.shadowRoot.querySelector('#id_password').disabled = false;
-    this.shadowRoot.querySelector('#id_user_id').disabled = false;
-    this.shadowRoot.querySelector('#id_password').disabled = false;
-    this.shadowRoot.querySelector('.waiting-animation').style.display = 'none';
+  private _enableUserInput() {
+    this.userIdInput.disabled = false;
+    this.passwordInput.disabled = false;
+    this.apiKeyInput.disabled = false;
+    this.secretKeyInput.disabled = false;
+    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
   }
 
-  render() {
+  private _showEndpointDescription(e?) {
+    if (e != undefined) {
+      e.stopPropagation();
+    }
+    this._helpDescriptionTitle = _text('login.EndpointInfo');
+    this._helpDescription = _text('login.DescEndpoint');
+    this.helpDescriptionDialog.show();
+  }
+
+  protected render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
@@ -1146,21 +1531,18 @@ export default class BackendAILogin extends BackendAIPage {
         <div slot="title">
           <div id="login-title-area"></div>
           <div class="horizontal center layout">
-            <img src="manifest/backend.ai-text.svg" style="height:35px;padding:15px 0 15px 5px;" />
-            <div class="flex"></div>
+            <img class="title-img" src="manifest/backend.ai-text.svg" alt="backend.ai" />
           </div>
         </div>
-        <div slot="content" class="login-panel intro centered" style="margin: 0;">
+        <div slot="content" class="login-panel intro centered">
           <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
-            <div>${this.connection_mode == 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
+            <div>${this.connection_mode === 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
-                <div class="vertical center-justified layout">
-                  <div style="font-size:12px;margin:5px 10px;text-align:center;font-weight:400;">${_t('login.LoginAnotherway')}</div>
-                  <mwc-button
-                      class="change-login-mode-button"
-                      outlined
-                      label="${this.connection_mode == 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
+                <div id="change-signin-area" class="vertical center-justified layout">
+                  <div id="change-signin-message">${_t('login.LoginAnotherway')}</div>
+                  <mwc-button outlined class="change-login-mode-button"
+                      label="${this.connection_mode === 'SESSION' ? _t('login.ClickToUseIAM') : _t('login.ClickToUseID')}"
                       @click="${() => this._changeSigninMode()}">
                   </mwc-button>
                 </div>
@@ -1176,80 +1558,98 @@ export default class BackendAILogin extends BackendAIPage {
               </div>
               <div id="loading-message">Waiting...</div>
             </div>
-            <form id="session-login-form" style="${this.connection_mode == 'SESSION' ? `display:block;` : `display:none;`}">
+            <form id="session-login-form" class="${this.connection_mode === 'SESSION' ? 'block' : 'none'}">
               <fieldset>
-                <div class="horizontal layout start-justified center login-input">
-                  <mwc-icon>email</mwc-icon>
-                  <input type="email" id="id_user_id" maxlength="64" autocomplete="username"
-                              label="${_t('login.E-mail')}" placeholder="${_t('login.E-mail')}" icon="email" value="${this.user_id}" @keyup="${this._submitIfEnter}"></input>
-                </div>
-                <div class="horizontal layout start-justified center login-input">
-                  <mwc-icon>vpn_key</mwc-icon>
-                  <input type="password" id="id_password" autocomplete="current-password"
-                              label="${_t('login.Password')}" placeholder="${_t('login.Password')}" icon="vpn_key" value="${this.password}" @keyup="${this._submitIfEnter}"></input>
-                </div>
+                  <mwc-textfield type="email" id="id_user_id" maxlength="64" autocomplete="username"
+                      label="${_t('login.E-mail')}" icon="email"
+                      value="${this.user_id}"
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
+                  <mwc-textfield type="password" id="id_password" autocomplete="current-password"
+                      label="${_t('login.Password')}" icon="vpn_key"
+                      value="${this.password}"
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
               </fieldset>
             </form>
-            <form id="api-login-form" style="${this.connection_mode == 'SESSION' ? `display:none;` : `display:block;`}">
+            <form id="api-login-form" class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}">
               <fieldset>
                 <mwc-textfield type="text" id="id_api_key" maxLength="20"
-                            label="${_t('login.APIKey')}" icon="lock" value="${this.api_key}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                    label="${_t('login.APIKey')}" icon="lock"
+                    value="${this.api_key}"
+                    @keyup="${this._submitIfEnter}">
+                </mwc-textfield>
                 <mwc-textfield type="password" id="id_secret_key" maxLength="40"
-                            label="${_t('login.SecretKey')}" icon="vpn_key" value="${this.secret_key}" @keyup="${this._submitIfEnter}" ></mwc-textfield>
+                    label="${_t('login.SecretKey')}" icon="vpn_key"
+                    value="${this.secret_key}"
+                    @keyup="${this._submitIfEnter}">
+                </mwc-textfield>
               </fieldset>
             </form>
             <form>
               <fieldset>
                 <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
-                  <mwc-icon-button id="endpoint-button" icon="cloud_queue" style="padding-left: 3px; background-color: rgb(250, 250, 250);" @click="${() => this._toggleEndpoint()}"></mwc-icon-button>
+                  <mwc-icon-button id="endpoint-button" icon="cloud_queue"
+                      @click="${() => this._toggleEndpoint()}">
+                  </mwc-icon-button>
                   <mwc-menu id="endpoint-list" @selected="${() => this._updateEndpoint()}">
                     <mwc-list-item disabled>${_t('login.EndpointHistory')}</mwc-list-item>
                     ${this.endpoints.length === 0 ? html`
-                    <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
+                      <mwc-list-item value="">${_t('login.NoEndpointSaved')}</mwc-list-item>
                     ` : html``}
 
-                    ${this.endpoints.map((item) =>
-    html`<mwc-list-item value="${item}">
-                      <div class="horizontal justified center flex layout" style="width:365px;">
-                        <span>${item}</span><span class="flex"></span>
-                        <mwc-icon-button icon="delete" @click="${() => this._deleteEndpoint(item)}" class="endpoint-control-button"></mwc-icon-button>
-                      </div>
-                    </mwc-list-item>`)}
+                    ${this.endpoints.map((item) => html`
+                      <mwc-list-item value="${item}">
+                        <div class="horizontal justified center flex layout" style="width:365px;">
+                          <span>${item}</span><span class="flex"></span>
+                          <mwc-icon-button class="endpoint-control-button" icon="delete"
+                              @click="${() => this._deleteEndpoint(item)}">
+                          </mwc-icon-button>
+                        </div>
+                      </mwc-list-item>
+                    `)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" maxLength="2048"
-                              style="--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                              label="${_t('login.Endpoint')}" value="${this.api_endpoint}" @keyup="${this._submitIfEnter}"></mwc-textfield>
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                      maxLength="2048" label="${_t('login.Endpoint')}"
+                      value="${this.api_endpoint}"
+                      @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
+                  <mwc-icon-button icon="info" class="fg grey info" @click="${(e) => this._showEndpointDescription(e)}"></mwc-icon-button>
                 </div>
-                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized" maxLength="2048"
-                            style="display:none;--mdc-text-field-idle-line-color:rgba(255,255,255,0);--mdc-text-field-hover-line-color:rgba(255,255,255,0);"
-                            label="${_t('login.Endpoint')}" icon="cloud" value=""></mwc-textfield>
-                <mwc-button
-                      unelevated
-                      id="login-button"
-                      icon="check"
-                      fullwidth
-                      label="${_t('login.Login')}"
-                      @click="${() => this._login()}"></mwc-button>
-                <div class="layout horizontal" style="margin-top:2em;">
+                <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint_humanized"
+                    maxLength="2048" style="display:none;"
+                    label="${_t('login.Endpoint')}" icon="cloud" value="">
+                </mwc-textfield>
+                <mwc-button unelevated fullwidth id="login-button" icon="check"
+                    label="${_t('login.Login')}"
+                    @click="${() => this._login()}">
+                </mwc-button>
+                ${this.singleSignOnVendors.includes('saml') ? html`
+                  <mwc-button
+                    id="sso-login-saml-button"
+                    label="${_t('login.SingleSignOn.LoginWithSAML')}"
+                    fullwidth
+                    @click="${() => this.loginWithSAML()}"
+                  ></mwc-button>
+                ` : html``}
+                <div id="additional-action-area" class="layout horizontal">
                   ${this.signup_support ? html`
-                    <div class="vertical center-justified layout" style="width:100%;">
-                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t('login.NotAUser')}</div>
-                      <mwc-button
-                          outlined
-                          label="${_t('login.SignUp')}"
-                          @click="${() => this._showSignupDialog()}"></mwc-button>
+                    <div id="signup-area" class="vertical center-justified layout">
+                      <div id="signup-message">${_t('login.NotAUser')}</div>
+                      <mwc-button outlined label="${_t('login.SignUp')}"
+                          @click="${() => this._showSignupDialog()}">
+                      </mwc-button>
                     </div>
                   `: html``}
                   ${this.signup_support && this.allowAnonymousChangePassword ? html`
-                    <span class="flex" style="min-width:1em;"></span>
+                    <span class="flex"></span>
                   `: html``}
                   ${this.allowAnonymousChangePassword ? html`
-                    <div class="vertical center-justified layout" style="width:100%;">
-                      <div style="font-size:12px; margin:0 10px; text-align:center;">${_t('login.ForgotPassword')}</div>
-                      <mwc-button
-                          outlined
-                          label="${_t('login.ChangePassword')}"
-                          @click="${() => this._showChangePasswordEmailDialog()}"></mwc-button>
+                    <div id="change-password-area" class="vertical center-justified layout">
+                      <div id="change-password-message">${_t('login.ForgotPassword')}</div>
+                      <mwc-button outlined label="${_t('login.ChangePassword')}"
+                          @click="${() => this._showChangePasswordEmailDialog()}">
+                      </mwc-button>
                     </div>
                   ` : html``}
                 </div>
@@ -1264,19 +1664,20 @@ export default class BackendAILogin extends BackendAIPage {
           <section>
             <div class="warning">${_t('login.DescConfirmLeave')}</div>
           </section>
-          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id" maxLength="64"
-              label="E-mail" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
-          <mwc-textfield type="password" name="signout_password" id="id_signout_password" maxLength="64"
-              label="Password" value="" @keyup="${this._signoutIfEnter}"></mwc-textfield>
+          <mwc-textfield type="email" name="signout_user_id" id="id_signout_user_id"
+              maxLength="64" label="E-mail" value=""
+              @keyup="${this._signoutIfEnter}">
+          </mwc-textfield>
+          <mwc-textfield type="password" name="signout_password" id="id_signout_password"
+              maxLength="64" label="Password" value=""
+              @keyup="${this._signoutIfEnter}">
+          </mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
-              outlined
-              fullwidth
-              id="signout-button"
-              icon="check"
-              label="${_t('login.LeaveService')}"
-              @click="${() => this._signout()}"></mwc-button>
+          <mwc-button outlined fullwidth id="signout-button"
+              icon="check" label="${_t('login.LeaveService')}"
+              @click="${() => this._signout()}">
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="change-password-confirm-dialog" fixed backdrop blockscrolling persistent disablefocustrap>
@@ -1300,26 +1701,34 @@ export default class BackendAILogin extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="block-panel" fixed blockscrolling persistent escapeKeyAction>
-        ${this.blockMessage != '' ? html`
+        ${this.blockMessage !== '' ? html`
           ${this.blockType !== '' ? html`
             <span slot="title" id="work-title">${this.blockType}</span>
           ` : html``}
           <div slot="content" style="text-align:center;padding-top:15px;">
-          ${this.blockMessage}
+            ${this.blockMessage}
           </div>
           <div slot="footer" class="horizontal center-justified flex layout">
-          <mwc-button
+            <mwc-button
               outlined
               fullwidth
               label="${_t('login.CancelLogin')}"
-              @click="${(e) => this._cancelLogin(e)}"></mwc-button>
+              @click="${(e) => this._cancelLogin(e)}">
+            </mwc-button>
           </div>
         ` : html``}
+      </backend-ai-dialog>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:10px;">
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
       </backend-ai-dialog>
       <backend-ai-signup id="signup-dialog"></backend-ai-signup>
     `;
   }
 }
+
 declare global {
   interface HTMLElementTagNameMap {
     'backend-ai-login': BackendAILogin;

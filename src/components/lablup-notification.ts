@@ -29,8 +29,6 @@ import {store} from '../store';
 
 @customElement('lablup-notification')
 export default class LablupNotification extends LitElement {
-  public shadowRoot: any;
-
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
   @property({type: String}) url = '';
@@ -60,7 +58,7 @@ export default class LablupNotification extends LitElement {
     return 'lablup-notification';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`

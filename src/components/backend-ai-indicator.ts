@@ -19,18 +19,13 @@ import 'weightless/title';
 
 @customElement('backend-ai-indicator')
 export default class BackendAIIndicator extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: Number}) delay = 1000;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -39,7 +34,7 @@ export default class BackendAIIndicator extends LitElement {
           right: 20px;
           bottom: 20px;
           z-index: 9000;
-          --dialog-height: 80px;
+          --dialog-height: auto;
           --dialog-width: 250px;
           --dialog-content-padding: 15px;
         }
@@ -47,7 +42,7 @@ export default class BackendAIIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#app-progress-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {
@@ -82,7 +77,7 @@ export default class BackendAIIndicator extends LitElement {
     // language=HTML
     return html`
       <wl-dialog id="app-progress-dialog" blockscrolling>
-        <wl-title level="5" id="app-progress-text" slot="header">${this.text}</wl-title>
+        <wl-title level="5" id="app-progress-text" slot="header" style="word-break: keep-all;">${this.text}</wl-title>
         <div slot="content">
         <wl-progress-bar .mode="${this.mode}" id="app-progress" .value="${this.value}"></wl-progress-bar>
         </div>

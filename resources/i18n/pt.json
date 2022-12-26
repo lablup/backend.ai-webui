@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "Grupo de recursos excluído com sucesso",
     "EnterValidResourceGroupName": "Insira um nome de grupo de recursos válido",
     "ResourceGroupNameRequired": "O nome do grupo de recursos é obrigatório.",
-    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome."
+    "ResourceGroupAlreadyExist": "Já existe um grupo de recursos com o mesmo nome.",
+    "SetSchedulerOptions": "Definir opções do agendador",
+    "TimeoutSeconds": "Segundos",
+    "ResourceGroupDetail": "Detalhe do grupo de recursos"
   },
   "maintenance": {
     "General": "Em geral",

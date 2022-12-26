@@ -54,7 +54,6 @@ const capitalize = (s) => {
 
 @customElement('backend-ai-chart')
 export default class BackendAIChart extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) idx;
   @property({type: Object}) collection;
   @property({type: Object}) chartData;
@@ -74,7 +73,7 @@ export default class BackendAIChart extends LitElement {
   }
 
   firstUpdated() {
-    this.chart = this.shadowRoot.querySelector('#chart');
+    this.chart = this.shadowRoot?.querySelector('#chart');
     if (this.collection.axisTitle['y']) {
       this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
     }
@@ -152,8 +151,10 @@ export default class BackendAIChart extends LitElement {
           display: true,
           ticks: {
             maxTicksLimit: 5,
-            callback: function(value) {
-              return Math.round(value);
+            callback: (value) => {
+              if (value % 1 === 0) {
+                return value;
+              }
             },
             font: function(context) {
               const height = context.chart.height;
@@ -202,7 +203,7 @@ export default class BackendAIChart extends LitElement {
     return 'backend-ai-chart';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

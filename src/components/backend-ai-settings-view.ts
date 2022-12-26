@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -20,12 +20,38 @@ import {
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 
+import {Select} from '@material/mwc-select';
+import {TextField} from '@material/mwc-textfield';
 import '@material/mwc-switch/mwc-switch';
-import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 
 import './lablup-activity-panel';
 import {default as PainKiller} from './backend-ai-painkiller';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
+interface SettingOption {
+  option: string;
+  id: string;
+}
+
+interface Options {
+  image_pulling_behavior: string;
+  cuda_gpu: boolean;
+  cuda_fgpu: boolean;
+  rocm_gpu: boolean;
+  tpu: boolean;
+  schedulerType: string;
+  scheduler: {
+    num_retries_to_skip: string;
+  };
+  network: {
+    mtu: string;
+  };
+}
 
 /**
  Backend AI Settings View
@@ -43,10 +69,10 @@ import {default as PainKiller} from './backend-ai-painkiller';
 @customElement('backend-ai-settings-view')
 export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: Object}) images = Object();
-  @property({type: Object}) options = Object();
+  @property({type: Object}) options: Options;
   @property({type: Object}) schedulerOptions = Object();
   @property({type: Object}) networkOptions = Object();
-  @property({type: Object}) optionsAndId = Object();
+  @property({type: Object}) optionsAndId: SettingOption[];
   @property({type: Object}) notification = Object();
   @property({type: Array}) imagePullingBehavior = [
     {name: _text('settings.image.digest'), behavior: 'digest'},
@@ -59,6 +85,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescription = '';
   @property({type: Object}) optionRange = Object();
+  @query('#scheduler-switch') schedulerSelect!: Select;
+  @query('#num-retries') numberOfRetries!: TextField;
+  @query('#scheduler-env-dialog') schedulerEnvDialog!: BackendAIDialog;
+  @query('#overlay-network-env-dialog') overlayNetworkEnvDialog!: BackendAIDialog;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -97,7 +128,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     return 'backend-ai-settings-view';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -258,7 +289,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                 <mwc-select id="ui-image-pulling-behavior"
                             required
                             outlined
-                            style="width:120px;"
+                            style="width:150px;"
                             @selected="${(e) => this.setImagePullingBehavior(e)}">
                 ${this.imagePullingBehavior.map((item) => html`
                   <mwc-list-item value="${item.behavior}"
@@ -544,12 +575,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
       this.updateSettings();
     }
     // if user wants to modify the scheduler options and close the dialog, open the confirm dialog.
-    const schedulerEnvDialog = this.shadowRoot.querySelector('#scheduler-env-dialog');
-    schedulerEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
-      const container = this.shadowRoot.querySelector('#scheduler-env-container');
-      const rows = container.querySelectorAll('mwc-textfield');
+    this.schedulerEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      const container = this.shadowRoot?.querySelector('#scheduler-env-container');
+      const rows = Array.from(container?.querySelectorAll('mwc-textfield') as NodeListOf<TextField>);
       for (const row of rows) {
-        if (this.options.scheduler[this._findOptionById(row.id)] !== row.value && this.selectedSchedulerType !== '') {
+        if (this.options.scheduler[this._findOptionById(row.id) ?? -1] !== row.value && this.selectedSchedulerType !== '') {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -557,12 +587,11 @@ export default class BackendAiSettingsView extends BackendAIPage {
         }
       }
     });
-    const networkEnvDialog = this.shadowRoot.querySelector('#overlay-network-env-dialog');
-    networkEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
-      const container = this.shadowRoot.querySelector('#overlay-network-env-container');
-      const rows = container.querySelectorAll('mwc-textfield');
+    this.overlayNetworkEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
+      const container = this.shadowRoot?.querySelector('#overlay-network-env-container');
+      const rows = Array.from(container?.querySelectorAll('mwc-textfield') as NodeListOf<TextField>);
       for (const row of rows) {
-        if (this.options.network[this._findOptionById(row.id)] !== row.value) {
+        if (this.options.network[this._findOptionById(row.id) ?? ''] !== row.value) {
           this.openDialog('env-config-confirmation');
           break;
         } else {
@@ -572,7 +601,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     });
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
     }
@@ -587,7 +616,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       } else {
         this.options['image_pulling_behavior'] = 'none';
       }
-      this.update(this.options);
+      // this.update(this.options);
+      this.requestUpdate();
     });
   }
 
@@ -596,7 +626,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
         this.options.scheduler[key] = response['result'] || '0';
       });
-      this.update(this.options.scheduler);
+      // this.update(this.options.scheduler);
+      this.requestUpdate();
     }
   }
 
@@ -605,7 +636,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       globalThis.backendaiclient.setting.get(`network/overlay/${key}`).then((response) => {
         this.options.network[key] = response['result'] || '';
       });
-      this.update(this.options.network);
+      // this.update(this.options.network);
+      this.requestUpdate();
     }
   }
 
@@ -623,7 +655,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       if ('tpu.device' in response) {
         this.options['tpu'] = true;
       }
-      this.update(this.options);
+      // this.update(this.options);
+      this.requestUpdate();
     });
   }
 
@@ -642,9 +675,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * */
   updateNetworkOptionElements() {
     this.updateNetwork();
-    const networkOptions = [...this.shadowRoot.querySelectorAll('.network-option')];
+    const networkOptions = Array.from(this.shadowRoot?.querySelectorAll<TextField>('.network-option') as NodeListOf<TextField>);
     for (const networkOption of networkOptions) {
-      const key = this._findOptionById(networkOption.id);
+      const key = this._findOptionById(networkOption.id) ?? '';
       networkOption.value = this.options.network[key] || '';
     }
   }
@@ -663,7 +696,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
         this.options['image_pulling_behavior'] = value;
         this.notification.text = _text('notification.SuccessfullyUpdated');
         this.notification.show();
-        this.update(this.options);
+        // this.update(this.options);
+        this.requestUpdate();
         console.log(response);
       });
     }
@@ -677,7 +711,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * @return {string} - id
    */
   _findIdByOption(option) {
-    return this.optionsAndId.find((elm) => elm.option === option).id;
+    return this.optionsAndId.find((elm) => elm.option === option)?.id;
   }
 
   /**
@@ -687,7 +721,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * @return {object} - option name
    */
   _findOptionById(id) {
-    return this.optionsAndId.find((elm) => elm.id === id).option;
+    return this.optionsAndId.find((elm) => elm.id === id)?.option;
   }
 
   /**
@@ -695,21 +729,21 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * @param {string} id - id of option
    */
   _clearOptions(id) {
-    const container = this.shadowRoot.querySelector('#' + id);
+    const container = this.shadowRoot?.querySelector('#' + id);
     // initialize options (textfield values)
-    container.querySelectorAll('mwc-textfield').forEach((tf) => {
+    container?.querySelectorAll('mwc-textfield').forEach((tf) => {
       tf.value = '';
     });
   }
 
   _openDialogWithConfirmation(id) {
-    const envDialog = this.shadowRoot.querySelector('#' + id);
+    const envDialog = this.shadowRoot?.querySelector('#' + id) as BackendAIDialog;
     envDialog.closeWithConfirmation = true;
-    envDialog.show();
+    envDialog?.show();
   }
 
   _closeDialogWithConfirmation(id) {
-    const envDialog = this.shadowRoot.querySelector('#' + id);
+    const envDialog = this.shadowRoot?.querySelector('#' + id) as BackendAIDialog;
     envDialog.closeWithConfirmation = false;
     envDialog.hide();
   }
@@ -718,16 +752,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
    * Close confirmation dialog and environment variable dialog and reset the option values.
    */
   closeAndResetEnvInput() {
-    const envDialogs = this.shadowRoot.querySelectorAll('.env-dialog');
-    for (const envDialog of envDialogs) {
+    const envDialogs = this.shadowRoot?.querySelectorAll<BackendAIDialog>('.env-dialog') as NodeListOf<BackendAIDialog>;
+    for (const envDialog of Array.from(envDialogs)) {
       if (envDialog.open) {
         const envContainer = envDialog.querySelector('.env-container');
-        this._clearOptions(envContainer.id);
+        this._clearOptions(envContainer?.id);
         this.closeDialog('env-config-confirmation');
         this._closeDialogWithConfirmation(envDialog.id);
         if (envDialog.id === 'scheduler-env-dialog') {
-          const schedulerSwitch = this.shadowRoot.querySelector('#scheduler-switch');
-          schedulerSwitch.value = null;
+          // this.schedulerSwitch.value = null;
+          this.schedulerSelect.value = '';
         }
         break;
       }
@@ -757,17 +791,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
     if (item in schedulerConfigDescription) {
       this._helpDescriptionTitle = schedulerConfigDescription[item].title;
       this._helpDescription = schedulerConfigDescription[item].desc;
-      const desc = this.shadowRoot.querySelector('#help-description');
-      desc.show();
+      this.helpDescriptionDialog.show();
     }
   }
 
-  openDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+  openDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
 
-  closeDialog(id) {
-    this.shadowRoot.querySelector('#' + id).hide();
+  closeDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**
@@ -775,11 +808,9 @@ export default class BackendAiSettingsView extends BackendAIPage {
    *
    */
   saveAndCloseDialog() {
-    const scheduler = this.shadowRoot.querySelector('#scheduler-switch');
-    const numRetriesPerSchedulerEl = this.shadowRoot.querySelector('#num-retries');
-    const tempNumRetries = numRetriesPerSchedulerEl.value;
-    const inputValidationArr = [scheduler, numRetriesPerSchedulerEl];
-    if (inputValidationArr.filter((elem) => elem.reportValidity()).length < inputValidationArr.length) {
+    const tempNumRetries = this.numberOfRetries.value;
+    const inputValidationArr = [this.schedulerSelect, this.numberOfRetries];
+    if (inputValidationArr.filter((elem) => elem?.reportValidity()).length < inputValidationArr.length) {
       return;
     }
     if (['fifo', 'lifo', 'drf'].includes(this.selectedSchedulerType)) {
@@ -796,7 +827,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
             this.notification.show();
             this.options.schedulerType = this.selectedSchedulerType;
             this.options.scheduler = {...this.options.scheduler, ...options};
-            this.update(this.options);
+            // this.update(this.options);
+            this.requestUpdate();
             this._closeDialogWithConfirmation('scheduler-env-dialog');
           })
           .catch((err) => {
@@ -807,19 +839,19 @@ export default class BackendAiSettingsView extends BackendAIPage {
       } else if (tempNumRetries !== '0') {
         this.notification.text = _text('settings.FifoOnly');
         this.notification.show();
-        this.shadowRoot.querySelector('#num-retries').value = '0';
+        this.numberOfRetries.value = '0';
       }
     }
   }
 
   saveAndCloseOverlayNetworkDialog() {
-    const networkOptions = [...this.shadowRoot.querySelectorAll('.network-option')];
+    const networkOptions = Array.from(this.shadowRoot?.querySelectorAll<TextField>('.network-option') as NodeListOf<TextField>);
     if (networkOptions.filter((elem) => elem.reportValidity()).length < networkOptions.length) {
       return;
     }
     const options = {};
     for (const networkOption of networkOptions) {
-      const key = this._findOptionById(networkOption.id);
+      const key = this._findOptionById(networkOption.id) ?? '';
       const value = networkOption.value;
       if (value !== '' || value !== null || value !== undefined) {
         options[key] = value;
@@ -832,7 +864,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
         this.notification.text = _text('notification.SuccessfullyUpdated');
         this.notification.show();
         this.options.network = {...this.options.network, ...options};
-        this.update(this.options);
+        // this.update(this.options);
+        this.requestUpdate();
         this._closeDialogWithConfirmation('overlay-network-env-dialog');
       })
       .catch((err) => {
@@ -852,7 +885,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
     this.updateScheduler();
     for (const [key] of Object.entries(this.options.scheduler)) {
       globalThis.backendaiclient.setting.get(`plugins/scheduler/${this.selectedSchedulerType}/${key}`).then((response) => {
-        this.shadowRoot.querySelector('#' + this._findIdByOption(key)).value = response['result'] || '0';
+        (this.shadowRoot?.querySelector('#' + this._findIdByOption(key)) as TextField).value = response['result'] || '0';
       });
     }
   }

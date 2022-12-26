@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -27,6 +27,11 @@ import '../plastics/lablup-piechart/lablup-piechart';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 
 /**
  `<backend-ai-resource-panel>` is a Summary panel of backend.ai web UI.
@@ -69,17 +74,13 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Number}) height = 0;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -194,7 +195,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -483,7 +483,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical start-justified wrap">
                 <lablup-progress-bar id="gpu-usage-bar" class="start"
                   progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
-                  description="${this.cuda_gpu_used !== 0 ? this.cuda_gpu_used.toFixed(1) : 0} / ${this.cuda_gpu_total !== 0 ? this.cuda_gpu_total.toFixed(1) : 0} CUDA GPUs ${_t('summary.reserved')}."
+                  description="${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}."
                 ></lablup-progress-bar>
                 <lablup-progress-bar id="gpu-usage-bar-2" class="end"
                   progress="0"
@@ -499,7 +499,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="fgpu-usage-bar" class="start"
                 progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                description="${this.cuda_fgpu_used !== 0 ? this.cuda_fgpu_used.toFixed(1) : 0} / ${this.cuda_fgpu_total !== 0 ? this.cuda_fgpu_total.toFixed(1) : 0} CUDA fGPUs ${_t('summary.reserved')}."
+                description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}."
               ></lablup-progress-bar>
               <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
                 progress="0"

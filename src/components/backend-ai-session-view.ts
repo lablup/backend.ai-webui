@@ -5,22 +5,22 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
 import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/icon';
-import 'weightless/textfield';
+import {Textfield} from 'weightless/textfield';
 
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-icon-button/mwc-icon-button';
-import '@material/mwc-menu/mwc-menu';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
+import {TextField} from '@material/mwc-textfield';
+import '@material/mwc-list';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import {Menu} from '@material/mwc-menu';
+import '@material/mwc-tab-bar';
+import '@material/mwc-tab';
 
 import './lablup-activity-panel';
 import './backend-ai-session-launcher';
@@ -33,6 +33,13 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAISessionList = HTMLElementTagNameMap['backend-ai-session-list'];
+type BackendAIResourceMonitor = HTMLElementTagNameMap['backend-ai-resource-monitor']
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Session View
@@ -51,12 +58,18 @@ import {
 export default class BackendAiSessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
-  @property({type: Object}) _lists = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _defaultFileName = '';
-  @property({type: Object}) exportToCsvDialog = Object();
+  @queryAll('backend-ai-session-list') sessionList!: NodeListOf<BackendAISessionList>;
+  @query('#running-jobs') runningJobs!: BackendAISessionList;
+  @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
+  @query('#export-file-name') exportFileNameInput!: TextField;
+  @query('#date-from') dateFromInput!: Textfield;
+  @query('#date-to') dateToInput!: Textfield;
+  @query('#dropdown-menu') dropdownMenu!: Menu;
+  @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -64,7 +77,7 @@ export default class BackendAiSessionView extends BackendAIPage {
     this._status = 'inactive';
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -169,10 +182,9 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._lists = this.shadowRoot.querySelectorAll('backend-ai-session-list');
     this.notification = globalThis.lablupNotification;
     document.addEventListener('backend-ai-session-list-refreshed', () => {
-      this.shadowRoot.querySelector('#running-jobs').refreshList(true, false);
+      this.runningJobs.refreshList(true, false);
     });
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -188,16 +200,15 @@ export default class BackendAiSessionView extends BackendAIPage {
   async _viewStateChanged(active) {
     await this.updateComplete;
     if (active === false) {
-      this.shadowRoot.querySelector('#resource-monitor').removeAttribute('active');
+      this.resourceMonitor.removeAttribute('active');
       this._status = 'inactive';
-      for (let x = 0; x < this._lists.length; x++) {
-        this._lists[x].removeAttribute('active');
+      for (let x = 0; x < this.sessionList.length; x++) {
+        this.sessionList[x].removeAttribute('active');
       }
       return;
     }
-    this.shadowRoot.querySelector('#resource-monitor').setAttribute('active', true);
-    this.shadowRoot.querySelector('#running-jobs').setAttribute('active', true);
-    this.exportToCsvDialog = this.shadowRoot.querySelector('#export-to-csv');
+    this.resourceMonitor.setAttribute('active', 'true');
+    this.runningJobs.setAttribute('active', 'true');
     this._status = 'active';
   }
 
@@ -208,23 +219,29 @@ export default class BackendAiSessionView extends BackendAIPage {
    * */
   _toggleDialogCheckbox(e) {
     const checkbox = e.target;
-    const dateFrom = this.shadowRoot.querySelector('#date-from');
-    const dateTo = this.shadowRoot.querySelector('#date-to');
+    const dateFrom = this.dateFromInput;
+    const dateTo = this.dateToInput;
 
     dateFrom.disabled = checkbox.checked;
     dateTo.disabled = checkbox.checked;
   }
 
+  _triggerClearTimeout() {
+    const event = new CustomEvent('backend-ai-clear-timeout');
+    document.dispatchEvent(event);
+  }
+
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title + '-lists').style.display = 'block';
-    for (let x = 0; x < this._lists.length; x++) {
-      this._lists[x].removeAttribute('active');
+    (this.shadowRoot?.querySelector('#' + tab.title + '-lists') as HTMLElement).style.display = 'block';
+    for (let x = 0; x < this.sessionList.length; x++) {
+      this.sessionList[x].removeAttribute('active');
     }
-    this.shadowRoot.querySelector('#' + tab.title + '-jobs').setAttribute('active', true);
+    this._triggerClearTimeout();
+    (this.shadowRoot?.querySelector('#' + tab.title + '-jobs') as HTMLElement).setAttribute('active', 'true');
   }
 
   /**
@@ -233,7 +250,7 @@ export default class BackendAiSessionView extends BackendAIPage {
    * @param {Event} e - Toggle event
    */
   _toggleDropdown(e) {
-    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const menu = this.dropdownMenu;
     const button = e.target;
     menu.anchor = button;
     if (!menu.open) {
@@ -242,7 +259,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   _openExportToCsvDialog() {
-    const menu = this.shadowRoot.querySelector('#dropdown-menu');
+    const menu = this.dropdownMenu;
     if (menu.open) {
       menu.close();
     }
@@ -266,8 +283,8 @@ export default class BackendAiSessionView extends BackendAIPage {
    * Check date-to < date-from.
    * */
   _validateDateRange() {
-    const dateTo = this.shadowRoot.querySelector('#date-to');
-    const dateFrom = this.shadowRoot.querySelector('#date-from');
+    const dateTo = this.dateToInput;
+    const dateFrom = this.dateFromInput;
 
     if (dateTo.value && dateFrom.value) {
       const to = new Date(dateTo.value).getTime();
@@ -314,7 +331,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   }
 
   _exportToCSV() {
-    const fileNameEl = this.shadowRoot.querySelector('#export-file-name');
+    const fileNameEl = this.exportFileNameInput;
 
     if (!fileNameEl.validity.valid) {
       return;

@@ -19,7 +19,6 @@ import {IronFlex, IronFlexAlignment} from '../layout/iron-flex-layout-classes';
  */
 @customElement("lablup-piechart")
 export default class LablupPiechart extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) currentNumber = 50;
   @property({type: Number}) maxNumber = 100;
   @property({type: String}) unit = '%';
@@ -32,10 +31,6 @@ export default class LablupPiechart extends LitElement {
   @property({type: String}) indicatorPath = '';
   @property({type: String}) prefix = '';
   @property({type: String}) sizeParam = '';
-
-  constructor() {
-    super();
-  }
 
   static get is() {
     return 'lablup-piechart';
@@ -62,9 +57,9 @@ export default class LablupPiechart extends LitElement {
       chartFontSize = 0.9 / (this.currentNumber.toString().length);
     }
     this.chartFontSize = chartFontSize.toString();
-    let chart: HTMLElement = this.shadowRoot.querySelector("#chart");
-    let chartText: HTMLElement = this.shadowRoot.querySelector("#chart-text");
-    let unitText: HTMLElement = this.shadowRoot.querySelector("#unit-text");
+    let chart: HTMLElement = this.shadowRoot?.querySelector("#chart") as HTMLElement;
+    let chartText: HTMLElement = this.shadowRoot?.querySelector("#chart-text") as HTMLElement;
+    let unitText: HTMLElement = this.shadowRoot?.querySelector("#unit-text") as HTMLElement;
     let unitFontSize: string = (0.3 - this.unit.length * 0.05).toString();
     chart.setAttribute("fill", this.chartcolor);
     chartText.setAttribute("fill", this.textcolor);
@@ -107,9 +102,9 @@ export default class LablupPiechart extends LitElement {
     x = x + 0.5;
     y = -y + 0.5;
     this.indicatorPath = this.indicatorPath + "L" + x + " " + y + " z";
-    this.shadowRoot.querySelector('#pievalue').setAttribute("d", this.indicatorPath);
+    this.shadowRoot?.querySelector('#pievalue')?.setAttribute("d", this.indicatorPath);
     if (this.url !== undefined && this.url !== "") {
-      this.shadowRoot.querySelector("#chart").addEventListener('tap', this._moveTo.bind(this));
+      this.shadowRoot?.querySelector("#chart")?.addEventListener('tap', this._moveTo.bind(this));
     }
     this.requestUpdate();
   }

@@ -5,15 +5,14 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
 import '@vaadin/vaadin-icons/vaadin-icons';
 import '@vaadin/vaadin-item/vaadin-item';
 
-import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import 'weightless/button';
@@ -21,10 +20,18 @@ import 'weightless/card';
 import 'weightless/icon';
 
 import './backend-ai-dialog';
-import {default as PainKiller} from './backend-ai-painkiller';
+import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
+import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-resource-preset-list')
 class BackendAiResourcePresetList extends BackendAIPage {
@@ -36,8 +43,26 @@ class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: String}) condition = '';
   @property({type: String}) presetName = '';
   @property({type: Object}) resourcePresets;
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Array}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Array}) _boundControlRenderer = this.controlRenderer.bind(this);
+  @query('#create-preset-name') createPresetNameInput!: TextField;
+  @query('#create-cpu-resource') createCpuResourceInput!: TextField;
+  @query('#create-ram-resource') createRamResourceInput!: TextField;
+  @query('#create-gpu-resource') createGpuResourceInput!: TextField;
+  @query('#create-fgpu-resource') createFGpuResourceInput!: TextField;
+  @query('#create-shmem-resource') createSharedMemoryResourceInput!: TextField;
+  @query('#cpu-resource') cpuResourceInput!: TextField;
+  @query('#ram-resource') ramResourceInput!: TextField;
+  @query('#gpu-resource') gpuResourceInput!: TextField;
+  @query('#fgpu-resource') fgpuResourceInput!: TextField;
+  @query('#shmem-resource') sharedMemoryResourceInput!: TextField;
+  @query('#id-preset-name') presetNameInput!: TextField;
+  @query('#create-preset-dialog') createPresetDialog!: BackendAIDialog;
+  @query('#modify-template-dialog') modifyTemplateDialog!: BackendAIDialog;
+  @query('#delete-resource-preset-dialog') deleteResourcePresetDialog!: BackendAIDialog;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
+
   constructor() {
     super();
   }
@@ -97,7 +122,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         mwc-button, mwc-button[unelevated] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-on-theme-primary: var(--general-button-background-color);
+          --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
 
@@ -195,10 +220,6 @@ class BackendAiResourcePresetList extends BackendAIPage {
     );
   }
 
-  _launchPresetAddDialog(e) {
-    this.shadowRoot.querySelector('#create-preset-dialog').show();
-  }
-
   render() {
     // language=HTML
     return html`
@@ -206,10 +227,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <h4 class="horizontal flex center center-justified layout">
           <span>${_t('resourcePreset.ResourcePresets')}</span>
           <span class="flex"></span>
-          <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${(e) => this._launchPresetAddDialog(e)}"></mwc-button>
+          <mwc-button raised id="add-resource-preset" icon="add" label="${_t('resourcePreset.CreatePreset')}" @click="${() => this._launchPresetAddDialog()}"></mwc-button>
         </h4>
-        <div>
-          <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+        <div class="list-wrapper">
+          <vaadin-grid theme="row-stripes column-borders compact" height-by-rows aria-label="Resource Policy list"
                       .items="${this.resourcePresets}">
             <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
             <vaadin-grid-sort-column resizable path="name" header="${_t('resourcePreset.Name')}">
@@ -219,6 +240,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
             </vaadin-grid-column>
           </vaadin-grid>
+          <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
       <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
@@ -323,7 +345,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
               unelevated
               class="operation"
               label="${_t('button.Okay')}"
-              @click="${(e) => this._deleteResourcePresetWithCheck(e)}"></mwc-button>
+              @click="${() => this._deleteResourcePresetWithCheck()}"></mwc-button>
          </div>
       </backend-ai-dialog>
     `;
@@ -331,10 +353,10 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    const textfields = this.shadowRoot.querySelectorAll('mwc-textfield');
-    for (const textfield of textfields) {
+    const textfields = this.shadowRoot?.querySelectorAll('mwc-textfield');
+    textfields?.forEach((textfield) => {
       this._addInputValidator(textfield);
-    }
+    });
   }
 
   async _viewStateChanged(active) {
@@ -362,28 +384,32 @@ class BackendAiResourcePresetList extends BackendAIPage {
     }
   }
 
+  _launchPresetAddDialog() {
+    this.createPresetDialog.show();
+  }
+
   _launchResourcePresetDialog(e) {
     this.updateCurrentPresetToDialog(e);
-    this.shadowRoot.querySelector('#modify-template-dialog').show();
+    this.modifyTemplateDialog.show();
   }
 
   _launchDeleteResourcePresetDialog(e) {
     const controls = e.target.closest('#controls');
     const preset_name = controls['preset-name'];
     this.presetName = preset_name;
-    this.shadowRoot.querySelector('#delete-resource-preset-dialog').show();
+    this.deleteResourcePresetDialog.show();
   }
 
-  _deleteResourcePresetWithCheck(e) {
+  _deleteResourcePresetWithCheck() {
     globalThis.backendaiclient.resourcePreset.delete(this.presetName).then((response) => {
-      this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
-      this.notification.text = 'Resource preset is successfully deleted.';
+      this.deleteResourcePresetDialog.hide();
+      this.notification.text = _text('resourcePreset.Deleted');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#delete-resource-preset-dialog').hide();
+        this.deleteResourcePresetDialog.hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -397,18 +423,20 @@ class BackendAiResourcePresetList extends BackendAIPage {
     const resourcePresets = globalThis.backendaiclient.utils.gqlToObject(this.resourcePresets, 'name');
     const resourcePreset = resourcePresets[preset_name];
     // resourcePolicy['total_resource_slots'] = JSON.parse(resourcePolicy['total_resource_slots']);
-    this.shadowRoot.querySelector('#id-preset-name').value = preset_name;
-    this.shadowRoot.querySelector('#cpu-resource').value = resourcePreset.resource_slots.cpu;
-    this.shadowRoot.querySelector('#gpu-resource').value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
-    this.shadowRoot.querySelector('#fgpu-resource').value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
-    this.shadowRoot.querySelector('#ram-resource').value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g'));
-    this.shadowRoot.querySelector('#shmem-resource').value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
+    this.presetNameInput.value = preset_name;
+    this.cpuResourceInput.value = resourcePreset.resource_slots.cpu;
+    this.gpuResourceInput.value = 'cuda.device' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.device'] : '';
+    this.fgpuResourceInput.value = 'cuda.shares' in resourcePreset.resource_slots ? resourcePreset.resource_slots['cuda.shares'] : '';
+    this.ramResourceInput.value = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.resource_slots['mem'], 'g')).toString();
+    this.sharedMemoryResourceInput.value = resourcePreset.shared_memory ? parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(resourcePreset.shared_memory, 'g')).toFixed(2) : '';
   }
 
   _refreshTemplateData() {
     const param = {
       'group': globalThis.backendaiclient.current_group
     };
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePreset.check(param).then((response) => {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
@@ -421,6 +449,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
         }
       });
       this.resourcePresets = resourcePresets;
+      if (this.resourcePresets.length == 0) {
+        this.listCondition = 'no-data';
+      } else {
+        this._listStatus?.hide();
+      }
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -441,11 +474,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
   _readResourcePresetInput() {
     const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const cpu = wrapper(this.shadowRoot.querySelector('#cpu-resource').value);
-    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
-    const gpu_resource = wrapper(this.shadowRoot.querySelector('#gpu-resource').value);
-    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#fgpu-resource').value);
-    let sharedMemory = this.shadowRoot.querySelector('#shmem-resource').value;
+    const cpu = wrapper(this.cpuResourceInput.value);
+    const mem = wrapper(this.ramResourceInput.value + 'g');
+    const gpu_resource = wrapper(this.gpuResourceInput.value);
+    const fgpu_resource = wrapper(this.fgpuResourceInput.value);
+    let sharedMemory = this.sharedMemoryResourceInput.value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
 
     const resource_slots = {cpu, mem};
@@ -469,9 +502,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
     if (!this._checkFieldValidity('modify')) {
       return;
     }
-    const name = this.shadowRoot.querySelector('#id-preset-name').value;
+    const name = this.presetNameInput.value;
     const wrapper = (v) => v !== undefined && v.includes('Unlimited') ? 'Infinity' : v;
-    const mem = wrapper(this.shadowRoot.querySelector('#ram-resource').value + 'g');
+    const mem = wrapper(this.ramResourceInput.value + 'g');
     if (!name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
       this.notification.show();
@@ -484,14 +517,14 @@ class BackendAiResourcePresetList extends BackendAIPage {
       return;
     }
     globalThis.backendaiclient.resourcePreset.mutate(name, input).then((response) => {
-      this.shadowRoot.querySelector('#modify-template-dialog').hide();
+      this.modifyTemplateDialog.hide();
       this.notification.text = _text('resourcePreset.Updated');
       this.notification.show();
       this._refreshTemplateData();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
-        this.shadowRoot.querySelector('#modify-template-dialog').hide();
+        this.modifyTemplateDialog.hide();
         this.notification.text = PainKiller.relieve(err.title);
         this.notification.detail = err.message;
         this.notification.show(true, err);
@@ -557,9 +590,9 @@ class BackendAiResourcePresetList extends BackendAIPage {
    */
   _checkFieldValidity(prefix = '') {
     const query = 'mwc-textfield[class^="'.concat(prefix).concat('"]');
-    const createDialogTextfields = this.shadowRoot.querySelectorAll(query);
+    const createDialogTextfields = this.shadowRoot?.querySelectorAll<TextField>(query) as NodeListOf<TextField>;
     let isValid = true;
-    for (const textfield of createDialogTextfields) {
+    for (const textfield of Array.from(createDialogTextfields)) {
       isValid = textfield.checkValidity();
       if (!isValid) {
         return textfield.checkValidity();
@@ -577,12 +610,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
       v = v.toString();
       return typeof (v) !== 'undefined' && v.includes('Unlimited') ? 'Infinity' : v;
     };
-    const preset_name = wrapper(this.shadowRoot.querySelector('#create-preset-name').value);
-    const cpu = wrapper(this.shadowRoot.querySelector('#create-cpu-resource').value);
-    const mem = wrapper(this.shadowRoot.querySelector('#create-ram-resource').value + 'g');
-    const gpu_resource = wrapper(this.shadowRoot.querySelector('#create-gpu-resource').value);
-    const fgpu_resource = wrapper(this.shadowRoot.querySelector('#create-fgpu-resource').value);
-    let sharedMemory = this.shadowRoot.querySelector('#create-shmem-resource').value;
+    const preset_name = wrapper(this.createPresetNameInput.value);
+    const cpu = wrapper(this.createCpuResourceInput.value);
+    const mem = wrapper(this.createRamResourceInput.value + 'g');
+    const gpu_resource = wrapper(this.createGpuResourceInput.value);
+    const fgpu_resource = wrapper(this.createFGpuResourceInput.value);
+    let sharedMemory = this.createSharedMemoryResourceInput.value;
     if (sharedMemory) sharedMemory = sharedMemory + 'g';
     if (!preset_name) {
       this.notification.text = _text('resourcePreset.NoPresetName');
@@ -610,18 +643,18 @@ class BackendAiResourcePresetList extends BackendAIPage {
 
     globalThis.backendaiclient.resourcePreset.add(preset_name, input)
       .then((res) => {
-        this.shadowRoot.querySelector('#create-preset-dialog').hide();
+        this.createPresetDialog.hide();
         if (res.create_resource_preset.ok) {
           this.notification.text = _text('resourcePreset.Created');
           this.refresh();
 
           // reset values
-          this.shadowRoot.querySelector('#create-preset-name').value = '';
-          this.shadowRoot.querySelector('#create-cpu-resource').value = 1;
-          this.shadowRoot.querySelector('#create-ram-resource').value = 1;
-          this.shadowRoot.querySelector('#create-gpu-resource').value = 0;
-          this.shadowRoot.querySelector('#create-fgpu-resource').value = 0;
-          this.shadowRoot.querySelector('#create-shmem-resource').value = '';
+          this.createPresetNameInput.value = '';
+          this.createCpuResourceInput.value = '1';
+          this.createRamResourceInput.value = '1';
+          this.createGpuResourceInput.value = '0';
+          this.createFGpuResourceInput.value = '0';
+          this.createSharedMemoryResourceInput.value = '';
         } else {
           this.notification.text = PainKiller.relieve(res.create_resource_preset.msg);
         }

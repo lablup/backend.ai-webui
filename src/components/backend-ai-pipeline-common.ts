@@ -77,10 +77,6 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   @property({type: String}) pipelineConfigPath = 'config.json';
   @property({type: String}) pipelineComponentDetailPath = 'components.json';
 
-  constructor() {
-    super();
-  }
-
   /**
    * Download pipeline config file and return it.
    *

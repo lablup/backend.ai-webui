@@ -2,10 +2,9 @@
  @license
  Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -21,7 +20,6 @@ import 'weightless/icon';
 import 'weightless/button';
 import 'weightless/label';
 
-import './lablup-loading-spinner';
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 import '@material/mwc-icon';
@@ -30,6 +28,14 @@ import '@material/mwc-icon-button';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 
 /**
  Backend.AI Error Log List
@@ -49,7 +55,7 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: String}) message = '';
   @property({type: Array}) logs = [];
   @property({type: Array}) _selected_items = [];
-  @property({type: Object}) spinner = Object();
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) _grid = Object();
   @property({type: Array}) logView = [];
   @property({type: Number}) _pageSize = 25;
@@ -63,13 +69,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   @property({type: Object}) boundMethodRenderer = this.methodRenderer.bind(this);
   @property({type: Object}) boundReqUrlRenderer = this.reqUrlRender.bind(this);
   @property({type: Object}) boundParamRenderer = this.paramRenderer.bind(this);
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
 
-
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -124,11 +127,10 @@ export default class BackendAiErrorLogList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this._updatePageItemSize();
-    this._grid = this.shadowRoot.querySelector('#list-grid');
+    this._grid = this.shadowRoot?.querySelector('#list-grid');
     if (!globalThis.backendaiclient || !globalThis.backendaiclient.is_admin) {
-      this.shadowRoot.querySelector('vaadin-grid').style.height = 'calc(100vh - 275px)!important';
+      (this.shadowRoot?.querySelector('vaadin-grid') as VaadinGrid).style.height = 'calc(100vh - 275px)!important';
     }
     this.notification = globalThis.lablupNotification;
     document.addEventListener('log-message-refresh', () => this._refreshLogData());
@@ -147,13 +149,18 @@ export default class BackendAiErrorLogList extends BackendAIPage {
    * Refresh log data.
    */
   _refreshLogData() {
-    this.spinner.show();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     this._updatePageItemSize();
     this.logs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '{}');
     this._totalLogCount = this.logs.length > 0 ? this.logs.length : 1;
     this._updateItemsFromPage(1);
     this._grid.clearCache();
-    this.spinner.hide();
+    if (this.logs.length == 0) {
+      this.listCondition = 'no-data';
+    } else {
+      this._listStatus?.hide();
+    }
   }
 
   /**
@@ -347,26 +354,29 @@ export default class BackendAiErrorLogList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid id="list-grid" page-size="${this._pageSize}"
-                   theme="row-stripes column-borders compact wrap-cell-content"
-                   aria-label="Error logs" .items="${this.logView}">
-        <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}" .renderer="${this.boundTimeStampRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}" .renderer="${this.boundStatusRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}" .renderer="${this.boundErrTitleRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}" .renderer="${this.boundErrMsgRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}" .renderer="${this.boundErrTypeRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}" .renderer="${this.boundMethodRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable auto-width flex-grow="0" text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid id="list-grid" page-size="${this._pageSize}"
+                     theme="row-stripes column-borders compact wrap-cell-content"
+                     aria-label="Error logs" .items="${this.logView}">
+          <vaadin-grid-column width="250px" flex-grow="0" text-align="start" auto-width header="${_t('logs.TimeStamp')}" .renderer="${this.boundTimeStampRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Status')}" .renderer="${this.boundStatusRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorTitle')}" .renderer="${this.boundErrTitleRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorMessage')}" .renderer="${this.boundErrMsgRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column width="50px" flex-grow="0" text-align="start" auto-width header="${_t('logs.ErrorType')}" .renderer="${this.boundErrTypeRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.Method')}" .renderer="${this.boundMethodRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable flex-grow="0" text-align="start" auto-width header="${_t('logs.RequestUrl')}" .renderer="${this.boundReqUrlRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable auto-width text-align="start" header="${_t('logs.Parameters')}" .renderer="${this.boundParamRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('logs.NoLogToDisplay')}"></backend-ai-list-status>
+      </div>
       <div class="horizontal center-justified layout flex" style="padding: 10px;border-top:1px solid #ccc;">
         <mwc-icon-button
             class="pagination"

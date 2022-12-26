@@ -29,7 +29,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-progress-bar')
 export default class LablupProgressBar extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) progressBar;
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
@@ -105,9 +104,9 @@ export default class LablupProgressBar extends LitElement {
   }
 
   firstUpdated() {
-    this.progressBar = this.shadowRoot.querySelector('#front');
-    this.frontDesc = this.shadowRoot.querySelector('#front');
-    this.backDesc = this.shadowRoot.querySelector('#back');
+    this.progressBar = this.shadowRoot?.querySelector('#front');
+    this.frontDesc = this.shadowRoot?.querySelector('#front');
+    this.backDesc = this.shadowRoot?.querySelector('#back');
     this.progressBar.style.clipPath = 'inset(0 0 0 0%)';
   }
 

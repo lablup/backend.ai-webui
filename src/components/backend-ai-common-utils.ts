@@ -84,6 +84,72 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     return value.substring(0, startFrom) + maskChar.repeat(maskLength) + value.substring(startFrom+maskLength, value.length);
   }
 
+  /**
+   * Delete a nested key from an object.
+   *
+   * @param {Object} obj - target object
+   * @param {String} nestedKey - nested key to delete with arbitrary depths (ex: 'key.subkey')
+   * @param {String} sep - separator of the `nestedKey`
+   * @return {Object} - Object without nested key
+  */
+  deleteNestedKeyFromObject(obj: Object, nestedKey: string, sep = '.') {
+    if (!obj || obj.constructor !== Object || !nestedKey) {
+      return obj;
+    }
+    const keys = nestedKey.split(sep);
+    const lastKey = keys.pop();
+    if (lastKey) {
+      delete keys.reduce((o, k) => o[k], obj)[lastKey];
+    }
+    return obj;
+  }
+
+  /**
+   * Merge two nested objects into one.
+   *
+   * @param {Object} obj1 - source object
+   * @param {Object} obj2 - the objects that will override obj1
+   * @return {Object} - Merged object
+   */
+  mergeNestedObjects(obj1: Object, obj2: Object) {
+    if (!obj1 || !obj2) {
+      return obj1 || obj2 || {};
+    }
+    function _merge(a, b) {
+      return Object.entries(b).reduce((o, [k, v]) => {
+        o[k] = v && (v as any).constructor === Object ?
+          _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
+          v;
+        return o;
+      }, a);
+    }
+    return [obj1, obj2].reduce(_merge, {});
+  }
+
+  /**
+   * Export string to txt file
+   *
+   * @param {String} fileName - file name to save
+   * @param {String} str - contents string
+   */
+  exportToTxt(fileName: string, str: string) {
+    if (!str || str.length === 0) {
+      return;
+    }
+    const blob = new Blob([str], {type: 'text/plain;charset=utf-8'});
+    const link = document.createElement('a');
+    if (link.download !== undefined) {
+      // Browsers that support HTML5 download attribute
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileName + '.txt');
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  }
+
   render() {
     // language=HTML
     return html`

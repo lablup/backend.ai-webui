@@ -764,7 +764,10 @@
     "ResourceGroupDeleted": "資源組刪除成功",
     "EnterValidResourceGroupName": "輸入有效的資源組名稱",
     "ResourceGroupNameRequired": "需要資源組名稱。",
-    "ResourceGroupAlreadyExist": "已存在同名的資源組。"
+    "ResourceGroupAlreadyExist": "已存在同名的資源組。",
+    "SetSchedulerOptions": "設置調度程序選項",
+    "TimeoutSeconds": "秒",
+    "ResourceGroupDetail": "資源組詳細信息"
   },
   "maintenance": {
     "General": "一般的",
