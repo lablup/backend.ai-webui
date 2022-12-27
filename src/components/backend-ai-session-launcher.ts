@@ -1884,12 +1884,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if (enqueue_session) {
-            available_slot['cpu'] = Infinity;
-            available_slot['mem'] = Infinity;
-            available_slot['cuda_device'] = Infinity;
-            available_slot['cuda_shares'] = Infinity;
-            available_slot['rocm_device'] = Infinity;
-            available_slot['tpu_device'] = Infinity;
+            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+              if (slot in this.total_resource_group_slot) {
+                available_slot[slot] = this.total_resource_group_slot[slot];
+              }
+            });
           }
 
           if ('cpu' in this.userResourceLimit) {
