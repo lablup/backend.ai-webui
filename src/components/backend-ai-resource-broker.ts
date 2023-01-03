@@ -170,6 +170,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
           }
         }
+        this.imageTagAlias = json.tagAlias;
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
             this._refreshImageList();
@@ -177,13 +178,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         } else {
           this._refreshImageList();
         }
-      }
-    );
-    fetch('resources/image_tags.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageTagAlias = json.alias;
       }
     );
 
