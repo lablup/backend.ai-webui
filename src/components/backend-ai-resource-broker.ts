@@ -19,6 +19,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: Object}) imageTagAlias = Object();
   // Resource information
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -178,6 +179,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
       }
     );
+    fetch('resources/image_tags.json').then(
+      (response) => response.json()
+    ).then(
+      (json) => {
+        this.imageTagAlias = json.alias;
+      }
+    );
+
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.active && this.metadata_updating === false) {
         this.metadata_updating = true;
