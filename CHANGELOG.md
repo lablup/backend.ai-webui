@@ -1,5 +1,12 @@
 # Changelog
 
+## v22.09.4 (09/12/2022)
+## What's Changed
+* feat: add support for header based authentication on wsproxy by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1528
+* Show warning dialog and validation message when setting rate limit below 100 by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1482
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.3...v22.09.4
+
 ## v22.09.3 (27/11/2022)
 ## What's Changed
 * add: Electron app debugging content on README by @studioego in https://github.com/lablup/backend.ai-webui/pull/1485
