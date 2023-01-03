@@ -171,6 +171,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           }
         }
         this.imageTagAlias = json.tagAlias;
+        console.log(this.imageTagAlias);
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
             this._refreshImageList();
