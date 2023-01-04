@@ -451,15 +451,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
-    if (globalThis.isElectron && !appServices.includes('vscode')) {
-      this.appSupportList.push({ // Force push terminal
-        'name': 'vscode',
-        'title': 'VS Code',
-        'category': '2.Development',
-        'redirect': '',
-        'src': './resources/icons/vscode.svg'
-      });
-    }
     appServices.forEach((elm) => {
       if (!(elm in this.appTemplate)) {
         this.appTemplate[elm] = [];
@@ -506,6 +497,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
+    if (globalThis.isElectron && !appServices.includes('vscode')) {
+      this.appSupportList.push({ // Force push terminal
+        'name': 'vscode',
+        'title': 'VS Code',
+        'category': '2.Development',
+        'redirect': '',
+        'src': './resources/icons/vscode.svg'
+      });
+    }
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
