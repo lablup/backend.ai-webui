@@ -66,7 +66,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @query('#signup-panel') signupPanel!: BackendAIDialog;
   @query('#block-panel') blockPanel!: BackendAIDialog;
   @query('#email-sent-dialog') emailSentDialog!: BackendAIDialog;
-  @query('#block-panel') TOSdialog!: LablupTermsOfService;
+  @query('#terms-of-service') TOSdialog!: LablupTermsOfService;
 
   static get styles(): CSSResultGroup {
     return [
@@ -198,14 +198,9 @@ export default class BackendAiSignup extends BackendAIPage {
   }
 
   init_client() {
-    if (typeof this.client === 'undefined') {
-      if (this.endpoint !== '' && this.client && Object.keys(this.client).length !== 0) {
-        const clientConfig = new ClientConfig('', '', this.endpoint, 'SESSION');
-        this.client = new Client(
-          clientConfig,
-          `Backend.AI WebUI.`,
-        );
-      }
+    if (typeof this.client === 'undefined' && this.endpoint !== '') {
+      const clientConfig = new ClientConfig('', '', this.endpoint, 'SESSION');
+      this.client = new Client(clientConfig, `Backend.AI WebUI.`);
     }
   }
 

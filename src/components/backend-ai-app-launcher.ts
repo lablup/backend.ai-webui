@@ -61,6 +61,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#app-port') appPort!: TextField;
   @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
   @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
+  @query('#force-use-v1-proxy') forceUseV1Proxy!: Checkbox;
+  @query('#force-use-v2-proxy') forceUseV2Proxy!: Checkbox;
   @query('#app-launch-confirmation-dialog') appLaunchConfirmationDialog!: BackendAIDialog;
   @query('#ssh-dialog') sshDialog!: BackendAIDialog;
   @query('#tensorboard-dialog') tensorboardDialog!: BackendAIDialog;
@@ -388,6 +390,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @return {string} wsproxy version
    */
   async _getWSProxyVersion(sessionUuid) {
+    if (globalThis.backendaiwebui.debug === true) {
+      if (this.forceUseV1Proxy.checked) return 'v1'
+      else if (this.forceUseV2Proxy.checked) return 'v2';
+    }
+
     const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
     const scalingGroupId = kInfo.compute_session.scaling_group;
     const groupId = globalThis.backendaiclient.current_group_id();
@@ -527,7 +534,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
       param['mode'] = 'SESSION';
-      param['session'] = globalThis.backendaiclient._config._session_id;
+      if (globalThis.backendaiclient._loginSessionId) {
+        param['auth_mode'] = 'header';
+        param['session'] = globalThis.backendaiclient._loginSessionId;
+      } else {
+        param['auth_mode'] = 'cookie';
+        param['session'] = globalThis.backendaiclient._config._session_id;
+      }
     } else {
       param['mode'] = 'API';
       param['access_key'] = globalThis.backendaiclient._config.accessKey;
@@ -608,7 +621,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
-    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app)
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app);
     if (servicePortInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
@@ -849,7 +862,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         sendAppName = 'sshd';
       }
       const userPort = parseInt(this.appPort.value);
-      if (this.checkPreferredPort && userPort) {
+      if (this.checkPreferredPort.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
@@ -1216,6 +1229,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
                              min="1025" max="65534" style="margin-left:1em;width:90px;"
                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+            </div>
+            <div class="horizontal layout center">
+            ${globalThis.backendaiwebui.debug === true ? html`
+              <mwc-checkbox id="force-use-v1-proxy" style="margin-right:0.5em;"></mwc-checkbox>
+              Force use of V1
+              <mwc-checkbox id="force-use-v2-proxy" style="margin-right:0.5em;"></mwc-checkbox>
+              Force use of V2
+            `: ``}
             </div>
           </div>
         </div>

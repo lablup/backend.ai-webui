@@ -108,7 +108,8 @@
     "NoInvitations": "There is no invitations to display.",
     "AcceptSharedVFolder": "You can now access folder: ",
     "DeclineSharedVFolder": "Folder invitation is deleted: ",
-    "connectingToCluster": "Connecting to Backend.AI Cluster..."
+    "connectingToCluster": "Connecting to Backend.AI Cluster...",
+    "DownloadWebUIApp": "Download Backend.AI Web UI App"
   },
   "session": {
     "launcher": {
@@ -314,6 +315,7 @@
     },
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
+    "DownloadingSessionLogs": "Downloading session logs.",
     "VSCodeRemoteConnection": "Connect Visual Studio Code Remote",
     "VSCodeRemoteDescription": "If you want to run Visual Studio Code remote, need to enter a password"
   },
@@ -407,6 +409,9 @@
     "RateLimitValidation": "Rate Limit should be greater than zero and below 50000.",
     "RateLimitFor15min": "Rate Limit (for 15 min.)",
     "for900seconds": "for 900 seconds",
+    "RateLimitInputRequired": "Input required.",
+    "InvalidRateLimitValue": "Input a valid Rate Limit value.",
+    "WarningLessRateLimit": "If the Rate Limit value is small, API operations such as login may be blocked.",
     "Users": "Users",
     "exportCSV": "export CSV",
     "CreateUser": "Create User",
@@ -467,7 +472,8 @@
     "UserAccountCreatedError": "This account has already been registered.",
     "KeypairCreated": "Keypair successfully created.",
     "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
-    "UserIDRequired": "User ID is required."
+    "UserIDRequired": "User ID is required.",
+    "KeypairDetail": "Keypair Detail"
   },
   "data": {
     "Folders": "Folders",
