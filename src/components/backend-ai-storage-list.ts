@@ -140,7 +140,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   };
   @property({type: Array}) filebrowserSupportedImages = [];
   @property({type: Object}) storageProxyInfo = Object();
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
     MiB: Math.pow(2, 20),
     GiB: Math.pow(2, 30),
