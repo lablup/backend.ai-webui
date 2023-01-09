@@ -11,26 +11,28 @@ jobs:
     runs-on: ubuntu-latest
     environment: app-packaging
     steps:
-      - name: Check out Git repository
-        uses: actions/checkout@v1
+      - name: Check out backend.ai-app repository
+        uses: actions/checkout@v3
+        repository: lablup/backend.ai-app
+        ref: main
+      - name: Check out webui repository
+        uses: actions/checkout@v3
+        path: webui
       - name: Install Node.js and NPM
         uses: actions/setup-node@v1
         with:
           node-version: 16
-      - name: Install Dependencies
-        run: npm install
-      - name: Compile Static Build
-        run: make dep && make compile
-      - name: Checkout backend.ai-app Repository
-        uses: actions/checkout@v3
-        with:
-          path: backend.ai-app
+      - name: Install Dependencies and Build
+        run: |
+          cd webui
+          npm install
+          make dep && make compile
+          cd ..
       - name: Copy Build Output
-        run: cp -r build/rollup/* backend.ai-app
+        run: cp -r webui/build/rollup/* .
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
-          path: backend.ai-app
           commit-message: Update to ${{ github.ref_name }}
           committer: LablupBot <devops@lablup.com>
           author: LablupBot <devops@lablup.com>
