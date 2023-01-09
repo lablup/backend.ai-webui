@@ -1,5 +1,14 @@
 # Changelog
 
+## v22.09.5 (03/01/2023)
+## What's Changed
+* fix: build correct app url in `_terminateApp` regardless of the existence of trailing slash by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1533
+* fix: broken logic in initializing browser backendai client by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1532
+* feat: show all resource templates when `alwaysEnqueueComputeSession` is true by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1530
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.4...v22.09.5
+
+
 ## v22.09.4 (09/12/2022)
 ## What's Changed
 * feat: add support for header based authentication on wsproxy by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1528
