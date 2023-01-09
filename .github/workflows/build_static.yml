@@ -20,7 +20,7 @@ jobs:
       - name: Install Dependencies
         run: npm install
       - name: Compile Static Build
-        run: make compile
+        run: make dep && make compile
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
@@ -30,6 +30,6 @@ jobs:
           branch: feature/${{ github.ref_name }}
           delete-branch: true
           title: "feat update to ${{ github.ref_name }}"
-          reviewers: inureyes
+          # reviewers: inureyes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
