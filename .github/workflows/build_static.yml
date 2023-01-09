@@ -41,6 +41,5 @@ jobs:
           branch: feature/${{ github.ref_name }}
           delete-branch: true
           title: "feat: update to ${{ github.ref_name }}"
+          token: ${{ secrets.GITHUB_TOKEN }}
           # reviewers: inureyes
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
