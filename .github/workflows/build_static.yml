@@ -32,6 +32,8 @@ jobs:
           cd ..
       - name: Copy Build Output
         run: cp -r webui/build/rollup/* .
+      - name: Delete webui Repository from Filesystem
+        run: rm -rf webui
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
