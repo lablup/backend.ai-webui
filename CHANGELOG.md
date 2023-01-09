@@ -1,5 +1,11 @@
 # Changelog
 
+## v22.09.6 (09/01/2023)
+## What's Changed
+* feat: add IBM Spectrum Scale and WekaIO to quota support storage list by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1537
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.5...v22.09.6
+
 ## v22.09.5 (03/01/2023)
 ## What's Changed
 * fix: build correct app url in `_terminateApp` regardless of the existence of trailing slash by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1533
