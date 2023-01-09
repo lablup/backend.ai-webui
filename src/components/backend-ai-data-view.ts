@@ -92,7 +92,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
-  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka'];
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) storageProxyInfo = Object();
   @property({type: String}) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
