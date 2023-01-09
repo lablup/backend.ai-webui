@@ -21,15 +21,22 @@ jobs:
         run: npm install
       - name: Compile Static Build
         run: make dep && make compile
+      - name: Checkout backend.ai-app Repository
+        uses: actions/checkout@v3
+        with:
+          path: backend.ai-app
+      - name: Copy Build Output
+        run: cp -r build/rollup/* backend.ai-app
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v4
         with:
+          path: backend.ai-app
           commit-message: Update to ${{ github.ref_name }}
           committer: LablupBot <devops@lablup.com>
           author: LablupBot <devops@lablup.com>
           branch: feature/${{ github.ref_name }}
           delete-branch: true
-          title: "feat update to ${{ github.ref_name }}"
+          title: "feat: update to ${{ github.ref_name }}"
           # reviewers: inureyes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
