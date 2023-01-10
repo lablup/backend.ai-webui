@@ -317,7 +317,9 @@
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",
     "VSCodeRemoteConnection": "Connect Visual Studio Code Remote",
-    "VSCodeRemoteDescription": "If you want to run Visual Studio Code remote, need to enter a password"
+    "VSCodeRemotePasswordTitle": "Visual Studio Code Remote Password",
+    "VSCodeRemoteDescription": "If you want to run Visual Studio Code Remote, need to enter a password",
+    "VSCodeRemoteNoticeSSHConfig": "If you want to seamlessly run Visual Studio Code Remote, you need to add the following to the $HOME/.ssh/config file so that you can connect seamlessly Visual Studio Code Remote."
   },
   "button": {
     "Cancel": "Cancel",

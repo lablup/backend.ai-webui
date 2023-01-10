@@ -319,7 +319,9 @@
     "EnvironmentInfo": "환경 정보",
     "DownloadingSessionLogs": "세션 로그를 다운받습니다.",
     "VSCodeRemoteConnection": "Visual Studio Code 원격 연결",
-    "VSCodeRemoteDescription": "Visual Studioe Code에 원격 연결로 작업합니다."
+    "VSCodeRemotePasswordTitle": "Visual Studio Code 원격 연결 패스워드",
+    "VSCodeRemoteDescription": "Visual Studioe Code 원격 연결로 작업합니다.",
+    "VSCodeRemoteNoticeSSHConfig": "만약 Visual Studio Code 원격 연결을 원활하게 하려면, $HOME/.ssh/config 파일에 아래와 같이 내용을 추가해야 원활하게 연결 할 수 있습니다."
   },
   "button": {
     "Cancel": "취소",

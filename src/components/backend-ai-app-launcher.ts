@@ -1001,13 +1001,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
-   * Open a VS Code dialog.
-   */
-  _openVSCodeDialog() {
-    this.vscodeDialog.show();
-  }
-
-  /**
    * Close a Tensorboard dialog.
    */
   _hideTensorboardDialog() {
@@ -1050,6 +1043,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     } catch (e) {
       button.removeAttribute('disabled');
     }
+  }
+
+  /**
+   * Open a VS Code dialog.
+   */
+  _openVSCodeDialog() {
+    this.vscodeDialog.show();
   }
 
   /**
@@ -1186,6 +1186,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     }
   }
+
 
   render() {
     // language=HTML
@@ -1336,15 +1337,25 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div slot="content">
-              <span>VS Code Remote Password:</span>
+              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
               <mwc-textfield
-              readonly
-              class="vscode-password"
-              id="vscode-password"></mwc-textfield>
-          <mwc-icon-button
-              id="copy-vscode-password-button"
-              icon="content_copy"
-              @click="${() => this._copyVSCodePassword('#vscode-password')}"></mwc-icon-button>
+                readonly
+                class="vscode-password"
+                id="vscode-password"></mwc-textfield>
+              <mwc-icon-button
+                id="copy-vscode-password-button"
+                icon="content_copy"
+                @click="${() => this._copyVSCodePassword('#vscode-password')}"></mwc-icon-button>
+            </div>
+            <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
+              <p style="margin:auto 10px;">
+                ${_t('session.VSCodeRemoteNoticeSSHConfig')}
+              </p>
+              <p style="margin:auto 10px;">
+              <pre>Host 127.0.0.1
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null</pre>
+              </p>
             </div>
           </section>
         </div>

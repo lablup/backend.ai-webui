@@ -320,7 +320,9 @@
     "EnvironmentInfo": "__NOT_TRANSLATED__",
     "DownloadingSessionLogs": "__NOT_TRANSLATED__",
     "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
-    "VSCodeRemoteDescription": "__NOT_TRANSLATED__"
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -475,7 +477,8 @@
     "NoUserToDisplay": "__NOT_TRANSLATED__",
     "RateLimitInputRequired": "__NOT_TRANSLATED__",
     "InvalidRateLimitValue": "__NOT_TRANSLATED__",
-    "WarningLessRateLimit": "__NOT_TRANSLATED__"
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
