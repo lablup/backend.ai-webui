@@ -319,7 +319,7 @@
     "VSCodeRemoteConnection": "Connect Visual Studio Code Remote",
     "VSCodeRemotePasswordTitle": "Visual Studio Code Remote Password",
     "VSCodeRemoteDescription": "If you want to run Visual Studio Code Remote, need to enter a password",
-    "VSCodeRemoteNoticeSSHConfig": "If you want to seamlessly run Visual Studio Code Remote, you need to add the following to the $HOME/.ssh/config file so that you can connect seamlessly Visual Studio Code Remote."
+    "VSCodeRemoteNoticeSSHConfig": "You can add the following to the `$HOME/.ssh/config` file to seamlessly remote connection to the Visual Studio Code."
   },
   "button": {
     "Cancel": "Cancel",
