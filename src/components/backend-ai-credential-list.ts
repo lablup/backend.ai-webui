@@ -122,6 +122,10 @@ export default class BackendAICredentialList extends BackendAIPage {
           font-weight: 100;
         }
 
+        vaadin-item div[secondary] {
+          font-weight: 400;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
