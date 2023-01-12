@@ -573,7 +573,14 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     * @return {string} Humanized value for value
     */
   _humanizeName(value) {
-    this.alias= this.resourceBroker.imageTagAlias;
+    this.alias = this.resourceBroker.imageTagAlias;
+    const tagReplace = this.resourceBroker.imageTagReplace;
+    for (const [key, replaceString] of Object.entries(tagReplace)) {
+      const pattern = new RegExp(key);
+      if (pattern.test(value)) {
+        return value.replace(pattern, replaceString);
+      }
+    }
     if (value in this.alias) {
       return this.alias[value];
     } else {

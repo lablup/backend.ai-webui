@@ -857,5 +857,10 @@
     "alpine3.12": "Alpine Linux 3.12",
     "ngc": "Nvidia GPU Cloud",
     "ff": "Research Env."
+  },
+  "tagReplace": {
+    "^(tf)([0-9.]*)$": "TensorFlow $2",
+    "^(pytorch)([0-9.]*)$": "PyTorch $2",
+    "^(cuda)([0-9.]*)$": "GPU:CUDA$2"
   }
 }

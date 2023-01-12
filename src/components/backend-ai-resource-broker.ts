@@ -20,6 +20,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
   @property({type: Object}) imageTagAlias = Object();
+  @property({type: Object}) imageTagReplace = Object();
   // Resource information
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -171,6 +172,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           }
         }
         this.imageTagAlias = json.tagAlias;
+        this.imageTagReplace = json.tagReplace;
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
             this._refreshImageList();

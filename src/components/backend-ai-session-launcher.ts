@@ -1563,7 +1563,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _aliasName(value) {
-    const alias= this.resourceBroker.imageTagAlias;
+    const alias = this.resourceBroker.imageTagAlias;
+    const tagReplace = this.resourceBroker.imageTagReplace;
+    for (const [key, replaceString] of Object.entries(tagReplace)) {
+      const pattern = new RegExp(key);
+      if (pattern.test(value)) {
+        return value.replace(pattern, replaceString);
+      }
+    }
     if (value in alias) {
       return alias[value];
     } else {
