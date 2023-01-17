@@ -338,6 +338,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     case 'weka':
       color = 'purple';
       icon = 'local';
+      break;
     default:
       color = 'yellow';
       icon = 'local';
