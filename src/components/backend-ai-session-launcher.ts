@@ -1222,6 +1222,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         ownershipPanel.style.display = 'none';
       }
+
+      // Set display custom resource allocation section
+      const customAllocationSection = this.shadowRoot?.querySelector('wl-expansion[name="resource-group"') as WlExpansion;
+      customAllocationSection.disabled = !globalThis.backendaiclient._config.showCustomResourceAllocation;
       this._updateSelectedScalingGroup();
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();

@@ -101,6 +101,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Boolean}) always_enqueue_compute_session = false;
   @property({type: Boolean}) allowSignupWithoutConfirmation = false;
+  @property({type: Boolean}) showCustomResourceAllocation = false;
   @property({type: Boolean}) openPortToPublic = false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
   @property({type: Boolean}) maxMemoryPerContainer = 16;
@@ -702,6 +703,14 @@ export default class BackendAILogin extends BackendAIPage {
         defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
         value: (generalConfig?.appDownloadUrl),
       } as ConfigValueObject) as string;
+
+    // Enable Custom Resource Allocation section
+    this.showCustomResourceAllocation = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: (generalConfig?.showCustomResourceAllocation),
+      } as ConfigValueObject) as boolean;
 
     // Enable pipeline flag
     // FIXME: temporally disable pipeline feature in manual
@@ -1416,6 +1425,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+      globalThis.backendaiclient._config.showCustomResourceAllocation = this.showCustomResourceAllocation;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

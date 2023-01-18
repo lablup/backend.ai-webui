@@ -118,6 +118,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: Boolean}) isHideAgents = true;
+  @property({type: Boolean}) showCustomResourceAllocation = true;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
