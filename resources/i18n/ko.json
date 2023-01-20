@@ -113,6 +113,14 @@
   },
   "session": {
     "launcher": {
+      "Resources": "자원",
+      "FolderMount": "폴더 마운트",
+      "Summary": "요약",
+      "EnvVerSessionType": "실행 환경 / 버전 / 세션 타입",
+      "ResGroupResAllocationClusterMode": "자원 그룹 / 자원 할당 / 클러스터 모드 설정",
+      "AdvancedOptions": "고급 옵션 설정",
+      "New": "새로운 버전",
+      "Original": "이전 버전",
       "TOTAL": "전체",
       "RESOURCE": "자원",
       "MY": "나의",

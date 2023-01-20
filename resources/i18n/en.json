@@ -113,6 +113,14 @@
   },
   "session": {
     "launcher": {
+      "Resources": "Resources",
+      "FolderMount": "Folder Mount",
+      "Summary": "Summary",
+      "EnvVerSessionType": "Environments / Version / Session Type",
+      "ResGroupResAllocationClusterMode": "Resource Group / Resource Allocation / Cluster Mode",
+      "AdvancedOptions": "Advanced Options",
+      "New": "New",
+      "Original": "Original",
       "TOTAL": "TOTAL",
       "RESOURCE": "RESOURCE",
       "MY": "MY",

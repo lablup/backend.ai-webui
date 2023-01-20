@@ -44,6 +44,7 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) closeWithConfirmation = false;
   @property({type: String}) escapeKeyAction = 'close';
   @property({type: Boolean}) stickyTitle = false;
+  @property({type: Boolean}) stickyFooter = false;
 
   @query('#dialog') protected dialog;
 
@@ -118,13 +119,23 @@ export default class BackendAiDialog extends LitElement {
           border-bottom: 1px solid #DDD !important;
         }
 
-        .sticky {
+        .sticky-title {
           position: sticky;
           position: -webkit-sticky;
           position: -moz-sticky;
           position: -ms-sticky;
           position: -o-sticky;
           top: 0;
+          z-index: 10;
+        }
+
+        .sticky-footer {
+          position: sticky;
+          position: -webkit-sticky;
+          position: -moz-sticky;
+          position: -ms-sticky;
+          position: -o-sticky;
+          bottom: 0;
           z-index: 10;
         }
       `];
@@ -136,7 +147,10 @@ export default class BackendAiDialog extends LitElement {
       this.dialog.scrimClickAction = '';
     }
     if (this.stickyTitle) {
-      (this.shadowRoot?.querySelector('h3') as HTMLElement).classList.add('sticky');
+      (this.shadowRoot?.querySelector('h3') as HTMLElement).classList.add('sticky-title');
+    }
+    if (this.stickyFooter) {
+      (this.shadowRoot?.querySelector('#footer') as HTMLElement).classList.add('sticky-footer');
     }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;
@@ -224,10 +238,10 @@ export default class BackendAiDialog extends LitElement {
             </mwc-icon-button>
             `}
           </h3>
-          <div class="content content-area">
+          <div id="content" class="content content-area">
             <slot name="content"></slot>
           </div>
-          <div class="footer horizontal flex layout">
+          <div id="footer" class="footer horizontal flex layout">
             <slot name="footer"></slot>
           </div>
         </div>
