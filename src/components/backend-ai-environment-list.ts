@@ -439,7 +439,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
             if (tags[2] !== undefined) {
-              image.additional_req = this._humanizeName(tags[2]);
+              image.additional_req = this._humanizeName(tags.slice(2).join('-'));
             }
           } else if (image.tag !== undefined) {
             image.baseversion = image.tag;
@@ -498,7 +498,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               image[resource.key + '_limit_max'] = this._addUnit(resource.max);
             }
           });
-
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
           domainImages.push(image);
         }

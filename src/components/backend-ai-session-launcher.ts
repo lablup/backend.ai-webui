@@ -2698,7 +2698,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const requirements = this._aliasName(fragment[2]).split(':');
       if (requirements.length > 1) {
         info.push({ // Additional information
-          tag: requirements[1],
+          tag: requirements.slice(1).join('-'),
           app: requirements[0],
           color: 'green',
           size: '90px'
