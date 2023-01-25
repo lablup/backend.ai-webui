@@ -1053,6 +1053,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _initializeFolderMapping() {
+    this.folderMapping = {};
+    const aliasFields = this.shadowRoot?.querySelectorAll('.alias') as NodeListOf<VaadinTextField>;
+    aliasFields.forEach((element) => {
+      element.value = '';
+    });
+  }
+
   /**
    * Update selected folders.
    * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
@@ -1071,6 +1079,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.selectedVfolders = selectedFolders;
       for (const folder of this.selectedVfolders) {
+        const alias = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
+        if (alias.length > 0) {
+          this.folderMapping[folder] = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
+        }
         if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
           delete this.folderMapping[folder];
           (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value = '';
@@ -1494,6 +1506,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       // initialize vfolder
       this._updateSelectedFolder(false);
+      this._initializeFolderMapping();
     }).catch((err) => {
       // this.metadata_updating = false;
       // console.log(err);
@@ -1563,85 +1576,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _aliasName(value) {
-    const alias = {
-      'python': 'Python',
-      'tensorflow': 'TensorFlow',
-      'pytorch': 'PyTorch',
-      'lua': 'Lua',
-      'r': 'R',
-      'r-base': 'R',
-      'julia': 'Julia',
-      'rust': 'Rust',
-      'cpp': 'C++',
-      'gcc': 'GCC',
-      'go': 'Go',
-      'tester': 'Tester',
-      'haskell': 'Haskell',
-      'matlab': 'MATLAB',
-      'sagemath': 'Sage',
-      'texlive': 'TeXLive',
-      'java': 'Java',
-      'php': 'PHP',
-      'octave': 'Octave',
-      'nodejs': 'Node',
-      'caffe': 'Caffe',
-      'scheme': 'Scheme',
-      'scala': 'Scala',
-      'base': 'Base',
-      'cntk': 'CNTK',
-      'h2o': 'H2O.AI',
-      'triton-server': 'Triton Server',
-      'digits': 'DIGITS',
-      'ubuntu-linux': 'Ubuntu Linux',
-      'tf1': 'TensorFlow 1',
-      'tf2': 'TensorFlow 2',
-      'py3': 'Python 3',
-      'py2': 'Python 2',
-      'py27': 'Python 2.7',
-      'py35': 'Python 3.5',
-      'py36': 'Python 3.6',
-      'py37': 'Python 3.7',
-      'py38': 'Python 3.8',
-      'py39': 'Python 3.9',
-      'py310': 'Python 3.10',
-      'ji15': 'Julia 1.5',
-      'ji16': 'Julia 1.6',
-      'ji17': 'Julia 1.7',
-      'lxde': 'LXDE',
-      'lxqt': 'LXQt',
-      'xfce': 'XFCE',
-      'gnome': 'GNOME',
-      'kde': 'KDE',
-      'ubuntu16.04': 'Ubuntu 16.04',
-      'ubuntu18.04': 'Ubuntu 18.04',
-      'ubuntu20.04': 'Ubuntu 20.04',
-      'intel': 'Intel MKL',
-      '2018': '2018',
-      '2019': '2019',
-      '2020': '2020',
-      '2021': '2021',
-      '2022': '2022',
-      'tpu': 'TPU:TPUv3',
-      'rocm': 'GPU:ROCm',
-      'cuda9': 'GPU:CUDA9',
-      'cuda10': 'GPU:CUDA10',
-      'cuda10.0': 'GPU:CUDA10',
-      'cuda10.1': 'GPU:CUDA10.1',
-      'cuda10.2': 'GPU:CUDA10.2',
-      'cuda10.3': 'GPU:CUDA10.3',
-      'cuda11': 'GPU:CUDA11',
-      'cuda11.0': 'GPU:CUDA11',
-      'cuda11.1': 'GPU:CUDA11.1',
-      'cuda11.2': 'GPU:CUDA11.2',
-      'cuda11.3': 'GPU:CUDA11.3',
-      'miniconda': 'Miniconda',
-      'anaconda2018.12': 'Anaconda 2018.12',
-      'anaconda2019.12': 'Anaconda 2019.12',
-      'alpine3.8': 'Alpine Linux 3.8',
-      'alpine3.12': 'Alpine Linux 3.12',
-      'ngc': 'Nvidia GPU Cloud',
-      'ff': 'Research Env.',
-    };
+    const alias = this.resourceBroker.imageTagAlias;
+    const tagReplace = this.resourceBroker.imageTagReplace;
+    for (const [key, replaceString] of Object.entries(tagReplace)) {
+      const pattern = new RegExp(key);
+      if (pattern.test(value)) {
+        return value.replace(pattern, replaceString);
+      }
+    }
     if (value in alias) {
       return alias[value];
     } else {
@@ -1884,12 +1826,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if (enqueue_session) {
-            available_slot['cpu'] = Infinity;
-            available_slot['mem'] = Infinity;
-            available_slot['cuda_device'] = Infinity;
-            available_slot['cuda_shares'] = Infinity;
-            available_slot['rocm_device'] = Infinity;
-            available_slot['tpu_device'] = Infinity;
+            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+              if (slot in this.total_resource_group_slot) {
+                available_slot[slot] = this.total_resource_group_slot[slot];
+              }
+            });
           }
 
           if ('cpu' in this.userResourceLimit) {
@@ -2164,7 +2105,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   folderMapRenderer(root, column?, rowData?) {
     render(
       html`
-          <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
+          <vaadin-text-field id="vfolder-alias-${rowData.item.name}" class="alias" clear-button-visible prevent-invalid-input
                              pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
                              theme="small" placeholder="/home/work/${rowData.item.name}"
                              @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
@@ -2770,7 +2711,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const requirements = this._aliasName(fragment[2]).split(':');
       if (requirements.length > 1) {
         info.push({ // Additional information
-          tag: requirements[1],
+          tag: requirements.slice(1).join('-'),
           app: requirements[0],
           color: 'green',
           size: '90px'

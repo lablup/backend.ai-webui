@@ -122,6 +122,10 @@ export default class BackendAICredentialList extends BackendAIPage {
           font-weight: 100;
         }
 
+        vaadin-item div[secondary] {
+          font-weight: 400;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
@@ -891,9 +895,9 @@ export default class BackendAICredentialList extends BackendAIPage {
         <span slot="title">${_t('credential.KeypairDetail')}</span>
         <div slot="action" class="horizontal end-justified flex layout">
           ${this.keypairInfo.is_admin ? html`
-            <lablup-shields app="" color="red" description="admin" ui="flat"></lablup-shields>
+            <lablup-shields class="layout horizontal center" app="" color="red" description="admin" ui="flat"></lablup-shields>
           ` : html``}
-          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
+          <lablup-shields class="layout horizontal center" app="" description="user" ui="flat"></lablup-shields>
         </div>
         <div slot="content" class="intro">
           <div class="horizontal layout">

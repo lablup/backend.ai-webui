@@ -54,6 +54,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 @customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) images;
+  @property({type: Object}) resourceBroker;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) servicePorts;
   @property({type: Number}) selectedIndex = 0;
@@ -265,6 +266,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
+    this.resourceBroker = globalThis.resourceBroker;
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -419,8 +421,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Get backend.ai client images.
-      */
+    * Get backend.ai client images.
+    */
   _getImages() {
     this.listCondition = 'loading';
     this._listStatus?.show();
@@ -437,7 +439,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
             if (tags[2] !== undefined) {
-              image.additional_req = this._humanizeName(tags[2]);
+              image.additional_req = this._humanizeName(tags.slice(2).join('-'));
             }
           } else if (image.tag !== undefined) {
             image.baseversion = image.tag;
@@ -496,7 +498,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               image[resource.key + '_limit_max'] = this._addUnit(resource.max);
             }
           });
-
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
           domainImages.push(image);
         }
@@ -525,11 +526,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Add unit to the value.
-      *
-      * @param {string} value
-      * @return {string} value with proper unit
-      */
+    * Add unit to the value.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _addUnit(value) {
     const unit = value.substr(-1);
     if (unit == 'm') {
@@ -545,11 +546,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Change unit to symbol.
-      *
-      * @param {string} value
-      * @return {string} value with proper unit
-      */
+    * Change unit to symbol.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _symbolicUnit(value) {
     const unit = value.substr(-2);
     if (unit == 'MB') {
@@ -565,93 +566,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Humanize the value.
-      *
-      * @param {string} value - Language name, version, environment or identifier
-      * @return {string} Humanized value for value
-      */
+    * Humanize the value.
+    *
+    * @param {string} value - Language name, version, environment or identifier
+    * @return {string} Humanized value for value
+    */
   _humanizeName(value) {
-    this.alias = {
-      'python': 'Python',
-      'tensorflow': 'TensorFlow',
-      'pytorch': 'PyTorch',
-      'lua': 'Lua',
-      'r': 'R',
-      'r-base': 'R',
-      'julia': 'Julia',
-      'rust': 'Rust',
-      'cpp': 'C++',
-      'gcc': 'GCC',
-      'go': 'Go',
-      'tester': 'Tester',
-      'haskell': 'Haskell',
-      'matlab': 'MATLAB',
-      'sagemath': 'Sage',
-      'texlive': 'TeXLive',
-      'java': 'Java',
-      'php': 'PHP',
-      'octave': 'Octave',
-      'nodejs': 'Node',
-      'caffe': 'Caffe',
-      'scheme': 'Scheme',
-      'scala': 'Scala',
-      'base': 'Base',
-      'cntk': 'CNTK',
-      'h2o': 'H2O.AI',
-      'triton-server': 'Triton Server',
-      'digits': 'DIGITS',
-      'ubuntu-linux': 'Ubuntu Linux',
-      'tf1': 'TensorFlow 1',
-      'tf2': 'TensorFlow 2',
-      'py3': 'Python 3',
-      'py2': 'Python 2',
-      'py27': 'Python 2.7',
-      'py35': 'Python 3.5',
-      'py36': 'Python 3.6',
-      'py37': 'Python 3.7',
-      'py38': 'Python 3.8',
-      'py39': 'Python 3.9',
-      'py310': 'Python 3.10',
-      'ji15': 'Julia 1.5',
-      'ji16': 'Julia 1.6',
-      'ji17': 'Julia 1.7',
-      'lxde': 'LXDE',
-      'lxqt': 'LXQt',
-      'xfce': 'XFCE',
-      'xrdp': 'XRDP',
-      'gnome': 'GNOME',
-      'kde': 'KDE',
-      'ubuntu16.04': 'Ubuntu 16.04',
-      'ubuntu18.04': 'Ubuntu 18.04',
-      'ubuntu20.04': 'Ubuntu 20.04',
-      'intel': 'Intel MKL',
-      '2018': '2018',
-      '2019': '2019',
-      '2020': '2020',
-      '2021': '2021',
-      '2022': '2022',
-      'rocm': 'GPU:ROCm',
-      'cuda9': 'GPU:CUDA9',
-      'cuda10': 'GPU:CUDA10',
-      'cuda10.0': 'GPU:CUDA10',
-      'cuda10.1': 'GPU:CUDA10.1',
-      'cuda10.2': 'GPU:CUDA10.2',
-      'cuda10.3': 'GPU:CUDA10.3',
-      'cuda11': 'GPU:CUDA11',
-      'cuda11.0': 'GPU:CUDA11',
-      'cuda11.1': 'GPU:CUDA11.1',
-      'cuda11.2': 'GPU:CUDA11.2',
-      'cuda11.3': 'GPU:CUDA11.3',
-      'cuda12': 'GPU:CUDA12',
-      'cuda12.0': 'GPU:CUDA12.0',
-      'miniconda': 'Miniconda',
-      'anaconda2018.12': 'Anaconda 2018.12',
-      'anaconda2019.12': 'Anaconda 2019.12',
-      'alpine3.8': 'Alpine Linux 3.8',
-      'alpine3.12': 'Alpine Linux 3.12',
-      'ngc': 'NVidia GPU Cloud',
-      'ff': 'Research Env.',
-    };
+    this.alias = this.resourceBroker.imageTagAlias;
+    const tagReplace = this.resourceBroker.imageTagReplace;
+    for (const [key, replaceString] of Object.entries(tagReplace)) {
+      const pattern = new RegExp(key);
+      if (pattern.test(value)) {
+        return value.replace(pattern, replaceString);
+      }
+    }
     if (value in this.alias) {
       return this.alias[value];
     } else {

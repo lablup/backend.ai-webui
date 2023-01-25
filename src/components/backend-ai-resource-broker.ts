@@ -19,6 +19,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: Object}) imageTagAlias = Object();
+  @property({type: Object}) imageTagReplace = Object();
   // Resource information
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -169,6 +171,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
           }
         }
+        this.imageTagAlias = json.tagAlias;
+        this.imageTagReplace = json.tagReplace;
         if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
           document.addEventListener('backend-ai-connected', () => {
             this._refreshImageList();
@@ -178,6 +182,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
       }
     );
+
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.active && this.metadata_updating === false) {
         this.metadata_updating = true;
@@ -405,7 +410,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     // console.log('aggregate from:', from);
     this.aggregate_updating = true;
     const total_slot = {};
-    const total_resource_group_slot = {};
+    const total_resource_group_slot: any = {};
     const total_project_slot = {};
 
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
@@ -434,44 +439,19 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then((response) => {
-      if (response.presets) {
-        const presets = response.presets;
-        const available_presets: any = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            if ('cuda.shares' in item.resource_slots) {
-              item.cuda_shares = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item.resource_slots) {
-              item.cuda_device = item.resource_slots['cuda.device'];
-            }
-            if ('rocm.device' in item.resource_slots) {
-              item.rocm_device = item.resource_slots['rocm.device'];
-            }
-            if ('tpu.device' in item.resource_slots) {
-              item.tpu_device = item.resource_slots['tpu.device'];
-            }
-            item.cpu = item.resource_slots.cpu;
-            item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-            if (item.shared_memory) {
-              item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
-            } else {
-              item.shmem = null;
-            }
-            available_presets.push(item);
-          }
-        });
-        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
-        this.resource_templates = available_presets;
-        if (this.resource_templates_filtered.length === 0) {
-          this.resource_templates_filtered = this.resource_templates;
-        }
-      }
-
       const resource_remaining = response.keypair_remaining;
       const resource_using = response.keypair_using;
       const project_resource_total = response.group_limits;
       const project_resource_using = response.group_using;
       const device_list = {
+        'cuda.device': 'cuda_device',
+        'cuda.shares': 'cuda_shares',
+        'rocm.device': 'rocm_device',
+        'tpu.device': 'tpu_device'
+      };
+      const slotList = {
+        'cpu': 'cpu',
+        'mem': 'mem',
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
@@ -631,7 +611,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const used_resource_group_slot_percent = {};
       const used_project_slot_percent = {};
 
-      ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+      Object.keys(slotList).forEach((slot) => {
         if (slot in used_slot) {
           if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
             total_slot[slot] = used_slot[slot];
@@ -671,6 +651,45 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
+
+      const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
+      const availablePresets = response.presets.map((item) => {
+        if (item.allocatable === true) {
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots) {
+              item[slotName] = item.resource_slots[slotKey];
+            }
+          }
+        } else if (enqueueSession) {
+          // Even if allocatable is false, if enqueueSession is true,
+          // allocatable is determined based on when no resources are allocated.
+          item.allocatable = true;
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots && slotName in total_resource_group_slot) {
+              const resourceSlot = slotKey === 'mem' ? globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g') : item.resource_slots[slotKey];
+              const totalResourceGroupSlot = total_resource_group_slot[slotName];
+              if (resourceSlot <= totalResourceGroupSlot) {
+                item[slotName] = resourceSlot;
+              } else {
+                item.allocatable = false;
+                break;
+              }
+            }
+          }
+        }
+        // Change to binary unit
+        item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+        if (item.shared_memory) {
+          item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
+        } else {
+          item.shmem = null;
+        }
+        return item;
+      }).filter((item) => item.allocatable).sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
+      this.resource_templates = availablePresets;
+      if (this.resource_templates_filtered.length === 0) {
+        this.resource_templates_filtered = this.resource_templates;
+      }
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
       return Promise.resolve(true);
