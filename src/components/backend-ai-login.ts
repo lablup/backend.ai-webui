@@ -10,6 +10,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import '@material/mwc-button';
 import '@material/mwc-icon';
+import '@material/mwc-textfield';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';

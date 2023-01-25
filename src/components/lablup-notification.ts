@@ -196,6 +196,9 @@ export default class LablupNotification extends LitElement {
    * @param {object} log - Log object that contains detail information
    * */
   async show(persistent = false, log: Record<string, unknown> = Object()) {
+    if (this.text === '_DISCONNECTED') {
+      return;
+    }
     const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = [] as any; // Reset notifications
