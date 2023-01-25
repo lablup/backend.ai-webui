@@ -1759,7 +1759,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       modifyFolderJobQueue.push(updateFolderConfig);
     }
     if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-      const quota = this.modifyFolderQuotaInput.value ? BigInt(Number(this.modifyFolderQuotaInput.value) * this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]).toString: '0';
+      const quota = this.modifyFolderQuotaInput.value ? BigInt(Number(this.modifyFolderQuotaInput.value) * this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]).toString() : '0';
       if ((this.quota.value != Number(this.modifyFolderQuotaInput.value)) || (this.quota.unit != this.modifyFolderQuotaUnitSelect.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
         modifyFolderJobQueue.push(updateFolderQuota);
