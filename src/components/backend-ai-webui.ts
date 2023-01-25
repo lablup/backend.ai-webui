@@ -184,7 +184,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     let configPath;
     if (globalThis.isElectron) {
       configPath = './config.toml';
-      document.addEventListener('backend-ai-logout', () => this.logout(true));
+      document.addEventListener('backend-ai-logout', () => this.logout(false));
       document.addEventListener('backend-ai-app-close', () => this.close_app_window(true));
       document.addEventListener('backend-ai-show-splash', () => this._showSplash());
     } else {
@@ -799,16 +799,16 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
       // remove data in sessionStorage
       sessionStorage.clear();
-
       if (performClose === true) {
         // Do nothing. this window will be closed.
       } else if (globalThis.isElectron) {
         this.user_id = '';
         this.domain = '';
         this._page = 'summary';
-        globalThis.history.pushState({}, '', '/summary');
-        store.dispatch(navigate(decodeURIComponent('/')));
-        // globalThis.location.reload();
+        this._moveTo('/');
+        //globalThis.history.pushState({}, '', '/summary');
+        //store.dispatch(navigate(decodeURIComponent('/')));
+        //globalThis.location.reload();
         document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
         this.appBody.style.visibility = 'hidden';
         const curtain = this.shadowRoot?.getElementById('loading-curtain');
@@ -822,6 +822,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         });
         this.loginPanel.open();
       } else {
+        this._moveTo('/');
         globalThis.location.reload();
       }
     }
@@ -1148,7 +1149,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.6.230109</small>
+                <small class="sidebar-footer" style="font-size:9px;">22.09.7.230125</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1172,7 +1173,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.6.230109</small>
+              <small class="sidebar-footer" style="font-size:9px;">22.09.7.230125</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
