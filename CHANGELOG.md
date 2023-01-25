@@ -1,4 +1,23 @@
 # Changelog
+## v22.09.7 (25/01/2023)
+## What's Changed
+* style: set font-weight for readability and align `lablup-shields` as center by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1542
+* fix: call `toString` method in setting quota value by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1547
+* feat: add sort feature for endpoint, starts, and schedulable columns in Agent list page by @ChangHoon-Sung in https://github.com/lablup/backend.ai-webui/pull/1546
+* add: new environment image tag parsing aliases by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1535
+* fix: display full image tags in session launcher and environment list to better distinguish images with long similar tags by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1549
+* chore(deps): bump decode-uri-component from 0.2.0 to 0.2.2 by @dependabot in https://github.com/lablup/backend.ai-webui/pull/1527
+* feat/fix: initialize aliases after successfully creating a session and fix the error that mounts using another name by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1545
+* fix: minor typo errors which block compile by @fregataa in https://github.com/lablup/backend.ai-webui/pull/1548
+* bugfix: gpu, fgpu progress bar are always zero by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1553
+* update: check login status to show notification after logout by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1554
+
+## New Contributors
+* @ChangHoon-Sung made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1546
+* @fregataa made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1548
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.6...v22.09.7
+
 
 ## v22.09.6 (09/01/2023)
 ## What's Changed
