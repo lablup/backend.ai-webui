@@ -151,8 +151,10 @@ export default class BackendAIChart extends LitElement {
           display: true,
           ticks: {
             maxTicksLimit: 5,
-            callback: function(value) {
-              return Math.round(value);
+            callback: (value) => {
+              if (value % 1 === 0) {
+                return value;
+              }
             },
             font: function(context) {
               const height = context.chart.height;

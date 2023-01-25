@@ -1128,19 +1128,19 @@ export default class BackendAIAgentList extends BackendAIPage {
     return html`
       <div class="list-wrapper">
         <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
-                    .items="${this.agents}">
+                    .items="${this.agents}" multi-sort multi-sort-priority="append">
           <vaadin-grid-column width="30px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column resizable width="100px" header="${_t('agent.Endpoint')}"
+          <vaadin-grid-sort-column resizable width="100px" path="id" header="${_t('agent.Endpoint')}"
                               .renderer="${this._boundEndpointRenderer}">
-          </vaadin-grid-column>
+          </vaadin-grid-sort-column>
           <vaadin-grid-column auto-width resizable header="${_t('agent.Region')}"
                               .renderer="${this._boundRegionRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column auto-width flex-grow="0" resizable path="architecture" header="${_t('agent.Architecture')}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
-          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable path="first_contact" auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
+          </vaadin-grid-sort-column>
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
@@ -1152,8 +1152,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
                               .renderer="${this._boundStatusRenderer}"></vaadin-grid-column>
           ${this._enableAgentSchedulable ? html`
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('agent.Schedulable')}"
-                              .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-column>
+          <vaadin-grid-sort-column auto-width flex-grow="0" resizable path="schedulable" header="${_t('agent.Schedulable')}"
+                              .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-sort-column>
           ` : html``}
           <vaadin-grid-column resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>

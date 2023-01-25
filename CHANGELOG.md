@@ -1,5 +1,69 @@
 # Changelog
 
+## v22.09.6 (09/01/2023)
+## What's Changed
+* feat: add IBM Spectrum Scale and WekaIO to quota support storage list by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1537
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.5...v22.09.6
+
+## v22.09.5 (03/01/2023)
+## What's Changed
+* fix: build correct app url in `_terminateApp` regardless of the existence of trailing slash by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1533
+* fix: broken logic in initializing browser backendai client by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1532
+* feat: show all resource templates when `alwaysEnqueueComputeSession` is true by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1530
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.4...v22.09.5
+
+
+## v22.09.4 (09/12/2022)
+## What's Changed
+* feat: add support for header based authentication on wsproxy by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1528
+* Show warning dialog and validation message when setting rate limit below 100 by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1482
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.3...v22.09.4
+
+## v22.09.3 (27/11/2022)
+## What's Changed
+* add: Electron app debugging content on README by @studioego in https://github.com/lablup/backend.ai-webui/pull/1485
+* style: change `modify-env-dialog` style by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1476
+* fix: remove the invalid redirect URL for vnc-web by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1496
+* fix: build correct app url regardless of the existence of trailing slash by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1497
+* feature: unify folder view icon and directory list into one column by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1490
+* update: remove template from vaadin table for resource group by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1491
+* fix: typo error by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1498
+* feature: modular top-bar items by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1489
+* fix: modify y-axis value setting callback function to have only unique integer values. by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1501
+* ci: Fix sync-labels option error by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/1500
+* fix: can't upload to vfolder after canceling upload by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1502
+* fix: make available to select project in creating the project data folder by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1506
+* feature: Open dialog and add credential with URL option by @snaag in https://github.com/lablup/backend.ai-webui/pull/1495
+* fix: show session language description by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1507
+* feature: chore(backend-ai-dialog): translate new-keypair-dialog in kor by @100sun in https://github.com/lablup/backend.ai-webui/pull/1494
+* hotfix: remove invalid import statements by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1512
+* feature: add download link button for webui desktop by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1503
+* feature: add log download button on session log dialog by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1505
+* fix: send preferred port when only checked by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1516
+* feature: update data handling part in receiving and updating keypair resource policy by @lizable in https://github.com/lablup/backend.ai-webui/pull/1517
+* Revert "Feature/update data handling part in receiving and updating keypair resource policy (#1517)" by @lizable in https://github.com/lablup/backend.ai-webui/pull/1519
+* feature: update data handling on keypair resource policy by @lizable in https://github.com/lablup/backend.ai-webui/pull/1520
+* fix: TOS dialog doesn't show because of id mismatching by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1518
+* feature: add sticky title option to `backend-ai-dialog` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1514
+* add: header-based session login feature by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1521
+
+## New Contributors
+* @snaag made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1495
+* @100sun made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1494
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.2...v22.09.3
+
+## v22.09.2 (28/10/2022)
+## What's Changed
+* feature : annotate plastic components and ESModule SDK by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1479
+* feature: allow plugins work as hidden page plugin. by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1481
+* fix: Cannot set the maximum shared memory size via configuration by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1483
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.1...v22.09.2
+
 ## v22.09.1 (19/09/2022)
 ## What's Changed
 * update: lit and mwc-components to the latest version by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1445

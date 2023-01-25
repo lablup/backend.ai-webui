@@ -108,7 +108,8 @@
     "NoInvitations": "Үзүүлэх урилга байхгүй байна.",
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",
     "DeclineSharedVFolder": "Энэхүү фолдерын уралгыг устгалаа:",
-    "connectingToCluster": "Backend.AI кластерт холбогдож байна ..."
+    "connectingToCluster": "Backend.AI кластерт холбогдож байна ...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -316,7 +317,8 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "зурвас",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -347,7 +349,8 @@
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
     "ForceTerminate": "Хүчээр цуцлах",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Дахин тохируулах"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -467,7 +470,10 @@
     "Status": "__NOT_TRANSLATED__",
     "UserStatus": "__NOT_TRANSLATED__",
     "NoCredentialToDisplay": "__NOT_TRANSLATED__",
-    "NoUserToDisplay": "__NOT_TRANSLATED__"
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",

@@ -65,6 +65,25 @@
       "dialects": [
         "XFS"
       ]
+    },
+    "weka": {
+      "name": "WekaIO",
+      "description": "WekaIO is a parallel and scalable file storage system which is optimized for performance and data-intensive workloads.",
+      "icon": "local.png",
+      "dialects": [
+        "WekaIO",
+        "weka.io",
+        "weka"
+      ]
+    },
+    "spectrumscale": {
+      "name": "IBM Spectrum Scale",
+      "description": "IBM Spectrum Scale (formerly known as GPFS) is a high-performance, scalable file storage system.",
+      "icon": "local.png",
+      "dialects": [
+        "SpectrumScale",
+        "GPFS"
+      ]
     }
   }
 }

@@ -10,6 +10,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import '@material/mwc-button';
 import '@material/mwc-icon';
+import '@material/mwc-textfield';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
@@ -81,6 +82,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) default_import_environment = '';
   @property({type: String}) blockType = '';
   @property({type: String}) blockMessage = '';
+  @property({type: String}) appDownloadUrl;
   @property({type: String}) connection_mode = 'SESSION' as ConnectionMode;
   @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
@@ -467,7 +469,7 @@ export default class BackendAILogin extends BackendAIPage {
     const defaultConditions: boolean = (parentsKey === undefined ||
                                         valueObj.value === undefined ||
                                         typeof valueObj.value === 'undefined' ||
-                                        valueObj.value === '' ||
+                                        valueObj.value === '' || valueObj.value === '""' ||
                                         valueObj.value === null);
     let extraConditions;
     switch (typeof valueObj.defaultValue) {
@@ -694,6 +696,14 @@ export default class BackendAILogin extends BackendAIPage {
        value: (generalConfig?.enableContainerCommit),
      } as ConfigValueObject) as boolean;
 
+    // Application download path value
+    this.appDownloadUrl = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'string',
+        defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
+        value: (generalConfig?.appDownloadUrl),
+      } as ConfigValueObject) as string;
+
     // Enable pipeline flag
     // FIXME: temporally disable pipeline feature in manual
     this._enablePipeline = this._getConfigValueByExists(generalConfig,
@@ -872,6 +882,7 @@ export default class BackendAILogin extends BackendAIPage {
           'general.apiEndpoint',
           'general.apiEndpointText',
           'general.siteDescription',
+          'general.appDownloadUrl',
           'wsproxy',
         ];
         const webserverConfigURL = new URL('./config.toml', this.api_endpoint).href;
@@ -1405,6 +1416,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.maskUserInfo = this.maskUserInfo;
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
+      globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

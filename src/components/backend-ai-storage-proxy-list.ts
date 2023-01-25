@@ -331,7 +331,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       icon = 'purestorage';
       break;
     case 'dgx':
+    case 'spectrumscale':
       color = 'green';
+      icon = 'local';
+      break;
+    case 'weka':
+      color = 'purple';
       icon = 'local';
       break;
     default:

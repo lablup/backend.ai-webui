@@ -990,7 +990,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     const proxyURL = await globalThis.appLauncher._getProxyURL(sessionId);
     const rqst = {
       method: 'GET',
-      uri: proxyURL + `proxy/${token}/${sessionId}`
+      uri: new URL(`proxy/${token}/${sessionId}`, proxyURL).href
     };
     return this.sendRequest(rqst)
       .then((response) => {
@@ -998,7 +998,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: proxyURL + `proxy/${token}/${sessionId}/delete`,
+            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href,
             credentials: 'include',
             mode: 'cors'
           };
@@ -1047,6 +1047,28 @@ export default class BackendAiSessionList extends BackendAIPage {
         this.workDialog.accessKey = accessKey;
         this.workDialog.show();
       }, 100);
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      } else if (err && err.title) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.show(true, err);
+      }
+    });
+  }
+
+  _downloadLogs() {
+    const sessionUuid = (this.workDialog as any).sessionUuid;
+    const sessionName = (this.workDialog as any).sessionName;
+    const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
+    const accessKey = this.workDialog.accessKey;
+    globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
+      const logs = req.result.logs;
+      globalThis.backendaiutils.exportToTxt(sessionName, logs);
+      this.notification.text = _text('session.DownloadingSessionLogs');
+      this.notification.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -2417,7 +2439,9 @@ export default class BackendAiSessionList extends BackendAIPage {
       </div>
       <backend-ai-dialog id="work-dialog" narrowLayout scrollable fixed backdrop>
         <span slot="title" id="work-title"></span>
-        <div slot="action">
+        <div slot="action" class="horizontal layout center">
+          <mwc-icon-button fab flat inverted icon="download" @click="${() => this._downloadLogs()}">
+          </mwc-icon-button>
           <mwc-icon-button fab flat inverted icon="refresh" @click="${(e) => this._refreshLogs()}">
           </mwc-icon-button>
         </div>

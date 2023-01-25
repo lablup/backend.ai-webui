@@ -76,6 +76,7 @@ class Manager extends EventEmitter {
       if (req.body.mode && req.body.mode === "SESSION") {
         cf['mode'] = "SESSION";
         cf['session'] = req.body.session;
+        cf['auth_mode'] = req.body.auth_mode;
         cf['endpoint'] = cf['endpoint'] + "/func";
       } else {
         cf['mode'] = "API";

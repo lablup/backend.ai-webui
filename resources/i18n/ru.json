@@ -108,7 +108,8 @@
     "NoInvitations": "Нет приглашений для отображения.",
     "AcceptSharedVFolder": "Теперь вы можете получить доступ к папке:",
     "DeclineSharedVFolder": "Папка приглашения удалена:",
-    "connectingToCluster": "Подключение к Backend.AI кластеру ..."
+    "connectingToCluster": "Подключение к Backend.AI кластеру ...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -316,7 +317,8 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "сообщение",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -347,7 +349,8 @@
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
     "ForceTerminate": "Принудительно завершить",
-    "Commit": "__NOT_TRANSLATED__"
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Перезагрузить"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -467,7 +470,10 @@
     "Status": "__NOT_TRANSLATED__",
     "UserStatus": "__NOT_TRANSLATED__",
     "NoCredentialToDisplay": "__NOT_TRANSLATED__",
-    "NoUserToDisplay": "__NOT_TRANSLATED__"
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
