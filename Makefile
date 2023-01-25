@@ -53,8 +53,10 @@ dep:
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/node_modules/markty
 	mkdir -p ./build/electron-app/node_modules/markty-toml
+	mkdir -p ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme
 	cp -Rp ./node_modules/markty ./build/electron-app/node_modules
 	cp -Rp ./node_modules/markty-toml ./build/electron-app/node_modules
+	cp -Rp ./node_modules/@vanillawc/wc-codemirror/theme/monokai.css ./build/electron-app/node_modules/@vanillawc/wc-codemirror/theme/monokai.css
 	cp ./preload.js ./build/electron-app/preload.js
 web:
 	if [ ! -d "./build/rollup/" ];then \

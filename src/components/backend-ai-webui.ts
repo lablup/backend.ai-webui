@@ -28,7 +28,7 @@ import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 
-import toml from 'markty-toml.es';
+import toml from 'markty-toml';
 
 import 'weightless/popover';
 import 'weightless/popover-card';
