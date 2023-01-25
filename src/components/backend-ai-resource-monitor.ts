@@ -735,7 +735,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="gpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"
+                progress="${this.used_resource_group_slot.cuda_device / this.total_resource_group_slot.cuda_device}"
                 description="${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}"
               ></lablup-progress-bar>
               <lablup-progress-bar id="gpu-usage-bar-2" class="end"
@@ -757,11 +757,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="fgpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"
+                progress="${this.used_resource_group_slot.cuda_shares / this.total_resource_group_slot.cuda_shares}"
                 description="${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}"
               ></lablup-progress-bar>
               <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
-                progress="${this.used_slot_percent.cuda_shares / 100.0}"
+                progress="${this.used_slot.cuda_shares / this.total_slot.cuda_shares}"
                 description="${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}"
               ></lablup-progress-bar>
             </div>
