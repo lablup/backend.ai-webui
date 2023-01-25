@@ -998,7 +998,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href
+            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href,
             credentials: 'include',
             mode: 'cors'
           };
