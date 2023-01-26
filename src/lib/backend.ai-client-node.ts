@@ -2575,7 +2575,7 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(/:/g, "%3A");;
+    registry = registry.replace(/:/g, "%3A");
     image = image.replace(/\//g, "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
@@ -2599,7 +2599,7 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(/:/g, "%3A");;
+    registry = registry.replace(/:/g, "%3A");
     image = image.replace(/\//g, "%2F");
     tag = tag.replace(/\//g, "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -2623,7 +2623,7 @@ class ContainerImage {
     } else {
       registry = '';
     }
-    registry = registry.replace(/:/g, "%3A");;
+    registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
@@ -2653,7 +2653,7 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(/:/g, "%3A");;
+    registry = registry.replace(/:/g, "%3A");
     const rqst = this.client.newSignedRequest("POST", "/config/get", {
       "key": `images/${registry}/${image}/${tag}/resource/`,
       "prefix": true

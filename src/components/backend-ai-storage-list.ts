@@ -1061,6 +1061,16 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._getStorageProxyBackendInformation();
       this._triggerFolderListChanged();
     }
+
+    //@ts-ignore
+    const params = (new URL(document.location)).searchParams;
+    console.log(params);
+    const folderName = params.get('folder');
+    console.log(folderName);
+    if(folderName){
+      // alert(folderName);
+      console.log(this.folders)
+    }
   }
 
   _modifySharedFolderPermissions() {
@@ -1132,15 +1142,11 @@ export default class BackendAiStorageList extends BackendAIPage {
                 class="fg blue controls-running"
                 icon="folder_open"
                 title=${_t('data.folders.OpenAFolder')}
-                @click="${(e) =>
-    this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                rowData.item.is_owner ||
-                (rowData.item.type === 'group' && this.is_admin)))}"
+                @click="${(e) => this._folderExplorer(rowData)}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             ` :
     html``}
-          <div @click="${(e) => this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                  rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin)))}"
+          <div @click="${(e) => this._folderExplorer(rowData)}"
                .folder-id="${rowData.item.name}" style="cursor:pointer;">${rowData.item.name}</div>
         </div>
       `, root
@@ -2146,12 +2152,19 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the folder_open icon button
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
-  _folderExplorer(e, isWritable) {
-    const folderName = this._getControlName(e);
+  _folderExplorer(rowData) {
+
+    const folderName = rowData.item.name;
+    const isWritable = this._hasPermission(rowData.item, "w") || rowData.item.is_owner || (rowData.item.type === "group" && this.is_admin);
+
     const explorer = {
       id: folderName,
       breadcrumb: ['.'],
     };
+
+    const queryParams = new URLSearchParams();
+    queryParams.set('folder', folderName)
+    window.history.replaceState({},'',`${location.pathname}?${queryParams}`)
 
     /**
      * NOTICE: If it's admin user and the folder type is group, It will have write permission.
