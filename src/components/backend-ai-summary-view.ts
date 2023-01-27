@@ -562,7 +562,7 @@ export default class BackendAISummary extends BackendAIPage {
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal layout wrap flex">
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
-            <span style="">${this._stripHTMLTags(this.announcement)}</span>
+            <span>${this._stripHTMLTags(this.announcement)}</span>
           </div>
         ` : html``}
         <div class="horizontal wrap layout">
