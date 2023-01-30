@@ -433,6 +433,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select#modify-folder-quota-unit {
           width: 120px;
+          --mdc-menu-min-width: 120px;
+          --mdc-menu-max-width: 120px;
         }
 
         mwc-select.full-width {
@@ -449,12 +451,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-menu-min-width: 320px;
         }
 
-        mwc-select.fixed-position > mwc-list-item {
-          width: 147px; // default width
+        mwc-select#modify-folder-quota-unit > mwc-list-item {
+          width: 88px; // default width
         }
 
-        mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
-          width: 88px; // default width
+        mwc-select.fixed-position > mwc-list-item {
+          width: 147px; // default width
         }
 
         mwc-radio {
