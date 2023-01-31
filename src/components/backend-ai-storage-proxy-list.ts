@@ -388,9 +388,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
             </div>
             <span class="flex"></span>
-            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
-                                 buffer="${totalBuffer}"
-                                 description="${usagePercent}%"></lablup-progress-bar>
+            <div class="layout vertical center">
+              <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+                                   buffer="${totalBuffer}"
+                                   description="${usagePercent}%"></lablup-progress-bar>
+              <div class="indicator" style="margin-top:3px;">${globalThis.backendaiutils._humanReadableFileSize(usage.used_bytes)} / ${globalThis.backendaiutils._humanReadableFileSize(usage.capacity_bytes)}</div>
+            </div>
           </div>
         </div>
       `, root

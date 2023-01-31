@@ -82,6 +82,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundUtilizationRenderer = this.utilizationRenderer.bind(this);
+  @property({type: Object}) _boundDiskRenderer = this.diskRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
@@ -853,6 +854,39 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
+   * Render a disk occupancy.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  diskRenderer(root, column?, rowData?) {
+    let pct;
+    if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.node.disk) {
+      pct = parseFloat(rowData.item.live_stat.node.disk.pct || 0).toFixed(1);
+    }
+    render(
+      html`
+        ${pct ? html`
+          <div class="flex-column indicator">
+            ${pct > 80 ? html`
+              <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
+                                   description="${pct} %"
+                                   style="--progress-bar-background:var(--paper-red-500)"></lablup-progress-bar>
+            `: html`
+              <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
+                                   description="${pct} %"></lablup-progress-bar>
+            `}
+            <div style="margin-top:3px;">${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.current)} / ${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.capacity)}</div>
+          </div>
+        `: html`
+          <span>-</span>
+        `}
+      `, root
+    );
+  }
+
+  /**
    * Render a heartbeat status.
    *
    * @param {DOMelement} root
@@ -1147,6 +1181,8 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('agent.DiskPerc')}"
+                              .renderer="${this._boundDiskRenderer}"></vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" path="scaling_group"
                               header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"
