@@ -868,16 +868,17 @@ export default class BackendAIAgentList extends BackendAIPage {
     render(
       html`
         ${pct ? html`
-          <div class="flex-column indicator">
+          <div class="indicator layout vertical center">
             ${pct > 80 ? html`
               <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
                                    description="${pct} %"
-                                   style="--progress-bar-background:var(--paper-red-500)"></lablup-progress-bar>
+                                   style="margin-left:0;--progress-bar-background:var(--paper-red-500)"></lablup-progress-bar>
             `: html`
               <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
-                                   description="${pct} %"></lablup-progress-bar>
+                                   description="${pct} %"
+                                   style="margin-left:0;"></lablup-progress-bar>
             `}
-            <div style="margin-top:3px;">${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.current)} / ${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.capacity)}</div>
+            <div style="margin-top:10px;">${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.current)} / ${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.capacity)}</div>
           </div>
         `: html`
           <span>-</span>
