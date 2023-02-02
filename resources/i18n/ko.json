@@ -373,7 +373,8 @@
     "Architecture": "아키텍쳐",
     "Utilization": "사용량",
     "NoAvailableLiveStat": "표시할 사용량 없음",
-    "Allocation": "할당 정보"
+    "Allocation": "할당 정보",
+    "DiskPerc": "디스크 %"
   },
   "general": {
     "cores": "코어",
