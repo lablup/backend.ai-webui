@@ -200,7 +200,7 @@ export default class BackendAISummary extends BackendAIPage {
           margin-top: 10px;
           font-size: 13px;
           font-weight: 400;
-          height: auto;
+          max-height: 55px;
           max-width: 1000px;
           overflow-y: scroll;
         }
@@ -598,7 +598,7 @@ export default class BackendAISummary extends BackendAIPage {
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
             <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="245">
-              <div slot="message">
+              <div slot="message" style="max-height:150px; overflow:scroll">
                 ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
               </div>
             </lablup-activity-panel>
