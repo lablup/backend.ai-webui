@@ -433,6 +433,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select#modify-folder-quota-unit {
           width: 120px;
+          --mdc-menu-min-width: 120px;
+          --mdc-menu-max-width: 120px;
         }
 
         mwc-select.full-width {
@@ -449,12 +451,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-menu-min-width: 320px;
         }
 
-        mwc-select.fixed-position > mwc-list-item {
-          width: 147px; // default width
+        mwc-select#modify-folder-quota-unit > mwc-list-item {
+          width: 88px; // default width
         }
 
-        mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
-          width: 88px; // default width
+        mwc-select.fixed-position > mwc-list-item {
+          width: 147px; // default width
         }
 
         mwc-radio {
@@ -618,7 +620,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
                 <mwc-select class="fixed-position" id="modify-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}" fixedMenuPosition>
                 ${Object.keys(this.quotaUnit).map((unit, idx) => html`
-                      <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
+                      <mwc-list-item value="${unit}" ?selected="${unit == this.maxSize.unit}">${unit}</mwc-list-item>
                     `)}
                 </mwc-select>
             </div>
@@ -1727,7 +1729,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
-        this.modifyFolderQuotaUnitSelect.value = this.quota.unit;
+        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MiB' : this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
