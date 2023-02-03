@@ -667,7 +667,7 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})\.git$"
+                             pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})$"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
                              @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button', 'importGithubMessage')}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
@@ -694,7 +694,7 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})\.git$"
+                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})$"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
                              @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', 'importGitlabMessage')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
