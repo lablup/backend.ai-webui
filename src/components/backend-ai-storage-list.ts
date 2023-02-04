@@ -8,8 +8,9 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
 
 import {Button} from '@material/mwc-button';
 import '@material/mwc-formfield';
@@ -592,14 +593,14 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
-              header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column width="135px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
-              header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
+          <lablup-grid-sort-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
+              header="${_t('data.folders.Name')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="id" width="130px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="host" width="105px" flex-grow="0" resizable
+              header="${_t('data.folders.Location')}"></lablup-grid-sort-filter-column>
+          <vaadin-grid-sort-column path="max_size" width="95px" flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-sort-column>
+          <lablup-grid-sort-filter-column path="ownership_type" width="70px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></lablup-grid-sort-filter-column>
           <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
           ${this.enableStorageProxy ? html`

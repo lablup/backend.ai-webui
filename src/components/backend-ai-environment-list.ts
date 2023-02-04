@@ -17,8 +17,9 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './lablup-grid-sort-filter-column';
+import './lablup-loading-spinner';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
@@ -1206,22 +1207,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </vaadin-grid-selection-column>
           <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-filter-column path="registry" width="80px" resizable
-              header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="architecture" width="80px" resizable
-              header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="namespace" width="60px" resizable
-              header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="lang" resizable
-              header="${_t('environment.Language')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="baseversion" resizable
-              header="${_t('environment.Version')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-column width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
-          </vaadin-grid-filter-column>
+          <lablup-grid-sort-filter-column path="registry" width="80px" resizable
+              header="${_t('environment.Registry')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="architecture" width="80px" resizable
+              header="${_t('environment.Architecture')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="namespace" width="60px" resizable
+              header="${_t('environment.Namespace')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="lang" resizable
+              header="${_t('environment.Language')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="baseversion" resizable
+              header="${_t('environment.Version')}"></lablup-grid-sort-filter-column>
+          <vaadin-grid-sort-filter-column path="baseimage" resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="additional_req" width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
+          </lablup-grid-sort-filter-column>
           <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
