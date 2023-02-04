@@ -1,5 +1,18 @@
 # Changelog
 ## v22.09.8 (04/02/2023)
+## What's Changed
+* update: change slash / colon escaping to apply whole string by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1556
+* fix: temporally comment out unused folder usage mode by @lizable in https://github.com/lablup/backend.ai-webui/pull/1562
+* fix: wrapping notice-ticker to fit in the layout with bigger font-size by @lizable in https://github.com/lablup/backend.ai-webui/pull/1563
+* feat: add disk column on agent tab and display the total capacity of the storage by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1567
+* fix: refactor vfolder quota setting dialog by @lizable in https://github.com/lablup/backend.ai-webui/pull/1566
+* Fix: remove '.git' suffix about git repos by @studioego in https://github.com/lablup/backend.ai-webui/pull/1565
+* refactor: limit the maximum height of announcement panels by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1568
+* refactor/add more sort columns for multiple pages by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1570
+* update: package running script to npx-based CLI by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1558
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.7...v22.09.8
+
 
 ## v22.09.7 (25/01/2023)
 ## What's Changed
