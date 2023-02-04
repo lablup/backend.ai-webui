@@ -8,8 +8,9 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
 
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
@@ -660,13 +661,13 @@ export default class BackendAIUserList extends BackendAIPage {
                     aria-label="User list" id="user-grid" .items="${this.users}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-          <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
-                              .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
-                              .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
+          <lablup-grid-sort-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
+                              .renderer="${this._userIdRenderer.bind(this)}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
+                              .renderer="${this._userNameRenderer}"></lablup-grid-sort-filter-column>
           ${this.condition !== 'active' ? html`
-            <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
-                              .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
+            <lablup-grid-sort-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
+                              .renderer="${this._userStatusRenderer}"></lablup-grid-sort-filter-column>` : html``}
           <vaadin-grid-column resizable header="${_t('general.Control')}"
               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>

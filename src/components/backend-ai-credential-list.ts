@@ -23,6 +23,7 @@ import '@material/mwc-list/mwc-list-item';
 
 import BackendAIDialog from './backend-ai-dialog';
 import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -872,10 +873,10 @@ export default class BackendAICredentialList extends BackendAIPage {
                      id="keypair-grid" .items="${this.keypairs}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-          <vaadin-grid-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable
-                                     .renderer="${this._boundUserIdRenderer}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable
-                                     .renderer="${this._boundAccessKeyRenderer}"></vaadin-grid-filter-column>
+          <lablup-grid-sort-filter-column path="user_id" auto-width header="${_t('credential.UserID')}" resizable
+                                     .renderer="${this._boundUserIdRenderer}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="access_key" auto-width header="${_t('general.AccessKey')}" resizable
+                                     .renderer="${this._boundAccessKeyRenderer}"></lablup-grid-sort-filter-column>
           <vaadin-grid-sort-column resizable header="${_t('credential.Permission')}" path="admin"
                                    .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
           <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at"
