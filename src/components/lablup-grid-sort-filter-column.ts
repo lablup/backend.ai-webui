@@ -109,7 +109,6 @@ class LablupGridSortFilterColumn extends GridColumn {
       return;
     }
     this.direction = e.detail.value;
-    console.log('__onDirectionChanged', this.direction);
   }
 
   __getHeader(header, path) {
