@@ -1,4 +1,6 @@
 # Changelog
+## v22.09.8 (04/02/2023)
+
 ## v22.09.7 (25/01/2023)
 ## What's Changed
 * style: set font-weight for readability and align `lablup-shields` as center by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1542
