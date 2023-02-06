@@ -166,7 +166,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         lablup-progress-bar.utilization {
-          --progress-bar-width: 80px;
+          --progress-bar-width: 85px;
           margin-left: 10px;
         }
 
@@ -865,7 +865,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               ${liveStat.cuda_mem ? html`
                 <div class="layout horizontal justified flex progress-bar-section">
                   <span style="margin-right:5px;">GPU(mem)</span>
-                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio}" description="${(liveStat.cuda_mem?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio}" description="${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.current)}/${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.capacity)} GiB"></lablup-progress-bar>
                 </div>
               ` : html``}
             </div>
@@ -1205,7 +1205,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable width="180px" header="${_t('agent.Utilization')}"
+          <vaadin-grid-column resizable width="185px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('agent.DiskPerc')}"
