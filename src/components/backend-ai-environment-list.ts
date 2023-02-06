@@ -21,10 +21,10 @@ import './backend-ai-dialog';
 import './lablup-grid-sort-filter-column';
 import './lablup-loading-spinner';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -1217,7 +1217,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               header="${_t('environment.Language')}"></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column path="baseversion" resizable
               header="${_t('environment.Version')}"></lablup-grid-sort-filter-column>
-          <vaadin-grid-sort-filter-column path="baseimage" resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
+          <lablup-grid-sort-filter-column path="baseimage" resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
           </lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column path="additional_req" width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
           </lablup-grid-sort-filter-column>
