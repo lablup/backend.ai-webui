@@ -46,6 +46,7 @@ import './lablup-progress-bar';
  *  - cpu_util
  *  - mem_util
  *  - cuda_util (optional)
+ *  - cuda_mem (optional)
  */
 type LiveStat = {
   cpu_util: {
@@ -59,6 +60,11 @@ type LiveStat = {
     ratio: number;
   }
   cuda_util?: { // optional
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+  cuda_mem?: { // optional
     capacity: number;
     current: number;
     ratio: number;
@@ -815,6 +821,20 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
         liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
       }
+      if (rowData.item.live_stat.node.cuda_mem) {
+        liveStat = Object.assign(liveStat, {
+          cuda_mem: {capacity: 0, current: 0, ratio: 0},
+        });
+        liveStat.cuda_mem!.capacity = parseFloat(rowData.item.live_stat.node.cuda_mem.capacity ?? 0);
+        liveStat.cuda_mem!.current = parseFloat(rowData.item.live_stat.node.cuda_mem.current);
+        let cudaMemCapacity;
+        if (!liveStat.cuda_mem!.capacity || liveStat.cuda_mem!.capacity === 0) {
+          cudaMemCapacity = 100;
+        } else {
+          cudaMemCapacity = liveStat.cuda_mem!.capacity;
+        }
+        liveStat.cuda_mem!.ratio = (liveStat.cuda_mem!.current / cudaMemCapacity) || 0;
+      }
       if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
         const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;
         liveStat.cpu_util.capacity = parseFloat(rowData.item.live_stat.node.cpu_util.capacity);
@@ -838,8 +858,14 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               ${liveStat.cuda_util ? html`
                 <div class="layout horizontal justified flex progress-bar-section">
-                  <span style="margin-right:5px;">GPU</span>
+                  <span style="margin-right:5px;">GPU(util)</span>
                   <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                </div>
+              ` : html``}
+              ${liveStat.cuda_mem ? html`
+                <div class="layout horizontal justified flex progress-bar-section">
+                  <span style="margin-right:5px;">GPU(mem)</span>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio}" description="${(liveStat.cuda_mem?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
                 </div>
               ` : html``}
             </div>
@@ -1179,7 +1205,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
+          <vaadin-grid-column resizable width="180px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('agent.DiskPerc')}"
