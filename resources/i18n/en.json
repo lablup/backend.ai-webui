@@ -507,6 +507,7 @@
     "Capacity": "capacity",
     "folders": {
       "Location": "Location",
+      "Status": "Status",
       "Type": "Type",
       "Permission": "Permission",
       "Cloneable": "Cloneable",

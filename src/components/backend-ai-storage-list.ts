@@ -121,6 +121,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundUploadProgressRenderer = Object();
   @property({type: Object}) _boundInviteeInfoRenderer = Object();
   @property({type: Object}) _boundIDRenderer = Object();
+  @property({type: Object}) _boundStatusRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) _folderRefreshing = false;
   @property({type: Number}) lastQueryTime = 0;
@@ -195,6 +196,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundUploadProgressRenderer = this.uploadProgressRenderer.bind(this);
     this._boundInviteeInfoRenderer = this.inviteeInfoRenderer.bind(this);
     this._boundIDRenderer = this.iDRenderer.bind(this);
+    this._boundStatusRenderer = this.statusRenderer.bind(this);
   }
 
   static get styles(): CSSResultGroup {
@@ -599,6 +601,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           </lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column path="host" width="105px" flex-grow="0" resizable
               header="${_t('data.folders.Location')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="status" width="80px" flex-grow="0" resizable .renderer="${this._boundStatusRenderer}"
+              header="${_t('data.folders.Status')}"></lablup-grid-sort-filter-column>
           <vaadin-grid-sort-column path="max_size" width="95px" flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-sort-column>
           <lablup-grid-sort-filter-column path="ownership_type" width="70px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></lablup-grid-sort-filter-column>
           <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
@@ -1146,6 +1150,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="folder_open"
                 title=${_t('data.folders.OpenAFolder')}
                 @click="${(e) => this._folderExplorer(rowData)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             ` :
     html``}
@@ -1223,6 +1228,34 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  statusRenderer(root, column?, rowData?) {
+    let color: string;
+    switch (rowData.item.status) {
+    case 'ready':
+      color = 'yellow';
+      break;
+    case 'performing':
+    case 'cloning':
+      color = 'blue';
+      break;
+    case 'deleting':
+      color = 'red';
+      break;
+    case 'mounted':
+      color = 'blue';
+      break;
+    default:
+      color = 'grey';
+    }
+    render(
+      // language=HTML
+      html`
+        <lablup-shields app="" color="${color}"
+                        description="${rowData.item.status}" ui="flat"></lablup-shields>
+      `, root
+    );
+  }
+
   /**
    * Add textfield to write email.
    *
@@ -1278,6 +1311,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="info"
             title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
+            ?disabled="${rowData.item.status === 'deleting'}"
           ></mwc-icon-button>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
     html`
@@ -1296,6 +1330,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="share"
                 title=${_t('data.explorer.ShareFolder')}
                 @click="${(e) => this._shareFolderDialog(e)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``
@@ -1308,6 +1343,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="perm_identity"
                 title=${_t('data.explorer.ModifyPermissions')}
                 @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``
@@ -1319,6 +1355,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="create"
                 title=${_t('data.folders.Rename')}
                 @click="${(e) => this._renameFolderDialog(e)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``
@@ -1330,6 +1367,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="settings"
                 title=${_t('data.folders.FolderOptionUpdate')}
                 @click="${(e) => this._modifyFolderOptionDialog(e)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``
@@ -1341,6 +1379,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="delete"
                 title=${_t('data.folders.Delete')}
                 @click="${(e) => this._deleteFolderDialog(e)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``
@@ -1351,6 +1390,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 class="fg red controls-running"
                 icon="remove_circle"
                 @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+                ?disabled="${rowData.item.status === 'deleting'}"
               ></mwc-icon-button>
             ` :
     html``

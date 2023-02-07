@@ -553,7 +553,8 @@
       "FolderUsing": "__NOT_TRANSLATED__",
       "NoFolderToDisplay": "__NOT_TRANSLATED__",
       "FolderInfo": "__NOT_TRANSLATED__",
-      "OpenAFolder": "__NOT_TRANSLATED__"
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",
