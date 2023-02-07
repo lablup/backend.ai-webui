@@ -1280,81 +1280,57 @@ export default class BackendAiStorageList extends BackendAIPage {
             @click="${(e) => this._infoFolder(e)}"
           ></mwc-icon-button>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
-    html`
-            <mwc-icon-button
-              class="fg blue controls-running"
-              icon="content_copy"
-              disabled
-              @click="${() => {
-    this._requestCloneFolder(rowData.item);
-  }}"></mwc-icon-button>
-            ` : html``}-->
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="share"
-                title=${_t('data.explorer.ShareFolder')}
-                @click="${(e) => this._shareFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg cyan controls-running"
-                icon="perm_identity"
-                title=${_t('data.explorer.ModifyPermissions')}
-                @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="create"
-                title=${_t('data.folders.Rename')}
-                @click="${(e) => this._renameFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg blue controls-running"
-                icon="settings"
-                title=${_t('data.folders.FolderOptionUpdate')}
-                @click="${(e) => this._modifyFolderOptionDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
-    html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="delete"
-                title=${_t('data.folders.Delete')}
-                @click="${(e) => this._deleteFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
-    html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="remove_circle"
-                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
+      html`
+        <mwc-icon-button
+          class="fg blue controls-running"
+          icon="content_copy"
+          disabled
+          @click="${() => { this._requestCloneFolder(rowData.item);}}"
+          ></mwc-icon-button>
+      ` : html``}-->
+      ${rowData.item.is_owner ?
+        html`
+          <mwc-icon-button
+            class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+            icon="share"
+            title=${_t('data.explorer.ShareFolder')}
+            @click="${(e) => this._shareFolderDialog(e)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg cyan controls-running"
+            icon="perm_identity"
+            title=${_t('data.explorer.ModifyPermissions')}
+            @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+            icon="create"
+            title=${_t('data.folders.Rename')}
+            @click="${(e) => this._renameFolderDialog(e)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg blue controls-running"
+            icon="settings"
+            title=${_t('data.folders.FolderOptionUpdate')}
+            @click="${(e) => this._modifyFolderOptionDialog(e)}"
+          ></mwc-icon-button>` : html``}
+      ${rowData.item.is_owner || 
+        this._hasPermission(rowData.item, 'd') || 
+        (rowData.item.type === 'group' && this.is_admin) ?
+        html`
+          <mwc-icon-button
+            class="fg red controls-running"
+            icon="delete"
+            title=${_t('data.folders.Delete')}
+            @click="${(e) => this._deleteFolderDialog(e)}"
+          ></mwc-icon-button>` : html``}
+      ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
+        html`
+          <mwc-icon-button
+            class="fg red controls-running"
+            icon="remove_circle"
+            @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+          ></mwc-icon-button>` : html``}
         </div>
        `, root
     );
