@@ -1100,6 +1100,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  _checkProcessingStatus(status) {
+    return ['performing', 'cloning', 'deleting', 'mounted'].includes(status);
+  }
+
   /**
    * Render permission options - View, Edit, EditDelete, KickOut.
    *
@@ -1150,7 +1154,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 icon="folder_open"
                 title=${_t('data.folders.OpenAFolder')}
                 @click="${(e) => this._folderExplorer(rowData)}"
-                ?disabled="${rowData.item.status === 'deleting'}"
+                ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             ` :
     html``}
@@ -1311,7 +1315,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="info"
             title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
       html`
@@ -1329,27 +1333,28 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="share"
             title=${_t('data.explorer.ShareFolder')}
             @click="${(e) => this._shareFolderDialog(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg cyan controls-running"
             icon="perm_identity"
             title=${_t('data.explorer.ModifyPermissions')}
             @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="create"
             title=${_t('data.folders.Rename')}
             @click="${(e) => this._renameFolderDialog(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg blue controls-running"
             icon="settings"
             title=${_t('data.folders.FolderOptionUpdate')}
             @click="${(e) => this._modifyFolderOptionDialog(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>` : html``}
       ${rowData.item.is_owner || 
         this._hasPermission(rowData.item, 'd') || 
@@ -1360,7 +1365,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="delete"
             title=${_t('data.folders.Delete')}
             @click="${(e) => this._deleteFolderDialog(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>` : html``}
       ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
         html`
@@ -1368,7 +1373,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             class="fg red controls-running"
             icon="remove_circle"
             @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-            ?disabled="${rowData.item.status === 'deleting'}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>` : html``}
         </div>
        `, root
