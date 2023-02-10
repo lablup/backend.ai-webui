@@ -421,6 +421,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 10px;
           color: var(--general-menu-color-2);
         }
+
+        div.usage-items {
+          font-size: 8px;
+          width: 55px;
+        }
       `];
   }
 
@@ -698,6 +703,11 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].tpu_util = liveStat.tpu_util;
             } else {
               sessions[objectKey].tpu_util = 0;
+            }
+   if (liveStat && liveStat.cuda_mem) {
+              sessions[objectKey].cuda_mem_ratio = liveStat.cuda_mem.pct;
+            } else {
+              sessions[objectKey].cuda_mem_ratio = null;
             }
           }
           const service_info = JSON.parse(sessions[objectKey].service_ports);
@@ -2030,7 +2040,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         html`
         <div class="vertical start start-justified layout">
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="usage-items">CPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
@@ -2039,7 +2049,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="usage-items">RAM</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
@@ -2049,7 +2059,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>
           ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
@@ -2059,7 +2069,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
           ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
@@ -2069,7 +2079,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
           ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
@@ -2079,7 +2089,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
           ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">TPU</div>
+            <div class="usage-items">TPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
@@ -2087,8 +2097,18 @@ export default class BackendAiSessionList extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
           </div>` : html``}
+          ${rowData.item.cuda_mem_ratio ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">I/O</div>
+            <div class="usage-items">GPU(mem)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_mem_ratio}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">I/O</div>
             <div style="font-size:8px;" class="horizontal start-justified center layout">
             R: ${rowData.item.io_read_bytes_mb}MB /
             W: ${rowData.item.io_write_bytes_mb}MB
@@ -2401,7 +2421,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+          <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t('session.Usage')}"
                               .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"

@@ -46,6 +46,7 @@ import './lablup-progress-bar';
  *  - cpu_util
  *  - mem_util
  *  - cuda_util (optional)
+ *  - cuda_mem (optional)
  */
 type LiveStat = {
   cpu_util: {
@@ -59,6 +60,11 @@ type LiveStat = {
     ratio: number;
   }
   cuda_util?: { // optional
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+  cuda_mem?: { // optional
     capacity: number;
     current: number;
     ratio: number;
@@ -160,7 +166,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         lablup-progress-bar.utilization {
-          --progress-bar-width: 80px;
+          --progress-bar-width: 85px;
           margin-left: 10px;
         }
 
@@ -807,13 +813,28 @@ export default class BackendAIAgentList extends BackendAIPage {
         // NOTE: cuda_util.capacity is reported as 0 from the server. In that case,
         //       we manually set it to 100 to properly display the GPU utilization.
         // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
-        let cudaUtilCapacity;
-        if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
-          cudaUtilCapacity = 100;
+        // let cudaUtilCapacity;
+        // if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
+        //   cudaUtilCapacity = 100;
+        // } else {
+        //   cudaUtilCapacity = liveStat.cuda_util!.capacity;
+        // }
+        // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / 100) || 0;
+      }
+      if (rowData.item.live_stat.node.cuda_mem) {
+        liveStat = Object.assign(liveStat, {
+          cuda_mem: {capacity: 0, current: 0, ratio: 0},
+        });
+        liveStat.cuda_mem!.capacity = parseFloat(rowData.item.live_stat.node.cuda_mem.capacity ?? 0);
+        liveStat.cuda_mem!.current = parseFloat(rowData.item.live_stat.node.cuda_mem.current);
+        let cudaMemCapacity;
+        if (!liveStat.cuda_mem!.capacity || liveStat.cuda_mem!.capacity === 0) {
+          cudaMemCapacity = 100;
         } else {
-          cudaUtilCapacity = liveStat.cuda_util!.capacity;
+          cudaMemCapacity = liveStat.cuda_mem!.capacity;
         }
-        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+        liveStat.cuda_mem!.ratio = (liveStat.cuda_mem!.current / cudaMemCapacity) || 0;
       }
       if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
         const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;
@@ -838,8 +859,14 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               ${liveStat.cuda_util ? html`
                 <div class="layout horizontal justified flex progress-bar-section">
-                  <span style="margin-right:5px;">GPU</span>
+                  <span style="margin-right:5px;">GPU(util)</span>
                   <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                </div>
+              ` : html``}
+              ${liveStat.cuda_mem ? html`
+                <div class="layout horizontal justified flex progress-bar-section">
+                  <span style="margin-right:5px;">GPU(mem)</span>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio}" description="${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.current)}/${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.capacity)} GiB"></lablup-progress-bar>
                 </div>
               ` : html``}
             </div>
@@ -1179,7 +1206,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
+          <vaadin-grid-column resizable width="185px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('agent.DiskPerc')}"
