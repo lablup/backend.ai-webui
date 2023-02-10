@@ -510,6 +510,7 @@
     "Capacity": "생성가능 갯수",
     "folders": {
       "Location": "위치",
+      "Status": "상태",
       "Type": "종류",
       "Permission": "권한",
       "Cloneable": "복사 가능 여부",
