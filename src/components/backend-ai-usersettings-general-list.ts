@@ -847,12 +847,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
+  /**
+   * Reset SSH Keypair input field (private/public)
+   */
+  _initManualSSHKeypairFormDialog() {
+    this.enteredSSHPublicKeyInput.value = '';
+    this.enteredSSHPrivateKeyInput.value = '';
+  }
+
+  /**
+   * Open SSH Keypair Form dialog
+   */
   _openSSHKeypairFormDialog() {
     this.sshKeypairFormDialog.show();
   }
+
+  /**
+   * Hide SSH Keypair Form dialog
+   */
   _hideSSHKeypairFormDialog() {
     this.sshKeypairFormDialog.hide();
   }
+
+  /**
+   * Save SSH Keypair Form dialog
+   */
   _saveSSHKeypairFormDialog() {
     const sshPublicKey = this.enteredSSHPublicKeyInput.value;
     const sshPrivateKey = this.enteredSSHPrivateKeyInput.value;
@@ -1172,7 +1191,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           <mwc-button
               unelevated
               label="${_t('button.EnterManually')}"
-              @click="${this._openSSHKeypairFormDialog}"></mwc-button>
+              @click="${() => {
+                this._initManualSSHKeypairFormDialog();
+                this._openSSHKeypairFormDialog();
+              }}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
