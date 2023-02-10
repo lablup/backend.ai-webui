@@ -1940,10 +1940,11 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   configRenderer(root, column?, rowData?) {
-    // extract mounted folder names and convert them to an array.
-    // monkeypatch for extracting and formatting legacy mounts info
     const mountedFolderList: Array<string> = rowData.item.mounts.map((elem: string) => {
-      return (elem.startsWith('[')) ? JSON.parse(elem.replace(/'/g, '"'))[0] : elem;
+      const folderName = elem.substring(elem.indexOf('name=') + 6, elem.indexOf(',') - 1);
+      // extract mounted folder names and convert them to an array.
+      // monkeypatch for extracting and formatting legacy mounts info
+      return folderName.startsWith('[') ? JSON.parse(folderName.replace(/'/g, '"'))[0] : folderName;
     });
     render(
       html`
