@@ -861,8 +861,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       privkey: sshPrivateKey
     });
     p.then((resp) => {
+      this.notification.text = _text('usersettings.SSHKeypairEnterManuallyFinished');
+      this.notification.show();
       this._hideSSHKeypairFormDialog();
       this._openSSHKeypairRefreshDialog();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
     });
   }
 
