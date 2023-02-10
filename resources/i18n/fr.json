@@ -350,7 +350,8 @@
     "GoBackToSummaryPage": "Revenir à la page Résumé",
     "ForceTerminate": "Forcer l'arrêt",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Réinitialisation"
+    "Reset": "Réinitialisation",
+    "EnterManually": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -758,7 +759,9 @@
     "Edit_ShellScriptTitle_2": " script shell",
     "AutoLogout": "Déconnexion automatique",
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",

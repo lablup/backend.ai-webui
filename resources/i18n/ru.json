@@ -350,7 +350,8 @@
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
     "ForceTerminate": "Принудительно завершить",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Перезагрузить"
+    "Reset": "Перезагрузить",
+    "EnterManually": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -758,7 +759,9 @@
     "Edit_ShellScriptTitle_2": " сценарий оболочки",
     "AutoLogout": "Автоматический выход",
     "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
