@@ -760,7 +760,8 @@
     "AutoLogout": "Déconnexion automatique",
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",

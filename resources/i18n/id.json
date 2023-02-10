@@ -760,7 +760,8 @@
     "AutoLogout": "Keluar Otomatis",
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",

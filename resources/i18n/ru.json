@@ -760,7 +760,8 @@
     "AutoLogout": "Автоматический выход",
     "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",

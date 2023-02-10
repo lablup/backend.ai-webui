@@ -759,7 +759,8 @@
     "Edit_ShellScriptTitle_1": " ",
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
-    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다."
+    "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다.",
+    "SSHKeypairEnterManuallyFinished": "SSH 키페어 등록이 성공적으로 완료되었습니다."
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",
