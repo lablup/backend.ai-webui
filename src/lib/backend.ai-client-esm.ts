@@ -1439,9 +1439,17 @@ class Client {
     return this._wrapWithPromise(rqst, false);
   }
 
+  /**
+   * post SSH Keypair to container
+   * save the given keypair (both ssh_public_key and ssh_private_key) 
+   */
+  async postSSHKeypair(param) {
+    let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
+    return this._wrapWithPromise(rqst, false);
+  }
+
   // TODO: move attach_background_task function in Maintenance Class to here.
 }
-
 class ResourcePreset {
   public client: any;
   public urlPrefix: any;

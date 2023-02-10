@@ -347,7 +347,8 @@
     "GoBackToSummaryPage": "Go back to Summary page",
     "ForceTerminate": "Force Terminate",
     "Commit": "Commit",
-    "Reset": "Reset"
+    "Reset": "Reset",
+    "EnterManually": "Enter Manually"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -738,7 +739,7 @@
     "PreferredSSHPort": "Preferred SSH Port",
     "DescPreferredSSHPort": "Use this value as an SSH/SFTP port if possible. <br />If the port is already in use, assign another random port to SSH/SFTP. Leave blank to auto-assign.",
     "SSHKeypairManagement": "SSH Keypair Management",
-    "DescSSHKeypairManagement": "Refresh SSH Keypair already exists or generate SSH Keypair by random.",
+    "DescSSHKeypairManagement": "Change SSH Keypair by randomly generating or by entering directly.",
     "CheckAgainDialog": "This action cannot be undone. Do you want to proceed?",
     "SessionTerminationDialog": "Session termination cannot be undone. Do you want to proceed to terminate the session?",
     "CurrentSSHPublicKey": "Current public key: ",
@@ -755,7 +756,8 @@
     "Edit_ShellScriptTitle_1": "Edit ",
     "Edit_ShellScriptTitle_2": " shell script",
     "AutoLogout": "Auto Logout",
-    "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)"
+    "DescAutoLogout": "Log out automatically if all logined pages are closed except session originated pages for apps(e.g. jupyter notebook, web terminal, etc.)",
+    "SSHKeypairEnterManually": "SSH Keypair"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",

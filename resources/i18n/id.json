@@ -350,7 +350,8 @@
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
     "ForceTerminate": "Hentikan paksa",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Atur Ulang"
+    "Reset": "Atur Ulang",
+    "EnterManually": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -758,7 +759,8 @@
     "Edit_ShellScriptTitle_2": " skrip shell",
     "AutoLogout": "Keluar Otomatis",
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",

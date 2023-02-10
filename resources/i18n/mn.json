@@ -350,7 +350,8 @@
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
     "ForceTerminate": "Хүчээр цуцлах",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Дахин тохируулах"
+    "Reset": "Дахин тохируулах",
+    "EnterManually": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -758,7 +759,8 @@
     "Edit_ShellScriptTitle_2": " бүрхүүлийн скрипт",
     "AutoLogout": "Автоматаар гарах",
     "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
