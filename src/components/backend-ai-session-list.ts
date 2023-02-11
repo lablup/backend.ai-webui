@@ -704,7 +704,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             } else {
               sessions[objectKey].tpu_util = 0;
             }
-   if (liveStat && liveStat.cuda_mem) {
+            if (liveStat && liveStat.cuda_mem) {
               sessions[objectKey].cuda_mem_ratio = liveStat.cuda_mem.pct;
             } else {
               sessions[objectKey].cuda_mem_ratio = null;
@@ -2087,22 +2087,22 @@ export default class BackendAiSessionList extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
           </div>` : html``}
+          ${rowData.item.cuda_fgpu_slot || rowData.item.rocm_gpu_slot ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">GPU(mem)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_mem_ratio}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
           ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
             <div class="usage-items">TPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
-                description=""
-              ></lablup-progress-bar>
-            </div>
-          </div>` : html``}
-          ${rowData.item.cuda_mem_ratio ? html`
-          <div class="horizontal start-justified center layout">
-            <div class="usage-items">GPU(mem)</div>
-            <div class="horizontal start-justified center layout">
-              <lablup-progress-bar class="usage"
-                progress="${rowData.item.cuda_mem_ratio}"
                 description=""
               ></lablup-progress-bar>
             </div>
