@@ -1236,17 +1236,15 @@ export default class BackendAiStorageList extends BackendAIPage {
     let color: string;
     switch (rowData.item.status) {
     case 'ready':
-      color = 'yellow';
+      color = 'green';
       break;
     case 'performing':
     case 'cloning':
+    case 'mounted':
       color = 'blue';
       break;
     case 'deleting':
-      color = 'red';
-      break;
-    case 'mounted':
-      color = 'blue';
+      color = 'yellow';
       break;
     default:
       color = 'grey';
@@ -1356,8 +1354,8 @@ export default class BackendAiStorageList extends BackendAIPage {
             @click="${(e) => this._modifyFolderOptionDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>` : html``}
-      ${rowData.item.is_owner || 
-        this._hasPermission(rowData.item, 'd') || 
+      ${rowData.item.is_owner ||
+        this._hasPermission(rowData.item, 'd') ||
         (rowData.item.type === 'group' && this.is_admin) ?
         html`
           <mwc-icon-button
