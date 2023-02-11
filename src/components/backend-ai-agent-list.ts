@@ -862,11 +862,9 @@ export default class BackendAIAgentList extends BackendAIPage {
                   <span style="margin-right:5px;">GPU(util)</span>
                   <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
                 </div>
-              ` : html``}
-              ${liveStat.cuda_mem ? html`
                 <div class="layout horizontal justified flex progress-bar-section">
                   <span style="margin-right:5px;">GPU(mem)</span>
-                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio}" description="${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.current)}/${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.capacity)} GiB"></lablup-progress-bar>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio || 0}" description="${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.current)}/${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.capacity)} GiB"></lablup-progress-bar>
                 </div>
               ` : html``}
             </div>
