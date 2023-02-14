@@ -37,8 +37,8 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /* FIXME:
-* This type definition is a workaround for resolving both Type error and Importing error.
-*/
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 
 @customElement('backend-ai-resource-monitor')
@@ -277,8 +277,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           height: 55px;
           --mdc-select-outlined-idle-border-color: #dddddd;
           --mdc-select-outlined-hover-border-color: #dddddd;
-        background-color: white!important;
-        border-radius: 5px;
+         background-color: white!important;
+         border-radius: 5px;
         }
 
         wl-button.resource-button.iron-selected {
@@ -449,8 +449,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   /**
-  * @deprecated it does not used now
-  */
+   * @deprecated it does not used now
+   */
   _updateSelectedScalingGroup() {
     const Sgroups = this.shadowRoot?.querySelector('#scaling-groups') as any;
     const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
@@ -572,11 +572,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   }
 
   /**
-  *  If bot refreshOnly and active are true, refresh resource monitor indicator
-  *
-  * @param {boolean} refreshOnly
-  *
-  */
+   *  If bot refreshOnly and active are true, refresh resource monitor indicator
+   *
+   * @param {boolean} refreshOnly
+   *
+   */
   async _refreshResourcePolicy(refreshOnly = false) {
     if (!this.active) {
       return Promise.resolve(true);
