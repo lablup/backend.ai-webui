@@ -337,6 +337,9 @@ export default class BackendAIData extends BackendAIPage {
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
                 <mwc-tab title="automount" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                <mwc-tab title="model" label="${_t('data.Models')}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
@@ -351,6 +354,12 @@ export default class BackendAIData extends BackendAIPage {
                 <p>${_t('data.DialogFolderStartingWithDotAutomount')}</p>
               </div>
               <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true && this._activeTab === 'automount'}"></backend-ai-storage-list>
+            </div>
+            <div id="model-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t('data.DialogModelFolder')}</p>
+              </div>
+              <backend-ai-storage-list id="model-folder-storage" storageType="model" ?active="${this.active === true && this._activeTab === 'model'}"></backend-ai-storage-list>
             </div>
           </div>
         </lablup-activity-panel>
