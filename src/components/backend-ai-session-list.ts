@@ -91,8 +91,9 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  * Type of sesion type
  * - INTERACTIVE: execute in prompt, terminate on-demand
  * - BATCH: apply execution date and time, and automatically terminated when command is done
+ * - INFERENCE: model inference with API
  */
-type SessionType = 'INTERACTIVE' | 'BATCH';
+type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
@@ -430,7 +431,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return ['batch', 'interactive', 'running'].includes(this.condition);
+    return ['batch', 'interactive', 'inference', 'running'].includes(this.condition);
   }
 
   get _isIntegratedCondition() {
@@ -577,6 +578,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     case 'running':
     case 'interactive':
     case 'batch':
+    case 'inference':
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
@@ -636,7 +638,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._listStatus?.show();
         this.total_session_count = 1;
       } else {
-        if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
+        if (['interactive', 'batch', 'inference'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
           this.listCondition = 'no-data';
           this._listStatus?.show();
         } else {
@@ -723,13 +725,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].app_services = [];
             sessions[objectKey].app_services_option = {};
           }
-          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'running'].includes(this.condition)) {
+          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
           }
 
-          if (['batch', 'interactive', 'running'].includes(this.condition)) {
+          if (['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
             sessions[objectKey].running = true;
           } else {
             sessions[objectKey].running = false;
@@ -770,12 +772,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
       }
-      if (['batch', 'interactive'].includes(this.condition)) {
+      if (['batch', 'interactive', 'inference'].includes(this.condition)) {
         const result = sessions.reduce((res, session) => {
-          res[session.type === 'BATCH' as SessionType ? 'batch' : 'interactive'].push(session);
+          res[session.type.toUpperCase()].push(session);
           return res;
-        }, {batch: [], interactive: []});
-        sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
+        }, {batch: [], interactive: [], inference: []});
+        sessions = result[this.condition];
       }
 
       this.compute_sessions = sessions;
@@ -789,7 +791,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 7000 : 30000;
+          refreshTime = ['batch', 'interactive', 'inference', 'running'].includes(this.condition) ? 7000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -799,7 +801,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active && repeat) {
         // Keep trying to fetch session list with more delay
-        const refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 20000 : 120000;
+        const refreshTime = ['batch', 'interactive', 'inference', 'running'].includes(this.condition) ? 20000 : 120000;
         this.refreshTimer = setTimeout(() => {
           this._refreshJobData();
         }, refreshTime);
@@ -2034,7 +2036,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    if (['batch', 'interactive', 'running'].includes(this.condition)) {
+    if (['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
       render(
         // language=HTML
         html`
