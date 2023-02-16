@@ -1272,7 +1272,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const vfoldersCount = this._grid?.selectedItems?.map((item) => item.name).length;
     // check whether the progress is in the last stage
     if (this.currentIndex == this.progressLength) {
-      if (vfoldersCount !== undefined && vfoldersCount > 0) {
+      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0)) {
         return this._newSession();
       } else {
         this.launchConfirmationDialog.show();
@@ -1493,20 +1493,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 1500);
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
-      // only open appLauncher when session type is 'interactive'
+      // only open appLauncher when session type is 'interactive' or 'inference'.
       if (res.length === 1 && this.sessionType !== 'batch') {
         res[0].taskobj.then((res) => {
           let appOptions;
           if ('kernelId' in res) { // API v4
             appOptions = {
               'session-name': res.kernelId,
-              'access-key': ''
+              'access-key': '',
+              'mode': this.mode
             };
           } else { // API >= v5
             appOptions = {
               'session-uuid': res.sessionId,
               'session-name': res.sessionName,
-              'access-key': ''
+              'access-key': '',
+              'mode': this.mode
             };
           }
           const service_info = res.servicePorts;
@@ -1518,6 +1520,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (this.mode === 'import') {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
+          }
+          if (this.mode === 'inference') {
+            appOptions['runtime'] = appOptions['app-services'].find((element) => !['ttyd', 'sshd'].includes(element));
           }
           // only launch app when it has valid service ports
           if (service_info.length > 0) {

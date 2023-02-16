@@ -34,6 +34,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
+  @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
@@ -48,6 +49,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
   @property({type: String}) tensorboardPath = '';
+  @property({type: String}) endpointURL = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
@@ -386,16 +388,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @return {void}
    */
   _showAppLauncher(controls) {
+    this.controls = controls;
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    const mode = controls['mode'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
+      param['mode'] = mode;
       param['session-uuid'] = sessionUuid;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
-      param['file-name'] = controls['filename'];
+      if ('filename' in controls) {
+        param['file-name'] = controls['filename'];
+      }
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
@@ -477,6 +484,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return;
   }
 
+  /**
+   * Automatically opens proxy for API call
+   */
+  _openInferenceAPI() {
+
+  }
   /**
    * Hide the app launcher.
    */
@@ -669,6 +682,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
     const envs = null;
+    const mode = param['mode'];
     let args = null;
     if (appName === undefined || appName === null) {
       return;
@@ -699,13 +713,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
-            await this._connectToProxyWorker(response.url, urlPostfix);
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
-            setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
-            }, 1000);
+            if (mode === 'inference') {
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              console.log(response);
+              this.endpointURL = response.proxy;
+              delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
+              this._showAppLauncher(this.controls);
+            } else {
+              await this._connectToProxyWorker(response.url, urlPostfix);
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              setTimeout(() => {
+                globalThis.open(response.url + urlPostfix, '_blank');
+                // console.log(appName + " proxy loaded: ");
+                // console.log(sessionUuid);
+              }, 1000);
+            }
           }
         });
     }
@@ -1082,6 +1104,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <span>${_t('session.applauncher.App')}</span>
         </div>
         <div slot="content">
+          ${this.endpointURL !== '' ? html`
+          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+            <span style="font-weight:600;margin-left:20px;margin-right:15px;">Endpoint URL: </span> <span style="font-family:monospace;">${this.endpointURL}</span>
+          </div>
+          `: html``}
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map((item) => html`
               ${item.category === 'divider' ? html`
