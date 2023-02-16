@@ -11,6 +11,7 @@ import {BackendAIPage} from './backend-ai-page';
 import './backend-ai-dialog';
 import './backend-ai-list-status';
 import './lablup-grid-sort-filter-column';
+import './backend-ai-session-launcher';
 
 import {Button} from '@material/mwc-button';
 import '@material/mwc-formfield';
@@ -57,6 +58,7 @@ type Switch = HTMLElementTagNameMap['mwc-switch'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
 /**
  Backend AI Storage List
@@ -99,9 +101,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
-  // TODO delete - not used in this file
-  // @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) sessionLauncher = Object();
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
@@ -177,7 +176,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @query('#download-file-dialog') downloadFileDialog!: BackendAIDialog;
   @query('#modify-permission-dialog') modifyPermissionDialog!: BackendAIDialog;
   @query('#share-folder-dialog') shareFolderDialog!: BackendAIDialog;
-
+  @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   constructor() {
     super();
     this._boundIndexRenderer = this.indexRenderer.bind(this);
@@ -221,6 +220,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 370px);
+        }
+
+        #session-launcher {
+          --component-width: 235px;
         }
 
         span.title {
@@ -591,6 +594,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <backend-ai-session-launcher mode="inference" location="data" hideLaunchButton
+        id="session-launcher" ?active="${this.active === true}"
+        .newSessionDialogTitle="${_t('session.launcher.StartModelServing')}"></backend-ai-session-launcher>
       <div class="list-wrapper">
         <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
@@ -1040,8 +1046,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
 
-    // TODO delete - not used in this file
-    // this.sessionLauncher = this.shadowRoot?.querySelector('#session-launcher');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
@@ -1308,6 +1312,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           folder-name="${rowData.item.name}"
           folder-type="${rowData.item.type}"
         >
+         ${rowData.item.usage_mode == 'model' ?
+      html`
+          <mwc-icon-button
+            class="fg green controls-running"
+            icon="play_arrow"
+            title=${_t('data.folders.Serve')}
+            @click="${(e) => this._inferModel(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>`: html``}
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
@@ -1909,6 +1922,23 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * Start inference with the selected folder
+   *
+   * @param {Event} e - clicked running icon button
+   */
+  _inferModel(e) {
+    const folderName = this._getControlName(e);
+    alert(folderName);
+    //this.sessionLauncher.selectDefaultLanguage(true, this.environment);
+    this.sessionLauncher._launchSessionDialog();
+    /*
+    this.mode = 'inference'
+    this.customFolderMapping  {test-model: '/work'}
+     */
+    return true;
   }
 
   /**

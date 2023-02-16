@@ -234,7 +234,9 @@
       "NumOpenMPthreads": "Number of OpenMP threads",
       "NumOpenBLASthreads": "Number of OpenBLAS threads",
       "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
-      "Architecture": "Architecture"
+      "Architecture": "Architecture",
+      "StartModelServing": "Start Model Serving",
+      "InferenceMode": "Inference"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -553,7 +555,8 @@
       "FolderUsage": "Folder usage",
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
-      "MaxFolderQuota": "Max Folder Quota"
+      "MaxFolderQuota": "Max Folder Quota",
+      "Serve": "Serve"
     },
     "explorer": {
       "Delete": "Delete...",
@@ -615,7 +618,7 @@
       "PermissionModified": "Permission updated"
     },
     "NoStorageDescriptionFound": "No description.",
-    "DialogModelFolder": "DialogModelFolder"
+    "DialogModelFolder": "You can serve and manage models."
   },
   "dialog": {
     "warning": {

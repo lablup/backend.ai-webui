@@ -235,7 +235,9 @@
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
       "ScheduleTime": "__NOT_TRANSLATED__",
-      "Architecture": "__NOT_TRANSLATED__"
+      "Architecture": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -556,7 +558,8 @@
       "NoFolderToDisplay": "__NOT_TRANSLATED__",
       "FolderInfo": "__NOT_TRANSLATED__",
       "OpenAFolder": "__NOT_TRANSLATED__",
-      "Status": "__NOT_TRANSLATED__"
+      "Status": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",

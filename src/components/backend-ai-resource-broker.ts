@@ -15,6 +15,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) imageArchitectures = Object();
+  @property({type: Object}) imageRoles = Object();
+  @property({type: Object}) imageRuntimeConfig = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
@@ -28,6 +30,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
+  @property({type: Array}) inferenceServers;
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
@@ -116,6 +119,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
   init_resource() {
     this.languages = [];
+    this.inferenceServers = [];
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -735,6 +739,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supportImages = {};
       this.imageRequirements = {};
       this.imageArchitectures = {};
+      this.imageRoles = {};
       const privateImages: object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -776,6 +781,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
         }
         this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
+        this.imageRoles[`${supportsKey}`] = 'COMPUTE'; // Default role is COMPUTE.
+        this.imageRuntimeConfig[`${supportsKey}:${item.tag}`] = {};
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
@@ -789,6 +796,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
             privateImages[supportsKey].push(item.tag);
           }
+          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE'].includes(label['value'])) {
+            this.imageRoles[`${supportsKey}`] = label['value'];
+          }
+          if (label['key'] === 'ai.backend.model-path') {
+            this.imageRuntimeConfig[`${supportsKey}:${item.tag}`]['model-path'] = label['value'];
+          }
         });
       });
       Object.keys(privateImages).forEach((key) => {
@@ -796,7 +809,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const tags = this.supports[key];
         this.supports[key] = tags.filter((tag) => !privateImages[key].includes(tag));
         if (this.supports[key].length < 1) {
-          // If there is no availabe version, remove the environment itself.
+          // If there is no available version, remove the environment itself.
           delete this.supports[key];
           // delete this.supportImages[key];
         }

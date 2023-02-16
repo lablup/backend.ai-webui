@@ -145,6 +145,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) autoMountedVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
   @property({type: Object}) folderMapping = Object();
+  @property({type: Object}) customFolderMapping = Object();
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -1003,7 +1004,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _enableLaunchButton() {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
-      this.languages = this.resourceBroker.languages;
+      if (this.mode === 'inference') {
+        this.languages = this.resourceBroker.languages.filter(item =>
+          item.name !== '' && this.resourceBroker.imageRoles[item.name] === 'INFERENCE');
+      } else {
+        this.languages = this.resourceBroker.languages.filter(item =>
+          item.name === '' || this.resourceBroker.imageRoles[item.name] === 'COMPUTE');
+      }
       this.enableLaunchButton = true;
     } else {
       this.enableLaunchButton = false;
@@ -1300,7 +1307,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessionType = (this.shadowRoot?.querySelector('#session-type') as Select).value;
     let sessionName = (this.shadowRoot?.querySelector('#session-name') as TextField).value;
     const isSessionNameValid = (this.shadowRoot?.querySelector('#session-name') as TextField).checkValidity();
-    const vfolder = this.selectedVfolders;
+    let vfolder = this.selectedVfolders; // Will be overwritten if customFolderMapping is given on inference mode.
     this.cpu_request = parseInt(this.cpuResouceSlider.value);
     this.mem_request = parseFloat(this.memoryResouceSlider.value);
     this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
@@ -1384,16 +1391,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (sessionName.length == 0) { // No name is given
       sessionName = this.generateSessionId();
     }
+    let folderMapping;
+    if (this.mode === 'inference') { // Override model folder setup
+      vfolder = Object.keys(this.customFolderMapping);
+      folderMapping = this.customFolderMapping;
+    } else {
+      folderMapping = this.folderMapping;
+    }
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
-      if (Object.keys(this.folderMapping).length !== 0) {
+      if (Object.keys(folderMapping).length !== 0) {
         config['mount_map'] = {};
-        for (const f in this.folderMapping) {
-          if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            if (!(this.folderMapping[f].startsWith('/'))) {
-              config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+        for (const f in folderMapping) {
+          if ({}.hasOwnProperty.call(folderMapping, f)) {
+            if (!(folderMapping[f].startsWith('/'))) {
+              config['mount_map'][f] = '/home/work/' + folderMapping[f];
             } else {
-              config['mount_map'][f] = this.folderMapping[f];
+              config['mount_map'][f] = folderMapping[f];
             }
           }
         }
@@ -2355,7 +2369,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
       globalThis.backendaiclient._config.default_session_environment !== '') {
-      this.default_language = globalThis.backendaiclient._config.default_session_environment;
+      if (this.languages.map((item) => item.name).includes(globalThis.backendaiclient._config.default_session_environment)) {
+        this.default_language = globalThis.backendaiclient._config.default_session_environment;
+      } else if (this.languages[0].name !== ''){
+         this.default_language = this.languages[0].name;
+      } else {
+         this.default_language = this.languages[1].name;
+      }
     } else if (this.languages.length > 1) {
       this.default_language = this.languages[1].name;
     } else if (this.languages.length !== 0) {
@@ -3141,12 +3161,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div id="progress-01" class="progress center layout fade active">
             <mwc-select id="session-type" icon="category" label="${_text('session.launcher.SessionType')}" required fixedMenuPosition
                         value="${this.sessionType}" @selected="${(e) => this._toggleStartUpCommandEditor(e)}">
+              ${this.mode === 'inference' ? html`
+              <mwc-list-item value="inference" selected>
+                ${_t('session.launcher.InferenceMode')}
+              </mwc-list-item>
+              `: html`
               <mwc-list-item value="batch">
                 ${_t('session.launcher.BatchMode')}
               </mwc-list-item>
               <mwc-list-item value="interactive" selected>
                 ${_t('session.launcher.InteractiveMode')}
               </mwc-list-item>
+              `}
             </mwc-select>
             <mwc-select id="environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
