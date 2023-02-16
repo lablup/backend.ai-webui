@@ -438,7 +438,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
-    }).then((response) => {
+    }).then(async (response) => {
       const resource_remaining = response.keypair_remaining;
       const resource_using = response.keypair_using;
       const project_resource_total = response.group_limits;
@@ -471,6 +471,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
+      
+
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
@@ -601,7 +603,51 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
 
       this.total_slot = total_slot;
-      this.total_resource_group_slot = total_resource_group_slot;
+      if (!globalThis.backendaiclient._config.hideAgents) {
+        const status = 'ALIVE';
+        const limit = 20;
+        const offset = 0;
+        const timeout = 10 * 1000;
+        const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'scaling_group'];
+        const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
+        this.total_resource_group_slot = agentSummaryList.agent_summary_list.items
+          .filter((agent) => agent.scaling_group == this.scaling_group).map((agent) => {
+            const availableSlots = JSON.parse(agent.available_slots)
+            if ('cpu' in availableSlots) {
+              availableSlots['cpu'] = parseInt(availableSlots['cpu'] ?? 0);
+            } else {
+              availableSlots['cpu'] = 0;
+            }
+            if ('mem' in availableSlots) {
+              availableSlots['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots['mem'], 'g'));
+            } else {
+              availableSlots['mem'] = 0;
+            }
+            if ('cuda.device' in availableSlots) {
+              availableSlots['cuda_device'] = parseInt(availableSlots['cuda.device'])
+            } else {
+              availableSlots['cuda_device'] = 0;
+            }
+            if ('cuda.shares' in availableSlots) {
+              availableSlots['cuda_shares'] = parseInt(availableSlots['cuda.shares'])
+            } else {
+              availableSlots['cuda_shares'] = 0;
+            }
+            return availableSlots;
+          })
+          .reduce((acc, curr) => {
+            Object.keys(curr).forEach((key) => {
+              acc[key] += curr[key];
+            });
+          return acc;
+        });
+        this.total_resource_group_slot.mem = this.total_resource_group_slot.mem.toFixed(2);
+        if ('cuda_shares' in this.total_resource_group_slot) {
+          this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
+        }
+      } else {
+        this.total_resource_group_slot = total_resource_group_slot;
+      }
       this.total_project_slot = total_project_slot;
       this.used_slot = used_slot;
       this.used_resource_group_slot = used_resource_group_slot;
