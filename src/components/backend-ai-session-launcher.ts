@@ -1391,10 +1391,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (sessionName.length == 0) { // No name is given
       sessionName = this.generateSessionId();
     }
-    let folderMapping;
+
+    let kernelName: string;
+    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
+      kernelName = this.manualImageName.value;
+    } else {
+      kernelName = this._generateKernelIndex(kernel, version);
+    }
+
+    let folderMapping = {};
     if (this.mode === 'inference') { // Override model folder setup
-      vfolder = Object.keys(this.customFolderMapping);
-      folderMapping = this.customFolderMapping;
+      // Inference image should have its own mount point for automatic container start.
+      if (kernelName in this.resourceBroker.imageRuntimeConfig && 'model-path' in this.resourceBroker.imageRuntimeConfig[kernelName]) {
+        vfolder = Object.keys(this.customFolderMapping);
+        folderMapping[vfolder] = this.resourceBroker.imageRuntimeConfig[kernelName]['model-path'];
+      } else {
+        this.notification.text = _text('session.launcher.ImageDoesNotProvideModelPath');
+        this.notification.show();
+        return;
+      }
     } else {
       folderMapping = this.folderMapping;
     }
@@ -1441,12 +1456,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const openBLASCoreValue = (this.shadowRoot?.querySelector('#OpenBLASCore') as TextField).value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
-    }
-    let kernelName: string;
-    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
-      kernelName = this.manualImageName.value;
-    } else {
-      kernelName = this._generateKernelIndex(kernel, version);
     }
     this.launchButton.disabled = true;
     this.launchButtonMessage.textContent = _text('session.Preparing');

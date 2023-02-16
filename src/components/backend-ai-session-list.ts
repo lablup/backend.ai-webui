@@ -774,7 +774,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       }
       if (['batch', 'interactive', 'inference'].includes(this.condition)) {
         const result = sessions.reduce((res, session) => {
-          res[session.type.toUpperCase()].push(session);
+          res[session.type.toLowerCase()].push(session);
           return res;
         }, {batch: [], interactive: [], inference: []});
         sessions = result[this.condition];

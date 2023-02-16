@@ -1931,14 +1931,14 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _inferModel(e) {
     const folderName = this._getControlName(e);
-    alert(folderName);
-    //this.sessionLauncher.selectDefaultLanguage(true, this.environment);
+    this.sessionLauncher.customFolderMapping[folderName] = 'tst';
+    console.log(this.sessionLauncher.customFolderMapping[folderName]);
     this.sessionLauncher._launchSessionDialog();
     /*
     this.mode = 'inference'
     this.customFolderMapping  {test-model: '/work'}
      */
-    return true;
+    return;
   }
 
   /**
