@@ -274,7 +274,8 @@
       "AppMustBeRun": "Démarrer uniquement lorsque l'application est déjà en cours d'exécution",
       "AppMustBeRunDialog": "Cette application n'est accessible et utilisée que si elle est déjà en cours d'exécution via le terminal. Sinon, vous serez dirigé vers une page d'erreur qui se produit lorsque l'application n'est pas en cours d'exécution.",
       "ConfirmAndRun": "j'ai vérifié et je vais commencer",
-      "Prepared": "Préparé"
+      "Prepared": "Préparé",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "InputTensorboardPath": "Veuillez saisir le répertoire de journal auquel TensorBoard fera référence. Notez que le répertoire des journaux ne sera pas automatiquement créé.",

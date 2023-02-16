@@ -274,7 +274,8 @@
       "AppMustBeRun": "Mulai hanya saat aplikasi sudah berjalan",
       "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
       "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
-      "Prepared": "Siap"
+      "Prepared": "Siap",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",

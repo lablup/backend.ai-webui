@@ -283,7 +283,8 @@
       "AppMustBeRun": "이미 앱이 실행중일 때만 시작하세요",
       "AppMustBeRunDialog": "이 앱은 터미널을 통해 미리 실행되고 있는 경우에만 접근 및 사용할 수 있습니다. 그렇지 않은 경우, 앱이 실행중이 아닐때 발생하는 오류 페이지에 접속될 것입니다.",
       "ConfirmAndRun": "확인하였으며 시작하겠습니다",
-      "Prepared": "준비되었습니다"
+      "Prepared": "준비되었습니다",
+      "App": "앱"
     },
     "TensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로",
     "InputTensorboardPath": "TensorBoard가 참조할 로그 디렉토리 경로를 입력하세요. 로그 디렉토리는 자동으로 생성되지 않는다는 점에 주의하십시오.",

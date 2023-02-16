@@ -1079,7 +1079,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return html`
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
-          <span>${_t('session.App')}</span>
+          <span>${_t('session.applauncher.App')}</span>
         </div>
         <div slot="content">
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">

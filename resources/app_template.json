@@ -107,7 +107,16 @@
         "title": "Triton Server",
         "category": "3.Machine Learning Tools",
         "redirect": "",
-        "src": "./resources/icons/terminal.svg"
+        "src": "./resources/icons/nvidia.png"
+      }
+    ],
+    "triton-server-http": [
+      {
+        "name": "triton-server-http",
+        "title": "Triton Server (HTTP)",
+        "category": "3.Machine Learning Tools",
+        "redirect": "",
+        "src": "./resources/icons/nvidia.png"
       }
     ],
     "nniboard": [
