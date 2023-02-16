@@ -564,7 +564,7 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as boolean;
 
     // Allow change Sign-in mode flag
-    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+    this.change_signin_support = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
