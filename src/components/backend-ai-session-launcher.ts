@@ -2982,7 +2982,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
     // Exclude for model inference. No folder will be shown in the inference mode.
-    if (this.currentIndex == 2) {
+    if (this.mode === 'inference' && this.currentIndex == 2) {
       this.currentIndex += n;
     }
     // limit the range of progress number
