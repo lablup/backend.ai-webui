@@ -58,7 +58,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) appArgs = Object();
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
+  @query('#custom-subdomain') customSubdomain!: TextField;
   @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
+  @query('#chk-no-auth') doNotRequireAuthentication!: Checkbox;
   @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
   @query('#force-use-v1-proxy') forceUseV1Proxy!: Checkbox;
   @query('#force-use-v2-proxy') forceUseV2Proxy!: Checkbox;
@@ -615,6 +617,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
+    if (this.customSubdomain.value) {
+      uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
+    }
+    if (this.doNotRequireAuthentication?.checked) {
+      uri = uri += '&no_auth=true';
+    }
     uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
@@ -1003,6 +1011,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  _adjustCustomSubdomain(e) {
+    const subdomain = e.target.value;
+    this.customSubdomain.value = subdomain;
+  }
+
   /**
    * Dynamically add Web Terminal Guide Carousel
    */
@@ -1112,6 +1125,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               Force use of V2
             `: ``}
             </div>
+            </div>
+          <div style="padding:10px 20px 15px 20px">
+            ${globalThis.backendaiwebui.debug === true ? html`
+            <div class="horizontal layout center">
+              <mwc-checkbox id="chk-custom-subdomain" style="margin-right:0.5em;"></mwc-checkbox>
+              ${_t('session.UseSubdomain')}
+              <mwc-textfield id="custom-subdomain" type="string"
+                            style="margin-left:1em;width:90px;"
+                            @change="${(e) => this._adjustCustomSubdomain(e)}"></mwc-textfield>
+            </div>
+            `: ``}
+          </div>
+          <div style="padding:10px 20px 15px 20px">
+            ${globalThis.backendaiwebui.debug === true ? html`
+              <mwc-checkbox id="chk-no-auth" style="margin-right:0.5em;"></mwc-checkbox>
+              Do not require authentication
+            `: ``}
           </div>
         </div>
       </backend-ai-dialog>
