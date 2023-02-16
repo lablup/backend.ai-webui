@@ -705,7 +705,7 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].tpu_util = 0;
             }
             if (liveStat && liveStat.cuda_mem) {
-              sessions[objectKey].cuda_mem_ratio = liveStat.cuda_mem.pct;
+              sessions[objectKey].cuda_mem_ratio = (liveStat.cuda_mem.current / liveStat.cuda_mem.capacity) || 0;
             } else {
               sessions[objectKey].cuda_mem_ratio = null;
             }
