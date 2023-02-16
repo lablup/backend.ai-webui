@@ -237,7 +237,8 @@
       "ScheduleTime": "__NOT_TRANSLATED__",
       "Architecture": "__NOT_TRANSLATED__",
       "StartModelServing": "__NOT_TRANSLATED__",
-      "InferenceMode": "__NOT_TRANSLATED__"
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -321,7 +322,10 @@
     "Message": "сообщение",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
     "DownloadingSessionLogs": "__NOT_TRANSLATED__",
-    "Inference": "__NOT_TRANSLATED__"
+    "Inference": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "BypassAuthentication": "__NOT_TRANSLATED__",
+    "App": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",

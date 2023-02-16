@@ -236,7 +236,8 @@
       "SwitchOpenMPoptimization": "OpenMP 자동 최적화 사용",
       "Architecture": "아키텍쳐",
       "StartModelServing": "모델 서비스 시작",
-      "InferenceMode": "Inference"
+      "InferenceMode": "Inference",
+      "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
@@ -320,7 +321,10 @@
     "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
     "EnvironmentInfo": "환경 정보",
     "DownloadingSessionLogs": "세션 로그를 다운받습니다.",
-    "Inference": "INFERENCE"
+    "Inference": "INFERENCE",
+    "UseSubdomain": "서브도메인 주소 입력",
+    "BypassAuthentication": "인증 바이패스",
+    "App": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "취소",

@@ -1079,7 +1079,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     return html`
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
-          <span>App</span>
+          <span>${_t('session.App')}</span>
         </div>
         <div slot="content">
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
@@ -1125,7 +1125,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               Force use of V2
             `: ``}
             </div>
-            </div>
+          </div>
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.backendaiwebui.debug === true ? html`
             <div class="horizontal layout center">
@@ -1139,8 +1139,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           </div>
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.backendaiwebui.debug === true ? html`
+            <div class="horizontal layout center">
               <mwc-checkbox id="chk-no-auth" style="margin-right:0.5em;"></mwc-checkbox>
-              Do not require authentication
+              ${_t('session.BypassAuthentication')}
+            </div>
             `: ``}
           </div>
         </div>

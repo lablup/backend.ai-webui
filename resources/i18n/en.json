@@ -236,7 +236,8 @@
       "SwitchOpenMPoptimization": "Use automatic OpenMP optimization",
       "Architecture": "Architecture",
       "StartModelServing": "Start Model Serving",
-      "InferenceMode": "Inference"
+      "InferenceMode": "Inference",
+      "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -318,7 +319,10 @@
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",
-    "Inference": "Inference"
+    "Inference": "Inference",
+    "UseSubdomain": "UseSubdomain",
+    "BypassAuthentication": "Bypass authentication",
+    "App": "App"
   },
   "button": {
     "Cancel": "Cancel",
