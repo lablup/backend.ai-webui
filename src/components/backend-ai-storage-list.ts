@@ -1051,7 +1051,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
-    if (this.storageType === 'automount') {
+    if (['automount', 'model'].includes(this.storageType)) {
       (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 230px)';
     } else {
       (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 185px)';
@@ -1574,9 +1574,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       const folders = value.filter((item) => {
-        if (this.storageType === 'general' && !item.name.startsWith('.')) {
+        if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
+          console.log(item);
           return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
+          return item;
+        } else if (this.storageType === 'model' && !item.name.startsWith('.') && item.usage_mode == 'model') {
           return item;
         }
       });
