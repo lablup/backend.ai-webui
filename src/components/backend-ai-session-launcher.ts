@@ -2976,6 +2976,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   async moveProgress(n) {
     const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
+    // Exclude for model inference. No folder will be shown in the inference mode.
+    if (this.currentIndex == 2) {
+      this.currentIndex += n;
+    }
     // limit the range of progress number
     if (this.currentIndex > this.progressLength) {
       this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, this.progressLength, 1);
@@ -3396,7 +3400,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
               </div>
-
             </wl-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
@@ -3743,6 +3746,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             </div>
+            ${this.mode !== 'inference' ? html`
             <p class="title">${_t('session.launcher.MountedFolders')}</p>
             <div id="mounted-folders-container">
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
@@ -3765,7 +3769,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <span>${_t('session.launcher.NoFolderMounted')}</span>
                 </div>
               `}
-            </div>
+            </div>`: html`
+
+            `}
             <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
             <div class="environment-variables-container">
               ${this.environ.length > 0 ? html`

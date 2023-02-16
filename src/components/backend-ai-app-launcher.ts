@@ -617,7 +617,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
-    if (this.customSubdomain.value) {
+    if (this.customSubdomain?.value) {
       uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
     }
     if (this.doNotRequireAuthentication?.checked) {
