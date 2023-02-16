@@ -315,7 +315,8 @@
     },
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
-    "DownloadingSessionLogs": "Downloading session logs."
+    "DownloadingSessionLogs": "Downloading session logs.",
+    "Inference": "Inference"
   },
   "button": {
     "Cancel": "Cancel",
@@ -613,7 +614,8 @@
       "NoChanges": "No changes made",
       "PermissionModified": "Permission updated"
     },
-    "NoStorageDescriptionFound": "No description."
+    "NoStorageDescriptionFound": "No description.",
+    "DialogModelFolder": "DialogModelFolder"
   },
   "dialog": {
     "warning": {

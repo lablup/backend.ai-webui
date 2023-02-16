@@ -318,7 +318,8 @@
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "Pesan",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
-    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -616,7 +617,8 @@
       "NoChanges": "Tidak ada perubahan yang dilakukan",
       "PermissionModified": "Izin diperbarui"
     },
-    "NoStorageDescriptionFound": "Tidak ada deskripsi."
+    "NoStorageDescriptionFound": "Tidak ada deskripsi.",
+    "DialogModelFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

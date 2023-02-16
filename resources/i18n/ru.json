@@ -318,7 +318,8 @@
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "сообщение",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
-    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -616,7 +617,8 @@
       "NoChanges": "Никаких изменений не внесено",
       "PermissionModified": "Разрешение обновлено"
     },
-    "NoStorageDescriptionFound": "Нет описания."
+    "NoStorageDescriptionFound": "Нет описания.",
+    "DialogModelFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {

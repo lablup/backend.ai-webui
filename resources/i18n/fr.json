@@ -318,7 +318,8 @@
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "Message",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
-    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -616,7 +617,8 @@
       "NoChanges": "Aucune modification apportée",
       "PermissionModified": "Autorisation mise à jour"
     },
-    "NoStorageDescriptionFound": "Pas de description."
+    "NoStorageDescriptionFound": "Pas de description.",
+    "DialogModelFolder": "__NOT_TRANSLATED__"
   },
   "dialog": {
     "warning": {
