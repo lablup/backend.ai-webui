@@ -57,7 +57,9 @@
       "Run": "실행",
       "UserName": "사용자",
       "PleaseChangeYourPassword": "비밀번호를 변경해주세요.",
-      "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요."
+      "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요.",
+      "SetupTotp": "이중 인증 활성화",
+      "TotpActivated": "이중 인증 사용"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -350,7 +352,9 @@
     "GoBackToSummaryPage": "요약 페이지로 돌아가기",
     "ForceTerminate": "강제 종료",
     "Commit": "커밋하기",
-    "Reset": "초기화"
+    "Reset": "초기화",
+    "OptOut": "비활성화",
+    "Activate": "활성화"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -1268,5 +1272,15 @@
   "explorer": {
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
+  },
+  "totp": {
+    "OTP": "이중 인증",
+    "TotpRemoved": "이중 인증이 비활성화 되었습니다.",
+    "TotpSetupCompleted": "이중 인증이 활성화 되었습니다.",
+    "InvalidTotpCode": "올바르지 않은 이중 인증 코드입니다,",
+    "ScanQRToEnable": "이중 인증 프로그램으로 하단의 QR 코드를 스캔하여 이중 인증을 인증기에 등록하세요.",
+    "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다.",
+    "EnterConfirmationCode": "이제 확인을 위해 인증기에서 보이는 6자리 숫자를 입력하세요.",
+    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?"
   }
 }
