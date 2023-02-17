@@ -110,7 +110,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
-  @property({type: Boolean}) hideAgents = false;
+  @property({type: Boolean}) hideAgents = true;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
