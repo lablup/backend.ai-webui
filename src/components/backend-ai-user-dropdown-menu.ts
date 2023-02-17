@@ -169,7 +169,6 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    this.totpActivationSwitch?.setAttribute('selected', this.totpActivated);
     this.userPreferenceDialog?.show();
   }
 
@@ -610,11 +609,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
             <p style="flex-grow: 1;margin-left: 15px;">
               ${_t('webui.menu.TotpActivated')}
             </p>
-            <mwc-switch id="totp-activation" ?selected="${this.totpActivated}"
-                style="margin-right: 10px;"
+            <mwc-switch id="totp-activation" .selected="${this.totpActivated}" style="margin-right: 10px;"
                 @click="${(e) => this.totpActivated ? this._confirmRemovingTotp(e) : this._startActivatingTotp(e)}">
             </mwc-switch>
-            </mwc-icon-button-toggle>
           </div>
         `: html``}
       </div>

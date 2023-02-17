@@ -1206,7 +1206,7 @@ export default class BackendAILogin extends BackendAIPage {
             return Promise.resolve(false);
           } else if (response.fail_reason) {
             this.open();
-            if (response.fail_reason == "OTP not provided") {
+            if (response.fail_reason == 'OTP not provided') {
               this.otpRequired = true;
               this._disableUserInput();
             } else if (this.user_id !== '' && this.password !== '') {
