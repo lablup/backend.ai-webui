@@ -655,6 +655,7 @@ export default class BackendAIUserList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact"

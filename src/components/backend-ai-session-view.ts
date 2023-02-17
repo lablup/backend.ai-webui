@@ -453,6 +453,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" autowidth>
         <div slot="message">
           <backend-ai-resource-monitor location="session" id="resource-monitor" ?active="${this.active === true}"></backend-ai-resource-monitor>

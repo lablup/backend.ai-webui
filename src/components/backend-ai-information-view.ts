@@ -150,6 +150,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">
