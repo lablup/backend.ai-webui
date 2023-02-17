@@ -471,7 +471,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
-      
+
 
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
@@ -604,6 +604,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       this.total_slot = total_slot;
       if (!globalThis.backendaiclient._config.hideAgents) {
+        let initialResourceSlots = {
+          cpu: 0,
+          mem: 0,
+          cuda_device: 0,
+          cuda_shares: 0
+        };
         const status = 'ALIVE';
         const limit = 20;
         const offset = 0;
@@ -612,7 +618,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
         this.total_resource_group_slot = agentSummaryList.agent_summary_list.items
           .filter((agent) => agent.scaling_group == this.scaling_group).map((agent) => {
-            const availableSlots = JSON.parse(agent.available_slots)
+            const availableSlots = JSON.parse(agent.available_slots);
             if ('cpu' in availableSlots) {
               availableSlots['cpu'] = parseInt(availableSlots['cpu'] ?? 0);
             } else {
@@ -624,12 +630,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               availableSlots['mem'] = 0;
             }
             if ('cuda.device' in availableSlots) {
-              availableSlots['cuda_device'] = parseInt(availableSlots['cuda.device'])
+              availableSlots['cuda_device'] = parseInt(availableSlots['cuda.device']);
             } else {
               availableSlots['cuda_device'] = 0;
             }
             if ('cuda.shares' in availableSlots) {
-              availableSlots['cuda_shares'] = parseInt(availableSlots['cuda.shares'])
+              availableSlots['cuda_shares'] = parseInt(availableSlots['cuda.shares']);
             } else {
               availableSlots['cuda_shares'] = 0;
             }
@@ -639,8 +645,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             Object.keys(curr).forEach((key) => {
               acc[key] += curr[key];
             });
-          return acc;
-        });
+            return acc;
+          }, initialResourceSlots);
         this.total_resource_group_slot.mem = this.total_resource_group_slot.mem.toFixed(2);
         if ('cuda_shares' in this.total_resource_group_slot) {
           this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
