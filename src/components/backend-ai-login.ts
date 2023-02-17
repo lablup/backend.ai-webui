@@ -110,6 +110,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
+  @property({type: Boolean}) hideAgents = true;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
@@ -706,6 +707,14 @@ export default class BackendAILogin extends BackendAIPage {
         defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
         value: (generalConfig?.appDownloadUrl),
       } as ConfigValueObject) as string;
+
+    // Enable hide agent flag
+    this.hideAgents = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: (generalConfig?.hideAgents),
+      } as ConfigValueObject) as boolean;
 
     // Enable pipeline flag
     // FIXME: temporally disable pipeline feature in manual
@@ -1424,6 +1433,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+      globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
