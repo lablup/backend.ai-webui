@@ -1590,10 +1590,11 @@ export default class BackendAILogin extends BackendAIPage {
                       @keyup="${this._submitIfEnter}">
                   </mwc-textfield>
                   <mwc-textfield type="number" id="otp"
-                        style="display: ${this.otpRequired ? "block" : "none"};"
+                        style="display: ${this.otpRequired ? 'block' : 'none'};"
                         label="${_t('totp.OTP')}" icon="pin"
                         value="${this.otp}"
                         @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
               </fieldset>
             </form>
             <form id="api-login-form" class="${this.connection_mode === 'SESSION' ? 'none' : 'block'}">
