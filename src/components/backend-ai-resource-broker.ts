@@ -604,12 +604,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       this.total_slot = total_slot;
       if (!globalThis.backendaiclient._config.hideAgents) {
-        let initialResourceSlots = {
-          cpu: 0,
-          mem: 0,
-          cuda_device: 0,
-          cuda_shares: 0
-        };
         const status = 'ALIVE';
         const limit = 20;
         const offset = 0;
@@ -646,7 +640,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               acc[key] += curr[key];
             });
             return acc;
-          }, initialResourceSlots);
+          }, { cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0 });
         this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
         if ('cuda_shares' in this.total_resource_group_slot) {
           this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
