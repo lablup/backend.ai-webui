@@ -744,8 +744,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot.cuda_device / this.total_resource_group_slot.cuda_device, '%')}</span>
-              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot.cuda_device / this.total_slot.cuda_device, '%')}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.cuda_device, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.cuda_device, '%')}</span>
             </div>
           </div>` :
     html``}
