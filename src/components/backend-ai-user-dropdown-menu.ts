@@ -399,6 +399,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
   render() {
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal flex center layout">
         <div class="vertical layout center" style="position:relative;right:50px;">
           <mwc-menu id="dropdown-menu" class="user-menu">

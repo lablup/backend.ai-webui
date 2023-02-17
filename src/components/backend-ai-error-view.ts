@@ -79,6 +79,7 @@ export default class BackendAIErrorView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+    <link rel="stylesheet" href="resources/custom.css">
     <div class="horizontal center flex layout" style="margin:20px;">
       <img src="/resources/images/404_not_found.svg" style="width:500px;margin:20px;"/>
       <div class="vertical layout" style="width:100%;">

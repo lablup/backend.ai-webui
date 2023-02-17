@@ -558,6 +558,7 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="item" elevation="1" class="vertical layout center wrap flex">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal layout wrap flex">
