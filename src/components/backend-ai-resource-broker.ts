@@ -647,7 +647,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             });
             return acc;
           }, initialResourceSlots);
-        this.total_resource_group_slot.mem = this.total_resource_group_slot.mem.toFixed(2);
+        this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
         if ('cuda_shares' in this.total_resource_group_slot) {
           this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
         }
