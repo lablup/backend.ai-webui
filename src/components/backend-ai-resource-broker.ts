@@ -605,35 +605,25 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.total_slot = total_slot;
       if (!globalThis.backendaiclient._config.hideAgents) {
         const status = 'ALIVE';
-        const limit = 20;
+        // TODO: Let's assume that the number of agents is less than 100 for
+        //       user-accessible resource group. This will meet our current
+        //       need, but we need to fix this when refactoring the resource
+        //       indicator.
+        const limit = 100;
         const offset = 0;
         const timeout = 10 * 1000;
-        const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'scaling_group'];
+        const fields = ['id', 'status', 'available_slots', 'scaling_group'];
         const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
         this.total_resource_group_slot = agentSummaryList.agent_summary_list.items
-          .filter((agent) => agent.scaling_group == this.scaling_group).map((agent) => {
+          .filter((agent) => agent.scaling_group == this.scaling_group)
+          .map((agent) => {
             const availableSlots = JSON.parse(agent.available_slots);
-            if ('cpu' in availableSlots) {
-              availableSlots['cpu'] = parseInt(availableSlots['cpu'] ?? 0);
-            } else {
-              availableSlots['cpu'] = 0;
-            }
-            if ('mem' in availableSlots) {
-              availableSlots['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots['mem'], 'g'));
-            } else {
-              availableSlots['mem'] = 0;
-            }
-            if ('cuda.device' in availableSlots) {
-              availableSlots['cuda_device'] = parseInt(availableSlots['cuda.device']);
-            } else {
-              availableSlots['cuda_device'] = 0;
-            }
-            if ('cuda.shares' in availableSlots) {
-              availableSlots['cuda_shares'] = parseInt(availableSlots['cuda.shares']);
-            } else {
-              availableSlots['cuda_shares'] = 0;
-            }
-            return availableSlots;
+            return {
+              cpu: parseInt(availableSlots?.['cpu'] ?? 0),
+              mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots?.['mem'] ?? 0, 'g')),
+              cuda_device: parseInt(availableSlots?.['cuda.device'] ?? 0),
+              cuda_shares: parseInt(availableSlots?.['cuda.shares'] ?? 0),
+            };
           })
           .reduce((acc, curr) => {
             Object.keys(curr).forEach((key) => {
