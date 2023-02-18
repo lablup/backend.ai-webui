@@ -612,9 +612,9 @@ class Client {
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
-      return true
+      return true;
     } catch (e) {
-      return false
+      return false;
     }
   }
 

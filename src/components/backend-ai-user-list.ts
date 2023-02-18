@@ -81,12 +81,14 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
+  @property({type: Object}) _totpActivatedRenderer = this.totpActivatedRenderer.bind(this);
   @property({type: Object}) keypairs;
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @property({type: Boolean}) totpSupported = false;
   @property({type: Object}) userStatus = {
     'active': 'Active',
     'inactive': 'Inactive',
@@ -220,11 +222,16 @@ export default class BackendAIUserList extends BackendAIPage {
           color: var(--general-sidebar-color);
           width: 270px;
         }
+
+        mwc-icon.totp {
+          --mdc-icon-size: 24px;
+        }
       `];
   }
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    this.totpSupported = globalThis.backendaiclient.managerSupportsTotp;
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
@@ -266,6 +273,9 @@ export default class BackendAIUserList extends BackendAIPage {
     this.listCondition = 'loading';
     this._listStatus?.show();
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
+    if (this.totpSupported) {
+      fields.push('totp_activated');
+    }
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -652,6 +662,31 @@ export default class BackendAIUserList extends BackendAIPage {
     );
   }
 
+/**
+ * Render current status of user
+ * - active
+ * - inactive
+ * - before-verification
+ * - deleted
+ *
+ * @param {Element} root
+ * @param {Element} column
+ * @param {Object} rowData
+ */
+  totpActivatedRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.totp_activated ? html`
+            <mwc-icon class="fg green totp">check_circle</mwc-icon>
+          ` : html`
+            <mwc-icon class="fg red totp">block</mwc-icon>
+          `}
+        </div>
+      `, root
+    );
+  }
+
   render() {
     // language=HTML
     return html`
@@ -666,6 +701,10 @@ export default class BackendAIUserList extends BackendAIPage {
                               .renderer="${this._userIdRenderer.bind(this)}"></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
                               .renderer="${this._userNameRenderer}"></lablup-grid-sort-filter-column>
+          ${this.totpSupported ? html`
+            <vaadin-grid-sort-column auto-width flex-grow="0" path="totp_activated" header="${_t('webui.menu.TotpActivated')}" resizable
+                              .renderer="${this._totpActivatedRenderer.bind(this)}"></vaadin-grid-sort-column>
+          `: html``}
           ${this.condition !== 'active' ? html`
             <lablup-grid-sort-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
                               .renderer="${this._userStatusRenderer}"></lablup-grid-sort-filter-column>` : html``}
