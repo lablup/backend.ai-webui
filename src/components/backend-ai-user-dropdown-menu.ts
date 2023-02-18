@@ -20,10 +20,13 @@ import {
 import {get as _text} from 'lit-translate/util';
 import {Menu} from '@material/mwc-menu';
 import {IconButton} from '@material/mwc-icon-button';
+import {Switch} from '@material/mwc-switch';
 import {store} from '../store';
 import {navigate} from '../backend-ai-app';
 import BackendAIDialog from './backend-ai-dialog';
 import {TextField} from '@material/mwc-textfield';
+import QR from '../lib/qr';
+
 /**
  Backend AI User dropdown menu
 
@@ -45,10 +48,19 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Array}) groups = [];
   @property({type: Object}) notification;
   @property({type: Boolean}) isUserInfoMaskEnabled = true;
+  @property({type: Boolean}) totpSupported = false;
+  @property({type: Boolean}) totpActivated = false;
+  @property({type: String}) totpKey = '';
+  @property({type: String}) totpUri = '';
 
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
   @query('#dropdown-menu') dropdownMenu: Menu | undefined;
   @query('#user-preference-dialog') userPreferenceDialog: BackendAIDialog | undefined;
+  @query('#totp-setup-dialog') totpSetupDialog: BackendAIDialog | undefined;
+  @query('#totp-removal-confirm-dialog') totpRemovalConfirmDialog: BackendAIDialog | undefined;
+  @query('#totp-uri-qrcode') totpUriQrImage: HTMLImageElement | undefined;
+  @query('#totp-confirm-otp') confirmOtpTextfield: TextField | undefined;
+  @query('#totp-activation') totpActivationSwitch: Switch | undefined;
 
   constructor() {
     super();
@@ -84,6 +96,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.domain = globalThis.backendaiclient._config.domainName;
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this._showRole();
+    this._showTotpActivated();
   }
 
   /**
@@ -129,6 +142,16 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.roleInfo = data.user;
   }
 
+  async _showTotpActivated() {
+    this.totpSupported = await globalThis.backendaiclient.managerSupportsTotp();
+    if (this.totpSupported) {
+      const user_info = await globalThis.backendaiclient.user.get(
+        globalThis.backendaiclient.email, ['totp_activated']
+      );
+      this.totpActivated = user_info.user.totp_activated;
+    }
+  }
+
   _getKeypairInfo(user_id) {
     const fields = ['access_key', 'secret_key'];
     const is_active = true;
@@ -154,6 +177,28 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    */
   _hideUserPrefDialog() {
     this.userPreferenceDialog?.hide();
+  }
+
+  /**
+   * Open the TOTP Setup dialog.
+   */
+  async _openTotpSetupDialog() {
+    this._showKeypairInfo();
+    this.totpSetupDialog?.show();
+    const result = await globalThis.backendaiclient.initialize_totp();
+    this.totpKey = result.totp_key;
+    this.totpUri = result.totp_uri;
+    const pngURL = QR.generatePNG(result.totp_uri, null);
+    if (this.totpUriQrImage) {
+      this.totpUriQrImage.src = pngURL;
+    }
+  }
+
+  /**
+   * Hide the TOTP Setup dialog.
+   */
+  _hideTotpSetupDialog() {
+    this.totpSetupDialog?.hide();
   }
 
   async _showSecretKey(e) {
@@ -397,6 +442,41 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this._updateUserPassword();
     this._refreshUserInfoPanel();
   }
+
+  async _startActivatingTotp(e) {
+    this._hideUserPrefDialog();
+    this._openTotpSetupDialog();
+  }
+
+  async _stopUsingTotp(e) {
+    await globalThis.backendaiclient.remove_totp();
+    this.notification.text = _text('totp.TotpRemoved');
+    this.notification.show();
+    await this._showTotpActivated();
+    this.totpRemovalConfirmDialog?.hide();
+    this._openUserPrefDialog();
+  }
+
+  async _confirmOtpSetup(e) {
+    const validationCode = this.confirmOtpTextfield?.value;
+    try {
+      await globalThis.backendaiclient.activate_totp(validationCode);
+      this.notification.text = _text('totp.TotpSetupCompleted');
+      this.notification.show();
+      await this._showTotpActivated();
+      this._hideTotpSetupDialog();
+      this._openUserPrefDialog();
+    } catch (e) {
+      this.notification.text = _text('totp.InvalidTotpCode');
+      this.notification.show();
+    }
+  }
+
+  _confirmRemovingTotp(e) {
+    this._hideUserPrefDialog();
+    this.totpRemovalConfirmDialog?.show();
+  }
+
   render() {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
@@ -449,6 +529,33 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         </mwc-icon-button>
       </div>
     </div>
+    <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
+      <span slot="title">${_t('webui.menu.SetupTotp')}</span>
+      <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
+        <p>${_t('totp.ScanQRToEnable')}</p>
+        <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
+        <p>${_t('totp.TypeInAuthKey')}</p>
+        <blockquote>${this.totpKey}</blockquote>
+      </div>
+      <div slot="content" class="layout vertical" style="width: 300px">
+        <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
+        <mwc-textfield id="totp-confirm-otp" type="number" no-label-float placeholder="000000"
+          min="0" max="999999" style="margin-left:1em;width:120px;">
+          </mwc-textfield>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button unelevated @click="${(e) => this._confirmOtpSetup(e)}">${_t('button.Confirm')}</mwc-button>
+      </div>
+    </backend-ai-dialog>
+    <backend-ai-dialog id="totp-removal-confirm-dialog" fixed backdrop>
+      <span slot="title">${_t('button.Confirm')}</span>
+      <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
+        <p>${_t('totp.ConfirmTotpRemovalBody')}</p>
+      </div>
+      <div slot="footer" class="horizontal end-justified flex layout">
+        <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t('button.Confirm')}</mwc-button>
+      </div>
+    </backend-ai-dialog>
     <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
       <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
       <div slot="content" class="layout vertical" style="width:300px;">
@@ -495,8 +602,18 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
                                     @click="${(e) => this._togglePasswordVisibility(e.target)}">
-            </mwc-icon-button-toggle>
+          </mwc-icon-button-toggle>
         </div>
+        ${this.totpSupported ? html`
+          <div class="horizontal flex layout">
+            <p style="flex-grow: 1;margin-left: 15px;">
+              ${_t('webui.menu.TotpActivated')}
+            </p>
+            <mwc-switch id="totp-activation" .selected="${this.totpActivated}" style="margin-right: 10px;"
+                @click="${(e) => this.totpActivated ? this._confirmRemovingTotp(e) : this._startActivatingTotp(e)}">
+            </mwc-switch>
+          </div>
+        `: html``}
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
         <div class="flex"></div>

@@ -608,6 +608,16 @@ class Client {
     return version <= apiVersion;
   }
 
+  async managerSupportsTotp() {
+    let rqst = this.newSignedRequest('GET', `/totp`, null, null);
+    try {
+      await this._wrapWithPromise(rqst);
+      return true
+    } catch (e) {
+      return false
+    }
+  }
+
   /**
    * Check if webserver is authenticated. This requires additional webserver package.
    *
@@ -635,11 +645,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -770,6 +781,21 @@ class Client {
       'new_password2': newPassword2
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, '', true);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {}, null);
+    return this._wrapWithPromise(rqst);
+  }
+  
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp() {
+    let rqst = this.newSignedRequest('DELETE', '/totp', {}, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -3458,7 +3484,7 @@ class User {
    *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'totp_activated']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +

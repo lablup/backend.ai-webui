@@ -57,7 +57,9 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -351,7 +353,9 @@
     "ForceTerminate": "Forcer l'arrêt",
     "Commit": "__NOT_TRANSLATED__",
     "Reset": "Réinitialisation",
-    "EnterManually": "__NOT_TRANSLATED__"
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -1268,5 +1272,15 @@
   "explorer": {
     "ValueRequired": "ValeurRequis",
     "InputTooShort": "Entrée Trop Courte"
+  },
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
   }
 }
