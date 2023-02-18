@@ -480,7 +480,8 @@
     "RateLimitInputRequired": "__NOT_TRANSLATED__",
     "InvalidRateLimitValue": "__NOT_TRANSLATED__",
     "WarningLessRateLimit": "__NOT_TRANSLATED__",
-    "KeypairDetail": "__NOT_TRANSLATED__"
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",

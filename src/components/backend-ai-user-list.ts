@@ -357,6 +357,9 @@ export default class BackendAIUserList extends BackendAIPage {
 
   async _getUserData(user_id) {
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
+    if (this.totpSupported) {
+      fields.push('totp_activated');
+    }
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
@@ -490,6 +493,13 @@ export default class BackendAIUserList extends BackendAIPage {
       input.status = status;
     }
 
+    if (this.totpSupported) {
+      const totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
+      if (totpSwitch.selected !== this.userInfo.totp_activated) {
+        input.totp_activated = totpSwitch.selected;
+      }
+    }
+
     if (Object.entries(input).length === 0) {
       this._hideDialog(event);
 
@@ -555,6 +565,15 @@ export default class BackendAIUserList extends BackendAIPage {
       username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
     }
     return username;
+  }
+
+  _toggleActivatingSwitch() {
+    const totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
+    if (!this.userInfo.totp_activated && totpSwitch.selected) {
+      totpSwitch.selected = false;
+      this.notification.text = _text('credential.AdminCanOnlyRemoveTotp');
+      this.notification.show();
+    }
   }
 
   /**
@@ -806,15 +825,31 @@ export default class BackendAIUserList extends BackendAIPage {
                   <mwc-switch
                       id="need_password_change"
                       ?selected=${this.userInfo.need_password_change}></mwc-switch>
-                </div>` : html`
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescActiveUser')}"
-                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescRequirePasswordChange')}"
-                        value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                </div>
+                ${this.totpSupported ? html`
+                  <div class="horizontal layout center">
+                    <p class="label">${_text('webui.menu.TotpActivated')}</p>
+                    <mwc-switch 
+                        id="totp_activated_change"
+                        ?selected=${this.userInfo.totp_activated}
+                        @click="${() => this._toggleActivatingSwitch()}"></mwc-switch>
+                  </div>
+                ` : html``}
+                ` : html`
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescActiveUser')}"
+                    value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescRequirePasswordChange')}"
+                    value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                ${this.totpSupported ? html`
+                  <mwc-textfield
+                      disabled
+                      label="${_text('webui.menu.TotpActivated')}"
+                      value="${this.userInfo.totp_activated ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                ` : html``}
             `}
           </div>
         </div>
