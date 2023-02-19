@@ -231,7 +231,7 @@ export default class BackendAIUserList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.totpSupported = globalThis.backendaiclient.managerSupportsTotp;
+    this.totpSupported = globalThis.backendaiclient?.managerSupportsTotp();
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
@@ -446,7 +446,7 @@ export default class BackendAIUserList extends BackendAIPage {
    *
    * @param {Event} event - click SaveChanges button
    * */
-  _saveChanges(event) {
+  async _saveChanges(event) {
     const username = this.usernameInput.value;
     const full_name = this.fullNameInput.value;
     const password = this.passwordInput.value;
@@ -454,6 +454,10 @@ export default class BackendAIUserList extends BackendAIPage {
     const description = this.descriptionInput.value;
     const status = this.statusSelect.value;
     const need_password_change = this.needPasswordChangeSwitch.selected;
+    let totpSwitch;
+    if (this.totpSupported) {
+      totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
+    }
 
     this._togglePasswordInputRequired();
 
@@ -493,14 +497,7 @@ export default class BackendAIUserList extends BackendAIPage {
       input.status = status;
     }
 
-    if (this.totpSupported) {
-      const totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
-      if (totpSwitch.selected !== this.userInfo.totp_activated) {
-        input.totp_activated = totpSwitch.selected;
-      }
-    }
-
-    if (Object.entries(input).length === 0) {
+    if (Object.entries(input).length === 0 && (this.totpSupported && totpSwitch.selected === this.userInfo.totp_activated)) {
       this._hideDialog(event);
 
       this.notification.text = _text('environment.NoChangeMade');
@@ -510,24 +507,41 @@ export default class BackendAIUserList extends BackendAIPage {
     }
 
     // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
-    globalThis.backendaiclient.user.update(this.userInfo.email, input)
-      .then((res) => {
-        if (res.modify_user.ok) {
-          this.userInfoDialog.hide();
+    const updateQueue: Array<any> = [];
+    if (Object.entries(input).length > 0) {
+      const updateUser = await globalThis.backendaiclient.user.update(this.userInfo.email, input)
+        .then((res) => {
+          if (res.modify_user.ok) {
+            this.notification.text = _text('environment.SuccessfullyModified');
+            this.userInfo = {...this.userInfo, ...input, password: null};
+            this._refreshUserData();
+            this.passwordInput.value = '';
+            this.confirmInput.value = '';
+          } else {
+            this.notification.text = PainKiller.relieve(res.modify_user.msg);
+            this.usernameInput.value = this.userInfo.username;
+            this.descriptionInput.value = this.userInfo.description;
+          }
+          this.notification.show();
+        });
+      updateQueue.push(updateUser);
+    }
 
-          this.notification.text = _text('environment.SuccessfullyModified');
-          this.userInfo = {...this.userInfo, ...input, password: null};
-          this._refreshUserData();
-          this.passwordInput.value = '';
-          this.confirmInput.value = '';
-        } else {
-          this.notification.text = PainKiller.relieve(res.modify_user.msg);
-          this.usernameInput.value = this.userInfo.username;
-          this.descriptionInput.value = this.userInfo.description;
-        }
-        this.notification.show();
+    if (this.totpSupported && totpSwitch.selected !== this.userInfo.totp_activated) {
+      const stopUsingTotp = await globalThis.backendaiclient.remove_totp(this.userInfo.email)
+        .then(() => {
+          this.notification.text = _text('totp.TotpRemoved');
+          this.notification.show();
+        });
+      updateQueue.push(stopUsingTotp);
+    }
+
+    await Promise.all(updateQueue)
+      .then(() => {
+        this.userInfoDialog.hide();
         this.refresh();
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log(err);
         if (err && err.message) {
           this.notification.text = PainKiller.relieve(err.title);

@@ -794,8 +794,14 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async remove_totp() {
-    let rqst = this.newSignedRequest('DELETE', '/totp', {}, null);
+  async remove_totp(email=null) {
+    let rqstUrl = '/totp';
+    if (email) {
+      const params = {email: email};
+      const q = new URLSearchParams(params).toString();
+      rqstUrl += `?${q}`;
+    }
+    let rqst = this.newSignedRequest('DELETE', rqstUrl, {}, null);
     return this._wrapWithPromise(rqst);
   }
 
