@@ -145,17 +145,17 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   async _showTotpActivated() {
     this.totpSupported = await globalThis.backendaiclient.managerSupportsTotp();
     if (this.totpSupported) {
-      const user_info = await globalThis.backendaiclient.user.get(
+      const userInfo = await globalThis.backendaiclient.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
       );
-      this.totpActivated = user_info.user.totp_activated;
+      this.totpActivated = userInfo.user.totp_activated;
     }
   }
 
   _getKeypairInfo(user_id) {
     const fields = ['access_key', 'secret_key'];
-    const is_active = true;
-    return globalThis.backendaiclient.keypair.list(user_id, fields, is_active);
+    const isActive = true;
+    return globalThis.backendaiclient.keypair.list(user_id, fields, isActive);
   }
 
   async _showKeypairInfo() {

@@ -487,7 +487,8 @@
     "KeypairCreated": "Keypair successfully created.",
     "UserNotFound": "Credential creation failed, since the following user ID could't be found : ",
     "UserIDRequired": "User ID is required.",
-    "KeypairDetail": "Keypair Detail"
+    "KeypairDetail": "Keypair Detail",
+    "AdminCanOnlyRemoveTotp": "Only disabling 2FA authentication of other users is possible."
   },
   "data": {
     "Folders": "Folders",
