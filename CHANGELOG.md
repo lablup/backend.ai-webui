@@ -1,4 +1,32 @@
 # Changelog
+
+## v22.09.10 (17/02/2023)
+## What's Changed
+* fix: incorrect display of GPU memory utilization by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1588
+* fix: incorrect assignment of signin mode config by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1591
+* add: more CSS injection point to custom.css by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1594
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.9...v22.09.10
+
+
+## v22.09.9 (12/02/2023)
+## What's Changed
+* hotfix: broken environment list UI because of the unmatched tag by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1571
+* fix: merge splitted conditional render html template on controls column by @lizable in https://github.com/lablup/backend.ai-webui/pull/1574
+* feat: Add modal to enter SSH keypair manually by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1578
+* feat: display CUDA memory utilization in node and session pages by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1572
+* bugfix: insert a dash in image Requirements (tag) in launching a compute session by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1576
+* feat: add status column and disable deleting folders by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1573
+* fix: display cuda memory utilization info even if its value is zero by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1580
+* misc: change data folder's status color by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1581
+
+## New Contributors
+* @yomybaby made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1578
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.8...v22.09.9
+
+
 ## v22.09.8 (04/02/2023)
 ## What's Changed
 * update: change slash / colon escaping to apply whole string by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1556
