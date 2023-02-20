@@ -1,5 +1,16 @@
 # Changelog
 
+## v22.09.11 (20/02/2023)
+## What's Changed
+* feature: show total resource group amount in resource monitor gauge by @lizable in https://github.com/lablup/backend.ai-webui/pull/1593
+* feat: add support for TOTP integration by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1596
+* fix: increase item count 20 -> 100 for agent summary list query by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1599
+* feature: 2fa management by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1600
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.10...v22.09.11
+
+
 ## v22.09.10 (17/02/2023)
 ## What's Changed
 * fix: incorrect display of GPU memory utilization by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1588

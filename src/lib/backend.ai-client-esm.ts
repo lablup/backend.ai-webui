@@ -585,7 +585,7 @@ class Client {
       this._features['fine-grained-storage-permissions'] = true;
     }
     if (this.isManagerVersionCompatibleWith('22.09')) {
-      this._features['2FA-authentication'] = this.isManagerSupportsTotp(); // TOOD: use isManagerSupportsTotp to judge.
+      this._features['2FA-authentication'] = this.isManagerSupportingTOTP();
     }
   }
 
@@ -611,7 +611,7 @@ class Client {
     return version <= apiVersion;
   }
 
-  async isManagerSupportsTotp() {
+  async isManagerSupportingTOTP() {
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
