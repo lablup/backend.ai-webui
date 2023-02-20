@@ -584,6 +584,9 @@ class Client {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09')) {
+      this._features['2FA-authentication'] = this.isManagerSupportsTotp(); // TOOD: use isManagerSupportsTotp to judge.
+    }
   }
 
   /**
@@ -608,13 +611,14 @@ class Client {
     return version <= apiVersion;
   }
 
-  async managerSupportsTotp() {
+  async isManagerSupportsTotp() {
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
+      return Promise.resolve(true);
       return true;
     } catch (e) {
-      return false;
+      return Promise.resolve(false);
     }
   }
 
@@ -788,7 +792,7 @@ class Client {
     let rqst = this.newSignedRequest('POST', '/totp', {}, null);
     return this._wrapWithPromise(rqst);
   }
-  
+
   async activate_totp(otp) {
     let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
     return this._wrapWithPromise(rqst);
@@ -1473,7 +1477,7 @@ class Client {
 
   /**
    * post SSH Keypair to container
-   * save the given keypair (both ssh_public_key and ssh_private_key) 
+   * save the given keypair (both ssh_public_key and ssh_private_key)
    */
   async postSSHKeypair(param) {
     let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
@@ -3487,10 +3491,14 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': List(UUID)     // Group Ids for user. Should be list of UUID strings.
+   *   'totp_activated': Boolean// Whether or not TOTP is enabled for the user.
    * };
    */
-  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'totp_activated']) {
+  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    if (!this.client.supports('2fa-authentication') && '2fa-authentication' in fields) {
+      // TODO : check and remove specific field.
+    }
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +

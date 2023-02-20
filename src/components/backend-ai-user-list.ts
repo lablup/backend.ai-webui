@@ -238,7 +238,6 @@ export default class BackendAIUserList extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.totpSupported = globalThis.backendaiclient?.managerSupportsTotp();
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
@@ -256,12 +255,14 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async() => {
+        this.totpSupported = globalThis.backendaiclient?.supports['2FA-authentication'];
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       }, true);
     } else { // already connected
+      this.totpSupported = globalThis.backendaiclient?.supports['2FA-authentication'];
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
@@ -898,7 +899,7 @@ export default class BackendAIUserList extends BackendAIPage {
                 ${this.totpSupported ? html`
                   <div class="horizontal layout center">
                     <p class="label">${_text('webui.menu.TotpActivated')}</p>
-                    <mwc-switch 
+                    <mwc-switch
                         id="totp_activated_change"
                         ?selected=${this.userInfo.totp_activated}
                         @click="${() => this._toggleActivatingSwitch()}"></mwc-switch>
