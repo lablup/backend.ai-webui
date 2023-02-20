@@ -138,7 +138,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
 
         div.configuration {
-          width: 70px !important;
+          width: 100px !important;
         }
 
         div.configuration wl-icon {
@@ -403,6 +403,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  _displayResourcesByResourceUnit(value = 0, enableUnitConvert = false, resourceName = '') {
+    let decimalPoint = 0;
+    const resourceValue = this._markIfUnlimited(value, enableUnitConvert);
+    resourceName = resourceName.toLowerCase();
+    switch (resourceName) {
+      case 'cpu':
+      case 'cuda_device':
+      case 'max_vfolder_count':
+        decimalPoint = 0;
+        break;
+      case 'mem':
+      case 'cuda_shares':
+      case 'max_vfolder_size':
+        decimalPoint = 1;
+    }
+    return ['∞', '-'].includes(resourceValue) ? resourceValue : Number(resourceValue).toFixed(decimalPoint);
+  }
+
   /**
    * Render a resource.
    *
@@ -416,12 +434,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cpu, false ,'cpu')}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.mem, false ,'mem')}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -430,7 +448,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_device, false, 'cuda_device')}</span>
             <span class="indicator">GPU</span>
           </div>
 ` : html``}
@@ -438,7 +456,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_shares, false,'cuda_shares')}</span>
             <span class="indicator">fGPU</span>
           </div>
 ` : html``}
@@ -446,12 +464,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_size, true)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_size, true, 'max_vfolder_size')}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_count, false, 'max_vfolder_count')}</span>
             <span class="indicator">Folders</span>
           </div>
         </div>
