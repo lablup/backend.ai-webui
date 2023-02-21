@@ -8,8 +8,9 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import './backend-ai-list-status';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
 
 import {Button} from '@material/mwc-button';
 import '@material/mwc-formfield';
@@ -120,6 +121,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) _boundUploadProgressRenderer = Object();
   @property({type: Object}) _boundInviteeInfoRenderer = Object();
   @property({type: Object}) _boundIDRenderer = Object();
+  @property({type: Object}) _boundStatusRenderer = Object();
   @property({type: Boolean}) _uploadFlag = true;
   @property({type: Boolean}) _folderRefreshing = false;
   @property({type: Number}) lastQueryTime = 0;
@@ -194,6 +196,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._boundUploadProgressRenderer = this.uploadProgressRenderer.bind(this);
     this._boundInviteeInfoRenderer = this.inviteeInfoRenderer.bind(this);
     this._boundIDRenderer = this.iDRenderer.bind(this);
+    this._boundStatusRenderer = this.statusRenderer.bind(this);
   }
 
   static get styles(): CSSResultGroup {
@@ -433,6 +436,8 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-select#modify-folder-quota-unit {
           width: 120px;
+          --mdc-menu-min-width: 120px;
+          --mdc-menu-max-width: 120px;
         }
 
         mwc-select.full-width {
@@ -449,12 +454,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-menu-min-width: 320px;
         }
 
-        mwc-select.fixed-position > mwc-list-item {
-          width: 147px; // default width
+        mwc-select#modify-folder-quota-unit > mwc-list-item {
+          width: 88px; // default width
         }
 
-        mwc-select.fixed-position#modify-folder-quota-unit > mwc-list-item {
-          width: 88px; // default width
+        mwc-select.fixed-position > mwc-list-item {
+          width: 147px; // default width
         }
 
         mwc-radio {
@@ -590,14 +595,16 @@ export default class BackendAiStorageList extends BackendAIPage {
         <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
-              header="${_t('data.folders.Name')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column width="135px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-filter-column path="host" width="105px" flex-grow="0" resizable
-              header="${_t('data.folders.Location')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="55px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></vaadin-grid-column>
+          <lablup-grid-sort-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
+              header="${_t('data.folders.Name')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="id" width="130px" flex-grow="0" resizable header="ID" .renderer="${this._boundIDRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="host" width="105px" flex-grow="0" resizable
+              header="${_t('data.folders.Location')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="status" width="80px" flex-grow="0" resizable .renderer="${this._boundStatusRenderer}"
+              header="${_t('data.folders.Status')}"></lablup-grid-sort-filter-column>
+          <vaadin-grid-sort-column path="max_size" width="95px" flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-sort-column>
+          <lablup-grid-sort-filter-column path="ownership_type" width="70px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></lablup-grid-sort-filter-column>
           <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
           ${this.enableStorageProxy ? html`
@@ -618,7 +625,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
                 <mwc-select class="fixed-position" id="modify-folder-quota-unit" @change="${() => this._updateQuotaInputHumanReadableValue()}" fixedMenuPosition>
                 ${Object.keys(this.quotaUnit).map((unit, idx) => html`
-                      <mwc-list-item value="${unit}" ?selected="${unit === this.maxSize.unit}">${unit}</mwc-list-item>
+                      <mwc-list-item value="${unit}" ?selected="${unit == this.maxSize.unit}">${unit}</mwc-list-item>
                     `)}
                 </mwc-select>
             </div>
@@ -1061,6 +1068,16 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._getStorageProxyBackendInformation();
       this._triggerFolderListChanged();
     }
+
+    //@ts-ignore
+    const params = (new URL(document.location)).searchParams;
+    console.log(params);
+    const folderName = params.get('folder');
+    console.log(folderName);
+    if(folderName){
+      // alert(folderName);
+      console.log(this.folders)
+    }
   }
 
   _modifySharedFolderPermissions() {
@@ -1081,6 +1098,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.show();
       this.modifyPermissionDialog.hide();
     });
+  }
+
+  _checkProcessingStatus(status) {
+    return ['performing', 'cloning', 'deleting', 'mounted'].includes(status);
   }
 
   /**
@@ -1132,15 +1153,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                 class="fg blue controls-running"
                 icon="folder_open"
                 title=${_t('data.folders.OpenAFolder')}
-                @click="${(e) =>
-    this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                rowData.item.is_owner ||
-                (rowData.item.type === 'group' && this.is_admin)))}"
+                @click="${(e) => this._folderExplorer(rowData)}"
+                ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
                 .folder-id="${rowData.item.name}"></mwc-icon-button>
             ` :
     html``}
-          <div @click="${(e) => this._folderExplorer(e, (this._hasPermission(rowData.item, 'w') ||
-                  rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin)))}"
+          <div @click="${(e) => this._folderExplorer(rowData)}"
                .folder-id="${rowData.item.name}" style="cursor:pointer;">${rowData.item.name}</div>
         </div>
       `, root
@@ -1214,6 +1232,32 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
+  statusRenderer(root, column?, rowData?) {
+    let color: string;
+    switch (rowData.item.status) {
+    case 'ready':
+      color = 'green';
+      break;
+    case 'performing':
+    case 'cloning':
+    case 'mounted':
+      color = 'blue';
+      break;
+    case 'deleting':
+      color = 'yellow';
+      break;
+    default:
+      color = 'grey';
+    }
+    render(
+      // language=HTML
+      html`
+        <lablup-shields app="" color="${color}"
+                        description="${rowData.item.status}" ui="flat"></lablup-shields>
+      `, root
+    );
+  }
+
   /**
    * Add textfield to write email.
    *
@@ -1269,83 +1313,66 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="info"
             title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
           ></mwc-icon-button>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
-    html`
-            <mwc-icon-button
-              class="fg blue controls-running"
-              icon="content_copy"
-              disabled
-              @click="${() => {
-    this._requestCloneFolder(rowData.item);
-  }}"></mwc-icon-button>
-            ` : html``}-->
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="share"
-                title=${_t('data.explorer.ShareFolder')}
-                @click="${(e) => this._shareFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg cyan controls-running"
-                icon="perm_identity"
-                title=${_t('data.explorer.ModifyPermissions')}
-                @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
-                icon="create"
-                title=${_t('data.folders.Rename')}
-                @click="${(e) => this._renameFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner ?
-    html`
-              <mwc-icon-button
-                class="fg blue controls-running"
-                icon="settings"
-                title=${_t('data.folders.FolderOptionUpdate')}
-                @click="${(e) => this._modifyFolderOptionDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${rowData.item.is_owner || this._hasPermission(rowData.item, 'd') || (rowData.item.type === 'group' && this.is_admin) ?
-    html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="delete"
-                title=${_t('data.folders.Delete')}
-                @click="${(e) => this._deleteFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
-          ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
-    html`
-              <mwc-icon-button
-                class="fg red controls-running"
-                icon="remove_circle"
-                @click="${(e) => this._leaveInvitedFolderDialog(e)}"
-              ></mwc-icon-button>
-            ` :
-    html``
-}
+      html`
+        <mwc-icon-button
+          class="fg blue controls-running"
+          icon="content_copy"
+          disabled
+          @click="${() => { this._requestCloneFolder(rowData.item);}}"
+          ></mwc-icon-button>
+      ` : html``}-->
+      ${rowData.item.is_owner ?
+        html`
+          <mwc-icon-button
+            class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+            icon="share"
+            title=${_t('data.explorer.ShareFolder')}
+            @click="${(e) => this._shareFolderDialog(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg cyan controls-running"
+            icon="perm_identity"
+            title=${_t('data.explorer.ModifyPermissions')}
+            @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
+            icon="create"
+            title=${_t('data.folders.Rename')}
+            @click="${(e) => this._renameFolderDialog(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg blue controls-running"
+            icon="settings"
+            title=${_t('data.folders.FolderOptionUpdate')}
+            @click="${(e) => this._modifyFolderOptionDialog(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>` : html``}
+      ${rowData.item.is_owner ||
+        this._hasPermission(rowData.item, 'd') ||
+        (rowData.item.type === 'group' && this.is_admin) ?
+        html`
+          <mwc-icon-button
+            class="fg red controls-running"
+            icon="delete"
+            title=${_t('data.folders.Delete')}
+            @click="${(e) => this._deleteFolderDialog(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>` : html``}
+      ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
+        html`
+          <mwc-icon-button
+            class="fg red controls-running"
+            icon="remove_circle"
+            @click="${(e) => this._leaveInvitedFolderDialog(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>` : html``}
         </div>
        `, root
     );
@@ -1721,7 +1748,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
-        this.modifyFolderQuotaUnitSelect.value = this.quota.unit;
+        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MiB' : this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
@@ -2146,12 +2173,19 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Event} e - click the folder_open icon button
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
-  _folderExplorer(e, isWritable) {
-    const folderName = this._getControlName(e);
+  _folderExplorer(rowData) {
+
+    const folderName = rowData.item.name;
+    const isWritable = this._hasPermission(rowData.item, "w") || rowData.item.is_owner || (rowData.item.type === "group" && this.is_admin);
+
     const explorer = {
       id: folderName,
       breadcrumb: ['.'],
     };
+
+    const queryParams = new URLSearchParams();
+    queryParams.set('folder', folderName)
+    window.history.replaceState({},'',`${location.pathname}?${queryParams}`)
 
     /**
      * NOTICE: If it's admin user and the folder type is group, It will have write permission.

@@ -200,8 +200,15 @@ export default class BackendAISummary extends BackendAIPage {
           margin-top: 10px;
           font-size: 13px;
           font-weight: 400;
-          height: 35px;
+          max-height: 55px;
+          max-width: 1000px;
           overflow-y: scroll;
+        }
+
+        .notice-ticker > span {
+          display: inline-block;
+          white-space: pre-line;
+          font-size: 1rem;
         }
 
         .notice-ticker lablup-shields {
@@ -326,9 +333,16 @@ export default class BackendAISummary extends BackendAIPage {
           --card-background-color: var(--general-sidepanel-color);
         }
 
+        @media screen and (max-width: 899px) {
+          .notice-ticker {
+            justify-content: left !important;
+          }
+        }
+
         @media screen and (max-width: 850px) {
           .notice-ticker {
             margin-left: 0px;
+            width: auto;
           }
 
           .notice-ticker > span {
@@ -544,9 +558,10 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
-      <div class="item" elevation="1">
+      <link rel="stylesheet" href="resources/custom.css">
+      <div class="item" elevation="1" class="vertical layout center wrap flex">
         ${this.announcement != '' ? html`
-          <div class="notice-ticker horizontal center layout wrap flex">
+          <div class="notice-ticker horizontal layout wrap flex">
             <lablup-shields app="" color="red" description="Notice" ui="round"></lablup-shields>
             <span>${this._stripHTMLTags(this.announcement)}</span>
           </div>
@@ -584,7 +599,7 @@ export default class BackendAISummary extends BackendAIPage {
           <backend-ai-resource-panel ?active="${this.active === true}" height="500"></backend-ai-resource-panel>
           <div class="horizontal wrap layout">
             <lablup-activity-panel title="${_t('summary.Announcement')}" elevation="1" horizontalsize="2x" height="245">
-              <div slot="message">
+              <div slot="message" style="max-height:150px; overflow:scroll">
                 ${this.announcement !== '' ? unsafeHTML(this.announcement) : _t('summary.NoAnnouncement')}
               </div>
             </lablup-activity-panel>

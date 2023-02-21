@@ -2708,10 +2708,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       size: '90px',
     });
     if (fragment.length > 2) {
-      const requirements = this._aliasName(fragment[2]).split(':');
+      let requirements = this._aliasName(fragment.slice(2).join('-'));
+      requirements = requirements.split(':');
       if (requirements.length > 1) {
         info.push({ // Additional information
-          tag: requirements.slice(1).join('-'),
+          tag: requirements.slice(1).join(':'),
           app: requirements[0],
           color: 'green',
           size: '90px'
@@ -3129,6 +3130,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
                  @click="${() => this._launchSessionDialog()}">
         <wl-icon>power_settings_new</wl-icon>

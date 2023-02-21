@@ -584,6 +584,9 @@ class Client {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09')) {
+      this._features['2FA-authentication'] = this.isManagerSupportingTOTP();
+    }
   }
 
   /**
@@ -606,6 +609,17 @@ class Client {
       version = version.split('.').map(s => s.padStart(10)).join('.');
     }
     return version <= apiVersion;
+  }
+
+  async isManagerSupportingTOTP() {
+    let rqst = this.newSignedRequest('GET', `/totp`, null, null);
+    try {
+      await this._wrapWithPromise(rqst);
+      return Promise.resolve(true);
+      return true;
+    } catch (e) {
+      return Promise.resolve(false);
+    }
   }
 
   /**
@@ -635,11 +649,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -770,6 +785,27 @@ class Client {
       'new_password2': newPassword2
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, '', true);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp(email=null) {
+    let rqstUrl = '/totp';
+    if (email) {
+      const params = {email: email};
+      const q = new URLSearchParams(params).toString();
+      rqstUrl += `?${q}`;
+    }
+    let rqst = this.newSignedRequest('DELETE', rqstUrl, {}, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1439,9 +1475,17 @@ class Client {
     return this._wrapWithPromise(rqst, false);
   }
 
+  /**
+   * post SSH Keypair to container
+   * save the given keypair (both ssh_public_key and ssh_private_key)
+   */
+  async postSSHKeypair(param) {
+    let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
+    return this._wrapWithPromise(rqst, false);
+  }
+
   // TODO: move attach_background_task function in Maintenance Class to here.
 }
-
 class ResourcePreset {
   public client: any;
   public urlPrefix: any;
@@ -2685,8 +2729,8 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
     Object.keys(input).forEach((slot_type) => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -2709,9 +2753,9 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
-    tag = tag.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
+    tag = tag.replace(/\//g, "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
       "key": `images/${registry}/${image}/${tag}/labels/${key}`,
       "value": value
@@ -2733,7 +2777,7 @@ class ContainerImage {
     } else {
       registry = '';
     }
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
@@ -2763,7 +2807,7 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     const rqst = this.client.newSignedRequest("POST", "/config/get", {
       "key": `images/${registry}/${image}/${tag}/resource/`,
       "prefix": true
@@ -3447,10 +3491,14 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': List(UUID)     // Group Ids for user. Should be list of UUID strings.
+   *   'totp_activated': Boolean// Whether or not TOTP is enabled for the user.
    * };
    */
   async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    if (!this.client.supports('2fa-authentication') && '2fa-authentication' in fields) {
+      // TODO : check and remove specific field.
+    }
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +

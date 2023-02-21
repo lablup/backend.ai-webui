@@ -46,6 +46,7 @@ import './lablup-progress-bar';
  *  - cpu_util
  *  - mem_util
  *  - cuda_util (optional)
+ *  - cuda_mem (optional)
  */
 type LiveStat = {
   cpu_util: {
@@ -59,6 +60,11 @@ type LiveStat = {
     ratio: number;
   }
   cuda_util?: { // optional
+    capacity: number;
+    current: number;
+    ratio: number;
+  }
+  cuda_mem?: { // optional
     capacity: number;
     current: number;
     ratio: number;
@@ -82,6 +88,7 @@ export default class BackendAIAgentList extends BackendAIPage {
   @property({type: Object}) _boundContactDateRenderer = this.contactDateRenderer.bind(this);
   @property({type: Object}) _boundResourceRenderer = this.resourceRenderer.bind(this);
   @property({type: Object}) _boundUtilizationRenderer = this.utilizationRenderer.bind(this);
+  @property({type: Object}) _boundDiskRenderer = this.diskRenderer.bind(this);
   @property({type: Object}) _boundStatusRenderer = this.statusRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundSchedulableRenderer = this.schedulableRenderer.bind(this);
@@ -159,7 +166,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         }
 
         lablup-progress-bar.utilization {
-          --progress-bar-width: 80px;
+          --progress-bar-width: 85px;
           margin-left: 10px;
         }
 
@@ -806,13 +813,28 @@ export default class BackendAIAgentList extends BackendAIPage {
         // NOTE: cuda_util.capacity is reported as 0 from the server. In that case,
         //       we manually set it to 100 to properly display the GPU utilization.
         // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / liveStat.cuda_util!.capacity ?? 100) || 0;
-        let cudaUtilCapacity;
-        if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
-          cudaUtilCapacity = 100;
+        // let cudaUtilCapacity;
+        // if (!liveStat.cuda_util!.capacity || liveStat.cuda_util!.capacity === 0) {
+        //   cudaUtilCapacity = 100;
+        // } else {
+        //   cudaUtilCapacity = liveStat.cuda_util!.capacity;
+        // }
+        // liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / 100) || 0;
+      }
+      if (rowData.item.live_stat.node.cuda_mem) {
+        liveStat = Object.assign(liveStat, {
+          cuda_mem: {capacity: 0, current: 0, ratio: 0},
+        });
+        liveStat.cuda_mem!.capacity = parseFloat(rowData.item.live_stat.node.cuda_mem.capacity ?? 0);
+        liveStat.cuda_mem!.current = parseFloat(rowData.item.live_stat.node.cuda_mem.current);
+        let cudaMemCapacity;
+        if (!liveStat.cuda_mem!.capacity || liveStat.cuda_mem!.capacity === 0) {
+          cudaMemCapacity = 100;
         } else {
-          cudaUtilCapacity = liveStat.cuda_util!.capacity;
+          cudaMemCapacity = liveStat.cuda_mem!.capacity;
         }
-        liveStat.cuda_util!.ratio = (liveStat.cuda_util!.current / cudaUtilCapacity) || 0;
+        liveStat.cuda_mem!.ratio = (liveStat.cuda_mem!.current / cudaMemCapacity) || 0;
       }
       if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.devices) {
         const numCores = Object.keys(rowData.item.live_stat.devices.cpu_util).length;
@@ -837,8 +859,12 @@ export default class BackendAIAgentList extends BackendAIPage {
               </div>
               ${liveStat.cuda_util ? html`
                 <div class="layout horizontal justified flex progress-bar-section">
-                  <span style="margin-right:5px;">GPU</span>
+                  <span style="margin-right:5px;">GPU(util)</span>
                   <lablup-progress-bar class="utilization" progress="${liveStat.cuda_util?.ratio}" description="${(liveStat.cuda_util?.ratio * 100).toFixed(1)} %"></lablup-progress-bar>
+                </div>
+                <div class="layout horizontal justified flex progress-bar-section">
+                  <span style="margin-right:5px;">GPU(mem)</span>
+                  <lablup-progress-bar class="utilization" progress="${liveStat.cuda_mem?.ratio || 0}" description="${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.current)}/${BackendAIAgentList.bytesToGiB(liveStat.cuda_mem?.capacity)} GiB"></lablup-progress-bar>
                 </div>
               ` : html``}
             </div>
@@ -850,6 +876,40 @@ export default class BackendAIAgentList extends BackendAIPage {
         html`${_t('agent.NoAvailableLiveStat')}`, root
       );
     }
+  }
+
+  /**
+   * Render a disk occupancy.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
+  diskRenderer(root, column?, rowData?) {
+    let pct;
+    if (rowData.item.live_stat && rowData.item.live_stat.node && rowData.item.live_stat.node.disk) {
+      pct = parseFloat(rowData.item.live_stat.node.disk.pct || 0).toFixed(1);
+    }
+    render(
+      html`
+        ${pct ? html`
+          <div class="indicator layout vertical center">
+            ${pct > 80 ? html`
+              <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
+                                   description="${pct} %"
+                                   style="margin-left:0;--progress-bar-background:var(--paper-red-500)"></lablup-progress-bar>
+            `: html`
+              <lablup-progress-bar class="utilization" progress="${pct / 100 || 0}"
+                                   description="${pct} %"
+                                   style="margin-left:0;"></lablup-progress-bar>
+            `}
+            <div style="margin-top:10px;">${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.current)} / ${globalThis.backendaiutils._humanReadableFileSize(rowData.item.live_stat.node.disk.capacity)}</div>
+          </div>
+        `: html`
+          <span>-</span>
+        `}
+      `, root
+    );
   }
 
   /**
@@ -1144,9 +1204,11 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable width="150px" header="${_t('agent.Utilization')}"
+          <vaadin-grid-column resizable width="185px" header="${_t('agent.Utilization')}"
                               .renderer="${this._boundUtilizationRenderer}">
           </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('agent.DiskPerc')}"
+                              .renderer="${this._boundDiskRenderer}"></vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" path="scaling_group"
                               header="${_t('general.ResourceGroup')}"></vaadin-grid-sort-column>
           <vaadin-grid-column width="160px" flex-grow="0" resizable header="${_t('agent.Status')}"

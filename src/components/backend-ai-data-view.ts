@@ -71,7 +71,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
-  @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
+  @property({type: Array}) usageModes = ['General']; // FIXME: temporally hide unused folder usage modes ['Data', 'Model'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type:string[] = [];
@@ -305,6 +305,7 @@ export default class BackendAIData extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
         <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
           <div slot="message">

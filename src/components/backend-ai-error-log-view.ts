@@ -53,6 +53,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
   render() {
     // language=HTML
     return html `
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-card class="item" elevation="1">
         <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
       </wl-card>

@@ -184,6 +184,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">

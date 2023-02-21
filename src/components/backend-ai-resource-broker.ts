@@ -438,7 +438,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
-    }).then((response) => {
+    }).then(async (response) => {
       const resource_remaining = response.keypair_remaining;
       const resource_using = response.keypair_using;
       const project_resource_total = response.group_limits;
@@ -471,6 +471,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
+
+
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
@@ -601,7 +603,41 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
 
       this.total_slot = total_slot;
-      this.total_resource_group_slot = total_resource_group_slot;
+      if (!globalThis.backendaiclient._config.hideAgents) {
+        const status = 'ALIVE';
+        // TODO: Let's assume that the number of agents is less than 100 for
+        //       user-accessible resource group. This will meet our current
+        //       need, but we need to fix this when refactoring the resource
+        //       indicator.
+        const limit = 100;
+        const offset = 0;
+        const timeout = 10 * 1000;
+        const fields = ['id', 'status', 'available_slots', 'scaling_group'];
+        const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
+        this.total_resource_group_slot = agentSummaryList.agent_summary_list.items
+          .filter((agent) => agent.scaling_group == this.scaling_group)
+          .map((agent) => {
+            const availableSlots = JSON.parse(agent.available_slots);
+            return {
+              cpu: parseInt(availableSlots?.['cpu'] ?? 0),
+              mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots?.['mem'] ?? 0, 'g')),
+              cuda_device: parseInt(availableSlots?.['cuda.device'] ?? 0),
+              cuda_shares: parseInt(availableSlots?.['cuda.shares'] ?? 0),
+            };
+          })
+          .reduce((acc, curr) => {
+            Object.keys(curr).forEach((key) => {
+              acc[key] += curr[key];
+            });
+            return acc;
+          }, { cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0 });
+        this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
+        if ('cuda_shares' in this.total_resource_group_slot) {
+          this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
+        }
+      } else {
+        this.total_resource_group_slot = total_resource_group_slot;
+      }
       this.total_project_slot = total_project_slot;
       this.used_slot = used_slot;
       this.used_resource_group_slot = used_resource_group_slot;

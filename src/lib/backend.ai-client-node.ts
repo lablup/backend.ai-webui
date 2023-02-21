@@ -633,11 +633,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
@@ -763,6 +764,21 @@ class Client {
       'new_password2': newPassword2
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {});
+    return this._wrapWithPromise(rqst);
+  }
+  
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp});
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp() {
+    let rqst = this.newSignedRequest('DELETE', '/totp', {});
     return this._wrapWithPromise(rqst);
   }
 
@@ -1234,7 +1250,7 @@ class Client {
       const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
 
       // Append Authorization token for every API request to pipeline
-      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) { 
+      if (queryString.startsWith('/api') === true || isDeleteTokenRequest) {
         const token = this.pipeline.getPipelineToken();
         hdrs.set("Authorization", `Token ${token}`);
       }
@@ -2575,8 +2591,8 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
     Object.keys(input).forEach(slot_type => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -2599,9 +2615,9 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
-    tag = tag.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
+    tag = tag.replace(/\//g, "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
       "key": `images/${registry}/${image}/${tag}/labels/${key}`,
       "value": value
@@ -2623,7 +2639,7 @@ class ContainerImage {
     } else {
       registry = '';
     }
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
@@ -2653,7 +2669,7 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     const rqst = this.client.newSignedRequest("POST", "/config/get", {
       "key": `images/${registry}/${image}/${tag}/resource/`,
       "prefix": true
@@ -3320,7 +3336,7 @@ class User {
    *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'totp_activated']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +
@@ -3931,7 +3947,7 @@ class Pipeline {
   }
 
   /**
-   * 
+   *
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
    *    'username': string,
@@ -3968,7 +3984,7 @@ class Pipeline {
     const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
     try {
       await this.client._wrapWithPromise(rqst);
-      this._removeCookieByName(this.tokenName); 
+      this._removeCookieByName(this.tokenName);
     } catch (err) {
       console.log(err);
       throw {
@@ -4000,7 +4016,7 @@ class Pipeline {
 
   /**
    * Get pipeline with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async info(id) {
@@ -4010,7 +4026,7 @@ class Pipeline {
 
   /**
    * Create a pipeline with input
-   * 
+   *
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
    *    'name': string,
@@ -4027,7 +4043,7 @@ class Pipeline {
 
   /**
    * Update the pipeline based on input value
-   * 
+   *
    * @param {string} id - pipeline id
    * @param {json} input - pipeline specification and data. Required fields are:
    * {
@@ -4045,8 +4061,8 @@ class Pipeline {
 
   /**
    * Delete the pipeline
-   * 
-   * @param {string} id - pipeline id 
+   *
+   * @param {string} id - pipeline id
    */
   async delete(id) {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
@@ -4055,8 +4071,8 @@ class Pipeline {
 
   /**
    * Instantiate(Run) pipeline to pipeline-job
-   * 
-   * @param {string} id - pipeline id 
+   *
+   * @param {string} id - pipeline id
    * @param {json} input - piepline specification and data. Required fields are:
    * {
    *    'name': string,
@@ -4070,10 +4086,10 @@ class Pipeline {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
- 
+
   /**
    * Get Cookie By its name if exists
-   * 
+   *
    * @param {string} name - cookie name
    * @returns {string} cookieValue
    */
@@ -4094,8 +4110,8 @@ class Pipeline {
 
   /**
    * Remove Cooke By its name if exists
-   * 
-   * @param {string} name - cookie name 
+   *
+   * @param {string} name - cookie name
    */
   _removeCookieByName(name = '') {
     if (name !== '') {
@@ -4128,7 +4144,7 @@ class PipelineJob {
 
   /**
    * Get pipeline job with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async info(id) {
@@ -4138,7 +4154,7 @@ class PipelineJob {
 
   /**
    * Stop running pipeline job with given its id
-   * 
+   *
    * @param {string} id - pipeline id
    */
   async stop(id) {
@@ -4165,7 +4181,7 @@ class PipelineTaskInstance {
   /**
    * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
    * if not, then bring all task instances that pipeline server user created via every pipeline job
-   * 
+   *
    * @param {stirng} pipelineJobId - pipeline job id
    */
   async list(pipelineJobId = '') {
@@ -4177,7 +4193,7 @@ class PipelineTaskInstance {
 
   /**
    * Get task instance with given its id
-   * 
+   *
    * @param {string} id - task instance id
    */
   async info(id) {
@@ -4187,17 +4203,17 @@ class PipelineTaskInstance {
 
   /**
    * Create custom task instance with input
-   * 
-   * @param {json} input 
+   *
+   * @param {json} input
    */
   async create(input) {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
-  } 
+  }
 
   /**
    * Update the task instance based on input value
-   * 
+   *
    * @param {string} id - task instance id
    * @param {json} input - task-instance specification and data.
    */
@@ -4208,8 +4224,8 @@ class PipelineTaskInstance {
 
   /**
    * Delete the task-instance
-   * 
-   * @param {string} id - task instance id 
+   *
+   * @param {string} id - task instance id
    */
   async delete(id) {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");

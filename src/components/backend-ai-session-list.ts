@@ -30,10 +30,11 @@ import {Menu} from '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import './backend-ai-list-status';
-import '../plastics/lablup-shields/lablup-shields';
-import './lablup-progress-bar';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
+import './lablup-progress-bar';
+import '../plastics/lablup-shields/lablup-shields';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -420,6 +421,11 @@ export default class BackendAiSessionList extends BackendAIPage {
           font-size: 10px;
           color: var(--general-menu-color-2);
         }
+
+        div.usage-items {
+          font-size: 8px;
+          width: 55px;
+        }
       `];
   }
 
@@ -697,6 +703,11 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].tpu_util = liveStat.tpu_util;
             } else {
               sessions[objectKey].tpu_util = 0;
+            }
+            if (liveStat && liveStat.cuda_mem) {
+              sessions[objectKey].cuda_mem_ratio = (liveStat.cuda_mem.current / liveStat.cuda_mem.capacity) || 0;
+            } else {
+              sessions[objectKey].cuda_mem_ratio = null;
             }
           }
           const service_info = JSON.parse(sessions[objectKey].service_ports);
@@ -2029,7 +2040,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         html`
         <div class="vertical start start-justified layout">
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">CPU</div>
+            <div class="usage-items">CPU</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cpu_util / (rowData.item.cpu_slot * 100)}"
@@ -2038,7 +2049,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </div>
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">RAM</div>
+            <div class="usage-items">RAM</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.mem_current / (rowData.item.mem_slot * 1000000000)}"
@@ -2048,7 +2059,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>
           ${rowData.item.cuda_gpu_slot && parseInt(rowData.item.cuda_gpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cuda_util / (rowData.item.cuda_gpu_slot * 100)}"
@@ -2058,7 +2069,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
           ${rowData.item.cuda_fgpu_slot && parseFloat(rowData.item.cuda_fgpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.cuda_util / (rowData.item.cuda_fgpu_slot * 100)}"
@@ -2068,7 +2079,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           </div>` : html``}
           ${rowData.item.rocm_gpu_slot && parseFloat(rowData.item.cuda_rocm_gpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">GPU</div>
+            <div class="usage-items">GPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.rocm_util / (rowData.item.rocm_gpu_slot * 100)}"
@@ -2076,9 +2087,19 @@ export default class BackendAiSessionList extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
           </div>` : html``}
+          ${rowData.item.cuda_fgpu_slot || rowData.item.rocm_gpu_slot ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">GPU(mem)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.cuda_mem_ratio}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
           ${rowData.item.tpu_slot && parseFloat(rowData.item.tpu_slot) > 0 ? html`
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">TPU</div>
+            <div class="usage-items">TPU(util)</div>
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
@@ -2087,7 +2108,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             </div>
           </div>` : html``}
           <div class="horizontal start-justified center layout">
-            <div style="font-size:8px;width:35px;">I/O</div>
+            <div class="usage-items">I/O</div>
             <div style="font-size:8px;" class="horizontal start-justified center layout">
             R: ${rowData.item.io_read_bytes_mb}MB /
             W: ${rowData.item.io_write_bytes_mb}MB
@@ -2359,6 +2380,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
@@ -2385,37 +2407,37 @@ export default class BackendAiSessionList extends BackendAIPage {
           ` : html``}
           <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
           ${this.is_admin ? html`
-            <vaadin-grid-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
+            <lablup-grid-sort-filter-column frozen path="${this._connectionMode === 'API' ? 'access_key' : 'user_email'}"
                                       header="${this._connectionMode === 'API' ? 'API Key' : 'User ID'}" resizable
                                       .renderer="${this._boundUserInfoRenderer}">
-            </vaadin-grid-filter-column>
+            </lablup-grid-sort-filter-column>
           ` : html``}
-          <vaadin-grid-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
+          <lablup-grid-sort-filter-column frozen path="${this.sessionNameField}" auto-width header="${_t('session.SessionInfo')}" resizable
                                      .renderer="${this._boundSessionInfoRenderer}">
-          </vaadin-grid-filter-column>
-          <vaadin-grid-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column width="120px" path="status" header="${_t('session.Status')}" resizable
                                      .renderer="${this._boundStatusRenderer}">
-          </vaadin-grid-filter-column>
+          </lablup-grid-sort-filter-column>
           <vaadin-grid-column width=${this._isContainerCommitEnabled ? '260px': '210px'} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="120px" flex-grow="0" resizable header="${_t('session.Usage')}"
+          <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t('session.Usage')}"
                               .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
+          <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
                                      .renderer="${this._boundArchitectureRenderer}">
-          </vaadin-grid-filter-column>
+          </lablup-grid-sort-filter-column>
           ${this._isIntegratedCondition ? html`
-            <vaadin-grid-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></vaadin-grid-filter-column>
+            <lablup-grid-sort-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
         ` : html``}
           ${this.is_superadmin ? html`
-            <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
+            <lablup-grid-sort-filter-column path="agent" auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                                 .renderer="${this._boundAgentRenderer}">
-            </vaadin-grid-column>
+            </lablup-grid-sort-filter-column>
                 ` : html``}
           </vaadin-grid>
           <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('session.NoSessionToDisplay')}"></backend-ai-list-status>

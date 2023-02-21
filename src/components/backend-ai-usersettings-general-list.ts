@@ -88,6 +88,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-management-dialog') sshKeypairManagementDialog!: BackendAIDialog;
   @query('#clear-ssh-keypair-dialog') clearSSHKeypairDialog!: BackendAIDialog;
   @query('#generate-ssh-keypair-dialog') generateSSHKeypairDialog!: BackendAIDialog;
+  @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
+  @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
+  @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
+  
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -843,6 +847,52 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     });
   }
 
+  /**
+   * Reset SSH Keypair input field (private/public)
+   */
+  _initManualSSHKeypairFormDialog() {
+    this.enteredSSHPublicKeyInput.value = '';
+    this.enteredSSHPrivateKeyInput.value = '';
+  }
+
+  /**
+   * Open SSH Keypair Form dialog
+   */
+  _openSSHKeypairFormDialog() {
+    this.sshKeypairFormDialog.show();
+  }
+
+  /**
+   * Hide SSH Keypair Form dialog
+   */
+  _hideSSHKeypairFormDialog() {
+    this.sshKeypairFormDialog.hide();
+  }
+
+  /**
+   * Save SSH Keypair Form dialog
+   */
+  _saveSSHKeypairFormDialog() {
+    const sshPublicKey = this.enteredSSHPublicKeyInput.value;
+    const sshPrivateKey = this.enteredSSHPrivateKeyInput.value;
+    const p = globalThis.backendaiclient.postSSHKeypair({
+      pubkey: sshPublicKey,
+      privkey: sshPrivateKey
+    });
+    p.then((resp) => {
+      this.notification.text = _text('usersettings.SSHKeypairEnterManuallyFinished');
+      this.notification.show();
+      this._hideSSHKeypairFormDialog();
+      this._openSSHKeypairRefreshDialog();
+    }).catch((err) => {
+      if (err && err.message) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+      }
+    });
+  }
+
   _clearCurrentSSHKeypair() {
     this._hideSSHKeypairClearDialog();
     this._hideSSHKeypairGenerationDialog();
@@ -1138,6 +1188,13 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               unelevated
               label="${_t('button.Generate')}"
               @click="${this._refreshSSHKeypair}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t('button.EnterManually')}"
+              @click="${() => {
+                this._initManualSSHKeypairFormDialog();
+                this._openSSHKeypairFormDialog();
+              }}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="generate-ssh-keypair-dialog" fixed persistent noclosebutton>
@@ -1179,6 +1236,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
               unelevated
               label="${_t('button.Yes')}"
               @click="${this._clearCurrentSSHKeypair}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="ssh-keypair-form-dialog" fixed persistent>
+      <span slot="title">${_t('usersettings.SSHKeypairEnterManually')}</span>
+        <div slot="content" style="max-width:500px;">
+          <div class="vertical layout" style="display:inline-block;">
+            <span slot="title">${_t('usersettings.PublicKey')}</span>
+            <div class="horizontal layout flex">
+              <mwc-textarea class="ssh-keypair" id="entered-ssh-public-key" outlined></mwc-textarea>
+            </div>
+            <span slot="title">${_t('usersettings.PrivateKey')}</span>
+            <div class="horizontal layout flex">
+              <mwc-textarea class="ssh-keypair" id="entered-ssh-private-key" outlined></mwc-textarea>
+            </div>
+          </div>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              outlined
+              label="${_t('button.Cancel')}"
+              @click="${this._hideSSHKeypairFormDialog}"></mwc-button>
+          <mwc-button
+             unelevated
+             label="${_t('button.Save')}"
+             @click="${this._saveSSHKeypairFormDialog}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
