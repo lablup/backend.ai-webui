@@ -588,7 +588,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
               type="password" maxLength="64"
               auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
               @change="${this._validatePassword}">
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"

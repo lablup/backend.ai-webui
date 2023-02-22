@@ -855,7 +855,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="password"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
                       maxLength="64"
                       label="${_text('general.NewPassword')}"
                       @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
@@ -869,7 +869,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="confirm"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
                       maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
                       label="${_text('webui.menu.NewPasswordAgain')}"></mwc-textfield>

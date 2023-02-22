@@ -164,11 +164,13 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             </mwc-textfield>
             <mwc-textfield id="password1" label="${_t('webui.menu.NewPassword')}" type="password"
                 auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
+                maxLength="64">
             </mwc-textfield>
             <mwc-textfield id="password2" label="${_t('webui.menu.NewPasswordAgain')}" type="password"
                 auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
+                maxLength="64">
             </mwc-textfield>
             <div style="height:1em"></div>
           </div>
