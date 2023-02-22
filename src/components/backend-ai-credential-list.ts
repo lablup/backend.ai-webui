@@ -134,7 +134,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         }
 
         div.configuration {
-          width: 70px !important;
+          width: 100px !important;
         }
 
         div.configuration mwc-icon {
@@ -287,6 +287,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
+          keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGiB(keypair['max_vfolder_size']));
         }
       });
       this.keypairs = keypairs;
@@ -833,6 +834,11 @@ export default class BackendAICredentialList extends BackendAIPage {
     if (rateLimit <= 0 ) {
       this.rateLimit.value = '1';
     }
+  }
+
+  static bytesToGiB(num, digits=1) {
+    if (!num) return num;
+    return (num / 2 ** 30).toFixed(digits);
   }
 
   /**

@@ -123,6 +123,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <span>${this.title}</span>

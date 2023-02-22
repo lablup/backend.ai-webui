@@ -140,6 +140,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <span slot="title">${_t('signup.EmailVerified')}</span>
 

@@ -45,6 +45,7 @@ export default class LablupLoadingSpinner extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-progress-spinner id="spinner"></wl-progress-spinner>
     `;
   }
