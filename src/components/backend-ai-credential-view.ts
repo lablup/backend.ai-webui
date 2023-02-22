@@ -1324,7 +1324,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.Password')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
                 validationMessage="${_text('signup.PasswordInvalid')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">
@@ -1341,7 +1341,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.ConfirmPassword')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[^\\w\\s])[A-Za-z\\d\\S]{8,}$"
                 validationMessage="${_text('signup.PasswordNotMatched')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">
