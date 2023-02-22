@@ -647,7 +647,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const used_resource_group_slot_percent = {};
       const used_project_slot_percent = {};
 
-      Object.keys(slotList).forEach((slot) => {
+      Object.values(slotList).forEach((slot) => {
         if (slot in used_slot) {
           if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
             total_slot[slot] = used_slot[slot];
@@ -668,6 +668,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             used_project_slot_percent[slot] = 0;
           }
         } else {
+            used_slot_percent[slot] = 0;
+            used_resource_group_slot_percent[slot] = 0;
+            used_project_slot_percent[slot] = 0;
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
