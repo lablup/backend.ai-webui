@@ -2287,10 +2287,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _chooseResourceTemplate(e) {
     let button;
-    if (typeof e.cpu !== 'undefined') {
+    if (typeof e?.cpu !== 'undefined') {
       button = e;
     } else {
-      button = e.target.closest('mwc-list-item');
+      button = e.target?.closest('mwc-list-item');
     }
     const cpu = button.cpu;
     const mem = button.mem;
