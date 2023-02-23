@@ -30,6 +30,7 @@ import './backend-ai-user-list';
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import JsonToCsv from '../lib/json_to_csv';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -1324,7 +1325,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.Password')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern=${BackendAiCommonUtils.passwordRegex}
                 validationMessage="${_text('signup.PasswordInvalid')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">
@@ -1341,7 +1342,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.ConfirmPassword')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern=${BackendAiCommonUtils.passwordRegex}
                 validationMessage="${_text('signup.PasswordNotMatched')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">

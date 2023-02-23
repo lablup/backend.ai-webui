@@ -10,6 +10,7 @@ import {translate as _t} from 'lit-translate';
 import '@material/mwc-select';
 import '@material/mwc-icon-button';
 
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
@@ -588,7 +589,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
               type="password" maxLength="64"
               auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+              pattern=${BackendAiCommonUtils.passwordRegex}
               @change="${this._validatePassword}">
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
