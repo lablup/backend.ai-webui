@@ -27,11 +27,11 @@ export default class BackendAiCommonUtils extends BackendAIPage {
    * - at least one or more Alphabet regardless of upper / lower case
    * - at least one or more digit number (0-9)
    * - at least one or more special character includes (^, -, _)
-   * 
-   * @returns {string} regex string
+   *
+   * @return {string} regex string
    */
   static get passwordRegex() {
-    return "^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$";
+    return '^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$';
   }
 
   /**
