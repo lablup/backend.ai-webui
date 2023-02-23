@@ -630,7 +630,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
               acc[key] += curr[key];
             });
             return acc;
-          }, { cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0 });
+          }, {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0});
         this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
         if ('cuda_shares' in this.total_resource_group_slot) {
           this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
@@ -668,9 +668,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             used_project_slot_percent[slot] = 0;
           }
         } else {
-            used_slot_percent[slot] = 0;
-            used_resource_group_slot_percent[slot] = 0;
-            used_project_slot_percent[slot] = 0;
+          used_slot_percent[slot] = 0;
+          used_resource_group_slot_percent[slot] = 0;
+          used_project_slot_percent[slot] = 0;
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
@@ -704,10 +704,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           // allocatable is determined based on when no resources are allocated.
           item.allocatable = true;
           for (const [slotKey, slotName] of Object.entries(slotList)) {
-            if (slotKey in total_resource_group_slot && slotName in total_resource_group_slot) {
+            if (slotKey in item.resource_slots && slotName in this.total_resource_group_slot) {
               const resourceSlot = slotKey === 'mem' ? globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g') : item.resource_slots[slotKey];
-              const totalResourceGroupSlot = total_resource_group_slot[slotName];
-              if (resourceSlot <= totalResourceGroupSlot) {
+              const totalResourceGroupSlot = this.total_resource_group_slot[slotName];
+              if (parseFloat(resourceSlot) <= parseFloat(totalResourceGroupSlot)) {
                 item[slotName] = resourceSlot;
               } else {
                 item.allocatable = false;
