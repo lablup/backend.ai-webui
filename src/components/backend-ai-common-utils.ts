@@ -23,6 +23,18 @@ export default class BackendAiCommonUtils extends BackendAIPage {
   }
 
   /**
+   * Returns password regex match with under condition
+   * - at least one or more Alphabet regardless of upper / lower case
+   * - at least one or more digit number (0-9)
+   * - at least one or more special character includes (^, -, _)
+   * 
+   * @returns {string} regex string
+   */
+  static get passwordRegex() {
+    return "^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$";
+  }
+
+  /**
    * Read recent project group according to endpoint id.
    *
    * @return {string} Current selected group
