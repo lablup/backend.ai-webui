@@ -472,7 +472,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       const keypair_resource_limit = response.keypair_limits;
 
-
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
@@ -704,10 +703,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           // allocatable is determined based on when no resources are allocated.
           item.allocatable = true;
           for (const [slotKey, slotName] of Object.entries(slotList)) {
-            if (slotKey in item.resource_slots && slotName in this.total_resource_group_slot) {
+            const totalSlots = globalThis.backendaiclient._config.hideAgents ? this.total_slot : this.total_resource_group_slot;
+            if (slotKey in item.resource_slots && slotName in totalSlots) {
               const resourceSlot = slotKey === 'mem' ? globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g') : item.resource_slots[slotKey];
-              const totalResourceGroupSlot = this.total_resource_group_slot[slotName];
-              if (parseFloat(resourceSlot) <= parseFloat(totalResourceGroupSlot)) {
+              const totalSlot = totalSlots[slotName];
+              if (parseFloat(resourceSlot) <= parseFloat(totalSlot)) {
                 item[slotName] = resourceSlot;
               } else {
                 item.allocatable = false;
