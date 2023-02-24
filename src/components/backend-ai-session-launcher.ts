@@ -1827,8 +1827,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           cpu_metric.min = parseInt(cpu_metric.min);
           if (enqueue_session) {
             ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
-              if (slot in this.total_resource_group_slot) {
-                available_slot[slot] = this.total_resource_group_slot[slot];
+              const totalSlots = globalThis.backendaiclient._config.hideAgents ? this.total_slot : this.total_resource_group_slot;
+              if (slot in totalSlots) {
+                available_slot[slot] = totalSlots[slot];
               }
             });
           }
