@@ -1834,7 +1834,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
-          let comparingListMaxCPUResources: number[] = [available_slot['cpu'], this.max_cpu_core_per_session];
+          const comparingListMaxCPUResources: number[] = [available_slot['cpu'], this.max_cpu_core_per_session];
           if (enqueue_session) {
             if ('cpu' in this.userResourceLimit) {
               comparingListMaxCPUResources.push(parseInt(this.userResourceLimit['cpu']));
@@ -1866,12 +1866,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
           const cuda_device_metric = {...item};
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
-          let comparingListMaxCUDADeviceResources: number[] = [available_slot['cuda_device'], this.max_cuda_device_per_container];
+          const comparingListMaxCUDADeviceResources: number[] = [available_slot['cuda_device'], this.max_cuda_device_per_container];
           if (enqueue_session) {
             if ('cuda.device' in this.userResourceLimit) {
               comparingListMaxCUDADeviceResources.push(parseInt(this.userResourceLimit['cuda.device']));
-            }
-            else {
+            } else {
               comparingListMaxCUDADeviceResources.push(parseInt(cuda_device_metric.max) ?? cuda_device_metric.min);
             }
           }
@@ -1890,7 +1889,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
           const cuda_shares_metric = {...item};
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
-          let comparingListMaxCUDAShareResources: number[] = [available_slot['cuda_shares'], this.max_cuda_shares_per_container];
+          const comparingListMaxCUDAShareResources: number[] = [available_slot['cuda_shares'], this.max_cuda_shares_per_container];
           if (enqueue_session) {
             if ('cuda.shares' in this.userResourceLimit) {
               comparingListMaxCUDAShareResources.push(parseInt(this.userResourceLimit['cuda.shares']));
@@ -1913,7 +1912,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             this.cuda_device_metric = cuda_shares_metric;
           }
         }
-        
+
         if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
           const rocm_metric = {...item};
           rocm_metric.min = parseInt(rocm_metric.min);
@@ -1942,11 +1941,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             mem_metric.max = 0;
           }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
-          let comparingListMaxMemResources: number[] = [available_slot['mem'], this.max_mem_per_container];
+          const comparingListMaxMemResources: number[] = [available_slot['mem'], this.max_mem_per_container];
           if (enqueue_session) {
             if ('mem' in this.userResourceLimit) {
               const user_mem_max = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g'));
-              comparingListMaxMemResources.push(user_mem_max)
+              comparingListMaxMemResources.push(user_mem_max);
             }
           } else {
             const mem_metric_max = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max ?? mem_metric.min, 'g', 'g'));
@@ -3458,9 +3457,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <lablup-slider id="mem-resource" class="mem"
                                    pin snaps expand step=0.05 editable markers tabindex="0"
                                    @change="${(e) => {
-                                     this._applyResourceValueChanges(e);
-                                     this._updateShmemLimit();
-                                  }}"
+    this._applyResourceValueChanges(e);
+    this._updateShmemLimit();
+  }}"
                                    marker_limit="${this.marker_limit}" suffix="GB"
                                    min="${this.mem_metric.min}" max="${this.mem_metric.max}"
                                    value="${this.mem_request}"></lablup-slider>
@@ -3475,9 +3474,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <lablup-slider id="shmem-resource" class="mem"
                                  pin snaps step="0.0125" editable markers tabindex="0"
                                  @change="${(e) => {
-                                   this._applyResourceValueChanges(e);
-                                   this._updateShmemLimit();
-                                  }}"
+    this._applyResourceValueChanges(e);
+    this._updateShmemLimit();
+  }}"
                                  marker_limit="${this.marker_limit}" suffix="GB"
                                  min="0.0625" max="${this.shmem_metric.max}"
                                  value="${this.shmem_request}"></lablup-slider>
