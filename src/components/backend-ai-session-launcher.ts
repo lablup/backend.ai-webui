@@ -2290,7 +2290,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (typeof e?.cpu !== 'undefined') {
       button = e;
     } else {
-      button = e.target?.closest('mwc-list-item');
+      button = this.shadowRoot?.querySelectorAll('#resource-templates mwc-list-item')[1];
     }
     const cpu = button.cpu;
     const mem = button.mem;
