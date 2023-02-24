@@ -1821,32 +1821,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         'min': 0,
         'max': 0
       };
+      // Check if enqueue session is enabled
+      if (enqueue_session) {
+        ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+          const totalSlots = globalThis.backendaiclient._config.hideAgents ? this.total_slot : this.total_resource_group_slot;
+          if (slot in totalSlots) {
+            available_slot[slot] = totalSlots[slot];
+          }
+        });
+      }
       currentResource.forEach((item) => {
         if (item.key === 'cpu') {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
+          let comparingListMaxCPUResources: number[] = [available_slot['cpu'], this.max_cpu_core_per_session];
           if (enqueue_session) {
-            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
-              const totalSlots = globalThis.backendaiclient._config.hideAgents ? this.total_slot : this.total_resource_group_slot;
-              if (slot in totalSlots) {
-                available_slot[slot] = totalSlots[slot];
-              }
-            });
-          }
-
-          if ('cpu' in this.userResourceLimit) {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max) && cpu_metric.max !== null) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
-            } else {
-              cpu_metric.max = Math.min(parseInt(this.userResourceLimit.cpu), available_slot['cpu'], this.max_cpu_core_per_session);
+            if ('cpu' in this.userResourceLimit) {
+              comparingListMaxCPUResources.push(parseInt(this.userResourceLimit['cpu']));
             }
           } else {
-            if (parseInt(cpu_metric.max) !== 0 && cpu_metric.max !== 'Infinity' && !isNaN(cpu_metric.max) && cpu_metric.max !== null) {
-              cpu_metric.max = Math.min(parseInt(cpu_metric.max), available_slot['cpu'], this.max_cpu_core_per_session);
-            } else {
-              cpu_metric.max = Math.min(this.available_slot['cpu'], this.max_cpu_core_per_session);
-            }
+            comparingListMaxCPUResources.push(parseInt(cpu_metric.max) ?? cpu_metric.min);
           }
+          cpu_metric.max = Math.min(...comparingListMaxCPUResources);
+
+          // adjusting disableLaunch
           if (cpu_metric.min >= cpu_metric.max) {
             if (cpu_metric.min > cpu_metric.max) {
               cpu_metric.min = cpu_metric.max;
@@ -1868,19 +1866,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
           const cuda_device_metric = {...item};
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
-          if ('cuda.device' in this.userResourceLimit) {
-            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max) && cuda_device_metric.max != null) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(this.userResourceLimit['cuda.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
-            } else {
-              cuda_device_metric.max = Math.min(parseInt(this.userResourceLimit['cuda.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+          let comparingListMaxCUDADeviceResources: number[] = [available_slot['cuda_device'], this.max_cuda_device_per_container];
+          if (enqueue_session) {
+            if ('cuda.device' in this.userResourceLimit) {
+              comparingListMaxCUDADeviceResources.push(parseInt(this.userResourceLimit['cuda.device']));
             }
-          } else {
-            if (parseInt(cuda_device_metric.max) !== 0 && cuda_device_metric.max !== 'Infinity' && !isNaN(cuda_device_metric.max) && cuda_device_metric.max != null) {
-              cuda_device_metric.max = Math.min(parseInt(cuda_device_metric.max), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
-            } else {
-              cuda_device_metric.max = Math.min(parseInt(this.available_slot['cuda_device']), this.max_cuda_device_per_container);
+            else {
+              comparingListMaxCUDADeviceResources.push(parseInt(cuda_device_metric.max) ?? cuda_device_metric.min);
             }
           }
+          cuda_device_metric.max = Math.min(...comparingListMaxCUDADeviceResources);
+
+          // adjusting disableLaunch
           if (cuda_device_metric.min >= cuda_device_metric.max) {
             if (cuda_device_metric.min > cuda_device_metric.max) {
               cuda_device_metric.min = cuda_device_metric.max;
@@ -1893,19 +1890,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
           const cuda_shares_metric = {...item};
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
-          if ('cuda.shares' in this.userResourceLimit) {
-            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max) && cuda_shares_metric.max != null) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(this.userResourceLimit['cuda.shares']), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
-            } else {
-              cuda_shares_metric.max = Math.min(parseFloat(this.userResourceLimit['cuda.shares']), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
+          let comparingListMaxCUDAShareResources: number[] = [available_slot['cuda_shares'], this.max_cuda_shares_per_container];
+          if (enqueue_session) {
+            if ('cuda.shares' in this.userResourceLimit) {
+              comparingListMaxCUDAShareResources.push(parseInt(this.userResourceLimit['cuda.shares']));
             }
           } else {
-            if (parseFloat(cuda_shares_metric.max) !== 0 && cuda_shares_metric.max !== 'Infinity' && !isNaN(cuda_shares_metric.max) && cuda_shares_metric.max != null) {
-              cuda_shares_metric.max = Math.min(parseFloat(cuda_shares_metric.max), parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
-            } else {
-              cuda_shares_metric.max = Math.min(parseFloat(available_slot['cuda_shares']), this.max_cuda_shares_per_container);
-            }
+            comparingListMaxCUDAShareResources.push(parseInt(cuda_shares_metric.max) ?? cuda_shares_metric.min);
           }
+          cuda_shares_metric.max = Math.min(...comparingListMaxCUDAShareResources);
+
+          // adjusting disableLaunch
           if (cuda_shares_metric.min >= cuda_shares_metric.max) {
             if (cuda_shares_metric.min > cuda_shares_metric.max) {
               cuda_shares_metric.min = cuda_shares_metric.max;
@@ -1913,12 +1908,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
             this.gpuResouceSlider.disabled = true;
           }
-
           this.cuda_shares_metric = cuda_shares_metric;
           if (cuda_shares_metric.max > 0) {
             this.cuda_device_metric = cuda_shares_metric;
           }
         }
+        
         if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
           const rocm_metric = {...item};
           rocm_metric.min = parseInt(rocm_metric.min);
@@ -1947,20 +1942,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             mem_metric.max = 0;
           }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
-          if ('mem' in this.userResourceLimit) {
-            const user_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g');
-            if (!isNaN(parseInt(image_mem_max)) && (parseInt(image_mem_max) !== 0)) {
-              mem_metric.max = Math.min(parseFloat(image_mem_max), parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
-            } else {
-              mem_metric.max = Math.min(parseFloat(user_mem_max), available_slot['mem'], this.max_mem_per_container);
+          let comparingListMaxMemResources: number[] = [available_slot['mem'], this.max_mem_per_container];
+          if (enqueue_session) {
+            if ('mem' in this.userResourceLimit) {
+              const user_mem_max = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g'));
+              comparingListMaxMemResources.push(user_mem_max)
             }
           } else {
-            if (parseInt(mem_metric.max) !== 0 && mem_metric.max !== 'Infinity' && isNaN(mem_metric.max) !== true) {
-              mem_metric.max = Math.min(parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g')), available_slot['mem'], this.max_mem_per_container);
-            } else {
-              mem_metric.max = Math.min(available_slot['mem'], this.max_mem_per_container); // TODO: set to largest memory size
-            }
+            const mem_metric_max = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max ?? mem_metric.min, 'g', 'g'));
+            comparingListMaxMemResources.push(mem_metric_max);
           }
+          mem_metric.max = Math.min(...comparingListMaxMemResources);
+
+          // adjusting disableLaunch
           if (mem_metric.min >= mem_metric.max) {
             if (mem_metric.min > mem_metric.max) {
               mem_metric.min = mem_metric.max;
