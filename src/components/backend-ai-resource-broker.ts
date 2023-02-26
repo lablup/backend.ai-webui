@@ -604,6 +604,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       this.total_slot = total_slot;
       if (!globalThis.backendaiclient._config.hideAgents) {
+        // When `hideAgents` is false, we display the total resources of the current resoure group.
+
         const status = 'ALIVE';
         // TODO: Let's assume that the number of agents is less than 100 for
         //       user-accessible resource group. This will meet our current
@@ -612,35 +614,63 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const limit = 100;
         const offset = 0;
         const timeout = 10 * 1000;
-        const fields = ['id', 'status', 'available_slots', 'scaling_group'];
+        const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'scaling_group', 'schedulable'];
         const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
-        this.total_resource_group_slot = agentSummaryList.agent_summary_list.items
-          .filter((agent) => agent.scaling_group == this.scaling_group)
+        // resourceGroupSlots will have three fields: available, occupied, and remaining.
+        const resourceGroupSlots = agentSummaryList.agent_summary_list.items
+          .filter((agent) => agent.scaling_group == this.scaling_group && agent.schedulable)
           .map((agent) => {
             const availableSlots = JSON.parse(agent.available_slots);
+            const occupiedSlots = JSON.parse(agent.occupied_slots);
             return {
-              cpu: parseInt(availableSlots?.['cpu'] ?? 0),
-              mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots?.['mem'] ?? 0, 'g')),
-              cuda_device: parseInt(availableSlots?.['cuda.device'] ?? 0),
-              cuda_shares: parseInt(availableSlots?.['cuda.shares'] ?? 0),
+              available: {
+                cpu: parseInt(availableSlots?.['cpu'] ?? 0),
+                mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots?.['mem'] ?? 0, 'g')),
+                cuda_device: parseInt(availableSlots?.['cuda.device'] ?? 0),
+                cuda_shares: parseFloat(availableSlots?.['cuda.shares'] ?? 0),
+              },
+              occupied: {
+                cpu: parseInt(occupiedSlots?.['cpu'] ?? 0),
+                mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots?.['mem'] ?? 0, 'g')),
+                cuda_device: parseInt(occupiedSlots?.['cuda.device'] ?? 0),
+                cuda_shares: parseFloat(occupiedSlots?.['cuda.shares'] ?? 0),
+              },
             };
           })
           .reduce((acc, curr) => {
-            Object.keys(curr).forEach((key) => {
-              acc[key] += curr[key];
-            });
+            Object.keys(curr.available).forEach((key) => acc.available[key] += curr.available[key]);
+            Object.keys(curr.occupied).forEach((key) => acc.occupied[key] += curr.occupied[key]);
             return acc;
-          }, {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0});
+          }, {
+            available: {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0},
+            occupied: {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0},
+          });
+        resourceGroupSlots.remaining = {};
+        Object.keys(resourceGroupSlots.available).forEach((key) => {
+          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key]
+        });
+
+        this.total_resource_group_slot = resourceGroupSlots.available;
+        // This value is purposely set to the remaining resource group slots
+        // when `hideAgents` is `true`.  There are some cases it is more useful
+        // to display the remaining slots.
+        this.used_resource_group_slot = resourceGroupSlots.remaining;
+
+        // Post formatting
         this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
+        this.used_resource_group_slot.mem = this.used_resource_group_slot.mem?.toFixed(2);
         if ('cuda_shares' in this.total_resource_group_slot) {
-          this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(1);
+          this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(2);
+        }
+        if ('cuda_shares' in this.used_resource_group_slot) {
+          this.used_resource_group_slot.cuda_shares = this.used_resource_group_slot.cuda_shares.toFixed(2);
         }
       } else {
         this.total_resource_group_slot = total_resource_group_slot;
+        this.used_resource_group_slot = used_resource_group_slot;
       }
       this.total_project_slot = total_project_slot;
       this.used_slot = used_slot;
-      this.used_resource_group_slot = used_resource_group_slot;
       this.used_project_slot = used_project_slot;
 
       const used_slot_percent = {};
@@ -658,7 +688,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             used_slot_percent[slot] = 0;
           }
           if (total_resource_group_slot[slot] != 0) {
-            used_resource_group_slot_percent[slot] = (used_resource_group_slot[slot] / total_resource_group_slot[slot]) * 100.0;
+            used_resource_group_slot_percent[slot] = (this.used_resource_group_slot[slot] / this.total_resource_group_slot[slot]) * 100.0;
           } else {
             used_resource_group_slot_percent[slot] = 0;
           }
