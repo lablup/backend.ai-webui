@@ -604,8 +604,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       this.total_slot = total_slot;
       if (!globalThis.backendaiclient._config.hideAgents) {
-        // When `hideAgents` is false, we display the total resources of the
-        // current resoure group.
+        // When `hideAgents` is false, we display the total resources of the current resoure group.
 
         const status = 'ALIVE';
         // TODO: Let's assume that the number of agents is less than 100 for
@@ -617,7 +616,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const timeout = 10 * 1000;
         const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'scaling_group', 'schedulable'];
         const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
-        // resourceGroupSlots wil have three fields: available, occupied, and remaining.
+        // resourceGroupSlots will have three fields: available, occupied, and remaining.
         const resourceGroupSlots = agentSummaryList.agent_summary_list.items
           .filter((agent) => agent.scaling_group == this.scaling_group && agent.schedulable)
           .map((agent) => {
@@ -652,8 +651,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         });
 
         this.total_resource_group_slot = resourceGroupSlots.available;
-        // This value is purposely set to the remaining resource group slots.
-        // There are some cases it is more useful to display the remaining slots.
+        // This value is purposely set to the remaining resource group slots
+        // when `hideAgents` is `true`.  There are some cases it is more useful
+        // to display the remaining slots.
         this.used_resource_group_slot = resourceGroupSlots.remaining;
 
         // Post formatting
