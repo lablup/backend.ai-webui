@@ -605,7 +605,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
                                     @click="${(e) => this._togglePasswordVisibility(e.target)}">
           </mwc-icon-button-toggle>
         </div>
-        ${this.totpSupported ? html`
+        ${this.totpSupported === true ? html`
           <div class="horizontal flex layout">
             <p style="flex-grow: 1;margin-left: 15px;">
               ${_t('webui.menu.TotpActivated')}

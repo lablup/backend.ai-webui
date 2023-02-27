@@ -791,7 +791,7 @@ export default class BackendAIUserList extends BackendAIPage {
                               .renderer="${this._userIdRenderer.bind(this)}"></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
                               .renderer="${this._userNameRenderer}"></lablup-grid-sort-filter-column>
-          ${this.totpSupported ? html`
+          ${this.totpSupported === true ? html`
             <vaadin-grid-sort-column auto-width flex-grow="0" path="totp_activated" header="${_t('webui.menu.TotpActivated')}" resizable
                               .renderer="${this._totpActivatedRenderer.bind(this)}"></vaadin-grid-sort-column>
           `: html``}
@@ -897,7 +897,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="need_password_change"
                       ?selected=${this.userInfo.need_password_change}></mwc-switch>
                 </div>
-                ${this.totpSupported ? html`
+                ${this.totpSupported === true ? html`
                   <div class="horizontal layout center">
                     <p class="label">${_text('webui.menu.TotpActivated')}</p>
                     <mwc-switch
@@ -915,7 +915,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     disabled
                     label="${_text('credential.DescRequirePasswordChange')}"
                     value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                ${this.totpSupported ? html`
+                ${this.totpSupported === true ? html`
                   <mwc-textfield
                       disabled
                       label="${_text('webui.menu.TotpActivated')}"

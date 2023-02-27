@@ -610,6 +610,9 @@ class Client {
   }
 
   async isManagerSupportingTOTP() {
+    if (this._config.hide2FA) {
+      return false;
+    }
     let rqst = this.newSignedRequest('GET', `/totp`, null, null);
     try {
       await this._wrapWithPromise(rqst);
