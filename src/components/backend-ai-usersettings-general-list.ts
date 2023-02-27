@@ -92,7 +92,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
   @query('#git-token-management-dialog') gitTokenManagementDialog!: BackendAIDialog;
-  
+  @query('#save-git-token-management-dialog') saveGitTokenManagementDialog!: BackendAIDialog;
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -875,21 +875,29 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     newItemRemoveButtonField.label = _text('button.Delete');
     newItemRemoveButtonField.style.width = "auto";
     newItemRemoveButtonField.addEventListener('click', (e) => {
-      console.log('newItemRemoveButtonField click');
-      console.log(e);
-      console.log(e.target);
-      console.log(this);
-      console.log(this.parentElement);
       this._deleteGitTokenList(e.target);
-      //this._deleteGitTokenList(e);
     });
     newDivField.appendChild(newItemRemoveButtonField);
     this.shadowRoot?.querySelector('#custom-git-token-list')?.appendChild(newDivField);
   }
 
+  _saveGitTokenManagement() {
+    console.log('save git token');
+    this._hideSaveGitTokenManagementDialog();
+  }
+
   _deleteGitTokenList(e) {
-    console.log('_deleteGitTokenList');
     e.parentElement.remove();
+  }
+
+  _openSaveGitTokenManagementDialog() {
+    console.log('_openSaveGitTokenManagementDialog');
+    this.saveGitTokenManagementDialog.show();
+  }
+
+  _hideSaveGitTokenManagementDialog() {
+    console.log('_hideSaveGitTokenManagementDialog');
+    this.saveGitTokenManagementDialog.hide();
   }
 
   /**
@@ -1333,9 +1341,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
              @click="${this._saveSSHKeypairFormDialog}"></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="git-token-management-dialog"  fixed backdrop persistent>
+      <backend-ai-dialog id="git-token-management-dialog" fixed backdrop persistent>
         <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
-        <div slot="content" style="max-width:500px">
+        <div slot="content" style="max-width:800px">
           <mwc-list>
             <mwc-list-item>
               <span class="title">${_t('usersettings.GithubTokenValue')}</span>
@@ -1365,12 +1373,26 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             @click="${this._addGitTokenList}"></mwc-button>
           <mwc-button
             label="${_t('button.Save')}"
-            @click="${this._hideGitTokenManagementDialog}"></mwc-button>
+            @click="${this._openSaveGitTokenManagementDialog}"></mwc-button>
           <mwc-button
             label="${_t('button.Close')}"
             @click="${this._hideGitTokenManagementDialog}"></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-dialog id="save-git-token-management-dialog" warning fixed backdrop>
+        <span slot="title">${_t('usersettings.ConfirmSaveGitTokenValues')}</span>
+          <div slot="content" class="vertical layout">
+            <p>${_t('usersettings.DescSaveGitTokenValues')}</p>
+          </div>
+          <div slot="footer" class="horizontal end-justified flex layout">
+            <mwc-button
+              label="${_t('button.Save')}"
+              @click="${this._saveGitTokenManagement}"></mwc-button>
+            <mwc-button
+              label="${_t('button.Close')}"
+              @click="${this._hideSaveGitTokenManagementDialog}"></mwc-button>
+          </div>
+        </backend-ai-dialog>
     `;
   }
 }

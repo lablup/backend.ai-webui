@@ -778,7 +778,9 @@
     "GitTokenManagement": "Git Repository Token Management",
     "DescGitTokenManagement": "Manage Github, Gitlab and some repo's service Tokens.",
     "GithubTokenValue": "Github Token Value",
-    "GitlabTokenValue": "Gitlab Token Value"
+    "GitlabTokenValue": "Gitlab Token Value",
+    "ConfirmSaveGitTokenValues": "Confirm to save Git service Tokens",
+    "DescSaveGitTokenValues": "Save Git service tokens"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Advanced Web Terminal Usage: Copy terminal contents",
