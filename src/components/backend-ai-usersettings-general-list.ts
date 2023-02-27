@@ -848,28 +848,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   _hideGitTokenManagementDialog() {
-    (this.shadowRoot?.querySelector('#custom-git-token-list'))?.querySelectorAll('div').forEach((e) => {
+    (this.shadowRoot?.querySelector('#custom-git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
       e.remove();
     });
     this.gitTokenManagementDialog.hide();
   }
 
   _addGitTokenList() {
-    let newDivField = document.createElement('div');
+
+    let newListItem = document.createElement('mwc-list-item');
 
     let newDomainTextField = document.createElement('mwc-textfield');
     newDomainTextField.label = _text('Git Service Domain');
     newDomainTextField.type = "text";
     newDomainTextField.className = "service_domain";
+    newDomainTextField.name = "service_domain"
     newDomainTextField.style.width = "auto";
-    newDivField.appendChild(newDomainTextField);
+    newListItem.appendChild(newDomainTextField);
 
     let newTokenTextField = document.createElement('mwc-textfield');
     newTokenTextField.label = _text('Git Service Token');
     newTokenTextField.type = "text";
     newTokenTextField.className = "service_token";
+    newTokenTextField.name = "service_token";
     newTokenTextField.style.width = "auto";
-    newDivField.appendChild(newTokenTextField);
+    newListItem.appendChild(newTokenTextField);
 
     let newItemRemoveButtonField = document.createElement('mwc-button');
     newItemRemoveButtonField.label = _text('button.Delete');
@@ -877,8 +880,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     newItemRemoveButtonField.addEventListener('click', (e) => {
       this._deleteGitTokenList(e.target);
     });
-    newDivField.appendChild(newItemRemoveButtonField);
-    this.shadowRoot?.querySelector('#custom-git-token-list')?.appendChild(newDivField);
+    newListItem.appendChild(newItemRemoveButtonField);
+    this.shadowRoot?.querySelector('#custom-git-token-list')?.appendChild(newListItem);
   }
 
   _saveGitTokenManagement() {
@@ -1346,19 +1349,33 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <div slot="content" style="max-width:800px">
           <mwc-list>
             <mwc-list-item>
-              <span class="title">${_t('usersettings.GithubTokenValue')}</span>
               <mwc-textfield
                 type="text"
-                name="git_token"
+                name="service_domain"
+                id="id_github_domain"
+                value="github.com"
+                label="github.com"
+                readonly>
+              </mwc-textfield>
+              <mwc-textfield
+                type="text"
+                name="service_token"
                 id="id_github_token"
                 label="${_t('usersettings.GithubTokenValue')}">
               </mwc-textfield>
             </mwc-list-item>
             <mwc-list-item>
-              <span class="title">${_t('usersettings.GitlabTokenValue')}</span>
               <mwc-textfield
                 type="text"
-                name="git_token"
+                name="service_domain"
+                id="id_gitlab_domain"
+                label="gitlab.com"
+                value="gitlab.com"
+                readonly>
+              </mwc-textfield>
+              <mwc-textfield
+                type="text"
+                name="service_token"
                 id="id_gitlab_token"
                 label="${_t('usersettings.GitlabTokenValue')}">
               </mwc-textfield>
