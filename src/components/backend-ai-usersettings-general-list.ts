@@ -91,6 +91,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
+  @query('#git-token-management-dialog') gitTokenManagementDialog!: BackendAIDialog;
   
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
@@ -835,6 +836,62 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     this.clearSSHKeypairDialog.hide();
   }
 
+  _openGitTokenManagementDialog() {
+    this.gitTokenManagementDialog.show();
+  }
+
+  /**
+   * Fetch Existing Git Tokens from Server
+   */
+  async _openGitTokenRefreshDialog() {
+
+  }
+
+  _hideGitTokenManagementDialog() {
+    (this.shadowRoot?.querySelector('#custom-git-token-list'))?.querySelectorAll('div').forEach((e) => {
+      e.remove();
+    });
+    this.gitTokenManagementDialog.hide();
+  }
+
+  _addGitTokenList() {
+    let newDivField = document.createElement('div');
+
+    let newDomainTextField = document.createElement('mwc-textfield');
+    newDomainTextField.label = _text('Git Service Domain');
+    newDomainTextField.type = "text";
+    newDomainTextField.className = "service_domain";
+    newDomainTextField.style.width = "auto";
+    newDivField.appendChild(newDomainTextField);
+
+    let newTokenTextField = document.createElement('mwc-textfield');
+    newTokenTextField.label = _text('Git Service Token');
+    newTokenTextField.type = "text";
+    newTokenTextField.className = "service_token";
+    newTokenTextField.style.width = "auto";
+    newDivField.appendChild(newTokenTextField);
+
+    let newItemRemoveButtonField = document.createElement('mwc-button');
+    newItemRemoveButtonField.label = _text('button.Delete');
+    newItemRemoveButtonField.style.width = "auto";
+    newItemRemoveButtonField.addEventListener('click', (e) => {
+      console.log('newItemRemoveButtonField click');
+      console.log(e);
+      console.log(e.target);
+      console.log(this);
+      console.log(this.parentElement);
+      this._deleteGitTokenList(e.target);
+      //this._deleteGitTokenList(e);
+    });
+    newDivField.appendChild(newItemRemoveButtonField);
+    this.shadowRoot?.querySelector('#custom-git-token-list')?.appendChild(newDivField);
+  }
+
+  _deleteGitTokenList(e) {
+    console.log('_deleteGitTokenList');
+    e.parentElement.remove();
+  }
+
   /**
    * Fetch Randomly refreshed keypair generated from server.
    * */
@@ -1026,6 +1083,19 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 id="ssh-keypair-details"
                 icon="more"
                 @click="${this._openSSHKeypairRefreshDialog}">
+            </mwc-icon-button>
+          </div>
+        </div>
+        <div class="horizontal layout wrap setting-item">
+          <div class="vertical start start-justified layout setting-desc">
+            <div class="title">${_t('usersettings.GitTokenManagement')}</div>
+            <div class="description">${_tr('usersettings.DescSSHKeypairManagement')}</div>
+          </div>
+          <div class="vertical center-justified layout flex end">
+            <mwc-icon-button
+                id="ssh-keypair-details"
+                icon="more"
+                @click="${this._openGitTokenManagementDialog}">
             </mwc-icon-button>
           </div>
         </div>
@@ -1261,6 +1331,44 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
              unelevated
              label="${_t('button.Save')}"
              @click="${this._saveSSHKeypairFormDialog}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="git-token-management-dialog"  fixed backdrop persistent>
+        <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
+        <div slot="content" style="max-width:500px">
+          <mwc-list>
+            <mwc-list-item>
+              <span class="title">${_t('usersettings.GithubTokenValue')}</span>
+              <mwc-textfield
+                type="text"
+                name="git_token"
+                id="id_github_token"
+                label="${_t('usersettings.GithubTokenValue')}">
+              </mwc-textfield>
+            </mwc-list-item>
+            <mwc-list-item>
+              <span class="title">${_t('usersettings.GitlabTokenValue')}</span>
+              <mwc-textfield
+                type="text"
+                name="git_token"
+                id="id_gitlab_token"
+                label="${_t('usersettings.GitlabTokenValue')}">
+              </mwc-textfield>
+            </mwc-list-item>
+          </mwc-list>
+          <mwc-list id="custom-git-token-list">
+          </mwc-list>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+            label="${_t('button.Add')}"
+            @click="${this._addGitTokenList}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Save')}"
+            @click="${this._hideGitTokenManagementDialog}"></mwc-button>
+          <mwc-button
+            label="${_t('button.Close')}"
+            @click="${this._hideGitTokenManagementDialog}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
