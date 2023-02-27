@@ -707,19 +707,19 @@ class BackendAIRegistryList extends BackendAIPage {
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Registry list" .items="${this._registryList}">
           <vaadin-grid-column flex-grow="0" width="40px" header="#" text-align="center" .renderer=${this._indexRenderer}>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer}>
+          <vaadin-grid-column flex-grow="1" auto-width header="${_t('registry.Hostname')}" .renderer=${this._hostNameRenderer} resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer}>
+          <vaadin-grid-column flex-grow="2" auto-width header="${_t('registry.RegistryURL')}" resizable .renderer=${this._registryUrlRenderer} resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type">
+          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.Type')}" path="type" resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project">
+          <vaadin-grid-column flex-grow="0" auto-width resizable header="${_t('registry.HarborProject')}" path="project" resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username">
+          <vaadin-grid-column flex-grow="1" header="${_t('registry.Username')}" path="username" resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}">
+          <vaadin-grid-column flex-grow="1" header="${_t('registry.Password')}" .renderer="${this._boundPasswordRenderer}" resizable>
           </vaadin-grid-column>
-          <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer}></vaadin-grid-column>
+          <vaadin-grid-column flex-grow="0" width="60px" header="${_t('general.Enabled')}" .renderer=${this._boundIsEnabledRenderer} resizable></vaadin-grid-column>
           <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
