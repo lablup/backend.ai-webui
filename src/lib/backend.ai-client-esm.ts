@@ -583,9 +583,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('22.09')) {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('22.09')) {
-      this._features['2FA-authentication'] = this.isManagerSupportingTOTP();
+      this._features['2FA'] = this.isManagerSupportingTOTP();
     }
   }
 
@@ -616,7 +614,6 @@ class Client {
     try {
       await this._wrapWithPromise(rqst);
       return Promise.resolve(true);
-      return true;
     } catch (e) {
       return Promise.resolve(false);
     }
@@ -3496,7 +3493,7 @@ class User {
    * };
    */
   async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
-    if (!this.client.supports('2fa-authentication') && '2fa-authentication' in fields) {
+    if (!this.client.supports('2FA') && '2FA' in fields) {
       // TODO : check and remove specific field.
     }
     let q, v;

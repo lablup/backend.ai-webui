@@ -144,9 +144,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showTotpActivated() {
-    this.totpSupported = await globalThis.backendaiclient.supports['2FA-authentication'];
+    this.totpSupported = globalThis.backendaiclient?.supports('2FA');
     if (this.totpSupported) {
-      const userInfo = await globalThis.backendaiclient.user.get(
+      const userInfo = await globalThis.backendaiclient?.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
       );
       this.totpActivated = userInfo.user.totp_activated;
