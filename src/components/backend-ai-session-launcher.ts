@@ -2715,13 +2715,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           tag: requirements.slice(1).join(':'),
           app: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       } else {
         info.push({ // Additional information
           tag: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       }
     }
@@ -3186,17 +3186,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="width:60px;">${_t('session.launcher.Version')}</div>
                   <div style="width:110px;">${_t('session.launcher.Base')}</div>
                   <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-                <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+                <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
               </h5>
               ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="height:auto;">
                     <span style="display:none">${version}</span>
                     <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(version || '', architecture).map((item) => html`
                       <lablup-shields style="width:${item.size}!important;"
                                       color="${item.color}"
                                       app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                      description="${item.tag}">
+                                      description="${item.tag}"
+                                      class="horizontal layout center center-justified">
                       </lablup-shields>
                     `)}
                   </div>
