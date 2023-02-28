@@ -77,6 +77,11 @@ export default class LablupShields extends LitElement {
           border-top-right-radius: 4px;
           border-bottom-right-radius: 4px;
         }
+        .app, .desc {
+          word-break: break-all;
+          white-space: normal;
+          height: fit-content;
+        }
     `];
   }
 
