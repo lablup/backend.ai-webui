@@ -3189,7 +3189,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
               </h5>
               ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="height:auto;">
+                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
                     <span style="display:none">${version}</span>
                     <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(version || '', architecture).map((item) => html`
