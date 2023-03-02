@@ -144,7 +144,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showTotpActivated() {
-    this.totpSupported = globalThis.backendaiclient?.supports('2FA');
+    this.totpSupported = await globalThis.backendaiclient?.supports('2FA');
     if (this.totpSupported) {
       const userInfo = await globalThis.backendaiclient?.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
@@ -605,7 +605,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
                                     @click="${(e) => this._togglePasswordVisibility(e.target)}">
           </mwc-icon-button-toggle>
         </div>
-        ${this.totpSupported === true ? html`
+        ${this.totpSupported ? html`
           <div class="horizontal flex layout">
             <p style="flex-grow: 1;margin-left: 15px;">
               ${_t('webui.menu.TotpActivated')}
