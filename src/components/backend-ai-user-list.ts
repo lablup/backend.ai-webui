@@ -256,14 +256,14 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this.totpSupported = globalThis.backendaiclient?.supports('2FA');
+      document.addEventListener('backend-ai-connected', async () => {
+        this.totpSupported = await globalThis.backendaiclient?.supports('2FA');
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       }, true);
     } else { // already connected
-      this.totpSupported = globalThis.backendaiclient?.supports('2FA');
+      this.totpSupported = await globalThis.backendaiclient?.supports('2FA');
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
