@@ -111,7 +111,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
   @property({type: Boolean}) hideAgents = true;
-  @property({type: Boolean}) hide2FA = true;
+  @property({type: Boolean}) enable2FA = false;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
@@ -717,12 +717,12 @@ export default class BackendAILogin extends BackendAIPage {
         value: (generalConfig?.hideAgents),
       } as ConfigValueObject) as boolean;
 
-    // Enable hide 2FA flag
-    this.hide2FA = this._getConfigValueByExists(generalConfig,
+    // Enable enable 2FA flag
+    this.enable2FA = this._getConfigValueByExists(generalConfig,
       {
         valueType: 'boolean',
         defaultValue: true,
-        value: (generalConfig?.hide2FA),
+        value: (generalConfig?.enable2FA),
       } as ConfigValueObject) as boolean;
 
     // Enable pipeline flag
@@ -1443,7 +1443,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
-      globalThis.backendaiclient._config.hide2FA = this.hide2FA;
+      globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
