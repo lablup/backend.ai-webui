@@ -1,5 +1,20 @@
 # Changelog
 
+## v22.09.12 (26/02/2023)
+## What's Changed
+* fix: expand space between resources displaying and fix decimal points by @lizable in https://github.com/lablup/backend.ai-webui/pull/1603
+* fix: align gpu process bar by @leejiwon1125 in https://github.com/lablup/backend.ai-webui/pull/1585
+* fix: allow any special characters in password input by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1606
+* ci: add an `add-to-project` workflow by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/1590
+* fix: display all available presets when `always_enqueue_compute_session` options is configured by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1607
+* hotfix: typo errors in getting 2FA by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1604
+* refactor: display total remaining resources in resource group indicator by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1610
+
+## New Contributors
+* @leejiwon1125 made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1585
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.11...v22.09.12
+
 ## v22.09.11 (20/02/2023)
 ## What's Changed
 * feature: show total resource group amount in resource monitor gauge by @lizable in https://github.com/lablup/backend.ai-webui/pull/1593
