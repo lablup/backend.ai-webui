@@ -1,5 +1,17 @@
 # Changelog
 
+## v22.09.13 (05/03/2023)
+
+## What's Changed
+* feat: set columns in the registry-list page to be resizable by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1613
+* feat: add the flag to hide 2fa by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1612
+* style: display all characters of session image tag by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1614
+* fix: get `totpSupported` flag asynchronously by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1615
+* refactor: change 2FA option name: `hide2FA` -> `enable2FA` by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1616
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.12...v22.09.13
+
 ## v22.09.12 (26/02/2023)
 ## What's Changed
 * fix: expand space between resources displaying and fix decimal points by @lizable in https://github.com/lablup/backend.ai-webui/pull/1603
