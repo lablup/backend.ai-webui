@@ -98,7 +98,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Boolean}) allow_project_resource_monitor = false;
   @property({type: Array}) disableLaunch;
   // Custom information
-  @property({type: Number}) max_cpu_core_per_session = 64;
+  @property({type: Number}) max_cpu_core_per_session = 128;
+  @property({type: Number}) max_mem_per_container = 1536;
+  @property({type: Number}) max_cuda_device_per_container = 16;
+  @property({type: Number}) max_cuda_shares_per_container = 16;
+  @property({type: Number}) max_shm_per_container = 8;
 
   constructor() {
     super();
@@ -238,10 +242,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
+        this._initMaxResourcesByConfiguration();
         this.allow_project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
         this._updatePageVariables(true);
       }, {once: true});
     } else {
+      this._initMaxResourcesByConfiguration();
       this.allow_project_resource_monitor = globalThis.backendaiclient._config.allow_project_resource_monitor;
       await this._updatePageVariables(true);
     }
@@ -471,18 +477,24 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
+      const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
+
+      // NOTE:
+      // When keypair resource limit is infinity,
+      // max limit will be set to maximum resource configuration if `always_enqueue_compute_session` is true.
+      // if not, it will follow total_resource_group amount
 
       if ('cpu' in keypair_resource_limit) {
-        total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
+        total_resource_group_slot['cpu'] = enqueueSession ? this.max_cpu_core_per_session : Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
-        if (keypair_resource_limit['cpu'] === 'Infinity') { // When resource is infinity, use scaling group limit instead.
+        if (keypair_resource_limit['cpu'] === 'Infinity') {
           total_slot['cpu'] = total_resource_group_slot['cpu'];
         } else {
           total_slot['cpu'] = keypair_resource_limit['cpu'];
         }
       }
       if ('mem' in keypair_resource_limit) {
-        total_resource_group_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
+        total_resource_group_slot['mem'] = enqueueSession ? this.max_mem_per_container : parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_remaining.mem, 'g')) + parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(scaling_group_resource_using.mem, 'g'));
         total_project_slot['mem'] = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(project_resource_total.mem, 'g'));
         if (keypair_resource_limit['mem'] === 'Infinity') {
           total_slot['mem'] = total_resource_group_slot['mem'];
@@ -495,7 +507,16 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in keypair_resource_limit) {
-          total_resource_group_slot[slot_name] = Number(scaling_group_resource_remaining[slot_key]) + Number(scaling_group_resource_using[slot_key]);
+          // FIXME:
+          // apply partial gpu resource setting according to available max configuration
+          // current slot name that supports max resource configuration:
+          // - cuda_device(cuda.device),
+          // - cuda_shares(cuda.shares),
+          if (['cuda_device', 'cuda_shares'].includes(slot_name) && enqueueSession) {
+            total_resource_group_slot[slot_name] = (slot_name == 'cuda_device') ? this.max_cuda_device_per_container : this.max_cuda_shares_per_container;
+          } else {
+            total_resource_group_slot[slot_name] =  Number(scaling_group_resource_remaining[slot_key]) + Number(scaling_group_resource_using[slot_key]);
+          }
           total_project_slot[slot_name] = Number(project_resource_total[slot_key]);
           if (keypair_resource_limit[slot_key] === 'Infinity') {
             total_slot[slot_name] = total_resource_group_slot[slot_name];
@@ -720,7 +741,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
 
-      const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
       const availablePresets = response.presets.map((item) => {
         if (item.allocatable === true) {
           for (const [slotKey, slotName] of Object.entries(slotList)) {
@@ -784,6 +804,17 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     } else {
       this._aggregateCurrentResource(from);
     }
+  }
+
+  /**
+   * 
+   */
+  _initMaxResourcesByConfiguration() {
+    this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
+    this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
+    this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
+    this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+    this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
   }
 
   /**
