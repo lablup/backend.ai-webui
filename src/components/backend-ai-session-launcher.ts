@@ -111,7 +111,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': 0,
     'max': 0
   };
-  @property({type: Object}) cuda_shares_metric;
+  @property({type: Object}) cuda_shares_metric = {
+    'min': 0,
+    'max': 0,
+  }
   @property({type: Object}) rocm_device_metric = {
     'min': '0',
     'max': '0'
@@ -180,11 +183,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Number}) max_cpu_core_per_session = 128;
-  @property({type: Number}) max_mem_per_container = 1536;
-  @property({type: Number}) max_cuda_device_per_container = 16;
-  @property({type: Number}) max_cuda_shares_per_container = 16;
-  @property({type: Number}) max_shm_per_container = 8;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
@@ -907,11 +905,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
-        this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
-        this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-        this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-        this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
         if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
           'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
           globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
@@ -927,11 +920,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._enableLaunchButton();
       }, {once: true});
     } else {
-      this.max_cpu_core_per_session = globalThis.backendaiclient._config.maxCPUCoresPerContainer || 128;
-      this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
-      this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
-      this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
-      this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
         'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
         globalThis.backendaiclient._config.allow_manual_image_name_for_session !== '') {
@@ -1834,7 +1822,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cpu') {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
-          const comparingListMaxCPUResources: number[] = [available_slot['cpu'], this.max_cpu_core_per_session];
+          const comparingListMaxCPUResources: number[] = [available_slot['cpu'], this.resourceBroker.max_cpu_core_per_session];
           if (enqueue_session) {
             if ('cpu' in this.userResourceLimit) {
               comparingListMaxCPUResources.push(parseInt(this.userResourceLimit['cpu']));
@@ -1866,7 +1854,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.device' && this.gpu_mode == 'cuda.device') {
           const cuda_device_metric = {...item};
           cuda_device_metric.min = parseInt(cuda_device_metric.min);
-          const comparingListMaxCUDADeviceResources: number[] = [available_slot['cuda_device'], this.max_cuda_device_per_container];
+          const comparingListMaxCUDADeviceResources: number[] = [available_slot['cuda_device'], this.resourceBroker.max_cuda_device_per_container];
           if (enqueue_session) {
             if ('cuda.device' in this.userResourceLimit) {
               comparingListMaxCUDADeviceResources.push(parseInt(this.userResourceLimit['cuda.device']));
@@ -1889,7 +1877,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
           const cuda_shares_metric = {...item};
           cuda_shares_metric.min = parseFloat(cuda_shares_metric.min);
-          const comparingListMaxCUDAShareResources: number[] = [available_slot['cuda_shares'], this.max_cuda_shares_per_container];
+          const comparingListMaxCUDAShareResources: number[] = [parseFloat(available_slot['cuda_shares']), this.resourceBroker.max_cuda_shares_per_container];
           if (enqueue_session) {
             if ('cuda.shares' in this.userResourceLimit) {
               comparingListMaxCUDAShareResources.push(parseInt(this.userResourceLimit['cuda.shares']));
@@ -1941,7 +1929,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             mem_metric.max = 0;
           }
           const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
-          const comparingListMaxMemResources: number[] = [available_slot['mem'], this.max_mem_per_container];
+          const comparingListMaxMemResources: number[] = [available_slot['mem'], this.resourceBroker.max_mem_per_container];
           if (enqueue_session) {
             if ('mem' in this.userResourceLimit) {
               const user_mem_max = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.userResourceLimit['mem'], 'g'));
@@ -1975,7 +1963,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
       });
       // Shared memory setting
-      shmem_metric.max = this.max_shm_per_container;
+      shmem_metric.max = this.resourceBroker.max_shm_per_container;
       shmem_metric.min = 0.0625; // 64m
       if (shmem_metric.min >= shmem_metric.max) {
         if (shmem_metric.min > shmem_metric.max) {
@@ -2613,7 +2601,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateShmemLimit() {
     const currentMemLimit = parseFloat(this.memoryResourceSlider.value);
     let shmemValue = this.sharedmemoryResourceSlider.value;
-    // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
+    // this.shmem_metric.max = Math.min(this.resourceBroker.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     // shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmemValue) > currentMemLimit) {
@@ -2623,8 +2611,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.sharedmemoryResourceSlider.max = shmemValue;
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
-    } else if (this.max_shm_per_container > shmemValue) {
-      this.sharedmemoryResourceSlider.max = currentMemLimit > this.max_shm_per_container ? this.max_shm_per_container : currentMemLimit;
+    } else if (this.resourceBroker.max_shm_per_container > shmemValue) {
+      this.sharedmemoryResourceSlider.max = currentMemLimit > this.resourceBroker.max_shm_per_container ? this.resourceBroker.max_shm_per_container : currentMemLimit;
     }
   }
 
