@@ -3481,7 +3481,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                    pin snaps editable markers step="${this.gpu_step}"
                                    @change="${(e) => this._applyResourceValueChanges(e)}"
                                    marker_limit="${this.marker_limit}" suffix="GPU"
-                                   min="0.0" max="${this.cuda_device_metric.max}"
+                                   min="0.0" max="${this.gpu_mode == 'cuda.device' ? this.cuda_device_metric.max : this.cuda_shares_metric.max}"
                                    value="${this.gpu_request}"></lablup-slider>
                   </div>
                   <mwc-list-item hasMeta class="resource-type">
