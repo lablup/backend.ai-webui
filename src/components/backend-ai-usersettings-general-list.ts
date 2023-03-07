@@ -874,9 +874,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     newTokenTextField.style.width = "auto";
     newListItem.appendChild(newTokenTextField);
 
-    let newItemRemoveButtonField = document.createElement('mwc-button');
-    newItemRemoveButtonField.label = _text('button.Delete');
-    newItemRemoveButtonField.style.width = "auto";
+    let newItemRemoveButtonField = document.createElement('mwc-icon-button');
+    newItemRemoveButtonField.className = "green minus-btn";
+    newItemRemoveButtonField.icon="remove";
     newItemRemoveButtonField.addEventListener('click', (e) => {
       this._deleteGitTokenList(e.target);
     });
@@ -1346,7 +1346,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="git-token-management-dialog" fixed backdrop persistent>
         <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
-        <div slot="content" style="max-width:800px">
+        <div slot="content" style="width:440px">
           <mwc-list>
             <mwc-list-item>
               <mwc-textfield
@@ -1383,11 +1383,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           </mwc-list>
           <mwc-list id="custom-git-token-list">
           </mwc-list>
+          <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
+              @click="${() => this._addGitTokenList()}">${_t('button.Add')}</mwc-button>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button
-            label="${_t('button.Add')}"
-            @click="${this._addGitTokenList}"></mwc-button>
           <mwc-button
             label="${_t('button.Save')}"
             @click="${this._openSaveGitTokenManagementDialog}"></mwc-button>
