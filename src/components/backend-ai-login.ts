@@ -135,6 +135,7 @@ export default class BackendAILogin extends BackendAIPage {
   @query('#id_secret_key') secretKeyInput!: TextField;
   @query('#otp') otpInput!: TextField;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#waiting-animation') waitingAnimation!: HTMLDivElement;
 
   constructor() {
     super();
@@ -327,7 +328,7 @@ export default class BackendAILogin extends BackendAIPage {
           text-align: center;
         }
 
-        .waiting-animation {
+        #waiting-animation {
           top: 20%;
           left: 40%;
           position: absolute;
@@ -1218,6 +1219,7 @@ export default class BackendAILogin extends BackendAIPage {
             if (response.fail_reason == 'OTP not provided') {
               this.otpRequired = true;
               this._disableUserInput();
+              this.waitingAnimation.style.display = 'none';
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
@@ -1531,7 +1533,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.apiKeyInput.disabled = true;
       this.secretKeyInput.disabled = true;
     }
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
+    this.waitingAnimation.style.display = 'flex';
   }
 
   private _enableUserInput() {
@@ -1539,7 +1541,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.passwordInput.disabled = false;
     this.apiKeyInput.disabled = false;
     this.secretKeyInput.disabled = false;
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
+    this.waitingAnimation.style.display = 'none';
   }
 
   private _showEndpointDescription(e?) {
@@ -1577,7 +1579,7 @@ export default class BackendAILogin extends BackendAIPage {
             ` : html``}
           </h3>
           <div class="login-form">
-            <div class="waiting-animation horizontal layout wrap">
+            <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
                 <div class="sk-cube1 sk-cube"></div>
                 <div class="sk-cube2 sk-cube"></div>
