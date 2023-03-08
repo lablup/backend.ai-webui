@@ -721,7 +721,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.enable2FA = this._getConfigValueByExists(generalConfig,
       {
         valueType: 'boolean',
-        defaultValue: true,
+        defaultValue: false,
         value: (generalConfig?.enable2FA),
       } as ConfigValueObject) as boolean;
 
