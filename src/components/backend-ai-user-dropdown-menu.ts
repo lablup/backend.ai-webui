@@ -5,7 +5,7 @@
 
 
 import {customElement, property, query} from 'lit/decorators.js';
-import {LitElement, html, CSSResultGroup} from 'lit';
+import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
 import '@material/mwc-select';
 import '@material/mwc-icon-button';
@@ -73,7 +73,21 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning
+      IronPositioning,
+      css`
+        span.dropdown-menu-name {
+          display: inline-block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 135px;
+        }
+
+        #dropdown-area {
+          position: relative;
+          right: 50px;
+        }
+      `,
     ];
   }
 
@@ -108,8 +122,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = this.fullName ? this.fullName : this.userId;
-    // mask username only when the configuration is enabled
+    let name = (this.fullName.replace(/\s+/g, "").length > 0) ? this.fullName : this.userId;
+      // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
       const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -484,7 +498,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal flex center layout">
-        <div class="vertical layout center" style="position:relative;right:50px;">
+        <div class="vertical layout center" id="dropdown-area">
           <mwc-menu id="dropdown-menu" class="user-menu">
             ${this.domain !== 'default' && this.domain !== '' ? html`
             <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
@@ -493,7 +507,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
             ` : html``}
             <mwc-list-item class="horizontal layout start center" style="pointer-events:none;">
                 <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
-                <span class="dropdown-menu-name">${this._getUsername()}</span>
+                 <span class="dropdown-menu-name">${this._getUsername()}</span>
             </mwc-list-item>
             <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
                 <mwc-icon class="dropdown-menu">email</mwc-icon>
