@@ -19,6 +19,8 @@
   <title>Backend.AI</title>
   <script src="./src/lib/webcomponents-loader.js"></script>
   <script src="./src/lib/web-animations-js/web-animations-next-lite.min.js"></script>
+  <!-- TODO: change the src by environment -->
+  <script defer src="http://127.0.0.1:3081/static/js/bundle.js"></script>
 
   <script>
     globalThis.isElectron = isElectron();
@@ -176,6 +178,7 @@
     }
 
     @keyframes sk-foldCubeAngle {
+
       0%,
       10% {
         -webkit-transform: perspective(140px) rotateX(-180deg);
