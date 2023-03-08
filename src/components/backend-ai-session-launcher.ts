@@ -1928,7 +1928,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (!mem_metric.max) {
             mem_metric.max = 0;
           }
-          const image_mem_max = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.max, 'g', 'g');
           const comparingListMaxMemResources: number[] = [available_slot['mem'], this.resourceBroker.max_mem_per_container];
           if (enqueue_session) {
             if ('mem' in this.userResourceLimit) {
