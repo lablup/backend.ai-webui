@@ -1206,7 +1206,7 @@ export default class BackendAILogin extends BackendAIPage {
           return;
         }
 
-        this.client?.login(this.otp).then((response) => {
+        this.client?.login(this.otp).then(async (response) => {
           if (response === false) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
@@ -1218,6 +1218,9 @@ export default class BackendAILogin extends BackendAIPage {
             this.open();
             if (response.fail_reason == 'OTP not provided') {
               this.otpRequired = true;
+              await this.otpInput.updateComplete;
+              this.otpInput.focus();
+
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
             } else if (this.user_id !== '' && this.password !== '') {
