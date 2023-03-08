@@ -52,8 +52,32 @@ export const reactToWebComponentWithDefault = (
               shadowRoot: node.current?.shadowRoot,
             }}
           >
-            {/* @ts-ignore */}
-            <ConfigProvider getPopupContainer={getPopupContainer}>
+            <ConfigProvider
+              // @ts-ignore
+              getPopupContainer={getPopupContainer}
+              theme={{
+                token: {
+                  colorPrimary: "#37B076",
+                  colorLink: "#37B076",
+                  colorLinkHover: "#71b98c",
+                  colorSuccess: "#37B076",
+                },
+                components: {
+                  Tag: {
+                    borderRadiusSM: 1,
+                  },
+                  Collapse: {
+                    colorFillAlter: "#FAFAFA",
+                    borderRadiusLG: 0,
+                  },
+                  Menu: {
+                    colorItemBgSelected: "transparent",
+                    colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
+                    radiusItem: 0,
+                  },
+                },
+              }}
+            >
               <StyleProvider container={node.current?.shadowRoot}>
                 <React.StrictMode>
                   {/* @ts-ignore */}
