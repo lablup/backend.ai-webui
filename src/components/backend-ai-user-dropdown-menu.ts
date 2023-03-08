@@ -76,6 +76,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       IronPositioning
     ];
   }
+
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -88,6 +89,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     }
   }
+
   /**
    * Refresh the user information panel.
    */
@@ -144,7 +146,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showTotpActivated() {
-    this.totpSupported = await globalThis.backendaiclient?.supports('2FA');
+    this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
     if (this.totpSupported) {
       const userInfo = await globalThis.backendaiclient?.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
