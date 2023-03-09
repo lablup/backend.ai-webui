@@ -1,6 +1,6 @@
 # Backend.AI Web UI
 
-[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui)
+[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui)](https://github.com/lablup/backend.ai-webui/releases/latest)
 
 Make AI Accessible: Backend.AI Web UI (web/app) for End-user / DevOps / SysAdmin.
 
