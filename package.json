@@ -104,6 +104,7 @@
     "@web/dev-server": "^0.1.34",
     "@web/dev-server-esbuild": "^0.3.2",
     "babel-eslint": "^10.1.0",
+    "better-docs": "^2.7.2",
     "browserify": "^17.0.0",
     "buffer": "^6.0.3",
     "cli-color": "^2.0.3",

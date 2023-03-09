@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';

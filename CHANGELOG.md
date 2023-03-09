@@ -1,7 +1,16 @@
 # Changelog
 
-## v22.09.13 (05/03/2023)
+## v22.09.14 (09/03/2023)
+## What's Changed
+* fix: minor capital letter issue by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1619
+* fix: 2FA item in user preference menu is not displayed after the initial login by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1622
+* fix: apply ellipsis when username or userid exceeds total width of user dropdown menu by @lizable in https://github.com/lablup/backend.ai-webui/pull/1624
+* hotfix: Remove the waiting text in the login dialog in typing OTP by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1623
 
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.13...v22.09.14
+
+
+## v22.09.13 (05/03/2023)
 ## What's Changed
 * feat: set columns in the registry-list page to be resizable by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1613
 * feat: add the flag to hide 2fa by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1612
@@ -9,8 +18,8 @@
 * fix: get `totpSupported` flag asynchronously by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1615
 * refactor: change 2FA option name: `hide2FA` -> `enable2FA` by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1616
 
-
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.12...v22.09.13
+
 
 ## v22.09.12 (26/02/2023)
 ## What's Changed
@@ -27,13 +36,13 @@
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.11...v22.09.12
 
+
 ## v22.09.11 (20/02/2023)
 ## What's Changed
 * feature: show total resource group amount in resource monitor gauge by @lizable in https://github.com/lablup/backend.ai-webui/pull/1593
 * feat: add support for TOTP integration by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1596
 * fix: increase item count 20 -> 100 for agent summary list query by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1599
 * feature: 2fa management by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1600
-
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.10...v22.09.11
 
@@ -43,7 +52,6 @@
 * fix: incorrect display of GPU memory utilization by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1588
 * fix: incorrect assignment of signin mode config by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1591
 * add: more CSS injection point to custom.css by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1594
-
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.9...v22.09.10
 
@@ -122,6 +130,7 @@
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.3...v22.09.4
 
+
 ## v22.09.3 (27/11/2022)
 ## What's Changed
 * add: Electron app debugging content on README by @studioego in https://github.com/lablup/backend.ai-webui/pull/1485
@@ -156,6 +165,7 @@
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.2...v22.09.3
 
+
 ## v22.09.2 (28/10/2022)
 ## What's Changed
 * feature : annotate plastic components and ESModule SDK by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1479
@@ -163,6 +173,7 @@
 * fix: Cannot set the maximum shared memory size via configuration by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1483
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.1...v22.09.2
+
 
 ## v22.09.1 (19/09/2022)
 ## What's Changed
@@ -193,6 +204,7 @@
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.0...v22.09.1
 
+
 ## v22.09.0 (31/08/2022)
 ## What's Changed
 * fix: add validation check and enable button only valid status in import and run page by @mihilt in https://github.com/lablup/backend.ai-webui/pull/1400
@@ -213,7 +225,6 @@
 
 
 ## v22.03.7 (22/08/2022)
-
 ## What's Changed
 * Feature: webui grid status by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1138
 * Hotfix: Temporally disable terminate and container commit on running session by @lizable in https://github.com/lablup/backend.ai-webui/pull/1425
@@ -223,7 +234,6 @@
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.6...v22.03.7
 
 ## v22.03.6 (18/08/2022)
-
 ## What's Changed
 * add: Required field for validation whether input field in command area by @lizable in https://github.com/lablup/backend.ai-webui/pull/1408
 * fix: show the modified registry information by @dan-2ee in https://github.com/lablup/backend.ai-webui/pull/1385
@@ -243,8 +253,8 @@
 
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.5...v22.03.6
 
-## v22.03.5  (04/08/2022)
 
+## v22.03.5  (04/08/2022)
 ## What's Changed
 * feature: application signing with GitHub Actions by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1308
 * hotfix: hide resource statics panel when login by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1407
@@ -254,7 +264,6 @@
 
 
 ## v22.03.4  (04/08/2022)
-
 ## What's Changed
 * add: storage host that supports directory based quota setting by @lizable in https://github.com/lablup/backend.ai-webui/pull/1332
 * fix: mount shared folders when creating a session by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1340
@@ -290,7 +299,6 @@
 **Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.03.3...v22.03.4
 
 ## v22.03.3 (26/06/2022)
-
 ## What's Changed
 * refactor: querySelector with leading Number id string(#1321) by @studioego in https://github.com/lablup/backend.ai-webui/pull/1322
 * fix: some session description dialog does not appear. by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1323
