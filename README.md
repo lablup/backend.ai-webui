@@ -1,10 +1,11 @@
 # Backend.AI Web UI
 
-[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui)](https://github.com/lablup/backend.ai-webui/releases/latest)
+[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui?color=39a96b&label=release&sort=semver&style=for-the-badge)](https://github.com/lablup/backend.ai-webui/releases/latest)
+[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui?color=ff9300&include_prereleases&label=testing&sort=semver&style=for-the-badge)](https://github.com/lablup/backend.ai-webui/releases/latest)
 
 Make AI Accessible: Backend.AI Web UI (web/app) for End-user / DevOps / SysAdmin.
 
-For more information, see [manual](https://console.docs.backend.ai/en/latest/).
+For more information, see [manual](https://webui.docs.backend.ai/en/latest/).
 
 ## Changelog
 
