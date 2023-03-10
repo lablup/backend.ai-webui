@@ -571,7 +571,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_project_slot['mem'] = 0.0;
       }
       used_project_slot['mem'] = used_project_slot['mem'].toFixed(2);
-
       for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
           remaining_slot[slot_name] = resource_remaining[slot_key];

@@ -394,7 +394,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
                   <div class="horizontal layout setting-item">
                     <div class="vertical center-justified layout setting-desc-shrink">
                       <div class="title">${_t('settings.ROCMGPUsupport')}</div>
-                      <div class="description-shrink">${_tr('settings.DescROCMGPUsupport')}<br />${_t('settings.Require1912orAbove')}
+                      <div class="description-shrink">${_tr('settings.DescROCMGPUsupport')}
                       </div>
                     </div>
                     <div class="vertical center-justified layout setting-button">

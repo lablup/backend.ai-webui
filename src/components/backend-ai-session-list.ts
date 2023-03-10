@@ -704,6 +704,16 @@ export default class BackendAiSessionList extends BackendAIPage {
             } else {
               sessions[objectKey].tpu_util = 0;
             }
+            if (liveStat && liveStat.ipu_util) {
+              sessions[objectKey].ipu_util = liveStat.ipu_util;
+            } else {
+              sessions[objectKey].ipu_util = 0;
+            }
+            if (liveStat && liveStat.atom_util) {
+              sessions[objectKey].atom_util = liveStat.atom_util;
+            } else {
+              sessions[objectKey].atom_util = 0;
+            }
             if (liveStat && liveStat.cuda_mem) {
               sessions[objectKey].cuda_mem_ratio = (liveStat.cuda_mem.current / liveStat.cuda_mem.capacity) || 0;
             } else {
@@ -742,6 +752,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           if ('tpu.device' in occupied_slots) {
             sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
+          }
+          if ('ipu.device' in occupied_slots) {
+            sessions[objectKey].ipu_slot = parseInt(occupied_slots['ipu.device']);
+          }
+          if ('atom.device' in occupied_slots) {
+            sessions[objectKey].atom_slot = parseInt(occupied_slots['atom.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
@@ -2012,10 +2028,17 @@ export default class BackendAiSessionList extends BackendAIPage {
               <span>${rowData.item.tpu_slot}</span>
               <span class="indicator">TPU</span>
               ` : html``}
+            ${rowData.item.atom_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.atom_slot}</span>
+              <span class="indicator">ATOM</span>
+              ` : html``}
             ${!rowData.item.cuda_gpu_slot &&
       !rowData.item.cuda_fgpu_slot &&
       !rowData.item.rocm_gpu_slot &&
-      !rowData.item.tpu_slot ? html`
+      !rowData.item.tpu_slot &&
+      !rowData.item.ipu_slot &&
+      !rowData.item.atom_slot ? html`
               <wl-icon class="fg green indicator">view_module</wl-icon>
               <span>-</span>
               <span class="indicator">GPU</span>
@@ -2103,6 +2126,26 @@ export default class BackendAiSessionList extends BackendAIPage {
             <div class="horizontal start-justified center layout">
               <lablup-progress-bar class="usage"
                 progress="${rowData.item.tpu_util / (rowData.item.tpu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.ipu_slot && parseFloat(rowData.item.ipu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">IPU(util)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.ipu_util / (rowData.item.ipu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.atom_slot && parseFloat(rowData.item.atom_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">ATOM(util)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.atom_util / (rowData.item.atom_slot * 100)}"
                 description=""
               ></lablup-progress-bar>
             </div>
