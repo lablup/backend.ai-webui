@@ -336,7 +336,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this._GPUmodeUpdated = true;
       return globalThis.backendaiclient.get_resource_slots().then((response) => {
         const results = response;
-        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device', 'ipu.device', 'atom.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
@@ -447,7 +447,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
-        'tpu.device': 'tpu_device'
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
       };
       const slotList = {
         'cpu': 'cpu',
@@ -455,7 +457,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
-        'tpu.device': 'tpu_device'
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
       };
       // let scaling_group_resource_remaining = response.scaling_group_remaining;
       if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project

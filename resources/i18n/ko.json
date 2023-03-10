@@ -882,7 +882,7 @@
     "TimeoutSeconds": "초",
     "ResourceGroupDetail": "자원 그룹 세부 정보",
     "RetriesToSkip": "회",
-    "NoGroupToDisplay": "__NOT_TRANSLATED__"
+    "NoGroupToDisplay": "그룹이 없습니다"
   },
   "maintenance": {
     "General": "일반",
@@ -1020,7 +1020,13 @@
     "OverlayNetworkConfiguration": "오버레이 네트워크 설정을 변경합니다.",
     "OverlayNetworkSettings": "오버레이 네트워크 설정",
     "OverlayNetworkSettingsDescription": "오버레이 네트워크는 물리 네트워크 위에 성립되는 가상의 컴퓨터 네트워크입니다. 오버레이 네트워크는 Backend.AI 매니저의 여러 Docker 데몬 호스트 간에 분산 네트워크를 생성합니다.",
-    "MTUDescription": "최대 전송 단위 - 해당 레이어가 전송할 수 있는 최대 프로토콜 데이터 단위의 크기입니다."
+    "MTUDescription": "최대 전송 단위 - 해당 레이어가 전송할 수 있는 최대 프로토콜 데이터 단위의 크기입니다.",
+    "IPUsupport": "IPU 지원",
+    "DescIPUsupport": "GraphCore IPU 가속기를 사용합니다.",
+    "ATOMsupport": "ATOM 지원",
+    "DescATOMsupport": "Rebellions ATOM 가속기를을 사용합니다.",
+    "RequireIPUPlugin": "Backend.AI IPU 플러그인이 필요합니다.",
+    "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",

@@ -399,6 +399,12 @@ export default class BackendAiSessionView extends BackendAIPage {
             if (occupiedSlots['rocm.device']) {
               exportListItem.rocm_device = occupiedSlots['rocm.device'];
             }
+            if (occupiedSlots['ipu.device']) {
+              exportListItem.ipu_device = occupiedSlots['ipu.device'];
+            }
+            if (occupiedSlots['atom.device']) {
+              exportListItem.atom_device = occupiedSlots['atom.device'];
+            }
           }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
           if (liveStat) {

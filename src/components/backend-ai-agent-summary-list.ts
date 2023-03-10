@@ -238,7 +238,6 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
             agents[objectKey].used_mem_slots = parseInt(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
             agents[objectKey].mem_total_usage_ratio = agents[objectKey].used_mem_slots / agents[objectKey].mem_slots;
             agents[objectKey].total_mem_percent = (agents[objectKey].mem_total_usage_ratio * 100)?.toFixed(2);
-
             if ('cuda.device' in available_slots) {
               agents[objectKey].cuda_gpu_slots = parseInt(available_slots['cuda.device']);
               if ('cuda.device' in occupied_slots) {
@@ -268,6 +267,36 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
               }
               agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
               agents[objectKey].total_rocm_gpu_percent = (agents[objectKey].used_rocm_gpu_slots_ratio * 100)?.toFixed(2);
+            }
+            if ('tpu.device' in available_slots) {
+              agents[objectKey].tpu_slots = parseInt(available_slots['tpu.device']);
+              if ('tpu.device' in occupied_slots) {
+                agents[objectKey].used_tpu_slots = parseInt(occupied_slots['tpu.device']);
+              } else {
+                agents[objectKey].used_tpu_slots = 0;
+              }
+              agents[objectKey].used_tpu_slots_ratio = agents[objectKey].used_tpu_slots / agents[objectKey].tpu_slots;
+              agents[objectKey].total_tpu_percent = (agents[objectKey].used_tpu_slots_ratio * 100)?.toFixed(2);
+            }
+            if ('ipu.device' in available_slots) {
+              agents[objectKey].ipu_slots = parseInt(available_slots['ipu.device']);
+              if ('ipu.device' in occupied_slots) {
+                agents[objectKey].used_ipu_slots = parseInt(occupied_slots['ipu.device']);
+              } else {
+                agents[objectKey].used_ipu_slots = 0;
+              }
+              agents[objectKey].used_ipu_slots_ratio = agents[objectKey].used_ipu_slots / agents[objectKey].ipu_slots;
+              agents[objectKey].total_ipu_percent = (agents[objectKey].used_ipu_slots_ratio * 100)?.toFixed(2);
+            }
+            if ('atom.device' in available_slots) {
+              agents[objectKey].atom_slots = parseInt(available_slots['atom.device']);
+              if ('atom.device' in occupied_slots) {
+                agents[objectKey].used_atom_slots = parseInt(occupied_slots['atom.device']);
+              } else {
+                agents[objectKey].used_atom_slots = 0;
+              }
+              agents[objectKey].used_atom_slots_ratio = agents[objectKey].used_atom_slots / agents[objectKey].atom_slots;
+              agents[objectKey].total_atom_percent = (agents[objectKey].used_atom_slots_ratio * 100)?.toFixed(2);
             }
             if ('schedulable' in agent) {
               agents[objectKey].schedulable = agent.schedulable;
@@ -424,6 +453,30 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
               <span class="flex"></span>
               <lablup-progress-bar id="tpu-bar" progress="${rowData.item.used_tpu_slots_ratio}"
                                   description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
+          ${rowData.item.ipu_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_ipu_slots}/${rowData.item.ipu_slots}</span>
+                <span class="indicator">IPU</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="ipu-bar" progress="${rowData.item.used_ipu_slots_ratio}"
+                                  description="${rowData.item.used_ipu_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
+          ${rowData.item.atom_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/tpu.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_atom_slots}/${rowData.item.atom_slots}</span>
+                <span class="indicator">ATOM</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="atom-bar" progress="${rowData.item.used_atom_slots_ratio}"
+                                  description="${rowData.item.used_atom_slots}"></lablup-progress-bar>
             </div>
           ` : html``}
         </div>`, root

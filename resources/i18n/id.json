@@ -1021,7 +1021,13 @@
     "OverlayNetworkSettings": "__NOT_TRANSLATED__",
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
-    "OutOfRange": "__NOT_TRANSLATED__"
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",

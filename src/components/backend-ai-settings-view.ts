@@ -44,6 +44,8 @@ interface Options {
   cuda_fgpu: boolean;
   rocm_gpu: boolean;
   tpu: boolean;
+  ipu: boolean;
+  atom: boolean;
   schedulerType: string;
   scheduler: {
     num_retries_to_skip: string;
@@ -99,6 +101,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       cuda_fgpu: false,
       rocm_gpu: false,
       tpu: false,
+      ipu: false,
+      atom: false,
       schedulerType: 'fifo',
       scheduler: {
         num_retries_to_skip: '0',
@@ -438,6 +442,26 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       <mwc-switch id="tpu-switch" ?selected="${this.options['tpu']}" disabled></mwc-switch>
                     </div>
                   </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t('settings.IPUsupport')}</div>
+                      <div class="description-shrink">${_tr('settings.DescIPUsupport')} <br/>${_t('settings.RequireIPUPlugin')}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="ipu-support-switch" ?selected="${this.options['ipu']}" disabled></mwc-switch>
+                    </div>
+                  </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t('settings.ATOMsupport')}</div>
+                      <div class="description-shrink">${_tr('settings.DescATOMsupport')} <br/>${_t('settings.RequireATOMPlugin')}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="atom-support-switch" ?selected="${this.options['atom']}" disabled></mwc-switch>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -655,6 +679,12 @@ export default class BackendAiSettingsView extends BackendAIPage {
       }
       if ('tpu.device' in response) {
         this.options['tpu'] = true;
+      }
+      if ('ipu.device' in response) {
+        this.options['ipu'] = true;
+      }
+      if ('atom.device' in response) {
+        this.options['atom'] = true;
       }
       // this.update(this.options);
       this.requestUpdate();

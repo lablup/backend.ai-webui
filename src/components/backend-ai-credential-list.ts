@@ -284,7 +284,22 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['default_for_unspecified'] === 'UNLIMITED') {
             keypair['total_resource_slots'].tpu_device = '-';
           }
-          ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
+          if ('ipu.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].ipu_device = keypair['total_resource_slots']['ipu.device'];
+          }
+          if (('ipu_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].ipu_device = '-';
+          }
+          if ('atom.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].tpu_device = keypair['total_resource_slots']['atom.device'];
+          }
+          if (('atom_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].atom_device = '-';
+          }
+
+          ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device', 'ipu_device', 'atom_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
           keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGiB(keypair['max_vfolder_size']));

@@ -1028,7 +1028,13 @@
     "OverlayNetworkConfiguration": "Configuration to use when creating overlay networks.",
     "OverlayNetworkSettings": "Overlay Network settings",
     "OverlayNetworkSettingsDescription": "An overlay network is a computer network that is layered on top of another network. The overlay network creates a distributed network among multiple Docker daemon hosts of the Backend.AI manager.",
-    "MTUDescription": "Maximum transmission unit, the size of the largest packet that a network protocol can transmit."
+    "MTUDescription": "Maximum transmission unit, the size of the largest packet that a network protocol can transmit.",
+    "IPUsupport": "IPU",
+    "DescIPUsupport": "Use GraphCore IPU accelerator",
+    "ATOMsupport": "ATOM",
+    "DescATOMsupport": "Use Rebellions ATOM accelerator",
+    "RequireIPUPlugin": "Requires Backend.AI IPU Plugin.",
+    "RequireATOMPlugin": "Requires Backend.AI ATOM Plugin."
   },
   "notification": {
     "SuccessfullyUpdated": "Successfully Updated",
