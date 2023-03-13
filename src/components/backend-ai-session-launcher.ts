@@ -1413,6 +1413,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       folderMapping = this.folderMapping;
     }
+    console.log('folder mapping:', folderMapping);
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
       if (Object.keys(folderMapping).length !== 0) {

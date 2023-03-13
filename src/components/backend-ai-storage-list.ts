@@ -1075,9 +1075,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
-    console.log(params);
     const folderName = params.get('folder');
-    console.log(folderName);
     if(folderName){
       // alert(folderName);
       console.log(this.folders)
@@ -1588,7 +1586,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       const folders = value.filter((item) => {
         if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
-          console.log(item);
+          //console.log(item);
           return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
           return item;
@@ -1931,8 +1929,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    */
   _inferModel(e) {
     const folderName = this._getControlName(e);
-    this.sessionLauncher.customFolderMapping[folderName] = 'tst';
-    console.log(this.sessionLauncher.customFolderMapping[folderName]);
+    this.sessionLauncher.customFolderMapping = {};
+    this.sessionLauncher.customFolderMapping[folderName] = 'mount'; // Session launcher only uses key. Therefore value can be anything. (reserved for future use)
     this.sessionLauncher._launchSessionDialog();
     /*
     this.mode = 'inference'
