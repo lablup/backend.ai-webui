@@ -585,6 +585,12 @@ class Client {
       this._features['fine-grained-storage-permissions'] = true;
       this._features['2FA'] = true;
     }
+    if (this.isAPIVersionCompatibleWith('v6.20230315')) {
+      this._features['inference-workload'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.03')) {
+      this._features['inference-workload'] = true;
+    }
   }
 
   /**
