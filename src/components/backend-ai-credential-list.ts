@@ -105,7 +105,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 226px);
+          height: calc(100vh - 229px);
         }
 
         mwc-icon-button {
