@@ -125,7 +125,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          vaadin-grid {
            border: 0;
            font-size: 14px;
-           height: calc(100vh - 225px);
+           height: calc(100vh - 228px);
          }
          h4 {
           font-weight: 200;
