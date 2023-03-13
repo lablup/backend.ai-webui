@@ -20,13 +20,13 @@ import '@material/mwc-radio';
 import {Select} from '@material/mwc-select';
 import '@material/mwc-textfield';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column-group';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-progress-bar/vaadin-progress-bar';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column-group';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/progress-bar/vaadin-progress-bar';
+import '@vaadin/item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -209,7 +209,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       css`
         vaadin-grid {
           border: 0 !important;
-          height: calc(100vh - 225px);
+          height: calc(100vh - 229px);
         }
 
         vaadin-grid.folderlist {
@@ -1071,9 +1071,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
-    console.log(params);
+    //console.log(params);
     const folderName = params.get('folder');
-    console.log(folderName);
+    //console.log(folderName);
     if(folderName){
       // alert(folderName);
       console.log(this.folders)
