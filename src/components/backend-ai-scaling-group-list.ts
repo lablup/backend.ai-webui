@@ -10,8 +10,7 @@ import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-list-status';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-template-renderer';
+import '@vaadin/grid/vaadin-grid';
 
 import '../plastics/lablup-shields/lablup-shields';
 

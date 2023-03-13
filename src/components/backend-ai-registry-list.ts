@@ -22,7 +22,7 @@ import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid';
 
 import 'weightless/button';
 import 'weightless/card';
