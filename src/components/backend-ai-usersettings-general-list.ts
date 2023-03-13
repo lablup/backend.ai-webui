@@ -27,6 +27,9 @@ import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-switch';
 import {Select} from '@material/mwc-select';
 import {TextArea} from '@material/mwc-textarea';
+import {TextField} from '@material/mwc-textfield';
+import {List} from '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './lablup-loading-spinner';
@@ -74,6 +77,8 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @property({type: String}) prevRcfile = '';
   @property({type: String}) preferredSSHPort = '';
   @property({type: String}) publicSSHkey = '';
+  @property({type: Array}) gitToken;
+  @property({type: Object}) gitTokenValues = Object();
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#bootstrap-editor') bootstrapEditor!: LablupCodemirror;
   @query('#usersetting-editor') userSettingEditor!: LablupCodemirror;
@@ -93,6 +98,9 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
   @query('#git-token-management-dialog') gitTokenManagementDialog!: BackendAIDialog;
   @query('#save-git-token-management-dialog') saveGitTokenManagementDialog!: BackendAIDialog;
+  @query('#id_github_token') githubTokenInput!: TextField;
+  @query('#id_gitlab_token') gitlabTokenInput!: TextField;
+  @query('#git-token-list') gitTokenList!: List;
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -844,20 +852,40 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * Fetch Existing Git Tokens from Server
    */
   async _openGitTokenRefreshDialog() {
-
+    globalThis.backendaiclient.userConfig.fetchGitToken().then((resp) => {
+      for (let i = 0; i < resp.length; i++) {
+        if (resp[i].domain === "github.com") {
+          this.githubTokenInput.value = resp[i].token;
+        } else if (resp[i].domain === "gitlab.com") {
+          this.gitlabTokenInput.value = resp[i].token;
+        } else {
+          console.log("domain: " + resp[i].domain);
+          console.log("token: " + resp[i].token);
+        }
+      }
+      this.gitTokenManagementDialog.show();
+    });
   }
 
   _hideGitTokenManagementDialog() {
-    (this.shadowRoot?.querySelector('#custom-git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
-      e.remove();
+    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
+      switch (e.querySelector('mwc-textfield')?.id) {
+        case 'id_github_domain':
+          this.githubTokenInput.value = '';
+          break;
+        case 'id_gitlab_domain':
+          this.gitlabTokenInput.value = '';
+          break;
+        default:
+          e.remove();
+      }
+      
     });
     this.gitTokenManagementDialog.hide();
   }
 
   _addGitTokenList() {
-
     let newListItem = document.createElement('mwc-list-item');
-
     let newDomainTextField = document.createElement('mwc-textfield');
     newDomainTextField.label = _text('Git Service Domain');
     newDomainTextField.type = "text";
@@ -865,7 +893,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     newDomainTextField.name = "service_domain"
     newDomainTextField.style.width = "auto";
     newListItem.appendChild(newDomainTextField);
-
     let newTokenTextField = document.createElement('mwc-textfield');
     newTokenTextField.label = _text('Git Service Token');
     newTokenTextField.type = "text";
@@ -873,7 +900,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     newTokenTextField.name = "service_token";
     newTokenTextField.style.width = "auto";
     newListItem.appendChild(newTokenTextField);
-
     let newItemRemoveButtonField = document.createElement('mwc-icon-button');
     newItemRemoveButtonField.className = "green minus-btn";
     newItemRemoveButtonField.icon="remove";
@@ -881,12 +907,54 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       this._deleteGitTokenList(e.target);
     });
     newListItem.appendChild(newItemRemoveButtonField);
-    this.shadowRoot?.querySelector('#custom-git-token-list')?.appendChild(newListItem);
+    this.shadowRoot?.querySelector('#git-token-list')?.appendChild(newListItem);
   }
 
-  _saveGitTokenManagement() {
+  async _saveGitTokenManagement() {
     console.log('save git token');
-    this._hideSaveGitTokenManagementDialog();
+
+    console.log('output');
+    console.log(this._parseGitTokenList());
+    console.log('end');
+    console.log('gitTokenValues');
+    console.log(this.gitTokenValues);
+
+    let tokenList:object[] = [];
+    let aaa:object = {'domain': 'domain', 'token': 'token'};
+    tokenList.push(aaa);
+//    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
+//      var domain = (e.querySelector("[name=service_domain]") as any).value;
+//      var token = (e.querySelector("[name=service_token]") as any).value;
+//      console.log('domain: ' + domain);
+//      console.log('token: ' + token);
+//    });
+
+
+    globalThis.backendaiclient.userConfig.updateGitToken(tokenList)
+      .then((res) => {
+        console.log('success');
+        console.log(res);
+        this._hideSaveGitTokenManagementDialog();
+      });
+  }
+
+  _parseGitTokenList() {
+    this.gitTokenValues = {};
+    const container = this.shadowRoot?.querySelector('#git-token-list');
+    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
+    const nonempty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
+    ).length === 0;
+    const encodeRow = (row) => {
+      const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value);
+      this.gitTokenValues[items[0]] = items[1];
+      return items;
+    };
+    Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
+  }
+
+  _saveGitTokenList() {
+
   }
 
   _deleteGitTokenList(e) {
@@ -1106,7 +1174,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
             <mwc-icon-button
                 id="ssh-keypair-details"
                 icon="more"
-                @click="${this._openGitTokenManagementDialog}">
+                @click="${this._openGitTokenRefreshDialog}">
             </mwc-icon-button>
           </div>
         </div>
@@ -1347,7 +1415,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       <backend-ai-dialog id="git-token-management-dialog" fixed backdrop persistent>
         <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
         <div slot="content" style="width:440px">
-          <mwc-list>
+          <mwc-list id="git-token-list">
             <mwc-list-item>
               <mwc-textfield
                 type="text"
@@ -1380,8 +1448,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
                 label="${_t('usersettings.GitlabTokenValue')}">
               </mwc-textfield>
             </mwc-list-item>
-          </mwc-list>
-          <mwc-list id="custom-git-token-list">
           </mwc-list>
           <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
               @click="${() => this._addGitTokenList()}">${_t('button.Add')}</mwc-button>

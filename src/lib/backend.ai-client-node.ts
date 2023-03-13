@@ -3823,6 +3823,23 @@ class UserConfig {
     return this.client._wrapWithPromise(rqst);
   }
 
+  /**
+   * fetch git service token from server
+   */
+  async fetchGitToken() {
+    let rqst = this.client.newSignedRequest('GET', '/user-config/git-tokens', null);
+    return this.client._wrapWithPromise(rqst, false);
+  }
+
+  async updateGitToken(tokenList: Array<object>) {
+    let params = {
+      params: JSON.stringify(tokenList)
+    }
+    console.log(params);
+    let rqst = this.client.newSignedRequest("PATCH", "/user-config/git-tokens", params);
+    return this.client._wrapWithPromise(rqst);
+  }
+
 }
 
 class Enterprise {
