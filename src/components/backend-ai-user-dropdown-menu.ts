@@ -51,6 +51,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Boolean}) isUserInfoMaskEnabled = true;
   @property({type: Boolean}) totpSupported = false;
   @property({type: Boolean}) totpActivated = false;
+  @property({type: Boolean}) forceTotp = false;
   @property({type: String}) totpKey = '';
   @property({type: String}) totpUri = '';
 
@@ -122,8 +123,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = (this.fullName.replace(/\s+/g, "").length > 0) ? this.fullName : this.userId;
-      // mask username only when the configuration is enabled
+    let name = (this.fullName.replace(/\s+/g, '').length > 0) ? this.fullName : this.userId;
+    // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
       const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -166,6 +167,16 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         globalThis.backendaiclient.email, ['totp_activated']
       );
       this.totpActivated = userInfo.user.totp_activated;
+      this.forceTotp = globalThis.backendaiclient?.supports('force2FA') && globalThis.backendaiclient?._config.force2FA;
+      const properties = ['open', 'noclosebutton', 'persistent', 'escapeKeyAction', 'scrimClickAction'];
+      if (this.forceTotp && !this.totpActivated) {
+        properties.forEach((property) => {
+          this.totpSetupDialog?.setAttribute(property, '');
+        });
+        this._openTotpSetupDialog();
+      } else {
+        this.totpSetupDialog?.removeAttribute(properties.join(' '));
+      }
     }
   }
 
@@ -482,7 +493,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       this.notification.show();
       await this._showTotpActivated();
       this._hideTotpSetupDialog();
-      this._openUserPrefDialog();
+      if (!this.forceTotp) {
+        this._openUserPrefDialog();
+      }
     } catch (e) {
       this.notification.text = _text('totp.InvalidTotpCode');
       this.notification.show();
