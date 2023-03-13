@@ -75,7 +75,7 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 229px);
+          height: calc(100vh - 182px);
         }
 
         .progress-bar-section {
