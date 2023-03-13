@@ -72,6 +72,12 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 229px);
+        }
+
         .progress-bar-section {
           height: 20px;
         }
