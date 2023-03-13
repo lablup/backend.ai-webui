@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -558,6 +558,7 @@ export default class BackendAISummary extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="/resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="item" elevation="1" class="vertical layout center wrap flex">
         ${this.announcement != '' ? html`
           <div class="notice-ticker horizontal layout wrap flex">

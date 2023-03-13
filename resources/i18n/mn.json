@@ -57,7 +57,9 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -359,7 +361,9 @@
     "ForceTerminate": "Хүчээр цуцлах",
     "Commit": "__NOT_TRANSLATED__",
     "Reset": "Дахин тохируулах",
-    "EnterManually": "__NOT_TRANSLATED__"
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -484,7 +488,8 @@
     "RateLimitInputRequired": "__NOT_TRANSLATED__",
     "InvalidRateLimitValue": "__NOT_TRANSLATED__",
     "WarningLessRateLimit": "__NOT_TRANSLATED__",
-    "KeypairDetail": "__NOT_TRANSLATED__"
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -1278,5 +1283,15 @@
   "explorer": {
     "ValueRequired": "Утга Шаардлагатай",
     "InputTooShort": "Хэт богино байна"
+  },
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
   }
 }

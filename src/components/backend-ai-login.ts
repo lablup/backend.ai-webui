@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -110,6 +110,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxShmPerContainer = 2;
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
+  @property({type: Boolean}) hideAgents = true;
+  @property({type: Boolean}) enable2FA = false;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
@@ -117,6 +119,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Object}) logoutTimer;
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: Boolean}) otpRequired = false;
+  @property({type: String}) otp;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -129,7 +133,9 @@ export default class BackendAILogin extends BackendAIPage {
   @query('#id_password') passwordInput!: TextField;
   @query('#id_api_key') apiKeyInput!: TextField;
   @query('#id_secret_key') secretKeyInput!: TextField;
+  @query('#otp') otpInput!: TextField;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#waiting-animation') waitingAnimation!: HTMLDivElement;
 
   constructor() {
     super();
@@ -322,7 +328,7 @@ export default class BackendAILogin extends BackendAIPage {
           text-align: center;
         }
 
-        .waiting-animation {
+        #waiting-animation {
           top: 20%;
           left: 40%;
           position: absolute;
@@ -564,7 +570,7 @@ export default class BackendAILogin extends BackendAIPage {
      } as ConfigValueObject) as boolean;
 
     // Allow change Sign-in mode flag
-    this.allowAnonymousChangePassword = this._getConfigValueByExists(generalConfig,
+    this.change_signin_support = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'boolean',
        defaultValue: false,
@@ -703,6 +709,22 @@ export default class BackendAILogin extends BackendAIPage {
         defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
         value: (generalConfig?.appDownloadUrl),
       } as ConfigValueObject) as string;
+
+    // Enable hide agent flag
+    this.hideAgents = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: true,
+        value: (generalConfig?.hideAgents),
+      } as ConfigValueObject) as boolean;
+
+    // Enable enable 2FA flag
+    this.enable2FA = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.enable2FA),
+      } as ConfigValueObject) as boolean;
 
     // Enable pipeline flag
     // FIXME: temporally disable pipeline feature in manual
@@ -1123,6 +1145,7 @@ export default class BackendAILogin extends BackendAIPage {
     if (this.connection_mode === 'SESSION') {
       this.user_id = this.userIdInput.value;
       this.password = this.passwordInput.value;
+      this.otp = this.otpInput.value;
 
       // show error message when id or password input is empty
       if (!this.user_id || this.user_id === 'undefined' || !this.password || this.password === 'undefined') {
@@ -1183,7 +1206,7 @@ export default class BackendAILogin extends BackendAIPage {
           return;
         }
 
-        this.client?.login().then((response) => {
+        this.client?.login(this.otp).then(async (response) => {
           if (response === false) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
@@ -1193,7 +1216,14 @@ export default class BackendAILogin extends BackendAIPage {
             return Promise.resolve(false);
           } else if (response.fail_reason) {
             this.open();
-            if (this.user_id !== '' && this.password !== '') {
+            if (response.fail_reason == 'OTP not provided') {
+              this.otpRequired = true;
+              await this.otpInput.updateComplete;
+              this.otpInput.focus();
+
+              this._disableUserInput();
+              this.waitingAnimation.style.display = 'none';
+            } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
             }
@@ -1417,6 +1447,8 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+      globalThis.backendaiclient._config.hideAgents = this.hideAgents;
+      globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1504,7 +1536,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.apiKeyInput.disabled = true;
       this.secretKeyInput.disabled = true;
     }
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
+    this.waitingAnimation.style.display = 'flex';
   }
 
   private _enableUserInput() {
@@ -1512,7 +1544,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.passwordInput.disabled = false;
     this.apiKeyInput.disabled = false;
     this.secretKeyInput.disabled = false;
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
+    this.waitingAnimation.style.display = 'none';
   }
 
   private _showEndpointDescription(e?) {
@@ -1550,7 +1582,7 @@ export default class BackendAILogin extends BackendAIPage {
             ` : html``}
           </h3>
           <div class="login-form">
-            <div class="waiting-animation horizontal layout wrap">
+            <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
                 <div class="sk-cube1 sk-cube"></div>
                 <div class="sk-cube2 sk-cube"></div>
@@ -1564,12 +1596,19 @@ export default class BackendAILogin extends BackendAIPage {
                   <mwc-textfield type="email" id="id_user_id" maxlength="64" autocomplete="username"
                       label="${_t('login.E-mail')}" icon="email"
                       value="${this.user_id}"
-                      @keyup="${this._submitIfEnter}">
+                      @keyup="${this._submitIfEnter}"
+                      >
                   </mwc-textfield>
                   <mwc-textfield type="password" id="id_password" autocomplete="current-password"
                       label="${_t('login.Password')}" icon="vpn_key"
                       value="${this.password}"
                       @keyup="${this._submitIfEnter}">
+                  </mwc-textfield>
+                  <mwc-textfield type="number" id="otp"
+                        style="display: ${this.otpRequired ? 'block' : 'none'};"
+                        label="${_t('totp.OTP')}" icon="pin"
+                        value="${this.otp}"
+                        @keyup="${this._submitIfEnter}">
                   </mwc-textfield>
               </fieldset>
             </form>

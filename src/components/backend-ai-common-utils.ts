@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -20,6 +20,18 @@ export default class BackendAiCommonUtils extends BackendAIPage {
 
   constructor() {
     super();
+  }
+
+  /**
+   * Returns password regex match with under condition
+   * - at least one or more Alphabet regardless of upper / lower case
+   * - at least one or more digit number (0-9)
+   * - at least one or more special character includes (^, -, _)
+   *
+   * @return {string} regex string
+   */
+  static get passwordRegex() {
+    return '^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$';
   }
 
   /**

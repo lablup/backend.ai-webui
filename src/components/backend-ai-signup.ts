@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -24,6 +24,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAIPage} from './backend-ai-page';
 
 /* FIXME:
@@ -447,7 +448,7 @@ export default class BackendAiSignup extends BackendAIPage {
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password1" id="id_password1"
                         label="${_t('signup.Password')}" maxLength="64"
-                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        pattern=${BackendAiCommonUtils.passwordRegex}
                         validationMessage="${_t('signup.PasswordInputRequired')}"
                         @change="${this._validatePassword}"
                         value="" required></mwc-textfield>
@@ -458,7 +459,7 @@ export default class BackendAiSignup extends BackendAIPage {
           <div class="horizontal flex layout">
             <mwc-textfield type="password" name="password2" id="id_password2"
                         label="${_t('signup.PasswordAgain')}" maxLength="64"
-                        pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                        pattern=${BackendAiCommonUtils.passwordRegex}
                         validationMessage="${_t('signup.PasswordInputRequired')}"
                         @change="${this._validatePassword}"
                         value="" required></mwc-textfield>

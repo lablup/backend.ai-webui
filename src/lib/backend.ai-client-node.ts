@@ -633,11 +633,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body);
     let result;
     try {
@@ -763,6 +764,21 @@ class Client {
       'new_password2': newPassword2
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {});
+    return this._wrapWithPromise(rqst);
+  }
+  
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp});
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp() {
+    let rqst = this.newSignedRequest('DELETE', '/totp', {});
     return this._wrapWithPromise(rqst);
   }
 
@@ -3320,7 +3336,7 @@ class User {
    *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+  async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'totp_activated']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +

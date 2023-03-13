@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -2315,10 +2315,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _chooseResourceTemplate(e) {
     let button;
-    if (typeof e.cpu !== 'undefined') {
+    if (typeof e?.cpu !== 'undefined') {
       button = e;
     } else {
-      button = e.target.closest('mwc-list-item');
+      button = e.target?.closest('mwc-list-item');
     }
     const cpu = button.cpu;
     const mem = button.mem;
@@ -2749,13 +2749,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           tag: requirements.slice(1).join(':'),
           app: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       } else {
         info.push({ // Additional information
           tag: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       }
     }
@@ -3168,6 +3168,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
                  @click="${() => this._launchSessionDialog()}">
         <wl-icon>power_settings_new</wl-icon>
@@ -3229,17 +3230,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="width:60px;">${_t('session.launcher.Version')}</div>
                   <div style="width:110px;">${_t('session.launcher.Base')}</div>
                   <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-                <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+                <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
               </h5>
               ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
                     <span style="display:none">${version}</span>
                     <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(version || '', architecture).map((item) => html`
                       <lablup-shields style="width:${item.size}!important;"
                                       color="${item.color}"
                                       app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                      description="${item.tag}">
+                                      description="${item.tag}"
+                                      class="horizontal layout center center-justified">
                       </lablup-shields>
                     `)}
                   </div>

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -123,6 +123,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <span>${this.title}</span>

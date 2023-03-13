@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
@@ -118,6 +118,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal wrap layout">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">

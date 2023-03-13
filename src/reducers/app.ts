@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {CLOSE_SNACKBAR, OPEN_SNACKBAR, UPDATE_DRAWER_STATE, UPDATE_OFFLINE, UPDATE_PAGE} from '../backend-ai-app.js';

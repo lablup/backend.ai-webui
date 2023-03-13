@@ -583,6 +583,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('22.09')) {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
+      this._features['2FA'] = true;
     }
   }
 
@@ -606,6 +607,19 @@ class Client {
       version = version.split('.').map(s => s.padStart(10)).join('.');
     }
     return version <= apiVersion;
+  }
+
+  async isManagerSupportingTOTP() {
+    if (!this._config.enable2FA) {
+      return false;
+    }
+    let rqst = this.newSignedRequest('GET', `/totp`, null, null);
+    try {
+      await this._wrapWithPromise(rqst);
+      return Promise.resolve(true);
+    } catch (e) {
+      return Promise.resolve(false);
+    }
   }
 
   /**
@@ -635,11 +649,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -770,6 +785,27 @@ class Client {
       'new_password2': newPassword2
     };
     let rqst = this.newSignedRequest('POST', `/auth/update-password`, body, '', true);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp(email=null) {
+    let rqstUrl = '/totp';
+    if (email) {
+      const params = {email: email};
+      const q = new URLSearchParams(params).toString();
+      rqstUrl += `?${q}`;
+    }
+    let rqst = this.newSignedRequest('DELETE', rqstUrl, {}, null);
     return this._wrapWithPromise(rqst);
   }
 
@@ -1441,7 +1477,7 @@ class Client {
 
   /**
    * post SSH Keypair to container
-   * save the given keypair (both ssh_public_key and ssh_private_key) 
+   * save the given keypair (both ssh_public_key and ssh_private_key)
    */
   async postSSHKeypair(param) {
     let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
@@ -3455,10 +3491,14 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': List(UUID)     // Group Ids for user. Should be list of UUID strings.
+   *   'totp_activated': Boolean// Whether or not TOTP is enabled for the user.
    * };
    */
   async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    if (!this.client.supports('2FA') && '2FA' in fields) {
+      fields.splice(fields.indexOf('2FA'), 1);
+    }
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +

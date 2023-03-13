@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, html, LitElement} from "lit";
 import {customElement, property, query} from 'lit/decorators.js';
@@ -76,6 +76,11 @@ export default class LablupShields extends LitElement {
         .round-right {
           border-top-right-radius: 4px;
           border-bottom-right-radius: 4px;
+        }
+        .app, .desc {
+          word-break: break-all;
+          white-space: normal;
+          height: fit-content;
         }
     `];
   }

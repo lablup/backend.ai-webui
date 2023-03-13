@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -201,7 +201,10 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       fields.push('schedulable');
     }
     const status = this.condition === 'running' ? 'ALIVE' : 'TERMINATED';
-    const limit = 20;
+    // TODO: Let's assume that the number of agents is less than 100 for
+    //       user-accessible resource group. This will meet our current need,
+    //       but we need to fix this when refactoring the resource indicator.
+    const limit = 100;
     const offset = 0;
     const timeout = 10 * 1000;
     globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout).then((response) => {

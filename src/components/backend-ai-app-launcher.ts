@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -1099,6 +1099,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
           <span>${_t('session.applauncher.App')}</span>
