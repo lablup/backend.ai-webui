@@ -1071,9 +1071,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
-    console.log(params);
+    //console.log(params);
     const folderName = params.get('folder');
-    console.log(folderName);
+    //console.log(folderName);
     if(folderName){
       // alert(folderName);
       console.log(this.folders)

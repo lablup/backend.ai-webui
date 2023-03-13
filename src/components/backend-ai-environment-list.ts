@@ -722,7 +722,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       let isGPURequired = false;
       const imageResource = Object();
       if ('resource_limits' in image) {
-        image['resource_limits'].forEach((el) => {
+        (image['resource_limits'] as Array<any>).forEach((el) => {
           imageResource[el['key'].replace('_', '.')] = el.min;
         });
       }
