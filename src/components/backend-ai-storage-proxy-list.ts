@@ -1,15 +1,15 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
@@ -76,7 +76,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 179px);
+          height: calc(100vh - 182px);
         }
 
         mwc-icon {
@@ -338,6 +338,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     case 'weka':
       color = 'purple';
       icon = 'local';
+      break;
     default:
       color = 'yellow';
       icon = 'local';
@@ -387,9 +388,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
             </div>
             <span class="flex"></span>
-            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
-                                 buffer="${totalBuffer}"
-                                 description="${usagePercent}%"></lablup-progress-bar>
+            <div class="layout vertical center">
+              <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+                                   buffer="${totalBuffer}"
+                                   description="${usagePercent}%"></lablup-progress-bar>
+              <div class="indicator" style="margin-top:3px;">${globalThis.backendaiutils._humanReadableFileSize(usage.used_bytes)} / ${globalThis.backendaiutils._humanReadableFileSize(usage.capacity_bytes)}</div>
+            </div>
           </div>
         </div>
       `, root

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -689,6 +689,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div id="scaling-group-select-box" class="layout horizontal start-justified"></div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
@@ -735,7 +736,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical center-justified wrap">
               <lablup-progress-bar id="gpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.cuda_device / 100.0}"
+                progress="${this.used_resource_group_slot.cuda_device / this.total_resource_group_slot.cuda_device}"
                 description="${this.used_resource_group_slot.cuda_device}/${this.total_resource_group_slot.cuda_device}"
               ></lablup-progress-bar>
               <lablup-progress-bar id="gpu-usage-bar-2" class="end"
@@ -757,11 +758,11 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="fgpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.cuda_shares / 100.0}"
+                progress="${this.used_resource_group_slot.cuda_shares / this.total_resource_group_slot.cuda_shares}"
                 description="${this.used_resource_group_slot.cuda_shares}/${this.total_resource_group_slot.cuda_shares}"
               ></lablup-progress-bar>
               <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
-                progress="${this.used_slot_percent.cuda_shares / 100.0}"
+                progress="${this.used_slot.cuda_shares / this.total_slot.cuda_shares}"
                 description="${this.used_slot.cuda_shares}/${this.total_slot.cuda_shares}"
               ></lablup-progress-bar>
             </div>

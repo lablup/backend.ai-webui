@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -8,9 +8,9 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
@@ -72,6 +72,12 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
+        vaadin-grid {
+          border: 0;
+          font-size: 14px;
+          height: calc(100vh - 182px);
+        }
+
         .progress-bar-section {
           height: 20px;
         }
@@ -201,7 +207,10 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
       fields.push('schedulable');
     }
     const status = this.condition === 'running' ? 'ALIVE' : 'TERMINATED';
-    const limit = 20;
+    // TODO: Let's assume that the number of agents is less than 100 for
+    //       user-accessible resource group. This will meet our current need,
+    //       but we need to fix this when refactoring the resource indicator.
+    const limit = 100;
     const offset = 0;
     const timeout = 10 * 1000;
     globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout).then((response) => {

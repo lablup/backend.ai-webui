@@ -421,6 +421,7 @@ export default class BackendAIPipelineView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <div style="margin:20px">
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -23,11 +23,11 @@ import {Switch} from '@material/mwc-switch';
 import '@material/mwc-slider';
 import {TextField} from '@material/mwc-textfield/mwc-textfield';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-text-field/vaadin-text-field';
-import '@vaadin/vaadin-date-time-picker/vaadin-date-time-picker';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/text-field/vaadin-text-field';
+import '@vaadin/date-time-picker/vaadin-date-time-picker';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';
@@ -1146,6 +1146,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _initializeFolderMapping() {
+    this.folderMapping = {};
+    const aliasFields = this.shadowRoot?.querySelectorAll('.alias') as NodeListOf<VaadinTextField>;
+    aliasFields.forEach((element) => {
+      element.value = '';
+    });
+  }
+
   /**
    * Update selected folders.
    * If selectedFolderItems are not empty and forceInitialize is true, unselect the selected items
@@ -1164,6 +1172,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.selectedVfolders = selectedFolders;
       for (const folder of this.selectedVfolders) {
+        const alias = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
+        if (alias.length > 0) {
+          this.folderMapping[folder] = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
+        }
         if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
           delete this.folderMapping[folder];
           (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value = '';
@@ -1602,6 +1614,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       // initialize vfolder
       this._updateSelectedFolder(false);
+      this._initializeFolderMapping();
     }).catch((err) => {
       // this.metadata_updating = false;
       // console.log(err);
@@ -2204,7 +2217,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   folderMapRenderer(root, column?, rowData?) {
     render(
       html`
-          <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
+          <vaadin-text-field id="vfolder-alias-${rowData.item.name}" class="alias" clear-button-visible prevent-invalid-input
                              pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
                              theme="small" placeholder="/home/work/${rowData.item.name}"
                              @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
@@ -2386,10 +2399,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _chooseResourceTemplate(e) {
     let button;
-    if (typeof e.cpu !== 'undefined') {
+    if (typeof e?.cpu !== 'undefined') {
       button = e;
     } else {
-      button = e.target.closest('mwc-list-item');
+      button = e.target?.closest('mwc-list-item');
     }
     const cpu = button.cpu;
     const mem = button.mem;
@@ -2807,19 +2820,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       size: '90px',
     });
     if (fragment.length > 2) {
-      const requirements = this._aliasName(fragment[2]).split(':');
+      let requirements = this._aliasName(fragment.slice(2).join('-'));
+      requirements = requirements.split(':');
       if (requirements.length > 1) {
         info.push({ // Additional information
-          tag: requirements.slice(1).join('-'),
+          tag: requirements.slice(1).join(':'),
           app: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       } else {
         info.push({ // Additional information
           tag: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '110px'
         });
       }
     }
@@ -3228,6 +3242,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
                  @click="${() => this._launchSessionDialog()}">
         <wl-icon>power_settings_new</wl-icon>
@@ -3905,17 +3920,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div style="width:60px;">${_t('session.launcher.Version')}</div>
                   <div style="width:110px;">${_t('session.launcher.Base')}</div>
                   <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-                <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+                <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
               </h5>
               ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
+                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
                     <span style="display:none">${version}</span>
                     <div class="horizontal layout end-justified">
                     ${this._getVersionInfo(version || '', architecture).map((item) => html`
                       <lablup-shields style="width:${item.size}!important;"
                                       color="${item.color}"
                                       app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                      description="${item.tag}">
+                                      description="${item.tag}"
+                                      class="horizontal layout center center-justified">
                       </lablup-shields>
                     `)}
                   </div>
