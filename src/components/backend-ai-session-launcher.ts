@@ -480,6 +480,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           z-index: 100;
         }
 
+        #new-session-dialog .tab-content {
+          margin: auto 30px;
+        }
+
         #new-session-dialog-prev {
           --component-width: 400px;
           --component-height: 640px;
