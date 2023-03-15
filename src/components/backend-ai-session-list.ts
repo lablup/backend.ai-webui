@@ -927,7 +927,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @return {string} converted value from Bytes to MB
    */
   static bytesToMB(value, decimalPoint = 1) {
-    return Number(value / (10 * 9)).toFixed(1);
+    return Number(value / (10 ** 6)).toFixed(1);
   }
 
   /**
