@@ -503,8 +503,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
-                <div>TX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)} MB</div>
+                <div>RX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)} MB</div>
               ` : html``}
             </div>
           </div>
