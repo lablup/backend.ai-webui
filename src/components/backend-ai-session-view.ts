@@ -59,6 +59,7 @@ export default class BackendAiSessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _defaultFileName = '';
@@ -207,9 +208,20 @@ export default class BackendAiSessionView extends BackendAIPage {
       }
       return;
     }
-    this.resourceMonitor.setAttribute('active', 'true');
-    this.runningJobs.setAttribute('active', 'true');
-    this._status = 'active';
+
+    const _init = () => {
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+      this.resourceMonitor.setAttribute('active', 'true');
+      this.runningJobs.setAttribute('active', 'true');
+      this._status = 'active';
+    };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        _init();
+      }, true);
+    } else {
+      _init();
+    }
   }
 
   /**
@@ -470,7 +482,9 @@ export default class BackendAiSessionView extends BackendAIPage {
                   <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  ${this.enableInferenceWorkload ? html`
                   <mwc-tab title="inference" label="${_t('session.Inference')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  `:html``}
                   <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                 </mwc-tab-bar>
@@ -503,9 +517,10 @@ export default class BackendAiSessionView extends BackendAIPage {
           <div id="batch-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="batch-jobs" condition="batch"></backend-ai-session-list>
           </div>
+          ${this.enableInferenceWorkload ? html`
           <div id="inference-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="inference-jobs" condition="inference"></backend-ai-session-list>
-          </div>
+          </div>`:html``}
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
           </div>
