@@ -754,7 +754,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    * Parse simple allowed vfodler host list with fine-grained permissions
    *
    * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
-   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   * @return {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
    */
   _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
     const obj = {};

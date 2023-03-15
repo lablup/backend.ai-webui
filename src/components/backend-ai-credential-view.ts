@@ -407,7 +407,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Parse simple allowed vfodler host list with fine-grained permissions
    *
    * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
-   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   * @return {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
    */
   _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
     const obj = {};
@@ -1041,13 +1041,13 @@ export default class BackendAICredentialView extends BackendAIPage {
     const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
     const isActionExist = regex.test(location.search);
 
-    if(isActionExist) {
+    if (isActionExist) {
       const action = location.search.split('action=')[1];
 
       switch (action) {
-        case 'add':
-          await this._launchKeyPairDialog();
-          break;
+      case 'add':
+        await this._launchKeyPairDialog();
+        break;
       }
     }
   }

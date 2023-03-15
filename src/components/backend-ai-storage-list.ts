@@ -1069,14 +1069,14 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._triggerFolderListChanged();
     }
 
-    //@ts-ignore
+    // @ts-ignore
     const params = (new URL(document.location)).searchParams;
-    //console.log(params);
+    // console.log(params);
     const folderName = params.get('folder');
-    //console.log(folderName);
-    if(folderName){
+    // console.log(folderName);
+    if (folderName) {
       // alert(folderName);
-      console.log(this.folders)
+      console.log(this.folders);
     }
   }
 
@@ -2184,8 +2184,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     };
 
     const queryParams = new URLSearchParams();
-    queryParams.set('folder', folderName)
-    window.history.replaceState({},'',`${location.pathname}?${queryParams}`)
+    queryParams.set('folder', folderName);
+    window.history.replaceState({}, '', `${location.pathname}?${queryParams}`);
 
     /**
      * NOTICE: If it's admin user and the folder type is group, It will have write permission.
