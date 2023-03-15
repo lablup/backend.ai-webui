@@ -475,8 +475,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         #new-session-dialog {
           --component-width: 80%;
           --component-min-width: 400px;
-          --component-height: 640px;
-          --component-max-height: 640px;
+          --component-height: 80vh;
+          --component-max-height: 80vh;
           z-index: 100;
         }
 
