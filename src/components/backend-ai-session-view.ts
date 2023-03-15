@@ -330,7 +330,7 @@ export default class BackendAISessionView extends BackendAIPage {
    * @return {string} converted value from Bytes to MiB
    */
   static bytesToMiB(value, decimalPoint = 1) {
-    return Number(value / (2 * 20)).toFixed(1);
+    return Number(value / (2 ** 20)).toFixed(1);
   }
 
   _exportToCSV() {
