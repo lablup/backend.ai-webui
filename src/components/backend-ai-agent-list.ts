@@ -981,13 +981,13 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
-   * Convert the value bytes to MiB
+   * Convert the value bytes to MB
    *
    * @param {number} value
-   * @return {number} converted value from bytes to MiB
+   * @return {number} converted value from bytes to MB
    */
-  static bytesToMiB(value) {
-    return Number(value / (2 ** 20)).toFixed(1);
+  static bytesToMB(value) {
+    return Number(value / (10 ** 6)).toFixed(1);
   }
 
   /**
@@ -1054,11 +1054,11 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ${this.agentDetail?.live_stat?.node ? html`
                   <div class="horizontal layout justified" style="width:100px;">
                     <span>TX: </span>
-                    <span>${BackendAIAgentList.bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
                   </div>
                   <div class="horizontal layout justified flex" style="width:100px;">
                     <span>RX: </span>
-                    <span>${BackendAIAgentList.bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
                   </div>
                 ` : html`
                   <p>${_t('agent.NoNetworkSignal')}</p>
