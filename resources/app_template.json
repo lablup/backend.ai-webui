@@ -110,6 +110,15 @@
         "src": "./resources/icons/terminal.svg"
       }
     ],
+    "gradio-cat-client": [
+      {
+        "name": "gradio-cat-client",
+        "title": "Cat Generator",
+        "category": "3.Machine Learning Tools",
+        "redirect": "",
+        "src": "./resources/icons/kitty.svg"
+      }
+    ],
     "nniboard": [
       {
         "name": "nniboard",
