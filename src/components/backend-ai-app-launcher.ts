@@ -634,7 +634,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
     }
     if (this.doNotRequireAuthentication?.checked) {
-      uri = uri += '&no_auth=true';
+      uri = uri + '&no_auth=true';
+    }
+    if (servicePortInfo.is_inference) {
+      uri = uri + '&is_inference=true';
     }
     uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
