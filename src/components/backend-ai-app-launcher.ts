@@ -62,7 +62,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
   @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
-  @query('#chk-no-auth') doNotRequireAuthentication!: Checkbox;
   @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
   @query('#force-use-v1-proxy') forceUseV1Proxy!: Checkbox;
   @query('#force-use-v2-proxy') forceUseV2Proxy!: Checkbox;
@@ -633,9 +632,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (this.customSubdomain?.value) {
       uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
     }
-    if (this.doNotRequireAuthentication?.checked) {
-      uri = uri + '&no_auth=true';
-    }
     if (servicePortInfo.is_inference) {
       uri = uri + '&is_inference=true';
     }
@@ -1165,14 +1161,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               <mwc-textfield id="custom-subdomain" type="string"
                             style="margin-left:1em;width:90px;"
                             @change="${(e) => this._adjustCustomSubdomain(e)}"></mwc-textfield>
-            </div>
-            `: ``}
-          </div>
-          <div style="padding:10px 20px 15px 20px">
-            ${globalThis.backendaiwebui.debug === true ? html`
-            <div class="horizontal layout center">
-              <mwc-checkbox id="chk-no-auth" style="margin-right:0.5em;"></mwc-checkbox>
-              ${_t('session.BypassAuthentication')}
             </div>
             `: ``}
           </div>
