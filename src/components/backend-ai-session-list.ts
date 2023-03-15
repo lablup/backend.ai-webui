@@ -142,6 +142,16 @@ export default class BackendAiSessionList extends BackendAIPage {
       return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
     }
   });
+  @property({type: Proxy}) sessionTypeColorTable = new Proxy({
+    'INTERACTIVE': 'green',
+    'BATCH': 'darkgreen',
+    'INFERENCE': 'blue',
+  }, {
+    get: (obj, prop) => {
+      // eslint-disable-next-line no-prototype-builtins
+      return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
+    }
+  });
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) current_page = 1;
@@ -1745,14 +1755,15 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   sessionTypeRenderer(root, column?, rowData?) {
-    const inferenceMetrics = JSON.parse(rowData.item.inference_metrics || "{}")
+    const inferenceMetrics = JSON.parse(rowData.item.inference_metrics || '{}');
     render(
       html`
         <div class="layout vertical start">
-          <span style="font-size: 12px;">${rowData.item.type}</span>
-          ${rowData.item.type === "INFERENCE" ? html`
-          <span>Inference requests: ${inferenceMetrics.requests}</span>
-          <span>Inference API last response time (ms): ${inferenceMetrics.last_response_ms}</span>
+          <lablup-shields color="${this.sessionTypeColorTable[rowData.item.type]}"
+              description="${rowData.item.type}" ui="round"></lablup-shields>
+          ${rowData.item.type === 'INFERENCE' ? html`
+            <span style="font-size:12px;margin-top:5px;">Inference requests: ${inferenceMetrics.requests}</span>
+            <span style="font-size:12px;">Inference API last response time (ms): ${inferenceMetrics.last_response_ms}</span>
           `: ``}
         </div>
       `, root
@@ -2266,7 +2277,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       html`
         <div class="horizontal layout center">
           <span style="font-size: 12px;">${rowData.item.status}</span>
-          ${( !rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
+          ${(!rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
             <mwc-icon-button class="fg green status" icon="help"
                 @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data, rowData.item.starts_at_hr)}"></mwc-icon-button>
           `}
@@ -2440,7 +2451,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                      .renderer="${this._boundArchitectureRenderer}">
           </lablup-grid-sort-filter-column>
           ${this._isIntegratedCondition ? html`
-            <lablup-grid-sort-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
+            <lablup-grid-sort-filter-column path="type" width="140px" flex-grow="0" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
         ` : html``}
           ${this.is_superadmin ? html`
             <lablup-grid-sort-filter-column path="agent" auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
