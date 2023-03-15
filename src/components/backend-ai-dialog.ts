@@ -40,11 +40,12 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) blockscrolling = false;
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
-  @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
-  @property({type: String}) escapeKeyAction = 'close';
   @property({type: Boolean}) stickyTitle = false;
   @property({type: Boolean}) stickyFooter = false;
+  @property({type: String}) type = 'normal';
+  @property({type: String}) escapeKeyAction = 'close';
+  @property({type: String}) scrimClickAction = 'close';
 
   @query('#dialog') protected dialog;
 
@@ -225,6 +226,7 @@ export default class BackendAiDialog extends LitElement {
                     escapeKeyAction="${this.escapeKeyAction}"
                     blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
+                    scrimClickAction="${this.scrimClickAction}"
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold">
