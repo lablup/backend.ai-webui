@@ -602,7 +602,8 @@ export default class BackendAiSessionList extends BackendAIPage {
       'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
-      'occupied_slots', 'access_key', 'starts_at', 'type'
+      'occupied_slots', 'access_key', 'starts_at', 'type',
+      'inference_metrics',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -1744,10 +1745,15 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   sessionTypeRenderer(root, column?, rowData?) {
+    const inferenceMetrics = JSON.parse(rowData.item.inference_metrics || "{}")
     render(
       html`
         <div class="layout vertical start">
           <span style="font-size: 12px;">${rowData.item.type}</span>
+          ${rowData.item.type === "INFERENCE" ? html`
+          <span>Inference requests: ${inferenceMetrics.requests}</span>
+          <span>Inference API last response time (ms): ${inferenceMetrics.last_response_ms}</span>
+          `: ``}
         </div>
       `, root
     );
