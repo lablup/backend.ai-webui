@@ -199,7 +199,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
   @property({type: Number}) progressLength;
-  @property({type: Object}) _grid = Object();
+  @property({type: Object}) _nonAutoMountedFolderGrid = Object();
+  @property({type: Object}) _modelFolderGrid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderToMountListRenderer = this.folderToMountListRenderer.bind(this);
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
@@ -291,7 +292,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         vaadin-grid {
-          max-height: 450px;
+          max-height: 335px;
         }
 
         .progress {
@@ -354,7 +355,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         div.vfolder-list,
         div.vfolder-mounted-list {
-          max-height: 450px;
+          max-height: 335px;
         }
 
         .environment-variables-container {
@@ -997,7 +998,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
     this.currentIndex = 1;
     this.progressLength = this.shadowRoot?.querySelectorAll('.progress').length;
-    this._grid = this.shadowRoot?.querySelector('#vfolder-grid');
+    this._nonAutoMountedFolderGrid = this.shadowRoot?.querySelector('#non-auto-mounted-folder-grid');
+    this._modelFolderGrid = this.shadowRoot?.querySelector('#model-folder-grid');
     // Tricks to close expansion if window size changes
     globalThis.addEventListener('resize', () => {
       document.body.dispatchEvent(new Event('click'));
@@ -1078,8 +1080,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   async _updateSelectedFolder(forceInitialize = false) {
-    if (this._grid && this._grid.selectedItems) {
-      const selectedFolderItems = this._grid.selectedItems;
+    if (this._nonAutoMountedFolderGrid && this._nonAutoMountedFolderGrid.selectedItems) {
+      let selectedFolderItems = this._nonAutoMountedFolderGrid.selectedItems;
+      selectedFolderItems = selectedFolderItems.concat(this._modelFolderGrid.selectedItems);
+      console.log(selectedFolderItems);
       let selectedFolders: string[] = [];
       if (selectedFolderItems.length > 0) {
         selectedFolders = selectedFolderItems.map((item) => item.name);
@@ -1109,29 +1113,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _unselectAllSelectedFolder() {
-    if (this._grid && this._grid.selectedItems) {
-      this._grid.selectedItems.forEach((item) => {
-        item.selected = false;
-      });
-      this._grid.selectedItems = [];
-    }
+    const gridListToUnselect = [this._nonAutoMountedFolderGrid, this._modelFolderGrid];
+    gridListToUnselect.forEach((grid) => {
+      if (grid && grid.selectedItems) {
+        grid.selectedItems.forEach((item) => {
+          item.selected = false;
+        });
+        grid.selectedItems = [];
+      }
+    });
     this.selectedVfolders = [];
   }
 
   _checkSelectedItems() {
-    if (this._grid && this._grid.selectedItems) {
-      const selectedFolderItems = this._grid.selectedItems;
-      let selectedFolders: string[] = [];
-      if (selectedFolderItems.length > 0) {
-        this._grid.selectedItems = [];
-        selectedFolders = selectedFolderItems.map((item) => item?.id);
-        this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
-          if (selectedFolders.includes(checkbox.__item?.id)) {
-            checkbox.checked = true;
-          }
-        });
+    const gridListToSelect = [this._nonAutoMountedFolderGrid, this._modelFolderGrid];
+    gridListToSelect.forEach((grid) => {
+      if (grid && grid.selectedItems) {
+        const selectedFolderItems = grid.selectedItems;
+        let selectedFolders: string[] = [];
+        if (selectedFolderItems.length > 0) {
+          grid.selectedItems = [];
+          selectedFolders = selectedFolderItems.map((item) => item?.id);
+          grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
+            if (selectedFolders.includes(checkbox.__item?.id)) {
+              checkbox.checked = true;
+            }
+          });
+        }
       }
-    }
+    });
   }
 
   /**
@@ -1279,7 +1289,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @return {void}
    * */
   _newSessionWithConfirmation() {
-    const vfoldersCount = this._grid?.selectedItems?.map((item) => item.name).length;
+    const vfoldersCount = this._nonAutoMountedFolderGrid?.selectedItems?.map((item) => item.name).length;
     // check whether the progress is in the last stage
     if (this.currentIndex == this.progressLength) {
       if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0)) {
@@ -2505,7 +2515,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._updateVirtualFolderList();
     }
     this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+    this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+    this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
   }
 
   _toggleResourceGauge() {
@@ -3020,7 +3031,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // }
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
-    this._grid?.clearCache();
+    this._nonAutoMountedFolderGrid?.clearCache();
+    this._modelFolderGrid?.clearCache();
     if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
       this._checkSelectedItems();
@@ -3372,7 +3384,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="vfolder-list">
               <vaadin-grid
                   theme="row-stripes column-borders compact"
-                  id="vfolder-grid"
+                  id="non-auto-mounted-folder-grid"
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
@@ -3395,6 +3407,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
+            </wl-expansion>
+            <wl-expansion class="vfolder" name="vfolder">
+              <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
+              <div class="vfolder-list">
+                <vaadin-grid
+                  theme="row-stripes column-borders compact"
+                  id="model-folder-grid"
+                  aria-label="model storage vfolder list"
+                  height-by-rows
+                  .items="${this.modelVfolders}"
+                  @selected-items-changed="${() => this._updateSelectedFolder()}">
+                  <vaadin-grid-selection-column id="select-column"
+                                                flex-grow="0"
+                                                text-align="center"
+                                                auto-select></vaadin-grid-selection-column>
+                  <vaadin-grid-filter-column header="${_t('session.launcher.ModelStorageToMount')}"
+                                             path="name" resizable
+                                             .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
+                  <vaadin-grid-column width="135px"
+                                      path=" ${_t('session.launcher.FolderAlias')}"
+                                      .renderer="${this._boundFolderMapRenderer}"
+                                      .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
+                </vaadin-grid>
+              </div>
             </wl-expansion>
             <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
