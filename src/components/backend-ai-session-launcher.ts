@@ -21,11 +21,11 @@ import {Switch} from '@material/mwc-switch';
 import '@material/mwc-slider';
 import {TextField} from '@material/mwc-textfield/mwc-textfield';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-text-field/vaadin-text-field';
-import '@vaadin/vaadin-date-time-picker/vaadin-date-time-picker';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/text-field/vaadin-text-field';
+import '@vaadin/date-time-picker/vaadin-date-time-picker';
 
 import 'weightless/checkbox';
 import 'weightless/expansion';

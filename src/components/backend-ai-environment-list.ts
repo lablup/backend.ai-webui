@@ -125,7 +125,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          vaadin-grid {
            border: 0;
            font-size: 14px;
-           height: calc(100vh - 225px);
+           height: calc(100vh - 229px);
          }
          h4 {
           font-weight: 200;
@@ -722,7 +722,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       let isGPURequired = false;
       const imageResource = Object();
       if ('resource_limits' in image) {
-        image['resource_limits'].forEach((el) => {
+        (image['resource_limits'] as Array<any>).forEach((el) => {
           imageResource[el['key'].replace('_', '.')] = el.min;
         });
       }

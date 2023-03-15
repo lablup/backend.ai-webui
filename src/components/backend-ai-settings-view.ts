@@ -17,8 +17,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
 
 import {Select} from '@material/mwc-select';
 import {TextField} from '@material/mwc-textfield';
