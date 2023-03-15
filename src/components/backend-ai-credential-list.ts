@@ -287,7 +287,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
-          keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGiB(keypair['max_vfolder_size']));
+          keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGB(keypair['max_vfolder_size']));
         }
       });
       this.keypairs = keypairs;
@@ -630,7 +630,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">memory</mwc-icon>
             <span>${rowData.item.total_resource_slots.mem}</span>
-            <span class="indicator">GB</span>
+            <span class="indicator">GiB</span>
           </div>
         </div>
         <div class="layout horizontal wrap center">
@@ -836,9 +836,16 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  static bytesToGiB(num, digits=1) {
-    if (!num) return num;
-    return (num / 2 ** 30).toFixed(digits);
+  /**
+   * Convert the value bytes to GB with decimal point to 1 as a default
+   *
+   * @param {number} bytes
+   * @param {number} decimalPoint decimal point set to 1 as a default
+   * @return {string} converted value with fixed decimal point
+   */
+  static bytesToGB(bytes, decimalPoint = 1) {
+    if (!bytes) return bytes;
+    return (bytes / 10 ** 9).toFixed(decimalPoint);
   }
 
   /**

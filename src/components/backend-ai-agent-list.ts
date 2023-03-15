@@ -452,26 +452,6 @@ export default class BackendAIAgentList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value
-   * @return {number} converted value from byte to MB.
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value
-   * @return {number} converted value from MB to GB.
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
    * Return backend.ai client elapsed time.
    *
    * @param {Date} start - Start time of backend.ai client.
@@ -1000,14 +980,26 @@ export default class BackendAIAgentList extends BackendAIPage {
     return;
   }
 
-
-  _bytesToMiB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MiB
+   *
+   * @param {number} value
+   * @return {number} converted value from bytes to MiB
+   */
+  static bytesToMiB(value) {
+    return Number(value / (2 ** 20)).toFixed(1);
   }
 
-  static bytesToGiB(num, digits=2) {
-    if (!num) return num;
-    return (num / 2 ** 30).toFixed(digits);
+  /**
+   * Convert the value bytes to GiB with decimal point to 2 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GiB
+   */
+  static bytesToGiB(value, decimalPoint = 2) {
+    if (!value) return value;
+    return (value / (2 ** 30)).toFixed(decimalPoint);
   }
 
   _modifyAgentSetting() {
@@ -1062,11 +1054,11 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ${this.agentDetail?.live_stat?.node ? html`
                   <div class="horizontal layout justified" style="width:100px;">
                     <span>TX: </span>
-                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
                   </div>
                   <div class="horizontal layout justified flex" style="width:100px;">
                     <span>RX: </span>
-                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
                   </div>
                 ` : html`
                   <p>${_t('agent.NoNetworkSignal')}</p>

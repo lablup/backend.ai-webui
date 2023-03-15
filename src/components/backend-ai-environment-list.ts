@@ -535,13 +535,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   _addUnit(value) {
     const unit = value.substr(-1);
     if (unit == 'm') {
-      return value.slice(0, -1) + 'MB';
+      return value.slice(0, -1) + 'MiB';
     }
     if (unit == 'g') {
-      return value.slice(0, -1) + 'GB';
+      return value.slice(0, -1) + 'GiB';
     }
     if (unit == 't') {
-      return value.slice(0, -1) + 'TB';
+      return value.slice(0, -1) + 'TiB';
     }
     return value;
   }

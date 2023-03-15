@@ -595,7 +595,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
+      'max_vfolder_size': BackendAICredentialView.gBToBytes(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
@@ -1032,8 +1032,8 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
-  _gBToByte(value = 0) {
-    const gigabyte = Math.pow(2, 30);
+  static gBToBytes(value = 0) {
+    const gigabyte = Math.pow(10, 9);
     return Math.round(gigabyte * value);
   }
 

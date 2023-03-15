@@ -144,18 +144,18 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) storageProxyInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
-    MiB: Math.pow(2, 20),
-    GiB: Math.pow(2, 30),
-    TiB: Math.pow(2, 40),
-    PiB: Math.pow(2, 50)
+    MB: Math.pow(10, 6),
+    GB: Math.pow(10, 9),
+    TB: Math.pow(10, 12),
+    PB: Math.pow(10, 15)
   };
   @property({type: Object}) maxSize = {
     value: 0,
-    unit: 'MiB'
+    unit: 'MB'
   };
   @property({type: Object}) quota = {
     value: 0,
-    unit: 'MiB'
+    unit: 'MB'
   };
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
@@ -563,17 +563,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update Quota Input to human readable value with proper unit
    */
   _updateQuotaInputHumanReadableValue() {
-    let unit = 'MiB'; // default unit starts with MiB.
+    let unit = 'MB'; // default unit starts with MB.
     const convertedCurrentQuota = Number(this.modifyFolderQuotaInput.value) * (this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]);
     const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
     [this.modifyFolderQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
-    if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
-      if (unit === 'MiB') {
+    if (['Bytes', 'KB', 'MB'].includes(unit)) {
+      if (unit === 'MB') {
         this.modifyFolderQuotaInput.value = Number(this.modifyFolderQuotaInput.value) < 1 ? '1' : Math.round(Number(this.modifyFolderQuotaInput.value)).toString();
       } else {
         this.modifyFolderQuotaInput.value = '1';
       }
-      unit = 'MiB';
+      unit = 'MB';
     } else {
       this.modifyFolderQuotaInput.value = parseFloat(this.modifyFolderQuotaInput.value).toFixed(1);
       if (convertedQuota < convertedCurrentQuota) {
@@ -582,7 +582,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     // apply step only when the unit is bigger than MB
-    this.modifyFolderQuotaInput.step = (this.modifyFolderQuotaUnitSelect.value === 'MiB')? 0 : 0.1;
+    this.modifyFolderQuotaInput.step = (this.modifyFolderQuotaUnitSelect.value === 'MB')? 0 : 0.1;
     const idx = this.modifyFolderQuotaUnitSelect.items.findIndex((item) => item.value === unit);
     this.modifyFolderQuotaUnitSelect.select(idx);
   }
@@ -758,7 +758,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
                   ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MB) : 'Undefined'}
                   ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size >= 0 ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -1168,7 +1168,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MB);
     }
     render(
       // language=HTML
@@ -1746,9 +1746,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MB']).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
-        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MiB' : this.quota.unit;
+        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
@@ -1993,9 +1993,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
     // default unit starts with MB.
     [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size).split(' ');
-    if (['Bytes', 'KiB', 'MiB'].includes(this.maxSize.unit)) {
+    if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
       this.maxSize.value = this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
-      this.maxSize.unit = 'MiB';
+      this.maxSize.unit = 'MB';
     } else {
       this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
     }
@@ -2174,9 +2174,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
   _folderExplorer(rowData) {
-
     const folderName = rowData.item.name;
-    const isWritable = this._hasPermission(rowData.item, "w") || rowData.item.is_owner || (rowData.item.type === "group" && this.is_admin);
+    const isWritable = this._hasPermission(rowData.item, 'w') || rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin);
 
     const explorer = {
       id: folderName,
@@ -2265,10 +2264,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       // vendor-specific APIs.
       return file.type === 'DIRECTORY';
     }
-  }
-
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
   }
 
   /* File upload and download */

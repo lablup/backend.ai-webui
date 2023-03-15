@@ -457,15 +457,6 @@ export default class BackendAIAgentSummaryList extends BackendAIPage {
     );
   }
 
-  _bytesToMiB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
-
-  static bytesToGiB(num, digits=2) {
-    if (!num) return num;
-    return (num / 2 ** 30).toFixed(digits);
-  }
-
   render() {
     // language=HTML
     return html`

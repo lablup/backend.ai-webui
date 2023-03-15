@@ -1376,7 +1376,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     }
-    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GiB
       this.shmem_request = 1;
     }
     config['shmem'] = String(this.shmem_request) + 'g';
@@ -2646,29 +2646,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Get MB value when input is less than 1 GB.
+   * Get MiB value when input is less than 1 GiB.
    *
    * @param {number} value - value with GB unit.
-   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * @return {number} MiB value if input is smaller than 1GiB. Otherwise, GiB value.
    * */
-  _conditionalGBtoMB(value) {
+  _conditionalGiBtoMiB(value) {
     if (value < 1.0) {
-      return this._roundResourceAllocation((value * 1024).toFixed(0), 2);
+      return this._roundResourceAllocation((value * 2**10).toFixed(0), 2);
     }
     return this._roundResourceAllocation(value, 2);
   }
 
   /**
-   * Get MB unit when input is less than 1 GB.
+   * Get MB unit when input is less than 1 GiB.
    *
-   * @param {number} value - value with GB unit.
-   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * @param {number} value - value with GiB unit.
+   * @return {string} MiB if input is smaller than 1GiB. Otherwise, GiB.
    * */
-  _conditionalGBtoMBunit(value) {
+  _conditionalGiBtoMiBunit(value) {
     if (value < 1.0) {
-      return 'MB';
+      return 'MiB';
     }
-    return 'GB';
+    return 'GiB';
   }
 
   /**
@@ -3407,9 +3407,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       <div style="width:110px;">${item.name}</div>
                       <div style="display:none"> (</div>
                       <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
-                      <div style="width:50px;text-align:right;">${item.mem}GB</div>
+                      <div style="width:50px;text-align:right;">${item.mem}GiB</div>
                       <div style="width:60px;text-align:right;">${item.shmem ? html`
-                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GiB
                       ` :
     html`64MB`}
                       </div>
@@ -3653,12 +3653,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
                     <span>${this._roundResourceAllocation(this.mem_request * this.cluster_size * this.session_request, 1)}</span>
-                    <p>GB</p>
+                    <p>GiB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request * this.cluster_size * this.session_request)}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request * this.cluster_size * this.session_request)}</p>
+                    <span>${this._conditionalGiBtoMiB(this.shmem_request * this.cluster_size * this.session_request)}</span>
+                    <p>${this._conditionalGiBtoMiBunit(this.shmem_request * this.cluster_size * this.session_request)}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.GPU')}</p>
@@ -3679,12 +3679,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.Memory')}</p>
                       <span>${this._roundResourceAllocation(this.mem_request, 1)}</span>
-                      <p>GB</p>
+                      <p>GiB</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                      <span>${this._conditionalGiBtoMiB(this.shmem_request)}</span>
+                      <p>${this._conditionalGiBtoMiBunit(this.shmem_request)}</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.GPU')}</p>
