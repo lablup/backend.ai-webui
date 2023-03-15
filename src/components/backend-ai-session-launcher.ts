@@ -3708,7 +3708,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           )}
                       </div>
                       <lablup-shields color="blue"
-                                      description="${this.sessionType.toUpperCase()}"
+                                      description="${this.mode === 'inference' ? this.mode.toUpperCase() : this.sessionType.toUpperCase()}"
                                       ui="round"
                                       style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
                     </div>
