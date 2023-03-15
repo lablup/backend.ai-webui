@@ -381,6 +381,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const allowedHosts = vhostInfo.allowed;
     const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
+      console.log(l);
       this.lastVFolderQueryTime = Date.now();
       const selectableFolders: Record<string, unknown>[] = [];
       const automountFolders: Record<string, unknown>[] = [];

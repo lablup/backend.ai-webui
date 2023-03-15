@@ -75,6 +75,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
   @property({type: Boolean}) hideEnvDialog = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
   @property({type: String}) newSessionDialogTitle = '';
@@ -143,6 +144,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) autoMountedVfolders;
+  @property({type: Array}) modelVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
   @property({type: Object}) folderMapping = Object();
   @property({type: Object}) customFolderMapping = Object();
@@ -855,6 +857,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.vfolders = [];
     this.selectedVfolders = [];
     this.nonAutoMountedVfolders = [];
+    this.modelVfolders = [];
     this.autoMountedVfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
@@ -1169,16 +1172,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (!this.active) {
       return;
     }
+
+    const _init = () => {
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+    };
+
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
+        _init();
       }, {once: true});
     } else {
       this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
       await this._updatePageVariables(true);
       this._disableEnterKey();
+      _init();
     }
   }
 
@@ -1798,7 +1808,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+      this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
