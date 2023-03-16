@@ -613,7 +613,6 @@ export default class BackendAiSessionList extends BackendAIPage {
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
       'occupied_slots', 'access_key', 'starts_at', 'type',
-      'inference_metrics',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -623,6 +622,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('session-detail-status')) {
       fields.push('status_data');
+    }
+    if (globalThis.backendaiclient.supports('inference-workload')) {
+      fields.push('inference_metrics');
     }
     if (this.enableScalingGroup) {
       fields.push('scaling_group');

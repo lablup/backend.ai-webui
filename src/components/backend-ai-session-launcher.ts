@@ -1818,8 +1818,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-      this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+      if (this.enableInferenceWorkload) {
+        this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+        this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+      } else {
+        this.nonAutoMountedVfolders = this.vfolders.filter((item) => !item.name.startsWith('.'));
+      }
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2515,8 +2519,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._updateVirtualFolderList();
     }
     this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-    this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
-    this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+    if (this.enableInferenceWorkload) {
+      this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+    } else {
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !item.name.startsWith('.'));
+    }
   }
 
   _toggleResourceGauge() {
@@ -3408,7 +3416,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               `}
             </div>
             </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder">
+            <wl-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
               <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
