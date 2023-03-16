@@ -1083,7 +1083,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this._nonAutoMountedFolderGrid && this._nonAutoMountedFolderGrid.selectedItems) {
       let selectedFolderItems = this._nonAutoMountedFolderGrid.selectedItems;
       selectedFolderItems = selectedFolderItems.concat(this._modelFolderGrid.selectedItems);
-      console.log(selectedFolderItems);
       let selectedFolders: string[] = [];
       if (selectedFolderItems.length > 0) {
         selectedFolders = selectedFolderItems.map((item) => item.name);

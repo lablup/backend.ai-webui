@@ -81,6 +81,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderName = '';
   @property({type: String}) deleteFolderName = '';
@@ -1310,7 +1311,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           folder-name="${rowData.item.name}"
           folder-type="${rowData.item.type}"
         >
-         ${rowData.item.usage_mode == 'model' ?
+         ${this.enableInferenceWorkload && rowData.item.usage_mode == 'model' ?
       html`
           <mwc-icon-button
             class="fg green controls-running"
@@ -1585,8 +1586,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       const folders = value.filter((item) => {
-        if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
-          //console.log(item);
+        if (!this.enableInferenceWorkload && this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'model') {
+          return item;
+        } else if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
           return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
           return item;
@@ -1642,6 +1644,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+        this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
