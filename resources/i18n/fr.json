@@ -621,7 +621,10 @@
       "NoChanges": "Aucune modification apportée",
       "PermissionModified": "Autorisation mise à jour"
     },
-    "NoStorageDescriptionFound": "Pas de description."
+    "NoStorageDescriptionFound": "Pas de description.",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {

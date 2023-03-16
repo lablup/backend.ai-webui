@@ -621,7 +621,10 @@
       "NoChanges": "Никаких изменений не внесено",
       "PermissionModified": "Разрешение обновлено"
     },
-    "NoStorageDescriptionFound": "Нет описания."
+    "NoStorageDescriptionFound": "Нет описания.",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {

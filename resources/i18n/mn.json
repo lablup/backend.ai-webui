@@ -621,7 +621,10 @@
       "NoChanges": "Өөрчлөлт оруулаагүй болно",
       "PermissionModified": "Зөвшөөрөл шинэчлэгдсэн"
     },
-    "NoStorageDescriptionFound": "Тайлбар алга."
+    "NoStorageDescriptionFound": "Тайлбар алга.",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {

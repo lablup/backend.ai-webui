@@ -621,7 +621,10 @@
       "NoChanges": "Tidak ada perubahan yang dilakukan",
       "PermissionModified": "Izin diperbarui"
     },
-    "NoStorageDescriptionFound": "Tidak ada deskripsi."
+    "NoStorageDescriptionFound": "Tidak ada deskripsi.",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {

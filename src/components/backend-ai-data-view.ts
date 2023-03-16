@@ -86,6 +86,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) _helpDescriptionUsageInfo = Object();
   @property({type: Object}) options;
   @property({type: Number}) createdCount;
   @property({type: Number}) invitedCount;
@@ -299,6 +300,30 @@ export default class BackendAIData extends BackendAIPage {
             display: none;
           }
         }
+
+        .host-status-indicator {
+          height: 16px;
+          padding-left: 8px;
+          padding-right: 8px;
+          border-radius: 8px;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+        }
+
+        .host-status-indicator.adequate {
+          background-color: rgba(58, 178, 97, 1);
+        }
+
+        .host-status-indicator.caution {
+          background-color: rgb(223, 179, 23);
+        }
+
+        .host-status-indicator.insufficient {
+          background-color:#ef5350;
+        }
       `];
   }
 
@@ -366,10 +391,20 @@ export default class BackendAIData extends BackendAIPage {
           <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
             ${this.vhosts.map((item, idx) => html`
               <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
+              <div class="horizontal layout justified center" title="${_t('data.usage.adequate')}">
                 <span>${item}</span>
-                <mwc-icon-button slot="meta" icon="info"
-                    @click="${(e) => this._showStorageDescription(e, item)}">
-                </mwc-icon-button>
+                ${
+                  true? html`
+                  &nbsp;
+                  <div class="host-status-indicator adequate">
+                    
+                  </div>
+                  `:html``
+                }
+              </div>
+              <mwc-icon-button slot="meta" icon="info"
+                  @click="${(e) => this._showStorageDescription(e, item)}">
+              </mwc-icon-button>
               </mwc-list-item>
             `)}
           </mwc-select>
@@ -507,11 +542,20 @@ export default class BackendAIData extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
-        <div slot="content" class="horizontal layout center">
-        ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
-          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+        <div slot="content" class="vertical layout">
+          <div class="horizontal layout center">
+            ${this._helpDescriptionIcon == '' ? html`` : html`
+            <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
+            `}
+            <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+          </div>
+          ${this._helpDescriptionUsageInfo.percentage !== undefined ? html`
+            <div class="horizontal layout center">
+              <!-- TODO: display usage Info -->
+              ${_t('data.usage.status')}:&nbsp;<div class="host-status-indicator adequate">${_t('data.usage.adequate')}</div>
+              &nbsp;(${this._helpDescriptionUsageInfo.percentage}% used)
+            </div>
+          `: html``}
         </div>
       </backend-ai-dialog>
     `;
@@ -735,6 +779,13 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionTitle = item;
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
+    }
+
+    //TODO: change this to real data
+    this._helpDescriptionUsageInfo = {
+      percentage: 80,
+      used: '80GB',
+      total: '100GB'
     }
     const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
