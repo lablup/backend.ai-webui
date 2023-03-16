@@ -733,21 +733,28 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span slot="secondary">${_t('data.folders.DescYouAreFolderOwner')}</span>
               </mwc-list-item>
             ` : html``}
-            <mwc-list-item twoline>
-              <span><strong>${_t('data.folders.Permission')}</strong></span>
-              <div slot="secondary" class="horizontal layout">
-              ${this.folderInfo.permission ? html`
-                ${this._hasPermission(this.folderInfo, 'r') ? html`
-                    <lablup-shields app="" color="green"
-                                    description="R" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'w') ? html`
-                    <lablup-shields app="" color="blue"
-                                    description="W" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'd') ? html`
-                    <lablup-shields app="" color="red"
-                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
-              </div>
-            </mwc-list-item>
+            ${this.folderInfo.usage_mode !== 'undefined' ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.UsageMode')}</strong></span>
+                <span slot="secondary">${this.folderInfo.usage_mode}</span>
+              </mwc-list-item>
+            ` : html``}
+            ${this.folderInfo.permission ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.folders.Permission')}</strong></span>
+                <div slot="secondary" class="horizontal layout">
+                  ${this._hasPermission(this.folderInfo, 'r') ? html`
+                      <lablup-shields app="" color="green"
+                                      description="R" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'w') ? html`
+                      <lablup-shields app="" color="blue"
+                                      description="W" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'd') ? html`
+                      <lablup-shields app="" color="red"
+                                      description="D" ui="flat"></lablup-shields>` : html``}
+                </div>
+              </mwc-list-item>
+            `: html``}
             ${this.enableStorageProxy ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.Cloneable')}</strong></span>
