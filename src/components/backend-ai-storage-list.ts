@@ -1654,6 +1654,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
