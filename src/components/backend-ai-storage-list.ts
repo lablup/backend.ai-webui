@@ -726,6 +726,12 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span slot="secondary">${_t('data.folders.DescYouAreFolderOwner')}</span>
               </mwc-list-item>
             ` : html``}
+            ${this.folderInfo.usage_mode !== 'undefined' ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.UsageMode')}</strong></span>
+                <span slot="secondary">${this.folderInfo.usage_mode}</span>
+              </mwc-list-item>
+            ` : html``}
             ${this.folderInfo.permission ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.Permission')}</strong></span>
@@ -742,12 +748,6 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </div>
               </mwc-list-item>
             `: html``}
-            ${this.folderInfo.usage_mode !== 'undefined' ? html`
-              <mwc-list-item twoline>
-                <span><strong>${_t('data.UsageMode')}</strong></span>
-                <span slot="secondary">${this.folderInfo.usage_mode}</span>
-              </mwc-list-item>
-            ` : html``}
             ${this.enableStorageProxy ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.Cloneable')}</strong></span>
