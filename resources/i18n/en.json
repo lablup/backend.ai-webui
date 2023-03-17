@@ -327,7 +327,10 @@
     },
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
-    "DownloadingSessionLogs": "Downloading session logs."
+    "DownloadingSessionLogs": "Downloading session logs.",
+    "ElapsedTime": "Elapsed Time",
+    "Timeout": "Timeout",
+    "SessionLifetime": "Session Lifetime"
   },
   "button": {
     "Cancel": "Cancel",

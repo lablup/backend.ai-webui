@@ -320,7 +320,10 @@
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "сообщение",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
-    "DownloadingSessionLogs": "__NOT_TRANSLATED__"
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",

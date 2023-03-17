@@ -93,8 +93,16 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  * - BATCH: apply execution date and time, and automatically terminated when command is done
  */
 type SessionType = 'INTERACTIVE' | 'BATCH';
+
+/**
+ * Interface of idle checks
+ * - key: 'timeout' | 'session_lifetime' | 'utilization'
+ */
+interface IdleChecks {
+  [key: string]: number | null;
+}
 @customElement('backend-ai-session-list')
-export default class BackendAiSessionList extends BackendAIPage {
+export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
@@ -139,6 +147,15 @@ export default class BackendAiSessionList extends BackendAIPage {
     get: (obj, prop) => {
       // eslint-disable-next-line no-prototype-builtins
       return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
+    }
+  });
+  @property({type: Proxy}) idleChecksTable = new Proxy({
+    'timeout': 'Timeout',
+    'session_lifetime': 'SessionLifetime',
+  }, {
+    get: (obj, prop) => {
+      // eslint-disable-next-line no-prototype-builtins
+      return obj.hasOwnProperty(prop) ? obj[prop] : '';
     }
   });
   @property({type: Number}) sshPort = 0;
@@ -610,6 +627,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('session-detail-status')) {
       fields.push('status_data');
+    }
+    if (globalThis.backendaiclient.supports('idle-checks')) {
+      fields.push('idle_checks');
     }
     if (this.enableScalingGroup) {
       fields.push('scaling_group');
@@ -1735,6 +1755,39 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   /**
+   * Convert seconds to 'hh:mm:ss' string
+   * @param {number} seconds - Seconds to convert
+   * @return {string} - hh:mm:ss
+   */
+  static secondsToHHMMSS(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondsRemainder = parseInt(seconds) % 60;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
+  }
+
+  /**
+   * Returns the minimum value of idle checks to know when idle sessions will be turned off.
+   * @param {string} idleChecks - Session's idle check
+   * @return {Array<string>} - Minimum value that and the key
+   */
+  _getIdleSessionTimeout(idleChecks: string): [string, string] | null {
+    if (globalThis.backendaiutils.isEmpty(idleChecks)) {
+      return null;
+    }
+    const obj: IdleChecks = JSON.parse(idleChecks);
+    let minKey = '';
+    let minValue: number | null = Infinity;
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== null && value !== undefined && minValue !== null && minValue !== undefined && value < minValue) {
+        minKey = key;
+        minValue = value;
+      }
+    }
+    return minValue ? [minKey, BackendAISessionList.secondsToHHMMSS(minValue.toString())] : null;
+  }
+
+  /**
    * Render session type - batch or interactive
    *
    * @param {Element} root - the row details content DOM element
@@ -2175,12 +2228,16 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   reservationRenderer(root, column?, rowData?) {
+    const [idleCheckKey, idleCheckValue]: (string | null)[] = this._getIdleSessionTimeout(rowData.item.idle_checks) || [];
     render(
       // language=HTML
       html`
         <div class="layout vertical">
           <span>${rowData.item.created_at_hr}</span>
-          <span>(${rowData.item.elapsed})</span>
+          <span>(${_t('session.ElapsedTime')}: ${rowData.item.elapsed})</span>
+          ${idleCheckKey ? html`
+            <span>(${_t('session.' + this.idleChecksTable[idleCheckKey])}: ${idleCheckValue})</span>
+          ` : html``}
         </div>
       `, root);
   }
@@ -2525,6 +2582,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-list': BackendAiSessionList;
+    'backend-ai-session-list': BackendAISessionList;
   }
 }

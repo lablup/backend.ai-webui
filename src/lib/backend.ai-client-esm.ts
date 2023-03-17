@@ -583,6 +583,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('22.09')) {
       this._features['image-commit'] = true;
       this._features['fine-grained-storage-permissions'] = true;
+      this._features['idle-checks'] = true;
       this._features['2FA'] = true;
       this._features['force2FA'] = true;
     }
