@@ -1864,7 +1864,6 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlRenderer(root, column?, rowData?) {
-    console.log(rowData)
     let mySession = true;
     mySession = (this._connectionMode === 'API' && rowData.item.access_key === globalThis.backendaiclient._config._accessKey) ||
       (rowData.item.user_email === globalThis.backendaiclient.email);
