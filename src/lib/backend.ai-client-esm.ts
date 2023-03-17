@@ -3089,6 +3089,12 @@ class Resources {
     this.resources['tpu.device'] = {};
     this.resources['tpu.device'].total = 0;
     this.resources['tpu.device'].used = 0;
+    this.resources['ipu.device'] = {};
+    this.resources['ipu.device'].total = 0;
+    this.resources['ipu.device'].used = 0;
+    this.resources['atom.device'] = {};
+    this.resources['atom.device'].total = 0;
+    this.resources['atom.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3156,6 +3162,18 @@ class Resources {
           }
           if ('tpu.device' in occupied_slots) {
             this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
+          }
+          if ('ipu.device' in available_slots) {
+            this.resources['ipu.device'].total = parseInt(this.resources['ipu.device'].total) + Math.floor(Number(available_slots['ipu.device']));
+          }
+          if ('ipu.device' in occupied_slots) {
+            this.resources['ipu.device'].used = parseInt(this.resources['ipu.device'].used) + Math.floor(Number(occupied_slots['ipu.device']));
+          }
+          if ('atom.device' in available_slots) {
+            this.resources['atom.device'].total = parseInt(this.resources['atom.device'].total) + Math.floor(Number(available_slots['atom.device']));
+          }
+          if ('atom.device' in occupied_slots) {
+            this.resources['atom.device'].used = parseInt(this.resources['atom.device'].used) + Math.floor(Number(occupied_slots['atom.device']));
           }
 
           if (isNaN(this.resources.cpu.used)) {

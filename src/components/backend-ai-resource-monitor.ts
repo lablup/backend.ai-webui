@@ -978,13 +978,38 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
               <lablup-progress-bar id="tpu-project-usage-bar" class="end"
                 progress="${this.used_project_slot_percent.tpu_device / 100.0}"
-                description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
+                description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.tpu_device}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.tpu_device, '%')}</span>
                 <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.tpu_device, '%')}</span>
               </div>
             </div>` : html``}
+            ${this.total_project_slot.ipu_device ? html`
+            <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">IPU</span>
+              <lablup-progress-bar id="ipu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.ipu_device / 100.0}"
+                description="${this.used_project_slot.ipu_device}/${this.total_project_slot.ipu_device === 'Infinity' ? '∞' : this.total_project_slot.ipu_device}"
+              ></lablup-progress-bar>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.ipu_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.ipu_device, '%')}</span>
+              </div>
+            </div>` : html``}
+            ${this.total_project_slot.atom_device ? html`
+            <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">ATOM</span>
+              <lablup-progress-bar id="tpu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.atom_device / 100.0}"
+                description="${this.used_project_slot.atom_device}/${this.total_project_slot.atom_device === 'Infinity' ? '∞' : this.total_project_slot.atom_device}"
+              ></lablup-progress-bar>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.atom_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.atom_device, '%')}</span>
+              </div>
+            </div>` : html``}
+
           </div>
           <div class="flex"></div>
         </div>

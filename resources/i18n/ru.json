@@ -111,7 +111,9 @@
     "AcceptSharedVFolder": "Теперь вы можете получить доступ к папке:",
     "DeclineSharedVFolder": "Папка приглашения удалена:",
     "connectingToCluster": "Подключение к Backend.AI кластеру ...",
-    "DownloadWebUIApp": "__NOT_TRANSLATED__"
+    "DownloadWebUIApp": "__NOT_TRANSLATED__",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {

@@ -74,6 +74,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
+  @property({type: Number}) ipu_total = 0;
+  @property({type: Number}) ipu_used = 0;
+  @property({type: Number}) atom_total = 0;
+  @property({type: Number}) atom_used = 0;
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
@@ -310,6 +314,18 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.cuda_fgpu = {};
     this.resources.cuda_fgpu.total = 0;
     this.resources.cuda_fgpu.used = 0;
+    this.resources.rocm_gpu = {};
+    this.resources.rocm_gpu.total = 0;
+    this.resources.rocm_gpu.used = 0;
+    this.resources.tpu = {};
+    this.resources.tpu.total = 0;
+    this.resources.tpu.used = 0;
+    this.resources.ipu = {};
+    this.resources.ipu.total = 0;
+    this.resources.ipu.used = 0;
+    this.resources.atom = {};
+    this.resources.atom.total = 0;
+    this.resources.atom.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -337,9 +353,33 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.cuda_fgpu_total = this.resources['cuda.shares'].total;
     }
+    if (isNaN(this.resources['rocm.device'].total)) {
+      this.rocm_gpu_total = 0;
+    } else {
+      this.rocm_gpu_total = this.resources['rocm.device'].total;
+    }
+    if (isNaN(this.resources['tpu.device'].total)) {
+      this.tpu_total = 0;
+    } else {
+      this.tpu_total = this.resources['tpu.device'].total;
+    }
+    if (isNaN(this.resources['ipu.device'].total)) {
+      this.ipu_total = 0;
+    } else {
+      this.ipu_total = this.resources['ipu.device'].total;
+    }
+    if (isNaN(this.resources['atom.device'].total)) {
+      this.atom_total = 0;
+    } else {
+      this.atom_total = this.resources['atom.device'].total;
+    }
     this.cpu_used = this.resources.cpu.used;
     this.cuda_gpu_used = this.resources['cuda.device'].used;
     this.cuda_fgpu_used = this.resources['cuda.shares'].used;
+    this.rocm_gpu_used = this.resources['rocm.device'].used;
+    this.tpu_used = this.resources['tpu.device'].used;
+    this.ipu_used = this.resources['ipu.device'].used;
+    this.atom_used = this.resources['atom.device'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
@@ -473,11 +513,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
               </div>
             </div>
-            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total ? html`
+            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total || this.ipu_total || this.atom_total? html`
             <div class="resource-line"></div>
             <div class="layout horizontal center flex resource">
               <div class="layout vertical center center-justified resource-name">
-                <div class="gauge-name">GPU</div>
+                <div class="gauge-name">GPU/NPU</div>
               </div>
               ${this.cuda_gpu_total ? html`
               <div class="layout vertical start-justified wrap">
@@ -497,15 +537,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               `: html``}
               ${this.cuda_fgpu_total ? html`
               <div class="layout vertical start-justified wrap">
-              <lablup-progress-bar id="fgpu-usage-bar" class="start"
-                progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA fGPUs ${_t('summary.reserved')}."
-              ></lablup-progress-bar>
-              <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
-                progress="0"
-                description="${_t('summary.FractionalGPUScalingEnabled')}."
-              ></lablup-progress-bar>
-
+                <lablup-progress-bar id="fgpu-usage-bar" class="start"
+                  progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
+                  description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA FGPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.FractionalGPUScalingEnabled')}."
+                ></lablup-progress-bar>
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
@@ -542,6 +581,37 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
                 <span class="percentage end-bar"></span>
               </div>`: html``}
+              ${this.ipu_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="ipu-usage-bar" class="start"
+                  progress="${this.ipu_used / 100.0}"
+                  description="${this.ipu_used} / ${this.ipu_total} IPUs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="ipu-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.IPUEnabled')}."
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.ipu_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar"></span>
+              </div>`: html``}
+              ${this.atom_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="atom-usage-bar" class="start"
+                  progress="${this.atom_used / 100.0}"
+                  description="${this.atom_used} / ${this.atom_total} ATOMs ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="atom-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.ATOMEnabled')}."
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.atom_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar"></span>
+              </div>`: html``}
+
             </div>`: html``}
             <div class="vertical start layout" style="margin-top:30px;">
               <div class="horizontal layout resource-legend-stack">
