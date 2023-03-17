@@ -22,7 +22,7 @@ import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -85,7 +85,7 @@ class BackendAIRegistryList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 225px);
+          height: calc(100vh - 229px);
         }
 
         h4 {

@@ -15,10 +15,10 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -105,7 +105,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 226px);
+          height: calc(100vh - 229px);
         }
 
         wl-icon.indicator {

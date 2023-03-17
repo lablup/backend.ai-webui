@@ -112,6 +112,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maskUserInfo = false;
   @property({type: Boolean}) hideAgents = true;
   @property({type: Boolean}) enable2FA = false;
+  @property({type: Boolean}) force2FA = false;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
@@ -724,6 +725,14 @@ export default class BackendAILogin extends BackendAIPage {
         valueType: 'boolean',
         defaultValue: false,
         value: (generalConfig?.enable2FA),
+      } as ConfigValueObject) as boolean;
+
+    // Enable force 2FA flag
+    this.force2FA = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.force2FA),
       } as ConfigValueObject) as boolean;
 
     // Enable pipeline flag
@@ -1449,6 +1458,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
+      globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);

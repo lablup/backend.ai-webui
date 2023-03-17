@@ -1,5 +1,17 @@
 # Changelog
 
+## v22.09.15 (16/03/2023)
+## What's Changed
+* update: change '강제종료' to '종료' for multiple session termination button text by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1626
+* update: spring-cleaning time (component updates) by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1627
+* feat: add force 2fa option by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1628
+* add: handle inference type on WebUI by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1586
+* feat: display usage_mode to folder-info-dialog by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1639
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.14...v22.09.15
+
+
 ## v22.09.14 (09/03/2023)
 ## What's Changed
 * fix: minor capital letter issue by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1619

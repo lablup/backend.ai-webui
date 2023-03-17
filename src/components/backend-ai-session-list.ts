@@ -6,21 +6,20 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-tree-toggle';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-tree-toggle';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/tooltip';
 
 import {default as AnsiUp} from '../lib/ansiup';
 import 'weightless/button';
 import {Checkbox} from 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
-import 'weightless/tooltip';
 import {Textfield} from 'weightless/textfield';
-import {Tooltip} from 'weightless/tooltip/tooltip';
 
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -91,8 +90,9 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  * Type of sesion type
  * - INTERACTIVE: execute in prompt, terminate on-demand
  * - BATCH: apply execution date and time, and automatically terminated when command is done
+ * - INFERENCE: model inference with API
  */
-type SessionType = 'INTERACTIVE' | 'BATCH';
+type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 @customElement('backend-ai-session-list')
 export default class BackendAiSessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
@@ -135,6 +135,16 @@ export default class BackendAiSessionList extends BackendAIPage {
     'failed-to-start': 'red',
     'creation-failed': 'red',
     'self-terminated': 'green'
+  }, {
+    get: (obj, prop) => {
+      // eslint-disable-next-line no-prototype-builtins
+      return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
+    }
+  });
+  @property({type: Proxy}) sessionTypeColorTable = new Proxy({
+    'INTERACTIVE': 'green',
+    'BATCH': 'darkgreen',
+    'INFERENCE': 'blue',
   }, {
     get: (obj, prop) => {
       // eslint-disable-next-line no-prototype-builtins
@@ -230,14 +240,6 @@ export default class BackendAiSessionList extends BackendAIPage {
           --button-fab-size: 32px;
           --button-padding: 3px;
           margin-right: 5px;
-        }
-
-        wl-tooltip.log-disabled-msg {
-          position: absolute;
-          top: 80%;
-          left: 100%;
-          transform: translate(-50%, -50%);
-          z-index: 1; /* used for overlay */
         }
 
         img.indicator-icon {
@@ -430,7 +432,7 @@ export default class BackendAiSessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return ['batch', 'interactive', 'running'].includes(this.condition);
+    return ['batch', 'interactive', 'inference', 'running'].includes(this.condition);
   }
 
   get _isIntegratedCondition() {
@@ -577,6 +579,7 @@ export default class BackendAiSessionList extends BackendAIPage {
     case 'running':
     case 'interactive':
     case 'batch':
+    case 'inference':
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
       break;
     case 'finished':
@@ -600,7 +603,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
       'service_ports', 'mounts',
-      'occupied_slots', 'access_key', 'starts_at', 'type'
+      'occupied_slots', 'access_key', 'starts_at', 'type',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
       fields.push('cluster_size');
@@ -610,6 +613,9 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('session-detail-status')) {
       fields.push('status_data');
+    }
+    if (globalThis.backendaiclient.supports('inference-workload')) {
+      fields.push('inference_metrics');
     }
     if (this.enableScalingGroup) {
       fields.push('scaling_group');
@@ -636,7 +642,7 @@ export default class BackendAiSessionList extends BackendAIPage {
         this._listStatus?.show();
         this.total_session_count = 1;
       } else {
-        if (['interactive', 'batch'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
+        if (['interactive', 'batch', 'inference'].includes(this.condition) && sessions.filter((session) => session.type.toLowerCase() === this.condition).length === 0) {
           this.listCondition = 'no-data';
           this._listStatus?.show();
         } else {
@@ -733,13 +739,13 @@ export default class BackendAiSessionList extends BackendAIPage {
             sessions[objectKey].app_services = [];
             sessions[objectKey].app_services_option = {};
           }
-          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'running'].includes(this.condition)) {
+          if (sessions[objectKey].app_services.length === 0 || !['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
             sessions[objectKey].appSupport = false;
           } else {
             sessions[objectKey].appSupport = true;
           }
 
-          if (['batch', 'interactive', 'running'].includes(this.condition)) {
+          if (['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
             sessions[objectKey].running = true;
           } else {
             sessions[objectKey].running = false;
@@ -786,16 +792,17 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
         });
       }
-      if (['batch', 'interactive'].includes(this.condition)) {
+      if (['batch', 'interactive', 'inference'].includes(this.condition)) {
         const result = sessions.reduce((res, session) => {
-          res[session.type === 'BATCH' as SessionType ? 'batch' : 'interactive'].push(session);
+          res[session.type.toLowerCase()].push(session);
           return res;
-        }, {batch: [], interactive: []});
-        sessions = result[this.condition === 'batch' ? 'batch': 'interactive'];
+        }, {batch: [], interactive: [], inference: []});
+        sessions = result[this.condition];
       }
 
       this.compute_sessions = sessions;
       this._grid.recalculateColumnWidths();
+      // this._grid.clearCache();
       this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
@@ -805,7 +812,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           document.dispatchEvent(event);
         }
         if (repeat === true) {
-          refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 7000 : 30000;
+          refreshTime = ['batch', 'interactive', 'inference', 'running'].includes(this.condition) ? 7000 : 30000;
           this.refreshTimer = setTimeout(() => {
             this._refreshJobData();
           }, refreshTime);
@@ -815,7 +822,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       this.refreshing = false;
       if (this.active && repeat) {
         // Keep trying to fetch session list with more delay
-        const refreshTime = ['batch', 'interactive', 'running'].includes(this.condition) ? 20000 : 120000;
+        const refreshTime = ['batch', 'interactive', 'inference', 'running'].includes(this.condition) ? 20000 : 120000;
         this.refreshTimer = setTimeout(() => {
           this._refreshJobData();
         }, refreshTime);
@@ -1480,30 +1487,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
-  /**
-   * Show tooltip when mouseenter the corresponding element
-   *
-   * @param {string} elementId
-   */
-  _showTooltip(elementId = '') {
-    if (elementId) {
-      const tooltip = this.shadowRoot?.querySelector(`#${elementId}`) as Tooltip;
-      tooltip.open = true;
-    }
-  }
-
-  /**
-   * Hide tooltip when mouseleave the corresponding element
-   *
-   * @param {string} elementId
-   */
-  _hideTooltip(elementId = '') {
-    if (elementId) {
-      const tooltip = this.shadowRoot?.querySelector(`#${elementId}`) as Tooltip;
-      tooltip.open = false;
-    }
-  }
-
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
@@ -1758,10 +1741,16 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   sessionTypeRenderer(root, column?, rowData?) {
+    const inferenceMetrics = JSON.parse(rowData.item.inference_metrics || '{}');
     render(
       html`
         <div class="layout vertical start">
-          <span style="font-size: 12px;">${rowData.item.type}</span>
+          <lablup-shields color="${this.sessionTypeColorTable[rowData.item.type]}"
+              description="${rowData.item.type}" ui="round"></lablup-shields>
+          ${rowData.item.type === 'INFERENCE' ? html`
+            <span style="font-size:12px;margin-top:5px;">Inference requests: ${inferenceMetrics.requests}</span>
+            <span style="font-size:12px;">Inference API last response time (ms): ${inferenceMetrics.last_response_ms}</span>
+          `: ``}
         </div>
       `, root
     );
@@ -1906,10 +1895,13 @@ export default class BackendAiSessionList extends BackendAIPage {
              .app-services-option="${rowData.item.app_services_option}">
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
+                               id="${rowData.index+'-apps'}"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               ?disabled="${!mySession || rowData.item.type === 'BATCH'}"
-                               icon="apps"></mwc-icon-button>
+                               icon="apps">
+            </mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
             <mwc-icon-button class="fg controls-running"
+                               id="${rowData.index+'-terminal'}"
                                ?disabled="${!mySession}"
                                @click="${(e) => this._runTerminal(e)}">
               <svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
@@ -1929,22 +1921,24 @@ export default class BackendAiSessionList extends BackendAIPage {
               </g>
             </svg>
             </mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-terminal'}" text="${_t('session.ExecuteTerminalApp')}" position="top-start"></vaadin-tooltip>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
-            <mwc-icon-button class="fg red controls-running" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status as CommitSessionStatus === 'ongoing'}
+            <mwc-icon-button class="fg red controls-running" id="${rowData.index+'-power'}" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status as CommitSessionStatus === 'ongoing'}
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-power'}" text="${_t('session.TerminateSession')}" position="top-start"></vaadin-tooltip>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
-            <mwc-icon-button class="fg blue controls-running" icon="assignment"
+            <mwc-icon-button class="fg blue controls-running" id="${rowData.index+'-assignment'}" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-assignment'}" text="${_t('session.SeeContainerLogs')}" position="top-start"></vaadin-tooltip>
           ` : html`
-            <div @mouseenter="${() => this._showTooltip('tooltip-'+rowData.item.session_id)}" @mouseleave="${() => this._hideTooltip('tooltip-'+rowData.item.session_id)}">
-              <mwc-icon-button fab flat inverted disabled class="fg controls-running" icon="assignment"></mwc-icon-button>
-            </div>
-            <wl-tooltip class="log-disabled-msg" id="tooltip-${rowData.item.session_id}">${_t('session.NoLogMsgAvailable')}</wl-tooltip>
+            <mwc-icon-button fab flat inverted disabled class="fg controls-running" id="${rowData.index+'-nologs'}" icon="assignment"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-archive'}" text="${_t('session.RequestContainerCommit')}" position="top-start"></vaadin-tooltip>
           `}
           ${this._isContainerCommitEnabled ? html`
             <mwc-icon-button class="fg blue controls-running"
+                             id="${rowData.index+'-archive'}"
                              ?disabled=${this._isPending(rowData.item.status) ||
                                          this._isPreparing(rowData.item.status) ||
                                          this._isError(rowData.item.status) ||
@@ -1952,6 +1946,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                          rowData.item.type as SessionType === 'BATCH' ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-nologs'}" text="${_t('session.NoLogMsgAvailable')}" position="top-start"></vaadin-tooltip>
           ` : html``}
         </div>
       `, root
@@ -2057,7 +2052,7 @@ export default class BackendAiSessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   usageRenderer(root, column?, rowData?) {
-    if (['batch', 'interactive', 'running'].includes(this.condition)) {
+    if (['batch', 'interactive', 'inference', 'running'].includes(this.condition)) {
       render(
         // language=HTML
         html`
@@ -2301,7 +2296,7 @@ export default class BackendAiSessionList extends BackendAIPage {
       html`
         <div class="horizontal layout center">
           <span style="font-size: 12px;">${rowData.item.status}</span>
-          ${( !rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
+          ${(!rowData.item.status_data || rowData.item.status_data === '{}') ? html`` : html`
             <mwc-icon-button class="fg green status" icon="help"
                 @click="${() => this._openStatusDetailDialog(rowData.item.status_info ?? '', rowData.item.status_data, rowData.item.starts_at_hr)}"></mwc-icon-button>
           `}
@@ -2475,7 +2470,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                      .renderer="${this._boundArchitectureRenderer}">
           </lablup-grid-sort-filter-column>
           ${this._isIntegratedCondition ? html`
-            <lablup-grid-sort-filter-column path="type" width="120px" flex-grow="0" text-align="center" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
+            <lablup-grid-sort-filter-column path="type" width="140px" flex-grow="0" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
         ` : html``}
           ${this.is_superadmin ? html`
             <lablup-grid-sort-filter-column path="agent" auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
