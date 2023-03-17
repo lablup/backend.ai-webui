@@ -121,6 +121,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) ipu_device_metric = {
+    'min': '0',
+    'max': '0'
+  };
+  @property({type: Object}) atom_device_metric = {
+    'min': '0',
+    'max': '0'
+  };
+
   @property({type: Object}) cluster_metric = {
     'min': 1,
     'max': 1
@@ -1879,7 +1888,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if (enqueue_session) {
-            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device', 'ipu_device', 'atom_device'].forEach((slot) => {
               if (slot in this.total_resource_group_slot) {
                 available_slot[slot] = this.total_resource_group_slot[slot];
               }
@@ -1989,6 +1998,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           }
           this.tpu_device_metric = tpu_device_metric;
         }
+        if (item.key === 'ipu.device') {
+          const ipu_device_metric = {...item};
+          ipu_device_metric.min = parseInt(ipu_device_metric.min);
+          ipu_device_metric.max = parseInt(ipu_device_metric.max);
+          if (ipu_device_metric.min > ipu_device_metric.max) {
+            // TODO: dynamic maximum per user policy
+          }
+          this.ipu_device_metric = ipu_device_metric;
+        }
+        if (item.key === 'atom.device') {
+          const atom_device_metric = {...item};
+          atom_device_metric.min = parseInt(atom_device_metric.min);
+          atom_device_metric.max = parseInt(atom_device_metric.max);
+          if (atom_device_metric.min > atom_device_metric.max) {
+            // TODO: dynamic maximum per user policy
+          }
+          this.atom_device_metric = atom_device_metric;
+        }
+
         if (item.key === 'mem') {
           const mem_metric = {...item};
           mem_metric.min = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
@@ -2351,6 +2379,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const cuda_shares = button.cuda_shares;
     const rocm_device = button.rocm_device;
     const tpu_device = button.tpu_device;
+    const ipu_device = button.ipu_device;
+    const atom_device = button.atom_device;
     let gpu_type; let gpu_value;
     if ((typeof cuda_device !== 'undefined' || typeof cuda_shares !== 'undefined')) {
       if (typeof cuda_device === 'undefined') { // FGPU
@@ -2366,6 +2396,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (typeof tpu_device !== 'undefined') {
       gpu_type = 'tpu.device';
       gpu_value = tpu_device;
+    } else if (typeof ipu_device !== 'undefined') {
+      gpu_type = 'ipu.device';
+      gpu_value = ipu_device;
+    } else if (typeof atom_device !== 'undefined') {
+      gpu_type = 'atom.device';
+      gpu_value = atom_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -3500,6 +3536,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                             .cuda_shares="${item.cuda_shares}"
                             .rocm_device="${item.rocm_device}"
                             .tpu_device="${item.tpu_device}"
+                            .ipu_device="${item.ipu_device}"
+                            .atom_device="${item.atom_device}"
                             .shmem="${item.shmem}">
                     <div class="horizontal layout end-justified">
                       <div style="width:110px;">${item.name}</div>
@@ -3516,6 +3554,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                         ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
                         ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
                         ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
+                        ${item.ipu_device && item.ipu_device > 0 ? html`${item.ipu_device} IPU` : html``}
+                        ${item.atom_device && item.atom_device > 0 ? html`${item.atom_device} ATOM` : html``}
                       </div>
                       <div style="display:none">)</div>
                     </div>
