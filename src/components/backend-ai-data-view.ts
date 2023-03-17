@@ -94,7 +94,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
-  @property({type: Object}) storageProxyInfo = Object();
+  @property({type: Object}) volumeInfo = Object();
   @property({type: String}) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
@@ -580,10 +580,10 @@ export default class BackendAIData extends BackendAIPage {
     };
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._getStorageProxyBackendInformation();
+        this._getVolumeInformation();
       }, true);
     } else { // already connected
-      this._getStorageProxyBackendInformation();
+      this._getVolumeInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
@@ -618,7 +618,7 @@ export default class BackendAIData extends BackendAIPage {
         this.usageModes.push('Model');
       }
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      this._getStorageProxyBackendInformation();
+      this._getVolumeInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -638,14 +638,18 @@ export default class BackendAIData extends BackendAIPage {
     }
   }
 
-  /** *
+  private async _getCurrentKeypairResourcePolicy() {
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    return res.keypair.resource_policy;
+  }
+
+  /**
    * create Storage Doughnut Chart
    *
    */
   async _createStorageChart() {
-    const accessKey = globalThis.backendaiclient._config.accessKey;
-    const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
-    const policyName = res.keypair.resource_policy;
+    const policyName = await this._getCurrentKeypairResourcePolicy();
     const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
     const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
     const groupId = globalThis.backendaiclient.current_group_id();
@@ -724,9 +728,9 @@ export default class BackendAIData extends BackendAIPage {
     this.openDialog('add-folder-dialog');
   }
 
-  async _getStorageProxyBackendInformation() {
+  async _getVolumeInformation() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    this.storageProxyInfo = vhostInfo.volume_info || {};
+    this.volumeInfo = vhostInfo.volume_info || {};
   }
 
   openDialog(id: string) {
