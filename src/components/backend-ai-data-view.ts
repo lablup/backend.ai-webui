@@ -71,6 +71,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
+  @property({type: String}) selectedVhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
@@ -415,6 +416,7 @@ export default class BackendAIData extends BackendAIPage {
             id="add-folder-host"
             label="${_t("data.Host")}"
             fixedMenuPosition
+            @selected=${(e)=> this.selectedVhost = e.target.value}
           >
             ${this.vhosts.map((item, idx) => {
               let percentage = this.storageProxyInfo[item] && this.storageProxyInfo[item]?.percentage;
@@ -443,9 +445,9 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout start" style="margin-top:-5px;margin-bottom:10px; padding-left:16px;">
             ${
-              typeof this.storageProxyInfo[this.vhost]?.percentage == 'number' ? 
+              typeof this.storageProxyInfo[this.selectedVhost]?.percentage == 'number' ? 
                 html`
-                  ${_t("data.usage.StatusOfSelectedHost")}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.vhost]?.percentage, true)}
+                  ${_t("data.usage.StatusOfSelectedHost")}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.selectedVhost]?.percentage, true)}
                 `
                 :html``
             }
@@ -801,6 +803,7 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
+    this.selectedVhost = vhost_info.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -817,6 +820,7 @@ export default class BackendAIData extends BackendAIPage {
     this.addFolderNameInput.value = ''; // reset folder name
     this.vhosts = vhost_info.allowed;
     this.vhost = vhost_info.default;
+    this.selectedVhost = vhost_info.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
