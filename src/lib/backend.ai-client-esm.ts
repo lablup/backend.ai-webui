@@ -869,11 +869,17 @@ class Client {
       if (resources['cuda.shares']) { // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
-      if (resources['rocm']) {
-        config['rocm.device'] = resources['rocm'];
+      if (resources['rocm.device']) {
+        config['rocm.device'] = parseInt(resources['rocm.device']);
       }
-      if (resources['tpu']) {
-        config['tpu.device'] = resources['tpu'];
+      if (resources['tpu.device']) {
+        config['tpu.device'] = parseInt(resources['tpu.device']);
+      }
+      if (resources['ipu.device']) {
+        config['ipu.device'] = parseInt(resources['ipu.device']);
+      }
+      if (resources['atom.device']) {
+        config['atom.device'] = parseInt(resources['atom.device']);
       }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
@@ -2942,7 +2948,6 @@ class ComputeSession {
         v.group_id = group;
       }
       const session = await this.client.query(q, v, null, timeout);
-      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
           break;

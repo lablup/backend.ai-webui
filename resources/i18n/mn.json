@@ -59,7 +59,8 @@
       "PasswordChangePlace": "__NOT_TRANSLATED__",
       "AgentSummary": "__NOT_TRANSLATED__",
       "SetupTotp": "__NOT_TRANSLATED__",
-      "TotpActivated": "__NOT_TRANSLATED__"
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -243,7 +244,9 @@
       "StartModelServing": "__NOT_TRANSLATED__",
       "InferenceMode": "__NOT_TRANSLATED__",
       "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
-      "ModelStorageToMount": "__NOT_TRANSLATED__"
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
