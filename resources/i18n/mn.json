@@ -329,7 +329,12 @@
     "Inference": "__NOT_TRANSLATED__",
     "UseSubdomain": "__NOT_TRANSLATED__",
     "BypassAuthentication": "__NOT_TRANSLATED__",
-    "App": "__NOT_TRANSLATED__"
+    "App": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
