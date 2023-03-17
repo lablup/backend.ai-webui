@@ -786,6 +786,7 @@ export default class BackendAiSessionList extends BackendAIPage {
 
       this.compute_sessions = sessions;
       this._grid.recalculateColumnWidths();
+      // this._grid.clearCache();
       this.requestUpdate();
       let refreshTime;
       this.refreshing = false;
@@ -1876,17 +1877,13 @@ export default class BackendAiSessionList extends BackendAIPage {
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}"
              .app-services-option="${rowData.item.app_services_option}">
-          <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
-          <vaadin-tooltip for="${rowData.index+'-terminal'}" text="${_t('session.ExecuteTerminalApp')}" position="top-start"></vaadin-tooltip>
-          <vaadin-tooltip for="${rowData.index+'-power'}" text="${_t('session.TerminateSession')}" position="top-start"></vaadin-tooltip>
-          <vaadin-tooltip for="${rowData.index+'-assignment'}" text="${_t('session.SeeContainerLogs')}" position="top-start"></vaadin-tooltip>
-          <vaadin-tooltip for="${rowData.index+'-archive'}" text="${_t('session.RequestContainerCommit')}" position="top-start"></vaadin-tooltip>
-          <vaadin-tooltip for="${rowData.index+'-nologs'}" text="${_t('session.NoLogMsgAvailable')}" position="top-start"></vaadin-tooltip>
           ${rowData.item.appSupport ? html`
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"
                                @click="${(e) => this._showAppLauncher(e)}"
-                               icon="apps"></mwc-icon-button>
+                               icon="apps">
+            </mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
             <mwc-icon-button class="fg controls-running"
                                id="${rowData.index+'-terminal'}"
                                ?disabled="${!mySession}"
@@ -1908,16 +1905,20 @@ export default class BackendAiSessionList extends BackendAIPage {
               </g>
             </svg>
             </mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-terminal'}" text="${_t('session.ExecuteTerminalApp')}" position="top-start"></vaadin-tooltip>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status)) || this._isError(rowData.item.status) ? html`
             <mwc-icon-button class="fg red controls-running" id="${rowData.index+'-power'}" ?disabled=${!this._isPending(rowData.item.status) && rowData.item?.commit_status as CommitSessionStatus === 'ongoing'}
                                icon="power_settings_new" @click="${(e) => this._openTerminateSessionDialog(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-power'}" text="${_t('session.TerminateSession')}" position="top-start"></vaadin-tooltip>
           ` : html``}
           ${(this._isRunning && !this._isPreparing(rowData.item.status) || this._APIMajorVersion > 4) && !this._isPending(rowData.item.status) ? html`
             <mwc-icon-button class="fg blue controls-running" id="${rowData.index+'-assignment'}" icon="assignment"
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-assignment'}" text="${_t('session.SeeContainerLogs')}" position="top-start"></vaadin-tooltip>
           ` : html`
             <mwc-icon-button fab flat inverted disabled class="fg controls-running" id="${rowData.index+'-nologs'}" icon="assignment"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-archive'}" text="${_t('session.RequestContainerCommit')}" position="top-start"></vaadin-tooltip>
           `}
           ${this._isContainerCommitEnabled ? html`
             <mwc-icon-button class="fg blue controls-running"
@@ -1929,6 +1930,7 @@ export default class BackendAiSessionList extends BackendAIPage {
                                          rowData.item.type as SessionType === 'BATCH' ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-nologs'}" text="${_t('session.NoLogMsgAvailable')}" position="top-start"></vaadin-tooltip>
           ` : html``}
         </div>
       `, root
