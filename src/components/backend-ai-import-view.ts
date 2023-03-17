@@ -14,12 +14,6 @@ import BackendAiResourceMonitor from './backend-ai-resource-monitor';
 import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
 /**
- * FIXME: Is it okay to get rid of import statement for unused UI component?
- */
-import 'weightless/card';
-import './backend-ai-chart';
-
-/**
  * FIXME: Repeated import statement(s) is/are needed
  *        when using custom elements and type casting of the component at other components
  */

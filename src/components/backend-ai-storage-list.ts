@@ -11,6 +11,7 @@ import {BackendAIPage} from './backend-ai-page';
 import './backend-ai-dialog';
 import './backend-ai-list-status';
 import './lablup-grid-sort-filter-column';
+import './backend-ai-session-launcher';
 
 import {Button} from '@material/mwc-button';
 import '@material/mwc-formfield';
@@ -57,6 +58,7 @@ type Switch = HTMLElementTagNameMap['mwc-switch'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
 /**
  Backend AI Storage List
@@ -79,6 +81,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) renameFolderName = '';
   @property({type: String}) deleteFolderName = '';
@@ -99,9 +102,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Array}) allowedGroups = [];
   @property({type: Object}) indicator = Object();
   @property({type: Object}) notification = Object();
-  // TODO delete - not used in this file
-  // @property({type: Object}) sessionLauncher = Object();
-  @property({type: Object}) sessionLauncher = Object();
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Array}) allowed_folder_type = [];
   @property({type: Boolean}) uploadFilesExist = false;
@@ -177,7 +177,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @query('#download-file-dialog') downloadFileDialog!: BackendAIDialog;
   @query('#modify-permission-dialog') modifyPermissionDialog!: BackendAIDialog;
   @query('#share-folder-dialog') shareFolderDialog!: BackendAIDialog;
-
+  @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   constructor() {
     super();
     this._boundIndexRenderer = this.indexRenderer.bind(this);
@@ -221,6 +221,10 @@ export default class BackendAiStorageList extends BackendAIPage {
           border: 0;
           font-size: 14px;
           height: calc(100vh - 370px);
+        }
+
+        #session-launcher {
+          --component-width: 235px;
         }
 
         span.title {
@@ -591,6 +595,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     // language=HTML
     return html`
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
+      <backend-ai-session-launcher mode="inference" location="data" hideLaunchButton
+        id="session-launcher" ?active="${this.active === true}"
+        .newSessionDialogTitle="${_t('session.launcher.StartModelServing')}"></backend-ai-session-launcher>
       <div class="list-wrapper">
         <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
@@ -726,21 +733,28 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span slot="secondary">${_t('data.folders.DescYouAreFolderOwner')}</span>
               </mwc-list-item>
             ` : html``}
-            <mwc-list-item twoline>
-              <span><strong>${_t('data.folders.Permission')}</strong></span>
-              <div slot="secondary" class="horizontal layout">
-              ${this.folderInfo.permission ? html`
-                ${this._hasPermission(this.folderInfo, 'r') ? html`
-                    <lablup-shields app="" color="green"
-                                    description="R" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'w') ? html`
-                    <lablup-shields app="" color="blue"
-                                    description="W" ui="flat"></lablup-shields>` : html``}
-                ${this._hasPermission(this.folderInfo, 'd') ? html`
-                    <lablup-shields app="" color="red"
-                                    description="D" ui="flat"></lablup-shields>` : html``}` : html``}
-              </div>
-            </mwc-list-item>
+            ${this.folderInfo.usage_mode !== 'undefined' ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.UsageMode')}</strong></span>
+                <span slot="secondary">${this.folderInfo.usage_mode}</span>
+              </mwc-list-item>
+            ` : html``}
+            ${this.folderInfo.permission ? html`
+              <mwc-list-item twoline>
+                <span><strong>${_t('data.folders.Permission')}</strong></span>
+                <div slot="secondary" class="horizontal layout">
+                  ${this._hasPermission(this.folderInfo, 'r') ? html`
+                      <lablup-shields app="" color="green"
+                                      description="R" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'w') ? html`
+                      <lablup-shields app="" color="blue"
+                                      description="W" ui="flat"></lablup-shields>` : html``}
+                  ${this._hasPermission(this.folderInfo, 'd') ? html`
+                      <lablup-shields app="" color="red"
+                                      description="D" ui="flat"></lablup-shields>` : html``}
+                </div>
+              </mwc-list-item>
+            `: html``}
             ${this.enableStorageProxy ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.Cloneable')}</strong></span>
@@ -1040,8 +1054,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
 
-    // TODO delete - not used in this file
-    // this.sessionLauncher = this.shadowRoot?.querySelector('#session-launcher');
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
@@ -1051,7 +1063,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (const textfield of Array.from(textfields)) {
       this._addInputValidator(textfield);
     }
-    if (this.storageType === 'automount') {
+    if (['automount', 'model'].includes(this.storageType)) {
       (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 230px)';
     } else {
       (this.shadowRoot?.querySelector('vaadin-grid.folderlist') as HTMLElement).style.height = 'calc(100vh - 185px)';
@@ -1071,9 +1083,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
-    //console.log(params);
     const folderName = params.get('folder');
-    //console.log(folderName);
     if(folderName){
       // alert(folderName);
       console.log(this.folders)
@@ -1308,6 +1318,15 @@ export default class BackendAiStorageList extends BackendAIPage {
           folder-name="${rowData.item.name}"
           folder-type="${rowData.item.type}"
         >
+         ${this.enableInferenceWorkload && rowData.item.usage_mode == 'model' ?
+      html`
+          <mwc-icon-button
+            class="fg green controls-running"
+            icon="play_arrow"
+            title=${_t('data.folders.Serve')}
+            @click="${(e) => this._inferModel(e)}"
+            ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+          ></mwc-icon-button>`: html``}
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
@@ -1574,9 +1593,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     groupId = globalThis.backendaiclient.current_group_id();
     globalThis.backendaiclient.vfolder.list(groupId).then((value) => {
       const folders = value.filter((item) => {
-        if (this.storageType === 'general' && !item.name.startsWith('.')) {
+        if (!this.enableInferenceWorkload && this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'model') {
+          return item;
+        } else if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
           return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
+          return item;
+        } else if (this.storageType === 'model' && !item.name.startsWith('.') && item.usage_mode == 'model') {
           return item;
         }
       });
@@ -1628,6 +1651,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+        this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
@@ -1637,6 +1661,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
@@ -1906,6 +1931,23 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show(true, err);
       }
     });
+  }
+
+  /**
+   * Start inference with the selected folder
+   *
+   * @param {Event} e - clicked running icon button
+   */
+  _inferModel(e) {
+    const folderName = this._getControlName(e);
+    this.sessionLauncher.customFolderMapping = {};
+    this.sessionLauncher.customFolderMapping[folderName] = 'mount'; // Session launcher only uses key. Therefore value can be anything. (reserved for future use)
+    this.sessionLauncher._launchSessionDialog();
+    /*
+    this.mode = 'inference'
+    this.customFolderMapping  {test-model: '/work'}
+     */
+    return;
   }
 
   /**

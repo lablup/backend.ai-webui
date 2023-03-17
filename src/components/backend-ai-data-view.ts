@@ -67,11 +67,12 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) folderInfo = Object();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: Array}) vhosts = [];
-  @property({type: Array}) usageModes = ['General']; // FIXME: temporally hide unused folder usage modes ['Data', 'Model'];
+  @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
   @property({type: Array}) allowed_folder_type:string[] = [];
@@ -262,13 +263,15 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #automount-folder-lists > div {
+        #automount-folder-lists > div,
+        #model-folder-lists > div {
           background-color: white;
           color: var(--general-textfield-selected-color);
           border-bottom:0.5px solid var(--general-textfield-selected-color);
         }
 
-        #automount-folder-lists > div > p {
+        #automount-folder-lists > div > p ,
+        #model-folder-lists > div > p {
           color: var(--general-sidebar-color);
           margin-left: 10px;
         }
@@ -338,6 +341,10 @@ export default class BackendAIData extends BackendAIPage {
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
                 <mwc-tab title="automount" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                ${this.enableInferenceWorkload ? html`
+                <mwc-tab title="model" label="${_t('data.Models')}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>`: html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
@@ -353,6 +360,13 @@ export default class BackendAIData extends BackendAIPage {
               </div>
               <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true && this._activeTab === 'automount'}"></backend-ai-storage-list>
             </div>
+            ${this.enableInferenceWorkload ? html`
+            <div id="model-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t('data.DialogModelFolder')}</p>
+              </div>
+              <backend-ai-storage-list id="model-folder-storage" storageType="model" ?active="${this.active === true && this._activeTab === 'model'}"></backend-ai-storage-list>
+            </div>` : html``}
           </div>
         </lablup-activity-panel>
       </div>
@@ -599,6 +613,10 @@ export default class BackendAIData extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+      if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
+        this.usageModes.push('Model');
+      }
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._getStorageProxyBackendInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
