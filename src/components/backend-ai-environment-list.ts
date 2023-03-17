@@ -64,6 +64,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _cuda_fgpu_disabled = false;
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
+  @property({type: Boolean}) _ipu_disabled = false;
+  @property({type: Boolean}) _atom_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Array}) installImageNameList;
@@ -97,6 +99,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-cuda-fgpu') modifyImageCudaFGpu!: Button;
   @query('#modify-image-rocm-gpu') modifyImageRocmGpu!: Button;
   @query('#modify-image-tpu') modifyImageTpu!: Button;
+  @query('#modify-image-ipu') modifyImageIpu!: Button;
+  @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -492,6 +496,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'tpu.device') {
               resource.key = 'tpu_device';
             }
+            if (resource.key == 'ipu.device') {
+              resource.key = 'ipu_device';
+            }
+            if (resource.key == 'atom.device') {
+              resource.key = 'atom_device';
+            }
+            if (resource.key === 'atom_device') {
+              console.log(resource);
+              if (resource.min !== null && resource.min !== undefined) {
+                console.log(resource.key + '_limit_min', this._addUnit(resource.min));
+              }
+            }
             if (resource.min !== null && resource.min !== undefined) {
               image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             }
@@ -641,6 +657,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const fgpu = this.modifyImageCudaFGpu.label;
     const rocm_gpu = this.modifyImageRocmGpu.label;
     const tpu = this.modifyImageTpu.label;
+    const ipu = this.modifyImageIpu.label;
+    const atom = this.modifyImageAtom.label;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
@@ -656,6 +674,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input['cuda.shares'] = {'min': fgpu};
     if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input['rocm.device'] = {'min': rocm_gpu};
     if (!this._tpu_disabled && tpu !== resource_limits[4].min) input['tpu.device'] = {'min': tpu};
+    if (!this._ipu_disabled && tpu !== resource_limits[5].min) input['ipu.device'] = {'min': ipu};
+    if (!this._atom_disabled && tpu !== resource_limits[6].min) input['atom.device'] = {'min': atom};
 
     const image = this.images[this.selectedIndex];
 
@@ -834,6 +854,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter((e) => e.key === 'cuda_shares').length === 0;
     this._rocm_gpu_disabled = resource_limits.filter((e) => e.key === 'rocm_device').length === 0;
     this._tpu_disabled = resource_limits.filter((e) => e.key === 'tpu_device').length === 0;
+    this._ipu_disabled = resource_limits.filter((e) => e.key === 'ipu_device').length === 0;
+    this._atom_disabled = resource_limits.filter((e) => e.key === 'atom_device').length === 0;
     this.modifyImageCpu.label = resource_limits[0].min;
     if (!this._cuda_gpu_disabled) {
       this.modifyImageCudaGpu.label = resource_limits[1].min;
@@ -870,6 +892,24 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else {
       this.modifyImageTpu.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = 0;
+    }
+    if (!this._ipu_disabled) {
+      this.modifyImageIpu.label = resource_limits[5].min;
+      (this.shadowRoot?.querySelector('mwc-slider#ipu') as Slider).value = this._range['ipu'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
+    } else {
+      this.modifyImageTpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#ipu') as Slider).value = 0;
+    }
+    if (!this._atom_disabled) {
+      this.modifyImageAtom.label = resource_limits[6].min;
+      (this.shadowRoot?.querySelector('mwc-slider#atom') as Slider).value = this._range['atom'].indexOf(this._range['cpu'].filter((value) => {
+        return value === resource_limits[0].min;
+      })[0]);
+    } else {
+      this.modifyImageAtom.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#atom') as Slider).value = 0;
     }
 
     const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
@@ -1002,6 +1042,10 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     * @param {object} rowData
     */
   requirementsRenderer(root, column?, rowData?) {
+    if (rowData.item.atom_device_limit_min) {
+      console.log(rowData.item);
+      console.log('asdsad');
+    }
     render(
       html`
              <div class="layout horizontal center flex">
@@ -1035,7 +1079,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    <wl-icon class="fg green">apps</wl-icon>
                    <span>${rowData.item.cuda_shares_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                   <span class="indicator">CUDA fGPU</span>
+                   <span class="indicator">CUDA FGPU</span>
                  </div>
                </div>
                ` : html``}
@@ -1052,14 +1096,34 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.tpu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                   <wl-icon class="fg green">apps</wl-icon>
                    <span>${rowData.item.tpu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                    <span class="indicator">TPU</span>
                  </div>
                </div>
                ` : html``}
-         `, root
+           ${rowData.item.ipu_device_limit_min ? html`
+              <div class="layout horizontal center flex">
+                 <div class="layout horizontal configuration">
+                   <wl-icon class="fg green">apps</wl-icon>
+                   <span>${rowData.item.ipu_device_limit_min}</span> ~
+                   <span>${this._markIfUnlimited(rowData.item.ipu_device_limit_max)}</span>
+                   <span class="indicator">IPU</span>
+                 </div>
+               </div>
+           ${rowData.item.atom_device_limit_min ? html`
+              <div class="layout horizontal center flex">
+                 <div class="layout horizontal configuration">
+                   <wl-icon class="fg green">apps</wl-icon>
+                   <span>${rowData.item.atom_device_limit_min}</span> ~
+                   <span>${this._markIfUnlimited(rowData.item.atom_device_limit_max)}</span>
+                   <span class="indicator">ATOM</span>
+                 </div>
+               </div>
+               ` : html``}
+           ` : html``}
+          `, root
     );
   }
 
@@ -1240,7 +1304,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="cpu"
                    step="1"
                    markers
-                   max="7"
+                   max="64"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cpu" disabled></mwc-button>
              </div>
@@ -1250,40 +1314,40 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="mem"
                    markers
                    step="1"
-                   max="11"
+                   max="512"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-mem" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">cuda GPU</span>
+               <span class="resource-limit-title">CUDA GPU</span>
                <mwc-slider
                    ?disabled="${this._cuda_gpu_disabled}"
                    id="cuda-gpu"
                    markers
                    step="1"
-                   max="7"
+                   max="16"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cuda-gpu" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">cuda FGPU</span>
+               <span class="resource-limit-title">CUDA FGPU</span>
                <mwc-slider
                    ?disabled="${this._cuda_fgpu_disabled}"
                    id="cuda-fgpu"
                    markers
                    step="1"
-                   max="5"
+                   max="32"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cuda-fgpu" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">rocm GPU</span>
+               <span class="resource-limit-title">ROCm GPU</span>
                <mwc-slider
                    ?disabled="${this._rocm_gpu_disabled}"
                    id="rocm-gpu"
                    markers
                    step="1"
-                   max="2"
+                   max="8"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-rocm-gpu" disabled></mwc-button>
              </div>
@@ -1294,9 +1358,31 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="tpu"
                    markers
                    step="1"
-                   max="11"
+                   max="10"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-tpu" disabled></mwc-button>
+             </div>
+             <div class="horizontal layout flex center">
+               <span class="resource-limit-title">IPU</span>
+               <mwc-slider
+                   ?disabled="${this._ipu_disabled}"
+                   id="ipu"
+                   markers
+                   step="1"
+                   max="16"
+                   @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+               <mwc-button class="range-value" id="modify-image-ipu" disabled></mwc-button>
+             </div>
+             <div class="horizontal layout flex center">
+               <span class="resource-limit-title">ATOM</span>
+               <mwc-slider
+                   ?disabled="${this._atom_disabled}"
+                   id="atom"
+                   markers
+                   step="1"
+                   max="4"
+                   @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+               <mwc-button class="range-value" id="modify-image-atom" disabled></mwc-button>
              </div>
            </div>
          </div>
