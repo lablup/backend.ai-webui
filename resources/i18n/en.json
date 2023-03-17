@@ -512,9 +512,12 @@
     "Host": "Host",
     "HostUsage": "Host Usage",
     "usage": {
-      "adequate": "Adequate",
-      "caution": "Caution",
-      "insufficient": "Insufficient"
+      "Adequate": "Adequate",
+      "Caution": "Caution",
+      "Insufficient": "Insufficient",
+      "StatusOfSelectedHost": "StatusOfSelectedHost",
+      "Status": "Status",
+      "used": "used"
     },
     "Foldername": "Folder name",
     "FolderToUpdate": "Folder to update",

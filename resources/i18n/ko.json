@@ -504,10 +504,12 @@
     "Host": "호스트",
     "HostUsage": "호스트 사용량",
     "usage": {
-      "status": "상태",
-      "adequate": "여유",
-      "caution": "주의",
-      "insufficient": "부족"
+      "Status": "상태",
+      "StatusOfSelectedHost": "선택한 호스트 상태",
+      "used": "사용중",
+      "Adequate": "여유",
+      "Caution": "주의",
+      "Insufficient": "부족"
     },
     "Foldername": "폴더 이름",
     "FolderToUpdate": "갱신할 폴더 이름",

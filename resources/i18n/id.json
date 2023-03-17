@@ -623,7 +623,13 @@
     },
     "NoStorageDescriptionFound": "Tidak ada deskripsi.",
     "usage": {
-      "adequate": "__NOT_TRANSLATED__"
+      "adequate": "__NOT_TRANSLATED__",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
     }
   },
   "dialog": {
