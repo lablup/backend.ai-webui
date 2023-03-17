@@ -513,6 +513,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             }
             if (resource.max !== null && resource.max !== undefined) {
               image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            } else {
+              image[resource.key + '_limit_max'] = Infinity;
             }
           });
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
@@ -1042,10 +1044,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     * @param {object} rowData
     */
   requirementsRenderer(root, column?, rowData?) {
-    if (rowData.item.atom_device_limit_min) {
-      console.log(rowData.item);
-      console.log('asdsad');
-    }
     render(
       html`
              <div class="layout horizontal center flex">
@@ -1112,7 +1110,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    <span class="indicator">IPU</span>
                  </div>
                </div>
-           ${rowData.item.atom_device_limit_min ? html`
+               ` : html``}
+              ${rowData.item.atom_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
                    <wl-icon class="fg green">apps</wl-icon>
@@ -1122,7 +1121,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                  </div>
                </div>
                ` : html``}
-           ` : html``}
           `, root
     );
   }
