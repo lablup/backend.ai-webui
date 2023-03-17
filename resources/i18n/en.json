@@ -336,7 +336,12 @@
     "Inference": "Inference",
     "UseSubdomain": "UseSubdomain",
     "BypassAuthentication": "Bypass authentication",
-    "App": "App"
+    "App": "App",
+    "SeeAppDialog": "See App Dialog",
+    "ExecuteTerminalApp": "Execute Terminal App",
+    "TerminateSession": "Terminate Session",
+    "SeeContainerLogs": "See Container Logs",
+    "RequestContainerCommit": "Request Container Commit"
   },
   "button": {
     "Cancel": "Cancel",

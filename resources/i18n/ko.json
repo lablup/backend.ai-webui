@@ -328,7 +328,12 @@
     "Inference": "INFERENCE",
     "UseSubdomain": "서브도메인 주소 입력",
     "BypassAuthentication": "인증 바이패스",
-    "App": "__NOT_TRANSLATED__"
+    "App": "앱",
+    "SeeAppDialog": "앱 다이얼로그 보기",
+    "ExecuteTerminalApp": "터미널 앱 실행하기",
+    "TerminateSession": "세션 종료하기",
+    "SeeContainerLogs": "컨테이너 로그 보기",
+    "RequestContainerCommit": "컨테이너 커밋하기"
   },
   "button": {
     "Cancel": "취소",
