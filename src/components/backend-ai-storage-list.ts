@@ -1558,21 +1558,27 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   async _getAllowedVFolderHostsByCurrentUserInfo() {
-    const _mergeDedupe = (arr) => {
-      return [...new Set([].concat(...arr))];
-    }
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    const currentKeypairResourcePolicy = await this._getCurrentKeypairResourcePolicy();
+    const [vhostInfo, currentKeypairResourcePolicy] = await Promise.all([
+      globalThis.backendaiclient.vfolder.list_hosts(),
+      this._getCurrentKeypairResourcePolicy(),
+    ]);
     const currentDomain = globalThis.backendaiclient._config.domainName;
     const currentGroupId = globalThis.backendaiclient.current_group_id();
     const mergedData = await globalThis.backendaiclient.storageproxy.getAllowedVFolderHostsByCurrentUserInfo(currentDomain, currentGroupId, currentKeypairResourcePolicy);
+
     const allowedPermissionForDomainsByVolume = JSON.parse(mergedData.domain.allowed_vfolder_hosts);
     const allowedPermissionForGroupsByVolume = JSON.parse(mergedData.group.allowed_vfolder_hosts);
     const allowedPermissionForResourcePolicyByVolume = JSON.parse(mergedData.keypair_resource_policy.allowed_vfolder_hosts);
+
+    const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
     this._unionedAllowedPermissionByVolume = Object.assign({}, ...vhostInfo.allowed.map((volume) => {
       return {
-        [volume]: _mergeDedupe([allowedPermissionForDomainsByVolume[volume], allowedPermissionForGroupsByVolume[volume], allowedPermissionForResourcePolicyByVolume[volume]])
-      }
+        [volume]: _mergeDedupe([
+          allowedPermissionForDomainsByVolume[volume],
+          allowedPermissionForGroupsByVolume[volume],
+          allowedPermissionForResourcePolicyByVolume[volume],
+        ])
+      };
     }));
     this.folderListGrid.clearCache();
   }
@@ -1688,11 +1694,11 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
-        await this._checkFilebrowserSupported();
-        await this._getVolumeInformation();
-        await this._getAllowedVFolderHostsByCurrentUserInfo();
-        await this._triggerFolderListChanged();
-        await this._refreshFolderList(false, 'viewStatechanged');
+        this._getAllowedVFolderHostsByCurrentUserInfo();
+        this._checkFilebrowserSupported();
+        this._getVolumeInformation();
+        this._triggerFolderListChanged();
+        this._refreshFolderList(false, 'viewStatechanged');
       }, true);
     } else {
       this.is_admin = globalThis.backendaiclient.is_admin;
@@ -1701,11 +1707,11 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
-      await this._checkFilebrowserSupported();
-      await this._getVolumeInformation();
-      await this._getAllowedVFolderHostsByCurrentUserInfo();
-      await this._triggerFolderListChanged();
-      await this._refreshFolderList(false, 'viewStatechanged');
+      this._getAllowedVFolderHostsByCurrentUserInfo();
+      this._checkFilebrowserSupported();
+      this._getVolumeInformation();
+      this._triggerFolderListChanged();
+      this._refreshFolderList(false, 'viewStatechanged');
     }
   }
 
