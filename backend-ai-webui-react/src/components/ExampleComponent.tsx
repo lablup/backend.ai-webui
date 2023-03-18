@@ -7,6 +7,7 @@ import {
   Select,
   theme,
   Tooltip,
+  Typography,
 } from "antd";
 //@ts-ignore
 import customCss from "./ExampleComponent.css?raw";
@@ -25,9 +26,17 @@ const SampleComponent: React.FC<{
   const { token } = theme.useToken();
   const { shadowRoot } = useWebComponentInfo();
   return (
-    <Flex direction="column" style={{ gap: token.paddingSM }}>
+    <Flex
+      direction="column"
+      style={{
+        gap: token.paddingSM,
+        border: "1px solid gray",
+        padding: 20,
+        borderRadius: 10,
+      }}
+    >
       <style>{customCss}</style>
-
+      <Typography.Title level={2}>React in Lit</Typography.Title>
       <Tooltip title="hello">
         <Button>This is a sample component</Button>
       </Tooltip>
@@ -39,7 +48,7 @@ const SampleComponent: React.FC<{
         placeholder="please select one"
       ></Select>
       <Alert
-        message={`I got from a string via 'value' attribute of component : ${value}`}
+        message={`I got from a string via 'value' attribute of component : ${typeof value} / ${value}`}
       />
       <div className="hello">With Custom CSS style (gray BG)</div>
       <div

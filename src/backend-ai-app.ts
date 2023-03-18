@@ -12,7 +12,7 @@ export const navigate = (path: any, params: Record<string, unknown> = {}) => (di
   // Extract the page name from path.
   if (['/summary', '/job', '/agent-summary', '/experiment', '/data', '/pipeline', '/pipeline-job', '/statistics', '/usersettings',
     '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
-    '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
+    '/maintenance', '/information', '/github', '/import', '/react-test'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     const fragments = path.split(/[/]+/);
     if (fragments.length > 1 && fragments[0] === '') {
       path = fragments[1];
@@ -31,7 +31,6 @@ export const navigate = (path: any, params: Record<string, unknown> = {}) => (di
   } else {
     page = path;
   }
-
   // const page = path === '/' ? 'summary' : path.slice(1);
   // Any other info you might want to extract from the path (like page type),
   // you can do here
@@ -111,6 +110,9 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
     break;
   case 'edu-applauncher':
     import('./components/backend-ai-edu-applauncher.js');
+    break;
+  case 'react-test':
+    import('./components/backend-ai-react-test-view.js');
     break;
   case 'unauthorized':
     import('./components/backend-ai-permission-denied-view.js');
