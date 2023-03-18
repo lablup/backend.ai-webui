@@ -1,124 +1,90 @@
-import React, { useEffect, useRef, useState, useMemo } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
 import { StyleProvider } from "@ant-design/cssinjs";
-import reactToWebComponent from "../helper/react-to-webcomponent.js";
-import root from "react-shadow";
-import { Button, ConfigProvider } from "antd";
-import PropTypes from "prop-types";
+import reactToWebComponent from "../helper/react-to-webcomponent";
+import { ConfigProvider } from "antd";
 
 import { QueryClient, QueryClientProvider } from "react-query";
 // Create a client
 const queryClient = new QueryClient();
 
 interface WebComponentContextType {
-  shadowRoot?: ShadowRoot;
   props: ReactWebComponentProps;
 }
-
-// eslint-disable-next-line
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
-
 export function useWebComponentInfo() {
   return React.useContext(WebComponentContext);
 }
 
 export interface ReactWebComponentProps {
   value?: string;
-  onEvent: (name: string, detail:any) => void;
+  styles?: string;
+  dispatchEvent?: (name: string, detail: any) => void;
+  shadowRoot: ShadowRoot;
 }
 
 export const reactToWebComponentWithDefault = (
-  ReactComponent: React.FunctionComponent | React.Component
+  ReactComponent: React.FunctionComponent<ReactWebComponentProps>
 ) => {
   const Root: React.FC<ReactWebComponentProps> = (props) => {
-    const node = useRef<HTMLElement>(null);
-    const [, setState] = useState(0);
-
-    // to force re-render after shadowRoot is created
-    useEffect(() => {
-      setTimeout(() => {
-        setState((x) => x + 1);
-      }, 0);
-    }, []);
-
-    //@ts-ignore
-    function getPopupContainer(triggerNode?: HTMLElement) {
-      if (triggerNode) {
-        return triggerNode.parentNode;
-      }
-      return node.current?.shadowRoot;
-    }
-
-    //@ts-ignore
-    // window.__REACT_SHADOW_ROOT__ = node.current?.shadowRoot;
-
-    const contextValue = useMemo<WebComponentContext>(() => {
-      return {
-        shadowRoot: node.current?.shadowRoot,
-        props: props,
-      };
-    }, [node.current, props]);
-    console.log(props,)
+    console.log(props.styles);
     return (
-      <root.div className="react-component" ref={node}>
-        {node.current?.shadowRoot ? (
-          <WebComponentContext.Provider value={contextValue}>
-            <QueryClientProvider client={queryClient}>
-              <ConfigProvider
-                // @ts-ignore
-                getPopupContainer={getPopupContainer}
-                theme={{
-                  token: {
-                    colorPrimary: "#37B076",
-                    colorLink: "#37B076",
-                    colorLinkHover: "#71b98c",
-                    colorSuccess: "#37B076",
+      <>
+        <style>{props.styles}</style>
+        <WebComponentContext.Provider
+          value={{
+            props,
+          }}
+        >
+          <QueryClientProvider client={queryClient}>
+            <ConfigProvider
+              // @ts-ignore
+              getPopupContainer={(triggerNode) => {
+                if (triggerNode?.parentNode) {
+                  return triggerNode.parentNode;
+                }
+                return props.shadowRoot;
+              }}
+              theme={{
+                token: {
+                  colorPrimary: "#37B076",
+                  colorLink: "#37B076",
+                  colorLinkHover: "#71b98c",
+                  colorSuccess: "#37B076",
+                },
+                components: {
+                  Tag: {
+                    borderRadiusSM: 1,
                   },
-                  components: {
-                    Tag: {
-                      borderRadiusSM: 1,
-                    },
-                    Collapse: {
-                      colorFillAlter: "#FAFAFA",
-                      borderRadiusLG: 0,
-                    },
-                    Menu: {
-                      colorItemBgSelected: "transparent",
-                      colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
-                      radiusItem: 0,
-                    },
+                  Collapse: {
+                    colorFillAlter: "#FAFAFA",
+                    borderRadiusLG: 0,
                   },
-                }}
-              >
-                <StyleProvider container={node.current?.shadowRoot}>
-                  <React.StrictMode>
-                    {/* @ts-ignore */}
-                    <ReactComponent value={props.value} />
-                    <Button onClick={(e)=>{
-                      console.log('click')
-                      e.stopPropagation();
-                      props.onEvent('click', {value: 'hello'})
-                    }}>Event</Button>
-                    <slot name="hello">alsdkfjalksjf</slot>
-                  </React.StrictMode>
-                </StyleProvider>
-              </ConfigProvider>
-            </QueryClientProvider>
-          </WebComponentContext.Provider>
-        ) : null}
-      </root.div>
+                  Menu: {
+                    colorItemBgSelected: "transparent",
+                    colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
+                    radiusItem: 0,
+                  },
+                },
+              }}
+            >
+              <StyleProvider container={props.shadowRoot}>
+                <React.StrictMode>
+                  {/* @ts-ignore */}
+                  <ReactComponent
+                    value={props.value}
+                    dispatchEvent={props.dispatchEvent}
+                  />
+                </React.StrictMode>
+              </StyleProvider>
+            </ConfigProvider>
+          </QueryClientProvider>
+        </WebComponentContext.Provider>
+      </>
     );
   };
 
-  Root.propTypes = {
-    value: PropTypes.string,
-  };
-
-  //@ts-ignore
-  return reactToWebComponent(Root, React, ReactDOM, {
-    dashStyleAttributes: true,
-    shadow: null,
-  }) as CustomElementConstructor;
+  return reactToWebComponent(Root, React, ReactDOM);
 };
 
 // Another way to do it:

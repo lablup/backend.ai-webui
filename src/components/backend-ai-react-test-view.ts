@@ -45,18 +45,24 @@ export default class BackendAiReactTestView extends BackendAIPage {
     }
   }
   changeName(event: Event) {
-    console.log('#####', event)
     const input = event.target as HTMLInputElement;
     this.value = input.value;
   }
 
-  handleChangeInReact(event: Event) {
-    // alert(event);
-    console.log(event);
-
-  }
+  handleChangeInReact = (event: CustomEvent) => {
+    if (event.type === "my") {
+      console.log("This log from lit(react-test-view)", event);
+      this.value = event.detail.value;
+    }
+  };
 
   render() {
+    //@ts-ignore
+    // const sharedCSS = BackendAiReactTestView.styles
+    //   .flat()
+    //   .map((s) => s.cssText)
+    //   .join("\n");
+
     // language=HTML
     return html`
       <div class="box">
@@ -69,14 +75,13 @@ export default class BackendAiReactTestView extends BackendAIPage {
       </div>
 
       <backend-ai-webui-react-example
-      
-        value=${100+3}
-        @click=${this.value === 'none'?null:this.handleChangeInReact}
+        value=${this.value}
+        @my=${this.value === "none" ? null : this.handleChangeInReact}
       >
-      <div slot="hello">
-        <h1>I'm children</h1>
-      </div>
-    </backend-ai-webui-react-example>
+        <div slot="hello">
+          <h1>I'm children</h1>
+        </div>
+      </backend-ai-webui-react-example>
       <!-- <backend-ai-react-test-internal-view></backend-ai-react-test-internal-view> -->
     `;
   }

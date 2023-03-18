@@ -17,14 +17,18 @@ import { useWebComponentInfo } from "../helper";
 
 const SampleComponent: React.FC<{
   value?: string;
-}> = ({ value }) => {
+  dispatchEvent?: (name: string, detail: any) => void;
+}> = ({ value, dispatchEvent }) => {
   useEffect(() => {
     message.success("hello");
   }, []);
   const [open, setOpen] = useState(false);
   const [isOpenedDrawer, setIsOpenedDrawer] = useState(false);
   const { token } = theme.useToken();
-  const { shadowRoot } = useWebComponentInfo();
+  const {
+    props: { shadowRoot },
+  } = useWebComponentInfo();
+  console.log("rendering;");
   return (
     <Flex
       direction="column"
@@ -37,8 +41,15 @@ const SampleComponent: React.FC<{
     >
       <style>{customCss}</style>
       <Typography.Title level={2}>React in Lit</Typography.Title>
+      <h1>Lit</h1>
       <Tooltip title="hello">
-        <Button>This is a sample component</Button>
+        <Button
+          onClick={() => {
+            dispatchEvent && dispatchEvent("my", { value: "hello" });
+          }}
+        >
+          Trigger an event from react to lit
+        </Button>
       </Tooltip>
       <Select
         options={[
@@ -77,7 +88,9 @@ const SampleComponent: React.FC<{
         title="This is drawer"
         onClose={() => setIsOpenedDrawer((v) => !v)}
         getContainer={shadowRoot}
-      />
+      >
+        <Button>hello</Button>
+      </Drawer>
     </Flex>
   );
 };
