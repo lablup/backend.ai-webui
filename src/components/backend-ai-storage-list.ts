@@ -1587,7 +1587,9 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   async refreshFolderList() {
     this._triggerFolderListChanged();
-    this.folderListGrid.clearCache();
+    if (this.folderListGrid) {
+      this.folderListGrid.clearCache();
+    }
     return await this._refreshFolderList(true, 'refreshFolderList');
   }
 
