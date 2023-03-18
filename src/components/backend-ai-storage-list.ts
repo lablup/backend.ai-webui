@@ -1657,10 +1657,20 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   async _checkFilebrowserSupported() {
-    const response = await globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+    const fields = [
+      'name', 'tag', 'registry', 'digest', 'installed',
+      'labels { key value }',
+      'resource_limits { key min max }',
+    ];
+    const response = await globalThis.backendaiclient.image.list(fields, true, true);
     const images = response.images;
-    // only filter both installed and filebrowser supported image from images
-    this.filebrowserSupportedImages = images.filter((image) => image['installed'] && image.labels.find((label) => label.key === 'ai.backend.service-ports' && label.value.toLowerCase().includes('filebrowser')));
+    // Filter filebrowser supported images.
+    this.filebrowserSupportedImages = images.filter((image) =>
+      image.labels.find((label) =>
+        label.key === 'ai.backend.service-ports' &&
+        label.value.toLowerCase().includes('filebrowser'),
+      ),
+    );
   }
 
   async _viewStateChanged(active) {
