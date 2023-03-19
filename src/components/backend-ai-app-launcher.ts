@@ -1137,7 +1137,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
-            <div id="preferred-app-port-config-box" style="display:none" class="horizontal layout center">
+            <div id="preferred-app-port-config-box" class="horizontal layout center">
               <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
               ${_t('session.TryPreferredPort')}
               <mwc-textfield id="app-port" type="number" no-label-float value="10250"
