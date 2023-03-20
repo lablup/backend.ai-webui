@@ -30,7 +30,7 @@ export default class BackendAiMetadataStore extends BackendAIPage {
   constructor() {
     super();
     this.readImageMetadata();
-    this.readDeviceMetadata();
+    //this.readDeviceMetadata();
   }
 
   firstUpdated() {
