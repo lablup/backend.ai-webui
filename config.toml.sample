@@ -36,6 +36,7 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 
 [resources]
 openPortToPublic = false            # Show option to open app proxy port to anyone.
+allowPreferredPort = false          # Preferred web service port number. However, there is no guarantee that the desired port will always be assigned because the port may not exist at all in the port pool or another service may already be using the port. In this case, the port number is randomly assigned.
 maxCPUCoresPerContainer = 256       # Maximum CPU per container.
 maxMemoryPerContainer = 64          # Maximum memory per container.
 maxCUDADevicesPerContainer = 8      # Maximum CUDA devices per container.

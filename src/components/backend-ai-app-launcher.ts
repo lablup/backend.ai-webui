@@ -54,6 +54,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Object}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
@@ -476,6 +477,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this.allowPreferredPort = globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
     this.dialog.setAttribute('access-key', accessKey);
@@ -1137,13 +1139,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
-            <div id="preferred-app-port-config-box" class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
-              ${_t('session.TryPreferredPort')}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em;width:90px;"
-                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
-            </div>
+            ${this.allowPreferredPort ? html`
+              <div id="preferred-app-port-config-box" class="horizontal layout center">
+                <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
+                ${_t('session.TryPreferredPort')}
+                <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                              min="1025" max="65534" style="margin-left:1em;width:90px;"
+                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+              </div>
+            ` : html``}
             <div class="horizontal layout center">
             ${globalThis.backendaiwebui.debug === true ? html`
               <mwc-checkbox id="force-use-v1-proxy" style="margin-right:0.5em;"></mwc-checkbox>
