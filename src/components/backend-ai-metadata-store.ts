@@ -24,18 +24,19 @@ export default class BackendAiMetadataStore extends BackendAIPage {
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) icons = Object();
+  @property({type: Object}) deviceInfo = Object();
 
   constructor() {
     super();
     this.readImageMetadata();
+    //this.readDeviceMetadata();
   }
 
   firstUpdated() {
-    this.readImageMetadata();
   }
 
-  async readImageMetadata() {
-    return fetch('resources/image_metadata.json').then(
+  readImageMetadata() {
+    fetch('resources/image_metadata.json').then(
       (response) => response.json()
     ).then(
       (json) => {
@@ -68,6 +69,20 @@ export default class BackendAiMetadataStore extends BackendAIPage {
         }
         this.imageTagAlias = json.tagAlias;
         this.imageTagReplace = json.tagReplace;
+      }
+    );
+  }
+
+  readDeviceMetadata() {
+    fetch('resources/device_metadata.json').then(
+      (response) => response.json()
+    ).then(
+      (json) => {
+        this.deviceInfo = json.deviceInfo;
+        for (const key in this.deviceInfo) {
+          if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
+          }
+        }
       }
     );
   }
