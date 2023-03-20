@@ -202,6 +202,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) max_ipu_device_per_container = 8;
   @property({type: Number}) max_atom_device_per_container = 4;
   @property({type: Number}) max_shm_per_container = 8;
+  @property({type: String}) acceleratorName = 'GPU';
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
   @property({type: Number}) cluster_size = 1;
@@ -1395,32 +1396,37 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
     }
     config['cpu'] = this.cpu_request;
-    console.log('GPU:', this.gpu_request);
-    console.log('GPU type:', this.gpu_request_type);
     switch (this.gpu_request_type) {
     case 'cuda.shares':
       config['cuda.shares'] = this.gpu_request;
+      this.acceleratorName = 'CUDA GPU';
       break;
     case 'cuda.device':
       config['cuda.device'] = this.gpu_request;
+      this.acceleratorName = 'CUDA GPU';
       break;
     case 'rocm.device':
       config['rocm.device'] = this.gpu_request;
+      this.acceleratorName = 'ROCm GPU';
       break;
     case 'tpu.device':
       config['tpu.device'] = this.gpu_request;
+      this.acceleratorName = 'TPU';
       break;
     case 'ipu.device':
       config['ipu.device'] = this.gpu_request;
+      this.acceleratorName = 'IPU';
       break;
     case 'atom.device':
       config['atom.device'] = this.gpu_request;
+      this.acceleratorName = 'ATOM';
       break;
     default:
       // Fallback to current gpu mode if there is a gpu request, but without gpu type.
       if (this.gpu_request > 0 && this.gpu_mode) {
         config[this.gpu_mode] = this.gpu_request;
       }
+      this.acceleratorName = 'GPU';
     }
     if (String(this.memoryResouceSlider.value) === 'Infinity') {
       config['mem'] = String(this.memoryResouceSlider.value);
@@ -3878,7 +3884,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <p>${this._conditionalGiBtoMiBunit(this.shmem_request * this.cluster_size * this.session_request)}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
-                    <p>${_t('session.launcher.GPU')}</p>
+                    <p>${this.acceleratorName}</p>
                     <span>${this._roundResourceAllocation(this.gpu_request * this.cluster_size * this.session_request, 2)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
@@ -3904,7 +3910,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       <p>${this._conditionalGiBtoMiBunit(this.shmem_request)}</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
-                      <p>${_t('session.launcher.GPU')}</p>
+                      <p>${this.acceleratorName}</p>
                       <span>${this.gpu_request}</span>
                       <p>${_t('session.launcher.GPUSlot')}</p>
                     </div>
