@@ -338,7 +338,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -367,7 +367,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>2</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -396,7 +396,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -425,7 +425,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -454,7 +454,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>

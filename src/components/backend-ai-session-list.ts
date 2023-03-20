@@ -94,7 +94,7 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  */
 type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 @customElement('backend-ai-session-list')
-export default class BackendAiSessionList extends BackendAIPage {
+export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
@@ -686,12 +686,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+              sessions[objectKey].io_read_bytes_mb = BackendAISessionList.bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+              sessions[objectKey].io_write_bytes_mb = BackendAISessionList.bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -899,18 +899,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -938,13 +926,17 @@ export default class BackendAiSessionList extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
+  /**
+   * Convert the value bytes to MB with decimal point to 1 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to MB
+   */
+  static bytesToMB(value, decimalPoint = 1) {
+    return Number(value / (10 ** 6)).toFixed(1);
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
   /**
    * Return elapsed time
    *
@@ -1984,7 +1976,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
-            <span class="indicator">GB</span>
+            <span class="indicator">GiB</span>
           </div>
           <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
@@ -1995,7 +1987,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_fgpu_slot}</span>
-              <span class="indicator">GPU</span>
+              <span class="indicator">FGPU</span>
               ` : html``}
             ${rowData.item.rocm_gpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
@@ -2105,8 +2097,8 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="horizontal start-justified center layout">
             <div class="usage-items">I/O</div>
             <div style="font-size:8px;" class="horizontal start-justified center layout">
-            R: ${rowData.item.io_read_bytes_mb}MB /
-            W: ${rowData.item.io_write_bytes_mb}MB
+            R: ${rowData.item.io_read_bytes_mb} MB /
+            W: ${rowData.item.io_write_bytes_mb} MB
             </div>
           </div>
        </div>
@@ -2520,6 +2512,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-list': BackendAiSessionList;
+    'backend-ai-session-list': BackendAISessionList;
   }
 }

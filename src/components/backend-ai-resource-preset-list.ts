@@ -156,8 +156,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gb)}</span>
-            <span class="indicator">GB</span>
+            <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gib)}</span>
+            <span class="indicator">GiB</span>
           </div>
         </div>
         <div class="layout horizontal wrap center">
@@ -174,15 +174,15 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <wl-icon class="fg green">view_module</wl-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
-            <span class="indicator">GPU</span>
+            <span class="indicator">FGPU</span>
           </div>
         ` : html``}
         ${rowData.item.shared_memory ?
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg blue">memory</wl-icon>
-            <span>${rowData.item.shared_memory_gb}</span>
-            <span class="indicator">GB</span>
+            <span>${rowData.item.shared_memory_gib}</span>
+            <span class="indicator">GiB</span>
           </div>
         ` : html``}
         </div>
@@ -441,11 +441,11 @@ class BackendAiResourcePresetList extends BackendAIPage {
       const resourcePresets = response.presets;
       Object.keys(resourcePresets).map((objectKey, index) => {
         const preset = resourcePresets[objectKey];
-        preset.resource_slots.mem_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
+        preset.resource_slots.mem_gib = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.resource_slots.mem, 'g'));
         if (preset.shared_memory) {
-          preset.shared_memory_gb = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g')).toFixed(2);
+          preset.shared_memory_gib = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(preset.shared_memory, 'g')).toFixed(2);
         } else {
-          preset.shared_memory_gb = null;
+          preset.shared_memory_gib = null;
         }
       });
       this.resourcePresets = resourcePresets;

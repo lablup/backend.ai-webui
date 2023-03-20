@@ -717,10 +717,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="mem-usage-bar" class="start"
                 progress="${this.used_resource_group_slot_percent.mem / 100.0}"
-                description="${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB"></lablup-progress-bar>
+                description="${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GiB"></lablup-progress-bar>
               <lablup-progress-bar id="mem-usage-bar-2" class="end"
                 progress="${this.used_slot_percent.mem / 100.0}"
-                description="${this.used_slot.mem}/${this.total_slot.mem}GB"
+                description="${this.used_slot.mem}/${this.total_slot.mem}GiB"
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">

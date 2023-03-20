@@ -55,7 +55,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  */
 
 @customElement('backend-ai-session-view')
-export default class BackendAiSessionView extends BackendAIPage {
+export default class BackendAISessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean}) active = true;
   @property({type: Boolean}) is_admin = false;
@@ -334,12 +334,15 @@ export default class BackendAiSessionView extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MiB with decimal point to 1 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to MiB
+   */
+  static bytesToMiB(value, decimalPoint = 1) {
+    return Number(value / (2 ** 20)).toFixed(1);
   }
 
   _exportToCSV() {
@@ -420,12 +423,12 @@ export default class BackendAiSessionView extends BackendAIPage {
               exportListItem.cpu_used_time = 0;
             }
             if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+              exportListItem.io_read_bytes_mb = BackendAISessionView.bytesToMiB(liveStat.io_read.current);
             } else {
               exportListItem.io_read_bytes_mb = 0;
             }
             if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+              exportListItem.io_write_bytes_mb = BackendAISessionView.bytesToMiB(liveStat.io_write.current);
             } else {
               exportListItem.io_write_bytes_mb = 0;
             }
@@ -567,6 +570,6 @@ export default class BackendAiSessionView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-view': BackendAiSessionView;
+    'backend-ai-session-view': BackendAISessionView;
   }
 }

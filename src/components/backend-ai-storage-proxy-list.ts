@@ -216,26 +216,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value - byte value
-   * @return {number} value converted to MB
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value - MB value
-   * @return {number} value converted to GB
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
    * Convert start date to human readable date.
    *
    * @param {Date} start date
@@ -460,8 +440,15 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     );
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MB
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {number} converted value from bytes to MB
+   */
+  static bytesToMB(value, decimalPoint = 1) {
+    return Number(value / (10 ** 6)).toFixed(decimalPoint);
   }
 
   render() {
@@ -511,13 +498,13 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <div>
                 <lablup-progress-bar class="mem"
                                      progress="${this.storageProxyDetail.mem_current_usage_ratio}"
-                                     description="${this.storageProxyDetail.current_mem}GB/${this.storageProxyDetail.mem_slots}GB"
+                                     description="${this.storageProxyDetail.current_mem} GiB / ${this.storageProxyDetail.mem_slots} GiB"
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
-                <div>TX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)} MB</div>
+                <div>RX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)} MB</div>
               ` : html``}
             </div>
           </div>
