@@ -840,7 +840,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${rowData.item.atom_slots ? html`
             <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
-                <img class="indicator-icon fg green" src="/resources/icons/atom.svg"/>
+                <img class="indicator-icon fg green" src="/resources/icons/rebel.svg"/>
                 <span class="monospace" style="padding-left:5px;">${rowData.item.used_atom_slots}/${rowData.item.atom_slots}</span>
                 <span class="indicator">ATOM</span>
               </div>

@@ -2015,8 +2015,13 @@ export default class BackendAISessionList extends BackendAIPage {
               <span>${rowData.item.tpu_slot}</span>
               <span class="indicator">TPU</span>
               ` : html``}
-            ${rowData.item.atom_slot ? html`
+            ${rowData.item.ipu_slot ? html`
               <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.tpu_slot}</span>
+              <span class="indicator">IPU</span>
+              ` : html``}
+            ${rowData.item.atom_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/rebel.svg" />
               <span>${rowData.item.atom_slot}</span>
               <span class="indicator">ATOM</span>
               ` : html``}
