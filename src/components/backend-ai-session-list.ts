@@ -461,28 +461,9 @@ export default class BackendAISessionList extends BackendAIPage {
 
   firstUpdated() {
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-            if ('icon' in this.imageInfo[key]) {
-              this.kernel_icons[key] = this.imageInfo[key].icon;
-            } else {
-              this.kernel_icons[key] = '';
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_icons = globalThis.backendaimetadata.icons;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));

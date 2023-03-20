@@ -237,23 +237,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   firstUpdated() {
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically

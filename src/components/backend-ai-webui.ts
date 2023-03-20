@@ -48,6 +48,7 @@ import './backend-ai-user-dropdown-menu';
 
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAISettingsStore from './backend-ai-settings-store';
+import BackendAiMetadataStore from './backend-ai-metadata-store';
 import BackendAITasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
@@ -68,6 +69,7 @@ registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
 globalThis.backendaioptions = new BackendAISettingsStore;
+globalThis.backendaimetadata = new BackendAiMetadataStore;
 globalThis.tasker = new BackendAITasker;
 globalThis.backendaiutils = new BackendAICommonUtils;
 

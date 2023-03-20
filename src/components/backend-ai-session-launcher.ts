@@ -1033,10 +1033,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
       if (this.mode === 'inference') {
-        this.languages = this.resourceBroker.languages.filter(item =>
+        this.languages = this.resourceBroker.languages.filter((item) =>
           item.name !== '' && this.resourceBroker.imageRoles[item.name] === 'INFERENCE');
       } else {
-        this.languages = this.resourceBroker.languages.filter(item =>
+        this.languages = this.resourceBroker.languages.filter((item) =>
           item.name === '' || this.resourceBroker.imageRoles[item.name] === 'COMPUTE');
       }
       this.enableLaunchButton = true;

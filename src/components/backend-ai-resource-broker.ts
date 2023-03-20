@@ -148,44 +148,17 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   firstUpdated() {
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.tags[key] = [];
-            if ('name' in this.imageInfo[key]) {
-              this.aliases[key] = this.imageInfo[key].name;
-              this.imageNames[key] = this.imageInfo[key].name;
-            }
-            if ('icon' in this.imageInfo[key]) {
-              this.icons[key] = this.imageInfo[key].icon;
-            } else {
-              this.icons[key] = 'default.png';
-            }
-
-            if ('label' in this.imageInfo[key]) {
-              this.imageInfo[key].label.forEach((item) => {
-                if (!('category' in item)) {
-                  this.tags[key].push(item);
-                }
-              });
-            }
-          }
-        }
-        this.imageTagAlias = json.tagAlias;
-        this.imageTagReplace = json.tagReplace;
-        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-          document.addEventListener('backend-ai-connected', () => {
-            this._refreshImageList();
-          }, {once: true});
-        } else {
-          this._refreshImageList();
-        }
-      }
-    );
+    this.tags = globalThis.backendaimetadata.tags;
+    this.icons = globalThis.backendaimetadata.icons;
+    this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
+    this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshImageList();
+      }, {once: true});
+    } else {
+      this._refreshImageList();
+    }
 
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.active && this.metadata_updating === false) {
