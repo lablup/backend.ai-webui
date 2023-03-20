@@ -57,7 +57,9 @@ module.exports = {
       }
 
       // For development when loading react bundle on other host, you need to set the public path to the dev server address.
-      webpackConfig.output.publicPath = "http://127.0.0.1:3081/";
+      if (env === "development") {
+        webpackConfig.output.publicPath = "http://127.0.0.1:3081/";
+      }
       return webpackConfig;
     },
   },

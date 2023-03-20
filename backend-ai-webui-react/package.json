@@ -26,7 +26,9 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "npm run cp:index.html && craco build && npm run cp:build",
+    "cp:index.html": "cp ../index.html ./public/index.html",
+    "cp:build": "cp -r ./build/* ../build/rollup/",
     "test": "craco test",
     "eject": "react-scripts eject"
   },
