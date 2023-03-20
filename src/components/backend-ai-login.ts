@@ -103,6 +103,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) always_enqueue_compute_session = false;
   @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) allowPreferredPort= false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
   @property({type: Boolean}) maxMemoryPerContainer = 16;
   @property({type: Number}) maxCUDADevicesPerContainer = 16;
@@ -787,6 +788,14 @@ export default class BackendAILogin extends BackendAIPage {
        value: resourcesConfig?.openPortToPublic,
      } as ConfigValueObject) as boolean;
 
+    // Preferred port flag
+    this.allowPreferredPort = this._getConfigValueByExists(resourcesConfig,
+    {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: resourcesConfig?.allowPreferredPort,
+    } as ConfigValueObject) as boolean;
+
     // Max CPU cores per container number
     this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
      {
@@ -1445,6 +1454,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
       globalThis.backendaiclient._config.always_enqueue_compute_session = this.always_enqueue_compute_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
+      globalThis.backendaiclient._config.allowPreferredPort = this.allowPreferredPort;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
