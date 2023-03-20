@@ -101,6 +101,7 @@ type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 interface IdleChecks {
   [key: string]: number | null;
 }
+
 @customElement('backend-ai-session-list')
 export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
@@ -633,6 +634,7 @@ export default class BackendAISessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('idle-checks')) {
       fields.push('idle_checks');
+    }
     if (globalThis.backendaiclient.supports('inference-workload')) {
       fields.push('inference_metrics');
     }
@@ -1753,7 +1755,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {string} idleChecks - Session's idle check
    * @return {Array<string>} - Minimum value that and the key
    */
-  _getIdleSessionTimeout(idleChecks: string): [string, string] | null {
+  _getIdleSessionTimeout(idleChecks: string) {
     if (globalThis.backendaiutils.isEmpty(idleChecks)) {
       return null;
     }
