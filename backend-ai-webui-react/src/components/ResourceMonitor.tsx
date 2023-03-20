@@ -12,7 +12,7 @@ const ResourceMonitor: React.FC<ResourceMonitorProps> = () => {
 
   //   // return globalThis.resourceBroker.updateScalingGroup(true, );
   // })
-  // @ts-ignore
+
   const {
     resourceBroker,
     props: { value },

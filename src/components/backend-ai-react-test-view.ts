@@ -73,7 +73,9 @@ export default class BackendAiReactTestView extends BackendAIPage {
         />
         <p>Value: ${this.value}</p>
       </div>
-
+      <div>
+        <backend-ai-webui-react-project-select></backend-ai-webui-react-project-select>
+      </div>
       <backend-ai-webui-react-example
         value=${this.value}
         @my=${this.value === "none" ? null : this.handleChangeInReact}

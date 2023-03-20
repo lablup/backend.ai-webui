@@ -1,5 +1,5 @@
-import React from "react";
-import { StyleProvider } from "@ant-design/cssinjs";
+import React, { useMemo } from "react";
+import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
@@ -25,9 +25,10 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   children,
   ...props
 }) => {
+  const cache = useMemo(() => createCache(), []);
   return (
     <>
-      {/* <style>{props.styles}</style> */}
+      <style>{props.styles}</style>
       <WebComponentContext.Provider
         value={{
           props,
@@ -68,7 +69,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
               },
             }}
           >
-            <StyleProvider container={props.shadowRoot}>
+            <StyleProvider container={props.shadowRoot} cache={cache}>
               <React.StrictMode>{children}</React.StrictMode>
             </StyleProvider>
           </ConfigProvider>
