@@ -3184,9 +3184,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _acceleratorName(gpu_type:string) {
     const accelerator_names = {
-      'cuda.device': 'CUDA GPU',
-      'cuda.shares': 'CUDA GPU',
-      'rocm.device': 'ROCm GPU',
+      'cuda.device': 'GPU',
+      'cuda.shares': 'GPU',
+      'rocm.device': 'GPU',
       'tpu.device': 'TPU',
       'ipu.device': 'IPU',
       'atom.device': 'ATOM'
@@ -3645,9 +3645,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     html`64MB`}
                       </div>
                       <div style="width:80px;text-align:right;">
-                        ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
+                        ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} GPU` : html``}
                         ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
-                        ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
+                        ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} GPU` : html``}
                         ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
                         ${item.ipu_device && item.ipu_device > 0 ? html`${item.ipu_device} IPU` : html``}
                         ${item.atom_device && item.atom_device > 0 ? html`${item.atom_device} ATOM` : html``}
