@@ -1,6 +1,7 @@
 import {
   Alert,
   Button,
+  DatePicker,
   Drawer,
   message,
   Modal,
@@ -69,6 +70,7 @@ const SampleComponent: React.FC<{
       >
         Inline style (lightblue BG)
       </div>
+      <DatePicker />
       <Button onClick={() => setOpen((v) => !v)} type={"primary"}>
         Open Modal
       </Button>
@@ -81,7 +83,7 @@ const SampleComponent: React.FC<{
         onCancel={() => setOpen((v) => !v)}
         onOk={() => setOpen((v) => !v)}
       >
-        hello
+        This is a text on Modal
       </Modal>
       <Drawer
         open={isOpenedDrawer}
@@ -89,7 +91,10 @@ const SampleComponent: React.FC<{
         onClose={() => setIsOpenedDrawer((v) => !v)}
         getContainer={shadowRoot}
       >
-        <Button>hello</Button>
+        <Flex direction="column">
+          <Button>hello</Button>
+          In Drawer
+        </Flex>
       </Drawer>
     </Flex>
   );

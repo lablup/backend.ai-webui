@@ -47,6 +47,7 @@ export const reactToWebComponentWithDefault = (
               }}
               theme={{
                 token: {
+                  fontFamily: `'Ubuntu', Roboto, sans-serif`,
                   colorPrimary: "#37B076",
                   colorLink: "#37B076",
                   colorLinkHover: "#71b98c",
