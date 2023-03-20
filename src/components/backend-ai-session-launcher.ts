@@ -1419,7 +1419,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (this.gpu_request > 0 && this.gpu_mode) {
         config[this.gpu_mode] = this.gpu_request;
       }
-      this.acceleratorName = 'GPU';
     }
     if (String(this.memoryResouceSlider.value) === 'Infinity') {
       config['mem'] = String(this.memoryResouceSlider.value);

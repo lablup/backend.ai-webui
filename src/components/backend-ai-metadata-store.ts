@@ -7,6 +7,7 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
+
 /**
  Backend.AI Metadata Reader / Storage
 
@@ -29,7 +30,7 @@ export default class BackendAiMetadataStore extends BackendAIPage {
   constructor() {
     super();
     this.readImageMetadata();
-    //this.readDeviceMetadata();
+    this.readDeviceMetadata();
   }
 
   firstUpdated() {
@@ -79,6 +80,7 @@ export default class BackendAiMetadataStore extends BackendAIPage {
     ).then(
       (json) => {
         this.deviceInfo = json.deviceInfo;
+        console.log(this.deviceInfo);
         for (const key in this.deviceInfo) {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
           }
