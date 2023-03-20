@@ -2,17 +2,22 @@ import { Select } from "antd";
 import { DefaultOptionType } from "antd/es/select";
 import React from "react";
 import { useQuery } from "react-query";
-import { ReactWebComponentProps } from "../helper";
+import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
+import { useWebComponentInfo } from "./DefaultProviders";
 import Flex from "./Flex";
 
-interface ResourceMonitorProps extends ReactWebComponentProps {}
-const ResourceMonitor: React.FC<ResourceMonitorProps> = ({ value }) => {
+interface ResourceMonitorProps {}
+const ResourceMonitor: React.FC<ResourceMonitorProps> = () => {
   // useQuery('resourceGroups', ()=>{
 
   //   // return globalThis.resourceBroker.updateScalingGroup(true, );
   // })
   // @ts-ignore
-  const resourceGroups = globalThis.resourceBroker.scaling_groups;
+  const {
+    resourceBroker,
+    props: { value },
+  } = useWebComponentInfo();
+  const resourceGroups = resourceBroker.scaling_groups;
 
   const options: DefaultOptionType[] = resourceGroups.map(
     (group: { name: string }) => {

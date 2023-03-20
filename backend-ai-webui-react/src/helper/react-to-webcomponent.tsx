@@ -1,7 +1,18 @@
+import React from "react";
+import ReactDOM from "react-dom/client";
+
+export interface ReactWebComponentProps {
+  value?: string;
+  styles?: string;
+  dispatchEvent?: (name: string, detail: any) => void;
+  shadowRoot: ShadowRoot;
+  children?: React.ReactNode;
+}
+
 export default function (
-  ReactComponent: React.FC<any> | React.ComponentClass<any>,
-  React: any,
-  ReactDOM: any
+  ReactComponent:
+    | React.FC<ReactWebComponentProps>
+    | React.ComponentClass<ReactWebComponentProps>
 ) {
   class ReactWebComponent extends HTMLElement {
     static get observedAttributes() {
@@ -22,22 +33,22 @@ export default function (
     reactRoot: any;
 
     createReactElement(value: string, styles: string) {
-      return React.createElement(
-        ReactComponent,
-        {
-          value,
-          styles,
-          dispatchEvent: (name: string, detail: any, bubbles = true) => {
-            this.dispatchEvent(
-              new CustomEvent(name, {
-                bubbles,
-                detail: detail,
-              })
-            );
-          },
-          shadowRoot: this.shadowRoot,
-        },
-        React.createElement("slot")
+      return (
+        this.shadowRoot && (
+          <ReactComponent
+            value={value}
+            styles={styles}
+            shadowRoot={this.shadowRoot}
+            dispatchEvent={(name: string, detail: any, bubbles = true) => {
+              this.dispatchEvent(
+                new CustomEvent(name, {
+                  bubbles,
+                  detail: detail,
+                })
+              );
+            }}
+          ></ReactComponent>
+        )
       );
     }
 

@@ -14,12 +14,9 @@ import {
 import customCss from "./ExampleComponent.css?raw";
 import { useEffect, useState } from "react";
 import Flex from "./Flex";
-import { useWebComponentInfo } from "../helper";
+import { useWebComponentInfo } from "./DefaultProviders";
 
-const SampleComponent: React.FC<{
-  value?: string;
-  dispatchEvent?: (name: string, detail: any) => void;
-}> = ({ value, dispatchEvent }) => {
+const SampleComponent: React.FC = () => {
   useEffect(() => {
     message.success("hello");
   }, []);
@@ -27,7 +24,7 @@ const SampleComponent: React.FC<{
   const [isOpenedDrawer, setIsOpenedDrawer] = useState(false);
   const { token } = theme.useToken();
   const {
-    props: { shadowRoot },
+    props: { shadowRoot, value, dispatchEvent },
   } = useWebComponentInfo();
   console.log("rendering;");
   return (
