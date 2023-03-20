@@ -337,7 +337,8 @@
     "ExecuteTerminalApp": "__NOT_TRANSLATED__",
     "TerminateSession": "__NOT_TRANSLATED__",
     "SeeContainerLogs": "__NOT_TRANSLATED__",
-    "RequestContainerCommit": "__NOT_TRANSLATED__"
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
