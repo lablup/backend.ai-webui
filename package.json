@@ -1,7 +1,7 @@
 {
   "name": "backend.ai-webui",
   "productName": "Backend.AI Desktop",
-  "version": "22.09.14",
+  "version": "23.03.0a1",
   "repository": "https://github.com/lablup/backend.ai-webui.git",
   "author": "Lablup Inc. <contact@lablup.com>",
   "license": "LGPL-3.0-or-later",
@@ -55,6 +55,7 @@
     "@vaadin/item": "^24.0.0",
     "@vaadin/progress-bar": "^24.0.0",
     "@vaadin/text-field": "^24.0.0",
+    "@vaadin/tooltip": "^24.0.0",
     "@vanillawc/wc-codemirror": "^2.1.0",
     "@webcomponents/webcomponentsjs": "^2.7.0",
     "bufferutil": "^4.0.7",

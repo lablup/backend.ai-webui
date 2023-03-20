@@ -75,6 +75,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
   @property({type: Boolean}) hideEnvDialog = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
   @property({type: String}) newSessionDialogTitle = '';
@@ -143,8 +144,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Array}) vfolders;
   @property({type: Array}) selectedVfolders;
   @property({type: Array}) autoMountedVfolders;
+  @property({type: Array}) modelVfolders;
   @property({type: Array}) nonAutoMountedVfolders;
   @property({type: Object}) folderMapping = Object();
+  @property({type: Object}) customFolderMapping = Object();
   @property({type: Object}) used_slot_percent;
   @property({type: Object}) used_resource_group_slot_percent;
   @property({type: Object}) used_project_slot_percent;
@@ -196,7 +199,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
   @property({type: Number}) progressLength;
-  @property({type: Object}) _grid = Object();
+  @property({type: Object}) _nonAutoMountedFolderGrid = Object();
+  @property({type: Object}) _modelFolderGrid = Object();
   @property({type: Boolean}) _debug = false;
   @property({type: Object}) _boundFolderToMountListRenderer = this.folderToMountListRenderer.bind(this);
   @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
@@ -288,7 +292,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         vaadin-grid {
-          max-height: 450px;
+          max-height: 335px;
         }
 
         .progress {
@@ -351,7 +355,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         div.vfolder-list,
         div.vfolder-mounted-list {
-          max-height: 450px;
+          max-height: 335px;
         }
 
         .environment-variables-container {
@@ -854,6 +858,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.vfolders = [];
     this.selectedVfolders = [];
     this.nonAutoMountedVfolders = [];
+    this.modelVfolders = [];
     this.autoMountedVfolders = [];
     this.default_language = '';
     this.concurrency_used = 0;
@@ -993,7 +998,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
     this.currentIndex = 1;
     this.progressLength = this.shadowRoot?.querySelectorAll('.progress').length;
-    this._grid = this.shadowRoot?.querySelector('#vfolder-grid');
+    this._nonAutoMountedFolderGrid = this.shadowRoot?.querySelector('#non-auto-mounted-folder-grid');
+    this._modelFolderGrid = this.shadowRoot?.querySelector('#model-folder-grid');
     // Tricks to close expansion if window size changes
     globalThis.addEventListener('resize', () => {
       document.body.dispatchEvent(new Event('click'));
@@ -1003,7 +1009,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _enableLaunchButton() {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
-      this.languages = this.resourceBroker.languages;
+      if (this.mode === 'inference') {
+        this.languages = this.resourceBroker.languages.filter(item =>
+          item.name !== '' && this.resourceBroker.imageRoles[item.name] === 'INFERENCE');
+      } else {
+        this.languages = this.resourceBroker.languages.filter(item =>
+          item.name === '' || this.resourceBroker.imageRoles[item.name] === 'COMPUTE');
+      }
       this.enableLaunchButton = true;
     } else {
       this.enableLaunchButton = false;
@@ -1068,8 +1080,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {boolean} forceInitialize - whether to initialize selected vfolder or not
    * */
   async _updateSelectedFolder(forceInitialize = false) {
-    if (this._grid && this._grid.selectedItems) {
-      const selectedFolderItems = this._grid.selectedItems;
+    if (this._nonAutoMountedFolderGrid && this._nonAutoMountedFolderGrid.selectedItems) {
+      let selectedFolderItems = this._nonAutoMountedFolderGrid.selectedItems;
+      selectedFolderItems = selectedFolderItems.concat(this._modelFolderGrid.selectedItems);
       let selectedFolders: string[] = [];
       if (selectedFolderItems.length > 0) {
         selectedFolders = selectedFolderItems.map((item) => item.name);
@@ -1099,29 +1112,35 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _unselectAllSelectedFolder() {
-    if (this._grid && this._grid.selectedItems) {
-      this._grid.selectedItems.forEach((item) => {
-        item.selected = false;
-      });
-      this._grid.selectedItems = [];
-    }
+    const gridListToUnselect = [this._nonAutoMountedFolderGrid, this._modelFolderGrid];
+    gridListToUnselect.forEach((grid) => {
+      if (grid && grid.selectedItems) {
+        grid.selectedItems.forEach((item) => {
+          item.selected = false;
+        });
+        grid.selectedItems = [];
+      }
+    });
     this.selectedVfolders = [];
   }
 
   _checkSelectedItems() {
-    if (this._grid && this._grid.selectedItems) {
-      const selectedFolderItems = this._grid.selectedItems;
-      let selectedFolders: string[] = [];
-      if (selectedFolderItems.length > 0) {
-        this._grid.selectedItems = [];
-        selectedFolders = selectedFolderItems.map((item) => item?.id);
-        this._grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
-          if (selectedFolders.includes(checkbox.__item?.id)) {
-            checkbox.checked = true;
-          }
-        });
+    const gridListToSelect = [this._nonAutoMountedFolderGrid, this._modelFolderGrid];
+    gridListToSelect.forEach((grid) => {
+      if (grid && grid.selectedItems) {
+        const selectedFolderItems = grid.selectedItems;
+        let selectedFolders: string[] = [];
+        if (selectedFolderItems.length > 0) {
+          grid.selectedItems = [];
+          selectedFolders = selectedFolderItems.map((item) => item?.id);
+          grid.querySelectorAll('vaadin-checkbox').forEach((checkbox) => {
+            if (selectedFolders.includes(checkbox.__item?.id)) {
+              checkbox.checked = true;
+            }
+          });
+        }
       }
-    }
+    });
   }
 
   /**
@@ -1162,16 +1181,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (!this.active) {
       return;
     }
+
+    const _init = () => {
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+    };
+
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
         this._updatePageVariables(true);
         this._disableEnterKey();
+        _init();
       }, {once: true});
     } else {
       this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
       await this._updatePageVariables(true);
       this._disableEnterKey();
+      _init();
     }
   }
 
@@ -1262,10 +1288,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @return {void}
    * */
   _newSessionWithConfirmation() {
-    const vfoldersCount = this._grid?.selectedItems?.map((item) => item.name).length;
+    const vfoldersCount = this._nonAutoMountedFolderGrid?.selectedItems?.map((item) => item.name).length;
     // check whether the progress is in the last stage
     if (this.currentIndex == this.progressLength) {
-      if (vfoldersCount !== undefined && vfoldersCount > 0) {
+      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0)) {
         return this._newSession();
       } else {
         this.launchConfirmationDialog.show();
@@ -1300,7 +1326,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.sessionType = (this.shadowRoot?.querySelector('#session-type') as Select).value;
     let sessionName = (this.shadowRoot?.querySelector('#session-name') as TextField).value;
     const isSessionNameValid = (this.shadowRoot?.querySelector('#session-name') as TextField).checkValidity();
-    const vfolder = this.selectedVfolders;
+    let vfolder = this.selectedVfolders; // Will be overwritten if customFolderMapping is given on inference mode.
     this.cpu_request = parseInt(this.cpuResouceSlider.value);
     this.mem_request = parseFloat(this.memoryResouceSlider.value);
     this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
@@ -1384,16 +1410,39 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (sessionName.length == 0) { // No name is given
       sessionName = this.generateSessionId();
     }
+
+    let kernelName: string;
+    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
+      kernelName = this.manualImageName.value;
+    } else {
+      kernelName = this._generateKernelIndex(kernel, version);
+    }
+
+    let folderMapping = {};
+    if (this.mode === 'inference') { // Override model folder setup
+      // Inference image should have its own mount point for automatic container start.
+      if (kernelName in this.resourceBroker.imageRuntimeConfig && 'model-path' in this.resourceBroker.imageRuntimeConfig[kernelName]) {
+        vfolder = Object.keys(this.customFolderMapping);
+        folderMapping[vfolder] = this.resourceBroker.imageRuntimeConfig[kernelName]['model-path'];
+      } else {
+        this.notification.text = _text('session.launcher.ImageDoesNotProvideModelPath');
+        this.notification.show();
+        return;
+      }
+    } else {
+      folderMapping = this.folderMapping;
+    }
+    console.log('folder mapping:', folderMapping);
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
-      if (Object.keys(this.folderMapping).length !== 0) {
+      if (Object.keys(folderMapping).length !== 0) {
         config['mount_map'] = {};
-        for (const f in this.folderMapping) {
-          if ({}.hasOwnProperty.call(this.folderMapping, f)) {
-            if (!(this.folderMapping[f].startsWith('/'))) {
-              config['mount_map'][f] = '/home/work/' + this.folderMapping[f];
+        for (const f in folderMapping) {
+          if ({}.hasOwnProperty.call(folderMapping, f)) {
+            if (!(folderMapping[f].startsWith('/'))) {
+              config['mount_map'][f] = '/home/work/' + folderMapping[f];
             } else {
-              config['mount_map'][f] = this.folderMapping[f];
+              config['mount_map'][f] = folderMapping[f];
             }
           }
         }
@@ -1427,12 +1476,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const openBLASCoreValue = (this.shadowRoot?.querySelector('#OpenBLASCore') as TextField).value;
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
-    }
-    let kernelName: string;
-    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
-      kernelName = this.manualImageName.value;
-    } else {
-      kernelName = this._generateKernelIndex(kernel, version);
     }
     this.launchButton.disabled = true;
     this.launchButtonMessage.textContent = _text('session.Preparing');
@@ -1470,20 +1513,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 1500);
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
-      // only open appLauncher when session type is 'interactive'
+      // only open appLauncher when session type is 'interactive' or 'inference'.
       if (res.length === 1 && this.sessionType !== 'batch') {
         res[0].taskobj.then((res) => {
           let appOptions;
           if ('kernelId' in res) { // API v4
             appOptions = {
               'session-name': res.kernelId,
-              'access-key': ''
+              'access-key': '',
+              'mode': this.mode
             };
           } else { // API >= v5
             appOptions = {
               'session-uuid': res.sessionId,
               'session-name': res.sessionName,
-              'access-key': ''
+              'access-key': '',
+              'mode': this.mode
             };
           }
           const service_info = res.servicePorts;
@@ -1495,6 +1540,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           if (this.mode === 'import') {
             appOptions['runtime'] = 'jupyter';
             appOptions['filename'] = this.importFilename;
+          }
+          if (this.mode === 'inference') {
+            appOptions['runtime'] = appOptions['app-services'].find((element) => !['ttyd', 'sshd'].includes(element));
           }
           // only launch app when it has valid service ports
           if (service_info.length > 0) {
@@ -1769,7 +1817,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._aggregateResourceUse('update-metric');
       await this._updateVirtualFolderList();
       this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+      if (this.enableInferenceWorkload) {
+        this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+        this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+      } else {
+        this.nonAutoMountedVfolders = this.vfolders.filter((item) => !item.name.startsWith('.'));
+      }
       // Resource limitation is not loaded yet.
       if (Object.keys(this.resourceBroker.resourceLimits).length === 0) {
         // console.log("No resource limit loaded");
@@ -2355,7 +2408,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
       globalThis.backendaiclient._config.default_session_environment !== '') {
-      this.default_language = globalThis.backendaiclient._config.default_session_environment;
+      if (this.languages.map((item) => item.name).includes(globalThis.backendaiclient._config.default_session_environment)) {
+        this.default_language = globalThis.backendaiclient._config.default_session_environment;
+      } else if (this.languages[0].name !== ''){
+         this.default_language = this.languages[0].name;
+      } else {
+         this.default_language = this.languages[1].name;
+      }
     } else if (this.languages.length > 1) {
       this.default_language = this.languages[1].name;
     } else if (this.languages.length !== 0) {
@@ -2459,7 +2518,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       await this._updateVirtualFolderList();
     }
     this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
-    this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.')));
+    if (this.enableInferenceWorkload) {
+      this.modelVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'model'));
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => (!item.name.startsWith('.') && item.usage_mode === 'general'));
+    } else {
+      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !item.name.startsWith('.'));
+    }
   }
 
   _toggleResourceGauge() {
@@ -2947,6 +3011,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   async moveProgress(n) {
     const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
+    // Exclude for model inference. No folder will be shown in the inference mode.
+    if (this.mode === 'inference' && this.currentIndex == 2) {
+      this.currentIndex += n;
+    }
     // limit the range of progress number
     if (this.currentIndex > this.progressLength) {
       this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, this.progressLength, 1);
@@ -2970,7 +3038,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // }
 
     // monkeypatch for grid items in accessible vfolder list in Safari or Firefox
-    this._grid?.clearCache();
+    this._nonAutoMountedFolderGrid?.clearCache();
+    this._modelFolderGrid?.clearCache();
     if (this.currentIndex === 2) {
       await this._fetchDelegatedSessionVfolder();
       this._checkSelectedItems();
@@ -3142,12 +3211,18 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <div id="progress-01" class="progress center layout fade active">
             <mwc-select id="session-type" icon="category" label="${_text('session.launcher.SessionType')}" required fixedMenuPosition
                         value="${this.sessionType}" @selected="${(e) => this._toggleStartUpCommandEditor(e)}">
+              ${this.mode === 'inference' ? html`
+              <mwc-list-item value="inference" selected>
+                ${_t('session.launcher.InferenceMode')}
+              </mwc-list-item>
+              `: html`
               <mwc-list-item value="batch">
                 ${_t('session.launcher.BatchMode')}
               </mwc-list-item>
               <mwc-list-item value="interactive" selected>
                 ${_t('session.launcher.InteractiveMode')}
               </mwc-list-item>
+              `}
             </mwc-select>
             <mwc-select id="environment" icon="code" label="${_text('session.launcher.Environments')}" required fixedMenuPosition
                         value="${this.default_language}">
@@ -3316,7 +3391,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="vfolder-list">
               <vaadin-grid
                   theme="row-stripes column-borders compact"
-                  id="vfolder-grid"
+                  id="non-auto-mounted-folder-grid"
                   aria-label="vfolder list"
                   height-by-rows
                   .items="${this.nonAutoMountedVfolders}"
@@ -3339,6 +3414,30 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
+            </wl-expansion>
+            <wl-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
+              <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
+              <div class="vfolder-list">
+                <vaadin-grid
+                  theme="row-stripes column-borders compact"
+                  id="model-folder-grid"
+                  aria-label="model storage vfolder list"
+                  height-by-rows
+                  .items="${this.modelVfolders}"
+                  @selected-items-changed="${() => this._updateSelectedFolder()}">
+                  <vaadin-grid-selection-column id="select-column"
+                                                flex-grow="0"
+                                                text-align="center"
+                                                auto-select></vaadin-grid-selection-column>
+                  <vaadin-grid-filter-column header="${_t('session.launcher.ModelStorageToMount')}"
+                                             path="name" resizable
+                                             .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
+                  <vaadin-grid-column width="135px"
+                                      path=" ${_t('session.launcher.FolderAlias')}"
+                                      .renderer="${this._boundFolderMapRenderer}"
+                                      .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
+                </vaadin-grid>
+              </div>
             </wl-expansion>
             <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
@@ -3363,7 +3462,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
               </div>
-
             </wl-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
@@ -3617,7 +3715,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                           )}
                       </div>
                       <lablup-shields color="blue"
-                                      description="${this.sessionType.toUpperCase()}"
+                                      description="${this.mode === 'inference' ? this.mode.toUpperCase() : this.sessionType.toUpperCase()}"
                                       ui="round"
                                       style="margin-top:3px;margin-right:3px;margin-bottom:9px;"></lablup-shields>
                     </div>
@@ -3710,6 +3808,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             </div>
+            ${this.mode !== 'inference' ? html`
             <p class="title">${_t('session.launcher.MountedFolders')}</p>
             <div id="mounted-folders-container">
               ${this.selectedVfolders.length > 0 || this.autoMountedVfolders.length > 0 ? html`
@@ -3732,7 +3831,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <span>${_t('session.launcher.NoFolderMounted')}</span>
                 </div>
               `}
-            </div>
+            </div>`: html`
+
+            `}
             <p class="title">${_t('session.launcher.EnvironmentVariablePaneTitle')}</p>
             <div class="environment-variables-container">
               ${this.environ.length > 0 ? html`
