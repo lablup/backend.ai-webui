@@ -806,9 +806,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.domain = '';
         this._page = 'summary';
         this._moveTo('/');
-        //globalThis.history.pushState({}, '', '/summary');
-        //store.dispatch(navigate(decodeURIComponent('/')));
-        //globalThis.location.reload();
+        // globalThis.history.pushState({}, '', '/summary');
+        // store.dispatch(navigate(decodeURIComponent('/')));
+        // globalThis.location.reload();
         document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
         this.appBody.style.visibility = 'hidden';
         const curtain = this.shadowRoot?.getElementById('loading-curtain');

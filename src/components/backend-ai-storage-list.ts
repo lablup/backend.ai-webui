@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import './backend-ai-dialog';
@@ -141,27 +141,28 @@ export default class BackendAiStorageList extends BackendAIPage {
     mem: 0.5
   };
   @property({type: Array}) filebrowserSupportedImages = [];
-  @property({type: Object}) storageProxyInfo = Object();
+  @property({type: Object}) volumeInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
-    MiB: Math.pow(2, 20),
-    GiB: Math.pow(2, 30),
-    TiB: Math.pow(2, 40),
-    PiB: Math.pow(2, 50)
+    MB: Math.pow(10, 6),
+    GB: Math.pow(10, 9),
+    TB: Math.pow(10, 12),
+    PB: Math.pow(10, 15)
   };
   @property({type: Object}) maxSize = {
     value: 0,
-    unit: 'MiB'
+    unit: 'MB'
   };
   @property({type: Object}) quota = {
     value: 0,
-    unit: 'MiB'
+    unit: 'MB'
   };
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
   @query('#modify-folder-quota') modifyFolderQuotaInput!: TextField;
   @query('#modify-folder-quota-unit') modifyFolderQuotaUnitSelect!: Select;
   @query('#fileList-grid') fileListGrid!: VaadinGrid;
+  @query('#folderList-grid') folderListGrid!: VaadinGrid;
   @query('#mkdir-name') mkdirNameInput!: TextField;
   @query('#delete-folder-name') deleteFolderNameInput!: TextField;
   @query('#new-folder-name') newFolderNameInput!: TextField;
@@ -178,6 +179,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @query('#modify-permission-dialog') modifyPermissionDialog!: BackendAIDialog;
   @query('#share-folder-dialog') shareFolderDialog!: BackendAIDialog;
   @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
+  @state() private _unionedAllowedPermissionByVolume = Object();
   constructor() {
     super();
     this._boundIndexRenderer = this.indexRenderer.bind(this);
@@ -567,17 +569,17 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Update Quota Input to human readable value with proper unit
    */
   _updateQuotaInputHumanReadableValue() {
-    let unit = 'MiB'; // default unit starts with MiB.
+    let unit = 'MB'; // default unit starts with MB.
     const convertedCurrentQuota = Number(this.modifyFolderQuotaInput.value) * (this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]);
     const convertedQuota = this.maxSize.value * (this.quotaUnit[this.maxSize.unit]);
     [this.modifyFolderQuotaInput.value, unit]= globalThis.backendaiutils._humanReadableFileSize(convertedCurrentQuota).split(' ');
-    if (['Bytes', 'KiB', 'MiB'].includes(unit)) {
-      if (unit === 'MiB') {
+    if (['Bytes', 'KB', 'MB'].includes(unit)) {
+      if (unit === 'MB') {
         this.modifyFolderQuotaInput.value = Number(this.modifyFolderQuotaInput.value) < 1 ? '1' : Math.round(Number(this.modifyFolderQuotaInput.value)).toString();
       } else {
         this.modifyFolderQuotaInput.value = '1';
       }
-      unit = 'MiB';
+      unit = 'MB';
     } else {
       this.modifyFolderQuotaInput.value = parseFloat(this.modifyFolderQuotaInput.value).toFixed(1);
       if (convertedQuota < convertedCurrentQuota) {
@@ -586,7 +588,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     // apply step only when the unit is bigger than MB
-    this.modifyFolderQuotaInput.step = (this.modifyFolderQuotaUnitSelect.value === 'MiB')? 0 : 0.1;
+    this.modifyFolderQuotaInput.step = (this.modifyFolderQuotaUnitSelect.value === 'MB')? 0 : 0.1;
     const idx = this.modifyFolderQuotaUnitSelect.items.findIndex((item) => item.value === unit);
     this.modifyFolderQuotaUnitSelect.select(idx);
   }
@@ -599,7 +601,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         id="session-launcher" ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartModelServing')}"></backend-ai-session-launcher>
       <div class="list-wrapper">
-        <vaadin-grid class="folderlist" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
+        <vaadin-grid class="folderlist" id="folderList-grid" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
           <lablup-grid-sort-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
@@ -772,7 +774,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
                   ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MB) : 'Undefined'}
                   ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size >= 0 ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -1053,7 +1055,6 @@ export default class BackendAiStorageList extends BackendAIPage {
   firstUpdated() {
     this._addEventListenerDropZone();
     this._mkdir = this._mkdir.bind(this);
-
     this.fileListGrid.addEventListener('selected-items-changed', () => {
       this._toggleFileListCheckbox();
     });
@@ -1071,22 +1072,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._getStorageProxyBackendInformation();
-        this._triggerFolderListChanged();
-      }, true);
-    } else { // already connected
-      this._getStorageProxyBackendInformation();
-      this._triggerFolderListChanged();
-    }
-
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
     const folderName = params.get('folder');
     if(folderName){
       // alert(folderName);
-      console.log(this.folders)
+      console.log(this.folders);
     }
   }
 
@@ -1178,7 +1169,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   quotaRenderer(root, column?, rowData?) {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MB);
     }
     render(
       // language=HTML
@@ -1308,6 +1299,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   controlFolderListRenderer(root, column?, rowData?) {
+    const isSharingAllowed = (this._unionedAllowedPermissionByVolume[rowData.item.host]?? []).includes('invite-others');
     render(
       // language=HTML
       html`
@@ -1351,6 +1343,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             title=${_t('data.explorer.ShareFolder')}
             @click="${(e) => this._shareFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            style="display: ${isSharingAllowed ? '': 'none'}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg cyan controls-running"
@@ -1358,6 +1351,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             title=${_t('data.explorer.ModifyPermissions')}
             @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            style="display: ${isSharingAllowed ? '': 'none'}"
           ></mwc-icon-button>
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
@@ -1552,22 +1546,57 @@ export default class BackendAiStorageList extends BackendAIPage {
     );
   }
 
-  async _getStorageProxyBackendInformation() {
+  private async _getCurrentKeypairResourcePolicy() {
+    const accessKey = globalThis.backendaiclient._config.accessKey;
+    const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
+    return res.keypair.resource_policy;
+  }
+
+  async _getVolumeInformation() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    this.storageProxyInfo = vhostInfo.volume_info || {};
+    this.volumeInfo = vhostInfo.volume_info || {};
+  }
+
+  async _getAllowedVFolderHostsByCurrentUserInfo() {
+    const [vhostInfo, currentKeypairResourcePolicy] = await Promise.all([
+      globalThis.backendaiclient.vfolder.list_hosts(),
+      this._getCurrentKeypairResourcePolicy(),
+    ]);
+    const currentDomain = globalThis.backendaiclient._config.domainName;
+    const currentGroupId = globalThis.backendaiclient.current_group_id();
+    const mergedData = await globalThis.backendaiclient.storageproxy.getAllowedVFolderHostsByCurrentUserInfo(currentDomain, currentGroupId, currentKeypairResourcePolicy);
+
+    const allowedPermissionForDomainsByVolume = JSON.parse(mergedData.domain.allowed_vfolder_hosts);
+    const allowedPermissionForGroupsByVolume = JSON.parse(mergedData.group.allowed_vfolder_hosts);
+    const allowedPermissionForResourcePolicyByVolume = JSON.parse(mergedData.keypair_resource_policy.allowed_vfolder_hosts);
+
+    const _mergeDedupe = (arr) => [...new Set([].concat(...arr))];
+    this._unionedAllowedPermissionByVolume = Object.assign({}, ...vhostInfo.allowed.map((volume) => {
+      return {
+        [volume]: _mergeDedupe([
+          allowedPermissionForDomainsByVolume[volume],
+          allowedPermissionForGroupsByVolume[volume],
+          allowedPermissionForResourcePolicyByVolume[volume],
+        ])
+      };
+    }));
+    this.folderListGrid.clearCache();
   }
 
   _checkFolderSupportSizeQuota(host: string) {
     if (!host) {
       return false;
     }
-    const backend = this.storageProxyInfo[host]?.backend;
+    const backend = this.volumeInfo[host]?.backend;
     return this.quotaSupportStorageBackends.includes(backend) ? true : false;
   }
 
-  refreshFolderList() {
+  async refreshFolderList() {
     this._triggerFolderListChanged();
-    return this._refreshFolderList(true, 'refreshFolderList');
+    if (this.folderListGrid) {
+      this.folderListGrid.clearCache();
+    }
+    return await this._refreshFolderList(true, 'refreshFolderList');
   }
 
   /**
@@ -1636,10 +1665,20 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    */
   async _checkFilebrowserSupported() {
-    const response = await globalThis.backendaiclient.image.list(['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], false, true);
+    const fields = [
+      'name', 'tag', 'registry', 'digest', 'installed',
+      'labels { key value }',
+      'resource_limits { key min max }',
+    ];
+    const response = await globalThis.backendaiclient.image.list(fields, true, true);
     const images = response.images;
-    // only filter both installed and filebrowser supported image from images
-    this.filebrowserSupportedImages = images.filter((image) => image['installed'] && image.labels.find((label) => label.key === 'ai.backend.service-ports' && label.value.toLowerCase().includes('filebrowser')));
+    // Filter filebrowser supported images.
+    this.filebrowserSupportedImages = images.filter((image) =>
+      image.labels.find((label) =>
+        label.key === 'ai.backend.service-ports' &&
+        label.value.toLowerCase().includes('filebrowser'),
+      ),
+    );
   }
 
   async _viewStateChanged(active) {
@@ -1648,14 +1687,17 @@ export default class BackendAiStorageList extends BackendAIPage {
       return;
     }
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
         this.is_admin = globalThis.backendaiclient.is_admin;
         this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
         this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+        this._getAllowedVFolderHostsByCurrentUserInfo();
         this._checkFilebrowserSupported();
+        this._getVolumeInformation();
+        this._triggerFolderListChanged();
         this._refreshFolderList(false, 'viewStatechanged');
       }, true);
     } else {
@@ -1665,7 +1707,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+      this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkFilebrowserSupported();
+      this._getVolumeInformation();
+      this._triggerFolderListChanged();
       this._refreshFolderList(false, 'viewStatechanged');
     }
   }
@@ -1771,9 +1816,9 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MiB']).split(' ');
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MB']).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
-        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MiB' : this.quota.unit;
+        this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
       }
       this.openDialog('modify-folder-dialog');
     }).catch((err) => {
@@ -1912,7 +1957,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _deleteFolder(folderName) {
     const job = globalThis.backendaiclient.vfolder.delete(folderName);
-    job.then((resp) => {
+    job.then(async (resp) => {
       // console.log(resp);
       if (resp.msg) {
         this.notification.text = _text('data.folders.CannotDeleteFolder');
@@ -1920,7 +1965,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       } else {
         this.notification.text = _text('data.folders.FolderDeleted');
         this.notification.show();
-        this.refreshFolderList();
+        await this.refreshFolderList();
         this._triggerFolderListChanged();
       }
     }).catch((err) => {
@@ -2008,10 +2053,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _leaveFolder(folderId) {
     const job = globalThis.backendaiclient.vfolder.leave_invited(folderId);
-    job.then((value) => {
+    job.then(async (value) => {
       this.notification.text = _text('data.folders.FolderDisconnected');
       this.notification.show();
-      this.refreshFolderList();
+      await this.refreshFolderList();
       this._triggerFolderListChanged();
     }).catch((err) => {
       console.log(err);
@@ -2035,9 +2080,9 @@ export default class BackendAiStorageList extends BackendAIPage {
     const max_vfolder_size = resource_policy.keypair_resource_policy.max_vfolder_size;
     // default unit starts with MB.
     [this.maxSize.value, this.maxSize.unit] = globalThis.backendaiutils._humanReadableFileSize(max_vfolder_size).split(' ');
-    if (['Bytes', 'KiB', 'MiB'].includes(this.maxSize.unit)) {
+    if (['Bytes', 'KB', 'MB'].includes(this.maxSize.unit)) {
       this.maxSize.value = this.maxSize.value < 1 ? 1 : Math.round(this.maxSize.value);
-      this.maxSize.unit = 'MiB';
+      this.maxSize.unit = 'MB';
     } else {
       this.maxSize.value = Math.round(this.maxSize.value * 10) / 10;
     }
@@ -2216,9 +2261,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * @param {boolean} isWritable - check whether write operation is allowed or not
    * */
   _folderExplorer(rowData) {
-
     const folderName = rowData.item.name;
-    const isWritable = this._hasPermission(rowData.item, "w") || rowData.item.is_owner || (rowData.item.type === "group" && this.is_admin);
+    const isWritable = this._hasPermission(rowData.item, 'w') || rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin);
 
     const explorer = {
       id: folderName,
@@ -2226,8 +2270,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     };
 
     const queryParams = new URLSearchParams();
-    queryParams.set('folder', folderName)
-    window.history.replaceState({},'',`${location.pathname}?${queryParams}`)
+    queryParams.set('folder', folderName);
+    window.history.replaceState({}, '', `${location.pathname}?${queryParams}`);
 
     /**
      * NOTICE: If it's admin user and the folder type is group, It will have write permission.
@@ -2307,10 +2351,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       // vendor-specific APIs.
       return file.type === 'DIRECTORY';
     }
-  }
-
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
   }
 
   /* File upload and download */

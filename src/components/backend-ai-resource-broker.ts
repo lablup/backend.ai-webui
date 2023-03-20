@@ -654,7 +654,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           });
         resourceGroupSlots.remaining = {};
         Object.keys(resourceGroupSlots.available).forEach((key) => {
-          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key]
+          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key];
         });
 
         this.total_resource_group_slot = resourceGroupSlots.available;

@@ -2321,6 +2321,27 @@ class StorageProxy {
       return this.client._wrapWithPromise(rqst);
     }
   }
+
+  /**
+   * Get all fields related to allowed_vfolder_hosts according to the current user information
+   *
+   * @param {string} domainName
+   * @param {string} projectId
+   * @param {string} resourcePolicyName
+   * @returns {object} - get allowed_vfolder_hosts key-value on domain, group, resource policy of current user
+   */
+  async getAllowedVFolderHostsByCurrentUserInfo(domainName = '', projectId = '', resourcePolicyName = '') {
+    const q = `
+      query($domainName: String, $projectId: UUID!, $resourcePolicyName: String) {
+        domain(name: $domainName) { allowed_vfolder_hosts }
+        group(id: $projectId, domain_name: $domainName) { allowed_vfolder_hosts }
+        keypair_resource_policy(name: $resourcePolicyName) { allowed_vfolder_hosts }
+      }
+    `;
+    const v = { domainName, projectId, resourcePolicyName };
+    return this.client.query(q, v);
+  }
+
 }
 
 class Keypair {

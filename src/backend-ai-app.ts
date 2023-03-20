@@ -56,7 +56,7 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'job':
     import('./components/backend-ai-session-view.js');
     break;
-  // temporally block pipeline
+    // temporally block pipeline
   /* case 'pipeline':
     import('./pipeline/components/pipeline-view.js');
     break;

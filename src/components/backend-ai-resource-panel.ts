@@ -500,11 +500,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               <div class="layout vertical start-justified wrap">
                 <lablup-progress-bar id="mem-usage-bar" class="start"
                   progress="${this.mem_total_usage_ratio / 100.0}"
-                  description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GB ${_t('summary.reserved')}."
+                  description="${this._addComma(this.mem_allocated)} / ${this._addComma(this.mem_total)} GiB ${_t('summary.reserved')}."
                 ></lablup-progress-bar>
                 <lablup-progress-bar id="mem-usage-bar-2" class="end"
                   progress="${this.mem_current_usage_ratio / 100.0}"
-                  description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GB
+                  description="${_t('summary.Using')} ${this._addComma(this.mem_used)} GiB
                     (${parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' } %)"
                 ></lablup-progress-bar>
               </div>
