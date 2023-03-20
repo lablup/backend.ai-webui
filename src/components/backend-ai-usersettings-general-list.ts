@@ -912,25 +912,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   async _saveGitTokenManagement() {
     console.log('save git token');
-
-    console.log('output');
-    console.log(this._parseGitTokenList());
-    console.log('end');
-    console.log('gitTokenValues');
-    console.log(this.gitTokenValues);
-
-    let tokenList:object[] = [];
-    let aaa:object = {'domain': 'domain', 'token': 'token'};
-    tokenList.push(aaa);
-//    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
-//      var domain = (e.querySelector("[name=service_domain]") as any).value;
-//      var token = (e.querySelector("[name=service_token]") as any).value;
-//      console.log('domain: ' + domain);
-//      console.log('token: ' + token);
-//    });
-
-
-    globalThis.backendaiclient.userConfig.updateGitToken(tokenList)
+    globalThis.backendaiclient.userConfig.updateGitToken(this.gitTokenValues)
       .then((res) => {
         console.log('success');
         console.log(res);
@@ -941,7 +923,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _parseGitTokenList() {
     this.gitTokenValues = {};
     const container = this.shadowRoot?.querySelector('#git-token-list');
-    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
+    const rows = container?.querySelectorAll('mwc-list-item') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
     ).length === 0;
