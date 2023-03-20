@@ -336,7 +336,7 @@
     "ElapsedTime": "Elapsed Time",
     "Timeout": "Timeout",
     "SessionLifetime": "Session Lifetime",
-    "TimeoutExceeded": " (Timeout Exceeded)",
+    "TimeoutExceeded": "Timeout Exceeded",
     "Inference": "Inference",
     "UseSubdomain": "UseSubdomain",
     "BypassAuthentication": "Bypass authentication",

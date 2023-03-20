@@ -1747,8 +1747,9 @@ export default class BackendAISessionList extends BackendAIPage {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secondsRemainder = parseInt(seconds) % 60;
-    const timeoutExceededStr = (hours < 0 || minutes < 0 || secondsRemainder < 0) ? _t('session.TimeoutExceeded') : '';
-    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}${timeoutExceededStr}`;
+    const timeoutExceededStr = (hours < 0 || minutes < 0 || secondsRemainder < 0) ? _text('session.TimeoutExceeded') : '';
+    const convertedStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
+    return timeoutExceededStr.length > 0 ? timeoutExceededStr : convertedStr;
   }
 
   /**
