@@ -331,12 +331,12 @@ export default class BackendAIData extends BackendAIPage {
       `];
   }
 
-  renderStatusIndicator(percentage:Number, showTitle:Boolean) {
+  renderStatusIndicator(percentage:number, showTitle:boolean) {
     const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
-    const type = ["Adequate", "Caution", "Insufficient"][idx];
-    const title = [_t("data.usage.Adequate"), _t("data.usage.Caution"), _t("data.usage.Insufficient")][idx];
-    return  html`<div class="host-status-indicator ${type.toLocaleLowerCase()} self-center">
-      ${showTitle?title:""}
+    const type = ['Adequate', 'Caution', 'Insufficient'][idx];
+    const title = [_t('data.usage.Adequate'), _t('data.usage.Caution'), _t('data.usage.Insufficient')][idx];
+    return html`<div class="host-status-indicator ${type.toLocaleLowerCase()} self-center">
+      ${showTitle ? title : ''}
     </div>`;
   }
   render() {
@@ -414,25 +414,23 @@ export default class BackendAIData extends BackendAIPage {
           <mwc-select
             class="full-width fixed-position"
             id="add-folder-host"
-            label="${_t("data.Host")}"
+            label="${_t('data.Host')}"
             fixedMenuPosition
             @selected=${(e)=> this.selectedVhost = e.target.value}
           >
-            ${this.vhosts.map((item, idx) => {
-              let percentage = this.storageProxyInfo[item] && this.storageProxyInfo[item]?.percentage;
-              return html` <mwc-list-item
+            ${this.vhosts.map((item) => {
+              const percentage = this.storageProxyInfo[item] && this.storageProxyInfo[item]?.usage && this.storageProxyInfo[item]?.usage?.percentage;
+              return html`<mwc-list-item
                 hasMeta
                 value="${item}"
                 ?selected="${item === this.vhost}"
               >
                 <div class="horizontal layout justified center">
                   <span>${item}</span>
-                  ${true
-                    ? html`
-                        &nbsp;
-                        ${typeof percentage === 'number'? this.renderStatusIndicator(percentage, false): ""}
-                      `
-                    : html``}
+                  ${html`
+                    &nbsp;
+                    ${typeof percentage === 'number' ? this.renderStatusIndicator(percentage, false): ''}
+                  `}
                 </div>
                 <mwc-icon-button
                   slot="meta"
@@ -443,13 +441,10 @@ export default class BackendAIData extends BackendAIPage {
               </mwc-list-item>`;
             })}
           </mwc-select>
-          <div class="horizontal layout start" style="margin-top:-5px;margin-bottom:10px; padding-left:16px;">
-            ${
-              typeof this.storageProxyInfo[this.selectedVhost]?.percentage == 'number' ? 
-                html`
-                  ${_t("data.usage.StatusOfSelectedHost")}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.selectedVhost]?.percentage, true)}
-                `
-                :html``
+          <div class="horizontal layout start" style="margin-top:-5px;margin-bottom:10px;padding-left:16px;font-size:12px;">
+            ${typeof this.storageProxyInfo[this.selectedVhost]?.usage?.percentage == 'number' ? html`
+              ${_t('data.usage.StatusOfSelectedHost')}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.selectedVhost]?.usage?.percentage, true)}
+              ` : html``
             }
           </div>
           <div class="horizontal layout">
@@ -588,7 +583,7 @@ export default class BackendAIData extends BackendAIPage {
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="vertical layout">
           <div class="horizontal layout center">
-            ${this._helpDescriptionIcon == ""
+            ${this._helpDescriptionIcon == ''
               ? html``
               : html`
                   <img
@@ -601,27 +596,27 @@ export default class BackendAIData extends BackendAIPage {
               ${unsafeHTML(this._helpDescription)}
             </p>
           </div>
-          ${this._helpDescriptionStorageProxyInfo.percentage !== undefined
+          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !== undefined
             ? html`
-              <div class="vertical layout">
-                <span><strong>${_t("data.usage.Status")}</strong></span>
+              <div class="vertical layout" style="padding-left:8px;">
+                <span><strong>${_t('data.usage.Status')}</strong></span>
                 <div class="horizontal layout">
-                  ${this.renderStatusIndicator(this._helpDescriptionStorageProxyInfo.percentage, true)}
+                  ${this.renderStatusIndicator(this._helpDescriptionStorageProxyInfo?.usage?.percentage, true)}
                 </div>
                 (${Math.floor(
-                  this._helpDescriptionStorageProxyInfo.percentage
+                  this._helpDescriptionStorageProxyInfo?.usage?.percentage
                 )}%
-                ${_t("data.usage.used")}
-                ${this._helpDescriptionStorageProxyInfo.total &&
-                this._helpDescriptionStorageProxyInfo.used
+                ${_t('data.usage.used')}
+                ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
+                this._helpDescriptionStorageProxyInfo?.usage?.used
                   ? html`
                       ,
                       ${globalThis.backendaiutils._humanReadableFileSize(
-                        this._helpDescriptionStorageProxyInfo.used
+                        this._helpDescriptionStorageProxyInfo?.usage?.used
                       )}
                       /
                       ${globalThis.backendaiutils._humanReadableFileSize(
-                        this._helpDescriptionStorageProxyInfo.total
+                        this._helpDescriptionStorageProxyInfo?.usage?.total
                       )}
                     `
                   : html``}
@@ -799,11 +794,11 @@ export default class BackendAIData extends BackendAIPage {
    * Clone folder dialog.
    */
   async _cloneFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
     this.addFolderNameInput.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    this.selectedVhost = vhost_info.default;
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -816,11 +811,11 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder dialog.
    */
   async _addFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
     this.addFolderNameInput.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    this.selectedVhost = vhost_info.default;
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -859,7 +854,7 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
 
-    this._helpDescriptionStorageProxyInfo = this.storageProxyInfo[item]
+    this._helpDescriptionStorageProxyInfo = this.storageProxyInfo[item];
     const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
   }
