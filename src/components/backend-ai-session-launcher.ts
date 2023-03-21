@@ -1311,9 +1311,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _newSessionWithConfirmation() {
     const vfoldersCount = this._nonAutoMountedFolderGrid?.selectedItems?.map((item) => item.name).length;
+    const modelFoldersCount = this._modelFolderGrid?.selectedItems?.map((item) => item.name).length;
     // check whether the progress is in the last stage
     if (this.currentIndex == this.progressLength) {
-      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0)) {
+      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0) || (modelFoldersCount !== undefined && modelFoldersCount > 0)) {
         return this._newSession();
       } else {
         this.launchConfirmationDialog.show();
@@ -1460,7 +1461,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       folderMapping = this.folderMapping;
     }
-    console.log('folder mapping:', folderMapping);
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
       if (Object.keys(folderMapping).length !== 0) {
