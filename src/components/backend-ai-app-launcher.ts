@@ -813,8 +813,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      const userPort = parseInt(this.appPort.value);
-      if (this.checkPreferredPort.checked && userPort) {
+      const userPort = parseInt(this.appPort?.value);
+      if (this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
