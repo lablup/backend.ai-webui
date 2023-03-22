@@ -767,7 +767,15 @@
     "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
+    "SavedGitTokenValues": "__NOT_TRANSLATED__",
+    "GitTokenManagement": "__NOT_TRANSLATED__",
+    "GithubTokenValue": "__NOT_TRANSLATED__",
+    "GitlabTokenValue": "__NOT_TRANSLATED__",
+    "ConfirmSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "DescSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "GitServiceDomain": "__NOT_TRANSLATED__",
+    "GitServiceToken": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",

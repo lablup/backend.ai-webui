@@ -859,8 +859,31 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         } else if (resp[i].domain === "gitlab.com") {
           this.gitlabTokenInput.value = resp[i].token;
         } else {
-          console.log("domain: " + resp[i].domain);
-          console.log("token: " + resp[i].token);
+          let newListItem = document.createElement('mwc-list-item');
+          let newDomainTextField = document.createElement('mwc-textfield');
+          newDomainTextField.label = _text('usersettings.GitServiceDomain');
+          newDomainTextField.type = "text";
+          newDomainTextField.className = "service_domain";
+          newDomainTextField.name = "service_domain"
+          newDomainTextField.style.width = "auto";
+          newDomainTextField.value = resp[i].domain;
+          newListItem.appendChild(newDomainTextField);
+          let newTokenTextField = document.createElement('mwc-textfield');
+          newTokenTextField.label = _text('usersettings.GitServiceToken');
+          newTokenTextField.type = "text";
+          newTokenTextField.className = "service_token";
+          newTokenTextField.name = "service_token";
+          newTokenTextField.style.width = "auto";
+          newTokenTextField.value = resp[i].token;
+          newListItem.appendChild(newTokenTextField);
+          let newItemRemoveButtonField = document.createElement('mwc-icon-button');
+          newItemRemoveButtonField.className = "green minus-btn";
+          newItemRemoveButtonField.icon="remove";
+          newItemRemoveButtonField.addEventListener('click', (e) => {
+            this._deleteGitTokenList(e.target);
+          });
+          newListItem.appendChild(newItemRemoveButtonField);
+          this.shadowRoot?.querySelector('#git-token-list')?.appendChild(newListItem);
         }
       }
       this.gitTokenManagementDialog.show();
@@ -887,14 +910,14 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _addGitTokenList() {
     let newListItem = document.createElement('mwc-list-item');
     let newDomainTextField = document.createElement('mwc-textfield');
-    newDomainTextField.label = _text('Git Service Domain');
+    newDomainTextField.label = _text('usersettings.GitServiceDomain');
     newDomainTextField.type = "text";
     newDomainTextField.className = "service_domain";
     newDomainTextField.name = "service_domain"
     newDomainTextField.style.width = "auto";
     newListItem.appendChild(newDomainTextField);
     let newTokenTextField = document.createElement('mwc-textfield');
-    newTokenTextField.label = _text('Git Service Token');
+    newTokenTextField.label = _text('usersettings.GitServiceToken');
     newTokenTextField.type = "text";
     newTokenTextField.className = "service_token";
     newTokenTextField.name = "service_token";
@@ -911,12 +934,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   }
 
   async _saveGitTokenManagement() {
-    console.log('save git token');
+    this._parseGitTokenList();
     globalThis.backendaiclient.userConfig.updateGitToken(this.gitTokenValues)
       .then((res) => {
-        console.log('success');
-        console.log(res);
+        this.notification.text = _text('usersettings.SavedGitTokenValues');
+        this.notification.show();
         this._hideSaveGitTokenManagementDialog();
+      }).catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this._hideSaveGitTokenManagementDialog();
+          this.gitTokenManagementDialog.hide();
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
       });
   }
 
@@ -935,21 +967,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
     Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
   }
 
-  _saveGitTokenList() {
-
-  }
-
   _deleteGitTokenList(e) {
     e.parentElement.remove();
   }
 
   _openSaveGitTokenManagementDialog() {
-    console.log('_openSaveGitTokenManagementDialog');
     this.saveGitTokenManagementDialog.show();
   }
 
   _hideSaveGitTokenManagementDialog() {
-    console.log('_hideSaveGitTokenManagementDialog');
     this.saveGitTokenManagementDialog.hide();
   }
 

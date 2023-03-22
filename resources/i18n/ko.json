@@ -772,7 +772,10 @@
     "GithubTokenValue": "Github 토큰값",
     "GitlabTokenValue": "Gitlab 토큰값",
     "ConfirmSaveGitTokenValues": "Git 서비스 토큰 저장 확인",
-    "DescSaveGitTokenValues": "Git 서비스 토큰 저장합니다"
+    "DescSaveGitTokenValues": "Git 서비스 토큰을 저장합니다",
+    "SavedGitTokenValues": "Git 서비스 토큰을 성공적으로 저장하였습니다.",
+    "GitServiceDomain": "Git 서비스 도메인",
+    "GitServiceToken": "Git 서비스 토큰"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "웹 터미널 고급 사용법: 터미널 내용 복사하기",

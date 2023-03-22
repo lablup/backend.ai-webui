@@ -767,7 +767,15 @@
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
-    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__",
+    "SavedGitTokenValues": "__NOT_TRANSLATED__",
+    "GitTokenManagement": "__NOT_TRANSLATED__",
+    "GithubTokenValue": "__NOT_TRANSLATED__",
+    "GitlabTokenValue": "__NOT_TRANSLATED__",
+    "ConfirmSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "DescSaveGitTokenValues": "__NOT_TRANSLATED__",
+    "GitServiceDomain": "__NOT_TRANSLATED__",
+    "GitServiceToken": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
