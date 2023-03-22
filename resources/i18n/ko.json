@@ -330,6 +330,9 @@
     "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
     "EnvironmentInfo": "환경 정보",
     "DownloadingSessionLogs": "세션 로그를 다운받습니다.",
+    "ElapsedTime": "경과 시간",
+    "Timeout": "타임아웃",
+    "SessionLifetime": "세션 수명",
     "Inference": "INFERENCE",
     "UseSubdomain": "서브도메인 주소 입력",
     "BypassAuthentication": "인증 바이패스",
@@ -338,7 +341,8 @@
     "ExecuteTerminalApp": "터미널 앱 실행하기",
     "TerminateSession": "세션 종료하기",
     "SeeContainerLogs": "컨테이너 로그 보기",
-    "RequestContainerCommit": "컨테이너 커밋하기"
+    "RequestContainerCommit": "컨테이너 커밋하기",
+    "TimeoutExceeded": "제한 시간 초과"
   },
   "button": {
     "Cancel": "취소",

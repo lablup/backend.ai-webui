@@ -169,6 +169,10 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     }
   }
 
+  isEmpty(str) {
+    return str === '' || str === null || str === undefined || typeof str === 'undefined';
+  }
+
   render() {
     // language=HTML
     return html`
