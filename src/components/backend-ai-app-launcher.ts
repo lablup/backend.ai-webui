@@ -54,6 +54,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Object}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
@@ -236,23 +237,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   firstUpdated() {
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically
@@ -357,7 +344,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1'
+      if (this.forceUseV1Proxy.checked) return 'v1';
       else if (this.forceUseV2Proxy.checked) return 'v2';
     }
 
@@ -476,6 +463,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this.allowPreferredPort = globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
     this.dialog.setAttribute('access-key', accessKey);
@@ -1137,13 +1125,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
-            <div id="preferred-app-port-config-box" style="display:none" class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
-              ${_t('session.TryPreferredPort')}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em;width:90px;"
-                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
-            </div>
+            ${this.allowPreferredPort ? html`
+              <div id="preferred-app-port-config-box" class="horizontal layout center">
+                <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
+                ${_t('session.TryPreferredPort')}
+                <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                              min="1025" max="65534" style="margin-left:1em;width:90px;"
+                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+              </div>
+            ` : html``}
             <div class="horizontal layout center">
             ${globalThis.backendaiwebui.debug === true ? html`
               <mwc-checkbox id="force-use-v1-proxy" style="margin-right:0.5em;"></mwc-checkbox>

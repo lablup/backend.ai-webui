@@ -108,7 +108,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'max': 1,
     'preferred': 0.0625
   };
-  @property({type: Object}) cuda_device_metric = {
+  @property({type: Object}) npu_device_metric = {
     'min': 0,
     'max': 0
   };
@@ -121,6 +121,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'min': '1',
     'max': '1'
   };
+  @property({type: Object}) ipu_device_metric = {
+    'min': '0',
+    'max': '0'
+  };
+  @property({type: Object}) atom_device_metric = {
+    'min': '0',
+    'max': '0'
+  };
+
   @property({type: Object}) cluster_metric = {
     'min': 1,
     'max': 1
@@ -183,10 +192,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: String}) _NPUDeviceNameOnSlider = 'GPU';
   @property({type: Number}) max_cpu_core_per_session = 128;
   @property({type: Number}) max_mem_per_container = 1536;
   @property({type: Number}) max_cuda_device_per_container = 16;
   @property({type: Number}) max_cuda_shares_per_container = 16;
+  @property({type: Number}) max_rocm_device_per_container = 10;
+  @property({type: Number}) max_tpu_device_per_container = 8;
+  @property({type: Number}) max_ipu_device_per_container = 8;
+  @property({type: Number}) max_atom_device_per_container = 4;
   @property({type: Number}) max_shm_per_container = 8;
   @property({type: Boolean}) allow_manual_image_name_for_session = false;
   @property({type: Object}) resourceBroker;
@@ -227,7 +241,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#next-button') nextButton!: IconButton;
   @query('#OpenMPswitch') openMPSwitch!: Switch;
   @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
-  @query('#gpu-resource') gpuResouceSlider!: LablupSlider;
+  @query('#gpu-resource') npuResouceSlider!: LablupSlider;
   @query('#mem-resource') memoryResouceSlider!: LablupSlider;
   @query('#shmem-resource') sharedMemoryResouceSlider!: LablupSlider;
   @query('#session-resource') sessionResouceSlider!: LablupSlider;
@@ -916,6 +930,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
         this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
         this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+        this.max_rocm_device_per_container = globalThis.backendaiclient._config.maxROCMDevicesPerContainer || 10;
+        this.max_tpu_device_per_container = globalThis.backendaiclient._config.maxTPUDevicesPerContainer || 8;
+        this.max_ipu_device_per_container = globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
+        this.max_atom_device_per_container = globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 4;
         this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
         if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
           'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
@@ -936,6 +954,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.max_mem_per_container = globalThis.backendaiclient._config.maxMemoryPerContainer || 1536;
       this.max_cuda_device_per_container = globalThis.backendaiclient._config.maxCUDADevicesPerContainer || 16;
       this.max_cuda_shares_per_container = globalThis.backendaiclient._config.maxCUDASharesPerContainer || 16;
+      this.max_rocm_device_per_container = globalThis.backendaiclient._config.maxROCMDevicesPerContainer || 10;
+      this.max_tpu_device_per_container = globalThis.backendaiclient._config.maxTPUDevicesPerContainer || 8;
+      this.max_ipu_device_per_container = globalThis.backendaiclient._config.maxIPUDevicesPerContainer || 8;
+      this.max_atom_device_per_container = globalThis.backendaiclient._config.maxATOMDevicesPerContainer || 4;
       this.max_shm_per_container = globalThis.backendaiclient._config.maxShmPerContainer || 8;
       if (globalThis.backendaiclient._config.allow_manual_image_name_for_session !== undefined &&
         'allow_manual_image_name_for_session' in globalThis.backendaiclient._config &&
@@ -1010,10 +1032,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     // Check preconditions and enable it via pooling
     if (!this.resourceBroker.image_updating) { // Image information is successfully updated.
       if (this.mode === 'inference') {
-        this.languages = this.resourceBroker.languages.filter(item =>
+        this.languages = this.resourceBroker.languages.filter((item) =>
           item.name !== '' && this.resourceBroker.imageRoles[item.name] === 'INFERENCE');
       } else {
-        this.languages = this.resourceBroker.languages.filter(item =>
+        this.languages = this.resourceBroker.languages.filter((item) =>
           item.name === '' || this.resourceBroker.imageRoles[item.name] === 'COMPUTE');
       }
       this.enableLaunchButton = true;
@@ -1289,9 +1311,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   _newSessionWithConfirmation() {
     const vfoldersCount = this._nonAutoMountedFolderGrid?.selectedItems?.map((item) => item.name).length;
+    const modelFoldersCount = this._modelFolderGrid?.selectedItems?.map((item) => item.name).length;
     // check whether the progress is in the last stage
     if (this.currentIndex == this.progressLength) {
-      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0)) {
+      if (this.mode === 'inference' || (vfoldersCount !== undefined && vfoldersCount > 0) || (modelFoldersCount !== undefined && modelFoldersCount > 0)) {
         return this._newSession();
       } else {
         this.launchConfirmationDialog.show();
@@ -1330,7 +1353,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.cpu_request = parseInt(this.cpuResouceSlider.value);
     this.mem_request = parseFloat(this.memoryResouceSlider.value);
     this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
-    this.gpu_request = parseFloat(this.gpuResouceSlider.value);
+    this.gpu_request = parseFloat(this.npuResouceSlider.value);
     this.session_request = parseInt(this.sessionResouceSlider.value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
@@ -1386,6 +1409,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     case 'tpu.device':
       config['tpu.device'] = this.gpu_request;
       break;
+    case 'ipu.device':
+      config['ipu.device'] = this.gpu_request;
+      break;
+    case 'atom.device':
+      config['atom.device'] = this.gpu_request;
+      break;
     default:
       // Fallback to current gpu mode if there is a gpu request, but without gpu type.
       if (this.gpu_request > 0 && this.gpu_mode) {
@@ -1402,7 +1431,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     }
-    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GB
+    if (this.mem_request > 4 && this.shmem_request < 1) { // Automatically increase shared memory to 1GiB
       this.shmem_request = 1;
     }
     config['shmem'] = String(this.shmem_request) + 'g';
@@ -1432,7 +1461,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       folderMapping = this.folderMapping;
     }
-    console.log('folder mapping:', folderMapping);
     if (vfolder.length !== 0) {
       config['mounts'] = vfolder;
       if (Object.keys(folderMapping).length !== 0) {
@@ -1484,7 +1512,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     const sessions: any[] = [];
     const randStr = this._getRandomString();
-
     if (this.num_sessions > 1) {
       for (let i = 1; i <= this.num_sessions; i++) {
         const add_session = {
@@ -1856,7 +1883,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // Post-UI markup to disable unchangeable values
       this.cpuResouceSlider.disabled = false;
       this.memoryResouceSlider.disabled = false;
-      this.gpuResouceSlider.disabled = false;
+      this.npuResouceSlider.disabled = false;
       if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
         this.cluster_size = 1;
         this.clusterSizeSlider.value = this.cluster_size;
@@ -1870,7 +1897,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         'max': 2,
         'preferred': 0.0625
       };
-      this.cuda_device_metric = {
+      this.npu_device_metric = {
         'min': 0,
         'max': 0
       };
@@ -1879,7 +1906,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           const cpu_metric = {...item};
           cpu_metric.min = parseInt(cpu_metric.min);
           if (enqueue_session) {
-            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+            ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device', 'ipu_device', 'atom_device'].forEach((slot) => {
               if (slot in this.total_resource_group_slot) {
                 available_slot[slot] = this.total_resource_group_slot[slot];
               }
@@ -1938,9 +1965,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.gpuResouceSlider.disabled = true;
+            this.npuResouceSlider.disabled = true;
           }
-          this.cuda_device_metric = cuda_device_metric;
+          this.npu_device_metric = cuda_device_metric;
+          this._NPUDeviceNameOnSlider = 'GPU';
         }
         if (item.key === 'cuda.shares' && this.gpu_mode === 'cuda.shares') {
           const cuda_shares_metric = {...item};
@@ -1963,32 +1991,109 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.gpuResouceSlider.disabled = true;
+            this.npuResouceSlider.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
           if (cuda_shares_metric.max > 0) {
-            this.cuda_device_metric = cuda_shares_metric;
+            this.npu_device_metric = cuda_shares_metric;
           }
+          this._NPUDeviceNameOnSlider = 'GPU';
         }
         if (item.key === 'rocm.device' && this.gpu_mode === 'rocm.device') {
-          const rocm_metric = {...item};
-          rocm_metric.min = parseInt(rocm_metric.min);
-          rocm_metric.max = parseInt(rocm_metric.max);
-          if (rocm_metric.min > rocm_metric.max) {
-            // TODO: dynamic maximum per user policy
+          const rocm_device_metric = {...item};
+          rocm_device_metric.min = parseInt(rocm_device_metric.min);
+          rocm_device_metric.max = parseInt(rocm_device_metric.max);
+          if (rocm_device_metric.min >= rocm_device_metric.max) {
+            if (rocm_device_metric.min > rocm_device_metric.max) {
+              rocm_device_metric.min = rocm_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
           }
-          this.rocm_device_metric = rocm_metric;
+          this.npu_device_metric = rocm_device_metric;
+          this._NPUDeviceNameOnSlider = 'GPU';
         }
         if (item.key === 'tpu.device') {
           const tpu_device_metric = {...item};
           tpu_device_metric.min = parseInt(tpu_device_metric.min);
-          tpu_device_metric.max = parseInt(tpu_device_metric.max);
-          if (tpu_device_metric.min > tpu_device_metric.max) {
-            // TODO: dynamic maximum per user policy
+          if ('tpu.device' in this.userResourceLimit) {
+            if (parseInt(tpu_device_metric.max) !== 0 && tpu_device_metric.max !== 'Infinity' && !isNaN(tpu_device_metric.max) && tpu_device_metric.max != null) {
+              tpu_device_metric.max = Math.min(parseInt(tpu_device_metric.max), parseInt(this.userResourceLimit['tpu.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+            } else {
+              tpu_device_metric.max = Math.min(parseInt(this.userResourceLimit['tpu.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+            }
+          } else {
+            if (parseInt(tpu_device_metric.max) !== 0 && tpu_device_metric.max !== 'Infinity' && !isNaN(tpu_device_metric.max) && tpu_device_metric.max != null) {
+              tpu_device_metric.max = Math.min(parseInt(tpu_device_metric.max), parseInt(available_slot['tpu_device']), this.max_tpu_device_per_container);
+            } else {
+              tpu_device_metric.max = Math.min(parseInt(this.available_slot['tpu_device']), this.max_tpu_device_per_container);
+            }
           }
-          this.tpu_device_metric = tpu_device_metric;
+          if (tpu_device_metric.min >= tpu_device_metric.max) {
+            if (tpu_device_metric.min > tpu_device_metric.max) {
+              tpu_device_metric.min = tpu_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          this.npu_device_metric = tpu_device_metric;
+          this._NPUDeviceNameOnSlider = 'TPU';
         }
+        if (item.key === 'ipu.device') {
+          const ipu_device_metric = {...item};
+          ipu_device_metric.min = parseInt(ipu_device_metric.min);
+          if ('ipu.device' in this.userResourceLimit) {
+            if (parseInt(ipu_device_metric.max) !== 0 && ipu_device_metric.max !== 'Infinity' && !isNaN(ipu_device_metric.max) && ipu_device_metric.max != null) {
+              ipu_device_metric.max = Math.min(parseInt(ipu_device_metric.max), parseInt(this.userResourceLimit['ipu.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+            } else {
+              ipu_device_metric.max = Math.min(parseInt(this.userResourceLimit['ipu.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+            }
+          } else {
+            if (parseInt(ipu_device_metric.max) !== 0 && ipu_device_metric.max !== 'Infinity' && !isNaN(ipu_device_metric.max) && ipu_device_metric.max != null) {
+              ipu_device_metric.max = Math.min(parseInt(ipu_device_metric.max), parseInt(available_slot['ipu_device']), this.max_ipu_device_per_container);
+            } else {
+              ipu_device_metric.max = Math.min(parseInt(this.available_slot['ipu_device']), this.max_ipu_device_per_container);
+            }
+          }
+          if (ipu_device_metric.min >= ipu_device_metric.max) {
+            if (ipu_device_metric.min > ipu_device_metric.max) {
+              ipu_device_metric.min = ipu_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          this.npu_device_metric = ipu_device_metric;
+          this._NPUDeviceNameOnSlider = 'IPU';
+        }
+        if (item.key === 'atom.device') {
+          const atom_device_metric = {...item};
+          atom_device_metric.min = parseInt(atom_device_metric.min);
+          if ('atom.device' in this.userResourceLimit) {
+            if (parseInt(atom_device_metric.max) !== 0 && atom_device_metric.max !== 'Infinity' && !isNaN(atom_device_metric.max) && atom_device_metric.max != null) {
+              atom_device_metric.max = Math.min(parseInt(atom_device_metric.max), parseInt(this.userResourceLimit['atom.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+            } else {
+              atom_device_metric.max = Math.min(parseInt(this.userResourceLimit['atom.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+            }
+          } else {
+            if (parseInt(atom_device_metric.max) !== 0 && atom_device_metric.max !== 'Infinity' && !isNaN(atom_device_metric.max) && atom_device_metric.max != null) {
+              atom_device_metric.max = Math.min(parseInt(atom_device_metric.max), parseInt(available_slot['atom_device']), this.max_atom_device_per_container);
+            } else {
+              atom_device_metric.max = Math.min(parseInt(this.available_slot['atom_device']), this.max_atom_device_per_container);
+            }
+          }
+          if (atom_device_metric.min >= atom_device_metric.max) {
+            if (atom_device_metric.min > atom_device_metric.max) {
+              atom_device_metric.min = atom_device_metric.max;
+              disableLaunch = true;
+            }
+            this.npuResouceSlider.disabled = true;
+          }
+          console.log(atom_device_metric);
+          this._NPUDeviceNameOnSlider = 'ATOM';
+          this.npu_device_metric = atom_device_metric;
+        }
+
         if (item.key === 'mem') {
           const mem_metric = {...item};
           mem_metric.min = globalThis.backendaiclient.utils.changeBinaryUnit(mem_metric.min, 'g');
@@ -2048,9 +2153,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.shmem_metric = shmem_metric;
 
       // GPU metric
-      if (this.cuda_device_metric.min == 0 && this.cuda_device_metric.max == 0) { // GPU is disabled (by image,too).
-        this.gpuResouceSlider.disabled = true;
-        this.gpuResouceSlider.value = 0;
+      if (this.npu_device_metric.min == 0 && this.npu_device_metric.max == 0) { // GPU is disabled (by image,too).
+        this.npuResouceSlider.disabled = true;
+        this.npuResouceSlider.value = 0;
         if (this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
@@ -2070,8 +2175,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.resource_templates_filtered = this.resource_templates;
         }
       } else {
-        this.gpuResouceSlider.disabled = false;
-        this.gpuResouceSlider.value = this.cuda_device_metric.max;
+        this.npuResouceSlider.disabled = false;
+        this.npuResouceSlider.value = this.npu_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
@@ -2089,7 +2194,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (disableLaunch) {
         this.cpuResouceSlider.disabled = true; // Not enough CPU. so no session.
         this.memoryResouceSlider.disabled = true;
-        this.gpuResouceSlider.disabled = true;
+        this.npuResouceSlider.disabled = true;
         this.sessionResouceSlider.disabled = true;
         this.sharedMemoryResouceSlider.disabled = true;
         this.launchButton.disabled = true;
@@ -2101,7 +2206,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this.cpuResouceSlider.disabled = false;
         this.memoryResouceSlider.disabled = false;
-        this.gpuResouceSlider.disabled = false;
+        this.npuResouceSlider.disabled = false;
         this.sessionResouceSlider.disabled = false;
         this.sharedMemoryResouceSlider.disabled = false;
         this.launchButton.disabled = false;
@@ -2110,9 +2215,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.clusterSizeSlider.disabled = false;
         }
       }
-      if (this.cuda_device_metric.min == this.cuda_device_metric.max &&
-          this.cuda_device_metric.max < 1) {
-        this.gpuResouceSlider.disabled = true;
+      if (this.npu_device_metric.min == this.npu_device_metric.max &&
+          this.npu_device_metric.max < 1) {
+        this.npuResouceSlider.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         // this.shadowRoot.querySelector('#cluster-size').disabled = true;
@@ -2351,6 +2456,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const cuda_shares = button.cuda_shares;
     const rocm_device = button.rocm_device;
     const tpu_device = button.tpu_device;
+    const ipu_device = button.ipu_device;
+    const atom_device = button.atom_device;
     let gpu_type; let gpu_value;
     if ((typeof cuda_device !== 'undefined' || typeof cuda_shares !== 'undefined')) {
       if (typeof cuda_device === 'undefined') { // FGPU
@@ -2366,6 +2473,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else if (typeof tpu_device !== 'undefined') {
       gpu_type = 'tpu.device';
       gpu_value = tpu_device;
+    } else if (typeof ipu_device !== 'undefined') {
+      gpu_type = 'ipu.device';
+      gpu_value = ipu_device;
+    } else if (typeof atom_device !== 'undefined') {
+      gpu_type = 'atom.device';
+      gpu_value = atom_device;
     } else {
       gpu_type = 'none';
       gpu_value = 0;
@@ -2385,7 +2498,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
     this.cpuResouceSlider.value = cpu;
     this.memoryResouceSlider.value = mem;
-    this.gpuResouceSlider.value = gpu_value;
+    this.npuResouceSlider.value = gpu_value;
     this.sharedMemoryResouceSlider.value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
@@ -2575,8 +2688,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         'desc': _text('session.launcher.DescSharedMemory')
       },
       'gpu': {
-        'name': _text('session.launcher.GPU'),
-        'desc': _text('session.launcher.DescGPU')
+        'name': _text('session.launcher.AIAccelerator'),
+        'desc': _text('session.launcher.DescAIAccelerator')
       },
       'session': {
         'name': _text('session.launcher.TitleSession'),
@@ -2710,29 +2823,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Get MB value when input is less than 1 GB.
+   * Get MiB value when input is less than 1 GiB.
    *
    * @param {number} value - value with GB unit.
-   * @return {number} MB value if input is smaller than 1GB. Otherwise, GB value.
+   * @return {number} MiB value if input is smaller than 1GiB. Otherwise, GiB value.
    * */
-  _conditionalGBtoMB(value) {
+  _conditionalGiBtoMiB(value) {
     if (value < 1.0) {
-      return this._roundResourceAllocation((value * 1024).toFixed(0), 2);
+      return this._roundResourceAllocation((value * 2**10).toFixed(0), 2);
     }
     return this._roundResourceAllocation(value, 2);
   }
 
   /**
-   * Get MB unit when input is less than 1 GB.
+   * Get MB unit when input is less than 1 GiB.
    *
-   * @param {number} value - value with GB unit.
-   * @return {string} MB if input is smaller than 1GB. Otherwise, GB.
+   * @param {number} value - value with GiB unit.
+   * @return {string} MiB if input is smaller than 1GiB. Otherwise, GiB.
    * */
-  _conditionalGBtoMBunit(value) {
+  _conditionalGiBtoMiBunit(value) {
     if (value < 1.0) {
-      return 'MB';
+      return 'MiB';
     }
-    return 'GB';
+    return 'GiB';
   }
 
   /**
@@ -3020,7 +3133,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.currentIndex = globalThis.backendaiclient.utils.clamp(this.currentIndex + n, this.progressLength, 1);
     }
     const movedProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
-
     currentProgressEl.classList.remove('active');
     movedProgressEl.classList.add('active');
 
@@ -3066,6 +3178,25 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return (currentIndex / progressLength).toFixed(2);
   }
 
+  /**
+   *
+   * @return {String} - Human-readable GPU/NPU name following the device type name
+   */
+  _acceleratorName(gpu_type:string) {
+    const accelerator_names = {
+      'cuda.device': 'GPU',
+      'cuda.shares': 'GPU',
+      'rocm.device': 'GPU',
+      'tpu.device': 'TPU',
+      'ipu.device': 'IPU',
+      'atom.device': 'ATOM'
+    };
+    if (gpu_type in accelerator_names) {
+      return accelerator_names[gpu_type];
+    } else {
+      return 'GPU';
+    }
+  }
   /**
    * Disable Select UI about Environments and versions when event target value is not empty.
    *
@@ -3500,22 +3631,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                             .cuda_shares="${item.cuda_shares}"
                             .rocm_device="${item.rocm_device}"
                             .tpu_device="${item.tpu_device}"
+                            .ipu_device="${item.ipu_device}"
+                            .atom_device="${item.atom_device}"
                             .shmem="${item.shmem}">
                     <div class="horizontal layout end-justified">
                       <div style="width:110px;">${item.name}</div>
                       <div style="display:none"> (</div>
                       <div style="width:50px;text-align:right;">${item.cpu}<span style="display:none">CPU</span></div>
-                      <div style="width:50px;text-align:right;">${item.mem}GB</div>
+                      <div style="width:50px;text-align:right;">${item.mem}GiB</div>
                       <div style="width:60px;text-align:right;">${item.shmem ? html`
-                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GB
+                        ${parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g')).toFixed(2)} GiB
                       ` :
     html`64MB`}
                       </div>
                       <div style="width:80px;text-align:right;">
-                        ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} CUDA GPU` : html``}
+                        ${item.cuda_device && item.cuda_device > 0 ? html`${item.cuda_device} GPU` : html``}
                         ${item.cuda_shares && item.cuda_shares > 0 ? html`${item.cuda_shares} GPU` : html``}
-                        ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} ROCM GPU` : html``}
+                        ${item.rocm_device && item.rocm_device > 0 ? html`${item.rocm_device} GPU` : html``}
                         ${item.tpu_device && item.tpu_device > 0 ? html`${item.tpu_device} TPU` : html``}
+                        ${item.ipu_device && item.ipu_device > 0 ? html`${item.ipu_device} IPU` : html``}
+                        ${item.atom_device && item.atom_device > 0 ? html`${item.atom_device} ATOM` : html``}
                       </div>
                       <div style="display:none">)</div>
                     </div>
@@ -3587,7 +3722,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                  value="${this.shmem_request}"></lablup-slider>
                   </div>
                   <mwc-list-item hasMeta class="resource-type">
-                    <div>GPU</div>
+                    <div>${_t('webui.menu.AIAccelerator')}</div>
                     <mwc-icon-button slot="meta" icon="info" class="fg info"
                       @click="${(e) => this._showResourceDescription(e, 'gpu')}"></mwc-icon-button>
                   </mwc-list-item>
@@ -3596,8 +3731,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <lablup-slider id="gpu-resource" class="gpu"
                                    pin snaps editable markers step="${this.gpu_step}"
                                    @change="${(e) => this._applyResourceValueChanges(e)}"
-                                   marker_limit="${this.marker_limit}" suffix="GPU"
-                                   min="0.0" max="${this.cuda_device_metric.max}"
+                                   marker_limit="${this.marker_limit}" suffix="${this._NPUDeviceNameOnSlider}"
+                                   min="0.0" max="${this.npu_device_metric.max}"
                                    value="${this.gpu_request}"></lablup-slider>
                   </div>
                   <mwc-list-item hasMeta class="resource-type">
@@ -3751,15 +3886,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.Memory')}</p>
                     <span>${this._roundResourceAllocation(this.mem_request * this.cluster_size * this.session_request, 1)}</span>
-                    <p>GB</p>
+                    <p>GiB</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
                     <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                    <span>${this._conditionalGBtoMB(this.shmem_request * this.cluster_size * this.session_request)}</span>
-                    <p>${this._conditionalGBtoMBunit(this.shmem_request * this.cluster_size * this.session_request)}</p>
+                    <span>${this._conditionalGiBtoMiB(this.shmem_request * this.cluster_size * this.session_request)}</span>
+                    <p>${this._conditionalGiBtoMiBunit(this.shmem_request * this.cluster_size * this.session_request)}</p>
                   </div>
                   <div class="vertical layout center center-justified resource-allocated">
-                    <p>${_t('session.launcher.GPU')}</p>
+                    <p>${this._acceleratorName(this.gpu_request_type)}</p>
                     <span>${this._roundResourceAllocation(this.gpu_request * this.cluster_size * this.session_request, 2)}</span>
                     <p>${_t('session.launcher.GPUSlot')}</p>
                   </div>
@@ -3777,15 +3912,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.Memory')}</p>
                       <span>${this._roundResourceAllocation(this.mem_request, 1)}</span>
-                      <p>GB</p>
+                      <p>GiB</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
                       <p>${_t('session.launcher.SharedMemoryAbbr')}</p>
-                      <span>${this._conditionalGBtoMB(this.shmem_request)}</span>
-                      <p>${this._conditionalGBtoMBunit(this.shmem_request)}</p>
+                      <span>${this._conditionalGiBtoMiB(this.shmem_request)}</span>
+                      <p>${this._conditionalGiBtoMiBunit(this.shmem_request)}</p>
                     </div>
                     <div class="vertical layout center center-justified resource-allocated">
-                      <p>${_t('session.launcher.GPU')}</p>
+                      <p>${this._acceleratorName(this.gpu_request_type)}</p>
                       <span>${this.gpu_request}</span>
                       <p>${_t('session.launcher.GPUSlot')}</p>
                     </div>

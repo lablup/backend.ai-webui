@@ -94,7 +94,7 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  */
 type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 @customElement('backend-ai-session-list')
-export default class BackendAiSessionList extends BackendAIPage {
+export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
@@ -461,28 +461,9 @@ export default class BackendAiSessionList extends BackendAIPage {
 
   firstUpdated() {
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-            if ('icon' in this.imageInfo[key]) {
-              this.kernel_icons[key] = this.imageInfo[key].icon;
-            } else {
-              this.kernel_icons[key] = '';
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_icons = globalThis.backendaimetadata.icons;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
@@ -686,12 +667,12 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].mem_current = 0;
             }
             if (liveStat && liveStat.io_read) {
-              sessions[objectKey].io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+              sessions[objectKey].io_read_bytes_mb = BackendAISessionList.bytesToMB(liveStat.io_read.current);
             } else {
               sessions[objectKey].io_read_bytes_mb = 0;
             }
             if (liveStat && liveStat.io_write) {
-              sessions[objectKey].io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+              sessions[objectKey].io_write_bytes_mb = BackendAISessionList.bytesToMB(liveStat.io_write.current);
             } else {
               sessions[objectKey].io_write_bytes_mb = 0;
             }
@@ -709,6 +690,16 @@ export default class BackendAiSessionList extends BackendAIPage {
               sessions[objectKey].tpu_util = liveStat.tpu_util;
             } else {
               sessions[objectKey].tpu_util = 0;
+            }
+            if (liveStat && liveStat.ipu_util) {
+              sessions[objectKey].ipu_util = liveStat.ipu_util;
+            } else {
+              sessions[objectKey].ipu_util = 0;
+            }
+            if (liveStat && liveStat.atom_util) {
+              sessions[objectKey].atom_util = liveStat.atom_util;
+            } else {
+              sessions[objectKey].atom_util = 0;
             }
             if (liveStat && liveStat.cuda_mem) {
               sessions[objectKey].cuda_mem_ratio = (liveStat.cuda_mem.current / liveStat.cuda_mem.capacity) || 0;
@@ -748,6 +739,12 @@ export default class BackendAiSessionList extends BackendAIPage {
           }
           if ('tpu.device' in occupied_slots) {
             sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
+          }
+          if ('ipu.device' in occupied_slots) {
+            sessions[objectKey].ipu_slot = parseInt(occupied_slots['ipu.device']);
+          }
+          if ('atom.device' in occupied_slots) {
+            sessions[objectKey].atom_slot = parseInt(occupied_slots['atom.device']);
           }
           if ('cuda.shares' in occupied_slots) {
             // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
@@ -899,18 +896,6 @@ export default class BackendAiSessionList extends BackendAIPage {
     }
   }
 
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  _byteToGB(value) {
-    return Math.floor(value / 1000000000);
-  }
-
-  _MBToGB(value) {
-    return value / 1024;
-  }
-
   /**
    * Scale the time in units of D, H, M, S, and MS.
    *
@@ -938,13 +923,17 @@ export default class BackendAiSessionList extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
+  /**
+   * Convert the value bytes to MB with decimal point to 1 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to MB
+   */
+  static bytesToMB(value, decimalPoint = 1) {
+    return Number(value / (10 ** 6)).toFixed(1);
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
-  }
   /**
    * Return elapsed time
    *
@@ -1984,7 +1973,7 @@ export default class BackendAiSessionList extends BackendAIPage {
           <div class="layout horizontal center configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
-            <span class="indicator">GB</span>
+            <span class="indicator">GiB</span>
           </div>
           <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
@@ -1995,7 +1984,7 @@ export default class BackendAiSessionList extends BackendAIPage {
             ${!rowData.item.cuda_gpu_slot && rowData.item.cuda_fgpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_fgpu_slot}</span>
-              <span class="indicator">GPU</span>
+              <span class="indicator">FGPU</span>
               ` : html``}
             ${rowData.item.rocm_gpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/ROCm.png" />
@@ -2007,10 +1996,22 @@ export default class BackendAiSessionList extends BackendAIPage {
               <span>${rowData.item.tpu_slot}</span>
               <span class="indicator">TPU</span>
               ` : html``}
+            ${rowData.item.ipu_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.tpu_slot}</span>
+              <span class="indicator">IPU</span>
+              ` : html``}
+            ${rowData.item.atom_slot ? html`
+              <img class="indicator-icon fg green" src="/resources/icons/rebel.svg" />
+              <span>${rowData.item.atom_slot}</span>
+              <span class="indicator">ATOM</span>
+              ` : html``}
             ${!rowData.item.cuda_gpu_slot &&
       !rowData.item.cuda_fgpu_slot &&
       !rowData.item.rocm_gpu_slot &&
-      !rowData.item.tpu_slot ? html`
+      !rowData.item.tpu_slot &&
+      !rowData.item.ipu_slot &&
+      !rowData.item.atom_slot ? html`
               <wl-icon class="fg green indicator">view_module</wl-icon>
               <span>-</span>
               <span class="indicator">GPU</span>
@@ -2102,11 +2103,31 @@ export default class BackendAiSessionList extends BackendAIPage {
               ></lablup-progress-bar>
             </div>
           </div>` : html``}
+          ${rowData.item.ipu_slot && parseFloat(rowData.item.ipu_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">IPU(util)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.ipu_util / (rowData.item.ipu_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
+          ${rowData.item.atom_slot && parseFloat(rowData.item.atom_slot) > 0 ? html`
+          <div class="horizontal start-justified center layout">
+            <div class="usage-items">ATOM(util)</div>
+            <div class="horizontal start-justified center layout">
+              <lablup-progress-bar class="usage"
+                progress="${rowData.item.atom_util / (rowData.item.atom_slot * 100)}"
+                description=""
+              ></lablup-progress-bar>
+            </div>
+          </div>` : html``}
           <div class="horizontal start-justified center layout">
             <div class="usage-items">I/O</div>
             <div style="font-size:8px;" class="horizontal start-justified center layout">
-            R: ${rowData.item.io_read_bytes_mb}MB /
-            W: ${rowData.item.io_write_bytes_mb}MB
+            R: ${rowData.item.io_read_bytes_mb} MB /
+            W: ${rowData.item.io_write_bytes_mb} MB
             </div>
           </div>
        </div>
@@ -2520,6 +2541,6 @@ export default class BackendAiSessionList extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-list': BackendAiSessionList;
+    'backend-ai-session-list': BackendAISessionList;
   }
 }

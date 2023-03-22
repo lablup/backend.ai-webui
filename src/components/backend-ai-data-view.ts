@@ -71,6 +71,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Boolean}) authenticated = false;
   @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
+  @property({type: String}) selectedVhost = '';
   @property({type: Array}) vhosts = [];
   @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
@@ -87,6 +88,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) _helpDescriptionStorageProxyInfo = Object();
   @property({type: Object}) options;
   @property({type: Number}) createdCount;
   @property({type: Number}) invitedCount;
@@ -94,7 +96,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
-  @property({type: Object}) volumeInfo = Object();
+  @property({type: Object}) storageProxyInfo = Object();
   @property({type: String}) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
@@ -302,9 +304,41 @@ export default class BackendAIData extends BackendAIPage {
             display: none;
           }
         }
+
+        .host-status-indicator {
+          height: 16px;
+          padding-left: 8px;
+          padding-right: 8px;
+          border-radius: 8px;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+        }
+
+        .host-status-indicator.adequate {
+          background-color: rgba(58, 178, 97, 1);
+        }
+
+        .host-status-indicator.caution {
+          background-color: rgb(223, 179, 23);
+        }
+
+        .host-status-indicator.insufficient {
+          background-color:#ef5350;
+        }
       `];
   }
 
+  renderStatusIndicator(percentage:number, showTitle:boolean) {
+    const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
+    const type = ['Adequate', 'Caution', 'Insufficient'][idx];
+    const title = [_t('data.usage.Adequate'), _t('data.usage.Caution'), _t('data.usage.Insufficient')][idx];
+    return html`<div class="host-status-indicator ${type.toLocaleLowerCase()} self-center">
+      ${showTitle ? title : ''}
+    </div>`;
+  }
   render() {
     // language=HTML
     return html`
@@ -377,16 +411,42 @@ export default class BackendAIData extends BackendAIPage {
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
-          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
-            ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
-                <span>${item}</span>
-                <mwc-icon-button slot="meta" icon="info"
-                    @click="${(e) => this._showStorageDescription(e, item)}">
+          <mwc-select
+            class="full-width fixed-position"
+            id="add-folder-host"
+            label="${_t('data.Host')}"
+            fixedMenuPosition
+            @selected=${(e)=> this.selectedVhost = e.target.value}
+          >
+            ${this.vhosts.map((item) => {
+              const percentage = this.storageProxyInfo[item] && this.storageProxyInfo[item]?.usage && this.storageProxyInfo[item]?.usage?.percentage;
+              return html`<mwc-list-item
+                hasMeta
+                value="${item}"
+                ?selected="${item === this.vhost}"
+              >
+                <div class="horizontal layout justified center">
+                  <span>${item}</span>
+                  ${html`
+                    &nbsp;
+                    ${typeof percentage === 'number' ? this.renderStatusIndicator(percentage, false): ''}
+                  `}
+                </div>
+                <mwc-icon-button
+                  slot="meta"
+                  icon="info"
+                  @click="${(e) => this._showStorageDescription(e, item)}"
+                >
                 </mwc-icon-button>
-              </mwc-list-item>
-            `)}
+              </mwc-list-item>`;
+            })}
           </mwc-select>
+          <div class="horizontal layout start" style="margin-top:-5px;margin-bottom:10px;padding-left:16px;font-size:12px;">
+            ${typeof this.storageProxyInfo[this.selectedVhost]?.usage?.percentage == 'number' ? html`
+              ${_t('data.usage.StatusOfSelectedHost')}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.selectedVhost]?.usage?.percentage, true)}
+              ` : html``
+            }
+          </div>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
                         style="width:${(!this.is_admin || !this.allowed_folder_type.includes('group')) ? '100%': '50%'}"
@@ -521,11 +581,48 @@ export default class BackendAIData extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
-        <div slot="content" class="horizontal layout center">
-        ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
-          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+        <div slot="content" class="vertical layout">
+          <div class="horizontal layout center">
+            ${this._helpDescriptionIcon == ''
+              ? html``
+              : html`
+                  <img
+                    slot="graphic"
+                    src="resources/icons/${this._helpDescriptionIcon}"
+                    style="width:64px;height:64px;margin-right:10px;"
+                  />
+                `}
+            <p style="font-size:14px;width:256px;">
+              ${unsafeHTML(this._helpDescription)}
+            </p>
+          </div>
+          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !== undefined
+            ? html`
+              <div class="vertical layout" style="padding-left:8px;">
+                <span><strong>${_t('data.usage.Status')}</strong></span>
+                <div class="horizontal layout">
+                  ${this.renderStatusIndicator(this._helpDescriptionStorageProxyInfo?.usage?.percentage, true)}
+                </div>
+                (${Math.floor(
+                  this._helpDescriptionStorageProxyInfo?.usage?.percentage
+                )}%
+                ${_t('data.usage.used')}
+                ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
+                this._helpDescriptionStorageProxyInfo?.usage?.used
+                  ? html`
+                      ,
+                      ${globalThis.backendaiutils._humanReadableFileSize(
+                        this._helpDescriptionStorageProxyInfo?.usage?.used
+                      )}
+                      /
+                      ${globalThis.backendaiutils._humanReadableFileSize(
+                        this._helpDescriptionStorageProxyInfo?.usage?.total
+                      )}
+                    `
+                  : html``}
+                )
+              `
+            : html``}
         </div>
       </backend-ai-dialog>
     `;
@@ -580,10 +677,10 @@ export default class BackendAIData extends BackendAIPage {
     };
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._getVolumeInformation();
+        this._getStorageProxyInformation();
       }, true);
     } else { // already connected
-      this._getVolumeInformation();
+      this._getStorageProxyInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
@@ -618,7 +715,7 @@ export default class BackendAIData extends BackendAIPage {
         this.usageModes.push('Model');
       }
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      this._getVolumeInformation();
+      this._getStorageProxyInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -701,10 +798,11 @@ export default class BackendAIData extends BackendAIPage {
    * Clone folder dialog.
    */
   async _cloneFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
     this.addFolderNameInput.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -717,10 +815,11 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder dialog.
    */
   async _addFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
     this.addFolderNameInput.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
@@ -728,9 +827,9 @@ export default class BackendAIData extends BackendAIPage {
     this.openDialog('add-folder-dialog');
   }
 
-  async _getVolumeInformation() {
+  async _getStorageProxyInformation() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    this.volumeInfo = vhostInfo.volume_info || {};
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   openDialog(id: string) {
@@ -758,6 +857,8 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
+
+    this._helpDescriptionStorageProxyInfo = this.storageProxyInfo[item];
     const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
   }

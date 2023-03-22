@@ -717,10 +717,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             <div class="layout vertical start-justified wrap">
               <lablup-progress-bar id="mem-usage-bar" class="start"
                 progress="${this.used_resource_group_slot_percent.mem / 100.0}"
-                description="${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GB"></lablup-progress-bar>
+                description="${this.used_resource_group_slot.mem}/${this.total_resource_group_slot.mem}GiB"></lablup-progress-bar>
               <lablup-progress-bar id="mem-usage-bar-2" class="end"
                 progress="${this.used_slot_percent.mem / 100.0}"
-                description="${this.used_slot.mem}/${this.total_slot.mem}GB"
+                description="${this.used_slot.mem}/${this.total_slot.mem}GiB"
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
@@ -772,7 +772,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
     html``}
-          ${this.total_slot.rocm_device_slot ?
+          ${this.total_slot.rocm_device ?
     html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
@@ -781,8 +781,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical center-justified wrap">
             <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
-              progress="${this.used_resource_group_slot_percent.rocm_device_slot / 100.0}"
-              description="${this.used_resource_group_slot.rocm_device_slot}/${this.total_resource_group_slot.rocm_device_slot}"
+              progress="${this.used_resource_group_slot_percent.rocm_device / 100.0}"
+              description="${this.used_resource_group_slot.rocm_device}/${this.total_resource_group_slot.rocm_device}"
             ></lablup-progress-bar>
             <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
               progress="${this.used_slot_percent.rocm_device_slot / 100.0}" buffer="${this.used_slot_percent.rocm_device_slot / 100.0}"
@@ -795,7 +795,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
           </div>` :
     html``}
-          ${this.total_slot.tpu_device_slot ?
+          ${this.total_slot.tpu_device ?
     html`
           <div class="layout horizontal center-justified monitor">
             <div class="layout vertical center center-justified resource-name">
@@ -803,17 +803,61 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
             </div>
             <div class="layout vertical center-justified wrap short-indicator">
               <lablup-progress-bar id="tpu-usage-bar" class="start"
-                progress="${this.used_resource_group_slot_percent.tpu_device_slot / 100.0}"
-                description="${this.used_resource_group_slot.tpu_device_slot}/${this.total_resource_group_slot.tpu_device_slot}"
+                progress="${this.used_resource_group_slot_percent.tpu_device / 100.0}"
+                description="${this.used_resource_group_slot.tpu_device}/${this.total_resource_group_slot.tpu_device}"
               ></lablup-progress-bar>
               <lablup-progress-bar id="tpu-usage-bar-2" class="end"
-                progress="${this.used_slot_percent.tpu_device_slot / 100.0}" buffer="${this.used_slot_percent.tpu_device_slot / 100.0}"
-                description="${this.used_slot.tpu_device_slot}/${this.total_slot.tpu_device_slot}"
+                progress="${this.used_slot_percent.tpu_device / 100.0}" buffer="${this.used_slot_percent.tpu_device / 100.0}"
+                description="${this.used_slot.tpu_device}/${this.total_slot.tpu_device}"
               ></lablup-progress-bar>
             </div>
             <div class="layout vertical center center-justified">
-              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.tpu_device_slot, '%')}</span>
-              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.tpu_device_slot, '%')}</span>
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.tpu_device, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.tpu_device, '%')}</span>
+            </div>
+          </div>` :
+    html``}
+          ${this.total_slot.ipu_device ?
+    html`
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified resource-name">
+              <span class="gauge-name">IPU</span>
+            </div>
+            <div class="layout vertical center-justified wrap short-indicator">
+              <lablup-progress-bar id="ipu-usage-bar" class="start"
+                progress="${this.used_resource_group_slot_percent.ipu_device / 100.0}"
+                description="${this.used_resource_group_slot.ipu_device}/${this.total_resource_group_slot.ipu_device}"
+              ></lablup-progress-bar>
+              <lablup-progress-bar id="ipu-usage-bar-2" class="end"
+                progress="${this.used_slot_percent.ipu_device / 100.0}" buffer="${this.used_slot_percent.ipu_device / 100.0}"
+                description="${this.used_slot.ipu_device}/${this.total_slot.ipu_device}"
+              ></lablup-progress-bar>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.ipu_device, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.ipu_device, '%')}</span>
+            </div>
+          </div>` :
+    html``}
+          ${this.total_slot.atom_device ?
+    html`
+          <div class="layout horizontal center-justified monitor">
+            <div class="layout vertical center center-justified resource-name">
+              <span class="gauge-name">ATOM</span>
+            </div>
+            <div class="layout vertical center-justified wrap short-indicator">
+              <lablup-progress-bar id="atom-usage-bar" class="start"
+                progress="${this.used_resource_group_slot_percent.atom_device / 100.0}"
+                description="${this.used_resource_group_slot.atom_device}/${this.total_resource_group_slot.atom_device}"
+              ></lablup-progress-bar>
+              <lablup-progress-bar id="atom-usage-bar-2" class="end"
+                progress="${this.used_slot_percent.atom_device / 100.0}" buffer="${this.used_slot_percent.atom_device / 100.0}"
+                description="${this.used_slot.atom_device}/${this.total_slot.atom_device}"
+              ></lablup-progress-bar>
+            </div>
+            <div class="layout vertical center center-justified">
+              <span class="percentage start-bar">${this._numberWithPostfix(this.used_resource_group_slot_percent.atom_device, '%')}</span>
+              <span class="percentage end-bar">${this._numberWithPostfix(this.used_slot_percent.atom_device, '%')}</span>
             </div>
           </div>` :
     html``}
@@ -934,13 +978,38 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
               <span style="width:35px;margin-left:5px; margin-right:5px;">GPU</span>
               <lablup-progress-bar id="tpu-project-usage-bar" class="end"
                 progress="${this.used_project_slot_percent.tpu_device / 100.0}"
-                description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.cuda_device}"
+                description="${this.used_project_slot.tpu_device}/${this.total_project_slot.tpu_device === 'Infinity' ? '∞' : this.total_project_slot.tpu_device}"
               ></lablup-progress-bar>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.tpu_device, '%')}</span>
                 <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.tpu_device, '%')}</span>
               </div>
             </div>` : html``}
+            ${this.total_project_slot.ipu_device ? html`
+            <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">IPU</span>
+              <lablup-progress-bar id="ipu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.ipu_device / 100.0}"
+                description="${this.used_project_slot.ipu_device}/${this.total_project_slot.ipu_device === 'Infinity' ? '∞' : this.total_project_slot.ipu_device}"
+              ></lablup-progress-bar>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.ipu_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.ipu_device, '%')}</span>
+              </div>
+            </div>` : html``}
+            ${this.total_project_slot.atom_device ? html`
+            <div class="layout horizontal">
+              <span style="width:35px;margin-left:5px; margin-right:5px;">ATOM</span>
+              <lablup-progress-bar id="tpu-project-usage-bar" class="end"
+                progress="${this.used_project_slot_percent.atom_device / 100.0}"
+                description="${this.used_project_slot.atom_device}/${this.total_project_slot.atom_device === 'Infinity' ? '∞' : this.total_project_slot.atom_device}"
+              ></lablup-progress-bar>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this._numberWithPostfix(this.used_project_slot_percent.atom_device, '%')}</span>
+                <span class="percentage end-bar">${this._numberWithPostfix(this.total_project_slot.atom_device, '%')}</span>
+              </div>
+            </div>` : html``}
+
           </div>
           <div class="flex"></div>
         </div>

@@ -80,6 +80,10 @@ export default class BackendAISummary extends BackendAIPage {
   @property({type: Number}) rocm_gpu_used = 0;
   @property({type: Number}) tpu_total = 0;
   @property({type: Number}) tpu_used = 0;
+  @property({type: Number}) ipu_total = 0;
+  @property({type: Number}) ipu_used = 0;
+  @property({type: Number}) atom_total = 0;
+  @property({type: Number}) atom_used = 0;
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
