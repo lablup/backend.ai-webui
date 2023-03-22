@@ -521,6 +521,15 @@
     "FolderNameTooLong": "폴더 이름은 64자 이하로 입력하세요",
     "EnterDifferentValue": "기존 파일 또는 폴더 이름과 다른 값을 입력해주세요. 변경하려는 폴더 이름에 공백문자가 있는지 확인해주세요.",
     "Host": "호스트",
+    "HostUsage": "호스트 사용량",
+    "usage": {
+      "Status": "상태",
+      "StatusOfSelectedHost": "선택한 호스트 상태",
+      "used": "사용중",
+      "Adequate": "여유",
+      "Caution": "주의",
+      "Insufficient": "부족"
+    },
     "Foldername": "폴더 이름",
     "FolderToUpdate": "갱신할 폴더 이름",
     "FolderToCopy": "복사할 폴더 이름",
@@ -640,7 +649,7 @@
       "NoChanges": "변경 사항이 없습니다",
       "PermissionModified": "권한이 변경되었습니다"
     },
-    "NoStorageDescriptionFound": "별도 정보가 없습니다.",
+    "NoStorageDescriptionFound": "별도 설명이 없습니다.",
     "DialogModelFolder": "모델을 선택하여 실행하거나, 또는 모델을 관리할 수 있습니다."
   },
   "dialog": {
