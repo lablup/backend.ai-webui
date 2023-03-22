@@ -96,7 +96,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
-  @property({type: Object}) volumeInfo = Object();
+  @property({type: Object}) storageProxyInfo = Object();
   @property({type: String}) folderType = 'user';
   @query('#add-folder-name') addFolderNameInput!: TextField;
   @query('#clone-folder-name') cloneFolderNameInput!: TextField;
@@ -677,10 +677,10 @@ export default class BackendAIData extends BackendAIPage {
     };
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
-        this._getVolumeInformation();
+        this._getStorageProxyInformation();
       }, true);
     } else { // already connected
-      this._getVolumeInformation();
+      this._getStorageProxyInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
       // this.shadowRoot.querySelector('#storage-status').updateChart();
@@ -715,7 +715,7 @@ export default class BackendAIData extends BackendAIPage {
         this.usageModes.push('Model');
       }
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
-      this._getVolumeInformation();
+      this._getStorageProxyInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -827,9 +827,9 @@ export default class BackendAIData extends BackendAIPage {
     this.openDialog('add-folder-dialog');
   }
 
-  async _getVolumeInformation() {
+  async _getStorageProxyInformation() {
     const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
-    this.volumeInfo = vhostInfo.volume_info || {};
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
   openDialog(id: string) {
