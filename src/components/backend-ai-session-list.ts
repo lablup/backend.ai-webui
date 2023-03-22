@@ -93,6 +93,15 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  * - INFERENCE: model inference with API
  */
 type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
+
+/**
+ * Interface of idle checks
+ * - key: 'timeout' | 'session_lifetime' | 'utilization'
+ */
+interface IdleChecks {
+  [key: string]: number | null;
+}
+
 @customElement('backend-ai-session-list')
 export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
@@ -139,6 +148,15 @@ export default class BackendAISessionList extends BackendAIPage {
     get: (obj, prop) => {
       // eslint-disable-next-line no-prototype-builtins
       return obj.hasOwnProperty(prop) ? obj[prop] : 'lightgrey';
+    }
+  });
+  @property({type: Proxy}) idleChecksTable = new Proxy({
+    'timeout': 'Timeout',
+    'session_lifetime': 'SessionLifetime',
+  }, {
+    get: (obj, prop) => {
+      // eslint-disable-next-line no-prototype-builtins
+      return obj.hasOwnProperty(prop) ? obj[prop] : '';
     }
   });
   @property({type: Proxy}) sessionTypeColorTable = new Proxy({
@@ -594,6 +612,9 @@ export default class BackendAISessionList extends BackendAIPage {
     }
     if (globalThis.backendaiclient.supports('session-detail-status')) {
       fields.push('status_data');
+    }
+    if (globalThis.backendaiclient.supports('idle-checks')) {
+      fields.push('idle_checks');
     }
     if (globalThis.backendaiclient.supports('inference-workload')) {
       fields.push('inference_metrics');
@@ -1707,6 +1728,41 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
+   * Convert seconds to 'hh:mm:ss' string
+   * @param {number} seconds - Seconds to convert
+   * @return {string} - hh:mm:ss
+   */
+  static secondsToHHMMSS(seconds) {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secondsRemainder = parseInt(seconds) % 60;
+    const timeoutExceededStr = (hours < 0 || minutes < 0 || secondsRemainder < 0) ? _text('session.TimeoutExceeded') : '';
+    const convertedStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
+    return timeoutExceededStr.length > 0 ? timeoutExceededStr : convertedStr;
+  }
+
+  /**
+   * Returns the minimum value of idle checks to know when idle sessions will be turned off.
+   * @param {string} idleChecks - Session's idle check
+   * @return {Array<string>} - Minimum value that and the key
+   */
+  _getIdleSessionTimeout(idleChecks: string) {
+    if (globalThis.backendaiutils.isEmpty(idleChecks)) {
+      return null;
+    }
+    const obj: IdleChecks = JSON.parse(idleChecks);
+    let minKey = '';
+    let minValue: number | null = Infinity;
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== null && value !== undefined && minValue !== null && minValue !== undefined && value < minValue) {
+        minKey = key;
+        minValue = value;
+      }
+    }
+    return minValue ? [minKey, BackendAISessionList.secondsToHHMMSS(minValue.toString())] : null;
+  }
+
+  /**
    * Render session type - batch or interactive
    *
    * @param {Element} root - the row details content DOM element
@@ -2191,12 +2247,17 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   reservationRenderer(root, column?, rowData?) {
+    const [idleCheckKey, idleCheckValue]: (string | null)[] = this._getIdleSessionTimeout(rowData.item.idle_checks) || [];
+    const idleCheckColor = idleCheckValue && idleCheckValue.length > 0 && parseInt(idleCheckValue.slice(0, 2)) < 1 ? 'red' : 'black';
     render(
       // language=HTML
       html`
         <div class="layout vertical">
           <span>${rowData.item.created_at_hr}</span>
-          <span>(${rowData.item.elapsed})</span>
+          <span>(${_t('session.ElapsedTime')}: ${rowData.item.elapsed})</span>
+          ${idleCheckKey ? html`
+            <span style="color:${idleCheckColor}">(${_t('session.' + this.idleChecksTable[idleCheckKey])}: ${idleCheckValue})</span>
+          ` : html``}
         </div>
       `, root);
   }

@@ -331,6 +331,9 @@
     "Message": "Pesan",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
     "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__",
     "Inference": "__NOT_TRANSLATED__",
     "UseSubdomain": "__NOT_TRANSLATED__",
     "BypassAuthentication": "__NOT_TRANSLATED__",
@@ -339,7 +342,8 @@
     "ExecuteTerminalApp": "__NOT_TRANSLATED__",
     "TerminateSession": "__NOT_TRANSLATED__",
     "SeeContainerLogs": "__NOT_TRANSLATED__",
-    "RequestContainerCommit": "__NOT_TRANSLATED__"
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
