@@ -2227,6 +2227,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * */
   reservationRenderer(root, column?, rowData?) {
     const [idleCheckKey, idleCheckValue]: (string | null)[] = this._getIdleSessionTimeout(rowData.item.idle_checks) || [];
+    const idleCheckColor = idleCheckValue && idleCheckValue.length > 0 && parseInt(idleCheckValue.slice(0, 2)) < 1 ? 'red' : 'black';
     render(
       // language=HTML
       html`
@@ -2234,7 +2235,7 @@ export default class BackendAISessionList extends BackendAIPage {
           <span>${rowData.item.created_at_hr}</span>
           <span>(${_t('session.ElapsedTime')}: ${rowData.item.elapsed})</span>
           ${idleCheckKey ? html`
-            <span>(${_t('session.' + this.idleChecksTable[idleCheckKey])}: ${idleCheckValue})</span>
+            <span style="color:${idleCheckColor}">(${_t('session.' + this.idleChecksTable[idleCheckKey])}: ${idleCheckValue})</span>
           ` : html``}
         </div>
       `, root);
