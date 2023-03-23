@@ -67,7 +67,7 @@ const SampleComponent: React.FC = () => {
       >
         Inline style (lightblue BG)
       </div>
-      <DatePicker />
+      <DatePicker transitionName="" />
       <Button onClick={() => setOpen((v) => !v)} type={"primary"}>
         Open Modal
       </Button>
