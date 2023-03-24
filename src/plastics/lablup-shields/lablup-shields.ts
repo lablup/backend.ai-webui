@@ -46,6 +46,7 @@ export default class LablupShields extends LitElement {
   @property({type: String}) color = 'green';
   @property({type: String}) appColor = 'grey';
   @property({type: String}) ui = 'flat';
+  @property({type: Object}) customColorPalette = Object();
   @query('#app') appContainer!: HTMLDivElement;
   @query('#description') descriptionContainer!: HTMLDivElement;
 
@@ -87,7 +88,7 @@ export default class LablupShields extends LitElement {
   }
 
   get _colorScheme() {
-    const colorPalette: colorSchemeType = {
+    let colorPalette: colorSchemeType = {
       "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
       "lightgreen": {"colorB": "#f3f5d0", "colorT": "#222222"},
       "green": {"colorB": "#97ca00", "colorT": "#ffffff"},
@@ -104,6 +105,9 @@ export default class LablupShields extends LitElement {
       "lightgrey": {"colorB": "#9f9f9f", "colorT": "#ffffff"},
       "lightgray": {"colorB": "#9f9f9f", "colorT": "#ffffff"}
     };
+    if (this.customColorPalette && Object.keys(this.customColorPalette).length > 0) {
+      colorPalette = Object.assign(colorPalette, this.customColorPalette);
+    }
     return colorPalette;
   }
 
