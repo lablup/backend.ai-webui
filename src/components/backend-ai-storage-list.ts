@@ -147,7 +147,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     MB: Math.pow(10, 6),
     GB: Math.pow(10, 9),
     TB: Math.pow(10, 12),
-    PB: Math.pow(10, 15)
+    PB: Math.pow(10, 15),
+    MiB: Math.pow(2, 20),
+    GiB: Math.pow(2, 30),
+    TiB: Math.pow(2, 40),
+    PiB: Math.pow(2, 50),
   };
   @property({type: Object}) maxSize = {
     value: 0,
@@ -774,7 +778,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
                   ${_t('data.folders.FolderUsing')}: ${this.folderInfo.used_bytes >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.used_bytes) : 'Undefined'} /
-                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * 2 ** 20) : 'Undefined'}
+                  ${_t('data.folders.FolderQuota')}: ${this.folderInfo.max_size >= 0 ? globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB) : 'Undefined'}
                   ${this.folderInfo.used_bytes >= 0 && this.folderInfo.max_size >= 0 ? html`
                     <vaadin-progress-bar value="${this.folderInfo.used_bytes / this.folderInfo.max_size / 2**20}"></vaadin-progress-bar>
                   ` : html``}
@@ -1170,7 +1174,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     let quotaIndicator = '-';
     if (this._checkFolderSupportSizeQuota(rowData.item.host) && rowData.item.max_size) {
       // `max_size` is in MiB. Convert this to SI unit
-      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * 2 ** 20);
+      quotaIndicator = globalThis.backendaiutils._humanReadableFileSize(rowData.item.max_size * this.quotaUnit.MiB);
     }
     render(
       // language=HTML
@@ -1817,7 +1821,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * 2 ** 20).split(' ');
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
         this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
       }
