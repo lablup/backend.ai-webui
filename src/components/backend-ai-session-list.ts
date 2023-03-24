@@ -119,6 +119,8 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
+  @property({type: Object}) _boundUtilIdleChecksHeaderderer = this.utilIdleChecksHeaderRenderer.bind(this);
+  @property({type: Object}) _boundUtilIdleChecksRenderer = this.utilIdleChecksRenderer.bind(this);
   @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundArchitectureRenderer = this.architectureRenderer.bind(this);
@@ -153,6 +155,10 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Proxy}) idleChecksTable = new Proxy({
     'timeout': 'Timeout',
     'session_lifetime': 'SessionLifetime',
+    'cpu_util': 'CPU',
+    'mem': 'MEM',
+    'cuda_util': 'GPU',
+    'cuda_mem': 'GPU(MEM)',
   }, {
     get: (obj, prop) => {
       // eslint-disable-next-line no-prototype-builtins
@@ -434,6 +440,12 @@ export default class BackendAISessionList extends BackendAIPage {
 
         .no-mount {
           color: var(--paper-grey-400);
+        }
+
+        .util-idle-checks {
+          --component-width: 40px;
+          text-align: center;
+          padding: 3px;
         }
 
         span#access-key-filter-helper-text {
@@ -1754,7 +1766,7 @@ export default class BackendAISessionList extends BackendAIPage {
     let minKey = '';
     let minValue: number | null = Infinity;
     for (const [key, value] of Object.entries(obj)) {
-      if (value !== null && value !== undefined && minValue !== null && minValue !== undefined && value < minValue) {
+      if (value !== null && value !== undefined && typeof value === 'number' && minValue !== null && minValue !== undefined && value < minValue) {
         minKey = key;
         minValue = value;
       }
@@ -2248,17 +2260,65 @@ export default class BackendAISessionList extends BackendAIPage {
    * */
   reservationRenderer(root, column?, rowData?) {
     const [idleCheckKey, idleCheckValue]: (string | null)[] = this._getIdleSessionTimeout(rowData.item.idle_checks) || [];
-    const idleCheckColor = idleCheckValue && idleCheckValue.length > 0 && parseInt(idleCheckValue.slice(0, 2)) < 1 ? 'red' : 'black';
+    const idleCheckColor = idleCheckValue && idleCheckValue.length > 0 && parseInt(idleCheckValue.slice(0, 2)) < 1 ? 'red' : 'darkgreen';
     render(
       // language=HTML
       html`
-        <div class="layout vertical">
+        <div class="layout vertical" style="padding:3px auto;">
           <span>${rowData.item.created_at_hr}</span>
-          <span>(${_t('session.ElapsedTime')}: ${rowData.item.elapsed})</span>
+          <lablup-shields app="${_t('session.ElapsedTime')}" color="darkgreen" style="margin:3px 0;"
+                          description="${rowData.item.elapsed}" ui="round"></lablup-shields>
           ${idleCheckKey ? html`
-            <span style="color:${idleCheckColor}">(${_t('session.' + this.idleChecksTable[idleCheckKey])}: ${idleCheckValue})</span>
+            <lablup-shields app="${_t('session.' + this.idleChecksTable[idleCheckKey])}"
+                            color="${idleCheckColor}"
+                            description="${idleCheckValue}" ui="round"></lablup-shields>
           ` : html``}
         </div>
+      `, root);
+  }
+
+  /**
+   * Render utilization idle checker header
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * */
+  utilIdleChecksHeaderRenderer(root, column?) {
+    render(
+      // language=HTML
+      html`
+        <div>${_t('session.UtilizationIdleChecks')}</div>
+        <div class="horizontal layout center">
+          <lablup-shields style="padding:3px;" description="${_t('session.Utilization')}" ui="round" color="lightblue"></lablup-shields>
+          <lablup-shields style="padding:3px;" description="${_t('session.Threshold')}" ui="round" color="lightgreen"></lablup-shields>  
+        </div>
+      `, root);
+  }
+
+  /**
+   * Render utilization idle checker
+   *
+   * @param {Element} root - the row details content DOM element
+   * @param {Element} column - the column element that controls the state of the host element
+   * @param {Object} rowData - the object with the properties related with the rendered item
+   * */
+  utilIdleChecksRenderer(root, column?, rowData?) {
+    const utilizationExtra: (string | null)[] = rowData.item.idle_checks ? JSON.parse(rowData.item.idle_checks).utilization_extra : null;
+    render(
+      // language=HTML
+      html`
+        ${utilizationExtra && Object.keys(utilizationExtra).map((item) => {
+          const utilization = utilizationExtra[item][0] ? parseInt(utilizationExtra[item][0]) : '-';
+          const threshold = utilizationExtra[item][1];
+          return html`
+          <div class="horizontal layout justified center">
+            <span>${this.idleChecksTable[item]}</span>
+            <div class="horizontal layout center">
+              <lablup-shields class="util-idle-checks" description="${utilization}" ui="round" color="lightblue"></lablup-shields>
+              <lablup-shields class="util-idle-checks" description="${threshold}" ui="round" color="lightgreen"></lablup-shields>
+            </div>
+          </div>  
+        `})}
       `, root);
   }
 
@@ -2502,9 +2562,13 @@ export default class BackendAISessionList extends BackendAIPage {
           <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t('session.Usage')}"
                               .renderer="${this._boundUsageRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-sort-column resizable auto-width flex-grow="0" header="${_t('session.Reservation')}"
+          <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
+          <vaadin-grid-column resizable width="180px" flex-grow="0" 
+                              .headerRenderer="${this._boundUtilIdleChecksHeaderderer}"
+                              .renderer="${this._boundUtilIdleChecksRenderer}">
+          </vaadin-grid-column>
           <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
                                      .renderer="${this._boundArchitectureRenderer}">
           </lablup-grid-sort-filter-column>

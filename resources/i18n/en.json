@@ -350,7 +350,10 @@
     "ExecuteTerminalApp": "Execute Terminal App",
     "TerminateSession": "Terminate Session",
     "SeeContainerLogs": "See Container Logs",
-    "RequestContainerCommit": "Request Container Commit"
+    "RequestContainerCommit": "Request Container Commit",
+    "UtilizationIdleChecks": "Utilization Idle Checks",
+    "Utilization": "Utilization",
+    "Threshold": "Threshold"
   },
   "button": {
     "Cancel": "Cancel",
