@@ -423,7 +423,8 @@ export default class BackendAICredentialList extends BackendAIPage {
       if (response.delete_keypair && !response.delete_keypair.ok) {
         throw new UnableToDeleteKeypairException(response.delete_keypair.msg);
       }
-      this.notification.text = PainKiller.relieve('Deleted the access key successfully.');
+      this.notification.text = _text('credential.KeySeccessfullyDeleted');
+      this.notification.show();
       this.refresh();
       this.deleteKeyPairDialog.hide();
     }).catch((err) => {
