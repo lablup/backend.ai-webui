@@ -349,7 +349,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _signoutUser() {
     globalThis.backendaiclient.user.delete(this.signoutUserName).then((response) => {
-      this.notification.text = PainKiller.relieve('Signout finished.');
+      this.notification.text = _text('credential.SignoutSeccessfullyFinished');
+      this.notification.show();
       this._refreshUserData();
       this.signoutUserDialog.hide();
     }).catch((err) => { // Signout failed
