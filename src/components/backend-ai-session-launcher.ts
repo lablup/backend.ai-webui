@@ -4053,12 +4053,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               id="delete-all-button"
               slot="footer"
               icon="delete"
+              style="width:100px"
               label="${_text('button.Reset')}"
               @click="${()=>this._clearRows()}"></mwc-button>
           <mwc-button
               unelevated
               slot="footer"
               icon="check"
+              style="width:100px"
               label="${_text('button.Save')}"
               @click="${()=>this.modifyEnv()}"></mwc-button>
         </div>
