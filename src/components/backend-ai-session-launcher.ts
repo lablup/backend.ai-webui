@@ -914,10 +914,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
 
     this.resourceGauge = this.shadowRoot?.querySelector('#resource-gauges');
-    document.addEventListener('backend-ai-group-changed', (e) => {
+    document.addEventListener('backend-ai-group-changed', () => {
       this._updatePageVariables(true);
     });
-    document.addEventListener('backend-ai-resource-broker-updated', (e) => {
+    document.addEventListener('backend-ai-resource-broker-updated', () => {
       // Fires when broker is updated.
     });
     if (this.hideLaunchButton === true) {
@@ -3170,7 +3170,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    *
-   * @return {Number} - fraction of currentProgress when progressLength becomes 1
+   * @return {Number} : fraction of currentProgress when progressLength becomes 1
    */
   _calculateProgress() {
     const progressLength = this.progressLength > 0 ? this.progressLength : 1;
@@ -3180,7 +3180,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   /**
    *
-   * @return {String} - Human-readable GPU/NPU name following the device type name
+   * @param {String} gpu_type : GPU/NPU type to get accelerator name. Name convention follows Backend.AI Accelerator plugins device names.
+   * @return {String} : Human-readable GPU/NPU name following the device type name
    */
   _acceleratorName(gpu_type:string) {
     const accelerator_names = {

@@ -583,9 +583,7 @@ export default class BackendAIData extends BackendAIPage {
         <span slot="title">${this._helpDescriptionTitle}</span>
         <div slot="content" class="vertical layout">
           <div class="horizontal layout center">
-            ${this._helpDescriptionIcon == ''
-              ? html``
-              : html`
+            ${this._helpDescriptionIcon == '' ? html`` : html`
                   <img
                     slot="graphic"
                     src="resources/icons/${this._helpDescriptionIcon}"
@@ -596,8 +594,7 @@ export default class BackendAIData extends BackendAIPage {
               ${unsafeHTML(this._helpDescription)}
             </p>
           </div>
-          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !== undefined
-            ? html`
+          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !== undefined ? html`
               <div class="vertical layout" style="padding-left:8px;">
                 <span><strong>${_t('data.usage.Status')}</strong></span>
                 <div class="horizontal layout">
@@ -985,7 +982,7 @@ export default class BackendAIData extends BackendAIPage {
         'usage_mode': usageMode
       };
       const job = globalThis.backendaiclient.vfolder.clone(input, this.cloneFolderName);
-      job.then((value) => {
+      job.then(() => {
         this.notification.text = _text('data.folders.FolderCloned');
         this.notification.show();
         this._refreshFolderList();

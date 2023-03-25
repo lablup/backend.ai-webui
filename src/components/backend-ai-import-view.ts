@@ -270,7 +270,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   _fetchNotebookURLResource(downloadURL) {
-    fetch(downloadURL).then((res) => {
+    fetch(downloadURL).then(() => {
       this.notification.text = _text('import.ReadyToImport');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -278,7 +278,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
-    }).catch((err) => {
+    }).catch(() => {
       this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -437,7 +437,7 @@ export default class BackendAIImport extends BackendAIPage {
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
-    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+    return globalThis.backendaiclient.get_resource_slots().then(() => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000, undefined);
