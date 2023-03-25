@@ -512,7 +512,8 @@
     "UserIDRequired": "User ID is required.",
     "KeypairDetail": "Keypair Detail",
     "AdminCanOnlyRemoveTotp": "Only disabling 2FA of other users is possible.",
-    "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted."
+    "KeySeccessfullyDeleted": "KeyPair is seccessfully deleted.",
+    "SignoutSeccessfullyFinished": "Signout is seccessfully finished"
   },
   "data": {
     "Folders": "Folders",

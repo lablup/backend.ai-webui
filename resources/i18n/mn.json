@@ -505,7 +505,8 @@
     "WarningLessRateLimit": "__NOT_TRANSLATED__",
     "KeypairDetail": "__NOT_TRANSLATED__",
     "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
-    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__"
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",

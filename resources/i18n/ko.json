@@ -504,7 +504,8 @@
     "UserIDRequired": "사용자 계정(email)은 필수 입력입니다.",
     "KeypairDetail": "키페어 정보",
     "AdminCanOnlyRemoveTotp": "다른 사용자의 이중 인증은 해제만 가능합니다.",
-    "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다."
+    "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다.",
+    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다."
   },
   "data": {
     "Folders": "폴더",
