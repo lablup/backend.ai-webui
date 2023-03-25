@@ -1337,14 +1337,14 @@ class Client {
     if (this._loginSessionId !== '') {
       hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
     }
-    let requestInfo = {
+    return {
       method: method,
       headers: hdrs as Headers,
       cache: 'default' as RequestCache,
       body: requestBody,
       uri: uri as string
     };
-    return requestInfo;
+    // return requestInfo;
   }
 
   /**
@@ -1411,8 +1411,7 @@ class Client {
     let year = (`0000${now.getUTCFullYear()}`).slice(-4);
     let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
     let day = (`0${now.getUTCDate()}`).slice(-2);
-    let t = year + month + day;
-    return t;
+    return year + month + day;
   }
 
   getEncodedPayload(body) {
@@ -1451,8 +1450,7 @@ class Client {
 
   getSignKey(secret_key, now) {
     let k1 = this.sign(secret_key, 'utf8', this.getCurrentDate(now), 'binary');
-    let k2 = this.sign(k1, 'binary', this._config.endpointHost, 'binary');
-    return k2;
+    return this.sign(k1, 'binary', this._config.endpointHost, 'binary');
   }
 
   generateRandomStr(length) {
@@ -1480,7 +1478,7 @@ class Client {
           b.charAt(a.indexOf(c)))     // Replace special chars
       .replace(/&/g, '-and-')         // Replace & with 'and'
       .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
-      .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+      .replace(/--+/g, '-')         // Replace multiple - with single -
       .replace(/^-+/, '')             // Trim - from start of text
       .replace(/-+$/, '')             // Trim - from end of text
   }
@@ -2114,7 +2112,7 @@ class VFolder {
   /**
    * Share specific users a group-type virtual folder with overriding permission.
    *
-   * @param {string} perm - Permission to give to. `rw` or `ro`.
+   * @param {string} permission - Permission to give to. `rw` or `ro`.
    * @param {array} emails - User E-mail(s) to share.
    * @param {string} name - A group virtual folder name to share.
    */
@@ -2212,7 +2210,7 @@ class Agent {
   /**
    * modify agent configuration with given name and fields.
    *
-   * @param {string} agent_id - resource preset name.
+   * @param {string | null} id - resource preset name.
    * @param {json} input - resource preset specification and data. Required fields are:
    * {
    *   'schedulable': schedulable
@@ -2263,7 +2261,7 @@ class AgentSummary {
     if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
       f.replace('schedulable', '');
     }
-    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+    if (!['ALIVE', 'TERMINATED'].includes(status)) {
       return Promise.resolve(false);
     }
     let q = `query($limit:Int!, $offset:Int!, $status:String) {
@@ -2367,6 +2365,7 @@ class Keypair {
    * Keypair API wrapper.
    *
    * @param {Client} client - the Client API wrapper object to bind
+   * @param {string | null} name - the name of keypair class
    */
   constructor(client, name = null) {
     this.client = client;
@@ -2479,7 +2478,7 @@ class Keypair {
    * @param {boolean} isActive - is_active state. Default is True.
    * @param {boolean} isAdmin - is_admin state. Default is False.
    * @param {string} resourcePolicy - resource policy name to assign. Default is `default`.
-   * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
+   * @param {number} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
             rateLimit = 1000) {
@@ -2749,7 +2748,7 @@ class ContainerImage {
   async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
     let q, v;
     if (this.client.supports('system-images')) {
-      if (installed_only === true) {
+      if (installed_only) {
         q = `query($installed:Boolean) {` +
           `  images(is_installed:$installed) { ${fields.join(" ")} }` +
           '}';
@@ -2832,7 +2831,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then(() => {
       return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
@@ -3067,16 +3066,10 @@ class SessionTemplate {
   /**
    * list session templates with specific conditions.
    *
-   * @param {array} fields - fields to query. Default fields are: ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
-   * @param {string or array} status - status to query. Default is 'RUNNING'.
-   *        Available statuses are: `PREPARING`, `BUILDING`,`PENDING`, `SCHEDULED`, `RUNNING`, `RESTARTING`, `RESIZING`, `SUSPENDED`, `TERMINATING`, `TERMINATED`, `ERROR`.
-   * @param {string} accessKey - access key that is used to start compute sessions.
-   * @param {number} limit - limit number of query items.
-   * @param {number} offset - offset for item query. Useful for pagination.
-   * @param {string} group - project group id to query. Default returns sessions from all groups.
-   * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
+   * @param {boolean} listall - returns all list
+   * @param {string} groupId - ID of group where session templates are bound
    */
-  async list(listall=false, groupId=null) {
+  async list(listall = false, groupId = null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
       const params = {'all': (listall ?  'true': 'false')};
@@ -3162,7 +3155,7 @@ class Resources {
       return this.client.agent.list(status, fields).then((response) => {
         this._init_resource_values();
         this.agents = response.agents;
-        Object.keys(this.agents).map((objectKey, index) => {
+        Object.keys(this.agents).map((objectKey) => {
           let value = this.agents[objectKey];
           let occupied_slots = JSON.parse(value.occupied_slots);
           let available_slots = JSON.parse(value.available_slots);
@@ -3273,6 +3266,7 @@ class Group {
    * List registred groups.
    * @param {boolean} is_active - List whether active users or inactive users.
    * @param {string} domain_name - domain name of group
+   * @param {array} fields - fields to get. Possible field names are:
    * {
    *   'name': String,          // Group name.
    *   'description': String,   // Description for group.
@@ -3290,7 +3284,7 @@ class Group {
         `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
         '}';
       v = {'is_active': is_active};
-      if (domain_name !== false) {
+      if (domain_name) {
         q = `query($domain_name: String, $is_active:Boolean) {` +
           `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
           '}';
@@ -3343,7 +3337,7 @@ class Domain {
             fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
               'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
     let q, v;
-    if (domain_name !== false) {
+    if (domain_name) {
       q = `query($name: String) {` +
         `  domain(name: $name) { ${fields.join(" ")} }` +
         '}';
@@ -3419,7 +3413,7 @@ class Maintenance {
    * @param {string} task_id - background task id.
    */
   attach_background_task(task_id: string) {
-    var urlStr = "/events/background-task?task_id=" + task_id;
+    let urlStr = "/events/background-task?task_id=" + task_id;
     let req = this.client.newSignedRequest("GET", urlStr, null);
     return new EventSource(req.uri, {withCredentials:true});
   }
@@ -3458,7 +3452,7 @@ class Maintenance {
   async recalculate_usage() {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
-      return this.client._wrapWithPromise(rqst, null, null, 60 * 1000);
+      return this.client._wrapWithPromise(rqst, undefined, null, 60 * 1000);
     }
   }
 }
@@ -3481,7 +3475,7 @@ class User {
    * TODO: we need new paginated list API after implementation of server-side dynamic filtering.
    *
    * @param {boolean} is_active - List whether active users or inactive users.
-   * @param {json} input - User specification to query. Fields are:
+   * @param {json} fields - User specification to query. Fields are:
    * {
    *   'username': String,      // User name for given user id.
    *   'password': String,      // Password for user id.
@@ -3547,7 +3541,7 @@ class User {
    * Get user information.
    *
    * @param {string} email - E-mail address as user id.
-   * @param {json} input - User specification to query. Fields are:
+   * @param {json} fields - User specification to query. Fields are:
    * {
    *   'email': String,         // E-mail for given E-mail (same as user)
    *   'username': String,      // User name for given user id.
@@ -3726,6 +3720,7 @@ class ScalingGroup {
   /**
    * Create a scaling group
    *
+   * @param {string} name - name of the new scaling group
    * @param {json} input - object containing desired modifications
    * {
    *   'description': String          // description of scaling group
@@ -3882,7 +3877,7 @@ class Setting {
   /**
    * Get settings
    *
-   * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
+   * @param {string} key - prefix to get. This command will return every settings starting with the prefix.
    */
   async get(key) {
     key = `config/${key}`;
@@ -3984,7 +3979,7 @@ class UserConfig {
   /**
    * Update bootstrap script of a keypair.
    *
-   * @param {string} data - text content of bootstrap script.
+   * @param {string} script - text content of bootstrap script.
    */
   async update_bootstrap_script(script: string) {
     const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {script});
