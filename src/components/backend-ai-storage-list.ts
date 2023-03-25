@@ -1820,7 +1820,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
       // get quota if host storage support per folder quota
       if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
-        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MB).split(' ');
+        [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit['MB']).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
         this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
       }
