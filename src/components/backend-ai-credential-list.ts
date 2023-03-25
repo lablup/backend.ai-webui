@@ -931,7 +931,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                               .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}"
                               .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}"
+          <vaadin-grid-column width="208px" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
