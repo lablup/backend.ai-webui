@@ -674,7 +674,7 @@ class Client {
       })});
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
-          this.logout();
+          await this.logout();
           return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
         }
         await this.get_manager_version();
@@ -833,7 +833,7 @@ class Client {
   }
 
   /**
-   * Create a compute session if the session for the given sessionId does not exists.
+   * Create a `compute session` if the session for the given sessionId does not exist.
    * It returns the information for the existing session otherwise, without error.
    *
    * @param {string} kernelType - the kernel type (usually language runtimes)
@@ -1132,7 +1132,7 @@ class Client {
    * Execute a code snippet or schedule batch-mode executions.
    *
    * @param {string} sessionId - the sessionId given when created
-   * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 to 64 bytes inclusively)
+   * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 and 64 bytes inclusively)
    * @param {string} mode - either "query", "batch", "input", or "continue"
    * @param {string} code - code snippet to execute
    * @param {object} opts - an optional object specifying additional configs such as batch-mode build/exec commands
@@ -1213,9 +1213,12 @@ class Client {
   }
 
   mangleUserAgentSignature() {
-    let uaSig = this.clientVersion
+    // TODO: remove the commented implementation
+    /* let uaSig = this.clientVersion
       + (this.agentSignature ? ('; ' + this.agentSignature) : '');
-    return uaSig;
+    return uaSig;*/
+    return this.clientVersion
+      + (this.agentSignature ? ('; ' + this.agentSignature) : '');
   }
 
   /**
@@ -1223,6 +1226,7 @@ class Client {
    *
    * @param {string} q - query string for GraphQL
    * @param {string} v - variable string for GraphQL
+   * @param {AbortSignal} signal - signal to abort current request
    * @param {number} timeout - Timeout to force terminate request
    * @param {number} retry - The number of retry when request is failed
    * @param {number} secure - Decide to encode the payload or not
@@ -1246,7 +1250,7 @@ class Client {
    * @param {string | null} serviceName - serviceName for sending up requests to other services
    * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any, serviceName: string | null = null, secure: boolean = false) {
+  newSignedRequest(method: string, queryString, body: any = undefined, serviceName: string | null = null, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1266,8 +1270,7 @@ class Client {
     //queryString = '/' + this._config.apiVersionMajor + queryString;
     let aStr;
     let hdrs;
-    let uri;
-    uri = '';
+    let uri: string;
     if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
       hdrs = new Headers({
         "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
@@ -1383,9 +1386,9 @@ class Client {
       cache: 'default' as RequestCache,
       uri: ''
     };
-    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
+    if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server')) { // Force request to use Public when session mode is enabled
       requestInfo.uri = this._config.endpoint + queryString;
-    } else if (this._config.connectionMode === 'SESSION' && queryString.startsWith('/server') === false) { // Force request to use Public when session mode is enabled
+    } else if (this._config.connectionMode === 'SESSION' && !queryString.startsWith('/server')) { // Force request to use Public when session mode is enabled
       requestInfo.uri = this._config.endpoint + '/func' + queryString;
     } else {
       requestInfo.uri = this._config.endpoint + queryString;
@@ -1414,7 +1417,8 @@ class Client {
 
   getEncodedPayload(body) {
     let iv = this.generateRandomStr(16);
-    let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
+    // let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
+    let key = (this._config.endpoint.toString('base64') + iv + iv).substring(0,32);
     let result = CryptoES.AES.encrypt(body,
       CryptoES.enc.Utf8.parse(key),
       { iv: CryptoES.enc.Utf8.parse(iv),
@@ -1482,7 +1486,7 @@ class Client {
   }
 
   /**
-   * fetch existing pubic key of SSH Keypair from container
+   * fetch existing public key of SSH Keypair from container
    * only ssh_public_key will be received.
    */
   async fetchSSHKeypair() {
@@ -1833,7 +1837,7 @@ class VFolder {
   }
 
   /**
-   * Create a upload session for a file to Virtual folder.
+   * Create an upload session for a file to Virtual folder.
    *
    * @param {string} path - Path to upload.
    * @param {string} fs - File object to upload.
@@ -1900,7 +1904,7 @@ class VFolder {
    * @param {string} target_path - path to the target file or directory (with old name).
    * @param {string} new_name - new name of the target.
    * @param {string} name - Virtual folder name that target file exists.
-   * @param {string} is_dir - True when the object is directory, false when it is file
+   * @param {string} is_dir - True when the object is directory, false when the object is file.
    */
   async rename_file(target_path, new_name, name = null, is_dir = false) {
     if (name == null) {
@@ -2193,7 +2197,7 @@ class Agent {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
-    if (['ALIVE', 'TERMINATED'].includes(status) === false) {
+    if (!['ALIVE', 'TERMINATED'].includes(status)) {
       return Promise.resolve(false);
     }
     let q = `query($status: String) {` +
@@ -2405,6 +2409,7 @@ class Keypair {
    * @param {string} userId - User ID to query API keys. If user ID is not given and client is authorized as admin, this will return every keypairs of the manager.
    * @param {array} fields - Fields to query. Queryable fields are: "access_key", 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
+   * @param {string} isActive - filter keys with active state. If `true`, only active keypairs are returned.
    */
   async list(userId = null, fields = ['access_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
     'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
@@ -3036,7 +3041,7 @@ class ComputeSession {
   }
 
   /**
-   * Get status of requested container commit on agent node (on-going / finished / failed)
+   * Get status of requested container commit on agent node (ongoing / finished / failed)
    *
    * @param sessionName - name of the session
    */
@@ -3505,7 +3510,7 @@ class User {
       v = this.client.is_admin ? { is_active } : {};
       return this.client.query(q, v);
     } else {
-      // From 20.03, there is no single query to fetch every users, so
+      // From 20.03, there is no single query to fetch every user, so
       // we iterate pages to gather all users for client-side compability.
       const limit = 100;
       const users = [] as any;
@@ -3554,7 +3559,7 @@ class User {
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
    *   'groups': List(UUID)     // Group Ids for user. Should be list of UUID strings.
-   *   'totp_activated': Boolean// Whether or not TOTP is enabled for the user.
+   *   'totp_activated': Boolean// Whether TOTP is enabled for the user.
    * };
    */
   async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
@@ -4508,8 +4513,8 @@ class utils {
         value = v[0];
       }
     }
-    if (binaryUnits.includes(value.substr(-1))) {
-      sourceUnit = value.substr(-1);
+    if (binaryUnits.includes(value.substring(value.length - 1))) {
+      sourceUnit = value.substring(value.length - 1);
       value = value.slice(0, -1);
     } else {
       sourceUnit = defaultUnit; // Fallback
