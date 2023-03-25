@@ -62,7 +62,11 @@ export default class BackendAIPainKiller {
    * */
   static relieve(msg) {
     if (typeof msg === 'undefined') {
-      return 'Problem occurred.';
+      if (globalThis.backendaiclient === undefined || globalThis.backendaiclient === null) {
+        return '_DISCONNECTED';
+      } else {
+        return 'Problem occurred.';
+      }
     }
     console.log('Error:', msg);
     if (globalThis.backendaiwebui.debug === true) {

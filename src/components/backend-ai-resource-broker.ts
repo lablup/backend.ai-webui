@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -15,10 +15,14 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) imageArchitectures = Object();
+  @property({type: Object}) imageRoles = Object();
+  @property({type: Object}) imageRuntimeConfig = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
+  @property({type: Object}) imageTagAlias = Object();
+  @property({type: Object}) imageTagReplace = Object();
   // Resource information
   @property({type: Object}) resourceLimits = Object();
   @property({type: Object}) userResourceLimit = Object();
@@ -26,6 +30,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
+  @property({type: Array}) inferenceServers;
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
@@ -114,6 +119,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
   init_resource() {
     this.languages = [];
+    this.inferenceServers = [];
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -142,42 +148,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   firstUpdated() {
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.tags[key] = [];
-            if ('name' in this.imageInfo[key]) {
-              this.aliases[key] = this.imageInfo[key].name;
-              this.imageNames[key] = this.imageInfo[key].name;
-            }
-            if ('icon' in this.imageInfo[key]) {
-              this.icons[key] = this.imageInfo[key].icon;
-            } else {
-              this.icons[key] = 'default.png';
-            }
+    this.tags = globalThis.backendaimetadata.tags;
+    this.icons = globalThis.backendaimetadata.icons;
+    this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
+    this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshImageList();
+      }, {once: true});
+    } else {
+      this._refreshImageList();
+    }
 
-            if ('label' in this.imageInfo[key]) {
-              this.imageInfo[key].label.forEach((item) => {
-                if (!('category' in item)) {
-                  this.tags[key].push(item);
-                }
-              });
-            }
-          }
-        }
-        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-          document.addEventListener('backend-ai-connected', () => {
-            this._refreshImageList();
-          }, {once: true});
-        } else {
-          this._refreshImageList();
-        }
-      }
-    );
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.active && this.metadata_updating === false) {
         this.metadata_updating = true;
@@ -331,7 +313,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this._GPUmodeUpdated = true;
       return globalThis.backendaiclient.get_resource_slots().then((response) => {
         const results = response;
-        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device', 'ipu.device', 'atom.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
@@ -405,7 +387,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     // console.log('aggregate from:', from);
     this.aggregate_updating = true;
     const total_slot = {};
-    const total_resource_group_slot = {};
+    const total_resource_group_slot: any = {};
     const total_project_slot = {};
 
     return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
@@ -433,40 +415,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         param['scaling_group'] = this.scaling_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
-    }).then((response) => {
-      if (response.presets) {
-        const presets = response.presets;
-        const available_presets: any = [];
-        presets.forEach((item) => {
-          if (item.allocatable === true) {
-            if ('cuda.shares' in item.resource_slots) {
-              item.cuda_shares = item.resource_slots['cuda.shares'];
-            } else if ('cuda.device' in item.resource_slots) {
-              item.cuda_device = item.resource_slots['cuda.device'];
-            }
-            if ('rocm.device' in item.resource_slots) {
-              item.rocm_device = item.resource_slots['rocm.device'];
-            }
-            if ('tpu.device' in item.resource_slots) {
-              item.tpu_device = item.resource_slots['tpu.device'];
-            }
-            item.cpu = item.resource_slots.cpu;
-            item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
-            if (item.shared_memory) {
-              item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
-            } else {
-              item.shmem = null;
-            }
-            available_presets.push(item);
-          }
-        });
-        available_presets.sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
-        this.resource_templates = available_presets;
-        if (this.resource_templates_filtered.length === 0) {
-          this.resource_templates_filtered = this.resource_templates;
-        }
-      }
-
+    }).then(async (response) => {
       const resource_remaining = response.keypair_remaining;
       const resource_using = response.keypair_using;
       const project_resource_total = response.group_limits;
@@ -475,7 +424,19 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
-        'tpu.device': 'tpu_device'
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
+      };
+      const slotList = {
+        'cpu': 'cpu',
+        'mem': 'mem',
+        'cuda.device': 'cuda_device',
+        'cuda.shares': 'cuda_shares',
+        'rocm.device': 'rocm_device',
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
       };
       // let scaling_group_resource_remaining = response.scaling_group_remaining;
       if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
@@ -491,6 +452,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
+
+
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
         total_project_slot['cpu'] = Number(project_resource_total.cpu);
@@ -585,7 +548,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_project_slot['mem'] = 0.0;
       }
       used_project_slot['mem'] = used_project_slot['mem'].toFixed(2);
-
       for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
           remaining_slot[slot_name] = resource_remaining[slot_key];
@@ -621,17 +583,81 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
 
       this.total_slot = total_slot;
-      this.total_resource_group_slot = total_resource_group_slot;
+      if (!globalThis.backendaiclient._config.hideAgents) {
+        // When `hideAgents` is false, we display the total resources of the current resoure group.
+
+        const status = 'ALIVE';
+        // TODO: Let's assume that the number of agents is less than 100 for
+        //       user-accessible resource group. This will meet our current
+        //       need, but we need to fix this when refactoring the resource
+        //       indicator.
+        const limit = 100;
+        const offset = 0;
+        const timeout = 10 * 1000;
+        const fields = ['id', 'status', 'available_slots', 'occupied_slots', 'scaling_group', 'schedulable'];
+        const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
+        // resourceGroupSlots will have three fields: available, occupied, and remaining.
+        const resourceGroupSlots = agentSummaryList.agent_summary_list.items
+          .filter((agent) => agent.scaling_group == this.scaling_group && agent.schedulable)
+          .map((agent) => {
+            const availableSlots = JSON.parse(agent.available_slots);
+            const occupiedSlots = JSON.parse(agent.occupied_slots);
+            return {
+              available: {
+                cpu: parseInt(availableSlots?.['cpu'] ?? 0),
+                mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(availableSlots?.['mem'] ?? 0, 'g')),
+                cuda_device: parseInt(availableSlots?.['cuda.device'] ?? 0),
+                cuda_shares: parseFloat(availableSlots?.['cuda.shares'] ?? 0),
+              },
+              occupied: {
+                cpu: parseInt(occupiedSlots?.['cpu'] ?? 0),
+                mem: parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots?.['mem'] ?? 0, 'g')),
+                cuda_device: parseInt(occupiedSlots?.['cuda.device'] ?? 0),
+                cuda_shares: parseFloat(occupiedSlots?.['cuda.shares'] ?? 0),
+              },
+            };
+          })
+          .reduce((acc, curr) => {
+            Object.keys(curr.available).forEach((key) => acc.available[key] += curr.available[key]);
+            Object.keys(curr.occupied).forEach((key) => acc.occupied[key] += curr.occupied[key]);
+            return acc;
+          }, {
+            available: {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0},
+            occupied: {cpu: 0, mem: 0, cuda_device: 0, cuda_shares: 0},
+          });
+        resourceGroupSlots.remaining = {};
+        Object.keys(resourceGroupSlots.available).forEach((key) => {
+          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key];
+        });
+
+        this.total_resource_group_slot = resourceGroupSlots.available;
+        // This value is purposely set to the remaining resource group slots
+        // when `hideAgents` is `true`.  There are some cases it is more useful
+        // to display the remaining slots.
+        this.used_resource_group_slot = resourceGroupSlots.remaining;
+
+        // Post formatting
+        this.total_resource_group_slot.mem = this.total_resource_group_slot.mem?.toFixed(2);
+        this.used_resource_group_slot.mem = this.used_resource_group_slot.mem?.toFixed(2);
+        if ('cuda_shares' in this.total_resource_group_slot) {
+          this.total_resource_group_slot.cuda_shares = this.total_resource_group_slot.cuda_shares.toFixed(2);
+        }
+        if ('cuda_shares' in this.used_resource_group_slot) {
+          this.used_resource_group_slot.cuda_shares = this.used_resource_group_slot.cuda_shares.toFixed(2);
+        }
+      } else {
+        this.total_resource_group_slot = total_resource_group_slot;
+        this.used_resource_group_slot = used_resource_group_slot;
+      }
       this.total_project_slot = total_project_slot;
       this.used_slot = used_slot;
-      this.used_resource_group_slot = used_resource_group_slot;
       this.used_project_slot = used_project_slot;
 
       const used_slot_percent = {};
       const used_resource_group_slot_percent = {};
       const used_project_slot_percent = {};
 
-      ['cpu', 'mem', 'cuda_device', 'cuda_shares', 'rocm_device', 'tpu_device'].forEach((slot) => {
+      Object.values(slotList).forEach((slot) => {
         if (slot in used_slot) {
           if (Number(total_slot[slot]) < Number(used_slot[slot])) { // Modify maximum resources when user have infinite resource
             total_slot[slot] = used_slot[slot];
@@ -642,7 +668,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             used_slot_percent[slot] = 0;
           }
           if (total_resource_group_slot[slot] != 0) {
-            used_resource_group_slot_percent[slot] = (used_resource_group_slot[slot] / total_resource_group_slot[slot]) * 100.0;
+            used_resource_group_slot_percent[slot] = (this.used_resource_group_slot[slot] / this.total_resource_group_slot[slot]) * 100.0;
           } else {
             used_resource_group_slot_percent[slot] = 0;
           }
@@ -652,6 +678,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             used_project_slot_percent[slot] = 0;
           }
         } else {
+          used_slot_percent[slot] = 0;
+          used_resource_group_slot_percent[slot] = 0;
+          used_project_slot_percent[slot] = 0;
         }
         if (slot in remaining_slot) {
           if (remaining_slot[slot] === 'Infinity') {
@@ -671,6 +700,45 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.available_slot = remaining_sg_slot;
       this.used_slot_percent = used_slot_percent;
       this.used_resource_group_slot_percent = used_resource_group_slot_percent;
+
+      const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
+      const availablePresets = response.presets.map((item) => {
+        if (item.allocatable === true) {
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots) {
+              item[slotName] = item.resource_slots[slotKey];
+            }
+          }
+        } else if (enqueueSession) {
+          // Even if allocatable is false, if enqueueSession is true,
+          // allocatable is determined based on when no resources are allocated.
+          item.allocatable = true;
+          for (const [slotKey, slotName] of Object.entries(slotList)) {
+            if (slotKey in item.resource_slots && slotName in this.total_resource_group_slot) {
+              const resourceSlot = slotKey === 'mem' ? globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g') : item.resource_slots[slotKey];
+              const totalResourceGroupSlot = this.total_resource_group_slot[slotName];
+              if (parseFloat(resourceSlot) <= parseFloat(totalResourceGroupSlot)) {
+                item[slotName] = resourceSlot;
+              } else {
+                item.allocatable = false;
+                break;
+              }
+            }
+          }
+        }
+        // Change to binary unit
+        item.mem = globalThis.backendaiclient.utils.changeBinaryUnit(item.resource_slots.mem, 'g');
+        if (item.shared_memory) {
+          item.shmem = globalThis.backendaiclient.utils.changeBinaryUnit(item.shared_memory, 'g');
+        } else {
+          item.shmem = null;
+        }
+        return item;
+      }).filter((item) => item.allocatable).sort((a, b) => (a['name'] > b['name'] ? 1 : -1));
+      this.resource_templates = availablePresets;
+      if (this.resource_templates_filtered.length === 0) {
+        this.resource_templates_filtered = this.resource_templates;
+      }
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
       return Promise.resolve(true);
@@ -716,6 +784,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supportImages = {};
       this.imageRequirements = {};
       this.imageArchitectures = {};
+      this.imageRoles = {};
       const privateImages: object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -757,6 +826,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
         }
         this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
+        this.imageRoles[`${supportsKey}`] = 'COMPUTE'; // Default role is COMPUTE.
+        this.imageRuntimeConfig[`${supportsKey}:${item.tag}`] = {};
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
@@ -770,6 +841,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
             privateImages[supportsKey].push(item.tag);
           }
+          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE'].includes(label['value'])) {
+            this.imageRoles[`${supportsKey}`] = label['value'];
+          }
+          if (label['key'] === 'ai.backend.model-path') {
+            this.imageRuntimeConfig[`${supportsKey}:${item.tag}`]['model-path'] = label['value'];
+          }
         });
       });
       Object.keys(privateImages).forEach((key) => {
@@ -777,7 +854,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const tags = this.supports[key];
         this.supports[key] = tags.filter((tag) => !privateImages[key].includes(tag));
         if (this.supports[key].length < 1) {
-          // If there is no availabe version, remove the environment itself.
+          // If there is no available version, remove the environment itself.
           delete this.supports[key];
           // delete this.supportImages[key];
         }

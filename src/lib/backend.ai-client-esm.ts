@@ -1,8 +1,8 @@
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.3.0)
-====================================================================
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.9.18)
+=========================================================================
 
-(C) Copyright 2016-2022 Lablup Inc.
+(C) Copyright 2016-2023 Lablup Inc.
 Licensed under MIT
 */
 /*jshint esnext: true */
@@ -147,6 +147,7 @@ class Client {
   public _managerVersion: any;
   public _apiVersion: any;
   public _apiVersionMajor: any;
+  public _loginSessionId: string | null;
   public is_admin: boolean;
   public is_superadmin: boolean;
   public kernelPrefix: any;
@@ -197,7 +198,7 @@ class Client {
    */
   constructor(config: ClientConfig, agentSignature: string) {
     this.code = null;
-    this.sessionId = null;
+    this.sessionId = null; // TODO: check and remove.
     this.kernelType = null;
     this.clientVersion = '22.09.0';
     this.agentSignature = agentSignature;
@@ -244,6 +245,11 @@ class Client {
     this.abortController = new AbortController();
     this.abortSignal = this.abortController.signal;
     this.requestTimeout = 5000;
+    if (localStorage.getItem('backendaiwebui.sessionid')) {
+      this._loginSessionId = localStorage.getItem('backendaiwebui.sessionid');
+    } else {
+      this._loginSessionId = '';
+    }
     //if (this._config.connectionMode === 'API') {
     //this.getManagerVersion();
     //}
@@ -300,16 +306,20 @@ class Client {
       if (typeof requestTimer !== "undefined") {
         clearTimeout(requestTimer);
       }
+      let loginSessionId = resp.headers.get('X-BackendAI-SessionID'); // Login session ID handler
+      if (loginSessionId) {
+        this._loginSessionId = loginSessionId;
+      }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (rawFile === false && contentType === null) {
+      if (!rawFile && contentType === null) {
         body = await resp.blob();
-      } else if (rawFile === false && (contentType?.startsWith('application/json') ||
+      } else if (!rawFile && (contentType?.startsWith('application/json') ||
           contentType?.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
-      } else if (rawFile === false && contentType?.startsWith('text/')) {
+      } else if (!rawFile && contentType?.startsWith('text/')) {
         body = await resp.text();
       } else {
         body = await resp.blob();
@@ -455,7 +465,7 @@ class Client {
       // Deprecated backendaiconsole.* should also be cleared here.
       Object.entries(localStorage)
           .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiconsole
+          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiwebui
           .map((x) => localStorage.removeItem(x));         // remove filtered keys
 
       // Will not throw exception here since the request should be proceeded
@@ -502,7 +512,7 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substr(1, 2);
+      this._apiVersionMajor = v.version.substring(1, 3);
       this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
       if (this._apiVersionMajor > 4) {
         this.kernelPrefix = '/session';
@@ -572,6 +582,18 @@ class Client {
     }
     if (this.isManagerVersionCompatibleWith('22.09')) {
       this._features['image-commit'] = true;
+      this._features['fine-grained-storage-permissions'] = true;
+      this._features['2FA'] = true;
+      this._features['force2FA'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('22.09.19')) {
+      this._features['idle-checks'] = true;
+    }
+    if (this.isAPIVersionCompatibleWith('v6.20230315')) {
+      this._features['inference-workload'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.03')) {
+      this._features['inference-workload'] = true;
     }
   }
 
@@ -597,6 +619,19 @@ class Client {
     return version <= apiVersion;
   }
 
+  async isManagerSupportingTOTP() {
+    if (!this._config.enable2FA) {
+      return false;
+    }
+    let rqst = this.newSignedRequest('GET', `/totp`, null, null);
+    try {
+      await this._wrapWithPromise(rqst);
+      return Promise.resolve(true);
+    } catch (e) {
+      return Promise.resolve(false);
+    }
+  }
+
   /**
    * Check if webserver is authenticated. This requires additional webserver package.
    *
@@ -608,7 +643,7 @@ class Client {
       result = await this._wrapWithPromise(rqst);
       if (result.authenticated === true) {
         this._config._accessKey = result.data.access_key;
-        this._config._session_id = result.session_id;
+        this._config._session_id = result.session_id; // TODO: change to X-BackendAI-SessionID header-version. use this._loginSessionId instead.
         //console.log("login succeed");
       } else {
         //console.log("login failed");
@@ -624,11 +659,12 @@ class Client {
    * Login into webserver with given ID/Password. This requires additional webserver package.
    *
    */
-  async login() {
+  async login(otp?: string) {
     let body = {
       'username': this._config.userId,
-      'password': this._config.password
+      'password': this._config.password,
     };
+    if (otp) body['otp'] = otp
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -642,8 +678,12 @@ class Client {
           return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
         }
         await this.get_manager_version();
+        if (this._loginSessionId !== null && this._loginSessionId !== '') {
+          localStorage.setItem('backendaiwebui.sessionid', this._loginSessionId);
+        }
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
+        localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
           return Promise.resolve({fail_reason: result.data.details});
         } else {
@@ -679,6 +719,7 @@ class Client {
     if (currentLogs) {
        localStorage.removeItem('backendaiwebui.logs');
     }
+    localStorage.removeItem('backendaiwebui.sessionid');
     return this._wrapWithPromise(rqst);
   }
 
@@ -757,6 +798,27 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  async initialize_totp() {
+    let rqst = this.newSignedRequest('POST', '/totp', {}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async activate_totp(otp) {
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  async remove_totp(email=null) {
+    let rqstUrl = '/totp';
+    if (email) {
+      const params = {email: email};
+      const q = new URLSearchParams(params).toString();
+      rqstUrl += `?${q}`;
+    }
+    let rqst = this.newSignedRequest('DELETE', rqstUrl, {}, null);
+    return this._wrapWithPromise(rqst);
+  }
+
   /**
    * Return the resource slots.
    */
@@ -810,11 +872,17 @@ class Client {
       if (resources['cuda.shares']) { // Generalized device information from 20.03
         config['cuda.shares'] = parseFloat(resources['cuda.shares']).toFixed(2);
       }
-      if (resources['rocm']) {
-        config['rocm.device'] = resources['rocm'];
+      if (resources['rocm.device']) {
+        config['rocm.device'] = parseInt(resources['rocm.device']);
       }
-      if (resources['tpu']) {
-        config['tpu.device'] = resources['tpu'];
+      if (resources['tpu.device']) {
+        config['tpu.device'] = parseInt(resources['tpu.device']);
+      }
+      if (resources['ipu.device']) {
+        config['ipu.device'] = parseInt(resources['ipu.device']);
+      }
+      if (resources['atom.device']) {
+        config['atom.device'] = parseInt(resources['atom.device']);
       }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
@@ -886,7 +954,11 @@ class Client {
   /**
    * Create a session with a session template.
    *
-   * @param {string} sessionId - the sessionId given when created
+   * @param {string} templateId - The templateId to create
+   * @param {string} image - Image name to create container
+   * @param {undefined | string | null} sessionName - Session name to create
+   * @param {object} resources - Resources to use for session
+   * @param {number} timeout - Timeout to cancel creation
    */
   async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
     if (typeof sessionName === 'undefined' || sessionName === null)
@@ -981,6 +1053,7 @@ class Client {
    * Obtain the session information by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - Owner API key to create
    */
   async get_info(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
@@ -1040,6 +1113,7 @@ class Client {
    * Restart the kernel session keeping its work directory and volume mounts.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - Owner API key to restart
    */
   async restart(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
@@ -1060,7 +1134,9 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 to 64 bytes inclusively)
    * @param {string} mode - either "query", "batch", "input", or "continue"
-   * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
+   * @param {string} code - code snippet to execute
+   * @param {object} opts - an optional object specifying additional configs such as batch-mode build/exec commands
+   * @param {number} timeout - time limit until the execution starts.
    */
   async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
     let params = {
@@ -1170,7 +1246,7 @@ class Client {
    * @param {string | null} serviceName - serviceName for sending up requests to other services
    * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any, serviceName: string | null, secure: boolean = false) {
+  newSignedRequest(method: string, queryString, body: any, serviceName: string | null = null, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1253,6 +1329,10 @@ class Client {
         hdrs.set('X-BackendAI-Encoded', 'true');
         requestBody = this.getEncodedPayload(requestBody);
       }
+    }
+    // Add session id header for non-cookie environment.
+    if (this._loginSessionId !== '') {
+      hdrs.set('X-BackendAI-SessionID', this._loginSessionId);
     }
     let requestInfo = {
       method: method,
@@ -1372,16 +1452,16 @@ class Client {
   }
 
   generateRandomStr(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++) {
+    let text = "";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
   }
 
   generateSessionId(length=8, nosuffix=false) {
-    var text = this.generateRandomStr(length);
+    let text = this.generateRandomStr(length);
     return nosuffix ? text : text + "-jsSDK";
   }
 
@@ -1419,9 +1499,17 @@ class Client {
     return this._wrapWithPromise(rqst, false);
   }
 
+  /**
+   * post SSH Keypair to container
+   * save the given keypair (both ssh_public_key and ssh_private_key)
+   */
+  async postSSHKeypair(param) {
+    let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
+    return this._wrapWithPromise(rqst, false);
+  }
+
   // TODO: move attach_background_task function in Maintenance Class to here.
 }
-
 class ResourcePreset {
   public client: any;
   public urlPrefix: any;
@@ -2237,6 +2325,34 @@ class StorageProxy {
     let v = {'vfolder_host': host};
     return this.client.query(q, v);
   }
+
+  async getAllPermissions() {
+    if (this.client.supports('fine-grained-storage-permissions')) {
+      const rqst = this.client.newSignedRequest('GET', `/acl`, null);
+      return this.client._wrapWithPromise(rqst);
+    }
+  }
+
+  /**
+   * Get all fields related to allowed_vfolder_hosts according to the current user information
+   *
+   * @param {string} domainName
+   * @param {string} projectId
+   * @param {string} resourcePolicyName
+   * @returns {object} - get allowed_vfolder_hosts key-value on domain, group, resource policy of current user
+   */
+  async getAllowedVFolderHostsByCurrentUserInfo(domainName = '', projectId = '', resourcePolicyName = '') {
+    const q = `
+      query($domainName: String, $projectId: UUID!, $resourcePolicyName: String) {
+        domain(name: $domainName) { allowed_vfolder_hosts }
+        group(id: $projectId, domain_name: $domainName) { allowed_vfolder_hosts }
+        keypair_resource_policy(name: $resourcePolicyName) { allowed_vfolder_hosts }
+      }
+    `;
+    const v = { domainName, projectId, resourcePolicyName };
+    return this.client.query(q, v);
+  }
+
 }
 
 class Keypair {
@@ -2658,8 +2774,8 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
     Object.keys(input).forEach((slot_type) => {
       Object.keys(input[slot_type]).forEach(key => {
         const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -2682,9 +2798,9 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(":", "%3A");
-    image = image.replace("/", "%2F");
-    tag = tag.replace("/", "%2F");
+    registry = registry.replace(/:/g, "%3A");
+    image = image.replace(/\//g, "%2F");
+    tag = tag.replace(/\//g, "%2F");
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
       "key": `images/${registry}/${image}/${tag}/labels/${key}`,
       "value": value
@@ -2706,7 +2822,7 @@ class ContainerImage {
     } else {
       registry = '';
     }
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
@@ -2736,7 +2852,7 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(":", "%3A");
+    registry = registry.replace(/:/g, "%3A");
     const rqst = this.client.newSignedRequest("POST", "/config/get", {
       "key": `images/${registry}/${image}/${tag}/resource/`,
       "prefix": true
@@ -2864,7 +2980,6 @@ class ComputeSession {
         v.group_id = group;
       }
       const session = await this.client.query(q, v, null, timeout);
-      console.log(session.compute_session_list.total_count)
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
           break;
@@ -3011,6 +3126,12 @@ class Resources {
     this.resources['tpu.device'] = {};
     this.resources['tpu.device'].total = 0;
     this.resources['tpu.device'].used = 0;
+    this.resources['ipu.device'] = {};
+    this.resources['ipu.device'].total = 0;
+    this.resources['ipu.device'].used = 0;
+    this.resources['atom.device'] = {};
+    this.resources['atom.device'].total = 0;
+    this.resources['atom.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3078,6 +3199,18 @@ class Resources {
           }
           if ('tpu.device' in occupied_slots) {
             this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
+          }
+          if ('ipu.device' in available_slots) {
+            this.resources['ipu.device'].total = parseInt(this.resources['ipu.device'].total) + Math.floor(Number(available_slots['ipu.device']));
+          }
+          if ('ipu.device' in occupied_slots) {
+            this.resources['ipu.device'].used = parseInt(this.resources['ipu.device'].used) + Math.floor(Number(occupied_slots['ipu.device']));
+          }
+          if ('atom.device' in available_slots) {
+            this.resources['atom.device'].total = parseInt(this.resources['atom.device'].total) + Math.floor(Number(available_slots['atom.device']));
+          }
+          if ('atom.device' in occupied_slots) {
+            this.resources['atom.device'].used = parseInt(this.resources['atom.device'].used) + Math.floor(Number(occupied_slots['atom.device']));
           }
 
           if (isNaN(this.resources.cpu.used)) {
@@ -3420,10 +3553,14 @@ class User {
    *   'is_active': Boolean,    // Flag if user is active or not.
    *   'domain_name': String,   // Domain for user.
    *   'role': String,          // Role for user.
-   *   'groups': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
+   *   'groups': List(UUID)     // Group Ids for user. Should be list of UUID strings.
+   *   'totp_activated': Boolean// Whether or not TOTP is enabled for the user.
    * };
    */
   async get(email, fields = ['email', 'username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}']) {
+    if (!this.client.supports('2FA') && '2FA' in fields) {
+      fields.splice(fields.indexOf('2FA'), 1);
+    }
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +
@@ -3935,11 +4072,7 @@ class Enterprise {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
         this.certificate = cert.certificate;
-        if (cert.status === "valid") {
-          this.certificate['valid'] = true;
-        } else {
-          this.certificate['valid'] = false;
-        }
+        this.certificate['valid'] = cert.status === "valid";
         return Promise.resolve(this.certificate);
       }
     } else {
@@ -4053,7 +4186,7 @@ class Pipeline {
         'password': '********'
       })});
       // if there's no token, then user account is invalid
-      if (result.hasOwnProperty('token') === false) {
+      if (!result.hasOwnProperty('token')) {
         return Promise.resolve(false);
       } else {
         const token = result.token;
@@ -4269,7 +4402,7 @@ class PipelineTaskInstance {
    * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
    * if not, then bring all task instances that pipeline server user created via every pipeline job
    *
-   * @param {stirng} pipelineJobId - pipeline job id
+   * @param {string} pipelineJobId - pipeline job id
    */
   async list(pipelineJobId = '') {
     let queryString = `${this.urlPrefix}`;
@@ -4387,23 +4520,32 @@ class utils {
     return value * Math.pow(1024, Math.floor(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
   }
 
+  /**
+   * Returns elapsed time between given start and end time. If end time is not set, calculate from start time to now.
+   *
+   * @param {string | Date | number} start - start time
+   * @param {string | Date | number} end - end time
+   * @return {string} - elapsed time
+   */
   elapsedTime(start, end) {
-    var startDate = new Date(start);
+    let startDate = new Date(start);
+    let endDate;
     if (end === null) {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date(end);
+      endDate = new Date(end);
     }
-    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
-    var seconds_cumulative = seconds_total;
-    var days = Math.floor(seconds_cumulative / 86400);
+    // let seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    // let seconds_cumulative = seconds_total;
+    let seconds_cumulative = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    let days = Math.floor(seconds_cumulative / 86400);
     seconds_cumulative = seconds_cumulative - days * 86400;
-    var hours = Math.floor(seconds_cumulative / 3600);
+    let hours = Math.floor(seconds_cumulative / 3600);
     seconds_cumulative = seconds_cumulative - hours * 3600;
-    var minutes = Math.floor(seconds_cumulative / 60);
+    let minutes = Math.floor(seconds_cumulative / 60);
     seconds_cumulative = seconds_cumulative - minutes * 60;
-    var seconds = seconds_cumulative;
-    var result = '';
+    let seconds = seconds_cumulative;
+    let result = '';
     if (days !== undefined && days > 0) {
       result = result + String(days) + ' Day ';
     }

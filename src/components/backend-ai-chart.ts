@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {CSSResultGroup, html, LitElement} from 'lit';
@@ -151,8 +151,10 @@ export default class BackendAIChart extends LitElement {
           display: true,
           ticks: {
             maxTicksLimit: 5,
-            callback: function(value) {
-              return Math.round(value);
+            callback: (value) => {
+              if (value % 1 === 0) {
+                return value;
+              }
             },
             font: function(context) {
               const height = context.chart.height;

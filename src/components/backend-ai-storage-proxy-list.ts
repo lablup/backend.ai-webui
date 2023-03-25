@@ -1,15 +1,15 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
@@ -76,7 +76,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 179px);
+          height: calc(100vh - 182px);
         }
 
         mwc-icon {
@@ -216,26 +216,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value - byte value
-   * @return {number} value converted to MB
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value - MB value
-   * @return {number} value converted to GB
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
-  }
-
-  /**
    * Convert start date to human readable date.
    *
    * @param {Date} start date
@@ -331,7 +311,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       icon = 'purestorage';
       break;
     case 'dgx':
+    case 'spectrumscale':
       color = 'green';
+      icon = 'local';
+      break;
+    case 'weka':
+      color = 'purple';
       icon = 'local';
       break;
     default:
@@ -383,9 +368,12 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <span class="indicator" style="padding-left:5px;">${_t('session.Usage')}</span>
             </div>
             <span class="flex"></span>
-            <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
-                                 buffer="${totalBuffer}"
-                                 description="${usagePercent}%"></lablup-progress-bar>
+            <div class="layout vertical center">
+              <lablup-progress-bar id="volume-usage-bar" progress="${usageRatio}"
+                                   buffer="${totalBuffer}"
+                                   description="${usagePercent}%"></lablup-progress-bar>
+              <div class="indicator" style="margin-top:3px;">${globalThis.backendaiutils._humanReadableFileSize(usage.used_bytes)} / ${globalThis.backendaiutils._humanReadableFileSize(usage.capacity_bytes)}</div>
+            </div>
           </div>
         </div>
       `, root
@@ -452,8 +440,15 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     );
   }
 
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MB
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {number} converted value from bytes to MB
+   */
+  static bytesToMB(value, decimalPoint = 1) {
+    return Number(value / (10 ** 6)).toFixed(decimalPoint);
   }
 
   render() {
@@ -503,13 +498,13 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
               <div>
                 <lablup-progress-bar class="mem"
                                      progress="${this.storageProxyDetail.mem_current_usage_ratio}"
-                                     description="${this.storageProxyDetail.current_mem}GB/${this.storageProxyDetail.mem_slots}GB"
+                                     description="${this.storageProxyDetail.current_mem} GiB / ${this.storageProxyDetail.mem_slots} GiB"
                 ></lablup-progress-bar>
               </div>
               <h3>Network</h3>
               ${'live_stat' in this.storageProxyDetail && 'node' in this.storageProxyDetail.live_stat ? html`
-                <div>TX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)}MB</div>
-                <div>RX: ${this._bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)}MB</div>
+                <div>TX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_tx.current)} MB</div>
+                <div>RX: ${BackendAIStorageProxyList.bytesToMB(this.storageProxyDetail.live_stat.node.net_rx.current)} MB</div>
               ` : html``}
             </div>
           </div>

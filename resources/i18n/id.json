@@ -57,7 +57,10 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",
@@ -108,7 +111,10 @@
     "NoInvitations": "Tidak ada undangan untuk ditampilkan.",
     "AcceptSharedVFolder": "Anda sekarang dapat mengakses folder: ",
     "DeclineSharedVFolder": "Undangan folder dihapus: ",
-    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI..."
+    "connectingToCluster": "Menghubungkan ke Cluster Backend.AI...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -234,7 +240,13 @@
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
       "ScheduleTime": "__NOT_TRANSLATED__",
-      "Architecture": "__NOT_TRANSLATED__"
+      "Architecture": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -270,7 +282,8 @@
       "AppMustBeRun": "Mulai hanya saat aplikasi sudah berjalan",
       "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
       "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
-      "Prepared": "Siap"
+      "Prepared": "Siap",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
@@ -316,7 +329,21 @@
     "CommitFailed": "__NOT_TRANSLATED__",
     "DescCommitSession": "__NOT_TRANSLATED__",
     "Message": "Pesan",
-    "EnvironmentInfo": "__NOT_TRANSLATED__"
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "BypassAuthentication": "__NOT_TRANSLATED__",
+    "App": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Batalkan",
@@ -348,7 +375,10 @@
     "GoBackToSummaryPage": "Kembali ke halaman Ringkasan",
     "ForceTerminate": "Hentikan paksa",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Atur Ulang"
+    "Reset": "Atur Ulang",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Titik akhir",
@@ -372,7 +402,8 @@
     "NoAgentToDisplay": "__NOT_TRANSLATED__",
     "Utilization": "__NOT_TRANSLATED__",
     "NoAvailableLiveStat": "__NOT_TRANSLATED__",
-    "Allocation": "__NOT_TRANSLATED__"
+    "Allocation": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "core",
@@ -468,7 +499,12 @@
     "Status": "__NOT_TRANSLATED__",
     "UserStatus": "__NOT_TRANSLATED__",
     "NoCredentialToDisplay": "__NOT_TRANSLATED__",
-    "NoUserToDisplay": "__NOT_TRANSLATED__"
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Folder",
@@ -546,7 +582,9 @@
       "FolderUsing": "__NOT_TRANSLATED__",
       "NoFolderToDisplay": "__NOT_TRANSLATED__",
       "FolderInfo": "__NOT_TRANSLATED__",
-      "OpenAFolder": "__NOT_TRANSLATED__"
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Menghapus...",
@@ -607,7 +645,17 @@
       "NoChanges": "Tidak ada perubahan yang dilakukan",
       "PermissionModified": "Izin diperbarui"
     },
-    "NoStorageDescriptionFound": "Tidak ada deskripsi."
+    "NoStorageDescriptionFound": "Tidak ada deskripsi.",
+    "DialogModelFolder": "__NOT_TRANSLATED__",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {
@@ -751,7 +799,9 @@
     "Edit_ShellScriptTitle_2": " skrip shell",
     "AutoLogout": "Keluar Otomatis",
     "DescAutoLogout": "Keluar secara otomatis jika semua halaman yang masuk ditutup kecuali halaman yang berasal dari sesi untuk aplikasi (mis. Jupyter notebook, terminal web, dll.)",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Penggunaan Terminal Web Tingkat Lanjut: Salin konten terminal",
@@ -1005,7 +1055,13 @@
     "OverlayNetworkSettings": "__NOT_TRANSLATED__",
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
-    "OutOfRange": "__NOT_TRANSLATED__"
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Berhasil Diperbarui",
@@ -1257,5 +1313,15 @@
   "explorer": {
     "ValueRequired": "NilaiDiperlukan",
     "InputTooShort": "MasukanTerlaluPendek"
+  },
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
   }
 }
