@@ -46,7 +46,7 @@ class ClientConfig {
   constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
-    this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4
+    this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4. WILL BE DEPRECATED AND UPGRADED TO v6 FROM 23.03.
     this._hashType = 'sha256';
     if (endpoint === undefined || endpoint === null)
       endpoint = 'https://api.backend.ai';
@@ -462,12 +462,6 @@ class Client {
       let webuiLogs = JSON.parse(localStorage.getItem('backendaiwebui.logs') || '[]');
       webuiLogs = webuiLogs.slice(0, Math.round(webuiLogs.length * 2 / 3));
       localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
-      // Deprecated backendaiconsole.* should also be cleared here.
-      Object.entries(localStorage)
-          .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiwebui
-          .map((x) => localStorage.removeItem(x));         // remove filtered keys
-
       // Will not throw exception here since the request should be proceeded
       // even if it is not possible to write log to localStorage.
     }
@@ -619,6 +613,9 @@ class Client {
     return version <= apiVersion;
   }
 
+  /**
+   * Return if manager supports OTP / 2FA.
+   */
   async isManagerSupportingTOTP() {
     if (!this._config.enable2FA) {
       return false;
@@ -1168,7 +1165,12 @@ class Client {
   runCode(code, sessionId, runId, mode) {
     return this.execute(sessionId, runId, mode, code, {});
   }
-
+  /**
+   * Rename session to another name.
+   *
+   * @param {string} sessionId - current session name
+   * @param {string} newId - new session name
+   */
   async rename(sessionId: string, newId: string) {
     let params = {
       'name': newId
@@ -1177,6 +1179,12 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
+  /**
+   * Terminate and destroy the service.
+   *
+   * @param {string} sessionId - the sessionId that contains service
+   * @param {string} service_name - service name to shut down
+   */
   async shutdown_service(sessionId: string, service_name: string) {
     let params = {
       'service_name': service_name
