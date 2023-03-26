@@ -2290,7 +2290,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <div>${_t('session.UtilizationIdleChecks')}</div>
         <div class="horizontal layout center">
           <lablup-shields style="padding:3px;" description="${_t('session.Utilization')}" ui="round" color="lightblue"></lablup-shields>
-          <lablup-shields style="padding:3px;" description="${_t('session.Threshold')}" ui="round" color="lightgreen"></lablup-shields>  
+          <lablup-shields style="padding:3px;" description="${_t('session.Threshold')}" ui="round" color="lightgreen"></lablup-shields>
         </div>
       `, root);
   }
@@ -2326,7 +2326,7 @@ export default class BackendAISessionList extends BackendAIPage {
                               color="${colorType === 'custom' ? 'lightgreenBackgroundRedText' : 'lightgreen'}"
                               .customColorPalette="${customColorPalette}"></lablup-shields>
             </div>
-          </div>  
+          </div>
         `})}
       `, root);
   }
@@ -2527,7 +2527,7 @@ export default class BackendAISessionList extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <div class="layout horizontal center filters">
+      <div class="layout horizontal center filters" style="height:14px">
         <div id="multiple-action-buttons" style="display:none;">
           <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
@@ -2535,10 +2535,10 @@ export default class BackendAISessionList extends BackendAIPage {
           </wl-button>
         </div>
         <span class="flex"></span>
-        <div class="vertical layout">
+        <div class="vertical layout" style="display:none">
           <wl-textfield id="access-key-filter" type="search" maxLength="64"
                       label="${_t('general.AccessKey')}" no-label-float .value="${this.filterAccessKey}"
-                      style="display:none;margin-right:20px;"
+                      style="margin-right:20px;"
                       @change="${(e) => this._updateFilterAccessKey(e)}">
           </wl-textfield>
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
@@ -2574,7 +2574,7 @@ export default class BackendAISessionList extends BackendAIPage {
           <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable width="180px" flex-grow="0" 
+          <vaadin-grid-column resizable width="180px" flex-grow="0"
                               .headerRenderer="${this._boundUtilIdleChecksHeaderderer}"
                               .renderer="${this._boundUtilIdleChecksRenderer}">
           </vaadin-grid-column>
