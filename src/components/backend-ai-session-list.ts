@@ -155,6 +155,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Proxy}) idleChecksTable = new Proxy({
     'timeout': 'Timeout',
     'session_lifetime': 'SessionLifetime',
+    'utilization': 'Utilization',
     'cpu_util': 'CPU',
     'mem': 'MEM',
     'cuda_util': 'GPU',
@@ -2308,26 +2309,31 @@ export default class BackendAISessionList extends BackendAIPage {
       // language=HTML
       html`
         ${utilizationExtra && Object.keys(utilizationExtra).map((item) => {
-          const utilization = utilizationExtra[item][0] ? parseInt(utilizationExtra[item][0]) : '-';
+          const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
           const threshold = utilizationExtra[item][1];
           const customColorPalette = {
             "lightblutBackgounrdRedText": {"colorB": "#caedfc", "colorT": "#e05d44"},
             "lightgreenBackgroundRedText": {"colorB": "#f3f5d0", "colorT": "#e05d44"},
           };
-          const colorType = typeof utilization === 'number' && typeof threshold === 'number' && threshold !== 0 && (utilization - threshold) / threshold < 1 ? 'custom' : 'original';
+          const colorType = typeof utilization === 'number'
+            && typeof threshold === 'number'
+            && threshold !== 0
+            && (utilization - threshold) / threshold < 1
+            ? 'custom' : 'original';
           return html`
-          <div class="horizontal layout justified center">
-            <span>${this.idleChecksTable[item]}</span>
-            <div class="horizontal layout center">
-              <lablup-shields class="util-idle-checks" description="${utilization}" ui="round"
-                              color="${colorType === 'custom' ? 'lightblutBackgounrdRedText' : 'lightblue'}"
-                              .customColorPalette="${customColorPalette}"></lablup-shields>
-              <lablup-shields class="util-idle-checks" description="${threshold}" ui="round"
-                              color="${colorType === 'custom' ? 'lightgreenBackgroundRedText' : 'lightgreen'}"
-                              .customColorPalette="${customColorPalette}"></lablup-shields>
+            <div class="horizontal layout justified center">
+              <span>${this.idleChecksTable[item]}</span>
+              <div class="horizontal layout center">
+                <lablup-shields class="util-idle-checks" description="${utilization}" ui="round"
+                                color="${colorType === 'custom' ? 'lightblutBackgounrdRedText' : 'lightblue'}"
+                                .customColorPalette="${customColorPalette}"></lablup-shields>
+                <lablup-shields class="util-idle-checks" description="${threshold}" ui="round"
+                                color="${colorType === 'custom' ? 'lightgreenBackgroundRedText' : 'lightgreen'}"
+                                .customColorPalette="${customColorPalette}"></lablup-shields>
+              </div>
             </div>
-          </div>
-        `})}
+          `})
+        }
       `, root);
   }
 
