@@ -342,7 +342,10 @@
     "TerminateSession": "세션 종료하기",
     "SeeContainerLogs": "컨테이너 로그 보기",
     "RequestContainerCommit": "컨테이너 커밋하기",
-    "TimeoutExceeded": "제한 시간 초과"
+    "TimeoutExceeded": "제한 시간 초과",
+    "UtilizationIdleChecks": "사용률 유휴 상태 점검",
+    "Utilization": "사용률",
+    "Threshold": "임계값"
   },
   "button": {
     "Cancel": "취소",
