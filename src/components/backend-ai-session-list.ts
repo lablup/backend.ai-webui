@@ -443,7 +443,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .util-idle-checks {
-          --component-width: 40px;
+          --lablup-shield-component-width: 40px;
           text-align: center;
           padding: 3px;
         }
