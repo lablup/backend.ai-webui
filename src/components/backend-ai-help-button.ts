@@ -84,6 +84,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
       }
     }
     this.showOnlineHelpPage(postfix);
+    this.blur();
   }
 
   /**
