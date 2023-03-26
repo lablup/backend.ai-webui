@@ -312,14 +312,14 @@ class Client {
       }
       errorType = Client.ERR_RESPONSE;
       let contentType = resp.headers.get('Content-Type');
-      if (rawFile === false && contentType === null) {
+      if (!rawFile && contentType === null) {
         body = await resp.blob();
-      } else if (rawFile === false && (contentType?.startsWith('application/json') ||
+      } else if (!rawFile && (contentType?.startsWith('application/json') ||
           contentType?.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
-      } else if (rawFile === false && contentType?.startsWith('text/')) {
+      } else if (!rawFile && contentType?.startsWith('text/')) {
         body = await resp.text();
       } else {
         body = await resp.blob();
@@ -512,7 +512,7 @@ class Client {
       this._managerVersion = v.manager;
       this._apiVersion = v.version;
       this._config._apiVersion = this._apiVersion; // To upgrade API version with server version
-      this._apiVersionMajor = v.version.substr(1, 2);
+      this._apiVersionMajor = v.version.substring(1, 3);
       this._config._apiVersionMajor = this._apiVersionMajor; // To upgrade API version with server version
       if (this._apiVersionMajor > 4) {
         this.kernelPrefix = '/session';
@@ -954,7 +954,11 @@ class Client {
   /**
    * Create a session with a session template.
    *
-   * @param {string} sessionId - the sessionId given when created
+   * @param {string} templateId - The templateId to create
+   * @param {string} image - Image name to create container
+   * @param {undefined | string | null} sessionName - Session name to create
+   * @param {object} resources - Resources to use for session
+   * @param {number} timeout - Timeout to cancel creation
    */
   async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
     if (typeof sessionName === 'undefined' || sessionName === null)
@@ -1049,6 +1053,7 @@ class Client {
    * Obtain the session information by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - Owner API key to create
    */
   async get_info(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
@@ -1108,6 +1113,7 @@ class Client {
    * Restart the kernel session keeping its work directory and volume mounts.
    *
    * @param {string} sessionId - the sessionId given when created
+   * @param {string | null} ownerKey - Owner API key to restart
    */
   async restart(sessionId, ownerKey = null) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
@@ -1128,7 +1134,9 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string} runId - a random ID to distinguish each continuation until finish (the length must be between 8 to 64 bytes inclusively)
    * @param {string} mode - either "query", "batch", "input", or "continue"
-   * @param {string} opts - an optional object specifying additional configs such as batch-mode build/exec commands
+   * @param {string} code - code snippet to execute
+   * @param {object} opts - an optional object specifying additional configs such as batch-mode build/exec commands
+   * @param {number} timeout - time limit until the execution starts.
    */
   async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
     let params = {
@@ -1238,7 +1246,7 @@ class Client {
    * @param {string | null} serviceName - serviceName for sending up requests to other services
    * @param {boolean} secure - encrypt payload if secure is true.
    */
-  newSignedRequest(method: string, queryString, body: any, serviceName: string | null, secure: boolean = false) {
+  newSignedRequest(method: string, queryString, body: any, serviceName: string | null = null, secure: boolean = false) {
     let content_type = "application/json";
     let requestBody;
     let authBody;
@@ -1444,16 +1452,16 @@ class Client {
   }
 
   generateRandomStr(length) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    for (var i = 0; i < length; i++) {
+    let text = "";
+    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
     return text;
   }
 
   generateSessionId(length=8, nosuffix=false) {
-    var text = this.generateRandomStr(length);
+    let text = this.generateRandomStr(length);
     return nosuffix ? text : text + "-jsSDK";
   }
 
@@ -4064,11 +4072,7 @@ class Enterprise {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
         this.certificate = cert.certificate;
-        if (cert.status === "valid") {
-          this.certificate['valid'] = true;
-        } else {
-          this.certificate['valid'] = false;
-        }
+        this.certificate['valid'] = cert.status === "valid";
         return Promise.resolve(this.certificate);
       }
     } else {
@@ -4182,7 +4186,7 @@ class Pipeline {
         'password': '********'
       })});
       // if there's no token, then user account is invalid
-      if (result.hasOwnProperty('token') === false) {
+      if (!result.hasOwnProperty('token')) {
         return Promise.resolve(false);
       } else {
         const token = result.token;
@@ -4398,7 +4402,7 @@ class PipelineTaskInstance {
    * List all task instances of the pipeline job corresponding to pipelineJobId if its value is not null.
    * if not, then bring all task instances that pipeline server user created via every pipeline job
    *
-   * @param {stirng} pipelineJobId - pipeline job id
+   * @param {string} pipelineJobId - pipeline job id
    */
   async list(pipelineJobId = '') {
     let queryString = `${this.urlPrefix}`;
@@ -4516,23 +4520,32 @@ class utils {
     return value * Math.pow(1024, Math.floor(binaryUnits.indexOf(sourceUnit) - binaryUnits.indexOf(targetUnit)));
   }
 
+  /**
+   * Returns elapsed time between given start and end time. If end time is not set, calculate from start time to now.
+   *
+   * @param {string | Date | number} start - start time
+   * @param {string | Date | number} end - end time
+   * @return {string} - elapsed time
+   */
   elapsedTime(start, end) {
-    var startDate = new Date(start);
+    let startDate = new Date(start);
+    let endDate;
     if (end === null) {
-      var endDate = new Date();
+      endDate = new Date();
     } else {
-      var endDate = new Date(end);
+      endDate = new Date(end);
     }
-    var seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
-    var seconds_cumulative = seconds_total;
-    var days = Math.floor(seconds_cumulative / 86400);
+    // let seconds_total = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    // let seconds_cumulative = seconds_total;
+    let seconds_cumulative = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    let days = Math.floor(seconds_cumulative / 86400);
     seconds_cumulative = seconds_cumulative - days * 86400;
-    var hours = Math.floor(seconds_cumulative / 3600);
+    let hours = Math.floor(seconds_cumulative / 3600);
     seconds_cumulative = seconds_cumulative - hours * 3600;
-    var minutes = Math.floor(seconds_cumulative / 60);
+    let minutes = Math.floor(seconds_cumulative / 60);
     seconds_cumulative = seconds_cumulative - minutes * 60;
-    var seconds = seconds_cumulative;
-    var result = '';
+    let seconds = seconds_cumulative;
+    let result = '';
     if (days !== undefined && days > 0) {
       result = result + String(days) + ' Day ';
     }

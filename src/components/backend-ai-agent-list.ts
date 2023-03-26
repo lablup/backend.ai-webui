@@ -1043,11 +1043,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
           <mwc-icon-button class="fg green controls-running" icon="assignment"
-                           @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
+                           @click="${() => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
             ${this._enableAgentSchedulable ? html`
               <mwc-icon-button class="fg blue controls-running" icon="settings"
-                               @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+                               @click="${() => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             ` : html``}
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>

@@ -243,7 +243,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePreset.NoResourcePresetToDisplay')}"></backend-ai-list-status>
         </div>
       </div>
-      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="modify-template-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourcePreset.ModifyResourcePreset')}</span>
         <div slot="content">
           <form id="login-form">
@@ -274,7 +274,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
             </fieldset>
           </form>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
               fullwidth
@@ -284,7 +284,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           </mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling narrowLayout>
+      <backend-ai-dialog id="create-preset-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('resourcePreset.CreateResourcePreset')}</span>
         <div slot="content">
           <mwc-textfield
@@ -318,7 +318,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
                 validationMessage="${_t('resourcePreset.MinimumShmemUnit')}"></mwc-textfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
               fullwidth

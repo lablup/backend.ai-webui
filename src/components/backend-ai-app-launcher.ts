@@ -472,12 +472,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
-   * Automatically opens proxy for API call
-   */
-  _openInferenceAPI() {
-
-  }
-  /**
    * Hide the app launcher.
    */
   _hideAppLauncher() {
@@ -899,6 +893,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    *
    * @param{Event} e
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _openAppLaunchConfirmationDialog(e) {
     this.appLaunchConfirmationDialog.show();
   }

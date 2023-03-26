@@ -521,7 +521,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // console.log(image_keys);
       // let sorted_images = {};
       // image_keys.sort();
-      this.images = domainImages;
+      const sortedImages = domainImages.sort((a, b) => b["installed"] - a["installed"]);
+
+      this.images = sortedImages;
       if (this.images.length == 0) {
         this.listCondition = 'no-data';
       } else {
