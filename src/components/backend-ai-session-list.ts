@@ -452,13 +452,13 @@ export default class BackendAISessionList extends BackendAIPage {
 
         .idle-check-key {
           font-size: 9px;
-          font-weight: 400;
+          font-weight: 500;
         }
 
         .idle-type {
           font-size: 8px;
           color: var(--paper-grey-600);
-          font-weight: 300;
+          font-weight: 400;
         }
 
         span#access-key-filter-helper-text {
