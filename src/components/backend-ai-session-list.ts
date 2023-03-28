@@ -152,6 +152,8 @@ export default class BackendAISessionList extends BackendAIPage {
     'network_timeout': 'NetworkIdleTimeout',
     'session_lifetime': 'MaxSessionLifetime',
     'utilization': 'UtilizationIdleTimeout',
+    'expire_after': 'ExpiresAfter',
+    'grace_period': 'GracePeriod',
     'cpu_util': 'CPU',
     'mem': 'MEM',
     'cuda_util': 'GPU',
@@ -2353,24 +2355,15 @@ export default class BackendAISessionList extends BackendAIPage {
       ${Object.keys(rowData.item.idle_checks)?.map((key) => {
         const remaining = rowData.item.idle_checks[key].remaining;
         const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
+        const remainingTimeType = rowData.item.idle_checks[key].remaining_time_type;
         return html`
           ${key in this.idleChecksTable && remaining ? html`
             <div class="layout vertical" style="padding:3px auto;">
-              ${['network_timeout', 'session_lifetime'].includes(key) ? html`
                 <div style="margin:4px;">
                   <div class="idle-check-key">${_t('session.' + this.idleChecksTable[key])}</div>
                   <strong style="color:${color}">${remaining}</strong>
-                  <div class="idle-type">${_t('session.ExpiresAfter')}</div>
+                  <div class="idle-type">${_t('session.' + this.idleChecksTable[remainingTimeType])}</div>
                 </div>
-              ` : html``}
-              ${['utilization'].includes(key) ? html`
-                <div style="margin:4px;">
-                  <div class="idle-check-key">${_t('session.' + this.idleChecksTable[key])}</div>
-                  <strong style="color:${color}">${remaining}</strong>
-                  <div class="idle-type">${_t('session.GracePeriod')}</div>
-                  
-                </div>
-              ` : html``}
             </div>
           ` : html``}
         `;
