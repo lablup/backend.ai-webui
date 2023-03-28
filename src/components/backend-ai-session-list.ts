@@ -2,9 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-tree-toggle';
@@ -94,14 +95,6 @@ type CommitSessionStatus = 'ready' | 'ongoing';
  */
 type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 
-/**
- * Interface of idle checks
- * - key: 'timeout' | 'session_lifetime' | 'utilization'
- */
-interface IdleChecks {
-  [key: string]: number | null;
-}
-
 @customElement('backend-ai-session-list')
 export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) active = true;
@@ -120,7 +113,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
   @property({type: Object}) _boundUtilIdleChecksHeaderderer = this.utilIdleChecksHeaderRenderer.bind(this);
-  @property({type: Object}) _boundUtilIdleChecksRenderer = this.utilIdleChecksRenderer.bind(this);
+  @property({type: Object}) _boundIdleChecksRenderer = this.idleChecksRenderer.bind(this);
   @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
   @property({type: Object}) _boundArchitectureRenderer = this.architectureRenderer.bind(this);
@@ -139,6 +132,9 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) kernel_icons = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -153,9 +149,9 @@ export default class BackendAISessionList extends BackendAIPage {
     }
   });
   @property({type: Proxy}) idleChecksTable = new Proxy({
-    'timeout': 'Timeout',
-    'session_lifetime': 'SessionLifetime',
-    'utilization': 'Utilization',
+    'network_timeout': 'NetworkIdleTimeout',
+    'session_lifetime': 'MaxSessionLifetime',
+    'utilization': 'UtilizationIdleTimeout',
     'cpu_util': 'CPU',
     'mem': 'MEM',
     'cuda_util': 'GPU',
@@ -193,6 +189,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @query('#terminate-selected-sessions-dialog') terminateSelectedSessionsDialog!: BackendAIDialog;
   @query('#status-detail-dialog') sessionStatusInfoDialog!: BackendAIDialog;
   @query('#work-dialog') workDialog!: BackendAIDialog;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
   private _isContainerCommitEnabled = false;
 
   @query('#commit-session-dialog') commitSessionDialog;
@@ -358,6 +355,14 @@ export default class BackendAISessionList extends BackendAIPage {
           word-wrap: break-word;
         }
 
+        #help-description {
+          --component-width: 70vw;
+        }
+
+        #help-description p, #help-description strong {
+          padding: 5px 30px !important;
+        }
+
         div.indicator,
         span.indicator {
           font-size: 9px;
@@ -443,10 +448,15 @@ export default class BackendAISessionList extends BackendAIPage {
           color: var(--paper-grey-400);
         }
 
-        .util-idle-checks {
-          --lablup-shield-component-width: 40px;
-          text-align: center;
-          padding: 3px;
+        .idle-check-key {
+          font-size: 9px;
+          font-weight: 400;
+        }
+
+        .idle-type {
+          font-size: 8px;
+          color: var(--paper-grey-600);
+          font-weight: 300;
         }
 
         span#access-key-filter-helper-text {
@@ -672,15 +682,30 @@ export default class BackendAISessionList extends BackendAIPage {
         });
         Object.keys(sessions).map((objectKey, index) => {
           const session = sessions[objectKey];
-          const occupied_slots = JSON.parse(session.occupied_slots);
+          const occupiedSlots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
-          sessions[objectKey].cpu_slot = parseInt(occupied_slots.cpu);
-          sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupied_slots.mem, 'g'));
+          sessions[objectKey].cpu_slot = parseInt(occupiedSlots.cpu);
+          sessions[objectKey].mem_slot = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(occupiedSlots.mem, 'g'));
           sessions[objectKey].mem_slot = sessions[objectKey].mem_slot.toFixed(2);
           // Readable text
           sessions[objectKey].elapsed = this._elapsed(sessions[objectKey].created_at, sessions[objectKey].terminated_at);
           sessions[objectKey].created_at_hr = this._humanReadableTime(sessions[objectKey].created_at);
           sessions[objectKey].starts_at_hr = sessions[objectKey].starts_at ? this._humanReadableTime(sessions[objectKey].starts_at) : '';
+          if (globalThis.backendaiclient.supports('idle-checks')) {
+            const idleChecks = JSON.parse(session.idle_checks || '{}');
+            if (idleChecks) {
+              sessions[objectKey].idle_checks = idleChecks;
+            }
+            if (idleChecks && idleChecks.network_timeout && idleChecks.network_timeout.remaining) {
+              sessions[objectKey].idle_checks.network_timeout.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.network_timeout.remaining);
+            }
+            if (idleChecks && idleChecks.session_lifetime && idleChecks.session_lifetime.remaining) {
+              sessions[objectKey].idle_checks.session_lifetime.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.session_lifetime.remaining);
+            }
+            if (idleChecks && idleChecks.utilization && idleChecks.utilization.remaining) {
+              sessions[objectKey].idle_checks.utilization.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.utilization.remaining);
+            }
+          }
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
             const container = sessions[objectKey].containers[0];
             const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
@@ -765,24 +790,24 @@ export default class BackendAISessionList extends BackendAIPage {
           } else {
             sessions[objectKey].running = false;
           }
-          if ('cuda.device' in occupied_slots) {
-            sessions[objectKey].cuda_gpu_slot = parseInt(occupied_slots['cuda.device']);
+          if ('cuda.device' in occupiedSlots) {
+            sessions[objectKey].cuda_gpu_slot = parseInt(occupiedSlots['cuda.device']);
           }
-          if ('rocm.device' in occupied_slots) {
-            sessions[objectKey].rocm_gpu_slot = parseInt(occupied_slots['rocm.device']);
+          if ('rocm.device' in occupiedSlots) {
+            sessions[objectKey].rocm_gpu_slot = parseInt(occupiedSlots['rocm.device']);
           }
-          if ('tpu.device' in occupied_slots) {
-            sessions[objectKey].tpu_slot = parseInt(occupied_slots['tpu.device']);
+          if ('tpu.device' in occupiedSlots) {
+            sessions[objectKey].tpu_slot = parseInt(occupiedSlots['tpu.device']);
           }
-          if ('ipu.device' in occupied_slots) {
-            sessions[objectKey].ipu_slot = parseInt(occupied_slots['ipu.device']);
+          if ('ipu.device' in occupiedSlots) {
+            sessions[objectKey].ipu_slot = parseInt(occupiedSlots['ipu.device']);
           }
-          if ('atom.device' in occupied_slots) {
-            sessions[objectKey].atom_slot = parseInt(occupied_slots['atom.device']);
+          if ('atom.device' in occupiedSlots) {
+            sessions[objectKey].atom_slot = parseInt(occupiedSlots['atom.device']);
           }
-          if ('cuda.shares' in occupied_slots) {
+          if ('cuda.shares' in occupiedSlots) {
             // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
-            sessions[objectKey].cuda_fgpu_slot = parseFloat(occupied_slots['cuda.shares']).toFixed(2);
+            sessions[objectKey].cuda_fgpu_slot = parseFloat(occupiedSlots['cuda.shares']).toFixed(2);
           }
           sessions[objectKey].kernel_image = kernelImage;
           sessions[objectKey].icon = this._getKernelIcon(session.image);
@@ -1746,33 +1771,57 @@ export default class BackendAISessionList extends BackendAIPage {
    * @return {string} - hh:mm:ss
    */
   static secondsToHHMMSS(seconds) {
+    const days = Math.floor(seconds / 86400);
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secondsRemainder = parseInt(seconds) % 60;
-    const timeoutExceededStr = (hours < 0 || minutes < 0 || secondsRemainder < 0) ? _text('session.TimeoutExceeded') : '';
-    const convertedStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
+    const timeoutExceededStr = (days < 0 || hours < 0 || minutes < 0 || secondsRemainder < 0) ? _text('session.TimeoutExceeded') : '';
+    const convertedStr = `${days !== undefined && days > 0 ? String(days) + 'd' : ''}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
     return timeoutExceededStr.length > 0 ? timeoutExceededStr : convertedStr;
   }
 
   /**
    * Returns the minimum value of idle checks to know when idle sessions will be turned off.
-   * @param {string} idleChecks - Session's idle check
+   * @param {Object} idleChecks - Session's idle check
    * @return {Array<string>} - Minimum value that and the key
    */
-  _getIdleSessionTimeout(idleChecks: string) {
+  _getIdleSessionTimeout(idleChecks) {
     if (globalThis.backendaiutils.isEmpty(idleChecks)) {
       return null;
     }
-    const obj: IdleChecks = JSON.parse(idleChecks);
     let minKey = '';
     let minValue: number | null = Infinity;
-    for (const [key, value] of Object.entries(obj)) {
+    for (const [key, value] of Object.entries(idleChecks)) {
       if (value !== null && value !== undefined && typeof value === 'number' && minValue !== null && minValue !== undefined && value < minValue) {
         minKey = key;
         minValue = value;
       }
     }
-    return minValue ? [minKey, BackendAISessionList.secondsToHHMMSS(minValue.toString())] : null;
+    return minValue ? [minKey, BackendAISessionList.secondsToHHMMSS(minValue)] : null;
+  }
+
+  _openIdleChecksInfoDialog() {
+    this._helpDescriptionTitle = _text('session.IdleChecks');
+    this._helpDescription = `
+      <p>${_text('session.IdleChecksDesc')}</p>
+      <strong>${_text('session.MaxSessionLifetime')}</strong>
+      <p>${_text('session.MaxSessionLifetimeDesc')}</p>
+      <strong>${_text('session.NetworkIdleTimeout')}</strong>
+      <p>${_text('session.NetworkIdleTimeoutDesc')}</p>
+      <strong>${_text('session.UtilizationIdleTimeout')}</strong>
+      <p>${_text('session.UtilizationIdleTimeoutDesc')}</p>
+      <div style="margin:10px 5% 20px 5%;">
+        <li>
+          <span style="font-weight:500">${_text('session.GracePeriod')}</span>
+          <div style="padding-left:20px;">${_text('session.GracePeriodDesc')}</div>
+        </li>
+        <li>
+          <span style="font-weight:500">${_text('session.UtilizationThreshold')}</span>
+          <div style="padding-left:20px;">${_text('session.UtilizationThresholdDesc')}</div>
+        </li>
+      </div>
+    `;
+    this.helpDescriptionDialog.show();
   }
 
   /**
@@ -2260,8 +2309,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   reservationRenderer(root, column?, rowData?) {
-    const [idleCheckKey, idleCheckValue]: (string | null)[] = this._getIdleSessionTimeout(rowData.item.idle_checks) || [];
-    const idleCheckColor = idleCheckValue && idleCheckValue.length > 0 && parseInt(idleCheckValue.slice(0, 2)) < 1 ? 'red' : 'darkgreen';
     render(
       // language=HTML
       html`
@@ -2269,11 +2316,6 @@ export default class BackendAISessionList extends BackendAIPage {
           <span>${rowData.item.created_at_hr}</span>
           <lablup-shields app="${_t('session.ElapsedTime')}" color="darkgreen" style="margin:3px 0;"
                           description="${rowData.item.elapsed}" ui="round"></lablup-shields>
-          ${idleCheckKey ? html`
-            <lablup-shields app="${_t('session.' + this.idleChecksTable[idleCheckKey])}"
-                            color="${idleCheckColor}"
-                            description="${idleCheckValue}" ui="round"></lablup-shields>
-          ` : html``}
         </div>
       `, root);
   }
@@ -2288,52 +2330,51 @@ export default class BackendAISessionList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <div>${_t('session.UtilizationIdleChecks')}</div>
         <div class="horizontal layout center">
-          <lablup-shields style="padding:3px;" description="${_t('session.Utilization')}" ui="round" color="lightblue"></lablup-shields>
-          <lablup-shields style="padding:3px;" description="${_t('session.Threshold')}" ui="round" color="lightgreen"></lablup-shields>
+          <div>
+            ${_t('session.IdleChecks')}
+          </div>
+          <mwc-icon-button class="fg grey" icon="info" @click="${() => this._openIdleChecksInfoDialog()}"></mwc-icon-button>
         </div>
       `, root);
   }
 
   /**
-   * Render utilization idle checker
+   * Render idle checker
    *
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
-  utilIdleChecksRenderer(root, column?, rowData?) {
-    const utilizationExtra: (string | null)[] = rowData.item.idle_checks ? JSON.parse(rowData.item.idle_checks).utilization_extra : null;
+  idleChecksRenderer(root, column?, rowData?) {
     render(
       // language=HTML
       html`
-        ${utilizationExtra && Object.keys(utilizationExtra).map((item) => {
-          const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
-          const threshold = utilizationExtra[item][1];
-          const customColorPalette = {
-            "lightblutBackgounrdRedText": {"colorB": "#caedfc", "colorT": "#e05d44"},
-            "lightgreenBackgroundRedText": {"colorB": "#f3f5d0", "colorT": "#e05d44"},
-          };
-          const colorType = typeof utilization === 'number'
-            && typeof threshold === 'number'
-            && threshold !== 0
-            && (utilization - threshold) / threshold < 1
-            ? 'custom' : 'original';
-          return html`
-            <div class="horizontal layout justified center">
-              <span>${this.idleChecksTable[item]}</span>
-              <div class="horizontal layout center">
-                <lablup-shields class="util-idle-checks" description="${utilization}" ui="round"
-                                color="${colorType === 'custom' ? 'lightblutBackgounrdRedText' : 'lightblue'}"
-                                .customColorPalette="${customColorPalette}"></lablup-shields>
-                <lablup-shields class="util-idle-checks" description="${threshold}" ui="round"
-                                color="${colorType === 'custom' ? 'lightgreenBackgroundRedText' : 'lightgreen'}"
-                                .customColorPalette="${customColorPalette}"></lablup-shields>
-              </div>
+      ${Object.keys(rowData.item.idle_checks)?.map((key) => {
+        const remaining = rowData.item.idle_checks[key].remaining;
+        const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
+        return html`
+          ${key in this.idleChecksTable && remaining ? html`
+            <div class="layout vertical" style="padding:3px auto;">
+              ${['network_timeout', 'session_lifetime'].includes(key) ? html`
+                <div style="margin:4px;">
+                  <div class="idle-check-key">${_t('session.' + this.idleChecksTable[key])}</div>
+                  <strong style="color:${color}">${remaining}</strong>
+                  <div class="idle-type">${_t('session.ExpiresAfter')}</div>
+                </div>
+              ` : html``}
+              ${['utilization'].includes(key) ? html`
+                <div style="margin:4px;">
+                  <div class="idle-check-key">${_t('session.' + this.idleChecksTable[key])}</div>
+                  <strong style="color:${color}">${remaining}</strong>
+                  <div class="idle-type">${_t('session.GracePeriod')}</div>
+                  
+                </div>
+              ` : html``}
             </div>
-          `})
-        }
+          ` : html``}
+        `;
+      })}
       `, root);
   }
 
@@ -2580,9 +2621,9 @@ export default class BackendAISessionList extends BackendAIPage {
           <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable width="180px" flex-grow="0"
+          <vaadin-grid-column resizable auto-width flex-grow="0"
                               .headerRenderer="${this._boundUtilIdleChecksHeaderderer}"
-                              .renderer="${this._boundUtilIdleChecksRenderer}">
+                              .renderer="${this._boundIdleChecksRenderer}">
           </vaadin-grid-column>
           <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
                                      .renderer="${this._boundArchitectureRenderer}">
@@ -2661,6 +2702,16 @@ export default class BackendAISessionList extends BackendAIPage {
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>
         <span slot="title">${_t('session.StatusInfo')}</span>
         <div slot="content" id="status-detail"></div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="help-description" narrowLayout fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:5px;">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
       </backend-ai-dialog>
       ${this._renderCommitSessionConfirmationDialog(
         this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}

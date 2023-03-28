@@ -4547,7 +4547,7 @@ class utils {
     let seconds = seconds_cumulative;
     let result = '';
     if (days !== undefined && days > 0) {
-      result = result + String(days) + ' Day ';
+      result = result + String(days) + 'd';
     }
     if (hours !== undefined) {
       result = result + this._padding_zeros(hours, 2) + ':';
