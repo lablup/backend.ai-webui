@@ -2353,9 +2353,9 @@ export default class BackendAISessionList extends BackendAIPage {
       // language=HTML
       html`
       ${Object.keys(rowData.item.idle_checks)?.map((key) => {
-        const remaining = rowData.item.idle_checks[key].remaining;
+        const remaining = rowData.item.idle_checks[key]?.remaining;
         const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
-        const remainingTimeType = rowData.item.idle_checks[key].remaining_time_type;
+        const remainingTimeType = rowData.item.idle_checks[key]?.remaining_time_type;
         return html`
           ${key in this.idleChecksTable && remaining ? html`
             <div class="layout vertical" style="padding:3px auto;">
