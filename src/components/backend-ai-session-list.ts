@@ -439,7 +439,8 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .mount-button,
-        .status-button {
+        .status-button,
+        .idle-check-key {
           border: none;
           background: none;
           padding: 0;
@@ -451,7 +452,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .idle-check-key {
-          font-size: 9px;
+          font-size: 11px;
           font-weight: 500;
         }
 
@@ -1827,6 +1828,70 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
+   * Create dropdown menu that shows utilization and thresholds of Utilization Idle Checks.
+   * Added menu to document.body to show at the top.
+   *
+   * @param {Event} e - mouseenter the util button
+   * @param {Object} utilizationExtra - idle_checks.utilization.extra
+   */
+  _createUtilizationIdleCheckDropdown(e, utilizationExtra) {
+    // Prevent re-rendering
+    if (document.getElementsByClassName('util-dropdown-menu').length > 0) return;
+    const menuDiv: HTMLElement = e.target;
+    const menu = document.createElement('mwc-menu') as Menu;
+    menu.anchor = menuDiv;
+    menu.className = 'util-dropdown-menu';
+    menu.style.boxShadow = '0 1px 1px rgba(0, 0, 0, 0.2)';
+    menu.setAttribute('open', '');
+    menu.setAttribute('fixed', '');
+    menu.setAttribute('corner', 'BOTTOM_START');
+
+    if (Object.keys(utilizationExtra).length > 0) {
+      const headerListItem = document.createElement('mwc-list-item');
+      headerListItem.style.height = '25px';
+      headerListItem.style.border = 'none';
+      headerListItem.style.boxShadow = 'none';
+      headerListItem.innerHTML = `
+        <div style="justify-content:flex-end;font-size:13px;font-family:var(--general-font-family);font-weight:600;">
+          ${_text('session.Utilization')} / ${_text('session.Threshold')} (%)
+        </div>
+      `;
+      menu.appendChild(headerListItem);
+
+      Object.keys(utilizationExtra).map((item) => {
+        const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
+        const threshold = utilizationExtra[item][1];
+        const color = !isNaN(+utilization) &&
+                      !isNaN(+threshold) &&
+                      threshold !== 0 &&
+                      (+utilization - threshold) / threshold < 1 ? '#e05d44' : '#222222';
+
+        const listItem = document.createElement('mwc-list-item');
+        listItem.style.height = '25px';
+        listItem.style.border = 'none';
+        listItem.style.boxShadow = 'none';
+        listItem.innerHTML = `
+          <div style="display:flex;flex-direction:row;justify-content:center;justify-content:space-between;font-size:12px;font-family:var(--general-font-family);font-weight:400;min-width:155px;">
+            <div>${this.idleChecksTable[item]}</div>
+            <div style="color:${color};">
+              ${utilization} / ${threshold}
+          </div>
+        `;
+        menu.appendChild(listItem);
+      });
+      document.body.appendChild(menu);
+    }
+  }
+
+  /**
+   * Remove the dropdown menu when mouseleave the util button.
+   * */
+  _removeUtilizationIdleCheckDropdown() {
+    const menu = document.getElementsByClassName('util-dropdown-menu') as any;
+    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+  }
+
+  /**
    * Render session type - batch or interactive
    *
    * @param {Element} root - the row details content DOM element
@@ -2349,26 +2414,27 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   idleChecksRenderer(root, column?, rowData?) {
-    render(
-      // language=HTML
-      html`
-      ${Object.keys(rowData.item.idle_checks)?.map((key) => {
-        const remaining = rowData.item.idle_checks[key]?.remaining;
-        const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
-        const remainingTimeType = rowData.item.idle_checks[key]?.remaining_time_type;
-        return html`
-          ${key in this.idleChecksTable && remaining ? html`
-            <div class="layout vertical" style="padding:3px auto;">
-                <div style="margin:4px;">
-                  <div class="idle-check-key">${_t('session.' + this.idleChecksTable[key])}</div>
-                  <strong style="color:${color}">${remaining}</strong>
-                  <div class="idle-type">${_t('session.' + this.idleChecksTable[remainingTimeType])}</div>
-                </div>
-            </div>
-          ` : html``}
+    let contents = '';
+    Object.keys(rowData.item.idle_checks)?.map((key) => {
+      const remaining = rowData.item.idle_checks[key]?.remaining;
+      const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
+      const remainingTimeType = rowData.item.idle_checks[key]?.remaining_time_type;
+      if (key in this.idleChecksTable && remaining) {
+        contents += `
+        <div class="layout vertical" style="padding:3px auto;">
+          <div style="margin:4px;">
+            <button id="${key}" class="idle-check-key" style="color:${key === 'utilization' ? '#42a5f5' : '#222222'}">${_text('session.' + this.idleChecksTable[key])}</button><br/>
+            <strong style="color:${color}">${remaining}</strong>
+            <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
+          </div>
+        </div>
         `;
-      })}
-      `, root);
+      }
+    });
+    root.innerHTML = contents;
+    const utilization = root.querySelector('#utilization');
+    utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra));
+    utilization?.addEventListener('mouseleave', () => this._removeUtilizationIdleCheckDropdown());
   }
 
   /**
