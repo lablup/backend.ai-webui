@@ -1846,7 +1846,7 @@ export default class BackendAISessionList extends BackendAIPage {
     menu.setAttribute('fixed', '');
     menu.setAttribute('corner', 'BOTTOM_START');
 
-    if (Object.keys(utilizationExtra).length > 0) {
+    if (!globalThis.backendaiutils.isEmpty(utilizationExtra)) {
       const headerListItem = document.createElement('mwc-list-item');
       headerListItem.style.height = '25px';
       headerListItem.style.border = 'none';
