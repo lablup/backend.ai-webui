@@ -1851,8 +1851,9 @@ export default class BackendAISessionList extends BackendAIPage {
       headerListItem.style.height = '25px';
       headerListItem.style.border = 'none';
       headerListItem.style.boxShadow = 'none';
+      headerListItem.style.justifyContent = 'flex-end';
       headerListItem.innerHTML = `
-        <div style="justify-content:flex-end;font-size:13px;font-family:var(--general-font-family);font-weight:600;">
+        <div style="font-size:13px;font-family:var(--general-font-family);font-weight:600;">
           ${_text('session.Utilization')} / ${_text('session.Threshold')} (%)
         </div>
       `;
