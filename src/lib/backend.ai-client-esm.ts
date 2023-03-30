@@ -4564,6 +4564,24 @@ class utils {
     return result + this._padding_zeros(seconds, 2) + '';
   }
 
+  /**
+   * Returns total seconds from give elapsed time string.
+   *   - ex) "1d01:54:33" -> 93273
+   *
+   * @param {string} datimeString - daytime string, ex) "1d01:54:33"
+   * @return {number} - total seconds
+   */
+  elapsedTimeToTotalSeconds(daytimeString) {
+    let days, hours, minutes, seconds;
+    if (daytimeString.includes('d')) {
+      [days, daytimeString] = daytimeString.split('d');
+    } else {
+      days = 0;
+    }
+    [hours, minutes, seconds] = daytimeString.split(':');
+    return parseInt(days) * 86400 + parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+  };
+
   _padding_zeros(n, width) {
     n = n + '';
     return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;

@@ -2418,17 +2418,28 @@ export default class BackendAISessionList extends BackendAIPage {
     let contents = '';
     Object.keys(rowData.item.idle_checks)?.map((key) => {
       const remaining = rowData.item.idle_checks[key]?.remaining;
-      const color = remaining && typeof remaining === 'string' && remaining?.length > 0 && parseInt(remaining.slice(0, 2)) < 1 ? '#e05d44' : '#222222';
+      if (!remaining) {
+        return;
+      }
+      const remainingSeconds = globalThis.backendaiclient.utils.elapsedTimeToTotalSeconds(remaining);
       const remainingTimeType = rowData.item.idle_checks[key]?.remaining_time_type;
-      if (key in this.idleChecksTable && remaining) {
+      const color = remainingSeconds < 3600 ? '#e05d44' : '#222222';
+      if (key in this.idleChecksTable) {
         contents += `
-        <div class="layout vertical" style="padding:3px auto;">
-          <div style="margin:4px;">
-            <button id="${key}" class="idle-check-key" style="color:${key === 'utilization' ? '#42a5f5' : '#222222'}">${_text('session.' + this.idleChecksTable[key])}</button><br/>
-            <strong style="color:${color}">${remaining}</strong>
-            <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
+          <div class="layout vertical" style="padding:3px auto;">
+            <div style="margin:4px;">
+              <button
+                id="${key}"
+                class="idle-check-key"
+                style="color:${key === 'utilization' ? '#42a5f5' : '#222222'}"
+              >
+                ${_text('session.' + this.idleChecksTable[key])}
+              </button>
+              <br/>
+              <strong style="color:${color}">${remaining}</strong>
+              <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
+            </div>
           </div>
-        </div>
         `;
       }
     });
