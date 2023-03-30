@@ -921,7 +921,8 @@
     "TimeoutSeconds": "초",
     "ResourceGroupDetail": "자원 그룹 세부 정보",
     "RetriesToSkip": "회",
-    "NoGroupToDisplay": "그룹이 없습니다."
+    "NoGroupToDisplay": "그룹이 없습니다.",
+    "AllowedSessionTypes": "허용된 세션 타입"
   },
   "maintenance": {
     "General": "일반",
