@@ -70,7 +70,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @property({type: Object}) allowedSessionTypesObjects = {
     'interactive': 'interactive',
     'batch': 'batch',
-    'both': 'both (interactive, batch)'
+    'inference': 'inference',
+    'general': 'general (interactive, batch)',
+    'all': 'all (interactive, batch, inference)'
   };
   @property({type: Boolean}) enableSchedulerOpts = false;
   @property({type: Boolean}) enableWSProxyAddr = false;
@@ -539,7 +541,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _initializeCreateSchedulerOpts() {
     const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
 
-    this.allowedSessionTypesSelect.value= 'both';
+    this.allowedSessionTypesSelect.value= 'general';
     schedulerOptsInputForms.checked = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
@@ -557,8 +559,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _initializeModifySchedulerOpts(name = '', value: any) {
     if ('allowed_session_types' === name) {
-      if (value.includes('interactive') && value.includes('batch')) {
-        this.allowedSessionTypesSelect.value = 'both';
+      if (value.includes('interactive') && value.includes('batch') && value.includes('inference')) {
+        this.allowedSessionTypesSelect.value = 'all';
+      } else if (value.includes('interactive') && value.includes('batch')) {
+        this.allowedSessionTypesSelect.value = 'general';
       } else {
         this.allowedSessionTypesSelect.value = value[0];
       }
@@ -612,8 +616,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _saveSchedulerOpts() {
     this.schedulerOpts = {};
-
-    if (this.allowedSessionTypesSelect.value === 'both') {
+    if (this.allowedSessionTypesSelect.value === 'all') {
+      this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch', 'inference'];
+    } else if (this.allowedSessionTypesSelect.value === 'general') {
       this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
     } else {
       this.schedulerOpts['allowed_session_types'] = [this.allowedSessionTypesSelect.value];
