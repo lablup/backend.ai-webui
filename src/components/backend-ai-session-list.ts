@@ -2417,13 +2417,19 @@ export default class BackendAISessionList extends BackendAIPage {
   idleChecksRenderer(root, column?, rowData?) {
     let contents = '';
     Object.keys(rowData.item.idle_checks)?.map((key) => {
-      const remaining = rowData.item.idle_checks[key]?.remaining;
-      if (!remaining) {
-        return;
-      }
+      const checkerInfo = rowData.item.idle_checks[key];
+      const remaining = checkerInfo?.remaining;
+
+      if (!remaining) return;
+
       const remainingSeconds = globalThis.backendaiclient.utils.elapsedTimeToTotalSeconds(remaining);
-      const remainingTimeType = rowData.item.idle_checks[key]?.remaining_time_type;
-      const color = remainingSeconds < 3600 ? '#e05d44' : '#222222';
+      const remainingTimeType = checkerInfo?.remaining_time_type;
+      let remainingColor = remainingSeconds < 3600 ? '#e05d44' : '#222222';
+      if (key === 'utilization') {
+        const extraUtilInfo = checkerInfo?.extra;
+        console.log(extraUtilInfo);
+        // TODO: Change color based on the current utilization value and threshold
+      }
       if (key in this.idleChecksTable) {
         contents += `
           <div class="layout vertical" style="padding:3px auto;">
@@ -2436,7 +2442,7 @@ export default class BackendAISessionList extends BackendAIPage {
                 ${_text('session.' + this.idleChecksTable[key])}
               </button>
               <br/>
-              <strong style="color:${color}">${remaining}</strong>
+              <strong style="color:${remainingColor}">${remaining}</strong>
               <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
             </div>
           </div>
