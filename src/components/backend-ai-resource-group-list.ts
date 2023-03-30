@@ -542,8 +542,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _initializeCreateSchedulerOpts() {
     const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
-
     this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
+    this.allowedSessionTypesSelect.selectedItemList = [];
     schedulerOptsInputForms.checked = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
@@ -885,32 +885,32 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   <div role="listbox">
                     ${this.enableSchedulerOpts ? html`
                       ${Object.entries(JSON.parse(this.resourceGroupInfo?.scheduler_opts)).map(([key, value]: any) => {
-    if (key === 'allowed_session_types') {
-      return html`
-                                  <vaadin-item>
-                                    <div><strong>allowed session types</strong></div>
-                                    <div class="scheduler-option-value">${value.join(', ')}</div>
-                                  </vaadin-item>`;
-    } else if (key === 'pending_timeout') {
-      return html`
-      <vaadin-item>
-      <div><strong>pending timeout</strong></div>
-      <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
-    </vaadin-item>`;
-    } else if (key === 'config') {
-      if (value['num_retries_to_skip']) {
-        return html`
-        <vaadin-item>
-        <div><strong># retries to skip pending session</strong></div>
-        <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
-      </vaadin-item>`;
-      } else {
-        return '';
-      }
-    } else {
-      return '';
-    }
-  })}
+                        if (key === 'allowed_session_types') {
+                          return html`
+                                                      <vaadin-item>
+                                                        <div><strong>allowed session types</strong></div>
+                                                        <div class="scheduler-option-value">${value.join(', ')}</div>
+                                                      </vaadin-item>`;
+                        } else if (key === 'pending_timeout') {
+                          return html`
+                          <vaadin-item>
+                          <div><strong>pending timeout</strong></div>
+                          <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+                        </vaadin-item>`;
+                        } else if (key === 'config') {
+                          if (value['num_retries_to_skip']) {
+                            return html`
+                            <vaadin-item>
+                            <div><strong># retries to skip pending session</strong></div>
+                            <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
+                          </vaadin-item>`;
+                          } else {
+                            return '';
+                          }
+                        } else {
+                          return '';
+                        }
+                      })}
                     ` : html``}
                   </div>
                 </div>
