@@ -2427,7 +2427,6 @@ export default class BackendAISessionList extends BackendAIPage {
       let remainingColor = remainingSeconds < 3600 ? '#e05d44' : '#222222';
       if (key === 'utilization') {
         const extraUtilInfo = checkerInfo?.extra;
-        console.log(extraUtilInfo);
         // TODO: Change color based on the current utilization value and threshold
       }
       if (key in this.idleChecksTable) {
@@ -2451,7 +2450,7 @@ export default class BackendAISessionList extends BackendAIPage {
     });
     root.innerHTML = contents;
     const utilization = root.querySelector('#utilization');
-    utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra));
+    utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources));
     utilization?.addEventListener('mouseleave', () => this._removeUtilizationIdleCheckDropdown());
   }
 
