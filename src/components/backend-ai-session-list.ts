@@ -597,6 +597,7 @@ export default class BackendAISessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
+    console.log('# _refreshJobData', this.refreshing)
 
     let status: any;
     status = 'RUNNING';
@@ -2138,8 +2139,8 @@ export default class BackendAISessionList extends BackendAIPage {
                                @click="${(e) => this._showLogs(e)}"></mwc-icon-button>
             <vaadin-tooltip for="${rowData.index+'-assignment'}" text="${_t('session.SeeContainerLogs')}" position="top-start"></vaadin-tooltip>
           ` : html`
-            <mwc-icon-button fab flat inverted disabled class="fg controls-running" id="${rowData.index+'-nologs'}" icon="assignment"></mwc-icon-button>
-            <vaadin-tooltip for="${rowData.index+'-archive'}" text="${_t('session.RequestContainerCommit')}" position="top-start"></vaadin-tooltip>
+            <mwc-icon-button fab flat inverted disabled class="fg controls-running" id="${rowData.index+'-assignment'}" icon="assignment"></mwc-icon-button>
+            <vaadin-tooltip for="${rowData.index+'-assignment'}" text="${_t('session.NoLogMsgAvailable')}" position="top-start"></vaadin-tooltip>
           `}
           ${this._isContainerCommitEnabled ? html`
             <mwc-icon-button class="fg blue controls-running"
@@ -2151,7 +2152,7 @@ export default class BackendAISessionList extends BackendAIPage {
                                          rowData.item.type as SessionType === 'BATCH' ||
                                          rowData.item.commit_status as CommitSessionStatus === 'ongoing'}
                              icon="archive" @click="${(e) => this._openCommitSessionDialog(e)}"></mwc-icon-button>
-            <vaadin-tooltip for="${rowData.index+'-nologs'}" text="${_t('session.NoLogMsgAvailable')}" position="top-start"></vaadin-tooltip>
+            <vaadin-tooltip for="${rowData.index+'-archive'}" text="${_t('session.RequestContainerCommit')}" position="top-start"></vaadin-tooltip>
           ` : html``}
         </div>
       `, root
