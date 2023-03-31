@@ -344,7 +344,7 @@
     "RequestContainerCommit": "컨테이너 커밋하기",
     "TimeoutExceeded": "제한 시간 초과",
     "Utilization": "사용률",
-    "Threshold": "임계값",
+    "Threshold": "수거 기준값",
     "IdleChecks": "유휴 상태 검사",
     "IdleChecksDesc": "연산 세션을 자동 삭제하는 세 가지 기준을 제공합니다.",
     "MaxSessionLifetime": "최대 세션 수명 시간",
