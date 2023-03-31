@@ -112,7 +112,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Object}) _boundConfigRenderer = this.configRenderer.bind(this);
   @property({type: Object}) _boundUsageRenderer = this.usageRenderer.bind(this);
   @property({type: Object}) _boundReservationRenderer = this.reservationRenderer.bind(this);
-  @property({type: Object}) _boundUtilIdleChecksHeaderderer = this.utilIdleChecksHeaderRenderer.bind(this);
+  @property({type: Object}) _boundIdleChecksHeaderderer = this.idleChecksHeaderRenderer.bind(this);
   @property({type: Object}) _boundIdleChecksRenderer = this.idleChecksRenderer.bind(this);
   @property({type: Object}) _boundAgentRenderer = this.agentRenderer.bind(this);
   @property({type: Object}) _boundSessionInfoRenderer = this.sessionInfoRenderer.bind(this);
@@ -2441,7 +2441,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Element} root - the row details content DOM element
    * @param {Element} column - the column element that controls the state of the host element
    * */
-  utilIdleChecksHeaderRenderer(root, column?) {
+  idleChecksHeaderRenderer(root, column?) {
     render(
       // language=HTML
       html`
@@ -2760,7 +2760,7 @@ export default class BackendAISessionList extends BackendAIPage {
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
           <vaadin-grid-column resizable auto-width flex-grow="0"
-                              .headerRenderer="${this._boundUtilIdleChecksHeaderderer}"
+                              .headerRenderer="${this._boundIdleChecksHeaderderer}"
                               .renderer="${this._boundIdleChecksRenderer}">
           </vaadin-grid-column>
           <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
