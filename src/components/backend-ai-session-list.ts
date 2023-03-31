@@ -1592,7 +1592,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </wl-expansion>
         </div>
     `;
-    statusDetailEl.querySelector('#predicate-check-comment').innerText = tmpSessionStatus.scheduler.msg;
+    (statusDetailEl.querySelector('#predicate-check-comment') as HTMLElement).innerText = tmpSessionStatus.scheduler.msg;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
         return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
