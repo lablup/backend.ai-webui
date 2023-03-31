@@ -589,14 +589,11 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
-    console.log('refreshJobdata: called: ', this.condition);
     await this.updateComplete;
     if (this.active !== true) {
-      console.log('refreshJobdata: not active: ', this.condition);
       return;
     }
     if (this.refreshing === true) {
-      console.log('refreshJobdata: another request is working.: ', this.condition);
       return;
     }
     this.refreshing = true;
