@@ -216,6 +216,7 @@
       "DuplicatedSessionName": "Duplicated session name not allowed",
       "SessionNameAllowCondition": "Session name should have 4-64 alphabets/numbers without any whitespaces.",
       "NoFolderExists": "No Folder Exists",
+      "SessionAlreadyExists": "Session name already exists",
       "sessionStillPreparing": "The session is still in preparation. After the session starts, tap the app icon to start the app.",
       "UnSelectAllVFolders": "UNSELECT ALL",
       "ResourceMonitorToggle": "See resource monitor",
