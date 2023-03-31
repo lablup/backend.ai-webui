@@ -80,7 +80,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean}) active = false;
   @property({type: Object}) _lists = Object();
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
   @property({type: Object}) storageInfo = Object();

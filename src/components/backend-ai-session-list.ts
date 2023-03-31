@@ -97,7 +97,7 @@ type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 
 @customElement('backend-ai-session-list')
 export default class BackendAISessionList extends BackendAIPage {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) compute_sessions = [];
@@ -589,11 +589,14 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {boolean} repeat - repeat the job data reading. Set refreshTime to 5000 for running list else 30000
    * */
   async _refreshJobData(refresh = false, repeat = true) {
+    console.log('refreshJobdata: called');
     await this.updateComplete;
     if (this.active !== true) {
+      console.log('refreshJobdata: not active');
       return;
     }
     if (this.refreshing === true) {
+      console.log('refreshJobdata: another request is working.');
       return;
     }
     this.refreshing = true;

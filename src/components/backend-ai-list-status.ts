@@ -39,7 +39,7 @@ export default class BackendAIListStatus extends BackendAIPage {
   @property({type: String}) message = 'There is nothing to display';
   @property({type: String}) statusCondition: StatusCondition = 'loading';
   @property({type: Object}) dots = Object();
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean}) active = false;
 
   constructor() {
     super();

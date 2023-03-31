@@ -39,7 +39,7 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Array}) notifications;
   @property({type: Array}) notificationstore;
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean}) active = false;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();

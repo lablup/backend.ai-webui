@@ -22,7 +22,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 @customElement('lablup-loading-dots')
 export default class LablupLoadingdots extends LitElement {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean}) active = false;
   @query('#dots') dots!: HTMLDivElement;
 
   static get styles(): CSSResultGroup {
