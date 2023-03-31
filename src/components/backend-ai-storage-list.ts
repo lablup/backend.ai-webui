@@ -1079,9 +1079,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
     const folderName = params.get('folder');
-    if(folderName){
+    if (folderName) {
       // alert(folderName);
-      console.log(this.folders);
     }
   }
 
@@ -3061,15 +3060,16 @@ export default class BackendAiStorageList extends BackendAIPage {
           element.parentElement?.removeChild(element);
         }
       }).catch((err) => {
-        if (this.selectedFolderType === 'user') {
-          this.notification.text = _text('data.invitation.InvitationError');
-        } else {
-          this.notification.text = _text('data.invitation.SharingError');
-        }
+        // if (this.selectedFolderType === 'user') {
+        //   this.notification.text = _text('data.invitation.InvitationError');
+        // } else {
+        //   this.notification.text = _text('data.invitation.SharingError');
+        // }
         if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
         }
-        this.notification.show(true, err);
+        this.notification.show();
       });
   }
 
