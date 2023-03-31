@@ -940,7 +940,8 @@
     "TimeoutSeconds": "Seconds",
     "ResourceGroupDetail": "Resource Group Detail",
     "RetriesToSkip": "Times",
-    "NoGroupToDisplay": "NoGroupToDisplay"
+    "NoGroupToDisplay": "NoGroupToDisplay",
+    "AllowedSessionTypes": "Allowed session types"
   },
   "maintenance": {
     "General": "General",
