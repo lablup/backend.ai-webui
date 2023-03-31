@@ -2827,7 +2827,7 @@ class ContainerImage {
     if (Object.keys(resource).length === 0) {
       resource = {'cpu': '1', 'mem': '512m'};
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource, Infinity, architecture).then((response) => {
+    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
       return this.client.destroy(sessionId);
     }).catch(err => {
       throw err;
