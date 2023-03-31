@@ -31,7 +31,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Object}) controls = Object();

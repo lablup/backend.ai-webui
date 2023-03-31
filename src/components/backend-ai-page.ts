@@ -25,7 +25,7 @@ registerTranslateConfig({
 export class BackendAIPage extends LitElement {
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
 
   constructor() {

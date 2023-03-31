@@ -97,7 +97,7 @@ type SessionType = 'INTERACTIVE' | 'BATCH' | 'INFERENCE';
 
 @customElement('backend-ai-session-list')
 export default class BackendAISessionList extends BackendAIPage {
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
   @property({type: Array}) compute_sessions = [];

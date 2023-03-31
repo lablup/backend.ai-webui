@@ -57,7 +57,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 @customElement('backend-ai-session-view')
 export default class BackendAISessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) filterAccessKey = '';

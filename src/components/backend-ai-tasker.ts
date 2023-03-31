@@ -48,7 +48,7 @@ export default class BackendAiTasker extends LitElement {
   @property({type: Array}) taskstore;
   @property({type: Array}) finished;
   @property({type: Object}) pooler;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) isGCworking = false;
 
   /**

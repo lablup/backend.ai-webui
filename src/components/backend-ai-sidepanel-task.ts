@@ -31,7 +31,7 @@ import {
  */
 @customElement('backend-ai-sidepanel-task')
 export default class BackendAiSidepanelTask extends BackendAIPage {
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Array}) tasks = [];
 
   /**
