@@ -1827,6 +1827,40 @@ export default class BackendAISessionList extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  getUtilizationCheckerColor = (resources, thresholds_check_operator = null) => {
+    const colorMap = {
+      green: '#527A42',
+      yellow: '#D8B541',
+      red: '#e05d44',
+    };
+    if (!thresholds_check_operator) {
+      const [utilization, threshold] = resources;
+      if (utilization < threshold * 2) {
+        return colorMap.red;
+      } else if (utilization < threshold * 10) {
+        return colorMap.yellow;
+      } else {
+        return colorMap.green;
+      }
+    } else {
+      let color = colorMap.green;
+      if (thresholds_check_operator === 'and') {
+        if (Object.values(resources).every(([util, thres]) => util < Math.min(thres * 2, thres + 5))) {
+          color = colorMap.red;
+        } else if (Object.values(resources).every(([util, thres]) => util < Math.min(thres * 10, thres + 10))) {
+          color = colorMap.yellow;
+        }
+      } else if (thresholds_check_operator === 'or') {
+        if (Object.values(resources).some(([util, thres]) => util < Math.min(thres * 2, thres + 5))) {
+          color = colorMap.red;
+        } else if (Object.values(resources).some(([util, thres]) => util < Math.min(thres * 10, thres + 10))) {
+          color = colorMap.yellow;
+        }
+      }
+      return color;
+    }
+  };
+
   /**
    * Create dropdown menu that shows utilization and thresholds of Utilization Idle Checks.
    * Added menu to document.body to show at the top.
@@ -1837,6 +1871,7 @@ export default class BackendAISessionList extends BackendAIPage {
   _createUtilizationIdleCheckDropdown(e, utilizationExtra) {
     // Prevent re-rendering
     if (document.getElementsByClassName('util-dropdown-menu').length > 0) return;
+
     const menuDiv: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as Menu;
     menu.anchor = menuDiv;
@@ -1860,19 +1895,27 @@ export default class BackendAISessionList extends BackendAIPage {
       menu.appendChild(headerListItem);
 
       Object.keys(utilizationExtra).map((item) => {
-        const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
-        const threshold = utilizationExtra[item][1];
-        const color = !isNaN(+utilization) &&
-                      !isNaN(+threshold) &&
-                      threshold !== 0 &&
-                      (+utilization - threshold) / threshold < 1 ? '#e05d44' : '#222222';
-
+        let [utilization, threshold] = utilizationExtra[item];
+        utilization = utilization >= 0 ? parseFloat(utilization).toFixed(1) : '-';
+        const color = this.getUtilizationCheckerColor([utilization, threshold]);
         const listItem = document.createElement('mwc-list-item');
         listItem.style.height = '25px';
         listItem.style.border = 'none';
         listItem.style.boxShadow = 'none';
         listItem.innerHTML = `
-          <div style="display:flex;flex-direction:row;justify-content:center;justify-content:space-between;font-size:12px;font-family:var(--general-font-family);font-weight:400;min-width:155px;">
+          <style>
+            .util-dropdown-menu {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              justify-content: space-between;
+              font-size: 12px;
+              font-family: var(--general-font-family);
+              font-weight: 400;
+              min-width: 155px;
+            }
+          </style>
+          <div class="util-dropdown-menu">
             <div>${this.idleChecksTable[item]}</div>
             <div style="color:${color};">
               ${utilization} / ${threshold}
@@ -2415,6 +2458,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   idleChecksRenderer(root, column?, rowData?) {
+    console.log('# idleChecksRenderer')
     let contents = '';
     Object.keys(rowData.item.idle_checks)?.map((key) => {
       const checkerInfo = rowData.item.idle_checks[key];
@@ -2424,11 +2468,22 @@ export default class BackendAISessionList extends BackendAIPage {
 
       const remainingSeconds = globalThis.backendaiclient.utils.elapsedTimeToTotalSeconds(remaining);
       const remainingTimeType = checkerInfo?.remaining_time_type;
-      let remainingColor = remainingSeconds < 3600 ? '#e05d44' : '#222222';
-      if (key === 'utilization') {
-        const extraUtilInfo = checkerInfo?.extra;
-        // TODO: Change color based on the current utilization value and threshold
+
+      // Determine color based on remaining time.
+      let remainingColor = '#527A42';
+      if (!remainingSeconds || remainingSeconds < 3600) {
+        remainingColor = '#e05d44';
+      } else if (remainingSeconds < 3600 * 4) {
+        remainingColor = '#D8B541';
       }
+
+      // Determine color based on resource utilization.
+      if (key === 'utilization' && checkerInfo?.extra && remainingSeconds < 3600 * 4) {
+        remainingColor = this.getUtilizationCheckerColor(
+          checkerInfo?.extra?.resources, checkerInfo?.extra?.thresholds_check_operator
+        );
+      }
+
       if (key in this.idleChecksTable) {
         contents += `
           <div class="layout vertical" style="padding:3px auto;">
