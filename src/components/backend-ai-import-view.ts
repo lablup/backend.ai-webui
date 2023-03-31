@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -12,12 +12,6 @@ import {BackendAIPage} from './backend-ai-page';
 import LablupLoadingSpinner from './lablup-loading-spinner';
 import BackendAiResourceMonitor from './backend-ai-resource-monitor';
 import BackendAiSessionLauncher from './backend-ai-session-launcher';
-
-/**
- * FIXME: Is it okay to get rid of import statement for unused UI component?
- */
-import 'weightless/card';
-import './backend-ai-chart';
 
 /**
  * FIXME: Repeated import statement(s) is/are needed
@@ -276,7 +270,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   _fetchNotebookURLResource(downloadURL) {
-    fetch(downloadURL).then((res) => {
+    fetch(downloadURL).then(() => {
       this.notification.text = _text('import.ReadyToImport');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -284,7 +278,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
-    }).catch((err) => {
+    }).catch(() => {
       this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -443,7 +437,7 @@ export default class BackendAIImport extends BackendAIPage {
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
-    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+    return globalThis.backendaiclient.get_resource_slots().then(() => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000, undefined);
@@ -617,13 +611,14 @@ export default class BackendAIImport extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
         <div slot="message">
           <div class="horizontal wrap layout center">
             <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
                            autoValidate validationMessage="${_text('import.WrongURLType')}"
                            pattern="^(https?):\/\/([\\w\.\/\-]{1,})\.ipynb$"
-                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
+                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
                            @change="${(e) => this.urlTextfieldChanged(e, 'import-notebook-button', 'importNotebookMessage')}"></mwc-textfield>
             <mwc-button id="import-notebook-button" disabled icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
               <span>${_t('import.GetAndRunNotebook')}</span>
@@ -649,7 +644,7 @@ export default class BackendAIImport extends BackendAIPage {
               <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
                              pattern="^(https?):\/\/([\\w\.\/\-]{1,})\.ipynb$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
                              @change="${(e) => this.urlTextfieldChanged(e, 'create-notebook-button')}"></mwc-textfield>
               <mwc-button id="create-notebook-button" disabled fullwidth @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
               <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
@@ -667,8 +662,8 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})\.git$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
+                             pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})$"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
                              @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button', 'importGithubMessage')}"></mwc-textfield>
               <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
                 ${this.vhosts.map((item, idx) => html `
@@ -694,8 +689,8 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})\.git$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}" 
+                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})$"
+                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
                              @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', 'importGitlabMessage')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
                              maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>

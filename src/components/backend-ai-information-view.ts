@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -150,6 +150,7 @@ export default class BackendAiInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal layout flex wrap">
         <div class="vertical layout">
           <lablup-activity-panel title="${_t('information.Core')}" horizontalsize="1x">

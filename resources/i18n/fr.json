@@ -57,7 +57,10 @@
       "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
       "PasswordChangePlace": "__NOT_TRANSLATED__",
-      "AgentSummary": "__NOT_TRANSLATED__"
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "CONNEXION REQUISE",
     "YouAreOffline": "Vous êtes maintenant hors ligne",
@@ -109,7 +112,9 @@
     "AcceptSharedVFolder": "Vous pouvez maintenant accéder au dossier :",
     "DeclineSharedVFolder": "L'invitation au dossier est supprimée :",
     "connectingToCluster": "Connexion au cluster Backend.AI...",
-    "DownloadWebUIApp": "__NOT_TRANSLATED__"
+    "DownloadWebUIApp": "__NOT_TRANSLATED__",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -235,7 +240,13 @@
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
       "ScheduleTime": "__NOT_TRANSLATED__",
-      "Architecture": "__NOT_TRANSLATED__"
+      "Architecture": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__"
     },
     "Preparing": "En train de préparer...",
     "PreparingSession": "Séance de préparation...",
@@ -271,7 +282,8 @@
       "AppMustBeRun": "Démarrer uniquement lorsque l'application est déjà en cours d'exécution",
       "AppMustBeRunDialog": "Cette application n'est accessible et utilisée que si elle est déjà en cours d'exécution via le terminal. Sinon, vous serez dirigé vers une page d'erreur qui se produit lorsque l'application n'est pas en cours d'exécution.",
       "ConfirmAndRun": "j'ai vérifié et je vais commencer",
-      "Prepared": "Préparé"
+      "Prepared": "Préparé",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "Répertoire des journaux pour TensorBoard",
     "InputTensorboardPath": "Veuillez saisir le répertoire de journal auquel TensorBoard fera référence. Notez que le répertoire des journaux ne sera pas automatiquement créé.",
@@ -322,7 +334,23 @@
     "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
     "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
     "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
-    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__"
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "BypassAuthentication": "__NOT_TRANSLATED__",
+    "App": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__",
+    "UtilizationIdleChecks": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "Threshold": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -354,7 +382,10 @@
     "GoBackToSummaryPage": "Revenir à la page Résumé",
     "ForceTerminate": "Forcer l'arrêt",
     "Commit": "__NOT_TRANSLATED__",
-    "Reset": "Réinitialisation"
+    "Reset": "Réinitialisation",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Point de terminaison",
@@ -378,7 +409,8 @@
     "NoAgentToDisplay": "__NOT_TRANSLATED__",
     "Utilization": "__NOT_TRANSLATED__",
     "NoAvailableLiveStat": "__NOT_TRANSLATED__",
-    "Allocation": "__NOT_TRANSLATED__"
+    "Allocation": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "cœurs",
@@ -478,7 +510,10 @@
     "RateLimitInputRequired": "__NOT_TRANSLATED__",
     "InvalidRateLimitValue": "__NOT_TRANSLATED__",
     "WarningLessRateLimit": "__NOT_TRANSLATED__",
-    "KeypairDetail": "__NOT_TRANSLATED__"
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Dossiers",
@@ -556,7 +591,9 @@
       "FolderUsing": "__NOT_TRANSLATED__",
       "NoFolderToDisplay": "__NOT_TRANSLATED__",
       "FolderInfo": "__NOT_TRANSLATED__",
-      "OpenAFolder": "__NOT_TRANSLATED__"
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Effacer...",
@@ -617,7 +654,17 @@
       "NoChanges": "Aucune modification apportée",
       "PermissionModified": "Autorisation mise à jour"
     },
-    "NoStorageDescriptionFound": "Pas de description."
+    "NoStorageDescriptionFound": "Pas de description.",
+    "DialogModelFolder": "__NOT_TRANSLATED__",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {
@@ -763,7 +810,9 @@
     "DescAutoLogout": "Déconnectez-vous automatiquement si toutes les pages connectées sont fermées, à l'exception des pages d'origine de session pour les applications (par exemple, bloc-notes jupyter, terminal Web, etc.)",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
     "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
-    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__"
+    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Utilisation avancée du terminal Web : copier le contenu du terminal",
@@ -878,7 +927,8 @@
     "TimeoutSeconds": "Seconds",
     "ResourceGroupDetail": "Détail du groupe de ressources",
     "RetriesToSkip": "__NOT_TRANSLATED__",
-    "NoGroupToDisplay": "__NOT_TRANSLATED__"
+    "NoGroupToDisplay": "__NOT_TRANSLATED__",
+    "AllowedSessionTypes": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Général",
@@ -1017,7 +1067,13 @@
     "OverlayNetworkSettings": "__NOT_TRANSLATED__",
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
-    "OutOfRange": "__NOT_TRANSLATED__"
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
@@ -1270,5 +1326,15 @@
     "ValueRequired": "ValeurRequis",
     "InputTooShort": "Entrée Trop Courte"
   },
-  "OpenVSCodeRemote": "__NOT_TRANSLATED__"
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
+  }
 }
