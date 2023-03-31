@@ -1494,7 +1494,7 @@ export default class BackendAISessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
-  static parseMessage(string) {
+  static escapeText(string) {
     const entityMap = {
       '&': '&amp;',
       '<': '&lt;',
@@ -1548,7 +1548,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span class="monospace predicate-check-comment" slot="secondary">${BackendAISessionList.parseMessage(`${tmpSessionStatus.scheduler.msg}`)}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${BackendAISessionList.escapeText(`${tmpSessionStatus.scheduler.msg}`)}</span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
