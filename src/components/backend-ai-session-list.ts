@@ -2478,7 +2478,11 @@ export default class BackendAISessionList extends BackendAIPage {
       }
 
       // Determine color based on resource utilization.
-      if (key === 'utilization' && checkerInfo?.extra && remainingSeconds < 3600 * 4) {
+      if (
+        key === 'utilization' &&
+        checkerInfo?.extra &&
+        (!remainingSeconds || remainingSeconds < 3600 * 4)
+      ) {
         remainingColor = this.getUtilizationCheckerColor(
           checkerInfo?.extra?.resources, checkerInfo?.extra?.thresholds_check_operator
         );
