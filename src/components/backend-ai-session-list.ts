@@ -3,7 +3,7 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html, render} from 'lit';
+import {css, CSSResultGroup, TemplateResult, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import '@vaadin/grid/vaadin-grid';
@@ -39,7 +39,6 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
-import {TemplateResult} from 'lit-element';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
