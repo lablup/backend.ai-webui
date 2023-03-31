@@ -1495,7 +1495,7 @@ export default class BackendAISessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
-  _renderStatusDetail() {html``
+  _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot?.querySelector('#status-detail') as HTMLDivElement;
@@ -1639,7 +1639,6 @@ export default class BackendAISessionList extends BackendAIPage {
         </div>
       `);
     }
-    console.log(statusDialogContent);
     render(statusDialogContent, statusDetailEl);
   }
 
