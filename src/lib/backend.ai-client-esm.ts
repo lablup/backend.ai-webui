@@ -2825,7 +2825,7 @@ class ContainerImage {
     registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = {'cpu': '1', 'mem': '512m'};
+      resource = {'cpu': '1', 'mem': '512m', 'enqueueOnly': true};
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
       return this.client.destroy(sessionId);
