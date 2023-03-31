@@ -1536,7 +1536,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.msg}</span>
+                  <span class="monospace predicate-check-comment predicate-detail-message" slot="secondary"></span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
@@ -1592,6 +1592,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </wl-expansion>
         </div>
     `;
+    (statusDetailEl.getElementsByClassName('predicate-detail-message')[0] as HTMLElement).innerText = tmpSessionStatus.scheduler.msg;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
         return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
@@ -2312,8 +2313,8 @@ export default class BackendAISessionList extends BackendAIPage {
           const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
           const threshold = utilizationExtra[item][1];
           const customColorPalette = {
-            "lightblutBackgounrdRedText": {"colorB": "#caedfc", "colorT": "#e05d44"},
-            "lightgreenBackgroundRedText": {"colorB": "#f3f5d0", "colorT": "#e05d44"},
+            'lightblutBackgounrdRedText': {'colorB': '#caedfc', 'colorT': '#e05d44'},
+            'lightgreenBackgroundRedText': {'colorB': '#f3f5d0', 'colorT': '#e05d44'},
           };
           const colorType = typeof utilization === 'number'
             && typeof threshold === 'number'
