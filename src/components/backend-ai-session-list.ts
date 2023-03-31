@@ -1536,7 +1536,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span id="predicate-check-comment" class="monospace predicate-check-comment" slot="secondary"></span>
+                  <span class="monospace predicate-check-comment predicate-detail-message" slot="secondary"></span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
@@ -1592,7 +1592,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </wl-expansion>
         </div>
     `;
-    statusDetailEl.querySelector('#predicate-check-comment').innerText = tmpSessionStatus.scheduler.msg;
+    (statusDetailEl.getElementsByClassName('predicate-detail-message')[0] as HTMLElement).innerText = tmpSessionStatus.scheduler.msg;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
         return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
