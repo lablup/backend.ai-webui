@@ -452,12 +452,12 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         .idle-check-key {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 500;
         }
 
         .idle-type {
-          font-size: 8px;
+          font-size: 11px;
           color: var(--paper-grey-600);
           font-weight: 400;
         }
@@ -597,7 +597,6 @@ export default class BackendAISessionList extends BackendAIPage {
       return;
     }
     this.refreshing = true;
-    console.log('# _refreshJobData', this.refreshing)
 
     let status: any;
     status = 'RUNNING';
@@ -2462,7 +2461,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   idleChecksRenderer(root, column?, rowData?) {
-    console.log('# idleChecksRenderer')
     let contents = '';
     Object.keys(rowData.item.idle_checks)?.map((key) => {
       const checkerInfo = rowData.item.idle_checks[key];
