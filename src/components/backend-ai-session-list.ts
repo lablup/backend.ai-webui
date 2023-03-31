@@ -1494,6 +1494,18 @@ export default class BackendAISessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
+  static parseMessage(string) {
+    const entityMap = {
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      '\'': '&#39;',
+      '/': '&#x2F;'
+    };
+    return String(string).replace(/[&<>"'\/]/g, (s) => entityMap[s]);
+  }
+
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
@@ -1536,7 +1548,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.msg}</span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${BackendAISessionList.parseMessage(`${tmpSessionStatus.scheduler.msg}`)}</span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
@@ -2312,8 +2324,8 @@ export default class BackendAISessionList extends BackendAIPage {
           const utilization = utilizationExtra[item][0] >= 0 ? parseFloat(utilizationExtra[item][0]).toFixed(1) : '-';
           const threshold = utilizationExtra[item][1];
           const customColorPalette = {
-            "lightblutBackgounrdRedText": {"colorB": "#caedfc", "colorT": "#e05d44"},
-            "lightgreenBackgroundRedText": {"colorB": "#f3f5d0", "colorT": "#e05d44"},
+            'lightblutBackgounrdRedText': {'colorB': '#caedfc', 'colorT': '#e05d44'},
+            'lightgreenBackgroundRedText': {'colorB': '#f3f5d0', 'colorT': '#e05d44'},
           };
           const colorType = typeof utilization === 'number'
             && typeof threshold === 'number'
