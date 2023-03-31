@@ -1494,18 +1494,6 @@ export default class BackendAISessionList extends BackendAIPage {
     while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
   }
 
-  static escapeText(string) {
-    const entityMap = {
-      '&': '&amp;',
-      '<': '&lt;',
-      '>': '&gt;',
-      '"': '&quot;',
-      '\'': '&#39;',
-      '/': '&#x2F;'
-    };
-    return String(string).replace(/[&<>"'\/]/g, (s) => entityMap[s]);
-  }
-
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
@@ -1548,7 +1536,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span class="monospace predicate-check-comment" slot="secondary">${BackendAISessionList.escapeText(`${tmpSessionStatus.scheduler.msg}`)}</span>
+                  <span id="predicate-check-comment" class="monospace predicate-check-comment" slot="secondary"></span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
@@ -1604,6 +1592,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </wl-expansion>
         </div>
     `;
+    statusDetailEl.querySelector('#predicate-check-comment').innerText = tmpSessionStatus.scheduler.msg;
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
       const sanitizeErrMsg = (msg) => {
         return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
