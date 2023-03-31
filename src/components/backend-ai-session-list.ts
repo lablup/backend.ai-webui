@@ -1827,14 +1827,17 @@ export default class BackendAISessionList extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
-  getUtilizationCheckerColor = (resources, thresholds_check_operator = null) => {
+  getUtilizationCheckerColor = (
+    resources: Record<string, [number, number]> | [number, number],
+    thresholds_check_operator: string | null = null,
+  ) => {
     const colorMap = {
       green: '#527A42',
       yellow: '#D8B541',
       red: '#e05d44',
     };
     if (!thresholds_check_operator) {
-      const [utilization, threshold] = resources;
+      const [utilization, threshold] = resources as [number, number];
       if (utilization < threshold * 2) {
         return colorMap.red;
       } else if (utilization < threshold * 10) {
