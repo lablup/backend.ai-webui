@@ -1886,48 +1886,55 @@ export default class BackendAISessionList extends BackendAIPage {
     menu.setAttribute('corner', 'BOTTOM_START');
 
     if (!globalThis.backendaiutils.isEmpty(utilizationExtra)) {
-      const headerListItem = document.createElement('mwc-list-item');
-      headerListItem.style.height = '25px';
-      headerListItem.style.border = 'none';
-      headerListItem.style.boxShadow = 'none';
-      headerListItem.style.justifyContent = 'flex-end';
-      headerListItem.innerHTML = `
-        <div style="font-size:13px;font-family:var(--general-font-family);font-weight:600;">
-          ${_text('session.Utilization')} / ${_text('session.Threshold')} (%)
-        </div>
+      const menuTemplate = html`
+        <style>
+          .util-detail-menu-header {
+            height: 25px;
+            border: none;
+            box-shadow: none;
+            justify-content: flex-end;
+          }
+          .util-detail-menu-header > div {
+            font-size: 13px;
+            font-family: var(--general-font-family);
+            font-weight: 600;
+          }
+          .util-detail-menu-content {
+            height: 25px;
+            border: none;
+            box-shadow: none;
+          }
+          .util-detail-menu-content > div {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            justify-content: space-between;
+            font-size: 12px;
+            font-family: var(--general-font-family);
+            font-weight: 400;
+            min-width: 155px;
+          }
+        </style>
+        <mwc-list-item class="util-detail-menu-header">
+          <div>${_text('session.Utilization')} / ${_text('session.Threshold')} (%)</div>
+        </mwc-list-item>${
+          Object.keys(utilizationExtra).map((item) => {
+            let [utilization, threshold] = utilizationExtra[item];
+            utilization = utilization >= 0 ? parseFloat(utilization).toFixed(1) : '-';
+            const color = this.getUtilizationCheckerColor([utilization, threshold]);
+            return html`
+              <mwc-list-item class="util-detail-menu-content">
+                <div>
+                  <div>${this.idleChecksTable[item]}</div>
+                  <div style="color:${color}">${utilization} / ${threshold}</div>
+                </div>
+              </mwc-list-item>
+            `;
+          })
+        }
       `;
-      menu.appendChild(headerListItem);
-
-      Object.keys(utilizationExtra).map((item) => {
-        let [utilization, threshold] = utilizationExtra[item];
-        utilization = utilization >= 0 ? parseFloat(utilization).toFixed(1) : '-';
-        const color = this.getUtilizationCheckerColor([utilization, threshold]);
-        const listItem = document.createElement('mwc-list-item');
-        listItem.style.height = '25px';
-        listItem.style.border = 'none';
-        listItem.style.boxShadow = 'none';
-        listItem.innerHTML = `
-          <style>
-            .util-dropdown-menu {
-              display: flex;
-              flex-direction: row;
-              justify-content: center;
-              justify-content: space-between;
-              font-size: 12px;
-              font-family: var(--general-font-family);
-              font-weight: 400;
-              min-width: 155px;
-            }
-          </style>
-          <div class="util-dropdown-menu">
-            <div>${this.idleChecksTable[item]}</div>
-            <div style="color:${color};">
-              ${utilization} / ${threshold}
-          </div>
-        `;
-        menu.appendChild(listItem);
-      });
       document.body.appendChild(menu);
+      render(menuTemplate, menu);
     }
   }
 
@@ -2451,7 +2458,8 @@ export default class BackendAISessionList extends BackendAIPage {
           </div>
           <mwc-icon-button class="fg grey" icon="info" @click="${() => this._openIdleChecksInfoDialog()}"></mwc-icon-button>
         </div>
-      `, root);
+      `, root
+    );
   }
 
   /**
@@ -2462,6 +2470,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   idleChecksRenderer(root, column?, rowData?) {
+    console.log('idleChecksRenderer')
     let contents = '';
     Object.keys(rowData.item.idle_checks)?.map((key) => {
       const checkerInfo = rowData.item.idle_checks[key];
