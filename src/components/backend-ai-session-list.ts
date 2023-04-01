@@ -1618,7 +1618,7 @@ export default class BackendAISessionList extends BackendAIPage {
                 ${item.traceback ? html`
                   <div class="vertical layout start">
                     <span class="subheading">Traceback</span>
-                    <span>${item.traceback}</span>
+                    <pre style="display: block; overflow: auto; width: 100%; height: 400px;">${item.traceback}</pre>
                   </div>
                 `: html``}
               </div>
