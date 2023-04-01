@@ -2470,7 +2470,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    * */
   idleChecksRenderer(root, column?, rowData?) {
-    console.log('idleChecksRenderer')
     const contentTemplates = Object.keys(rowData.item.idle_checks)?.map((key) => {
       const checkerInfo = rowData.item.idle_checks[key];
       const remaining = checkerInfo?.remaining;
@@ -2522,7 +2521,6 @@ export default class BackendAISessionList extends BackendAIPage {
     });
 
     const contentTemplate = html`${contentTemplates}`;
-    console.log(contentTemplates)
     render(contentTemplate, root);
 
     const utilization = root.querySelector('#utilization');
