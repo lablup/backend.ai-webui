@@ -37,7 +37,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 class BackendAiResourcePresetList extends BackendAIPage {
   @property({type: Array}) resourcePolicy = {};
   @property({type: Boolean}) is_admin = false;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) gpu_allocatable = false;
   @property({type: String}) gpuAllocationMode = 'device';
   @property({type: String}) condition = '';

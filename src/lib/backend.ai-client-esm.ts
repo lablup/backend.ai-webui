@@ -17,7 +17,7 @@ type requestInfo = {
   cache?: RequestCache | undefined,
   uri: string,
   credentials?: RequestCredentials | undefined,
-  signal?:AbortController["signal"] | undefined,
+  signal?: AbortController["signal"] | undefined,
 };
 
 
@@ -278,7 +278,7 @@ class Client {
    * @param {number} retry - an integer to retry this request
    * @param {Object} opts - Options
    */
-  async _wrapWithPromise(rqst: requestInfo, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts ={}) {
+  async _wrapWithPromise(rqst: requestInfo, rawFile = false, signal = null, timeout: number = 0, retry: number = 0, opts = {}) {
     let errorType = Client.ERR_REQUEST;
     let errorTitle = '';
     let errorMsg;
@@ -315,7 +315,7 @@ class Client {
       if (!rawFile && contentType === null) {
         body = await resp.blob();
       } else if (!rawFile && (contentType?.startsWith('application/json') ||
-          contentType?.startsWith('application/problem+json'))) {
+        contentType?.startsWith('application/problem+json'))) {
         body = await resp.json(); // Formatted error message from manager
         errorType = body.type;
         errorTitle = body.title;
@@ -392,7 +392,7 @@ class Client {
         default:
           if (typeof resp.status === 'undefined') {
             resp.status = 500;
-            resp.statusText =  'Server error';
+            resp.statusText = 'Server error';
           }
           if (errorType === '') {
             errorType = Client.ERR_UNKNOWN;
@@ -427,7 +427,7 @@ class Client {
         previous_log = previous_log.slice(1, 3000);
       }
     }
-    let log_stack : Record<string, unknown>[] = [];
+    let log_stack: Record<string, unknown>[] = [];
     if (typeof (resp) === 'undefined') {
       resp = {
         status: 'No status',
@@ -444,14 +444,14 @@ class Client {
       "statusCode": resp.status,
       "statusText": resp.statusText,
       "title": body.title,
-      "message" : ""
+      "message": ""
     };
     if ('log' in opts) {
       current_log.requestParameters = opts['log'];
     }
     log_stack.push(current_log);
 
-    if(previous_log) {
+    if (previous_log) {
       log_stack = log_stack.concat(previous_log);
     }
     try {
@@ -464,9 +464,9 @@ class Client {
       localStorage.setItem('backendaiwebui.logs', JSON.stringify(webuiLogs));
       // Deprecated backendaiconsole.* should also be cleared here.
       Object.entries(localStorage)
-          .map((x) => x[0])                                // get key
-          .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiwebui
-          .map((x) => localStorage.removeItem(x));         // remove filtered keys
+        .map((x) => x[0])                                // get key
+        .filter((x) => x.startsWith('backendaiconsole')) // filter keys start with backendaiwebui
+        .map((x) => localStorage.removeItem(x));         // remove filtered keys
 
       // Will not throw exception here since the request should be proceeded
       // even if it is not possible to write log to localStorage.
@@ -668,14 +668,16 @@ class Client {
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
-      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON. stringify({
-        'username': this._config.userId,
-        'password': '********'
-      })});
+      result = await this._wrapWithPromise(rqst, false, null, 0, 0, {
+        'log': JSON.stringify({
+          'username': this._config.userId,
+          'password': '********'
+        })
+      });
       if (result.authenticated === true) {
         if (result.data.role === 'monitor') {
           this.logout();
-          return Promise.resolve({fail_reason: 'Monitor user does not allow to login.'});
+          return Promise.resolve({ fail_reason: 'Monitor user does not allow to login.' });
         }
         await this.get_manager_version();
         if (this._loginSessionId !== null && this._loginSessionId !== '') {
@@ -685,7 +687,7 @@ class Client {
       } else if (result.authenticated === false) { // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({fail_reason: result.data.details});
+          return Promise.resolve({ fail_reason: result.data.details });
         } else {
           return Promise.resolve(false);
         }
@@ -717,7 +719,7 @@ class Client {
     // clean up log msg for security reason
     const currentLogs = localStorage.getItem('backendaiwebui.logs');
     if (currentLogs) {
-       localStorage.removeItem('backendaiwebui.logs');
+      localStorage.removeItem('backendaiwebui.logs');
     }
     localStorage.removeItem('backendaiwebui.sessionid');
     return this._wrapWithPromise(rqst);
@@ -737,7 +739,7 @@ class Client {
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
         if (result.data && result.data.details) {
-          return Promise.resolve({fail_reason: result.data.details});
+          return Promise.resolve({ fail_reason: result.data.details });
         } else {
           return Promise.resolve(false);
         }
@@ -804,14 +806,14 @@ class Client {
   }
 
   async activate_totp(otp) {
-    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
+    let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
     return this._wrapWithPromise(rqst);
   }
 
-  async remove_totp(email=null) {
+  async remove_totp(email = null) {
     let rqstUrl = '/totp';
     if (email) {
-      const params = {email: email};
+      const params = { email: email };
       const q = new URLSearchParams(params).toString();
       rqstUrl += `?${q}`;
     }
@@ -923,7 +925,7 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
-      params['config'] = {resources: config};
+      params['config'] = { resources: config };
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -963,7 +965,7 @@ class Client {
   async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
     if (typeof sessionName === 'undefined' || sessionName === null)
       sessionName = this.generateSessionId();
-    const params = {template_id: templateId};
+    const params = { template_id: templateId };
     if (image) {
       params['image'] = image;
     }
@@ -1030,7 +1032,7 @@ class Client {
         params['owner_access_key'] = resources['owner_access_key'];
       }
       // params['config'] = {};
-      params['config'] = {resources: config};
+      params['config'] = { resources: config };
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -1098,7 +1100,7 @@ class Client {
    * @param {string|null} ownerKey - owner key when terminating other users' session
    * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
-  async destroy(sessionId, ownerKey = null, forced:boolean = false) {
+  async destroy(sessionId, ownerKey = null, forced: boolean = false) {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey !== null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
@@ -1146,7 +1148,7 @@ class Client {
       "options": opts,
     };
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params, null);
-	return this._wrapWithPromise(rqst, false, null, timeout);
+    return this._wrapWithPromise(rqst, false, null, timeout);
   }
 
   // legacy aliases (DO NOT USE for new codes)
@@ -1414,12 +1416,14 @@ class Client {
 
   getEncodedPayload(body) {
     let iv = this.generateRandomStr(16);
-    let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32);
+    let key = (btoa(this._config.endpoint) + iv + iv).substring(0, 32);
     let result = CryptoES.AES.encrypt(body,
       CryptoES.enc.Utf8.parse(key),
-      { iv: CryptoES.enc.Utf8.parse(iv),
+      {
+        iv: CryptoES.enc.Utf8.parse(iv),
         padding: CryptoES.pad.Pkcs7,
-        mode: CryptoES.mode.CBC});
+        mode: CryptoES.mode.CBC
+      });
     return (iv + ':' + result.toString());
   }
 
@@ -1460,7 +1464,7 @@ class Client {
     return text;
   }
 
-  generateSessionId(length=8, nosuffix=false) {
+  generateSessionId(length = 8, nosuffix = false) {
     let text = this.generateRandomStr(length);
     return nosuffix ? text : text + "-jsSDK";
   }
@@ -1473,7 +1477,7 @@ class Client {
     return text.toString().toLowerCase()
       .replace(/\s+/g, '-')           // Replace spaces with -
       .replace(p, c =>
-          b.charAt(a.indexOf(c)))     // Replace special chars
+        b.charAt(a.indexOf(c)))     // Replace special chars
       .replace(/&/g, '-and-')         // Replace & with 'and'
       .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
       .replace(/\-\-+/g, '-')         // Replace multiple - with single -
@@ -1773,7 +1777,7 @@ class VFolder {
    * @param {string} new_name - New virtual folder name.
    */
   async rename(new_name = null) {
-    const body = {new_name};
+    const body = { new_name };
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1908,9 +1912,9 @@ class VFolder {
     }
     let body;
     if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
-      body = {target_path, new_name, is_dir};
+      body = { target_path, new_name, is_dir };
     } else {
-      body = {target_path, new_name};
+      body = { target_path, new_name };
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1948,7 +1952,7 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = {'file':file, 'archive': (archive ? 'true': 'false')};
+    const params = { 'file': file, 'archive': (archive ? 'true' : 'false') };
     const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
       const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
@@ -2002,7 +2006,7 @@ class VFolder {
    * @param {string} token - Temporary token to download specific file.
    */
   get_download_url_with_token(token: string = '') {
-    const params = {token};
+    const params = { token };
     let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
@@ -2118,7 +2122,7 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = {permission, emails};
+    const body = { permission, emails };
     const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/share`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2133,7 +2137,7 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = {emails};
+    const body = { emails };
     const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2146,7 +2150,7 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    */
   async get_quota(host, vfolder_id) {
-    const params = {folder_host: host, id: vfolder_id};
+    const params = { folder_host: host, id: vfolder_id };
     let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
     return this.client._wrapWithPromise(rqst);
@@ -2192,7 +2196,7 @@ class Agent {
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout: number = 0) {
     if (['ALIVE', 'TERMINATED'].includes(status) === false) {
       return Promise.resolve(false);
     }
@@ -2201,7 +2205,7 @@ class Agent {
       `     ${fields.join(" ")}` +
       `  }` +
       `}`;
-    let v = {'status': status};
+    let v = { 'status': status };
     return this.client.query(q, v, null, timeout);
   }
 
@@ -2214,7 +2218,7 @@ class Agent {
    *   'schedulable': schedulable
    * };
    */
-   async update(id = null, input) {
+  async update(id = null, input) {
     if (this.client.is_superadmin === true && id !== null) {
       let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
         `  modify_agent(id: $id, props: $input) {` +
@@ -2254,7 +2258,7 @@ class AgentSummary {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots", "architecture"],
-              limit = 20, offset = 0, timeout:number = 0) {
+    limit = 20, offset = 0, timeout: number = 0) {
     let f = fields.join(' ');
     if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
       f.replace('schedulable', '');
@@ -2269,10 +2273,10 @@ class AgentSummary {
         }
       }`;
     let v = {
-        'limit': limit,
-        'offset': offset,
-        'status': status,
-      };
+      'limit': limit,
+      'offset': offset,
+      'status': status,
+    };
     return this.client.query(q, v, null, timeout);
   }
 }
@@ -2316,13 +2320,13 @@ class StorageProxy {
    * @param {string} host - Virtual folder host.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
    */
-  async detail(host :string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
+  async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
     let q = `query($vfolder_host: String!) {` +
       `  storage_volume(id: $vfolder_host) {` +
       `     ${fields.join(" ")}` +
       `  }` +
       `}`;
-    let v = {'vfolder_host': host};
+    let v = { 'vfolder_host': host };
     return this.client.query(q, v);
   }
 
@@ -2450,7 +2454,7 @@ class Keypair {
         }
       `;
       // Prevent fetching more than 1000 keypairs.
-      for (let offset = 0; offset < 10 * limit; offset+=limit) {
+      for (let offset = 0; offset < 10 * limit; offset += limit) {
         v = {
           offset, limit,
           email: userId || this.client.email,
@@ -2462,7 +2466,7 @@ class Keypair {
           break;
         }
       }
-      const resp = {keypairs};
+      const resp = { keypairs };
       return Promise.resolve(resp);
     }
   }
@@ -2477,7 +2481,7 @@ class Keypair {
    * @param {integer} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-            rateLimit = 1000) {
+    rateLimit = 1000) {
     let fields = [
       'is_active',
       'is_admin',
@@ -2486,46 +2490,46 @@ class Keypair {
       'rate_limit'
     ];
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
-    `  create_keypair(user_id: $user_id, props: $input) {` +
-    `    ok msg keypair { ${fields.join(" ")} }` +
-    `  }` +
-    `}`;
-  let v = {
-    'user_id': userId,
-    'input': {
-      'is_active': isActive,
-      'is_admin': isAdmin,
-      'resource_policy': resourcePolicy,
-      'rate_limit': rateLimit,
-    },
-  };
-  return this.client.query(q, v);
+      `  create_keypair(user_id: $user_id, props: $input) {` +
+      `    ok msg keypair { ${fields.join(" ")} }` +
+      `  }` +
+      `}`;
+    let v = {
+      'user_id': userId,
+      'input': {
+        'is_active': isActive,
+        'is_admin': isAdmin,
+        'resource_policy': resourcePolicy,
+        'rate_limit': rateLimit,
+      },
+    };
+    return this.client.query(q, v);
     /** accessKey is no longer used */
     /*
     if (accessKey !== null && accessKey !== '') {
       fields = fields.concat(['access_key', 'secret_key']);
     } */
-     /* if (accessKey !== null && accessKey !== '') {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit,
-        },
-      };
-    } else {
-      v = {
-        'user_id': userId,
-        'input': {
-          'is_active': isActive,
-          'is_admin': isAdmin,
-          'resource_policy': resourcePolicy,
-          'rate_limit': rateLimit
-        },
-      };
-    } */
+    /* if (accessKey !== null && accessKey !== '') {
+     v = {
+       'user_id': userId,
+       'input': {
+         'is_active': isActive,
+         'is_admin': isAdmin,
+         'resource_policy': resourcePolicy,
+         'rate_limit': rateLimit,
+       },
+     };
+   } else {
+     v = {
+       'user_id': userId,
+       'input': {
+         'is_active': isActive,
+         'is_admin': isAdmin,
+         'resource_policy': resourcePolicy,
+         'rate_limit': rateLimit
+       },
+     };
+   } */
   }
 
   /**
@@ -2608,12 +2612,12 @@ class ResourcePolicy {
       q = `query {` +
         `  keypair_resource_policies { ${fields.join(" ")} }` +
         '}';
-      v = {'n': name};
+      v = { 'n': name };
     } else {
       q = `query($n:String!) {` +
         `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
         '}';
-      v = {'n': name};
+      v = { 'n': name };
     }
     return this.client.query(q, v);
   }
@@ -2706,7 +2710,7 @@ class ResourcePolicy {
    */
   async delete(name = null) {
     if (this.client.is_superadmin === true && name !== null) {
-      let q =`mutation($name: String!) {` +
+      let q = `mutation($name: String!) {` +
         ` delete_keypair_resource_policy(name: $name) {` +
         `   ok msg ` +
         ` }` +
@@ -2748,12 +2752,12 @@ class ContainerImage {
         q = `query($installed:Boolean) {` +
           `  images(is_installed:$installed) { ${fields.join(" ")} }` +
           '}';
-        v = {'installed': installed_only, 'is_operation': system_images};
+        v = { 'installed': installed_only, 'is_operation': system_images };
       } else {
         q = `query {` +
           `  images { ${fields.join(" ")} }` +
           '}';
-        v = {'is_operation': system_images};
+        v = { 'is_operation': system_images };
       }
     } else {
       q = `query {` +
@@ -2825,7 +2829,7 @@ class ContainerImage {
     registry = registry.replace(/:/g, "%3A");
     let sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = {'cpu': '1', 'mem': '512m'};
+      resource = { 'cpu': '1', 'mem': '512m' };
     }
     return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
       return this.client.destroy(sessionId);
@@ -2918,7 +2922,7 @@ class ComputeSession {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"],
-             status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
+    status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -2953,8 +2957,8 @@ class ComputeSession {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-                status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
-                accessKey = '', limit = 100, offset = 0, group = '', timeout:number = 0) {
+    status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
+    accessKey = '', limit = 100, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     if (!this.client.supports('avoid-hol-blocking')) {
       status.replace('SCHEDULED,', '');
@@ -2971,8 +2975,8 @@ class ComputeSession {
     }`;
 
     // Prevent fetching more than 1000 sessions.
-    for (let offset = 0; offset < 10 * limit; offset+=limit) {
-      v = {limit, offset, status};
+    for (let offset = 0; offset < 10 * limit; offset += limit) {
+      v = { limit, offset, status };
       if (accessKey != '') {
         v.access_key = accessKey;
       }
@@ -2982,7 +2986,7 @@ class ComputeSession {
       const session = await this.client.query(q, v, null, timeout);
       sessions.push(...session.compute_session_list.items);
       if (offset >= session.compute_session_list.total_count) {
-          break;
+        break;
       }
     }
     return Promise.resolve(sessions);
@@ -2995,7 +2999,7 @@ class ComputeSession {
    * @param {string} sessionUuid - session ID to query specific compute session.
    */
   async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"],
-            sessionUuid = '') {
+    sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($session_uuid: UUID!) {
@@ -3003,7 +3007,7 @@ class ComputeSession {
         ${fields.join(" ")}
       }
     }`;
-    v = {session_uuid: sessionUuid};
+    v = { session_uuid: sessionUuid };
     return this.client.query(q, v);
   }
 
@@ -3071,15 +3075,15 @@ class SessionTemplate {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(listall=false, groupId=null) {
+  async list(listall = false, groupId = null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = {'all': (listall ?  'true': 'false')};
+      const params = { 'all': (listall ? 'true' : 'false') };
       const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     if (groupId) {
-      const params = {group_id: groupId};
+      const params = { group_id: groupId };
       const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
@@ -3278,13 +3282,13 @@ class Group {
    * };
    */
   async list(is_active = true, domain_name = false,
-             fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
+    fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($is_active:Boolean) {` +
         `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
         '}';
-      v = {'is_active': is_active};
+      v = { 'is_active': is_active };
       if (domain_name !== false) {
         q = `query($domain_name: String, $is_active:Boolean) {` +
           `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
@@ -3298,7 +3302,7 @@ class Group {
       q = `query($is_active:Boolean) {` +
         `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
         '}';
-      v = {'is_active': is_active};
+      v = { 'is_active': is_active };
     }
     return this.client.query(q, v);
   }
@@ -3335,14 +3339,14 @@ class Domain {
    * };
    */
   async get(domain_name = false,
-            fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-              'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+    fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
+      'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
     let q, v;
     if (domain_name !== false) {
       q = `query($name: String) {` +
         `  domain(name: $name) { ${fields.join(" ")} }` +
         '}';
-      v = {'name': domain_name};
+      v = { 'name': domain_name };
       return this.client.query(q, v);
     }
   }
@@ -3416,7 +3420,7 @@ class Maintenance {
   attach_background_task(task_id: string) {
     var urlStr = "/events/background-task?task_id=" + task_id;
     let req = this.client.newSignedRequest("GET", urlStr, null);
-    return new EventSource(req.uri, {withCredentials:true});
+    return new EventSource(req.uri, { withCredentials: true });
   }
 
   /**
@@ -3444,7 +3448,7 @@ class Maintenance {
           `}`;
         v = {};
       }
-      return this.client.query(q, v, null, 600 * 1000 );
+      return this.client.query(q, v, null, 600 * 1000);
     } else {
       return Promise.resolve(false);
     }
@@ -3490,7 +3494,7 @@ class User {
    * };
    */
   async list(is_active = true,
-             fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
+    fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
       q = this.client.is_admin ? `
@@ -3525,15 +3529,15 @@ class User {
         }
       `;
       // Prevent fetching more than 1000 users.
-      for (let offset = 0; offset < 10 * limit; offset+=limit) {
-        v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
+      for (let offset = 0; offset < 10 * limit; offset += limit) {
+        v = this.client.is_admin ? { offset, limit, is_active } : { offset, limit };
         const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
         if (offset >= page.user_list.total_count) {
           break;
         }
       }
-      const resp = {users};
+      const resp = { users };
       return Promise.resolve(resp);
     }
   }
@@ -3566,7 +3570,7 @@ class User {
       q = `query($email:String) {` +
         `  user (email:$email) { ${fields.join(" ")} }` +
         '}';
-      v = {'email': email};
+      v = { 'email': email };
     } else {
       q = `query {` +
         `  user { ${fields.join(" ")} }` +
@@ -3711,7 +3715,7 @@ class ScalingGroup {
    */
   async getWsproxyVersion(scalingGroup, groupId) {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
+      return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
     }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
     const rqst = this.client.newSignedRequest("GET", url, null, null);
@@ -3783,7 +3787,7 @@ class ScalingGroup {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       delete input.wsproxy_addr;
       if (Object.keys(input).length < 1) {
-        return Promise.resolve({modify_scaling_group: {ok: true}});
+        return Promise.resolve({ modify_scaling_group: { ok: true } });
       }
     }
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
@@ -3826,7 +3830,7 @@ class Registry {
   }
 
   async list() {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": "config/docker/registry", "prefix": true});
+    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": "config/docker/registry", "prefix": true });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3870,7 +3874,7 @@ class Setting {
    */
   async list(prefix = "") {
     prefix = `config/${prefix}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": prefix, "prefix": true});
+    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": prefix, "prefix": true });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3881,7 +3885,7 @@ class Setting {
    */
   async get(key) {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {"key": key, "prefix": false});
+    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": key, "prefix": false });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3893,7 +3897,7 @@ class Setting {
    */
   async set(key, value) {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {key, value});
+    const rqst = this.client.newSignedRequest("POST", "/config/set", { key, value });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3982,7 +3986,7 @@ class UserConfig {
    * @param {string} data - text content of bootstrap script.
    */
   async update_bootstrap_script(script: string) {
-    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", {script});
+    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { script });
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4109,7 +4113,7 @@ class Cloud {
    * @param {string} token - JWT token which is delivered to user's email.
    */
   async verify_email(token: string) {
-    const body = {"verification_code": token};
+    const body = { "verification_code": token };
     const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4120,7 +4124,7 @@ class Cloud {
    * @param {string} email - user's email.
    */
   async send_verification_email(email: string) {
-    const body = {email};
+    const body = { email };
     const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4131,7 +4135,7 @@ class Cloud {
    * @param {string} email - user's email.
    */
   async send_password_change_email(email: string) {
-    const body = {email};
+    const body = { email };
     const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4144,7 +4148,7 @@ class Cloud {
    * @param {string} token - JWT token which is delivered to user's email.
    */
   async change_password(email: string, password: string, token: string) {
-    const body = {email, password, token};
+    const body = { email, password, token };
     const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -4181,10 +4185,12 @@ class Pipeline {
     const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
     let result;
     try {
-      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {'log': JSON.stringify({
-        'username': input.username,
-        'password': '********'
-      })});
+      result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {
+        'log': JSON.stringify({
+          'username': input.username,
+          'password': '********'
+        })
+      });
       // if there's no token, then user account is invalid
       if (!result.hasOwnProperty('token')) {
         return Promise.resolve(false);
@@ -4319,8 +4325,8 @@ class Pipeline {
       const cookies = document.cookie.split(';');
       for (let i = 0; i < cookies.length; i++) {
         const cookie = cookies[i].trim();
-        if (cookie.substring(0, name.length+1) === (name +'=')) {
-          cookieValue = decodeURIComponent(cookie.substring(name.length+1));
+        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+          cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
           break;
         }
       }
@@ -4349,9 +4355,9 @@ class PipelineJob {
    *
    * @param {Client} client - the Client API wrapper object to bind
    */
-   constructor(client: Client) {
+  constructor(client: Client) {
     this.client = client;
-    this.urlPrefix =  `/api/pipeline-jobs`;
+    this.urlPrefix = `/api/pipeline-jobs`;
   }
 
   /**
@@ -4393,7 +4399,7 @@ class PipelineTaskInstance {
    *
    * @param {Client} client - the Client API wrapper object to bind
    */
-   constructor(client: Client) {
+  constructor(client: Client) {
     this.client = client;
     this.urlPrefix = `/api/task-instances`;
   }
@@ -4547,7 +4553,7 @@ class utils {
     let seconds = seconds_cumulative;
     let result = '';
     if (days !== undefined && days > 0) {
-      result = result + String(days) + ' Day ';
+      result = result + String(days) + 'd';
     }
     if (hours !== undefined) {
       result = result + this._padding_zeros(hours, 2) + ':';
@@ -4557,6 +4563,24 @@ class utils {
     }
     return result + this._padding_zeros(seconds, 2) + '';
   }
+
+  /**
+   * Returns total seconds from give elapsed time string.
+   *   - ex) "1d01:54:33" -> 93273
+   *
+   * @param {string} datimeString - daytime string, ex) "1d01:54:33"
+   * @return {number} - total seconds
+   */
+  elapsedTimeToTotalSeconds(daytimeString) {
+    let days, hours, minutes, seconds;
+    if (daytimeString.includes('d')) {
+      [days, daytimeString] = daytimeString.split('d');
+    } else {
+      days = 0;
+    }
+    [hours, minutes, seconds] = daytimeString.split(':');
+    return parseInt(days) * 86400 + parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+  };
 
   _padding_zeros(n, width) {
     n = n + '';
@@ -4645,5 +4669,5 @@ module.exports.BackendAIClient = Client;
 module.exports.BackendAIClientConfig = ClientConfig;
 */
 /* For ESModule export */
-export {backend, Client, ClientConfig}
+export { backend, Client, ClientConfig }
 export default backend;
