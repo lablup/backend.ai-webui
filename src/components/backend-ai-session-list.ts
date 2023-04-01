@@ -1885,8 +1885,9 @@ export default class BackendAISessionList extends BackendAIPage {
     menu.setAttribute('fixed', '');
     menu.setAttribute('corner', 'BOTTOM_START');
 
+    let menuTemplate = html``;
     if (!globalThis.backendaiutils.isEmpty(utilizationExtra)) {
-      const menuTemplate = html`
+      menuTemplate = html`
         <style>
           .util-detail-menu-header {
             height: 25px;
@@ -1934,8 +1935,8 @@ export default class BackendAISessionList extends BackendAIPage {
         }
       `;
       document.body.appendChild(menu);
-      render(menuTemplate, menu);
     }
+    render(menuTemplate, menu);
   }
 
   /**
