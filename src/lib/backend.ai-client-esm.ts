@@ -2821,19 +2821,24 @@ class ContainerImage {
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
   async install(name, architecture, resource: object = {}, registry: string = 'index.docker.io') {
-    if (registry != 'index.docker.io') {
-      registry = registry + '/';
-    } else {
-      registry = '';
-    }
-    registry = registry.replace(/:/g, "%3A");
-    let sessionId = this.client.generateSessionId();
+    registry = (registry === 'index.docker.io' ? '' : registry + '/').replace(/:/g, '%3A');
+    const sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
-      resource = { 'cpu': '1', 'mem': '512m', 'enqueueOnly': true };
+      resource = {
+        cpu: '1',
+        mem: '512m',
+        enqueueOnly: true,
+        type: 'batch',
+        startupCommand: 'echo "Image is installed"'
+      };
     }
-    return this.client.createIfNotExists(registry + name, sessionId, resource, 600000, architecture).then((response) => {
-      return this.client.destroy(sessionId);
-    }).catch(err => {
+    return this.client.createIfNotExists(
+      registry + name,
+      sessionId,
+      resource,
+      10000,
+      architecture
+    ).catch((err) => {
       throw err;
     });
   }
