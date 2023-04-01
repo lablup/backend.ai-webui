@@ -1593,15 +1593,6 @@ export default class BackendAISessionList extends BackendAIPage {
         </div>
     `);
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
-      const sanitizeErrMsg = (msg) => {
-        return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
-      };
-      // FIXME: stopgap for handling html entities in msg
-      const encodedStr = (str) => {
-        return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
-          return '&#' + i.charCodeAt(0) + ';';
-        });
-      };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
       statusDialogContent.push(html`
       <div class="vertical layout start flex" style="width:100%;">
@@ -1622,7 +1613,7 @@ export default class BackendAISessionList extends BackendAIPage {
                 `: html``}
                 <div class="vertical layout start">
                   <span class="subheading">Message</span>
-                  <span class="error-description">${sanitizeErrMsg(item.repr)}</span>
+                  <span class="error-description">${item.repr}</span>
                 </div>
               </div>
               `;
