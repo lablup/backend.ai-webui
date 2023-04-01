@@ -1615,6 +1615,12 @@ export default class BackendAISessionList extends BackendAIPage {
                   <span class="subheading">Message</span>
                   <span class="error-description">${item.repr}</span>
                 </div>
+                ${item.traceback ? html`
+                  <div class="vertical layout start">
+                    <span class="subheading">Traceback</span>
+                    <span>${item.traceback}</span>
+                  </div>
+                `: html``}
               </div>
               `;
         })}
