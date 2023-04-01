@@ -31,7 +31,7 @@ import {
  */
 @customElement('backend-ai-sidepanel-notification')
 export default class BackendAiSidepanelNotification extends BackendAIPage {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Array}) notifications = [];
 
   /**
