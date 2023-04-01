@@ -2471,8 +2471,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * */
   idleChecksRenderer(root, column?, rowData?) {
     console.log('idleChecksRenderer')
-    let contents = '';
-    Object.keys(rowData.item.idle_checks)?.map((key) => {
+    const contentTemplates = Object.keys(rowData.item.idle_checks)?.map((key) => {
       const checkerInfo = rowData.item.idle_checks[key];
       const remaining = checkerInfo?.remaining;
 
@@ -2501,7 +2500,7 @@ export default class BackendAISessionList extends BackendAIPage {
       }
 
       if (key in this.idleChecksTable) {
-        contents += `
+        return html`
           <div class="layout vertical" style="padding:3px auto;">
             <div style="margin:4px;">
               <button
@@ -2517,9 +2516,15 @@ export default class BackendAISessionList extends BackendAIPage {
             </div>
           </div>
         `;
+      } else {
+        return html``;
       }
     });
-    root.innerHTML = contents;
+
+    const contentTemplate = html`${contentTemplates}`;
+    console.log(contentTemplates)
+    render(contentTemplate, root);
+
     const utilization = root.querySelector('#utilization');
     utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources));
     utilization?.addEventListener('mouseleave', () => this._removeUtilizationIdleCheckDropdown());
