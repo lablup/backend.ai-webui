@@ -700,13 +700,14 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].idle_checks = idleChecks;
             }
             if (idleChecks && idleChecks.network_timeout && idleChecks.network_timeout.remaining) {
-              sessions[objectKey].idle_checks.network_timeout.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.network_timeout.remaining);
+              sessions[objectKey].idle_checks.network_timeout.remaining = BackendAISessionList.secondsToDHMS(idleChecks.network_timeout.remaining);
             }
             if (idleChecks && idleChecks.session_lifetime && idleChecks.session_lifetime.remaining) {
-              sessions[objectKey].idle_checks.session_lifetime.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.session_lifetime.remaining);
+              sessions[objectKey].idle_checks.session_lifetime.remaining = BackendAISessionList.secondsToDHMS(idleChecks.session_lifetime.remaining);
             }
             if (idleChecks && idleChecks.utilization && idleChecks.utilization.remaining) {
-              sessions[objectKey].idle_checks.utilization.remaining = BackendAISessionList.secondsToHHMMSS(idleChecks.utilization.remaining);
+              console.log(idleChecks.utilization.remaining)
+              sessions[objectKey].idle_checks.utilization.remaining = BackendAISessionList.secondsToDHMS(idleChecks.utilization.remaining);
             }
           }
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
@@ -1770,17 +1771,17 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
-   * Convert seconds to 'hh:mm:ss' string
-   * @param {number} seconds - Seconds to convert
-   * @return {string} - hh:mm:ss
+   * Convert seconds to 'ddhh:mm:ss' string
+   * @param {number} totalSeconds - Total seconds to convert
+   * @return {string} - ddhh:mm:ss
    */
-  static secondsToHHMMSS(seconds) {
-    const days = Math.floor(seconds / 86400);
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-    const secondsRemainder = parseInt(seconds) % 60;
-    const timeoutExceededStr = (days < 0 || hours < 0 || minutes < 0 || secondsRemainder < 0) ? _text('session.TimeoutExceeded') : '';
-    const convertedStr = `${days !== undefined && days > 0 ? String(days) + 'd' : ''}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${secondsRemainder.toString().padStart(2, '0')}`;
+  static secondsToDHMS(totalSeconds) {
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = parseInt(totalSeconds) % 60;
+    const timeoutExceededStr = (days < 0 || hours < 0 || minutes < 0 || seconds < 0) ? _text('session.TimeoutExceeded') : '';
+    const convertedStr = `${days !== undefined && days > 0 ? String(days) + 'd' : ''}${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
     return timeoutExceededStr.length > 0 ? timeoutExceededStr : convertedStr;
   }
 
@@ -1801,7 +1802,7 @@ export default class BackendAISessionList extends BackendAIPage {
         minValue = value;
       }
     }
-    return minValue ? [minKey, BackendAISessionList.secondsToHHMMSS(minValue)] : null;
+    return minValue ? [minKey, BackendAISessionList.secondsToDHMS(minValue)] : null;
   }
 
   _openIdleChecksInfoDialog() {
