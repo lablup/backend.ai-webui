@@ -500,7 +500,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     if (globalThis.isElectron && !appServices.includes('vscode')) {
-      this.appSupportList.push({ // Force push terminal
+      this.appSupportList.push({ // Force push vscode
         'name': 'vscode',
         'title': 'VS Code',
         'category': '2.Development',
@@ -748,7 +748,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
-        sendAppName = 'sshd'
+        sendAppName = 'sshd';
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
