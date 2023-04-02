@@ -1624,7 +1624,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
   _createKernel(kernelName: string, sessionName: string, architecture: string, config) {
     const task = globalThis.backendaiclient.createIfNotExists(kernelName, sessionName, config, 20000, architecture);
-    task.catch((err) => {
+    task.then((res) => {
+      // When session is already created with the same name, the status code
+      // is 200, but the response body has 'created' field as false. For better
+      // user experience, we show the notification message.
+      if (!res?.created) {
+        this.notification.text = _text('session.launcher.SessionAlreadyExists');
+        this.notification.show();
+      }
+    }).catch((err) => {
       // console.log(err);
       if (err && err.message) {
         if ('statusCode' in err && err.statusCode === 408) {
