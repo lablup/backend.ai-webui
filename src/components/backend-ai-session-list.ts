@@ -706,7 +706,6 @@ export default class BackendAISessionList extends BackendAIPage {
               sessions[objectKey].idle_checks.session_lifetime.remaining = BackendAISessionList.secondsToDHMS(idleChecks.session_lifetime.remaining);
             }
             if (idleChecks && idleChecks.utilization && idleChecks.utilization.remaining) {
-              console.log(idleChecks.utilization.remaining)
               sessions[objectKey].idle_checks.utilization.remaining = BackendAISessionList.secondsToDHMS(idleChecks.utilization.remaining);
             }
           }
