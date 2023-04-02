@@ -874,8 +874,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
         sendAppName = 'sshd';
       }
-      const userPort = parseInt(this.appPort.value);
-      if (this.checkPreferredPort.checked && userPort) {
+      const userPort = parseInt(this.appPort?.value);
+      if (this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
@@ -937,7 +937,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
   /**
    * Read temp password
-   * 
+   *
    * @param {string} sessionUuid
    */
   async _readTempPasswd(sessionUuid) {
