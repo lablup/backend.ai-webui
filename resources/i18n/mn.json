@@ -246,7 +246,8 @@
       "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
-      "DescAIAccelerator": "__NOT_TRANSLATED__"
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -523,7 +524,6 @@
     "RateLimitInputRequired": "__NOT_TRANSLATED__",
     "InvalidRateLimitValue": "__NOT_TRANSLATED__",
     "WarningLessRateLimit": "__NOT_TRANSLATED__",
-    "KeypairDetail": "__NOT_TRANSLATED__",
     "KeypairDetail": "__NOT_TRANSLATED__",
     "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
     "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
