@@ -1,5 +1,27 @@
 # Changelog
 
+## v22.09.18 (26/03/2023)
+
+## What's Changed
+* fix: use SI unit (e.g., GB not GiB) for quota-related fields by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1650
+* fix : remain highlight after click on help button by @kin4496 in https://github.com/lablup/backend.ai-webui/pull/1655
+* feat: add confirm dialog for delete credentials by @raipen in https://github.com/lablup/backend.ai-webui/pull/1658
+* feat: vscode prettier extension issue by @krokerdile in https://github.com/lablup/backend.ai-webui/pull/1657
+* fix: sorting installed environments up when visiting environment menu by @seokiis in https://github.com/lablup/backend.ai-webui/pull/1659
+* fix: change messege type of delete user by @raipen in https://github.com/lablup/backend.ai-webui/pull/1662
+* fix: add margin to resource preset dialog by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1654
+* fix: resize column for resolve disappearing-icon by @raipen in https://github.com/lablup/backend.ai-webui/pull/1663
+* fix: session launcher's environment variable editor dialog button is broken in Korean by @krokerdile in https://github.com/lablup/backend.ai-webui/pull/1665
+* add: add utilization idle checks column by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1651
+
+## New Contributors
+* @kin4496 made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1655
+* @raipen made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1658
+* @krokerdile made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1657
+* @seokiis made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1659
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.17...v22.09.18
+
 ## v22.09.17 (23/03/2023)
 ## What's Changed
 * feat: add `allowPreferredPort` to show/hide `Try preferred port` by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1647
