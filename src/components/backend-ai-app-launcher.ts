@@ -755,7 +755,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           if (response.url) {
             if (mode === 'inference') {
               this.indicator.set(100, _text('session.applauncher.Prepared'));
-              console.log(response);
               this.endpointURL = response.proxy;
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
@@ -837,6 +836,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = config['url-postfix'];
     const envs = null;
     const args = null;
+    const defaultPreferredPortNumber = 10250;
     let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
@@ -874,8 +874,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
         sendAppName = 'sshd';
       }
-      const userPort = parseInt(this.appPort?.value);
-      if (this.checkPreferredPort?.checked && userPort) {
+      const userPort = (this.appPort === null || this.appPort === undefined) ? defaultPreferredPortNumber : parseInt(this.appPort?.value);
+      if (this.checkPreferredPort !== null && this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
@@ -1050,8 +1050,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         button.removeAttribute('disabled');
         setTimeout(() => {
           globalThis.open(response.url + urlPostfix, '_blank');
-          console.log(appName + ' proxy loaded: ');
-          console.log(sessionUuid);
+          // console.log(appName + ' proxy loaded: ');
+          // console.log(sessionUuid);
         }, 1000);
       });
     } catch (e) {
