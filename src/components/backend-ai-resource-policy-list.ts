@@ -52,7 +52,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
