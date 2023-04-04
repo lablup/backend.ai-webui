@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -10,11 +10,11 @@ import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
@@ -83,8 +83,11 @@ export default class BackendAICredentialList extends BackendAIPage {
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalCredentialCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @property({type: String}) deleteKeyPairUserName = '';
+  @property({type: String}) deleteKeyPairAccessKey = '';
   @query('#keypair-info-dialog') keypairInfoDialog!: BackendAIDialog;
   @query('#keypair-modify-dialog') keypairModifyDialog!: BackendAIDialog;
+  @query('#delete-keypair-dialog') deleteKeyPairDialog!: BackendAIDialog;
   @query('#policy-list') policyListSelect!: Select;
   @query('#rate-limit') rateLimit!: TextField;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
@@ -105,7 +108,7 @@ export default class BackendAICredentialList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 226px);
+          height: calc(100vh - 229px);
         }
 
         mwc-icon-button {
@@ -284,10 +287,25 @@ export default class BackendAICredentialList extends BackendAIPage {
             keypair['default_for_unspecified'] === 'UNLIMITED') {
             keypair['total_resource_slots'].tpu_device = '-';
           }
-          ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device'].forEach((slot) => {
+          if ('ipu.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].ipu_device = keypair['total_resource_slots']['ipu.device'];
+          }
+          if (('ipu_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].ipu_device = '-';
+          }
+          if ('atom.device' in keypair['total_resource_slots']) {
+            keypair['total_resource_slots'].tpu_device = keypair['total_resource_slots']['atom.device'];
+          }
+          if (('atom_device' in keypair['total_resource_slots']) === false &&
+            keypair['default_for_unspecified'] === 'UNLIMITED') {
+            keypair['total_resource_slots'].atom_device = '-';
+          }
+
+          ['cpu', 'mem', 'cuda_shares', 'cuda_device', 'rocm_device', 'tpu_device', 'ipu_device', 'atom_device'].forEach((slot) => {
             keypair['total_resource_slots'][slot] = this._markIfUnlimited(keypair['total_resource_slots'][slot]);
           });
-          keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGiB(keypair['max_vfolder_size']));
+          keypair['max_vfolder_size'] = this._markIfUnlimited(BackendAICredentialList.bytesToGB(keypair['max_vfolder_size']));
         }
       });
       this.keypairs = keypairs;
@@ -382,18 +400,33 @@ export default class BackendAICredentialList extends BackendAIPage {
   }
 
   /**
+   * Show the keypair detail dialog.
+   * 
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _deleteKeyPairDialog(e) {
+    const controls = e.target.closest('#controls');
+    const user_id = controls['user-id'];
+    const access_key = controls['access-key'];
+    this.deleteKeyPairUserName = user_id;
+    this.deleteKeyPairAccessKey = access_key;
+    this.deleteKeyPairDialog.show();
+  }
+
+  /**
    * Delete the access key.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _deleteKey(e) {
-    const controls = e.target.closest('#controls');
-    const accessKey = controls['access-key'];
-    globalThis.backendaiclient.keypair.delete(accessKey).then((response) => {
+    globalThis.backendaiclient.keypair.delete(this.deleteKeyPairAccessKey).then((response) => {
       if (response.delete_keypair && !response.delete_keypair.ok) {
         throw new UnableToDeleteKeypairException(response.delete_keypair.msg);
       }
+      this.notification.text = _text('credential.KeySeccessfullyDeleted');
+      this.notification.show();
       this.refresh();
+      this.deleteKeyPairDialog.hide();
     }).catch((err) => {
       console.log(err);
       if (err && err.message) {
@@ -547,7 +580,7 @@ export default class BackendAICredentialList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center"
-             .access-key="${rowData.item.access_key}">
+             .access-key="${rowData.item.access_key}" .user-id="${rowData.item.user_id}">
           <mwc-icon-button class="fg green" icon="assignment" fab flat inverted
                            @click="${(e) => this._showKeypairDetail(e)}">
           </mwc-icon-button>
@@ -558,7 +591,7 @@ export default class BackendAICredentialList extends BackendAIPage {
             <mwc-icon-button class="fg blue" icon="delete" fab flat inverted @click="${(e) => this._revokeKey(e)}">
             </mwc-icon-button>
             <mwc-icon-button class="fg red" icon="delete_forever" fab flat inverted
-                             @click="${(e) => this._deleteKey(e)}">
+                             @click="${(e) => this._deleteKeyPairDialog(e)}">
             </mwc-icon-button>
           ` : html``}
           ${this._isActive() === false ? html`
@@ -630,7 +663,7 @@ export default class BackendAICredentialList extends BackendAIPage {
           <div class="layout horizontal configuration">
             <mwc-icon class="fg green">memory</mwc-icon>
             <span>${rowData.item.total_resource_slots.mem}</span>
-            <span class="indicator">GB</span>
+            <span class="indicator">GiB</span>
           </div>
         </div>
         <div class="layout horizontal wrap center">
@@ -836,9 +869,16 @@ export default class BackendAICredentialList extends BackendAIPage {
     }
   }
 
-  static bytesToGiB(num, digits=1) {
-    if (!num) return num;
-    return (num / 2 ** 30).toFixed(digits);
+  /**
+   * Convert the value bytes to GB with decimal point to 1 as a default
+   *
+   * @param {number} bytes
+   * @param {number} decimalPoint decimal point set to 1 as a default
+   * @return {string} converted value with fixed decimal point
+   */
+  static bytesToGB(bytes, decimalPoint = 1) {
+    if (!bytes) return bytes;
+    return (bytes / 10 ** 9).toFixed(decimalPoint);
   }
 
   /**
@@ -891,13 +931,29 @@ export default class BackendAICredentialList extends BackendAIPage {
                               .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}"
                               .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column width="150px" resizable header="${_t('general.Control')}"
+          <vaadin-grid-column width="208px" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}"
                                 message="${_text('credential.NoCredentialToDisplay')}"></backend-ai-list-status>
       </div>
+      <backend-ai-dialog id="delete-keypair-dialog" fixed backdrop>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>You are deleting the credentials of user <span style="color:red">${this.deleteKeyPairUserName}</span>.</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              label="${_t('button.Cancel')}"
+              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+          <mwc-button
+              unelevated
+              label="${_t('button.Okay')}"
+              @click="${(e) => this._deleteKey(e)}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
       <backend-ai-dialog id="keypair-info-dialog" fixed backdrop blockscrolling container="${document.body}">
         <span slot="title">${_t('credential.KeypairDetail')}</span>
         <div slot="action" class="horizontal end-justified flex layout">

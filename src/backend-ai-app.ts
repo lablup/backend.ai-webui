@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -55,7 +55,7 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'job':
     import('./components/backend-ai-session-view.js');
     break;
-  // temporally block pipeline
+    // temporally block pipeline
   /* case 'pipeline':
     import('./pipeline/components/pipeline-view.js');
     break;

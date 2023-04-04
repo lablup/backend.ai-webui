@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {LitElement, html, CSSResultGroup} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
@@ -47,6 +47,7 @@ import './backend-ai-splash';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
+import BackendAiMetadataStore from './backend-ai-metadata-store';
 import BackendAITasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
@@ -67,6 +68,7 @@ registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
 globalThis.backendaioptions = new BackendAISettingsStore;
+globalThis.backendaimetadata = new BackendAiMetadataStore;
 globalThis.tasker = new BackendAITasker;
 globalThis.backendaiutils = new BackendAICommonUtils;
 
@@ -1041,8 +1043,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.user_id = '';
         this.domain = '';
         this._page = 'summary';
-        globalThis.history.pushState({}, '', '/summary');
-        store.dispatch(navigate(decodeURIComponent('/')));
+        this._moveTo('/');
+        // globalThis.history.pushState({}, '', '/summary');
+        // store.dispatch(navigate(decodeURIComponent('/')));
         // globalThis.location.reload();
         document.body.style.backgroundImage = 'url("/resources/images/loading-background-large.jpg")';
         this.appBody.style.visibility = 'hidden';
@@ -1477,7 +1480,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220902</small>
+                <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230316</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1501,7 +1504,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">22.09.1-beta.1.220902</small>
+              <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230316</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

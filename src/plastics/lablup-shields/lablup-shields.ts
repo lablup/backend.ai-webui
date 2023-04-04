@@ -1,11 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, html, LitElement} from "lit";
-import {customElement, property, query} from 'lit/decorators.js';
+import { css, html, LitElement } from "lit";
+import { customElement, property, query } from 'lit/decorators.js';
 
-import {IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning} from "../layout/iron-flex-layout-classes";
+import { IronFlex, IronFlexAlignment, IronFlexFactors, IronPositioning } from "../layout/iron-flex-layout-classes";
 
 type colorType = {
   colorB: string,
@@ -41,11 +41,12 @@ type colorSchemeType = {
  */
 @customElement("lablup-shields")
 export default class LablupShields extends LitElement {
-  @property({type: String}) app = '';
-  @property({type: String}) description = '';
-  @property({type: String}) color = 'green';
-  @property({type: String}) appColor = 'grey';
-  @property({type: String}) ui = 'flat';
+  @property({ type: String }) app = '';
+  @property({ type: String }) description = '';
+  @property({ type: String }) color = 'green';
+  @property({ type: String }) appColor = 'grey';
+  @property({ type: String }) ui = 'flat';
+  @property({ type: Object }) customColorPalette = Object();
   @query('#app') appContainer!: HTMLDivElement;
   @query('#description') descriptionContainer!: HTMLDivElement;
 
@@ -81,28 +82,32 @@ export default class LablupShields extends LitElement {
           word-break: break-all;
           white-space: normal;
           height: fit-content;
+          width: var(--lablup-shield-component-width, auto);
         }
     `];
   }
 
   get _colorScheme() {
-    const colorPalette: colorSchemeType = {
-      "brightgreen": {"colorB": "#44cc11", "colorT": "#222222"},
-      "lightgreen": {"colorB": "#f3f5d0", "colorT": "#222222"},
-      "green": {"colorB": "#97ca00", "colorT": "#ffffff"},
-      "darkgreen": {"colorB": "#457b3b", "colorT": "#ffffff"},
-      "yellow": {"colorB": "#dfb317", "colorT": "#ffffff"},
-      "yellowgreen": {"colorB": "#a4a61d", "colorT": "#ffffff"},
-      "orange": {"colorB": "#fe7d37", "colorT": "#ffffff"},
-      "red": {"colorB": "#e05d44", "colorT": "#ffffff"},
-      "blue": {"colorB": "#007ec6", "colorT": "#ffffff"},
-      "purple": {"colorB": "#ab47bc", "colorT": "#ffffff"},
-      "lightblue": {"colorB": "#caedfc", "colorT": "#222222"},
-      "grey": {"colorB": "#555555", "colorT": "#ffffff"},
-      "gray": {"colorB": "#555555", "colorT": "#ffffff"},
-      "lightgrey": {"colorB": "#9f9f9f", "colorT": "#ffffff"},
-      "lightgray": {"colorB": "#9f9f9f", "colorT": "#ffffff"}
+    let colorPalette: colorSchemeType = {
+      "brightgreen": { "colorB": "#44cc11", "colorT": "#222222" },
+      "lightgreen": { "colorB": "#f3f5d0", "colorT": "#222222" },
+      "green": { "colorB": "#97ca00", "colorT": "#ffffff" },
+      "darkgreen": { "colorB": "#457b3b", "colorT": "#ffffff" },
+      "yellow": { "colorB": "#dfb317", "colorT": "#ffffff" },
+      "yellowgreen": { "colorB": "#a4a61d", "colorT": "#ffffff" },
+      "orange": { "colorB": "#fe7d37", "colorT": "#ffffff" },
+      "red": { "colorB": "#e05d44", "colorT": "#ffffff" },
+      "blue": { "colorB": "#007ec6", "colorT": "#ffffff" },
+      "purple": { "colorB": "#ab47bc", "colorT": "#ffffff" },
+      "lightblue": { "colorB": "#caedfc", "colorT": "#222222" },
+      "grey": { "colorB": "#555555", "colorT": "#ffffff" },
+      "gray": { "colorB": "#555555", "colorT": "#ffffff" },
+      "lightgrey": { "colorB": "#9f9f9f", "colorT": "#ffffff" },
+      "lightgray": { "colorB": "#9f9f9f", "colorT": "#ffffff" }
     };
+    if (this.customColorPalette && Object.keys(this.customColorPalette).length > 0) {
+      colorPalette = Object.assign(colorPalette, this.customColorPalette);
+    }
     return colorPalette;
   }
 
@@ -112,10 +117,12 @@ export default class LablupShields extends LitElement {
       <div class="shields layout horizontal flex">
         <div id="app" class="app horizontal layout center">
           <slot name="app-icon"></slot>
-          <span id="app-text" class="text app-text">${this.app}</span></div>
+          <span id="app-text" class="text app-text">${this.app}</span>
+        </div>
         <div id="description" class="desc horizontal layout center">
           <slot name="desc-icon"></slot>
-          <span id="desc-text" class="text desc-text">${this.description}</span></div>
+          <span id="desc-text" class="text desc-text">${this.description}</span>
+        </div>
       </div>
     `;
   }

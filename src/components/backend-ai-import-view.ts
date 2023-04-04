@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -12,12 +12,6 @@ import {BackendAIPage} from './backend-ai-page';
 import LablupLoadingSpinner from './lablup-loading-spinner';
 import BackendAiResourceMonitor from './backend-ai-resource-monitor';
 import BackendAiSessionLauncher from './backend-ai-session-launcher';
-
-/**
- * FIXME: Is it okay to get rid of import statement for unused UI component?
- */
-import 'weightless/card';
-import './backend-ai-chart';
 
 /**
  * FIXME: Repeated import statement(s) is/are needed
@@ -276,7 +270,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   _fetchNotebookURLResource(downloadURL) {
-    fetch(downloadURL).then((res) => {
+    fetch(downloadURL).then(() => {
       this.notification.text = _text('import.ReadyToImport');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -284,7 +278,7 @@ export default class BackendAIImport extends BackendAIPage {
       this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
       this.sessionLauncher.importFilename = downloadURL.split('/').pop();
       this.sessionLauncher._launchSessionDialog();
-    }).catch((err) => {
+    }).catch(() => {
       this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
       this.importNotebookMessage = this.notification.text;
       this.notification.show();
@@ -443,7 +437,7 @@ export default class BackendAIImport extends BackendAIPage {
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
-    return globalThis.backendaiclient.get_resource_slots().then((response) => {
+    return globalThis.backendaiclient.get_resource_slots().then(() => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
       return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000, undefined);

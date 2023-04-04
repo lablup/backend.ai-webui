@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -15,6 +15,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Object}) supportImages = Object();
   @property({type: Object}) imageRequirements = Object();
   @property({type: Object}) imageArchitectures = Object();
+  @property({type: Object}) imageRoles = Object();
+  @property({type: Object}) imageRuntimeConfig = Object();
   @property({type: Object}) aliases = Object();
   @property({type: Object}) tags = Object();
   @property({type: Object}) imageInfo = Object();
@@ -28,6 +30,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: String}) kernel = '';
   @property({type: Array}) versions;
   @property({type: Array}) languages;
+  @property({type: Array}) inferenceServers;
   // Resource occupation information
   @property({type: String}) gpu_mode;
   @property({type: Array}) gpu_modes = [];
@@ -116,6 +119,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
   init_resource() {
     this.languages = [];
+    this.inferenceServers = [];
     this.total_slot = {};
     this.total_resource_group_slot = {};
     this.total_project_slot = {};
@@ -144,44 +148,17 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   }
 
   firstUpdated() {
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.tags[key] = [];
-            if ('name' in this.imageInfo[key]) {
-              this.aliases[key] = this.imageInfo[key].name;
-              this.imageNames[key] = this.imageInfo[key].name;
-            }
-            if ('icon' in this.imageInfo[key]) {
-              this.icons[key] = this.imageInfo[key].icon;
-            } else {
-              this.icons[key] = 'default.png';
-            }
-
-            if ('label' in this.imageInfo[key]) {
-              this.imageInfo[key].label.forEach((item) => {
-                if (!('category' in item)) {
-                  this.tags[key].push(item);
-                }
-              });
-            }
-          }
-        }
-        this.imageTagAlias = json.tagAlias;
-        this.imageTagReplace = json.tagReplace;
-        if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-          document.addEventListener('backend-ai-connected', () => {
-            this._refreshImageList();
-          }, {once: true});
-        } else {
-          this._refreshImageList();
-        }
-      }
-    );
+    this.tags = globalThis.backendaimetadata.tags;
+    this.icons = globalThis.backendaimetadata.icons;
+    this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
+    this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._refreshImageList();
+      }, {once: true});
+    } else {
+      this._refreshImageList();
+    }
 
     document.addEventListener('backend-ai-resource-refreshed', () => {
       if (this.active && this.metadata_updating === false) {
@@ -336,7 +313,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this._GPUmodeUpdated = true;
       return globalThis.backendaiclient.get_resource_slots().then((response) => {
         const results = response;
-        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device'].forEach((item) => {
+        ['cuda.device', 'cuda.shares', 'rocm.device', 'tpu.device', 'ipu.device', 'atom.device'].forEach((item) => {
           if (item in results && !(this.gpu_modes as Array<string>).includes(item)) {
             this.gpu_mode = item;
             (this.gpu_modes as Array<string>).push(item);
@@ -447,7 +424,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
-        'tpu.device': 'tpu_device'
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
       };
       const slotList = {
         'cpu': 'cpu',
@@ -455,7 +434,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
         'rocm.device': 'rocm_device',
-        'tpu.device': 'tpu_device'
+        'tpu.device': 'tpu_device',
+        'ipu.device': 'ipu_device',
+        'atom.device': 'atom_device'
       };
       // let scaling_group_resource_remaining = response.scaling_group_remaining;
       if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
@@ -567,7 +548,6 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         used_project_slot['mem'] = 0.0;
       }
       used_project_slot['mem'] = used_project_slot['mem'].toFixed(2);
-
       for (const [slot_key, slot_name] of Object.entries(device_list)) {
         if (slot_key in resource_remaining) {
           remaining_slot[slot_name] = resource_remaining[slot_key];
@@ -647,7 +627,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           });
         resourceGroupSlots.remaining = {};
         Object.keys(resourceGroupSlots.available).forEach((key) => {
-          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key]
+          resourceGroupSlots.remaining[key] = resourceGroupSlots.available[key] - resourceGroupSlots.occupied[key];
         });
 
         this.total_resource_group_slot = resourceGroupSlots.available;
@@ -804,6 +784,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.supportImages = {};
       this.imageRequirements = {};
       this.imageArchitectures = {};
+      this.imageRoles = {};
       const privateImages: object = {};
       Object.keys(this.images).map((objectKey, index) => {
         const item = this.images[objectKey];
@@ -845,6 +826,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
           this.imageArchitectures[`${supportsKey}:${item.tag}`] = [];
         }
         this.imageArchitectures[`${supportsKey}:${item.tag}`].push(item.architecture);
+        this.imageRoles[`${supportsKey}`] = 'COMPUTE'; // Default role is COMPUTE.
+        this.imageRuntimeConfig[`${supportsKey}:${item.tag}`] = {};
         item.labels.forEach((label) => {
           if (label['key'] === 'com.nvidia.tensorflow.version') {
             this.imageRequirements[`${supportsKey}:${item.tag}`]['framework'] = 'TensorFlow ' + label['value'];
@@ -858,6 +841,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
             privateImages[supportsKey].push(item.tag);
           }
+          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE'].includes(label['value'])) {
+            this.imageRoles[`${supportsKey}`] = label['value'];
+          }
+          if (label['key'] === 'ai.backend.model-path') {
+            this.imageRuntimeConfig[`${supportsKey}:${item.tag}`]['model-path'] = label['value'];
+          }
         });
       });
       Object.keys(privateImages).forEach((key) => {
@@ -865,7 +854,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const tags = this.supports[key];
         this.supports[key] = tags.filter((tag) => !privateImages[key].includes(tag));
         if (this.supports[key].length < 1) {
-          // If there is no availabe version, remove the environment itself.
+          // If there is no available version, remove the environment itself.
           delete this.supports[key];
           // delete this.supportImages[key];
         }

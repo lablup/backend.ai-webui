@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -55,10 +55,11 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  */
 
 @customElement('backend-ai-session-view')
-export default class BackendAiSessionView extends BackendAIPage {
+export default class BackendAISessionView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) is_admin = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _defaultFileName = '';
@@ -207,9 +208,20 @@ export default class BackendAiSessionView extends BackendAIPage {
       }
       return;
     }
-    this.resourceMonitor.setAttribute('active', 'true');
-    this.runningJobs.setAttribute('active', 'true');
-    this._status = 'active';
+
+    const _init = () => {
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+      this.resourceMonitor.setAttribute('active', 'true');
+      this.runningJobs.setAttribute('active', 'true');
+      this._status = 'active';
+    };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        _init();
+      }, true);
+    } else {
+      _init();
+    }
   }
 
   /**
@@ -322,12 +334,15 @@ export default class BackendAiSessionView extends BackendAIPage {
     return result;
   }
 
-  _msecToSec(value) {
-    return Number(value / 1000).toFixed(0);
-  }
-
-  _bytesToMB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MiB with decimal point to 1 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to MiB
+   */
+  static bytesToMiB(value, decimalPoint = 1) {
+    return Number(value / (2 ** 20)).toFixed(1);
   }
 
   _exportToCSV() {
@@ -399,6 +414,12 @@ export default class BackendAiSessionView extends BackendAIPage {
             if (occupiedSlots['rocm.device']) {
               exportListItem.rocm_device = occupiedSlots['rocm.device'];
             }
+            if (occupiedSlots['ipu.device']) {
+              exportListItem.ipu_device = occupiedSlots['ipu.device'];
+            }
+            if (occupiedSlots['atom.device']) {
+              exportListItem.atom_device = occupiedSlots['atom.device'];
+            }
           }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
           if (liveStat) {
@@ -408,12 +429,12 @@ export default class BackendAiSessionView extends BackendAIPage {
               exportListItem.cpu_used_time = 0;
             }
             if (liveStat.io_read) {
-              exportListItem.io_read_bytes_mb = this._bytesToMB(liveStat.io_read.current);
+              exportListItem.io_read_bytes_mb = BackendAISessionView.bytesToMiB(liveStat.io_read.current);
             } else {
               exportListItem.io_read_bytes_mb = 0;
             }
             if (liveStat.io_write) {
-              exportListItem.io_write_bytes_mb = this._bytesToMB(liveStat.io_write.current);
+              exportListItem.io_write_bytes_mb = BackendAISessionView.bytesToMiB(liveStat.io_write.current);
             } else {
               exportListItem.io_write_bytes_mb = 0;
             }
@@ -471,6 +492,9 @@ export default class BackendAiSessionView extends BackendAIPage {
                   <mwc-tab title="running" label="${_t('session.Running')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="interactive" label="${_t('session.Interactive')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="batch" label="${_t('session.Batch')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  ${this.enableInferenceWorkload ? html`
+                  <mwc-tab title="inference" label="${_t('session.Inference')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  `:html``}
                   <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                 </mwc-tab-bar>
@@ -503,6 +527,10 @@ export default class BackendAiSessionView extends BackendAIPage {
           <div id="batch-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="batch-jobs" condition="batch"></backend-ai-session-list>
           </div>
+          ${this.enableInferenceWorkload ? html`
+          <div id="inference-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="inference-jobs" condition="inference"></backend-ai-session-list>
+          </div>`:html``}
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>
           </div>
@@ -549,6 +577,6 @@ export default class BackendAiSessionView extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-view': BackendAiSessionView;
+    'backend-ai-session-view': BackendAISessionView;
   }
 }

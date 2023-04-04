@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -31,9 +31,10 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
+  @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
@@ -48,16 +49,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
   @property({type: String}) tensorboardPath = '';
+  @property({type: String}) endpointURL = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Object}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
+  @query('#custom-subdomain') customSubdomain!: TextField;
   @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
   @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
   @query('#force-use-v1-proxy') forceUseV1Proxy!: Checkbox;
@@ -233,23 +237,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   firstUpdated() {
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically
@@ -354,7 +344,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
   async _getWSProxyVersion(sessionUuid) {
     if (globalThis.backendaiwebui.debug === true) {
-      if (this.forceUseV1Proxy.checked) return 'v1'
+      if (this.forceUseV1Proxy.checked) return 'v1';
       else if (this.forceUseV2Proxy.checked) return 'v2';
     }
 
@@ -384,16 +374,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @return {void}
    */
   _showAppLauncher(controls) {
+    this.controls = controls;
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    const mode = controls['mode'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
+      param['mode'] = mode;
       param['session-uuid'] = sessionUuid;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
-      param['file-name'] = controls['filename'];
+      if ('filename' in controls) {
+        param['file-name'] = controls['filename'];
+      }
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
@@ -468,6 +463,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
     });
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this.allowPreferredPort = globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
     this.dialog.setAttribute('session-uuid', sessionUuid);
     this.dialog.setAttribute('access-key', accessKey);
@@ -615,6 +611,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
+    if (this.customSubdomain?.value) {
+      uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
+    }
+    if (servicePortInfo.is_inference) {
+      uri = uri + '&is_inference=true';
+    }
     uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
@@ -661,6 +663,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
     const envs = null;
+    const mode = param['mode'];
     let args = null;
     if (appName === undefined || appName === null) {
       return;
@@ -691,13 +694,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
-            await this._connectToProxyWorker(response.url, urlPostfix);
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
-            setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
-            }, 1000);
+            if (mode === 'inference') {
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              console.log(response);
+              this.endpointURL = response.proxy;
+              delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
+              this._showAppLauncher(this.controls);
+            } else {
+              await this._connectToProxyWorker(response.url, urlPostfix);
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              setTimeout(() => {
+                globalThis.open(response.url + urlPostfix, '_blank');
+                // console.log(appName + " proxy loaded: ");
+                // console.log(sessionUuid);
+              }, 1000);
+            }
           }
         });
     }
@@ -796,8 +807,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      const userPort = parseInt(this.appPort.value);
-      if (this.checkPreferredPort.checked && userPort) {
+      const userPort = parseInt(this.appPort?.value);
+      if (this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
       this._open_wsproxy(sessionUuid, appName, port, envs, args)
@@ -882,6 +893,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    *
    * @param{Event} e
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _openAppLaunchConfirmationDialog(e) {
     this.appLaunchConfirmationDialog.show();
   }
@@ -1003,6 +1015,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  _adjustCustomSubdomain(e) {
+    const subdomain = e.target.value;
+    this.customSubdomain.value = subdomain;
+  }
+
   /**
    * Dynamically add Web Terminal Guide Carousel
    */
@@ -1067,9 +1084,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
-          <span>App</span>
+          <span>${_t('session.applauncher.App')}</span>
         </div>
         <div slot="content">
+          ${this.endpointURL !== '' ? html`
+          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+            <span style="font-weight:600;margin-left:20px;margin-right:15px;">Endpoint URL: </span> <span style="font-family:monospace;">${this.endpointURL}</span>
+          </div>
+          `: html``}
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map((item) => html`
               ${item.category === 'divider' ? html`
@@ -1098,13 +1120,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
-            <div class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
-              ${_t('session.TryPreferredPort')}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em;width:90px;"
-                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
-            </div>
+            ${this.allowPreferredPort ? html`
+              <div id="preferred-app-port-config-box" class="horizontal layout center">
+                <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
+                ${_t('session.TryPreferredPort')}
+                <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                              min="1025" max="65534" style="margin-left:1em;width:90px;"
+                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+              </div>
+            ` : html``}
             <div class="horizontal layout center">
             ${globalThis.backendaiwebui.debug === true ? html`
               <mwc-checkbox id="force-use-v1-proxy" style="margin-right:0.5em;"></mwc-checkbox>
@@ -1113,6 +1137,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               Force use of V2
             `: ``}
             </div>
+          </div>
+          <div style="padding:10px 20px 15px 20px">
+            ${globalThis.backendaiwebui.debug === true ? html`
+            <div class="horizontal layout center">
+              <mwc-checkbox id="chk-custom-subdomain" style="margin-right:0.5em;"></mwc-checkbox>
+              ${_t('session.UseSubdomain')}
+              <mwc-textfield id="custom-subdomain" type="string"
+                            style="margin-left:1em;width:90px;"
+                            @change="${(e) => this._adjustCustomSubdomain(e)}"></mwc-textfield>
+            </div>
+            `: ``}
           </div>
         </div>
       </backend-ai-dialog>

@@ -71,8 +71,8 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     this.cpu_used_time = this.usedTimeFormatting(this.cpu_used_time);
     this.gpu_used_time = this.usedTimeFormatting(this.gpu_used_time);
 
-    this.disk_used = Math.floor(this.disk_used / (1024 * 1024 * 1024)); // bytes to GB
-    this.traffic_used = Math.floor(this.traffic_used / (1024 * 1024)); // bytes to MB
+    this.disk_used = Math.floor(this.disk_used / (10 ** 9)); // bytes to GB
+    this.traffic_used = Math.floor(this.traffic_used / (2 ** 20)); // bytes to MiB
   }
 
   /**
@@ -116,7 +116,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
             <span class="desc">${_t('usagepanel.DiskUsed')}</span>
           </div>
           <div class="vertical center layout">
-            <span class="value">${this.traffic_used}MB</span>
+            <span class="value">${this.traffic_used}MiB</span>
             <span class="desc">${_t('usagepanel.TrafficUsed')}</span>
           </div>
         </div>

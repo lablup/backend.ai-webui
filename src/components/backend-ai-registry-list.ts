@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -22,7 +22,7 @@ import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -85,7 +85,7 @@ class BackendAIRegistryList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 225px);
+          height: calc(100vh - 229px);
         }
 
         h4 {
