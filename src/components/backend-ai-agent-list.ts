@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -8,9 +8,9 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
 
 import '@material/mwc-linear-progress';
@@ -185,7 +185,7 @@ export default class BackendAIAgentList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 179px);
+          height: calc(100vh - 182px);
         }
     `];
   }
@@ -332,6 +332,37 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].used_rocm_gpu_slots_ratio = agents[objectKey].used_rocm_gpu_slots / agents[objectKey].rocm_gpu_slots;
               agents[objectKey].total_rocm_gpu_percent = (agents[objectKey].used_rocm_gpu_slots_ratio * 100).toFixed(2);
             }
+            if ('tpu.device' in available_slots) {
+              agents[objectKey].tpu_slots = parseInt(available_slots['tpu.device']);
+              if ('tpu.device' in occupied_slots) {
+                agents[objectKey].used_tpu_slots = parseInt(occupied_slots['tpu.device']);
+              } else {
+                agents[objectKey].used_tpu_slots = 0;
+              }
+              agents[objectKey].used_tpu_slots_ratio = agents[objectKey].used_tpu_slots / agents[objectKey].tpu_slots;
+              agents[objectKey].total_tpu_percent = (agents[objectKey].used_tpu_slots_ratio * 100).toFixed(2);
+            }
+            if ('ipu.device' in available_slots) {
+              agents[objectKey].ipu_slots = parseInt(available_slots['ipu.device']);
+              if ('ipu.device' in occupied_slots) {
+                agents[objectKey].used_ipu_slots = parseInt(occupied_slots['ipu.device']);
+              } else {
+                agents[objectKey].used_ipu_slots = 0;
+              }
+              agents[objectKey].used_ipu_slots_ratio = agents[objectKey].used_ipu_slots / agents[objectKey].ipu_slots;
+              agents[objectKey].total_ipu_percent = (agents[objectKey].used_ipu_slots_ratio * 100).toFixed(2);
+            }
+            if ('atom.device' in available_slots) {
+              agents[objectKey].atom_slots = parseInt(available_slots['atom.device']);
+              if ('atom.device' in occupied_slots) {
+                agents[objectKey].used_atom_slots = parseInt(occupied_slots['atom.device']);
+              } else {
+                agents[objectKey].used_atom_slots = 0;
+              }
+              agents[objectKey].used_atom_slots_ratio = agents[objectKey].used_atom_slots / agents[objectKey].atom_slots;
+              agents[objectKey].total_atom_percent = (agents[objectKey].used_atom_slots_ratio * 100).toFixed(2);
+            }
+
             if ('cuda' in compute_plugins) {
               const cuda_plugin = compute_plugins['cuda'];
               agents[objectKey].cuda_plugin = cuda_plugin;
@@ -404,6 +435,47 @@ export default class BackendAIAgentList extends BackendAIPage {
               });
               agents[objectKey].tpu_mem_live = tpu_mem;
             }
+            if (agents[objectKey].live_stat?.devices?.ipu_util) {
+              const ipu_util: Array<any> = [];
+              let i = 1;
+              Object.entries(agents[objectKey].live_stat.devices.ipu_util).forEach(([k, v]) => {
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                ipu_util.push(agentInfo);
+              });
+              agents[objectKey].ipu_util_live = ipu_util;
+            }
+            if (agents[objectKey].live_stat?.devices?.ipu_mem) {
+              const ipu_mem: Array<any> = [];
+              let i = 1;
+              Object.entries(agents[objectKey].live_stat.devices.ipu_mem).forEach(([k, v]) => {
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                ipu_mem.push(agentInfo);
+              });
+              agents[objectKey].ipu_mem_live = ipu_mem;
+            }
+            if (agents[objectKey].live_stat?.devices?.atom_util) {
+              const atom_util: Array<any> = [];
+              let i = 1;
+              Object.entries(agents[objectKey].live_stat.devices.atom_util).forEach(([k, v]) => {
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                atom_util.push(agentInfo);
+              });
+              agents[objectKey].atom_util_live = atom_util;
+            }
+            if (agents[objectKey].live_stat?.devices?.atom_mem) {
+              const atom_mem: Array<any> = [];
+              let i = 1;
+              Object.entries(agents[objectKey].live_stat.devices.atom_mem).forEach(([k, v]) => {
+                const agentInfo = Object.assign({}, v, {num: k, idx: i});
+                i = i + 1;
+                atom_mem.push(agentInfo);
+              });
+              agents[objectKey].atom_mem_live = atom_mem;
+            }
+
             if ('hardware_metadata' in agent) {
               agents[objectKey].hardware_metadata = JSON.parse(agent.hardware_metadata);
             }
@@ -449,26 +521,6 @@ export default class BackendAIAgentList extends BackendAIPage {
    */
   _isRunning() {
     return this.condition === 'running';
-  }
-
-  /**
-   * Convert the value byte to MB.
-   *
-   * @param {number} value
-   * @return {number} converted value from byte to MB.
-   */
-  _byteToMB(value) {
-    return Math.floor(value / 1000000);
-  }
-
-  /**
-   * Convert the value MB to GB.
-   *
-   * @param {number} value
-   * @return {number} converted value from MB to GB.
-   */
-  _MBtoGB(value) {
-    return Math.floor(value / 1024);
   }
 
   /**
@@ -773,6 +825,30 @@ export default class BackendAIAgentList extends BackendAIPage {
                                    description="${rowData.item.used_tpu_slots}"></lablup-progress-bar>
             </div>
           ` : html``}
+          ${rowData.item.ipu_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/ipu.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_ipu_slots}/${rowData.item.ipu_slots}</span>
+                <span class="indicator">IPU</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="ipu-bar" progress="${rowData.item.used_ipu_slots_ratio}"
+                                   description="${rowData.item.used_ipu_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
+          ${rowData.item.atom_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+                <img class="indicator-icon fg green" src="/resources/icons/rebel.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_atom_slots}/${rowData.item.atom_slots}</span>
+                <span class="indicator">ATOM</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="atom-bar" progress="${rowData.item.used_atom_slots_ratio}"
+                                   description="${rowData.item.used_atom_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
         </div>`, root
     );
   }
@@ -967,11 +1043,11 @@ export default class BackendAIAgentList extends BackendAIPage {
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.addr}">
           <mwc-icon-button class="fg green controls-running" icon="assignment"
-                           @click="${(e) => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
+                           @click="${() => this.showAgentDetailDialog(rowData.item.id)}"></mwc-icon-button>
           ${this._isRunning() ? html`
             ${this._enableAgentSchedulable ? html`
               <mwc-icon-button class="fg blue controls-running" icon="settings"
-                               @click="${(e) => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
+                               @click="${() => this._showConfigDialog(rowData.item.id)}"></mwc-icon-button>
             ` : html``}
             <mwc-icon-button class="temporarily-hide fg green controls-running" icon="refresh"
                              @click="${() => this._loadAgentList()}"></mwc-icon-button>
@@ -1000,14 +1076,26 @@ export default class BackendAIAgentList extends BackendAIPage {
     return;
   }
 
-
-  _bytesToMiB(value) {
-    return Number(value / (1024 * 1024)).toFixed(1);
+  /**
+   * Convert the value bytes to MB
+   *
+   * @param {number} value
+   * @return {number} converted value from bytes to MB
+   */
+  static bytesToMB(value) {
+    return Number(value / (10 ** 6)).toFixed(1);
   }
 
-  static bytesToGiB(num, digits=2) {
-    if (!num) return num;
-    return (num / 2 ** 30).toFixed(digits);
+  /**
+   * Convert the value bytes to GiB with decimal point to 2 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GiB
+   */
+  static bytesToGiB(value, decimalPoint = 2) {
+    if (!value) return value;
+    return (value / (2 ** 30)).toFixed(decimalPoint);
   }
 
   _modifyAgentSetting() {
@@ -1062,11 +1150,11 @@ export default class BackendAIAgentList extends BackendAIPage {
                 ${this.agentDetail?.live_stat?.node ? html`
                   <div class="horizontal layout justified" style="width:100px;">
                     <span>TX: </span>
-                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMB(this.agentDetail.live_stat.node.net_tx.current)}MiB</span>
                   </div>
                   <div class="horizontal layout justified flex" style="width:100px;">
                     <span>RX: </span>
-                    <span>${this._bytesToMiB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
+                    <span>${BackendAIAgentList.bytesToMB(this.agentDetail.live_stat.node.net_rx.current)}MiB</span>
                   </div>
                 ` : html`
                   <p>${_t('agent.NoNetworkSignal')}</p>

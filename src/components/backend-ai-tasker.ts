@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -48,7 +48,7 @@ export default class BackendAiTasker extends LitElement {
   @property({type: Array}) taskstore;
   @property({type: Array}) finished;
   @property({type: Object}) pooler;
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) isGCworking = false;
 
   /**

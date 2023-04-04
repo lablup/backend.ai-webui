@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
@@ -31,7 +31,7 @@ import {
  */
 @customElement('backend-ai-sidepanel-task')
 export default class BackendAiSidepanelTask extends BackendAIPage {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Array}) tasks = [];
 
   /**
