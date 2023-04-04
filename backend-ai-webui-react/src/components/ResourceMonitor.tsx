@@ -29,7 +29,7 @@ const ResourceMonitor: React.FC<ResourceMonitorProps> = () => {
   );
   return (
     <Flex>
-      <Select value={value} options={options} style={{ width: 100 }} />;
+      <Select value={value} options={options} style={{ width: 100 }} />
     </Flex>
   );
 };
