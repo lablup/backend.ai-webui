@@ -331,6 +331,10 @@
     "DescCommitSession": "다음 세션에 대응하는 컨테이너를 커밋하려고 합니다: ",
     "EnvironmentInfo": "환경 정보",
     "DownloadingSessionLogs": "세션 로그를 다운받습니다.",
+    "VSCodeRemoteConnection": "Visual Studio Code 원격 연결",
+    "VSCodeRemotePasswordTitle": "Visual Studio Code 원격 연결 패스워드",
+    "VSCodeRemoteDescription": "Visual Studioe Code 원격 연결로 작업합니다.",
+    "VSCodeRemoteNoticeSSHConfig": "`$HOME/.ssh/config` 파일에 아래와 같은 내용을 추가하여 Visual Studio Code 원격 연결을 원활하게 할 수 있습니다.",
     "ElapsedTime": "경과 시간",
     "Timeout": "타임아웃",
     "SessionLifetime": "세션 수명",
@@ -818,6 +822,8 @@
     "Edit_ShellScriptTitle_2": " 셀 스크립트 수정하기",
     "AutoLogout": "자동 로그아웃",
     "DescAutoLogout": "세션 내 앱을 실행하기 위해 생성된 페이지를 제외한 모든 Backend.AI 웹 UI 페이지가 닫힐 경우 자동으로 로그아웃됩니다.",
+    "NoExistingVSCodePassword": "복사할 VS Code 패스워드가 없습니다.",
+    "VSCodePasswordClipboardCopy": "VS Code 패스워드가 클립보드에 복사되었습니다.",
     "SSHKeypairEnterManuallyFinished": "SSH 키페어 등록이 성공적으로 완료되었습니다."
   },
   "webTerminalUsageGuide": {
@@ -1333,6 +1339,7 @@
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
   },
+  "OpenVSCodeRemote": "원격으로 Visual Studio Code 열기",
   "totp": {
     "OTP": "이중 인증",
     "TotpRemoved": "이중 인증이 비활성화 되었습니다.",
