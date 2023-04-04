@@ -286,6 +286,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getGitHubRepoFromURL() {
+    const service = "github";
     let url = (this.shadowRoot?.querySelector('#github-repo-url') as TextField).value;
     let tree = 'master';
     let name = '';
@@ -304,7 +305,7 @@ export default class BackendAIImport extends BackendAIPage {
       url = url + '/zip/' + tree;
       const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
       if (['http', 'https'].includes(protocol)) {
-        return this.importRepoFromURL(url, name);
+        return this.importRepoFromURL(url, name, service);
       } else {
         this.notification.text = _text('import.WrongURLType');
         this.importNotebookMessage = this.notification.text;
@@ -349,7 +350,7 @@ export default class BackendAIImport extends BackendAIPage {
         url = url + '/zip/' + tree;
         const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
         if (['http', 'https'].includes(protocol)) {
-          return this.importRepoFromURL(url, name);
+          return this.importRepoFromURL(url, name, service);
         } else {
           this.notification.text = _text('import.WrongURLType');
           this.importNotebookMessage = this.notification.text;
@@ -380,6 +381,7 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   getGitlabRepoFromURL() {
+    const service = "gitlab";
     let url = (this.shadowRoot?.querySelector('#gitlab-repo-url') as TextField).value;
     let tree = 'master';
     const getBranchName = (this.shadowRoot?.querySelector('#gitlab-default-branch-name') as TextField).value;
@@ -401,7 +403,7 @@ export default class BackendAIImport extends BackendAIPage {
       url += '/' + name + '-' + tree + '.zip';
       const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
       if (['http', 'https'].includes(protocol)) {
-        return this.importRepoFromURL(url, name);
+        return this.importRepoFromURL(url, name, service);
       } else {
         this.notification.text = _text('import.WrongURLType');
         this.importNotebookMessage = this.notification.text;
@@ -413,7 +415,7 @@ export default class BackendAIImport extends BackendAIPage {
       url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip';
       const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
       if (['http', 'https'].includes(protocol)) {
-        return this.importRepoFromURL(url, name);
+        return this.importRepoFromURL(url, name, service);
       } else {
         this.notification.text = _text('import.WrongURLType');
         this.importGitlabMessage = this.notification.text;
@@ -423,7 +425,7 @@ export default class BackendAIImport extends BackendAIPage {
     }
   }
 
-  async importRepoFromURL(url, folderName) {
+  async importRepoFromURL(url, folderName, service) {
     // Create folder to
     const imageResource: Record<string, unknown> = {};
     imageResource['cpu'] = 1;
@@ -432,8 +434,8 @@ export default class BackendAIImport extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('import.Preparing'));
-    folderName = await this._checkFolderNameAlreadyExists(folderName, url);
-    await this._addFolderWithName(folderName, url);
+    folderName = await this._checkFolderNameAlreadyExists(folderName, service);
+    await this._addFolderWithName(folderName, service);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
     imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
@@ -454,20 +456,20 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _addFolderWithName(name, url) {
+  async _addFolderWithName(name, service) {
     const permission = 'rw';
     const usageMode = 'general';
     const group = ''; // user ownership
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
-    if (url.includes('github.com/')) {
+    if (service === 'github') {
       host = (this.shadowRoot?.querySelector('#github-add-folder-host') as Select).value;
     } else {
       host = (this.shadowRoot?.querySelector('#gitlab-add-folder-host') as Select).value;
     }
-    name = await this._checkFolderNameAlreadyExists(name, url);
+    name = await this._checkFolderNameAlreadyExists(name, service);
     return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      if (url.includes('github.com/')) {
+      if (service === 'github') {
         this.importNotebookMessage = _text('import.FolderName') + name;
       } else {
         this.importGitlabMessage = _text('import.FolderName') + name;
@@ -482,14 +484,14 @@ export default class BackendAIImport extends BackendAIPage {
     });
   }
 
-  async _checkFolderNameAlreadyExists(name, url) {
+  async _checkFolderNameAlreadyExists(name, service) {
     const vfolderObj = await globalThis.backendaiclient.vfolder.list();
     const vfolders = vfolderObj.map(function(value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
       this.notification.text = _text('import.FolderAlreadyExists');
-      if (url.includes('github.com/')) {
+      if (service === 'github') {
         this.importNotebookMessage = this.notification.text;
       } else {
         this.importGitlabMessage = this.notification.text;
