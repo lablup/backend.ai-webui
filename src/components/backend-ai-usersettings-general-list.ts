@@ -861,18 +861,16 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         } else {
           let newListItem = document.createElement('mwc-list-item');
           let newDomainTextField = document.createElement('mwc-textfield');
-          newDomainTextField.label = _text('usersettings.GitServiceDomain');
           newDomainTextField.type = "text";
           newDomainTextField.className = "service_domain";
-          newDomainTextField.name = "service_domain"
           newDomainTextField.style.width = "auto";
           newDomainTextField.value = resp[i].domain;
+          newDomainTextField.addEventListener('input', (e) => this._validateGitDomainName(e));
+          newDomainTextField.validationMessage="${_text('session.Validation.EnterValidSessionName')}";
           newListItem.appendChild(newDomainTextField);
           let newTokenTextField = document.createElement('mwc-textfield');
-          newTokenTextField.label = _text('usersettings.GitServiceToken');
           newTokenTextField.type = "text";
           newTokenTextField.className = "service_token";
-          newTokenTextField.name = "service_token";
           newTokenTextField.style.width = "auto";
           newTokenTextField.value = resp[i].token;
           newListItem.appendChild(newTokenTextField);
@@ -910,17 +908,15 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   _addGitTokenList() {
     let newListItem = document.createElement('mwc-list-item');
     let newDomainTextField = document.createElement('mwc-textfield');
-    newDomainTextField.label = _text('usersettings.GitServiceDomain');
     newDomainTextField.type = "text";
     newDomainTextField.className = "service_domain";
-    newDomainTextField.name = "service_domain"
     newDomainTextField.style.width = "auto";
+    newDomainTextField.addEventListener('input', (e) => this._validateGitDomainName(e));
+    newDomainTextField.validationMessage="${_text('session.Validation.EnterValidSessionName')}";
     newListItem.appendChild(newDomainTextField);
     let newTokenTextField = document.createElement('mwc-textfield');
-    newTokenTextField.label = _text('usersettings.GitServiceToken');
     newTokenTextField.type = "text";
     newTokenTextField.className = "service_token";
-    newTokenTextField.name = "service_token";
     newTokenTextField.style.width = "auto";
     newListItem.appendChild(newTokenTextField);
     let newItemRemoveButtonField = document.createElement('mwc-icon-button');
@@ -977,6 +973,59 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
 
   _hideSaveGitTokenManagementDialog() {
     this.saveGitTokenManagementDialog.hide();
+  }
+
+  _validateGitDomainName(item) {
+    let gitDomainList: string[] = [];
+    (this.shadowRoot?.querySelector('#git-token-list'))?.querySelectorAll('mwc-list-item').forEach((e) => {
+      let selectedItem = e.querySelectorAll('mwc-textfield');
+      if (selectedItem[0] !== item.target) {
+        gitDomainList.push(selectedItem[0]?.value);
+      }
+    });
+
+    item.target.validityTransform = (value, nativeValidity) => {
+      if (!nativeValidity.valid) {
+        if (nativeValidity.valueMissing) {
+          //item.target.validationMessage = _text('session.Validation.SessionNameRequired');
+          this.notification.text = _text('session.Validation.SessionNameRequired');
+          this.notification.show();
+          return {
+            valid: nativeValidity.valid,
+            valueMissing: !nativeValidity.valid
+          };
+        } else if (nativeValidity.patternMismatch) {
+          //item.target.validationMessage = _text('session.Validation.SluggedStrings');
+          this.notification.text =  _text('session.Validation.SluggedStrings');
+          this.notification.show();
+          return {
+            valid: nativeValidity.valid,
+            patternMismatch: !nativeValidity.valid
+          };
+        } else {
+          //item.target.validationMessage = _text('session.Validation.EnterValidSessionName');
+          this.notification.text = _text('session.Validation.EnterValidSessionName');
+          this.notification.show();
+          return {
+            valid: nativeValidity.valid,
+            customError: !nativeValidity.valid
+          };
+        }
+      } else {
+        let isValid = true;
+        if (gitDomainList.indexOf(value) !== -1) {
+          isValid = false;
+          //item.target.validationMessage = _text('session.Validation.SessionNameAlreadyExist');
+          this.notification.text = _text('session.Validation.SessionNameAlreadyExist');
+          this.notification.show();
+        }
+        return {
+          valid: isValid,
+          customError: !isValid
+        };
+      }
+  }
+
   }
 
   /**
@@ -1424,37 +1473,21 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         <span slot="title">${_t('usersettings.GitTokenManagement')}</span>
         <div slot="content" style="width:440px">
           <mwc-list id="git-token-list">
+            <div class="horizontal layout flex" style="width:380px;margin-left:20px">
+              <h4 class="flex layout">${_text('usersettings.GitServiceDomain')}</h4>
+              <h4 class="flex layout">${_text('usersettings.GitServiceToken')}</h4>
+            </div>
             <mwc-list-item>
-              <mwc-textfield
-                type="text"
-                name="service_domain"
-                id="id_github_domain"
-                value="github.com"
-                label="github.com"
-                readonly>
-              </mwc-textfield>
-              <mwc-textfield
-                type="text"
-                name="service_token"
-                id="id_github_token"
-                label="${_t('usersettings.GithubTokenValue')}">
-              </mwc-textfield>
+              <mwc-textfield type="text" id="id_github_domain"
+                validationMessage="${_text('session.Validation.EnterValidSessionName')}"
+                value="github.com" readonly></mwc-textfield>
+              <mwc-textfield type="text" id="id_github_token"></mwc-textfield>
             </mwc-list-item>
             <mwc-list-item>
-              <mwc-textfield
-                type="text"
-                name="service_domain"
-                id="id_gitlab_domain"
-                label="gitlab.com"
-                value="gitlab.com"
-                readonly>
-              </mwc-textfield>
-              <mwc-textfield
-                type="text"
-                name="service_token"
-                id="id_gitlab_token"
-                label="${_t('usersettings.GitlabTokenValue')}">
-              </mwc-textfield>
+              <mwc-textfield type="text" id="id_gitlab_domain"
+                validationMessage="${_text('session.Validation.EnterValidSessionName')}"
+                value="gitlab.com" readonly></mwc-textfield>
+              <mwc-textfield type="text" id="id_gitlab_token"></mwc-textfield>
             </mwc-list-item>
           </mwc-list>
           <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
