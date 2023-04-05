@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const useBackendAIConnectedState = () => {
+export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
 
   useEffect(() => {
