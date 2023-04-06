@@ -31,6 +31,7 @@ import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/textfield';
 
 import './lablup-codemirror';
 import './lablup-progress-bar';
