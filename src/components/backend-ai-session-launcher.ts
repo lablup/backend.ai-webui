@@ -171,13 +171,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Number}) session_request;
   @property({type: Boolean}) _status;
   @property({type: Number}) num_sessions;
-  @property({type: String}) scaling_group;
-  @property({type: Array}) scaling_groups;
+  @property({type: String}) resource_group;
+  @property({type: Array}) resource_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
   @property({type: Boolean}) aggregate_updating = false;
-  @property({type: Object}) scaling_group_selection_box;
+  @property({type: Object}) resource_group_selection_box;
   @property({type: Object}) resourceGauge = Object();
   @property({type: String}) sessionType = 'interactive';
   /* Parameters required to launch a session on behalf of other user */
@@ -185,7 +185,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: String}) ownerDomain = '';
   @property({type: Array}) ownerKeypairs;
   @property({type: Array}) ownerGroups;
-  @property({type: Array}) ownerScalingGroups;
+  @property({type: Array}) ownerResourceGroupList;
   @property({type: Boolean}) project_resource_monitor = false;
   @property({type: Boolean}) _default_language_updated = false;
   @property({type: Boolean}) _default_version_updated = false;
@@ -209,7 +209,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) deleteEnvInfo = Object();
   @property({type: Object}) deleteEnvRow = Object();
   @property({type: Array}) environ;
-  @property({type: Object}) environ_values = Object();
+  @property({type: Object}) environValues = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
   @property({type: Number}) progressLength;
@@ -226,12 +226,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'version': ['']
   };
   @query('#image-name') manualImageName;
-  @query('#version') version_selector!: Select;
-  @query('#environment') environment!: Select;
+  @query('#session-type') sessionTypeSelector!: Select;
+  @query('#session-name') sessionNameInput!: TextField;
+  @query('#version') versionSelector!: Select;
+  @query('#environment') environmentSelector!: Select;
   @query('#owner-group') ownerGroupSelect!: Select;
-  @query('#scaling-groups') scalingGroups!: Select;
+  @query('#resource-group') resourceGroupSelect!: Select;
   @query('#resource-templates') resourceTemplatesSelect!: Select;
-  @query('#owner-scaling-group') ownerScalingGroupSelect!: Select;
+  @query('#owner-resource-group') ownerResourceGroupSelect!: Select;
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
   @query('#vfolder-mount-preview') vfolderMountPreview!: WlExpansion;
@@ -240,11 +242,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#prev-button') prevButton!: IconButton;
   @query('#next-button') nextButton!: IconButton;
   @query('#OpenMPswitch') openMPSwitch!: Switch;
-  @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
-  @query('#gpu-resource') npuResouceSlider!: LablupSlider;
-  @query('#mem-resource') memoryResouceSlider!: LablupSlider;
-  @query('#shmem-resource') sharedMemoryResouceSlider!: LablupSlider;
-  @query('#session-resource') sessionResouceSlider!: LablupSlider;
+  @query('#cpu-resource') cpuResourceSlider!: LablupSlider;
+  @query('#gpu-resource') npuResourceSlider!: LablupSlider;
+  @query('#mem-resource') memoryResourceSlider!: LablupSlider;
+  @query('#shmem-resource') sharedmemoryResourceSlider!: LablupSlider;
+  @query('#session-resource') sessionResourceSlider!: LablupSlider;
   @query('#cluster-size') clusterSizeSlider!: LablupSlider;
   @query('#launch-button-msg') launchButtonMessage!: HTMLSpanElement;
   @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
@@ -252,13 +254,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
   @query('#launch-confirmation-dialog') launchConfirmationDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#save-configuration') saveConfigurationCheckbox!: Checkbox;
 
   constructor() {
     super();
     this.active = false;
     this.ownerKeypairs = [];
     this.ownerGroups = [];
-    this.ownerScalingGroups = [];
+    this.ownerResourceGroupList = [];
     this.resourceBroker = globalThis.resourceBroker;
     this.notification = globalThis.lablupNotification;
     this.environ = [];
@@ -611,7 +614,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
 
         mwc-select#owner-group,
-        mwc-select#owner-scaling-group {
+        mwc-select#owner-resource-group {
           margin-right: 0;
           padding-right: 0;
           width: 50%;
@@ -886,8 +889,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.gpu_request = 0;
     this.gpu_request_type = 'cuda.device';
     this.session_request = 1;
-    this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
-    this.scaling_group = '';
+    this.resource_groups = [{name: ''}]; // if there is no resource group, set the name as empty string
+    this.resource_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
     this.metadata_updating = false;
@@ -898,12 +901,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.ownerDomain = '';
     this.ownerKeypairs = [];
     this.ownerGroups = [];
-    this.ownerScalingGroups = [];
+    this.ownerResourceGroupList = [];
   }
 
   firstUpdated() {
-    this.environment.addEventListener('selected', this.updateLanguage.bind(this));
-    this.version_selector.addEventListener('selected', () => {
+    this.environmentSelector.addEventListener('selected', this.updateLanguage.bind(this));
+    this.versionSelector.addEventListener('selected', () => {
       this.updateResourceAllocationPane();
     });
 
@@ -1010,7 +1013,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         return true;
       };
 
-      if (!isEquivalent(currentEnv, this.environ_values)) {
+      if (!isEquivalent(currentEnv, this.environValues)) {
         this.hideEnvDialog = true;
         this.openDialog('env-config-confirmation');
       } else {
@@ -1048,36 +1051,36 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * Update selected scaling groups.
+   * Update selected resource groups.
    * An element should update based on some state not triggered by setting a property.
    * */
-  _updateSelectedScalingGroup() {
-    this.scaling_groups = this.resourceBroker.scaling_groups;
-    const selectedSgroup = this.scalingGroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
-    if (this.resourceBroker.scaling_group === '' || typeof selectedSgroup == 'undefined') {
+  _updateSelectedResourceGroup() {
+    this.resource_groups = this.resourceBroker.resource_groups;
+    const selectedSgroup = this.resourceGroupSelect.items.find((item) => item.value === this.resourceBroker.resource_group);
+    if (this.resourceBroker.resource_group === '' || typeof selectedSgroup == 'undefined') {
       setTimeout(() => {
-        this._updateSelectedScalingGroup();
+        this._updateSelectedResourceGroup();
       }, 500);
       return;
     }
-    const idx = this.scalingGroups.items.indexOf(selectedSgroup);
-    this.scalingGroups.select(-1);
-    this.scalingGroups.select(idx);
-    this.scalingGroups.value = selectedSgroup.value;
-    this.scalingGroups.requestUpdate();
+    const idx = this.resourceGroupSelect.items.indexOf(selectedSgroup);
+    this.resourceGroupSelect.select(-1);
+    this.resourceGroupSelect.select(idx);
+    this.resourceGroupSelect.value = selectedSgroup.value;
+    this.resourceGroupSelect.requestUpdate();
   }
 
   /**
-   * Update scaling groups asynchronously.
+   * Update resource groups asynchronously.
    * If forceUpdate is true, call _refreshResourcePolicy().
    * Else, call updateResourceAllocationPane().
    *
    * @param {boolean} forceUpdate - whether to refresh resource policy or not
    * @param {any} e
    * */
-  async updateScalingGroup(forceUpdate = false, e) {
+  async updateResourceGroup(forceUpdate = false, e) {
     if (this.active) {
-      await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+      await this.resourceBroker.updateResourceGroup(forceUpdate, e.target.value);
 
       if (forceUpdate === true) {
         await this._refreshResourcePolicy();
@@ -1178,10 +1181,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const nameFragments = this.manualImageName.value.split(':');
       environmentString = nameFragments[0];
       versionArray = nameFragments.slice(-1)[0].split('-');
-    } else if (this.kernel !== undefined && this.version_selector?.disabled === false) {
+    } else if (this.kernel !== undefined && this.versionSelector?.disabled === false) {
       environmentString = this.kernel;
       // TODO remove protected field access
-      versionArray = (this.version_selector as any).selectedText.split('/');
+      versionArray = (this.versionSelector as any).selectedText.split('/');
     } else {
       return false;
     }
@@ -1227,8 +1230,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.active && this.metadata_updating === false) {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
-      // update selected Scaling Group depends on project group
-      this._updateSelectedScalingGroup();
+      // update selected resource group depends on project group
+      this._updateSelectedResourceGroup();
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
       this.aggregateResource('update-page-variable');
@@ -1282,7 +1285,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         ownershipPanel.style.display = 'none';
       }
-      this._updateSelectedScalingGroup();
+      this._updateSelectedResourceGroup();
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
       this.requestUpdate();
@@ -1341,20 +1344,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // When the "Environment" dropdown is disabled after typing the image name manually,
       // `selecteditem.id` is `null` and raises "id" exception when trying to launch the session.
       // That's why we need if-else block here.
-      const selectedItem = this.environment.selected;
+      const selectedItem = this.environmentSelector.selected;
       kernel = selectedItem?.id ?? '';
-      version = this.version_selector.selected?.value ?? '';
-      architecture = this.version_selector.selected?.getAttribute('architecture') ?? undefined;
+      version = this.versionSelector.selected?.value ?? '';
+      architecture = this.versionSelector.selected?.getAttribute('architecture') ?? undefined;
     }
-    this.sessionType = (this.shadowRoot?.querySelector('#session-type') as Select).value;
-    let sessionName = (this.shadowRoot?.querySelector('#session-name') as TextField).value;
-    const isSessionNameValid = (this.shadowRoot?.querySelector('#session-name') as TextField).checkValidity();
+    this.sessionType = this.sessionTypeSelector.value;
+    let sessionName = this.sessionNameInput.value;
+    const isSessionNameValid = this.sessionNameInput.checkValidity();
     let vfolder = this.selectedVfolders; // Will be overwritten if customFolderMapping is given on inference mode.
-    this.cpu_request = parseInt(this.cpuResouceSlider.value);
-    this.mem_request = parseFloat(this.memoryResouceSlider.value);
-    this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
-    this.gpu_request = parseFloat(this.npuResouceSlider.value);
-    this.session_request = parseInt(this.sessionResouceSlider.value);
+    this.cpu_request = parseInt(this.cpuResourceSlider.value);
+    this.mem_request = parseFloat(this.memoryResourceSlider.value);
+    this.shmem_request = parseFloat(this.sharedmemoryResourceSlider.value);
+    this.gpu_request = parseFloat(this.npuResourceSlider.value);
+    this.session_request = parseInt(this.sessionResourceSlider.value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
       this.notification.text = _text('session.launcher.DuplicatedSessionName');
@@ -1372,11 +1375,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.notification.show();
       return;
     }
-    this.scaling_group = this.scalingGroups.value;
+    this.resource_group = this.resourceGroupSelect.value;
     const config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
-    config['scaling_group'] = this.scaling_group;
+    config['resource_group'] = this.resource_group;
     config['type'] = this.sessionType;
     if (globalThis.backendaiclient.supports('multi-container')) {
       config['cluster_mode'] = this.cluster_mode;
@@ -1387,9 +1390,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.ownerGroupSelect.value;
       config['domain'] = this.ownerDomain;
-      config['scaling_group'] = this.ownerScalingGroupSelect.value;
+      config['resource_group'] = this.ownerResourceGroupSelect.value;
       config['owner_access_key'] = this.ownerAccesskeySelect.value;
-      if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
+      if (!config['group_name'] || !config['domain'] || !config['resource_group'] || !config ['owner_access_key']) {
         this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
         this.notification.show();
         return;
@@ -1421,8 +1424,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config[this.gpu_mode] = this.gpu_request;
       }
     }
-    if (String(this.memoryResouceSlider.value) === 'Infinity') {
-      config['mem'] = String(this.memoryResouceSlider.value);
+    if (String(this.memoryResourceSlider.value) === 'Infinity') {
+      config['mem'] = String(this.memoryResourceSlider.value);
     } else {
       config['mem'] = String(this.mem_request) + 'g';
     }
@@ -1496,8 +1499,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         config['startsAt'] = scheduledTime + getClientTimezoneOffset();
       }
     }
-    if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
-      config['env'] = this.environ_values;
+    if (this.environValues && Object.keys(this.environValues).length !== 0) {
+      config['env'] = this.environValues;
     }
     if (this.openMPSwitch.selected === false) {
       const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
@@ -1677,7 +1680,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   // TODO refactor method to return consistent type
   _updateVersions(kernel): any {
     if (kernel in this.resourceBroker.supports) {
-      this.version_selector.disabled = true;
+      this.versionSelector.disabled = true;
       const versions: {version: string, architecture: string}[] = [];
       for (const version of this.resourceBroker.supports[kernel]) {
         for (const architecture of this.resourceBroker.imageArchitectures[kernel + ':' + version]) {
@@ -1692,27 +1695,27 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       return;
     }
     if (this.versions !== undefined) {
-      return this.version_selector.layout(true).then(() => {
+      return this.versionSelector.layout(true).then(() => {
         // Set version selector's value beforehand to update resources in
         // updateResourceAllocationPane method. Without this, LAUNCH button's disabled state is not
         // updated, so in some cases, user cannot launch a session even though
         // there are available resources for the selected image.
-        this.version_selector.select(1);
-        this.version_selector.value = this.versions[0].version;
+        this.versionSelector.select(1);
+        this.versionSelector.value = this.versions[0].version;
         // TODO define extended type for custom property
-        (this.version_selector as any).architecture = this.versions[0].architecture;
-        // this.version_selector.selectedText = this.version_selector.value;
+        (this.versionSelector as any).architecture = this.versions[0].architecture;
+        // this.versionSelector.selectedText = this.versionSelector.value;
         // TODO define extended type for custom property
-        this._updateVersionSelectorText(this.version_selector.value, (this.version_selector as any).architecture);
-        this.version_selector.disabled = false;
-        this.environ_values = {};
+        this._updateVersionSelectorText(this.versionSelector.value, (this.versionSelector as any).architecture);
+        this.versionSelector.disabled = false;
+        this.environValues = {};
         this.updateResourceAllocationPane('update versions');
       });
     }
   }
 
   /**
-   * Update version_selector's selectedText.
+   * Update versionSelector's selectedText.
    *
    * @param {any} version
    * @param {any} architecture
@@ -1724,7 +1727,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       resultArray.push(item.tag);
     });
     // TODO remove protected field access
-    (this.version_selector as any).selectedText = resultArray.join(' / ');
+    (this.versionSelector as any).selectedText = resultArray.join(' / ');
   }
 
   /**
@@ -1762,8 +1765,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
          */
       }
       this.concurrency_used = this.resourceBroker.concurrency_used;
-      this.scaling_group = this.resourceBroker.scaling_group;
-      this.scaling_groups = this.resourceBroker.scaling_groups;
+      this.resource_group = this.resourceBroker.resource_group;
+      this.resource_groups = this.resourceBroker.resource_groups;
       this.resource_templates = this.resourceBroker.resource_templates;
       this.resource_templates_filtered = this.resourceBroker.resource_templates_filtered;
       this.total_slot = this.resourceBroker.total_slot;
@@ -1823,8 +1826,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         return this.updateResourceAllocationPane('after refresh resource policy');
       });
     }
-    const selectedItem = this.environment.selected;
-    const selectedVersionItem = this.version_selector.selected;
+    const selectedItem = this.environmentSelector.selected;
+    const selectedVersionItem = this.versionSelector.selected;
     // Pulldown is not ready yet.
     if (selectedVersionItem === null) {
       this.metric_updating = false;
@@ -1889,14 +1892,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const available_slot = this.resourceBroker.available_slot;
 
       // Post-UI markup to disable unchangeable values
-      this.cpuResouceSlider.disabled = false;
-      this.memoryResouceSlider.disabled = false;
-      this.npuResouceSlider.disabled = false;
+      this.cpuResourceSlider.disabled = false;
+      this.memoryResourceSlider.disabled = false;
+      this.npuResourceSlider.disabled = false;
       if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
         this.cluster_size = 1;
         this.clusterSizeSlider.value = this.cluster_size;
       }
-      this.sessionResouceSlider.disabled = false;
+      this.sessionResourceSlider.disabled = false;
       this.launchButton.disabled = false;
       this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
       let disableLaunch = false;
@@ -1939,7 +1942,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cpu_metric.min = cpu_metric.max;
               disableLaunch = true;
             }
-            this.cpuResouceSlider.disabled = true;
+            this.cpuResourceSlider.disabled = true;
           }
           this.cpu_metric = cpu_metric;
           // monkeypatch for cluster_metric max size
@@ -1973,7 +1976,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = cuda_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -1999,7 +2002,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
@@ -2017,7 +2020,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               rocm_device_metric.min = rocm_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = rocm_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -2043,7 +2046,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               tpu_device_metric.min = tpu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = tpu_device_metric;
           this._NPUDeviceNameOnSlider = 'TPU';
@@ -2069,7 +2072,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ipu_device_metric.min = ipu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           this.npu_device_metric = ipu_device_metric;
           this._NPUDeviceNameOnSlider = 'IPU';
@@ -2095,7 +2098,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               atom_device_metric.min = atom_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npuResourceSlider.disabled = true;
           }
           console.log(atom_device_metric);
           this._NPUDeviceNameOnSlider = 'ATOM';
@@ -2131,7 +2134,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               mem_metric.min = mem_metric.max;
               disableLaunch = true;
             }
-            this.memoryResouceSlider.disabled = true;
+            this.memoryResourceSlider.disabled = true;
           }
           mem_metric.min = Number(mem_metric.min.toFixed(2));
           mem_metric.max = Number(mem_metric.max.toFixed(2));
@@ -2154,7 +2157,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           shmem_metric.min = shmem_metric.max;
           disableLaunch = true;
         }
-        this.sharedMemoryResouceSlider.disabled = true;
+        this.sharedmemoryResourceSlider.disabled = true;
       }
       shmem_metric.min = Number(shmem_metric.min.toFixed(2));
       shmem_metric.max = Number(shmem_metric.max.toFixed(2));
@@ -2162,8 +2165,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       // GPU metric
       if (this.npu_device_metric.min == 0 && this.npu_device_metric.max == 0) { // GPU is disabled (by image,too).
-        this.npuResouceSlider.disabled = true;
-        this.npuResouceSlider.value = 0;
+        this.npuResourceSlider.disabled = true;
+        this.npuResourceSlider.value = 0;
         if (this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
@@ -2183,8 +2186,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           this.resource_templates_filtered = this.resource_templates;
         }
       } else {
-        this.npuResouceSlider.disabled = false;
-        this.npuResouceSlider.value = this.npu_device_metric.max;
+        this.npuResourceSlider.disabled = false;
+        this.npuResourceSlider.value = this.npu_device_metric.max;
         this.resource_templates_filtered = this.resource_templates;
       }
       // Refresh with resource template
@@ -2200,11 +2203,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         this._updateResourceIndicator(this.cpu_metric.min, this.mem_metric.min, 'none', 0);
       }
       if (disableLaunch) {
-        this.cpuResouceSlider.disabled = true; // Not enough CPU. so no session.
-        this.memoryResouceSlider.disabled = true;
-        this.npuResouceSlider.disabled = true;
-        this.sessionResouceSlider.disabled = true;
-        this.sharedMemoryResouceSlider.disabled = true;
+        this.cpuResourceSlider.disabled = true; // Not enough CPU. so no session.
+        this.memoryResourceSlider.disabled = true;
+        this.npuResourceSlider.disabled = true;
+        this.sessionResourceSlider.disabled = true;
+        this.sharedmemoryResourceSlider.disabled = true;
         this.launchButton.disabled = true;
         (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'none';
         if (this.cluster_support) {
@@ -2212,11 +2215,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         }
         this.launchButtonMessage.textContent = _text('session.launcher.NotEnoughResource');
       } else {
-        this.cpuResouceSlider.disabled = false;
-        this.memoryResouceSlider.disabled = false;
-        this.npuResouceSlider.disabled = false;
-        this.sessionResouceSlider.disabled = false;
-        this.sharedMemoryResouceSlider.disabled = false;
+        this.cpuResourceSlider.disabled = false;
+        this.memoryResourceSlider.disabled = false;
+        this.npuResourceSlider.disabled = false;
+        this.sessionResourceSlider.disabled = false;
+        this.sharedmemoryResourceSlider.disabled = false;
         this.launchButton.disabled = false;
         (this.shadowRoot?.querySelector('.allocation-check') as HTMLDivElement).style.display = 'flex';
         if (this.cluster_support) {
@@ -2225,14 +2228,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       if (this.npu_device_metric.min == this.npu_device_metric.max &&
           this.npu_device_metric.max < 1) {
-        this.npuResouceSlider.disabled = true;
+        this.npuResourceSlider.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         // this.shadowRoot.querySelector('#cluster-size').disabled = true;
-        this.sessionResouceSlider.min = 1;
-        this.sessionResouceSlider.max = 2;
-        this.sessionResouceSlider.value = 1;
-        this.sessionResouceSlider.disabled = true;
+        this.sessionResourceSlider.min = 1;
+        this.sessionResourceSlider.max = 2;
+        this.sessionResourceSlider.value = 1;
+        this.sessionResourceSlider.disabled = true;
       }
       if (this.max_containers_per_session <= 1 && this.cluster_mode === 'single-node') {
         this.clusterSizeSlider.min = 1;
@@ -2436,12 +2439,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _setSessionLimit(maxValue = 1) {
     if (maxValue > 0) {
-      this.sessionResouceSlider.value = maxValue;
+      this.sessionResourceSlider.value = maxValue;
       this.session_request = maxValue;
-      this.sessionResouceSlider.disabled = true;
+      this.sessionResourceSlider.disabled = true;
     } else {
-      this.sessionResouceSlider.max = this.concurrency_limit;
-      this.sessionResouceSlider.disabled = false;
+      this.sessionResourceSlider.max = this.concurrency_limit;
+      this.sessionResourceSlider.disabled = false;
     }
   }
 
@@ -2504,10 +2507,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
-    this.cpuResouceSlider.value = cpu;
-    this.memoryResouceSlider.value = mem;
-    this.npuResouceSlider.value = gpu_value;
-    this.sharedMemoryResouceSlider.value = this.shmem_request;
+    this.cpuResourceSlider.value = cpu;
+    this.memoryResourceSlider.value = mem;
+    this.npuResourceSlider.value = gpu_value;
+    this.sharedmemoryResourceSlider.value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
     this.gpu_request = gpu_value;
@@ -2544,7 +2547,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.default_language = 'index.docker.io/lablup/ngc-tensorflow';
     }
     // await environment.updateComplete; async way.
-    const obj = this.environment.items.find((o) => o.value === this.default_language);
+    const obj = this.environmentSelector.items.find((o) => o.value === this.default_language);
     if (typeof obj === 'undefined' && typeof globalThis.backendaiclient !== 'undefined' && globalThis.backendaiclient.ready === false) { // Not ready yet.
       setTimeout(() => {
         console.log('Environment selector is not ready yet. Trying to set the default language again.');
@@ -2552,8 +2555,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }, 500);
       return Promise.resolve(true);
     }
-    const idx = this.environment.items.indexOf(obj!);
-    this.environment.select(idx);
+    const idx = this.environmentSelector.items.indexOf(obj!);
+    this.environmentSelector.select(idx);
     this._default_language_updated = true;
     return Promise.resolve(true);
   }
@@ -2568,7 +2571,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * */
   async _fetchSessionOwnerGroups() {
     if (!this.ownerFeatureInitialized) {
-      this.ownerGroupSelect.addEventListener('selected', this._fetchSessionOwnerScalingGroups.bind(this));
+      this.ownerGroupSelect.addEventListener('selected', this._fetchSessionOwnerResourceGroups.bind(this));
       this.ownerFeatureInitialized = true;
     }
     const email = this.ownerEmailInput.value;
@@ -2612,19 +2615,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     ownerEnabled.disabled = false;
   }
 
-  async _fetchSessionOwnerScalingGroups() {
+  async _fetchSessionOwnerResourceGroups() {
     const group = this.ownerGroupSelect.value;
     if (!group) {
-      this.ownerScalingGroups = [];
+      this.ownerResourceGroupList = [];
       return;
     }
     const sgroupInfo = await globalThis.backendaiclient.scalingGroup.list(group);
-    this.ownerScalingGroups = sgroupInfo.scaling_groups;
-    if (this.ownerScalingGroups) {
-      this.ownerScalingGroupSelect.layout(true).then(()=>{
-        this.ownerScalingGroupSelect.select(0);
+    this.ownerResourceGroupList = sgroupInfo.resource_groups;
+    if (this.ownerResourceGroupList) {
+      this.ownerResourceGroupSelect.layout(true).then(()=>{
+        this.ownerResourceGroupSelect.select(0);
         // TODO remove protected field usage
-        (this.ownerGroupSelect as any).createAdapter().setSelectedText(this.ownerScalingGroups[0]['name']);
+        (this.ownerGroupSelect as any).createAdapter().setSelectedText(this.ownerResourceGroupSelect[0]['name']);
       });
     }
   }
@@ -2802,20 +2805,20 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _updateShmemLimit() {
-    const currentMemLimit = parseFloat(this.memoryResouceSlider.value);
-    let shmemValue = this.sharedMemoryResouceSlider.value;
+    const currentMemLimit = parseFloat(this.memoryResourceSlider.value);
+    let shmemValue = this.sharedmemoryResourceSlider.value;
     // this.shmem_metric.max = Math.min(this.max_shm_per_container, currentMemLimit);
     // clamp the max value to the smaller of the current memory value or the configuration file value.
     // shmemEl.max = this.shmem_metric.max;
     if (parseFloat(shmemValue) > currentMemLimit) {
       shmemValue = currentMemLimit;
       this.shmem_request = shmemValue;
-      this.sharedMemoryResouceSlider.value = shmemValue;
-      this.sharedMemoryResouceSlider.max = shmemValue;
+      this.sharedmemoryResourceSlider.value = shmemValue;
+      this.sharedmemoryResourceSlider.max = shmemValue;
       this.notification.text = _text('session.launcher.SharedMemorySettingIsReduced');
       this.notification.show();
     } else if (this.max_shm_per_container > shmemValue) {
-      this.sharedMemoryResouceSlider.max = currentMemLimit > this.max_shm_per_container ? this.max_shm_per_container : currentMemLimit;
+      this.sharedmemoryResourceSlider.max = currentMemLimit > this.max_shm_per_container ? this.max_shm_per_container : currentMemLimit;
     }
   }
 
@@ -3053,7 +3056,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Parse environment variables on UI.
    */
   _parseEnvVariableList() {
-    this.environ_values = {};
+    this.environValues = {};
     const container = this.shadowRoot?.querySelector('#modify-env-container');
     const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
@@ -3061,7 +3064,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     ).length === 0;
     const encodeRow = (row) => {
       const items: Array<any> = Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value);
-      this.environ_values[items[0]] = items[1];
+      this.environValues[items[0]] = items[1];
       return items;
     };
     Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row));
@@ -3071,12 +3074,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Save Environment variables
    */
   _saveEnvVariableList() {
-    this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
+    this.environ = Object.entries(this.environValues).map(([name, value]) => ({name, value}));
   }
 
   _resetEnvironmentVariables() {
     this.environ = [];
-    this.environ_values = {};
+    this.environValues = {};
     if (this.modifyEnvDialog !== null) {
       this._clearRows(true);
     }
@@ -3212,11 +3215,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _toggleEnvironmentSelectUI() {
     const isManualImageEnabled = this.manualImageName?.value ? true : false;
-    this.environment.disabled = this.version_selector.disabled = isManualImageEnabled;
+    this.environmentSelector.disabled = this.versionSelector.disabled = isManualImageEnabled;
     // select none(-1) when manual image is enabled
     const selectedIndex = isManualImageEnabled ? -1 : 1;
-    this.environment.select(selectedIndex);
-    this.version_selector.select(selectedIndex);
+    this.environmentSelector.select(selectedIndex);
+    this.versionSelector.select(selectedIndex);
   }
 
   /**
@@ -3507,9 +3510,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       </mwc-list-item>
                     `)}
                   </mwc-select>
-                  <mwc-select id="owner-scaling-group" label="${_text('session.launcher.OwnerResourceGroup')}"
+                  <mwc-select id="owner-resource-group" label="${_text('session.launcher.OwnerResourceGroup')}"
                               icon="storage" fixedMenuPosition>
-                    ${this.ownerScalingGroups.map((item) => html`
+                    ${this.ownerResourceGroupList.map((item) => html`
                       <mwc-list-item class="owner-group-dropdown"
                                     id="${item.name}"
                                     value="${item.name}">
@@ -3606,10 +3609,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
-              <mwc-select id="scaling-groups" label="${_text('session.launcher.ResourceGroup')}"
+              <mwc-select id="resource-group" label="${_text('session.launcher.ResourceGroup')}"
                           icon="storage" required fixedMenuPosition
-                          @selected="${(e) => this.updateScalingGroup(false, e)}">
-                ${this.scaling_groups.map((item) => html`
+                          @selected="${(e) => this.updateResourceGroup(false, e)}">
+                ${this.resource_groups.map((item) => html`
                   <mwc-list-item class="scaling-group-dropdown"
                                  id="${item.name}" graphic="icon"
                                  value="${item.name}">
@@ -3877,7 +3880,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                       ${_t('session.ResourceGroup')}
                     </div>
                     <div class="vertical layout">
-                      ${this.scaling_group}
+                      ${this.resource_group}
                     </div>
                   </div>
                 </div>
