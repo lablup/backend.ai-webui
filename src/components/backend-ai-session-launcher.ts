@@ -824,6 +824,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-ripple-color: transparent;
         }
 
+        #save-configuration-area {
+          background-color: var(--paper-orange-400);
+          max-height: 40px;
+          position: sticky;
+          top: 0;
+        }
+
         @media screen and (max-width: 400px) {
           backend-ai-dialog {
             --component-min-width: 350px;
@@ -1288,6 +1295,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._updateSelectedResourceGroup();
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
+      this._loadCurrentSessionConfig();
       this.requestUpdate();
       this._toggleScheduleTime(!this.useScheduledTime);
       this.newSessionDialog.show();
@@ -1528,6 +1536,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       sessions.push({'kernelName': kernelName, 'sessionName': sessionName, 'architecture': architecture, config});
     }
+
+    // if checked, set all input as a default
+    if (this.saveConfigurationCheckbox) {
+      this._saveCurrentSessionConfig();
+    }
+
     const createSessionQueue = sessions.map((item) => {
       return this.tasker.add('Creating ' + item.sessionName, this._createKernel(item.kernelName, item.sessionName, item.architecture, item.config), '', 'session');
     });
@@ -2248,10 +2262,50 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   updateLanguage() {
-    const selectedItem = this.environment.selected;
+    const selectedItem = this.environmentSelector.selected;
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
     this._updateVersions(kernel);
+  }
+
+  _saveCurrentSessionConfig() {
+    const sessionConfig: object = {
+      // progress-01
+      session_type: this.sessionTypeSelector.value,
+      environment: this.environmentSelector.value,
+      version: this.versionSelector.value,
+      session_name: this.sessionNameInput.value,
+      environment_variables: this.environ,
+
+      // progress-02
+      vfolders: this.selectedVfolders,
+
+      // progress-03
+      resource_group: this.resourceGroupSelect.value,
+      resource_preset: this.resourceTemplatesSelect.value,
+      resource_indicator: {
+        cpu: this.cpuResourceSlider.value,
+        memory: this.memoryResourceSlider.value,
+        shmem: this.sharedmemoryResourceSlider.value,
+        npu: this.npuResourceSlider.value,
+      },
+      cluster_mode: this.cluster_mode,
+      cluster_size: this.cluster_size,
+    }
+
+    // additional settings on certain condition
+    // TODO:
+    // add manual image name and disable environment/version field if enabled
+    // add delegate session info if enabled
+    // add model storage to mount if mounted
+    // add openMP optimization mode if disabled
+
+    globalThis.backendaioptions.set('current_session_config', sessionConfig);
+  }
+
+  _loadCurrentSessionConfig() {
+    const sessionConfig = globalThis.backendaioptions.get('current_session_config');
+    console.log(sessionConfig)
   }
 
   folderToMountListRenderer(root, column, rowData) {
@@ -3833,6 +3887,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </wl-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
+            <div class="horizontal layout flex justified center" id="save-configuration-area">
+              <p class="title" style="font-size:1rem;">Set as a default</p>
+              <mwc-checkbox id="save-configuration"></mwc-checkbox>
+            </div>
             <p class="title">${_t('session.SessionInfo')}</p>
             <div class="vertical layout cluster-total-allocation-container">
               ${this._preProcessingSessionInfo() ? html`
