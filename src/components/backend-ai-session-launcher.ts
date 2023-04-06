@@ -1388,7 +1388,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const config = {};
     config['group_name'] = globalThis.backendaiclient.current_group;
     config['domain'] = globalThis.backendaiclient._config.domainName;
-    config['resource_group'] = this.resource_group;
+    config['scaling_group'] = this.resource_group;
     config['type'] = this.sessionType;
     if (globalThis.backendaiclient.supports('multi-container')) {
       config['cluster_mode'] = this.cluster_mode;
@@ -1399,9 +1399,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (ownerEnabled && ownerEnabled.checked) {
       config['group_name'] = this.ownerGroupSelect.value;
       config['domain'] = this.ownerDomain;
-      config['resource_group'] = this.ownerResourceGroupSelect.value;
+      config['scaling_group'] = this.ownerResourceGroupSelect.value;
       config['owner_access_key'] = this.ownerAccesskeySelect.value;
-      if (!config['group_name'] || !config['domain'] || !config['resource_group'] || !config ['owner_access_key']) {
+      if (!config['group_name'] || !config['domain'] || !config['scaling_group'] || !config ['owner_access_key']) {
         this.notification.text = _text('session.launcher.NotEnoughOwnershipInfo');
         this.notification.show();
         return;
@@ -2305,8 +2305,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _loadCurrentSessionConfig() {
-    const sessionConfig = globalThis.backendaioptions.get('current_session_config');
-    console.log(sessionConfig)
+    const sessionConfig = globalThis.backendaioptions.get('current_session_config') ?? {};
+    if (Object.keys(sessionConfig).length > 0) {
+      this.sessionTypeSelector.value = sessionConfig.session_type;
+      this.environmentSelector.value = sessionConfig.environment;
+      this.versionSelector.value = sessionConfig.version;
+      this.sessionNameInput.value = sessionConfig.session_name;
+      this.environ = sessionConfig.environment_variables;
+      this.vfolders = sessionConfig.vfolders;
+      this.resourceGroupSelect.value = sessionConfig.resource_group;
+      this.resourceTemplatesSelect.value = sessionConfig.resource_preset;
+      this.cpuResourceSlider.value = sessionConfig.resource_indicator.cpu;
+      this.memoryResourceSlider.value = sessionConfig.resource_indicator.memory;
+      this.sharedmemoryResourceSlider.value = sessionConfig.resource_indicator.shmem;
+      this.npuResourceSlider.value = sessionConfig.resource_indicator.npu;
+      this.cluster_mode = sessionConfig.cluster_mode;
+      this.cluster_size = sessionConfig.cluster_size;
+
+    } else {
+      // no saved session config
+      console.log('no session configuration to load.')
+    }
+
   }
 
   folderToMountListRenderer(root, column, rowData) {

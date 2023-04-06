@@ -86,9 +86,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
   @property({type: Number}) lastQueryTime = 0;
   @property({type: Number}) lastResourcePolicyQueryTime = 0;
   @property({type: Number}) lastVFolderQueryTime = 0;
-  @property({type: String}) scaling_group;
+  @property({type: String}) resource_group;
   @property({type: String}) current_user_group;
-  @property({type: Array}) scaling_groups;
+  @property({type: Array}) resource_groups;
   @property({type: Array}) sessions_list;
   @property({type: Boolean}) metric_updating;
   @property({type: Boolean}) metadata_updating;
@@ -137,8 +137,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.concurrency_used = 0;
     this.concurrency_max = 0;
     this.concurrency_limit = 0;
-    this.scaling_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
-    this.scaling_group = '';
+    this.resource_groups = [{name: ''}]; // if there is no scaling group, set the name as empty string
+    this.resource_group = '';
     this.current_user_group = '';
     this.sessions_list = [];
     this.metric_updating = false;
@@ -194,11 +194,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     }
   }
 
-  async updateScalingGroup(forceUpdate = false, scaling_group: string) {
-    if (this.scaling_group == '' || scaling_group === '' || scaling_group === this.scaling_group) {
+  async updateResourceGroup(forceUpdate = false, resource_group: string) {
+    if (this.resource_group == '' || resource_group === '' || resource_group === this.resource_group) {
       return;
     }
-    this.scaling_group = scaling_group;
+    this.resource_group = resource_group;
     if (this.active) {
       this.lastQueryTime = 0; // Reset query interval
       if (forceUpdate === true) {
@@ -235,15 +235,15 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (isChanged) {
         this.lastQueryTime = 0; // Reset query interval
       }
-      if (this.scaling_group === '' || isChanged) {
+      if (this.resource_group === '' || isChanged) {
         if (this.current_user_group === '') {
           this.current_user_group = globalThis.backendaiclient.current_group;
         }
         // const currentGroup = globalThis.backendaiclient.current_group || null;
         const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
-        this.scaling_group = this.scaling_groups[0].name;
+        this.resource_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.resource_group = this.resource_groups[0].name;
       }
 
       // Reload number of sessions
@@ -397,22 +397,23 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       }
       const param: any = {group: globalThis.backendaiclient.current_group};
       if (this.current_user_group !== globalThis.backendaiclient.current_group ||
-        this.scaling_groups.length == 0 ||
-        this.scaling_groups.length === 1 && this.scaling_groups[0].name === '') {
+        this.resource_groups.length == 0 ||
+        this.resource_groups.length === 1 && this.resource_groups[0].name === '') {
         this.current_user_group = globalThis.backendaiclient.current_group;
         const sgs = await globalThis.backendaiclient.scalingGroup.list(this.current_user_group);
         // Make empty scaling group item if there is no scaling groups.
-        this.scaling_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
+        this.resource_groups = sgs.scaling_groups.length > 0 ? sgs.scaling_groups : [{name: ''}];
       }
-      if (this.scaling_groups.length > 0) {
-        const scaling_groups: any = [];
-        this.scaling_groups.map((group) => {
-          scaling_groups.push(group.name);
+      if (this.resource_groups.length > 0) {
+        const resource_groups: any = [];
+        this.resource_groups.map((group) => {
+          resource_groups.push(group.name);
         });
-        if (this.scaling_group === '' || !scaling_groups.includes(this.scaling_group)) {
-          this.scaling_group = this.scaling_groups[0].name;
+        if (this.resource_group === '' || !resource_groups.includes(this.resource_group)) {
+          this.resource_group = this.resource_groups[0].name;
         }
-        param['scaling_group'] = this.scaling_group;
+        // FIXME: need to update name of the param `scaling_group` to `resource_group` in server-side
+        param['scaling_group'] = this.resource_group;
       }
       return globalThis.backendaiclient.resourcePreset.check(param);
     }).then(async (response) => {
@@ -439,17 +440,18 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom.device': 'atom_device'
       };
       // let scaling_group_resource_remaining = response.scaling_group_remaining;
-      if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
-        response.scaling_groups[''] = {
+      if (this.resource_group === '' && this.resource_groups.length > 0) { // no scaling group in the current project
+        response.resource_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
           remaining: {'cpu': 0, 'mem': 0},
         };
-      } else if (this.scaling_groups.length === 0) {
+      } else if (this.resource_groups.length === 0) {
         this.aggregate_updating = false;
         return Promise.resolve(false);
       }
-      const scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
-      const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
+      // FIXME: need to update name of the param `scaling_group` to `resource_group` in server-side
+      const scaling_group_resource_using = response.scaling_groups[this.resource_group].using;
+      const scaling_group_resource_remaining = response.scaling_groups[this.resource_group].remaining;
 
       const keypair_resource_limit = response.keypair_limits;
 
@@ -598,7 +600,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         const agentSummaryList = await globalThis.backendaiclient.agentSummary.list(status, fields, limit, offset, timeout);
         // resourceGroupSlots will have three fields: available, occupied, and remaining.
         const resourceGroupSlots = agentSummaryList.agent_summary_list.items
-          .filter((agent) => agent.scaling_group == this.scaling_group && agent.schedulable)
+          .filter((agent) => agent.scaling_group == this.resource_group && agent.schedulable)
           .map((agent) => {
             const availableSlots = JSON.parse(agent.available_slots);
             const occupiedSlots = JSON.parse(agent.occupied_slots);

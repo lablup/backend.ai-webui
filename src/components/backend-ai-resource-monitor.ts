@@ -453,18 +453,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
    */
   _updateSelectedScalingGroup() {
     const Sgroups = this.shadowRoot?.querySelector('#scaling-groups') as any;
-    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
+    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.resource_group);
     const idx = Sgroups.items.indexOf(selectedSgroup);
     Sgroups.select(idx);
   }
 
-  async updateScalingGroup(forceUpdate = false, e) {
-    await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
+  async updateResourceGroup(forceUpdate = false, e) {
+    await this.resourceBroker.updateResourceGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
         if (this.scalingGroupSelectBox.firstChild) {
           // TODO clarify element type
-          (this.scalingGroupSelectBox.firstChild as any).value = this.resourceBroker.scaling_group;
+          (this.scalingGroupSelectBox.firstChild as any).value = this.resourceBroker.resource_group;
         }
       }
       if (forceUpdate === true) {
@@ -498,7 +498,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       this.metadata_updating = true;
       await this.resourceBroker._updatePageVariables(isChanged);
       setTimeout(() => {
-        this._updateScalingGroupSelector();
+        this._updateResourceGroupSelector();
       }, 1000);
       this.sessions_list = this.resourceBroker.sessions_list;
       await this._refreshResourcePolicy();
@@ -536,7 +536,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _updateScalingGroupSelector() {
+  _updateResourceGroupSelector() {
     // Detached from template to support live-update after creating new group (will need it)
     if (this.scalingGroupSelectBox.hasChildNodes() && this.scalingGroupSelectBox.firstChild) {
       this.scalingGroupSelectBox.removeChild(this.scalingGroupSelectBox.firstChild);
@@ -548,14 +548,14 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     scaling_select.setAttribute('fullwidth', 'true');
     scaling_select.style.margin= '1px solid #ccc';
     // scaling_select.setAttribute('outlined', 'true');
-    scaling_select.addEventListener('selected', this.updateScalingGroup.bind(this, true));
+    scaling_select.addEventListener('selected', this.updateResourceGroup.bind(this, true));
     let opt = document.createElement('mwc-list-item');
     opt.setAttribute('disabled', 'true');
     opt.innerHTML = _text('session.launcher.SelectResourceGroup');
     opt.style.borderBottom = '1px solid #ccc';
     scaling_select.appendChild(opt);
-    const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.scaling_group;
-    this.resourceBroker.scaling_groups.map((group) => {
+    const currentSelectedResourceGroup = scaling_select.value ? scaling_select.value : this.resourceBroker.resource_group;
+    this.resourceBroker.resource_groups.map((group) => {
       opt = document.createElement('mwc-list-item');
       opt.value = group.name;
       opt.setAttribute('graphic', 'icon');
@@ -625,8 +625,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }, 1000);
       }
       this.concurrency_used = this.resourceBroker.concurrency_used;
-      this.scaling_group = this.resourceBroker.scaling_group;
-      this.scaling_groups = this.resourceBroker.scaling_groups;
+      this.scaling_group = this.resourceBroker.resource_group;
+      this.scaling_groups = this.resourceBroker.resource_groups;
       this.total_slot = this.resourceBroker.total_slot;
       this.total_resource_group_slot = this.resourceBroker.total_resource_group_slot;
       this.total_project_slot = this.resourceBroker.total_project_slot;
