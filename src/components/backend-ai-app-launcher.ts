@@ -240,7 +240,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         .vscode-desktop-password {
-          min-height: 100px;
+          min-height: 80px;
           overflow-y: scroll;
           white-space: pre-wrap;
           word-wrap: break-word;
@@ -728,7 +728,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._openTensorboardDialog();
       return;
     }
-
+    if (appName === 'ttyd') {
+      const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
+      if (!isVisible || isVisible === 'true') {
+        this._openTerminalGuideDialog();
+      }
+    }
     if (appName === 'vscode-desktop') {
       this._openVSCodeDesktopDialog();
       return;
@@ -857,6 +862,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         this._openTerminalGuideDialog();
       }
     }
+    if (appName === 'vscode-desktop') {
+      this._openVSCodeDesktopDialog();
+      return;
+    }
 
     if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
@@ -946,7 +955,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const file = '/home/work/.password';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     const rawText = await blob.text();
-    vscodePasswordEl.value=rawText;
+    vscodePasswordEl.value = rawText;
   }
 
   /**
@@ -1371,29 +1380,31 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="vscode-desktop-dialog" fixed backdrop>
         <span slot="title">${_t('session.VSCodeRemoteConnection')}</span>
-        <div slot="content" style="padding:15px 0;">
-          <div style="padding:15px 0;">${_t('session.VSCodeRemoteDescription')}</div>
+        <div slot="content">
+          <div>${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
-            <h4>${_t('session.ConnectionInformation')}</h4>
+            <h3>${_t('session.ConnectionInformation')}</h4>
             <div slot="content">
               <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
               <mwc-textfield
                 readonly
                 class="vscode-desktop-password"
-                id="vscode-desktop-password"></mwc-textfield>
+                id="vscode-desktop-password"
+              ></mwc-textfield>
               <mwc-icon-button
                 id="copy-vscode-password-button"
                 icon="content_copy"
-                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"></mwc-icon-button>
+                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
+              ></mwc-icon-button>
             </div>
             <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
+              <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
               <p style="margin:auto 10px;">
-                ${_t('session.VSCodeRemoteNoticeSSHConfig')}
-              </p>
-              <p style="margin:auto 10px;">
-              <pre>Host 127.0.0.1
-  StrictHostKeyChecking no
-  UserKnownHostsFile /dev/null</pre>
+                <pre style="white-space:pre-line; margin:10px 10px 0 10px">
+                  Host 127.0.0.1
+                  &nbsp;&nbsp;StrictHostKeyChecking no
+                  &nbsp;&nbsp;UserKnownHostsFile /dev/null
+                </pre>
               </p>
             </div>
           </section>
