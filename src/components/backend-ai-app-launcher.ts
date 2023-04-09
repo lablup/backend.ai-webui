@@ -760,7 +760,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
-        sendAppName = 'vscode-desktop';
+        sendAppName = 'sshd';
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
@@ -884,7 +884,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         if (port === '0' || port === 0) { // setting store does not accept null.
           port = null;
         }
-        sendAppName = 'vscode-desktop';
+        sendAppName = 'sshd';
       }
       const userPort = (this.appPort === null || this.appPort === undefined) ? defaultPreferredPortNumber : parseInt(this.appPort?.value);
       if (this.checkPreferredPort !== null && this.checkPreferredPort?.checked && userPort) {
