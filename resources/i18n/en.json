@@ -341,7 +341,7 @@
     "DownloadingSessionLogs": "Downloading session logs.",
     "VSCodeRemoteConnection": "VSCode Remote Connection",
     "VSCodeRemotePasswordTitle": "Visual Studio Code remote SSH password",
-    "VSCodeRemoteDescription": "You can launch your local Visual Studio Code application and connect to the remote compute session (via SSH) using the password below. Please copy the password before clicking the button.",
+    "VSCodeRemoteDescription": "You can launch your local Visual Studio Code application and connect to the remote compute session (via SSH) using the password below. Please copy the password before clicking the button. (NOTE: You have to install Visual Studio Code in your local machine.)",
     "VSCodeRemoteNoticeSSHConfig": "To set up a seamless connection for Visual Studio Code to the remote compute session, create or edit the $HOME/.ssh/config file and add the following block.",
     "ElapsedTime": "Elapsed Time",
     "Timeout": "Timeout",
