@@ -1,5 +1,5 @@
 /*
-Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v22.9.18)
+Backend.AI API Library / SDK for Node.JS / Javascript ESModule (v23.3.0)
 =========================================================================
 
 (C) Copyright 2016-2023 Lablup Inc.
@@ -733,7 +733,7 @@ class Client {
    * Login into webserver with auth cookie token. This requires additional webserver package.
    *
    */
-  async token_login() {
+  async token_login() : Promise<any> {
     const body = {};
     const rqst = this.newSignedRequest('POST', `/server/token-login`, body, null);
     try {
@@ -769,7 +769,7 @@ class Client {
    * Leave from manager user. This requires additional webserver package.
    *
    */
-  async signout(userid, password) {
+  async signout(userid, password) : Promise<any> {
     let body = {
       'username': userid,
       'password': password
@@ -781,7 +781,7 @@ class Client {
   /**
    * Update user's full_name.
    */
-  async update_full_name(email, fullName) {
+  async update_full_name(email, fullName) : Promise<any> {
     let body = {
       'email': email,
       'full_name': fullName
@@ -794,7 +794,7 @@ class Client {
    * Update user's password.
    *
    */
-  async update_password(oldPassword, newPassword, newPassword2) {
+  async update_password(oldPassword, newPassword, newPassword2) : Promise<any> {
     let body = {
       'old_password': oldPassword,
       'new_password': newPassword,
@@ -804,17 +804,17 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async initialize_totp() {
+  async initialize_totp() : Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp', {}, null);
     return this._wrapWithPromise(rqst);
   }
 
-  async activate_totp(otp) {
+  async activate_totp(otp) : Promise<any> {
     let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
     return this._wrapWithPromise(rqst);
   }
 
-  async remove_totp(email = null) {
+  async remove_totp(email = null) : Promise<any> {
     let rqstUrl = '/totp';
     if (email) {
       const params = {email: email};
@@ -828,7 +828,7 @@ class Client {
   /**
    * Return the resource slots.
    */
-  async get_resource_slots() {
+  async get_resource_slots() : Promise<any> {
     let rqst;
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
       rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
@@ -1063,7 +1063,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to create
    */
-  async get_info(sessionId, ownerKey = null) {
+  async get_info(sessionId, ownerKey = null) : Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -1079,7 +1079,7 @@ class Client {
    * @param {string | null} ownerKey - owner key to access
    * @param {number} timeout - timeout to wait log query. Set to 0 to use default value.
    */
-  async get_logs(sessionId, ownerKey = null, timeout = 0) {
+  async get_logs(sessionId, ownerKey = null, timeout = 0) : Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}/logs`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -1093,7 +1093,7 @@ class Client {
    *
    * @param {string} sessionId - the sessionId given when created
    */
-  getTaskLogs(sessionId) {
+  getTaskLogs(sessionId) : Promise<any> {
     const queryString = `${this.kernelPrefix}/_/logs?session_name=${sessionId}`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
@@ -1106,7 +1106,7 @@ class Client {
    * @param {string|null} ownerKey - owner key when terminating other users' session
    * @param {boolean} forced - force destroy session. Requires admin privilege.
    */
-  async destroy(sessionId, ownerKey = null, forced: boolean = false) {
+  async destroy(sessionId, ownerKey = null, forced: boolean = false) : Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey !== null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}${forced ? '&forced=true' : ''}`;
@@ -1123,7 +1123,7 @@ class Client {
    * @param {string} sessionId - the sessionId given when created
    * @param {string | null} ownerKey - Owner API key to restart
    */
-  async restart(sessionId, ownerKey = null) {
+  async restart(sessionId, ownerKey = null) : Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}`;
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
@@ -1146,7 +1146,7 @@ class Client {
    * @param {object} opts - an optional object specifying additional configs such as batch-mode build/exec commands
    * @param {number} timeout - time limit until the execution starts.
    */
-  async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
+  async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) : Promise<any> {
     let params = {
       'mode': mode,
       'code': code,
@@ -1158,22 +1158,22 @@ class Client {
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  createKernel(kernelType, sessionId: string = '', resources = {}, timeout = 0) {
+  createKernel(kernelType, sessionId: string = '', resources = {}, timeout = 0) : Promise<any> {
     return this.createIfNotExists(kernelType, sessionId, resources, timeout, 'x86_64');
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  destroyKernel(sessionId, ownerKey = null) {
+  destroyKernel(sessionId, ownerKey = null) : Promise<any> {
     return this.destroy(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  refreshKernel(sessionId, ownerKey = null) {
+  refreshKernel(sessionId, ownerKey = null) : Promise<any> {
     return this.restart(sessionId, ownerKey);
   }
 
   // legacy aliases (DO NOT USE for new codes)
-  runCode(code, sessionId, runId, mode) {
+  runCode(code, sessionId, runId, mode) : Promise<any> {
     return this.execute(sessionId, runId, mode, code, {});
   }
 
@@ -1183,7 +1183,7 @@ class Client {
    * @param {string} sessionId - current session name
    * @param {string} newId - new session name
    */
-  async rename(sessionId: string, newId: string) {
+  async rename(sessionId: string, newId: string) : Promise<any> {
     let params = {
       'name': newId
     };
@@ -1197,7 +1197,7 @@ class Client {
    * @param {string} sessionId - the sessionId that contains service
    * @param {string} service_name - service name to shut down
    */
-  async shutdown_service(sessionId: string, service_name: string) {
+  async shutdown_service(sessionId: string, service_name: string) : Promise<any> {
     let params = {
       'service_name': service_name
     };
@@ -1206,7 +1206,7 @@ class Client {
     return this._wrapWithPromise(rqst, true);
   }
 
-  async upload(sessionId: string, path, fs) {
+  async upload(sessionId: string, path, fs) : Promise<any> {
     const formData = new FormData();
     //formData.append('src', fs, {filepath: path});
     formData.append('src', fs, path);
@@ -1214,7 +1214,7 @@ class Client {
     return this._wrapWithPromise(rqst);
   }
 
-  async download(sessionId: string, files) {
+  async download(sessionId: string, files) : Promise<any> {
     let params = {
       'files': files
     };
@@ -1416,7 +1416,7 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = 'application/json') {
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = 'application/json') : string {
     let bodyHash = CryptoES.SHA256(bodyValue);
     // let bodyHash = crypto.createHash(this._config.hashType)
     //  .update(bodyValue).digest('hex');
@@ -1427,14 +1427,14 @@ class Client {
       + bodyHash);
   }
 
-  getCurrentDate(now) {
+  getCurrentDate(now) : string {
     let year = (`0000${now.getUTCFullYear()}`).slice(-4);
     let month = (`0${now.getUTCMonth() + 1}`).slice(-2);
     let day = (`0${now.getUTCDate()}`).slice(-2);
     return year + month + day;
   }
 
-  getEncodedPayload(body) {
+  getEncodedPayload(body) : string {
     let iv = this.generateRandomStr(16);
     //let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
     let key = (this._getBase64FromString(this._config.endpoint) + iv + iv).substring(0, 32);
@@ -1448,7 +1448,7 @@ class Client {
     return (iv + ':' + result.toString());
   }
 
-  _getBase64FromString(str: string) {
+  _getBase64FromString(str: string) : string {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     let strBytes: number[] = [];
     for (let i = 0; i < str.length; i++) {
@@ -1464,7 +1464,6 @@ class Client {
       strBase64 += charset.charAt((triplet >> 18) & 0x3F) + charset.charAt((triplet >> 12) & 0x3F) + charset.charAt((triplet >> 6) & 0x3F) + charset.charAt(triplet & 0x3F);
     }
     return strBase64;
-    //const key = (endpointBase64 + iv + iv).substring(0, 32);
   }
 
   sign(key, key_encoding, msg, digest_type) {
@@ -1528,7 +1527,7 @@ class Client {
    * fetch existing public key of SSH Keypair from container
    * only ssh_public_key will be received.
    */
-  async fetchSSHKeypair() {
+  async fetchSSHKeypair() : Promise<any> {
     let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null);
     return this._wrapWithPromise(rqst, false);
   }
@@ -1537,7 +1536,7 @@ class Client {
    * refresh SSH Keypair from container
    * gets randomly generated keypair (both ssh_public_key and ssh_private_key) will be received.
    */
-  async refreshSSHKeypair() {
+  async refreshSSHKeypair() : Promise<any> {
     let rqst = this.newSignedRequest('PATCH', '/auth/ssh-keypair', null, null);
     return this._wrapWithPromise(rqst, false);
   }
@@ -1546,7 +1545,7 @@ class Client {
    * post SSH Keypair to container
    * save the given keypair (both ssh_public_key and ssh_private_key)
    */
-  async postSSHKeypair(param) {
+  async postSSHKeypair(param) : Promise<any> {
     let rqst = this.newSignedRequest('POST', '/auth/ssh-keypair', param, null);
     return this._wrapWithPromise(rqst, false);
   }
@@ -1571,7 +1570,7 @@ class ResourcePreset {
   /**
    * Return the GraphQL Promise object containing resource preset list.
    */
-  async list(param = null) {
+  async list(param = null) : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1579,7 +1578,7 @@ class ResourcePreset {
   /**
    * Return the GraphQL Promise object containing resource preset checking result.
    */
-  async check(param = null) {
+  async check(param = null) : Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/check-presets`, param);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1593,7 +1592,7 @@ class ResourcePreset {
    *   'resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
    * };
    */
-  async add(name = null, input) {
+  async add(name = null, input) : Promise<any> {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateResourcePresetInput!) {` +
         `  create_resource_preset(name: $name, props: $input) {` +
@@ -1619,7 +1618,7 @@ class ResourcePreset {
    *   'resource_slots': JSON.stringify(total_resource_slots), // Resource slot value. should be Stringified JSON.
    * };
    */
-  async mutate(name = null, input) {
+  async mutate(name = null, input) : Promise<any> {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyResourcePresetInput!) {` +
         `  modify_resource_preset(name: $name, props: $input) {` +
@@ -1641,7 +1640,7 @@ class ResourcePreset {
    *
    * @param {string} name - resource preset name to delete.
    */
-  async delete(name = null) {
+  async delete(name = null) : Promise<any> {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!) {` +
         `  delete_resource_preset(name: $name) {` +
@@ -1679,7 +1678,7 @@ class VFolder {
    * Get allowed types of folders
    *
    */
-  async list_allowed_types() {
+  async list_allowed_types() : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/allowed_types`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1694,7 +1693,7 @@ class VFolder {
    * @param {string} permission - Virtual folder's innate permission.
    * @param {boolean} cloneable - Whether Virtual folder is cloneable or not.
    */
-  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) {
+  async create(name, host = '', group = '', usageMode = 'general', permission = 'rw', cloneable = false) : Promise<any> {
     let body;
     if (host !== '') {
       body = {
@@ -1736,7 +1735,7 @@ class VFolder {
    * @param name - source Vfolder name
    */
 
-  async clone(input, name = null) {
+  async clone(input, name = null) : Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/clone`, input);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1749,7 +1748,7 @@ class VFolder {
    * @param {string} input.permission - permission for Vfolder. permission should one of the following: 'ro', 'rw', 'wd'
    * @param name - source Vfolder name
    */
-  async update_folder(input, name = null) {
+  async update_folder(input, name = null) : Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/update-options`, input);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1757,7 +1756,7 @@ class VFolder {
   /**
    * List Virtual folders that requested accessKey has permission to.
    */
-  async list(groupId = null, userEmail = null) {
+  async list(groupId = null, userEmail = null) : Promise<any> {
     let reqUrl = this.urlPrefix;
     let params = {};
     if (groupId) {
@@ -1777,7 +1776,7 @@ class VFolder {
    *
    * @param {string} groupId - project(group) id
    */
-  async list_hosts(groupId = null) {
+  async list_hosts(groupId = null) : Promise<any> {
     let reqUrl = `${this.urlPrefix}/_/hosts`;
     let params = {};
     if (this.client.isManagerVersionCompatibleWith('22.03.0') && groupId) {
@@ -1792,7 +1791,7 @@ class VFolder {
   /**
    * List all storage hosts connected to storage-proxy server
    */
-  async list_all_hosts() {
+  async list_all_hosts() : Promise<any> {
     if (this.client.is_superadmin === true) {
       let reqUrl = `${this.urlPrefix}/_/all-hosts`;
       let rqst = this.client.newSignedRequest('GET', reqUrl, null);
@@ -1803,7 +1802,7 @@ class VFolder {
   /**
    * Information about specific virtual folder.
    */
-  async info(name = null) {
+  async info(name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1816,7 +1815,7 @@ class VFolder {
    *
    * @param {string} new_name - New virtual folder name.
    */
-  async rename(new_name = null) {
+  async rename(new_name = null) : Promise<any> {
     const body = {new_name};
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1827,7 +1826,7 @@ class VFolder {
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
    */
-  async delete(name = null) {
+  async delete(name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1840,7 +1839,7 @@ class VFolder {
    *
    * @param {string} name - Virtual folder name. If no name is given, use name on this VFolder object.
    */
-  async leave_invited(name = null) {
+  async leave_invited(name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1855,7 +1854,7 @@ class VFolder {
    * @param {string} fs - File content to upload.
    * @param {string} name - Virtual folder name.
    */
-  async upload(path, fs, name = null) {
+  async upload(path, fs, name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1871,7 +1870,7 @@ class VFolder {
    * @param {string} fss - formData with file specification. formData should contain {src, content, {filePath:filePath}}.
    * @param {string} name - Virtual folder name.
    */
-  async uploadFormData(fss, name = null) {
+  async uploadFormData(fss, name = null) : Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/upload`, fss);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1883,7 +1882,7 @@ class VFolder {
    * @param {string} fs - File object to upload.
    * @param {string} name - Virtual folder name.
    */
-  async create_upload_session(path, fs, name = null) {
+  async create_upload_session(path, fs, name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1921,7 +1920,7 @@ class VFolder {
    * @param {string} parents - create parent folders when not exists (>=APIv6).
    * @param {string} exist_ok - Do not raise error when the folder already exists (>=APIv6).
    */
-  async mkdir(path, name = null, parents = null, exist_ok = null) {
+  async mkdir(path, name = null, parents = null, exist_ok = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1946,7 +1945,7 @@ class VFolder {
    * @param {string} name - Virtual folder name that target file exists.
    * @param {string} is_dir - True when the object is directory, false when the object is file.
    */
-  async rename_file(target_path, new_name, name = null, is_dir = false) {
+  async rename_file(target_path, new_name, name = null, is_dir = false) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -1967,7 +1966,7 @@ class VFolder {
    * @param {boolean} recursive - delete files recursively.
    * @param {string} name - Virtual folder name that files are in.
    */
-  async delete_files(files, recursive = false, name = null) {
+  async delete_files(files, recursive = false, name = null) : Promise<any> {
 
     if (name == null) {
       name = this.name;
@@ -1991,7 +1990,7 @@ class VFolder {
    * @param {boolean} archive - Download target directory as an archive.
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
-  async download(file, name = false, archive = false, noCache = false) {
+  async download(file, name = false, archive = false, noCache = false) : Promise<any> {
     const params = {'file': file, 'archive': (archive ? 'true' : 'false')};
     const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
@@ -2011,7 +2010,7 @@ class VFolder {
    * @param {string} name - Virtual folder name that files are in.
    * @param {boolean} archive - Download target directory as an archive.
    */
-  async request_download_token(file, name = false, archive = false) {
+  async request_download_token(file, name = false, archive = false) : Promise<any> {
     let body = {
       file,
       archive
@@ -2031,7 +2030,7 @@ class VFolder {
    *
    * @param {string} token - Temporary token to download specific file.
    */
-  async download_with_token(token: string = '') {
+  async download_with_token(token: string = '') : Promise<any> {
     let params = {
       'token': token
     };
@@ -2045,7 +2044,7 @@ class VFolder {
    *
    * @param {string} token - Temporary token to download specific file.
    */
-  get_download_url_with_token(token: string = '') {
+  get_download_url_with_token(token: string = '') : string {
     const params = {token};
     let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
@@ -2061,7 +2060,7 @@ class VFolder {
    * @param {string} path - Directory path to list.
    * @param {string} name - Virtual folder name to look up with.
    */
-  async list_files(path, name = null) {
+  async list_files(path, name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -2080,7 +2079,7 @@ class VFolder {
    * @param {array} emails - User E-mail to invite.
    * @param {string} name - Virtual folder name to invite.
    */
-  async invite(perm, emails, name = null) {
+  async invite(perm, emails, name = null) : Promise<any> {
     if (name == null) {
       name = this.name;
     }
@@ -2095,7 +2094,7 @@ class VFolder {
   /**
    * Show invitations to current API key.
    */
-  async invitations() {
+  async invitations() : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/invitations/list`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2105,7 +2104,7 @@ class VFolder {
    *
    * @param {string} inv_id - Invitation ID.
    */
-  async accept_invitation(inv_id) {
+  async accept_invitation(inv_id) : Promise<any> {
     let body = {
       'inv_id': inv_id
     };
@@ -2118,7 +2117,7 @@ class VFolder {
    *
    * @param {string} inv_id - Invitation ID to delete.
    */
-  async delete_invitation(inv_id) {
+  async delete_invitation(inv_id) : Promise<any> {
     let body = {
       'inv_id': inv_id
     };
@@ -2131,7 +2130,7 @@ class VFolder {
    *
    * @param {string} vfolder_id - vfolder id. If no id is given, all users who accepted the client's invitation will be returned
    */
-  async list_invitees(vfolder_id = null) {
+  async list_invitees(vfolder_id = null) : Promise<any> {
     let queryString = '/folders/_/shared';
     if (vfolder_id !== null) queryString = `${queryString}?vfolder_id=${vfolder_id}`;
     let rqst = this.client.newSignedRequest('GET', queryString, null);
@@ -2146,7 +2145,7 @@ class VFolder {
    * @param {string} input.user - invitee's uuid
    * @param {string} input.vfolder - id of the vfolder that has been shared to the invitee
    */
-  async modify_invitee_permission(input) {
+  async modify_invitee_permission(input) : Promise<any> {
     let rqst = this.client.newSignedRequest('POST', '/folders/_/shared', input);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2158,7 +2157,7 @@ class VFolder {
    * @param {array} emails - User E-mail(s) to share.
    * @param {string} name - A group virtual folder name to share.
    */
-  async share(permission, emails, name = null) {
+  async share(permission, emails, name = null) : Promise<any> {
     if (!name) {
       name = this.name;
     }
@@ -2173,7 +2172,7 @@ class VFolder {
    * @param {array} emails - User E-mail(s) to unshare.
    * @param {string} name - A group virtual folder name to unshare.
    */
-  async unshare(emails, name = null) {
+  async unshare(emails, name = null) : Promise<any> {
     if (!name) {
       name = this.name;
     }
@@ -2189,7 +2188,7 @@ class VFolder {
    * @param {string} host - Host name of a virtual folder.
    * @param {string} vfolder_id - id of the vfolder.
    */
-  async get_quota(host, vfolder_id) {
+  async get_quota(host, vfolder_id) : Promise<any> {
     const params = {folder_host: host, id: vfolder_id};
     let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
@@ -2204,7 +2203,7 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    * @param {number} quota - quota size of the vfolder.
    */
-  async set_quota(host, vfolder_id, quota) {
+  async set_quota(host, vfolder_id, quota) : Promise<any> {
     const body = {
       folder_host: host,
       id: vfolder_id,
@@ -2236,7 +2235,7 @@ class Agent {
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout: number = 0) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout: number = 0) : Promise<any> {
     if (!['ALIVE', 'TERMINATED'].includes(status)) {
       return Promise.resolve(false);
     }
@@ -2258,7 +2257,7 @@ class Agent {
    *   'schedulable': schedulable
    * };
    */
-  async update(id = null, input) {
+  async update(id = null, input) : Promise<any> {
     if (this.client.is_superadmin === true && id !== null) {
       let q = `mutation($id: String!, $input: ModifyAgentInput!) {` +
         `  modify_agent(id: $id, props: $input) {` +
@@ -2298,7 +2297,7 @@ class AgentSummary {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(status = 'ALIVE', fields = ['id', 'status', 'scaling_group', 'schedulable', 'available_slots', 'occupied_slots', 'architecture'],
-    limit = 20, offset = 0, timeout: number = 0) {
+    limit = 20, offset = 0, timeout: number = 0) : Promise<any> {
     let f = fields.join(' ');
     if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
       f.replace('schedulable', '');
@@ -2340,7 +2339,7 @@ class StorageProxy {
    * @param {number} limit - limit number of query items.
    * @param {number} offset - offset for item query. Useful for pagination.
    */
-  async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) {
+  async list(fields = ['id', 'backend', 'capabilities'], limit = 20, offset = 0) : Promise<any> {
     let q = `query($offset:Int!, $limit:Int!) {` +
       `  storage_volume_list(limit:$limit, offset:$offset) {` +
       `     items { ${fields.join(' ')} }` +
@@ -2360,7 +2359,7 @@ class StorageProxy {
    * @param {string} host - Virtual folder host.
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
    */
-  async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
+  async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) : Promise<any> {
     let q = `query($vfolder_host: String!) {` +
       `  storage_volume(id: $vfolder_host) {` +
       `     ${fields.join(' ')}` +
@@ -2370,7 +2369,7 @@ class StorageProxy {
     return this.client.query(q, v);
   }
 
-  async getAllPermissions() {
+  async getAllPermissions() : Promise<any> {
     if (this.client.supports('fine-grained-storage-permissions')) {
       const rqst = this.client.newSignedRequest('GET', `/acl`, null);
       return this.client._wrapWithPromise(rqst);
@@ -2385,7 +2384,7 @@ class StorageProxy {
    * @param {string} resourcePolicyName
    * @returns {object} - get allowed_vfolder_hosts key-value on domain, group, resource policy of current user
    */
-  async getAllowedVFolderHostsByCurrentUserInfo(domainName = '', projectId = '', resourcePolicyName = '') {
+  async getAllowedVFolderHostsByCurrentUserInfo(domainName = '', projectId = '', resourcePolicyName = '') : Promise<any> {
     const q = `
       query($domainName: String, $projectId: UUID!, $resourcePolicyName: String) {
         domain(name: $domainName) { allowed_vfolder_hosts }
@@ -2422,7 +2421,7 @@ class Keypair {
    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'.
    */
   async info(accessKey, fields = ['access_key', 'secret_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) {
+    'concurrency_limit', 'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy']) : Promise<any> {
     let q, v;
     if (this.client.is_admin) {
       q = `query($access_key: String!) {` +
@@ -2453,7 +2452,7 @@ class Keypair {
    * @param {string} isActive - filter keys with active state. If `true`, only active keypairs are returned.
    */
   async list(userId = null, fields = ['access_key', 'is_active', 'is_admin', 'user_id', 'created_at', 'last_used',
-    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) {
+    'concurrency_used', 'rate_limit', 'num_queries', 'resource_policy'], isActive = true) : Promise<any> {
 
     let q, v;
     if (this.client._apiVersionMajor < 5) {
@@ -2523,7 +2522,7 @@ class Keypair {
    * @param {number} rateLimit - API rate limit for 900 seconds. Prevents from DDoS attack.
    */
   async add(userId = null, isActive = true, isAdmin = false, resourcePolicy = 'default',
-    rateLimit = 1000) {
+    rateLimit = 1000) : Promise<any> {
     let fields = [
       'is_active',
       'is_admin',
@@ -2586,7 +2585,7 @@ class Keypair {
    *   'rate_limit': rate_limit
    * }
    */
-  async mutate(accessKey, input) {
+  async mutate(accessKey, input) : Promise<any> {
     let q = `mutation($access_key: String!, $input: ModifyKeyPairInput!) {` +
       `  modify_keypair(access_key: $access_key, props: $input) {` +
       `    ok msg` +
@@ -2604,7 +2603,7 @@ class Keypair {
    *
    * @param {string} accessKey - access key to delete.
    */
-  async delete(accessKey) {
+  async delete(accessKey) : Promise<any> {
     let q = `mutation($access_key: String!) {` +
       `  delete_keypair(access_key: $access_key) {` +
       `    ok msg` +
@@ -2645,7 +2644,7 @@ class ResourcePolicy {
     'max_vfolder_count',
     'max_vfolder_size',
     'allowed_vfolder_hosts',
-    'idle_timeout']) {
+    'idle_timeout']) : Promise<any> {
     if (this.client.supports('session-lifetime')) {
       fields.push('max_session_lifetime');
     }
@@ -2681,7 +2680,7 @@ class ResourcePolicy {
    *   'max_session_lifetime': max_session_lifetime
    * };
    */
-  async add(name = null, input) {
+  async add(name = null, input) : Promise<any> {
     let fields = ['name',
       'created_at',
       'default_for_unspecified',
@@ -2728,7 +2727,7 @@ class ResourcePolicy {
    *   {int} 'max_session_lifetime': max_session_lifetime
    * };
    */
-  async mutate(name = null, input) {
+  async mutate(name = null, input) : Promise<any> {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: ModifyKeyPairResourcePolicyInput!) {` +
         `  modify_keypair_resource_policy(name: $name, props: $input) {` +
@@ -2750,7 +2749,7 @@ class ResourcePolicy {
    *
    * @param {string} name - resource policy name to delete. (READ-ONLY)
    */
-  async delete(name = null) {
+  async delete(name = null) : Promise<any> {
     if (this.client.is_superadmin === true && name !== null) {
       let q = `mutation($name: String!) {` +
         ` delete_keypair_resource_policy(name: $name) {` +
@@ -2787,7 +2786,7 @@ class ContainerImage {
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
    */
-  async list(fields = ['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], installed_only = false, system_images = false) {
+  async list(fields = ['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], installed_only = false, system_images = false) : Promise<any> {
     let q, v;
     if (this.client.supports('system-images')) {
       if (installed_only) {
@@ -2818,7 +2817,7 @@ class ContainerImage {
    * @param {string} tag - image tag.
    * @param {object} input - value list to set.
    */
-  async modifyResource(registry, image, tag, input) {
+  async modifyResource(registry, image, tag, input) : Promise<any[]> {
     let promiseArray: Array<Promise<any>> = [];
     registry = registry.replace(/:/g, '%3A');
     image = image.replace(/\//g, '%2F');
@@ -2843,7 +2842,7 @@ class ContainerImage {
    * @param {string} key - key to change.
    * @param {string} value - value for the key.
    */
-  async modifyLabel(registry, image, tag, key, value) {
+  async modifyLabel(registry, image, tag, key, value) : Promise<any> {
     registry = registry.replace(/:/g, '%3A');
     image = image.replace(/\//g, '%2F');
     tag = tag.replace(/\//g, '%2F');
@@ -2862,7 +2861,7 @@ class ContainerImage {
    * @param {object} resource - resource to use for installation.
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  async install(name, architecture, resource: object = {}, registry: string = 'index.docker.io') {
+  async install(name, architecture, resource: object = {}, registry: string = 'index.docker.io') : Promise<any> {
     registry = (registry === 'index.docker.io' ? '' : registry + '/').replace(/:/g, '%3A');
     const sessionId = this.client.generateSessionId();
     if (Object.keys(resource).length === 0) {
@@ -2891,7 +2890,7 @@ class ContainerImage {
    * @param {string} name - name to install. it should contain full path with tags. e.g. lablup/python:3.6-ubuntu18.04
    * @param {string} registry - registry of image. default is 'index.docker.io', which is public Backend.AI docker registry.
    */
-  async uninstall(name, registry: string = 'index.docker.io') {
+  async uninstall(name, registry: string = 'index.docker.io') : Promise<boolean> {
     return Promise.resolve(false); // Temporally disable the feature.
   }
 
@@ -2902,7 +2901,7 @@ class ContainerImage {
    * @param {string} image - image name.
    * @param {string} tag - tag to get.
    */
-  async get(registry, image, tag) {
+  async get(registry, image, tag) : Promise<any> {
     registry = registry.replace(/:/g, '%3A');
     const rqst = this.client.newSignedRequest('POST', '/config/get', {
       'key': `images/${registry}/${image}/${tag}/resource/`,
@@ -2935,7 +2934,7 @@ class ComputeSession {
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    */
-  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') {
+  async total_count(status = 'RUNNING', accessKey = '', limit = 1, offset = 0, group = '') : Promise<any> {
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
@@ -2969,7 +2968,7 @@ class ComputeSession {
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
   async list(fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'containers {live_stat last_stat}', 'starts_at'],
-    status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
+    status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) : Promise<any> {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
@@ -3005,7 +3004,7 @@ class ComputeSession {
    */
   async listAll(fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'containers {live_stat last_stat}'],
     status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
-    accessKey = '', limit = 100, offset = 0, group = '', timeout: number = 0) {
+    accessKey = '', limit = 100, offset = 0, group = '', timeout: number = 0) : Promise<any> {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     if (!this.client.supports('avoid-hol-blocking')) {
       status.replace('SCHEDULED,', '');
@@ -3046,7 +3045,7 @@ class ComputeSession {
    * @param {string} sessionUuid - session ID to query specific compute session.
    */
   async get(fields = ['id', 'session_name', 'lang', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'cpu_used', 'io_read_bytes', 'io_write_bytes', 'scaling_group'],
-    sessionUuid = '') {
+    sessionUuid = '') : Promise<any> {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($session_uuid: UUID!) {
@@ -3081,7 +3080,7 @@ class ComputeSession {
    *
    * @param sessionName - name of the session
    */
-  async commitSession(sessionName: string = '') {
+  async commitSession(sessionName: string = '') : Promise<any> {
     const rqst = this.client.newSignedRequest('POST', `/session/${sessionName}/commit`, null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -3091,7 +3090,7 @@ class ComputeSession {
    *
    * @param sessionName - name of the session
    */
-  async getCommitSessionStatus(sessionName: string = '') {
+  async getCommitSessionStatus(sessionName: string = '') : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', `/session/${sessionName}/commit`);
     return this.client._wrapWithPromise(rqst);
   }
@@ -3117,7 +3116,7 @@ class SessionTemplate {
    * @param {boolean} listall - returns all list
    * @param {string} groupId - ID of group where session templates are bound
    */
-  async list(listall = false, groupId = null) {
+  async list(listall = false, groupId = null) : Promise<any> {
     let reqUrl = this.urlPrefix;
     if (listall) {
       const params = {'all': (listall ? 'true' : 'false')};
@@ -3190,7 +3189,7 @@ class Resources {
    *
    * @param {string} status - Resource node status to get information.
    */
-  async totalResourceInformation(status = 'ALIVE') {
+  async totalResourceInformation(status = 'ALIVE') : Promise<any> {
     if (this.client.is_admin) {
       let fields = ['id',
         'addr',
@@ -3292,7 +3291,7 @@ class Resources {
    * user statistics about usage.
    *
    */
-  async user_stats() {
+  async user_stats() : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/resource/stats/user/month', null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -3325,7 +3324,7 @@ class Group {
    * };
    */
   async list(is_active = true, domain_name = false,
-    fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) {
+    fields = ['id', 'name', 'description', 'is_active', 'created_at', 'modified_at', 'domain_name']) : Promise<any> {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($is_active:Boolean) {` +
@@ -3383,7 +3382,7 @@ class Domain {
    */
   async get(domain_name = false,
     fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
-      'allowed_docker_registries', 'integration_id', 'scaling_groups']) {
+      'allowed_docker_registries', 'integration_id', 'scaling_groups']) : Promise<any> {
     let q, v;
     if (domain_name) {
       q = `query($name: String) {` +
@@ -3394,7 +3393,7 @@ class Domain {
     }
   }
 
-  async list(fields = ['name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id']) {
+  async list(fields = ['name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id']) : Promise<any> {
     let q = `query {` +
       ` domains { ${fields.join(' ')} }` +
       `}`;
@@ -3422,7 +3421,7 @@ class Domain {
    *   'scaling_groups': [String],   // Scaling groups
    * };
    */
-  async update(domain_name = false, input) {
+  async update(domain_name = false, input) : Promise<any> {
     //let fields = ['name', 'description', 'is_active', 'created_at', 'modified_at', 'total_resource_slots', 'allowed_vfolder_hosts',
     //  'allowed_docker_registries', 'integration_id', 'scaling_groups'];
     if (this.client.is_superadmin === true) {
@@ -3460,7 +3459,7 @@ class Maintenance {
    * Attach to the background task to listen to events
    * @param {string} task_id - background task id.
    */
-  attach_background_task(task_id: string) {
+  attach_background_task(task_id: string) : EventSource {
     let urlStr = '/events/background-task?task_id=' + task_id;
     let req = this.client.newSignedRequest('GET', urlStr, null);
     return new EventSource(req.uri, {withCredentials: true});
@@ -3470,7 +3469,7 @@ class Maintenance {
    * Rescan image from repository
    * @param {string} registry - registry. default is ''
    */
-  async rescan_images(registry = '') {
+  async rescan_images(registry = '') : Promise<any> {
     if (this.client.is_admin === true) {
       let q, v;
       if (registry !== '') {
@@ -3497,7 +3496,7 @@ class Maintenance {
     }
   }
 
-  async recalculate_usage() {
+  async recalculate_usage() : Promise<any> {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
       return this.client._wrapWithPromise(rqst, undefined, null, 60 * 1000);
