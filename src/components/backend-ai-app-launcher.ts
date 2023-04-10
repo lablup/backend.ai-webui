@@ -117,7 +117,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         .app-icon {
           margin-left: 15px;
-          margin-right: 5px;
+          margin-right: 15px;
+          margin-bottom: 20px;
         }
 
         .app-icon .label {
