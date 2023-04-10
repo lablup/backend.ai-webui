@@ -17,7 +17,7 @@ type requestInfo = {
   cache?: RequestCache | undefined,
   uri: string,
   credentials?: RequestCredentials | undefined,
-  signal?: AbortController["signal"] | undefined,
+  signal?: AbortController['signal'] | undefined,
 };
 
 
@@ -48,26 +48,31 @@ class ClientConfig {
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4. WILL BE DEPRECATED AND UPGRADED TO v6 FROM 23.03.
     this._hashType = 'sha256';
-    if (endpoint === undefined || endpoint === null)
+    if (endpoint === undefined || endpoint === null) {
       endpoint = 'https://api.backend.ai';
+    }
     this._endpoint = endpoint;
     this._endpointHost = endpoint.replace(/^[^:]+:\/\//, '');
     if (connectionMode === 'API') { // API mode
       // dynamic configs
-      if (accessKey === undefined || accessKey === null)
+      if (accessKey === undefined || accessKey === null) {
         throw new Error('You must set accessKey! (either as argument or environment variable)');
-      if (secretKey === undefined || secretKey === null)
+      }
+      if (secretKey === undefined || secretKey === null) {
         throw new Error('You must set secretKey! (either as argument or environment variable)');
+      }
       this._accessKey = accessKey;
       this._secretKey = secretKey;
       this._userId = '';
       this._password = '';
     } else { // Session mode
       // dynamic configs
-      if (accessKey === undefined || accessKey === null)
+      if (accessKey === undefined || accessKey === null) {
         throw new Error('You must set user id! (either as argument or environment variable)');
-      if (secretKey === undefined || secretKey === null)
+      }
+      if (secretKey === undefined || secretKey === null) {
         throw new Error('You must set password! (either as argument or environment variable)');
+      }
       this._accessKey = '';
       this._secretKey = '';
       this._userId = accessKey;
@@ -101,6 +106,7 @@ class ClientConfig {
   get proxyURL() {
     return this._proxyURL;
   }
+
   get proxyToken() {
     return this._proxyToken;
   }
@@ -268,6 +274,7 @@ class Client {
   get apiVersion() {
     return this._apiVersion;
   }
+
   /**
    * Promise wrapper for asynchronous request to Backend.AI manager.
    *
@@ -303,7 +310,7 @@ class Client {
         }, (timeout === 0 ? this.requestTimeout : timeout));
       }
       resp = await fetch(rqst.uri, rqst);
-      if (typeof requestTimer !== "undefined") {
+      if (typeof requestTimer !== 'undefined') {
         clearTimeout(requestTimer);
       }
       let loginSessionId = resp.headers.get('X-BackendAI-SessionID'); // Login session ID handler
@@ -343,68 +350,68 @@ class Client {
         resp = {};
       }
       switch (errorType) {
-        case Client.ERR_REQUEST:
-          errorType = 'https://api.backend.ai/probs/client-request-error';
-          if (navigator.onLine) {
-            errorTitle = error_message;
-            errorMsg = `sending request has failed: ${error_message}`;
-            errorDesc = error_message;
-          } else {
-            errorTitle = "Network disconnected.";
-            errorMsg = `sending request has failed: Network disconnected`;
-            errorDesc = 'Network disconnected';
-          }
-          break;
-        case Client.ERR_RESPONSE:
-          errorType = 'https://api.backend.ai/probs/client-response-error';
+      case Client.ERR_REQUEST:
+        errorType = 'https://api.backend.ai/probs/client-request-error';
+        if (navigator.onLine) {
           errorTitle = error_message;
-          errorMsg = `reading response has failed: ${error_message}`;
+          errorMsg = `sending request has failed: ${error_message}`;
           errorDesc = error_message;
-          break;
-        case Client.ERR_SERVER:
-          errorType = 'https://api.backend.ai/probs/server-error';
-          errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
-          errorMsg = 'server responded failure: ';
-          if (body.msg) {
-            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
-            errorDesc = body.msg;
-          } else {
-            errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
-            errorDesc = body.title;
-          }
-          break;
-        case Client.ERR_ABORT:
-          errorType = 'https://api.backend.ai/probs/request-abort-error';
-          errorTitle = `Request aborted`;
-          errorMsg = 'Request aborted by user';
-          errorDesc = errorMsg;
-          resp.status = 408;
-          resp.statusText = 'Request aborted by user'
-          break;
-        case Client.ERR_TIMEOUT:
-          errorType = 'https://api.backend.ai/probs/request-timeout-error';
-          errorTitle = `Request timeout`;
-          errorMsg = 'No response returned within timeout';
-          errorDesc = errorMsg;
-          resp.status = 408;
-          resp.statusText = 'Timeout exceeded';
-          break;
-        default:
-          if (typeof resp.status === 'undefined') {
-            resp.status = 500;
-            resp.statusText = 'Server error';
-          }
-          if (errorType === '') {
-            errorType = Client.ERR_UNKNOWN;
-          }
-          if (errorTitle === '') {
-            errorTitle = body.title;
-          }
-          errorMsg = 'server responded failure: '
-            + `${resp.status} ${resp.statusText} - ${body.title}`;
-          if (body.title !== '') {
-            errorDesc = body.title;
-          }
+        } else {
+          errorTitle = 'Network disconnected.';
+          errorMsg = `sending request has failed: Network disconnected`;
+          errorDesc = 'Network disconnected';
+        }
+        break;
+      case Client.ERR_RESPONSE:
+        errorType = 'https://api.backend.ai/probs/client-response-error';
+        errorTitle = error_message;
+        errorMsg = `reading response has failed: ${error_message}`;
+        errorDesc = error_message;
+        break;
+      case Client.ERR_SERVER:
+        errorType = 'https://api.backend.ai/probs/server-error';
+        errorTitle = `${resp.status} ${resp.statusText} - ${body.title}`;
+        errorMsg = 'server responded failure: ';
+        if (body.msg) {
+          errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.msg}`;
+          errorDesc = body.msg;
+        } else {
+          errorMsg = errorMsg + `${resp.status} ${resp.statusText} - ${body.title}`;
+          errorDesc = body.title;
+        }
+        break;
+      case Client.ERR_ABORT:
+        errorType = 'https://api.backend.ai/probs/request-abort-error';
+        errorTitle = `Request aborted`;
+        errorMsg = 'Request aborted by user';
+        errorDesc = errorMsg;
+        resp.status = 408;
+        resp.statusText = 'Request aborted by user';
+        break;
+      case Client.ERR_TIMEOUT:
+        errorType = 'https://api.backend.ai/probs/request-timeout-error';
+        errorTitle = `Request timeout`;
+        errorMsg = 'No response returned within timeout';
+        errorDesc = errorMsg;
+        resp.status = 408;
+        resp.statusText = 'Timeout exceeded';
+        break;
+      default:
+        if (typeof resp.status === 'undefined') {
+          resp.status = 500;
+          resp.statusText = 'Server error';
+        }
+        if (errorType === '') {
+          errorType = Client.ERR_UNKNOWN;
+        }
+        if (errorTitle === '') {
+          errorTitle = body.title;
+        }
+        errorMsg = 'server responded failure: '
+          + `${resp.status} ${resp.statusText} - ${body.title}`;
+        if (body.title !== '') {
+          errorDesc = body.title;
+        }
       }
       throw {
         isError: true,
@@ -432,19 +439,19 @@ class Client {
       resp = {
         status: 'No status',
         statusText: 'No response given.'
-      }
+      };
     }
     let current_log = {
-      "isError": false,
-      "timestamp": new Date().toUTCString(),
-      "type": "",
-      "requestUrl": rqst.uri,
-      "requestMethod": rqst.method,
-      "requestParameters": rqst.body,
-      "statusCode": resp.status,
-      "statusText": resp.statusText,
-      "title": body.title,
-      "message": ""
+      'isError': false,
+      'timestamp': new Date().toUTCString(),
+      'type': '',
+      'requestUrl': rqst.uri,
+      'requestMethod': rqst.method,
+      'requestParameters': rqst.body,
+      'statusCode': resp.status,
+      'statusText': resp.statusText,
+      'title': body.title,
+      'message': ''
     };
     if ('log' in opts) {
       current_log.requestParameters = opts['log'];
@@ -661,7 +668,7 @@ class Client {
       'username': this._config.userId,
       'password': this._config.password,
     };
-    if (otp) body['otp'] = otp
+    if (otp) body['otp'] = otp;
     let rqst = this.newSignedRequest('POST', `/server/login`, body, '', true);
     let result;
     try {
@@ -684,7 +691,7 @@ class Client {
       } else if (result.authenticated === false) { // Authentication failed.
         localStorage.removeItem('backendaiwebui.sessionid');
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details });
+          return Promise.resolve({fail_reason: result.data.details});
         } else {
           return Promise.resolve(false);
         }
@@ -692,13 +699,13 @@ class Client {
     } catch (err) { // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
-          "title": err.description,
-          "message": "Too many failed login attempts."
+          'title': err.description,
+          'message': 'Too many failed login attempts.'
         };
       } else {
         throw {
-          "title": "No manager found at API Endpoint.",
-          "message": "Authentication failed. Check information and manager status."
+          'title': 'No manager found at API Endpoint.',
+          'message': 'Authentication failed. Check information and manager status.'
         };
       }
       //console.log(err);
@@ -736,7 +743,7 @@ class Client {
         return this.check_login();
       } else if (result.authenticated === false) { // Authentication failed.
         if (result.data && result.data.details) {
-          return Promise.resolve({ fail_reason: result.data.details });
+          return Promise.resolve({fail_reason: result.data.details});
         } else {
           return Promise.resolve(false);
         }
@@ -744,13 +751,13 @@ class Client {
     } catch (err) { // Manager / webserver down.
       if ('statusCode' in err && err.statusCode === 429) {
         throw {
-          "title": err.description,
-          "message": "Too many failed login attempts."
+          'title': err.description,
+          'message': 'Too many failed login attempts.'
         };
       } else {
         throw {
-          "title": "No manager found at API Endpoint.",
-          "message": "Authentication failed. Check information and manager status."
+          'title': 'No manager found at API Endpoint.',
+          'message': 'Authentication failed. Check information and manager status.'
         };
       }
       //console.log(err);
@@ -803,14 +810,14 @@ class Client {
   }
 
   async activate_totp(otp) {
-    let rqst = this.newSignedRequest('POST', '/totp/verify', { otp }, null);
+    let rqst = this.newSignedRequest('POST', '/totp/verify', {otp}, null);
     return this._wrapWithPromise(rqst);
   }
 
   async remove_totp(email = null) {
     let rqstUrl = '/totp';
     if (email) {
-      const params = { email: email };
+      const params = {email: email};
       const q = new URLSearchParams(params).toString();
       rqstUrl += `?${q}`;
     }
@@ -840,14 +847,15 @@ class Client {
    * @param {object} resources - Per-session resource
    * @param {number} timeout - Timeout of request. Default : default fetch value. (5sec.)
    * @param {string} architecture - image architecture
-  */
+   */
   async createIfNotExists(kernelType: string, sessionId: string, resources = {}, timeout: number = 0, architecture: string = 'x86_64') {
-    if (typeof sessionId === 'undefined' || sessionId === null || sessionId === '')
+    if (typeof sessionId === 'undefined' || sessionId === null || sessionId === '') {
       sessionId = this.generateSessionId();
+    }
     let params = {
-      "lang": kernelType,
-      "clientSessionToken": sessionId,
-      "architecture": architecture,
+      'lang': kernelType,
+      'clientSessionToken': sessionId,
+      'architecture': architecture,
     };
     if (resources && Object.keys(resources).length !== 0) {
       let config = {};
@@ -922,7 +930,7 @@ class Client {
       if (resources['owner_access_key']) {
         params['owner_access_key'] = resources['owner_access_key'];
       }
-      params['config'] = { resources: config };
+      params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -960,9 +968,10 @@ class Client {
    * @param {number} timeout - Timeout to cancel creation
    */
   async createSessionFromTemplate(templateId, image = null, sessionName: undefined | string | null = null, resources = {}, timeout: number = 0) {
-    if (typeof sessionName === 'undefined' || sessionName === null)
+    if (typeof sessionName === 'undefined' || sessionName === null) {
       sessionName = this.generateSessionId();
-    const params = { template_id: templateId };
+    }
+    const params = {template_id: templateId};
     if (image) {
       params['image'] = image;
     }
@@ -1029,7 +1038,7 @@ class Client {
         params['owner_access_key'] = resources['owner_access_key'];
       }
       // params['config'] = {};
-      params['config'] = { resources: config };
+      params['config'] = {resources: config};
       if (resources['mounts']) {
         params['config'].mounts = resources['mounts'];
       }
@@ -1139,10 +1148,10 @@ class Client {
    */
   async execute(sessionId: string, runId: string, mode: string, code: string, opts: Object, timeout = 0) {
     let params = {
-      "mode": mode,
-      "code": code,
-      "runId": runId,
-      "options": opts,
+      'mode': mode,
+      'code': code,
+      'runId': runId,
+      'options': opts,
     };
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}`, params, null);
     return this._wrapWithPromise(rqst, false, null, timeout);
@@ -1167,6 +1176,7 @@ class Client {
   runCode(code, sessionId, runId, mode) {
     return this.execute(sessionId, runId, mode, code, {});
   }
+
   /**
    * Rename session to another name.
    *
@@ -1176,7 +1186,7 @@ class Client {
   async rename(sessionId: string, newId: string) {
     let params = {
       'name': newId
-    }
+    };
     let rqst = this.newSignedRequest('POST', `${this.kernelPrefix}/${sessionId}/rename`, params, null);
     return this._wrapWithPromise(rqst);
   }
@@ -1261,7 +1271,7 @@ class Client {
    * @param {boolean} secure - encrypt payload if secure is true.
    */
   newSignedRequest(method: string, queryString, body: any = undefined, serviceName: string | null = null, secure: boolean = false) {
-    let content_type = "application/json";
+    let content_type = 'application/json';
     let requestBody;
     let authBody;
     let d = new Date();
@@ -1272,7 +1282,7 @@ class Client {
       // detect form data input from form-data module
       requestBody = body;
       authBody = '';
-      content_type = "multipart/form-data";
+      content_type = 'multipart/form-data';
     } else {
       requestBody = JSON.stringify(body);
       authBody = requestBody;
@@ -1283,9 +1293,9 @@ class Client {
     let uri: string;
     if (this._config.connectionMode === 'SESSION') { // Force request to use Public when session mode is enabled
       hdrs = new Headers({
-        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-        "X-BackendAI-Version": this._config.apiVersion,
-        "X-BackendAI-Date": d.toISOString(),
+        'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        'X-BackendAI-Version': this._config.apiVersion,
+        'X-BackendAI-Date': d.toISOString(),
       });
       if (queryString.startsWith('/server') === true) { // Force request to use Public when session mode is enabled
         uri = this._config.endpoint + queryString;
@@ -1301,10 +1311,10 @@ class Client {
       let signKey = this.getSignKey(this._config.secretKey, d);
       let rqstSig = this.sign(signKey, 'binary', aStr, 'hex');
       hdrs = new Headers({
-        "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-        "X-BackendAI-Version": this._config.apiVersion,
-        "X-BackendAI-Date": d.toISOString(),
-        "Authorization": `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
+        'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+        'X-BackendAI-Version': this._config.apiVersion,
+        'X-BackendAI-Date': d.toISOString(),
+        'Authorization': `BackendAI signMethod=HMAC-SHA256, credential=${this._config.accessKey}:${rqstSig}`,
       });
       uri = this._config.endpoint + queryString;
     }
@@ -1312,7 +1322,7 @@ class Client {
     if (serviceName === 'pipeline') {
       uri = this._config.endpoint + `/${serviceName}` + queryString;
       hdrs = new Headers({
-        "Accept": content_type,
+        'Accept': content_type,
         // "Allow-Control-Allow-Origin": "*"
       });
       const isDeleteTokenRequest = ((method === 'DELETE') && queryString.startsWith('/auth-token'));
@@ -1320,7 +1330,7 @@ class Client {
       // Append Authorization token for every API request to pipeline
       if (queryString.startsWith('/api') === true || isDeleteTokenRequest) {
         const token = this.pipeline.getPipelineToken();
-        hdrs.set("Authorization", `Token ${token}`);
+        hdrs.set('Authorization', `Token ${token}`);
       }
     }
 
@@ -1377,16 +1387,16 @@ class Client {
    * @param {string} queryString - the URI path and GET parameters
    * @param {any} body - an object that will be encoded as JSON in the request body
    * @param {string} urlPrefix - prefix to bind at the beginning of URL
-  */
+   */
   newPublicRequest(method: string, queryString: string, body: any, urlPrefix = '') {
     let d = new Date();
     let hdrs = new Headers({
-      "Content-Type": "application/json",
-      "User-Agent": `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
-      "X-BackendAI-Version": this._config.apiVersion,
-      "X-BackendAI-Date": d.toISOString(),
-      "credentials": 'include',
-      "mode": 'cors'
+      'Content-Type': 'application/json',
+      'User-Agent': `Backend.AI Client for Javascript ${this.mangleUserAgentSignature()}`,
+      'X-BackendAI-Version': this._config.apiVersion,
+      'X-BackendAI-Date': d.toISOString(),
+      'credentials': 'include',
+      'mode': 'cors'
     });
     //queryString = '/' + urlPrefix + queryString;
     let requestInfo = {
@@ -1406,7 +1416,7 @@ class Client {
     return requestInfo;
   }
 
-  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = "application/json") {
+  getAuthenticationString(method, queryString, dateValue, bodyValue, content_type = 'application/json') {
     let bodyHash = CryptoES.SHA256(bodyValue);
     // let bodyHash = crypto.createHash(this._config.hashType)
     //  .update(bodyValue).digest('hex');
@@ -1427,7 +1437,7 @@ class Client {
   getEncodedPayload(body) {
     let iv = this.generateRandomStr(16);
     //let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
-    let key = (this._getBase64FromString(this._config.endpoint) + iv + iv).substring(0,32);
+    let key = (this._getBase64FromString(this._config.endpoint) + iv + iv).substring(0, 32);
     let result = CryptoES.AES.encrypt(body,
       CryptoES.enc.Utf8.parse(key),
       {
@@ -1437,6 +1447,7 @@ class Client {
       });
     return (iv + ':' + result.toString());
   }
+
   _getBase64FromString(str: string) {
     const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
     let strBytes: number[] = [];
@@ -1467,9 +1478,9 @@ class Client {
       key = CryptoES.enc.Utf8.parse(key);
     }
     if (['binary', 'hex'].includes(digest_type)) {
-      hmacDigest = CryptoES.enc.Hex.stringify(CryptoES.HmacSHA256(hashDigest, key))
+      hmacDigest = CryptoES.enc.Hex.stringify(CryptoES.HmacSHA256(hashDigest, key));
     } else {
-      hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key))
+      hmacDigest = CryptoES.enc.Base64.stringify(CryptoES.HmacSHA256(hashDigest, key));
     }
     return hmacDigest;
     /*let kbuf = new Buffer(key, key_encoding);
@@ -1484,8 +1495,8 @@ class Client {
   }
 
   generateRandomStr(length) {
-    let text = "";
-    const possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let text = '';
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < length; i++) {
       text += possible.charAt(Math.floor(Math.random() * possible.length));
     }
@@ -1494,13 +1505,13 @@ class Client {
 
   generateSessionId(length = 8, nosuffix = false) {
     let text = this.generateRandomStr(length);
-    return nosuffix ? text : text + "-jsSDK";
+    return nosuffix ? text : text + '-jsSDK';
   }
 
   slugify(text) {
-    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;'
-    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------'
-    const p = new RegExp(a.split('').join('|'), 'g')
+    const a = 'àáäâèéëêìíïîòóöôùúüûñçßÿœæŕśńṕẃǵǹḿǘẍźḧ·/_,:;';
+    const b = 'aaaaeeeeiiiioooouuuuncsyoarsnpwgnmuxzh------';
+    const p = new RegExp(a.split('').join('|'), 'g');
 
     return text.toString().toLowerCase()
       .replace(/\s+/g, '-')           // Replace spaces with -
@@ -1510,7 +1521,7 @@ class Client {
       .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
       .replace(/--+/g, '-')         // Replace multiple - with single -
       .replace(/^-+/, '')             // Trim - from start of text
-      .replace(/-+$/, '')             // Trim - from end of text
+      .replace(/-+$/, '');             // Trim - from end of text
   }
 
   /**
@@ -1518,7 +1529,7 @@ class Client {
    * only ssh_public_key will be received.
    */
   async fetchSSHKeypair() {
-    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null)
+    let rqst = this.newSignedRequest('GET', '/auth/ssh-keypair', null, null);
     return this._wrapWithPromise(rqst, false);
   }
 
@@ -1542,6 +1553,7 @@ class Client {
 
   // TODO: move attach_background_task function in Maintenance Class to here.
 }
+
 class ResourcePreset {
   public client: any;
   public urlPrefix: any;
@@ -1660,7 +1672,7 @@ class VFolder {
   constructor(client, name = null) {
     this.client = client;
     this.name = name;
-    this.urlPrefix = '/folders'
+    this.urlPrefix = '/folders';
   }
 
   /**
@@ -1805,7 +1817,7 @@ class VFolder {
    * @param {string} new_name - New virtual folder name.
    */
   async rename(new_name = null) {
-    const body = { new_name };
+    const body = {new_name};
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${this.name}/rename`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -1917,10 +1929,10 @@ class VFolder {
       'path': path
     };
     if (parents) {
-      body['parents'] = parents
+      body['parents'] = parents;
     }
     if (exist_ok) {
-      body['exist_ok'] = exist_ok
+      body['exist_ok'] = exist_ok;
     }
     const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/mkdir`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1940,9 +1952,9 @@ class VFolder {
     }
     let body;
     if (this.client.isAPIVersionCompatibleWith('v6.20200815')) {
-      body = { target_path, new_name, is_dir };
+      body = {target_path, new_name, is_dir};
     } else {
-      body = { target_path, new_name };
+      body = {target_path, new_name};
     }
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/rename_file`, body);
     return this.client._wrapWithPromise(rqst);
@@ -1980,7 +1992,7 @@ class VFolder {
    * @param {boolean} noCache - If true, do not store the file response in any cache. New in API v6.
    */
   async download(file, name = false, archive = false, noCache = false) {
-    const params = { 'file': file, 'archive': (archive ? 'true' : 'false') };
+    const params = {'file': file, 'archive': (archive ? 'true' : 'false')};
     const q = new URLSearchParams(params).toString();
     if (this.client._apiVersionMajor < 6) {
       const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${name}/download_single?${q}`, null);
@@ -2034,7 +2046,7 @@ class VFolder {
    * @param {string} token - Temporary token to download specific file.
    */
   get_download_url_with_token(token: string = '') {
-    const params = { token };
+    const params = {token};
     let q = new URLSearchParams(params).toString();
     if (this.client._config.connectionMode === 'SESSION') {
       return `${this.client._config.endpoint}/func${this.urlPrefix}/_/download_with_token?${q}`;
@@ -2150,7 +2162,7 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = { permission, emails };
+    const body = {permission, emails};
     const rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${name}/share`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2165,7 +2177,7 @@ class VFolder {
     if (!name) {
       name = this.name;
     }
-    const body = { emails };
+    const body = {emails};
     const rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${name}/unshare`, body);
     return this.client._wrapWithPromise(rqst);
   }
@@ -2178,7 +2190,7 @@ class VFolder {
    * @param {string} vfolder_id - id of the vfolder.
    */
   async get_quota(host, vfolder_id) {
-    const params = { folder_host: host, id: vfolder_id };
+    const params = {folder_host: host, id: vfolder_id};
     let q = new URLSearchParams(params).toString();
     const rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/_/quota?${q}`, null);
     return this.client._wrapWithPromise(rqst);
@@ -2224,16 +2236,16 @@ class Agent {
    * @param {array} fields - Fields to query. Queryable fields are:  'id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout:number = 0) {
+  async list(status = 'ALIVE', fields = ['id', 'status', 'region', 'first_contact', 'cpu_cur_pct', 'mem_cur_bytes', 'available_slots', 'occupied_slots'], timeout: number = 0) {
     if (!['ALIVE', 'TERMINATED'].includes(status)) {
       return Promise.resolve(false);
     }
     let q = `query($status: String) {` +
       `  agents(status: $status) {` +
-      `     ${fields.join(" ")}` +
+      `     ${fields.join(' ')}` +
       `  }` +
       `}`;
-    let v = { 'status': status };
+    let v = {'status': status};
     return this.client.query(q, v, null, timeout);
   }
 
@@ -2285,7 +2297,7 @@ class AgentSummary {
    * @param {number} offset - offset for item query. Useful for pagination.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(status = 'ALIVE', fields = ["id", "status", "scaling_group", "schedulable", "available_slots", "occupied_slots", "architecture"],
+  async list(status = 'ALIVE', fields = ['id', 'status', 'scaling_group', 'schedulable', 'available_slots', 'occupied_slots', 'architecture'],
     limit = 20, offset = 0, timeout: number = 0) {
     let f = fields.join(' ');
     if (!this.client.supports('schedulable') && fields.includes('schedulable')) {
@@ -2351,10 +2363,10 @@ class StorageProxy {
   async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) {
     let q = `query($vfolder_host: String!) {` +
       `  storage_volume(id: $vfolder_host) {` +
-      `     ${fields.join(" ")}` +
+      `     ${fields.join(' ')}` +
       `  }` +
       `}`;
-    let v = { 'vfolder_host': host };
+    let v = {'vfolder_host': host};
     return this.client.query(q, v);
   }
 
@@ -2381,7 +2393,7 @@ class StorageProxy {
         keypair_resource_policy(name: $resourcePolicyName) { allowed_vfolder_hosts }
       }
     `;
-    const v = { domainName, projectId, resourcePolicyName };
+    const v = {domainName, projectId, resourcePolicyName};
     return this.client.query(q, v);
   }
 
@@ -2415,7 +2427,7 @@ class Keypair {
     if (this.client.is_admin) {
       q = `query($access_key: String!) {` +
         `  keypair(access_key: $access_key) {` +
-        `    ${fields.join(" ")}` +
+        `    ${fields.join(' ')}` +
         `  }` +
         `}`;
       v = {
@@ -2424,7 +2436,7 @@ class Keypair {
     } else {
       q = `query {` +
         `  keypair {` +
-        `    ${fields.join(" ")}` +
+        `    ${fields.join(' ')}` +
         `  }` +
         `}`;
       v = {};
@@ -2489,14 +2501,14 @@ class Keypair {
           offset, limit,
           email: userId || this.client.email,
           is_active: isActive,
-        }
+        };
         const page = await this.client.query(q, v);
         keypairs.push(...page.keypair_list.items);
         if (offset >= page.keypair_list.total_count) {
           break;
         }
       }
-      const resp = { keypairs };
+      const resp = {keypairs};
       return Promise.resolve(resp);
     }
   }
@@ -2521,7 +2533,7 @@ class Keypair {
     ];
     let q = `mutation($user_id: String!, $input: KeyPairInput!) {` +
       `  create_keypair(user_id: $user_id, props: $input) {` +
-      `    ok msg keypair { ${fields.join(" ")} }` +
+      `    ok msg keypair { ${fields.join(' ')} }` +
       `  }` +
       `}`;
     let v = {
@@ -2640,14 +2652,14 @@ class ResourcePolicy {
     let q, v;
     if (name === null) {
       q = `query {` +
-        `  keypair_resource_policies { ${fields.join(" ")} }` +
+        `  keypair_resource_policies { ${fields.join(' ')} }` +
         '}';
-      v = { 'n': name };
+      v = {'n': name};
     } else {
       q = `query($n:String!) {` +
-        `  keypair_resource_policy(name: $n) { ${fields.join(" ")} }` +
+        `  keypair_resource_policy(name: $n) { ${fields.join(' ')} }` +
         '}';
-      v = { 'n': name };
+      v = {'n': name};
     }
     return this.client.query(q, v);
   }
@@ -2686,7 +2698,7 @@ class ResourcePolicy {
     if (this.client.is_admin === true && name !== null) {
       let q = `mutation($name: String!, $input: CreateKeyPairResourcePolicyInput!) {` +
         `  create_keypair_resource_policy(name: $name, props: $input) {` +
-        `    ok msg resource_policy { ${fields.join(" ")} }` +
+        `    ok msg resource_policy { ${fields.join(' ')} }` +
         `  }` +
         `}`;
       let v = {
@@ -2775,23 +2787,23 @@ class ContainerImage {
    * @param {boolean} installed_only - filter images to installed / not installed. true to query installed images only.
    * @param {boolean} system_images - filter images to get system images such as web UI, SFTP server. true to query system images only.
    */
-  async list(fields = ["name", "tag", "registry", "digest", "installed", "labels { key value }", "resource_limits { key min max }"], installed_only = false, system_images = false) {
+  async list(fields = ['name', 'tag', 'registry', 'digest', 'installed', 'labels { key value }', 'resource_limits { key min max }'], installed_only = false, system_images = false) {
     let q, v;
     if (this.client.supports('system-images')) {
       if (installed_only) {
         q = `query($installed:Boolean) {` +
-          `  images(is_installed:$installed) { ${fields.join(" ")} }` +
+          `  images(is_installed:$installed) { ${fields.join(' ')} }` +
           '}';
-        v = { 'installed': installed_only, 'is_operation': system_images };
+        v = {'installed': installed_only, 'is_operation': system_images};
       } else {
         q = `query {` +
-          `  images { ${fields.join(" ")} }` +
+          `  images { ${fields.join(' ')} }` +
           '}';
-        v = { 'is_operation': system_images };
+        v = {'is_operation': system_images};
       }
     } else {
       q = `query {` +
-        `  images { ${fields.join(" ")} }` +
+        `  images { ${fields.join(' ')} }` +
         '}';
       v = {};
     }
@@ -2808,13 +2820,13 @@ class ContainerImage {
    */
   async modifyResource(registry, image, tag, input) {
     let promiseArray: Array<Promise<any>> = [];
-    registry = registry.replace(/:/g, "%3A");
-    image = image.replace(/\//g, "%2F");
+    registry = registry.replace(/:/g, '%3A');
+    image = image.replace(/\//g, '%2F');
     Object.keys(input).forEach((slot_type) => {
       Object.keys(input[slot_type]).forEach(key => {
-        const rqst = this.client.newSignedRequest("POST", "/config/set", {
-          "key": `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
-          "value": input[slot_type][key]
+        const rqst = this.client.newSignedRequest('POST', '/config/set', {
+          'key': `images/${registry}/${image}/${tag}/resource/${slot_type}/${key}`,
+          'value': input[slot_type][key]
         });
         promiseArray.push(this.client._wrapWithPromise(rqst));
       });
@@ -2832,12 +2844,12 @@ class ContainerImage {
    * @param {string} value - value for the key.
    */
   async modifyLabel(registry, image, tag, key, value) {
-    registry = registry.replace(/:/g, "%3A");
-    image = image.replace(/\//g, "%2F");
-    tag = tag.replace(/\//g, "%2F");
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {
-      "key": `images/${registry}/${image}/${tag}/labels/${key}`,
-      "value": value
+    registry = registry.replace(/:/g, '%3A');
+    image = image.replace(/\//g, '%2F');
+    tag = tag.replace(/\//g, '%2F');
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {
+      'key': `images/${registry}/${image}/${tag}/labels/${key}`,
+      'value': value
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -2891,10 +2903,10 @@ class ContainerImage {
    * @param {string} tag - tag to get.
    */
   async get(registry, image, tag) {
-    registry = registry.replace(/:/g, "%3A");
-    const rqst = this.client.newSignedRequest("POST", "/config/get", {
-      "key": `images/${registry}/${image}/${tag}/resource/`,
-      "prefix": true
+    registry = registry.replace(/:/g, '%3A');
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {
+      'key': `images/${registry}/${image}/${tag}/resource/`,
+      'prefix': true
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -2956,13 +2968,13 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async list(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}", "starts_at"],
+  async list(fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'containers {live_stat last_stat}', 'starts_at'],
     status = 'RUNNING', accessKey = '', limit = 30, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {
       compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {
-        items { ${fields.join(" ")}}
+        items { ${fields.join(' ')}}
         total_count
       }
     }`;
@@ -2991,8 +3003,8 @@ class ComputeSession {
    * @param {string} group - project group id to query. Default returns sessions from all groups.
    * @param {number} timeout - timeout for the request. Default uses SDK default. (5 sec.)
    */
-  async listAll(fields = ["id", "name", "image", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "containers {live_stat last_stat}"],
-    status = "RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR",
+  async listAll(fields = ['id', 'name', 'image', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'containers {live_stat last_stat}'],
+    status = 'RUNNING,RESTARTING,TERMINATING,PENDING,SCHEDULED,PREPARING,PULLING,TERMINATED,CANCELLED,ERROR',
     accessKey = '', limit = 100, offset = 0, group = '', timeout: number = 0) {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields);
     if (!this.client.supports('avoid-hol-blocking')) {
@@ -3011,7 +3023,7 @@ class ComputeSession {
 
     // Prevent fetching more than 1000 sessions.
     for (let offset = 0; offset < 10 * limit; offset += limit) {
-      v = { limit, offset, status };
+      v = {limit, offset, status};
       if (accessKey != '') {
         v.access_key = accessKey;
       }
@@ -3033,16 +3045,16 @@ class ComputeSession {
    * @param {array} fields - fields to query. Default fields are: ["session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes"].
    * @param {string} sessionUuid - session ID to query specific compute session.
    */
-  async get(fields = ["id", "session_name", "lang", "created_at", "terminated_at", "status", "status_info", "occupied_slots", "cpu_used", "io_read_bytes", "io_write_bytes", "scaling_group"],
+  async get(fields = ['id', 'session_name', 'lang', 'created_at', 'terminated_at', 'status', 'status_info', 'occupied_slots', 'cpu_used', 'io_read_bytes', 'io_write_bytes', 'scaling_group'],
     sessionUuid = '') {
     fields = this.client._updateFieldCompatibilityByAPIVersion(fields); // For V3/V4 API compatibility
     let q, v;
     q = `query($session_uuid: UUID!) {
       compute_session(id:$session_uuid) {
-        ${fields.join(" ")}
+        ${fields.join(' ')}
       }
     }`;
-    v = { session_uuid: sessionUuid };
+    v = {session_uuid: sessionUuid};
     return this.client.query(q, v);
   }
 
@@ -3084,6 +3096,7 @@ class ComputeSession {
     return this.client._wrapWithPromise(rqst);
   }
 }
+
 class SessionTemplate {
   public client: any;
   public urlPrefix: string;
@@ -3107,12 +3120,12 @@ class SessionTemplate {
   async list(listall = false, groupId = null) {
     let reqUrl = this.urlPrefix;
     if (listall) {
-      const params = { 'all': (listall ? 'true' : 'false') };
+      const params = {'all': (listall ? 'true' : 'false')};
       const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
     if (groupId) {
-      const params = { group_id: groupId };
+      const params = {group_id: groupId};
       const q = new URLSearchParams(params).toString();
       reqUrl += `?${q}`;
     }
@@ -3280,7 +3293,7 @@ class Resources {
    *
    */
   async user_stats() {
-    const rqst = this.client.newSignedRequest("GET", "/resource/stats/user/month", null);
+    const rqst = this.client.newSignedRequest('GET', '/resource/stats/user/month', null);
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -3316,12 +3329,12 @@ class Group {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
         '}';
       v = {'is_active': is_active};
       if (domain_name) {
         q = `query($domain_name: String, $is_active:Boolean) {` +
-          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(" ")} }` +
+          `  groups(domain_name: $domain_name, is_active:$is_active) { ${fields.join(' ')} }` +
           '}';
         v = {
           'is_active': is_active,
@@ -3330,9 +3343,9 @@ class Group {
       }
     } else {
       q = `query($is_active:Boolean) {` +
-        `  groups(is_active:$is_active) { ${fields.join(" ")} }` +
+        `  groups(is_active:$is_active) { ${fields.join(' ')} }` +
         '}';
-      v = { 'is_active': is_active };
+      v = {'is_active': is_active};
     }
     return this.client.query(q, v);
   }
@@ -3374,16 +3387,16 @@ class Domain {
     let q, v;
     if (domain_name) {
       q = `query($name: String) {` +
-        `  domain(name: $name) { ${fields.join(" ")} }` +
+        `  domain(name: $name) { ${fields.join(' ')} }` +
         '}';
-      v = { 'name': domain_name };
+      v = {'name': domain_name};
       return this.client.query(q, v);
     }
   }
 
   async list(fields = ['name', 'description', 'is_active', 'created_at', 'total_resource_slots', 'allowed_vfolder_hosts', 'allowed_docker_registries', 'integration_id']) {
     let q = `query {` +
-      ` domains { ${fields.join(" ")} }` +
+      ` domains { ${fields.join(' ')} }` +
       `}`;
     let v = {};
 
@@ -3448,9 +3461,9 @@ class Maintenance {
    * @param {string} task_id - background task id.
    */
   attach_background_task(task_id: string) {
-    let urlStr = "/events/background-task?task_id=" + task_id;
-    let req = this.client.newSignedRequest("GET", urlStr, null);
-    return new EventSource(req.uri, { withCredentials: true });
+    let urlStr = '/events/background-task?task_id=' + task_id;
+    let req = this.client.newSignedRequest('GET', urlStr, null);
+    return new EventSource(req.uri, {withCredentials: true});
   }
 
   /**
@@ -3524,7 +3537,7 @@ class User {
    * };
    */
   async list(is_active = true,
-    fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) : Promise<any> {
+    fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']): Promise<any> {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
       q = this.client.is_admin ? `
@@ -3536,7 +3549,7 @@ class User {
           users { ${fields.join(' ')} }
         }
       `;
-      v = this.client.is_admin ? { is_active } : {};
+      v = this.client.is_admin ? {is_active} : {};
       return this.client.query(q, v);
     } else {
       // From 20.03, there is no single query to fetch every user, so
@@ -3560,14 +3573,14 @@ class User {
       `;
       // Prevent fetching more than 1000 users.
       for (let offset = 0; offset < 10 * limit; offset += limit) {
-        v = this.client.is_admin ? { offset, limit, is_active } : { offset, limit };
+        v = this.client.is_admin ? {offset, limit, is_active} : {offset, limit};
         const page = await this.client.query(q, v);
         users.push(...page.user_list.items);
         if (offset >= page.user_list.total_count) {
           break;
         }
       }
-      const resp = { users };
+      const resp = {users};
       return Promise.resolve(resp);
     }
   }
@@ -3598,12 +3611,12 @@ class User {
     let q, v;
     if (this.client.is_admin === true) {
       q = `query($email:String) {` +
-        `  user (email:$email) { ${fields.join(" ")} }` +
+        `  user (email:$email) { ${fields.join(' ')} }` +
         '}';
-      v = { 'email': email };
+      v = {'email': email};
     } else {
       q = `query {` +
-        `  user { ${fields.join(" ")} }` +
+        `  user { ${fields.join(' ')} }` +
         '}';
       v = {};
     }
@@ -3627,7 +3640,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async create(email = null, input) : Promise<any> {
+  async create(email = null, input): Promise<any> {
     // let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
@@ -3662,7 +3675,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async update(email = null, input) : Promise<any> {
+  async update(email = null, input): Promise<any> {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -3684,7 +3697,7 @@ class User {
    *
    * @param {string} email - E-mail address as user id to delete.
    */
-  async delete(email) : Promise<any> {
+  async delete(email): Promise<any> {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!) {` +
         `  delete_user(email: $email) {` +
@@ -3714,14 +3727,14 @@ class ScalingGroup {
     this.client = client;
   }
 
-  async list_available() : Promise<any> {
+  async list_available(): Promise<any> {
     if (this.client.is_superadmin === true) {
-      const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
+      const fields = ['name', 'description', 'is_active', 'created_at', 'driver', 'driver_opts', 'scheduler', 'scheduler_opts'];
       if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
         fields.push('wsproxy_addr');
       }
       const q = `query {` +
-        `  scaling_groups { ${fields.join(" ")} }` +
+        `  scaling_groups { ${fields.join(' ')} }` +
         `}`;
       const v = {};
       return this.client.query(q, v);
@@ -3730,9 +3743,9 @@ class ScalingGroup {
     }
   }
 
-  async list(group = 'default') : Promise<any> {
+  async list(group = 'default'): Promise<any> {
     const queryString = `/scaling-groups?group=${group}`;
-    const rqst = this.client.newSignedRequest("GET", queryString, null, null);
+    const rqst = this.client.newSignedRequest('GET', queryString, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3743,12 +3756,12 @@ class ScalingGroup {
    * @param {string} scalingGroup - Scaling group name
    * @param {string} groupId - Project (group) ID
    */
-  async getWsproxyVersion(scalingGroup, groupId) : Promise<any> {
+  async getWsproxyVersion(scalingGroup, groupId): Promise<any> {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
-      return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
+      return Promise.resolve({wsproxy_version: 'v1'}); // for manager<=21.03 compatibility.
     }
     const url = `/scaling-groups/${scalingGroup}/wsproxy-version?group=${groupId}`;
-    const rqst = this.client.newSignedRequest("GET", url, null, null);
+    const rqst = this.client.newSignedRequest('GET', url, null, null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3767,7 +3780,7 @@ class ScalingGroup {
    *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */
-  async create(name, input) : Promise<any> {
+  async create(name, input): Promise<any> {
     let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
@@ -3786,7 +3799,7 @@ class ScalingGroup {
    * @param {string} domain - domain name
    * @param {string} scaling_group - scaling group name
    */
-  async associate_domain(domain, scaling_group) : Promise<any> {
+  async associate_domain(domain, scaling_group): Promise<any> {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
       `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
       `    ok msg` +
@@ -3814,11 +3827,11 @@ class ScalingGroup {
    *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */
-  async update(name, input) : Promise<any> {
+  async update(name, input): Promise<any> {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       delete input.wsproxy_addr;
       if (Object.keys(input).length < 1) {
-        return Promise.resolve({ modify_scaling_group: { ok: true } });
+        return Promise.resolve({modify_scaling_group: {ok: true}});
       }
     }
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
@@ -3839,7 +3852,7 @@ class ScalingGroup {
    *
    * @param {string} name - name of scaling group to be deleted
    */
-  async delete(name) : Promise<any> {
+  async delete(name): Promise<any> {
     let q = `mutation($name: String!) {` +
       `  delete_scaling_group(name: $name) {` +
       `    ok msg` +
@@ -3860,26 +3873,26 @@ class Registry {
     this.client = client;
   }
 
-  async list() : Promise<any> {
-    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": "config/docker/registry", "prefix": true });
+  async list(): Promise<any> {
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {'key': 'config/docker/registry', 'prefix': true});
     return this.client._wrapWithPromise(rqst);
   }
 
-  async set(key: string, value) : Promise<any> {
+  async set(key: string, value): Promise<any> {
     key = encodeURIComponent(key);
     let regkey = `config/docker/registry/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/set", {
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {
       key: regkey,
       value
     });
     return this.client._wrapWithPromise(rqst);
   }
 
-  async delete(key) : Promise<any> {
+  async delete(key): Promise<any> {
     key = encodeURIComponent(key);
-    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
-      "key": `config/docker/registry/${key}`,
-      "prefix": true
+    const rqst = this.client.newSignedRequest('POST', '/config/delete', {
+      'key': `config/docker/registry/${key}`,
+      'prefix': true
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -3888,6 +3901,7 @@ class Registry {
 class Setting {
   public client: any;
   public config: any;
+
   /**
    * Setting API wrapper.
    *
@@ -3903,9 +3917,9 @@ class Setting {
    *
    * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
    */
-  async list(prefix = "") : Promise<any> {
+  async list(prefix = ''): Promise<any> {
     prefix = `config/${prefix}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": prefix, "prefix": true });
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {'key': prefix, 'prefix': true});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3914,9 +3928,9 @@ class Setting {
    *
    * @param {string} key - prefix to get. This command will return every settings starting with the prefix.
    */
-  async get(key) : Promise<any> {
+  async get(key): Promise<any> {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": key, "prefix": false });
+    const rqst = this.client.newSignedRequest('POST', '/config/get', {'key': key, 'prefix': false});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3926,9 +3940,9 @@ class Setting {
    * @param {string} key - key to add.
    * @param {object} value - value to add.
    */
-  async set(key, value) : Promise<any> {
+  async set(key, value): Promise<any> {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/set", { key, value });
+    const rqst = this.client.newSignedRequest('POST', '/config/set', {key, value});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3938,11 +3952,11 @@ class Setting {
    * @param {string} key - key to delete
    * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
    */
-  async delete(key, prefix = false) : Promise<any> {
+  async delete(key, prefix = false): Promise<any> {
     key = `config/${key}`;
-    const rqst = this.client.newSignedRequest("POST", "/config/delete", {
-      "key": `${key}`,
-      "prefix": prefix
+    const rqst = this.client.newSignedRequest('POST', '/config/delete', {
+      'key': `${key}`,
+      'prefix': prefix
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -3966,8 +3980,8 @@ class Service {
    * Get announcements
    *
    */
-  async get_announcement() : Promise<any> {
-    const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
+  async get_announcement(): Promise<any> {
+    const rqst = this.client.newSignedRequest('GET', '/manager/announcement', null);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -3977,10 +3991,10 @@ class Service {
    * @param {boolean} enabled - Enable / disable announcement. Default is True.
    * @param {string} message - Announcement content. Usually in Markdown syntax.
    */
-  async update_announcement(enabled = true, message) : Promise<any> {
-    const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
-      "enabled": enabled,
-      "message": message
+  async update_announcement(enabled = true, message): Promise<any> {
+    const rqst = this.client.newSignedRequest('POST', '/manager/announcement', {
+      'enabled': enabled,
+      'message': message
     });
     return this.client._wrapWithPromise(rqst);
   }
@@ -4003,7 +4017,7 @@ class UserConfig {
   /**
    * Get content of bootstrap script of a keypair.
    */
-  async get_bootstrap_script() : Promise<any> {
+  async get_bootstrap_script(): Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -4016,8 +4030,8 @@ class UserConfig {
    *
    * @param {string} script - text content of bootstrap script.
    */
-  async update_bootstrap_script(script: string) : Promise<any> {
-    const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { script });
+  async update_bootstrap_script(script: string): Promise<any> {
+    const rqst = this.client.newSignedRequest('POST', '/user-config/bootstrap-script', {script});
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4026,30 +4040,30 @@ class UserConfig {
    * @param {string} data - text content of script dotfile
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async create(data: string = '', path: string) : Promise<any> {
+  async create(data: string = '', path: string): Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
     let params = {
-      "path": path,
-      "data": data,
-      "permission": '644'
+      'path': path,
+      'data': data,
+      'permission': '644'
     };
-    const rqst = this.client.newSignedRequest("POST", "/user-config/dotfiles", params);
+    const rqst = this.client.newSignedRequest('POST', '/user-config/dotfiles', params);
     return this.client._wrapWithPromise(rqst);
   }
 
   /**
    * Get content of script dotfile
    */
-  async get() : Promise<any> {
+  async get(): Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
     // let params = {
     //   "owner_access_key" : this.client._config.accessKey
     // }
-    const rqst = this.client.newSignedRequest("GET", "/user-config/dotfiles");
+    const rqst = this.client.newSignedRequest('GET', '/user-config/dotfiles');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4059,13 +4073,13 @@ class UserConfig {
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async update(data: string, path: string) : Promise<any> {
+  async update(data: string, path: string): Promise<any> {
     let params = {
-      "data": data,
-      "path": path,
-      "permission": '644'
-    }
-    const rqst = this.client.newSignedRequest("PATCH", "/user-config/dotfiles", params);
+      'data': data,
+      'path': path,
+      'permission': '644'
+    };
+    const rqst = this.client.newSignedRequest('PATCH', '/user-config/dotfiles', params);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4074,11 +4088,11 @@ class UserConfig {
    *
    * @param {string} path - path of script dotfile.
    */
-  async delete(path: string) : Promise<any> {
+  async delete(path: string): Promise<any> {
     let params = {
-      "path": path
-    }
-    const rqst = this.client.newSignedRequest("DELETE", "/user-config/dotfiles", params);
+      'path': path
+    };
+    const rqst = this.client.newSignedRequest('DELETE', '/user-config/dotfiles', params);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4088,6 +4102,7 @@ class Enterprise {
   public client: any;
   public config: any;
   public certificate: any;
+
   /**
    * Setting API wrapper.
    *
@@ -4101,13 +4116,13 @@ class Enterprise {
   /**
    * Get the current enterprise license.
    */
-  async getLicense() : Promise<any> {
+  async getLicense(): Promise<any> {
     if (this.client.is_superadmin === true) {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
         this.certificate = cert.certificate;
-        this.certificate['valid'] = cert.status === "valid";
+        this.certificate['valid'] = cert.status === 'valid';
         return Promise.resolve(this.certificate);
       }
     } else {
@@ -4133,7 +4148,7 @@ class Cloud {
   /**
    * Check if cloud endpoint is available.
    */
-  async ping() : Promise<any> {
+  async ping(): Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/cloud/ping');
     return this.client._wrapWithPromise(rqst);
   }
@@ -4143,9 +4158,9 @@ class Cloud {
    *
    * @param {string} token - JWT token which is delivered to user's email.
    */
-  async verify_email(token: string) : Promise<any> {
-    const body = { "verification_code": token };
-    const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
+  async verify_email(token: string): Promise<any> {
+    const body = {'verification_code': token};
+    const rqst = this.client.newSignedRequest('POST', '/cloud/verify-email', body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4154,9 +4169,9 @@ class Cloud {
    *
    * @param {string} email - user's email.
    */
-  async send_verification_email(email: string) : Promise<any> {
-    const body = { email };
-    const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
+  async send_verification_email(email: string): Promise<any> {
+    const body = {email};
+    const rqst = this.client.newSignedRequest('POST', '/cloud/send-verification-email', body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4165,9 +4180,9 @@ class Cloud {
    *
    * @param {string} email - user's email.
    */
-  async send_password_change_email(email: string) : Promise<any> {
-    const body = { email };
-    const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
+  async send_password_change_email(email: string): Promise<any> {
+    const body = {email};
+    const rqst = this.client.newSignedRequest('POST', '/cloud/send-password-change-email', body);
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4178,9 +4193,9 @@ class Cloud {
    * @param {string} password - new password.
    * @param {string} token - JWT token which is delivered to user's email.
    */
-  async change_password(email: string, password: string, token: string) : Promise<any> {
-    const body = { email, password, token };
-    const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
+  async change_password(email: string, password: string, token: string): Promise<any> {
+    const body = {email, password, token};
+    const rqst = this.client.newSignedRequest('POST', '/cloud/change-password', body);
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -4212,8 +4227,8 @@ class Pipeline {
    *    'secret_key': string,
    * }
    */
-  async login(input) : Promise<boolean> {
-    const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
+  async login(input): Promise<boolean> {
+    const rqst = this.client.newSignedRequest('POST', `/auth-token/`, input, 'pipeline');
     let result;
     try {
       result = await this.client._wrapWithPromise(rqst, false, null, 0, 0, {
@@ -4233,41 +4248,41 @@ class Pipeline {
     } catch (err) {
       console.log(err);
       throw {
-        "title": "No Pipeline Server found at API Endpoint.",
-        "message": "Authentication failed. Check information and pipeline server status."
-      }
+        'title': 'No Pipeline Server found at API Endpoint.',
+        'message': 'Authentication failed. Check information and pipeline server status.'
+      };
     }
   }
 
-  async logout() : Promise<any> {
-    const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
+  async logout(): Promise<any> {
+    const rqst = this.client.newSignedRequest('DELETE', `/auth-token/`, null, 'pipeline');
     try {
       await this.client._wrapWithPromise(rqst);
     } catch (err) {
       throw {
-        "title": "Pipeline Logout Failed.",
-        "message": "Pipeline Logout failed. Check information and pipeline server status."
-      }
+        'title': 'Pipeline Logout Failed.',
+        'message': 'Pipeline Logout failed. Check information and pipeline server status.'
+      };
     } finally {
       // remove cookie anyway
       this._removeCookieByName(this.tokenName);
     }
   }
 
-  async check_login() : Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
+  async check_login(): Promise<any> {
+    let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
-  getPipelineToken() : string {
+  getPipelineToken(): string {
     return this._getCookieByName(this.tokenName);
   }
 
   /**
    * List all pipelines
    */
-  async list() : Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+  async list(): Promise<any> {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4276,8 +4291,8 @@ class Pipeline {
    *
    * @param {string} id - pipeline id
    */
-  async info(id) : Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+  async info(id): Promise<any> {
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4294,7 +4309,7 @@ class Pipeline {
    * }
    */
   async create(input): Promise<any> {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4312,7 +4327,7 @@ class Pipeline {
    * }
    */
   async update(id, input): Promise<any> {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4322,7 +4337,7 @@ class Pipeline {
    * @param {string} id - pipeline id
    */
   async delete(id): Promise<any> {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4340,7 +4355,7 @@ class Pipeline {
    * }
    */
   async run(id, input): Promise<any> {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4395,7 +4410,7 @@ class PipelineJob {
    * List all pipeline jobs
    */
   async list(): Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4405,7 +4420,7 @@ class PipelineJob {
    * @param {string} id - pipeline id
    */
   async info(id): Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4415,7 +4430,7 @@ class PipelineJob {
    * @param {string} id - pipeline id
    */
   async stop(id): Promise<any> {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4444,7 +4459,7 @@ class PipelineTaskInstance {
   async list(pipelineJobId: string = ''): Promise<any> {
     let queryString = `${this.urlPrefix}`;
     queryString += (pipelineJobId) ? `/?pipeline_job=${pipelineJobId}` : `/`;
-    let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
+    let rqst = this.client.newSignedRequest('GET', queryString, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4454,7 +4469,7 @@ class PipelineTaskInstance {
    * @param {string} id - task instance id
    */
   async info(id): Promise<any> {
-    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4464,7 +4479,7 @@ class PipelineTaskInstance {
    * @param {json} input
    */
   async create(input): Promise<any> {
-    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4475,7 +4490,7 @@ class PipelineTaskInstance {
    * @param {json} input - task-instance specification and data.
    */
   async update(id, input): Promise<any> {
-    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
+    let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 
@@ -4485,7 +4500,7 @@ class PipelineTaskInstance {
    * @param {string} id - task instance id
    */
   async delete(id): Promise<any> {
-    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
+    let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, 'pipeline');
     return this.client._wrapWithPromise(rqst);
   }
 }
@@ -4631,7 +4646,7 @@ class utils {
 
   gqlToObject(array, key) {
     let result = {};
-    array.forEach(function (element) {
+    array.forEach(function(element) {
       result[element[key]] = element;
     });
     return result;
@@ -4639,7 +4654,7 @@ class utils {
 
   gqlToList(array, key) {
     let result: Array<any> = [];
-    array.forEach(function (element) {
+    array.forEach(function(element) {
       result.push(element[key]);
     });
     return result;
@@ -4701,4 +4716,4 @@ const backend = {
 */
 /* For ESModule export */
 // @ts-ignore
-export { backend, Client, ClientConfig };
+export {backend, Client, ClientConfig};
