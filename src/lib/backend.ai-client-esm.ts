@@ -4581,7 +4581,7 @@ class utils {
    * Returns total seconds from give elapsed time string.
    *   - ex) "1d01:54:33" -> 93273
    *
-   * @param {string} datimeString - daytime string, ex) "1d01:54:33"
+   * @param {string} daytimeString - daytime string, ex) "1d01:54:33"
    * @return {number} - total seconds
    */
   elapsedTimeToTotalSeconds(daytimeString) {
@@ -4626,7 +4626,6 @@ class utils {
     });
     return result;
   }
-
 }
 
 // below will become "static const" properties in ES7
@@ -4667,20 +4666,21 @@ Object.defineProperty(Client, 'ERR_UNKNOWN', {
   configurable: false
 });
 
+// @ts-ignore
 const backend = {
   Client: Client,
   ClientConfig: ClientConfig,
 };
 /* For Node.JS library
 // for use like "ai.backend.Client"
-module.exports.backend = backend;
+// module.exports.backend = backend;
 // for classical uses
-module.exports.Client = Client;
-module.exports.ClientConfig = ClientConfig;
+// module.exports.Client = Client;
+// module.exports.ClientConfig = ClientConfig;
 // legacy aliases
-module.exports.BackendAIClient = Client;
-module.exports.BackendAIClientConfig = ClientConfig;
+// module.exports.BackendAIClient = Client;
+// module.exports.BackendAIClientConfig = ClientConfig;
 */
 /* For ESModule export */
-export { backend, Client, ClientConfig }
-export default backend;
+// @ts-ignore
+export { backend, Client, ClientConfig };
