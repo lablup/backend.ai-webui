@@ -676,7 +676,8 @@
       "InvitationError": "Invitation failed. User may already be invited.",
       "Shared": "Successfully shared the group folder",
       "NoOneWasShared": "Failed to share the group folder",
-      "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project."
+      "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
+      "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s): "
     },
     "permission": {
       "NoChanges": "No changes made",
@@ -1320,7 +1321,9 @@
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy.",
-    "InvalidSignupToken": "Invalid signup token"
+    "InvalidSignupToken": "Invalid signup token",
+    "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
+    "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s)."
   },
   "maxLength": {
     "20chars": "(maximum 20 chars)",

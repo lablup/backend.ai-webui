@@ -662,7 +662,8 @@
       "InvitationError": "L'invitation a échoué. L'utilisateur est peut-être déjà invité.",
       "Shared": "Le dossier de groupe a été partagé avec succès",
       "NoOneWasShared": "Échec du partage du dossier de groupe",
-      "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié."
+      "SharingError": "Le partage a échoué. L'utilisateur est peut-être déjà partagé ou n'appartient pas au projet approprié.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Aucune modification apportée",

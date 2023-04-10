@@ -662,7 +662,8 @@
       "InvitationError": "Undangan gagal. Pengguna mungkin sudah diundang.",
       "Shared": "Folder grup berhasil dibagikan",
       "NoOneWasShared": "Gagal membagikan folder grup",
-      "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai."
+      "SharingError": "Gagal berbagi. Pengguna mungkin sudah dibagikan atau tidak ada dalamm proyek yang sesuai.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Tidak ada perubahan yang dilakukan",
