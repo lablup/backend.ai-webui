@@ -1,15 +1,16 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
-import './backend-ai-dialog';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import BackendAIDialog from './backend-ai-dialog';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -76,8 +77,8 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     this.webUIShell = document.querySelector('#webui-shell');
     this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.passwordChangeDialog = this.shadowRoot.querySelector('#update-password-dialog');
-    this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
+    this.passwordChangeDialog = this.shadowRoot?.querySelector('#update-password-dialog');
+    this.failDialog = this.shadowRoot?.querySelector('#verification-fail-dialog');
 
     this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
     this.client = new Client(
@@ -111,7 +112,7 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
     this._initClient(apiEndpoint);
 
     if (this.token) {
-      this.shadowRoot.querySelector('#update-password-dialog').show();
+      (this.shadowRoot?.querySelector('#update-password-dialog') as BackendAIDialog).show();
     } else {
       this.failDialog.show();
     }
@@ -121,9 +122,9 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
    * Update a password.
    */
   async _updatePassword() {
-    const emailEl = this.shadowRoot.querySelector('#email');
-    const passwordEl1 = this.shadowRoot.querySelector('#password1');
-    const passwordEl2 = this.shadowRoot.querySelector('#password2');
+    const emailEl = this.shadowRoot?.querySelector('#email') as TextField;
+    const passwordEl1 = this.shadowRoot?.querySelector('#password1') as TextField;
+    const passwordEl2 = this.shadowRoot?.querySelector('#password2') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     if (!passwordEl1.value || !passwordEl1.validity.valid) return;
     if (passwordEl1.value !== passwordEl2.value) {
@@ -164,11 +165,13 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
             </mwc-textfield>
             <mwc-textfield id="password1" label="${_t('webui.menu.NewPassword')}" type="password"
                 auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
+                pattern=${BackendAiCommonUtils.passwordRegex}
+                maxLength="64">
             </mwc-textfield>
             <mwc-textfield id="password2" label="${_t('webui.menu.NewPasswordAgain')}" type="password"
                 auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$" maxLength="64">
+                pattern=${BackendAiCommonUtils.passwordRegex}
+                maxLength="64">
             </mwc-textfield>
             <div style="height:1em"></div>
           </div>
@@ -201,5 +204,11 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
         </div>
       </backend-ai-dialog>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-change-forgot-password-view': BackendAIChangeForgotPasswordView;
   }
 }

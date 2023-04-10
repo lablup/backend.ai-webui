@@ -1,10 +1,11 @@
 # Backend.AI Web UI
 
-[![GitHub version](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui.svg)](https://badge.fury.io/gh/lablup%2Fbackend.ai-webui)
+[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui?color=39a96b&label=release&sort=semver&style=for-the-badge)](https://github.com/lablup/backend.ai-webui/releases/latest)
+[![GitHub version](https://img.shields.io/github/v/release/lablup/backend.ai-webui?color=ff9300&include_prereleases&label=testing&sort=semver&style=for-the-badge)](https://github.com/lablup/backend.ai-webui/releases/latest)
 
 Make AI Accessible: Backend.AI Web UI (web/app) for End-user / DevOps / SysAdmin.
 
-For more information, see [manual](https://console.docs.backend.ai/en/latest/).
+For more information, see [manual](https://webui.docs.backend.ai/en/latest/).
 
 ## Changelog
 
@@ -109,8 +110,15 @@ When enabling debug mode, It will show certain features used for debugging in bo
    - Enable creating session with manual image name
 
 ### Debugging in app(electron)
-🚧 WIP 🚧
+If you want to run the app(electron) in debugging mode, you have to first [initialize](#initializing) and [build the Electron app](#building-electron-app).
 
+If you have initialized and built the app(electron), please run the app(electron) in debugging mode with this command:
+
+```console
+$ make test_electron
+```
+
+You can debug the app.
 
 ## Branches
 

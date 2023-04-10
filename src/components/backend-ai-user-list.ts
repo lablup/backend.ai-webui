@@ -1,21 +1,23 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import QR from '../lib/qr';
 
-import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './lablup-grid-sort-filter-column';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -26,12 +28,14 @@ import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-textarea/mwc-textarea';
-import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-button';
+import '@material/mwc-textfield';
+import '@material/mwc-textarea';
+import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -39,6 +43,17 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type TextArea = HTMLElementTagNameMap['mwc-textarea'];
+type TextField = HTMLElementTagNameMap['mwc-textfield'];
+type Switch = HTMLElementTagNameMap['mwc-switch'];
+type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI User List
@@ -68,20 +83,38 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
   @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
   @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
-  @property({type: Object}) spinner;
+  @property({type: Object}) _totpActivatedRenderer = this.totpActivatedRenderer.bind(this);
   @property({type: Object}) keypairs;
-  @property({type: Object}) signoutUserDialog = Object();
   @property({type: String}) signoutUserName = '';
   @property({type: Object}) notification = Object();
-  @property({type: Object}) userGrid = Object();
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Number}) _totalUserCount = 0;
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
+  @property({type: Boolean}) totpSupported = false;
+  @property({type: Boolean}) totpActivated = false;
+  @property({type: String}) totpKey = '';
+  @property({type: String}) totpUri = '';
   @property({type: Object}) userStatus = {
     'active': 'Active',
     'inactive': 'Inactive',
     'before-verification': 'Before Verification',
     'deleted': 'Deleted',
   };
+  @query('#user-grid') userGrid!: VaadinGrid;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
+  @query('#password') passwordInput!: TextField;
+  @query('#confirm') confirmInput!: TextField;
+  @query('#username') usernameInput!: TextField;
+  @query('#full_name') fullNameInput!: TextField;
+  @query('#description') descriptionInput!: TextArea;
+  @query('#need_password_change') needPasswordChangeSwitch!: Switch;
+  @query('#status') statusSelect!: Select;
+  @query('#signout-user-dialog') signoutUserDialog!: BackendAIDialog;
+  @query('#user-info-dialog') userInfoDialog!: BackendAIDialog;
+  @query('#totp-setup-dialog') totpSetupDialog: BackendAIDialog | undefined;
+  @query('#totp-confirm-otp') confirmOtpTextfield: TextField | undefined;
+  @query('#totp-uri-qrcode') totpUriQrImage: HTMLImageElement | undefined;
 
   constructor() {
     super();
@@ -99,7 +132,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 235px);
+          height: calc(100vh - 229px);
         }
 
         backend-ai-dialog h4,
@@ -197,13 +230,15 @@ export default class BackendAIUserList extends BackendAIPage {
           color: var(--general-sidebar-color);
           width: 270px;
         }
+
+        mwc-icon.totp {
+          --mdc-icon-size: 24px;
+        }
       `];
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.signoutUserDialog = this.shadowRoot.querySelector('#signout-user-dialog');
     this.addEventListener('user-list-updated', () => {
       this.refresh();
     });
@@ -221,17 +256,17 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
+      document.addEventListener('backend-ai-connected', async () => {
+        this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-        this.userGrid = this.shadowRoot.querySelector('#user-grid');
       }, true);
     } else { // already connected
+      this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      this.userGrid = this.shadowRoot.querySelector('#user-grid');
     }
   }
 
@@ -244,8 +279,12 @@ export default class BackendAIUserList extends BackendAIPage {
     default:
       is_active = false;
     }
-    this.spinner.hide();
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
+    if (this.totpSupported) {
+      fields.push('totp_activated');
+    }
     return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
       const users = response.users;
       // Object.keys(users).map((objectKey, index) => {
@@ -253,9 +292,14 @@ export default class BackendAIUserList extends BackendAIPage {
       // Blank for the next impl.
       // });
       this.users = users;
-      this._totalUserCount = this.users.length;
+      if (this.users.length == 0) {
+        this.listCondition = 'no-data';
+      } else {
+        this._listStatus?.hide();
+      }
       // setTimeout(() => { this._refreshKeyData(status) }, 5000);
     }).catch((err) => {
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -286,7 +330,7 @@ export default class BackendAIUserList extends BackendAIPage {
         return item.name;
       });
       this.userInfoGroups = groupNames;
-      this.shadowRoot.querySelector('#user-info-dialog').show();
+      this.userInfoDialog.show();
     } catch (err) {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -305,7 +349,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _signoutUser() {
     globalThis.backendaiclient.user.delete(this.signoutUserName).then((response) => {
-      this.notification.text = PainKiller.relieve('Signout finished.');
+      this.notification.text = _text('credential.SignoutSeccessfullyFinished');
+      this.notification.show();
       this._refreshUserData();
       this.signoutUserDialog.hide();
     }).catch((err) => { // Signout failed
@@ -322,6 +367,9 @@ export default class BackendAIUserList extends BackendAIPage {
 
   async _getUserData(user_id) {
     const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
+    if (this.totpSupported) {
+      fields.push('totp_activated');
+    }
     return globalThis.backendaiclient.user.get(user_id, fields);
   }
 
@@ -366,6 +414,241 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
+   * If value includes unlimited contents, mark as unlimited.
+   *
+   * @param {string} value - string value
+   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
+   */
+  _markIfUnlimited(value) {
+    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
+      return '∞';
+    } else {
+      return value;
+    }
+  }
+
+  /**
+   * Toggle password visible/invisible mode.
+   *
+   * @param {HTMLElement} element - password visibility toggle component
+   */
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
+  /**
+   * Toggle password and confirm input field is required or not.
+   *
+   */
+  _togglePasswordInputRequired() {
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    this.passwordInput.required = (password === '' && confirm !== '') ? true : false;
+    this.confirmInput.required = (password !== '' && confirm === '') ? true : false;
+    this.passwordInput.reportValidity();
+    this.confirmInput.reportValidity();
+  }
+
+  /**
+   * Save any changes. - username, full_name, password, etc.
+   *
+   * @param {Event} event - click SaveChanges button
+   * */
+  async _saveChanges(event) {
+    const username = this.usernameInput.value;
+    const full_name = this.fullNameInput.value;
+    const password = this.passwordInput.value;
+    const confirm = this.confirmInput.value;
+    const description = this.descriptionInput.value;
+    const status = this.statusSelect.value;
+    const need_password_change = this.needPasswordChangeSwitch.selected;
+    let totpSwitch;
+    if (this.totpSupported) {
+      totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
+    }
+
+    this._togglePasswordInputRequired();
+
+    if (!this.passwordInput.checkValidity() || !this.confirmInput.checkValidity()) {
+      return;
+    }
+
+    if (password !== confirm) {
+      this.notification.text = _text('environment.PasswordsDoNotMatch');
+      this.notification.show();
+      return;
+    }
+
+    const input: any = Object();
+
+    if (password !== '') {
+      input.password = password;
+    }
+
+    if (username !== this.userInfo.username) {
+      input.username = username;
+    }
+
+    if (full_name !== this.userInfo.full_name) {
+      input.full_name = full_name;
+    }
+
+    if (description !== this.userInfo.description) {
+      input.description = description;
+    }
+
+    if (need_password_change !== this.userInfo.need_password_change) {
+      input.need_password_change = need_password_change;
+    }
+
+    if (status !== this.userInfo.status) {
+      input.status = status;
+    }
+
+    if (Object.entries(input).length === 0 && (this.totpSupported && totpSwitch.selected === this.userInfo.totp_activated)) {
+      this._hideDialog(event);
+
+      this.notification.text = _text('environment.NoChangeMade');
+      this.notification.show();
+
+      return;
+    }
+
+    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
+    const updateQueue: Array<any> = [];
+    if (Object.entries(input).length > 0) {
+      const updateUser = await globalThis.backendaiclient.user.update(this.userInfo.email, input)
+        .then((res) => {
+          if (res.modify_user.ok) {
+            this.notification.text = _text('environment.SuccessfullyModified');
+            this.userInfo = {...this.userInfo, ...input, password: null};
+            this._refreshUserData();
+            this.passwordInput.value = '';
+            this.confirmInput.value = '';
+          } else {
+            this.notification.text = PainKiller.relieve(res.modify_user.msg);
+            this.usernameInput.value = this.userInfo.username;
+            this.descriptionInput.value = this.userInfo.description;
+          }
+          this.notification.show();
+        });
+      updateQueue.push(updateUser);
+    }
+
+    if (this.totpSupported && !totpSwitch.selected && totpSwitch.selected !== this.userInfo.totp_activated) {
+      const stopUsingTotp = await globalThis.backendaiclient.remove_totp(this.userInfo.email)
+        .then(() => {
+          this.notification.text = _text('totp.TotpRemoved');
+          this.notification.show();
+        });
+      updateQueue.push(stopUsingTotp);
+    }
+
+    await Promise.all(updateQueue)
+      .then(() => {
+        this.userInfoDialog.hide();
+        this.refresh();
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
+
+    // if updated user info is current user, then apply it right away
+    if (this.userInfo.email === globalThis.backendaiclient.email) {
+      const event = new CustomEvent('current-user-info-changed', {detail: input});
+      document.dispatchEvent(event);
+    }
+  }
+
+  /**
+   * Get user id according to configuration
+   *
+   * @param {string} userId
+   * @return {string}
+   */
+  _getUserId(userId = '') {
+    if (userId && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
+  }
+
+  _getUsername(username = '') {
+    if (username && this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = username.length - maskStartIdx;
+      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
+    }
+    return username;
+  }
+
+  async _toggleActivatingSwitch() {
+    const totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
+    if (!this.userInfo.totp_activated && totpSwitch.selected) {
+      if (this.userInfo.email !== globalThis.backendaiclient.email) {
+        totpSwitch.selected = false;
+        this.notification.text = _text('credential.AdminCanOnlyRemoveTotp');
+        this.notification.show();
+      } else {
+        await this._openTotpSetupDialog();
+      }
+    }
+  }
+
+  /**
+   * Open the TOTP Setup dialog.
+   */
+  async _openTotpSetupDialog() {
+    this.totpSetupDialog?.show();
+    const result = await globalThis.backendaiclient.initialize_totp();
+    this.totpKey = result.totp_key;
+    this.totpUri = result.totp_uri;
+    const pngURL = QR.generatePNG(result.totp_uri, null);
+    if (this.totpUriQrImage) {
+      this.totpUriQrImage.src = pngURL;
+    }
+  }
+
+  /**
+   * Hide the TOTP Setup dialog.
+   */
+  _hideTotpSetupDialog() {
+    this.totpSetupDialog?.hide();
+  }
+
+  async _setTotpActivated() {
+    if (this.totpSupported) {
+      const userInfo = await globalThis.backendaiclient.user.get(
+        globalThis.backendaiclient.email, ['totp_activated']
+      );
+      this.totpActivated = userInfo.user.totp_activated;
+    }
+  }
+
+  async _confirmOtpSetup() {
+    const validationCode = this.confirmOtpTextfield?.value;
+    try {
+      await globalThis.backendaiclient.activate_totp(validationCode);
+      this.notification.text = _text('totp.TotpSetupCompleted');
+      this.notification.show();
+      await this._setTotpActivated();
+      this._hideTotpSetupDialog();
+    } catch (e) {
+      this.notification.text = _text('totp.InvalidTotpCode');
+      this.notification.show();
+    }
+  }
+
+  /**
    * Render index to root element.
    *
    * @param {Element} root - the row details content DOM element
@@ -380,20 +663,6 @@ export default class BackendAIUserList extends BackendAIPage {
       `,
       root
     );
-  }
-
-  /**
-   * If value includes unlimited contents, mark as unlimited.
-   *
-   * @param {string} value - string value
-   * @return {string} ∞ when value contains -, 0, 'Unlimited', Infinity, 'Infinity'
-   */
-  _markIfUnlimited(value) {
-    if (['-', 0, 'Unlimited', Infinity, 'Infinity'].includes(value)) {
-      return '∞';
-    } else {
-      return value;
-    }
   }
 
   /**
@@ -471,9 +740,9 @@ export default class BackendAIUserList extends BackendAIPage {
    * - before-verification
    * - deleted
    *
-   * @param root
-   * @param column
-   * @param rowData
+   * @param {Element} root
+   * @param {Element} column
+   * @param {Object} rowData
    */
   userStatusRenderer(root, column?, rowData?) {
     const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
@@ -485,170 +754,56 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
-   * Toggle password visible/invisible mode.
+   * Render current status of user
+   * - active
+   * - inactive
+   * - before-verification
+   * - deleted
    *
-   * @param {HTMLElement} element - password visibility toggle component
+   * @param {Element} root
+   * @param {Element} column
+   * @param {Object} rowData
    */
-  _togglePasswordVisibility(element) {
-    const isVisible = element.__on;
-    const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
-  }
-
-  /**
-   * Toggle password and confirm input field is required or not.
-   *
-   */
-  _togglePasswordInputRequired() {
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    passwordEl.required = (password === '' && confirm !== '') ? true : false;
-    confirmEl.required = (password !== '' && confirm === '') ? true : false;
-    passwordEl.reportValidity();
-    confirmEl.reportValidity();
-  }
-
-  /**
-   * Save any changes. - username, full_name, password, etc.
-   *
-   * @param {Event} event - click SaveChanges button
-   * */
-  _saveChanges(event) {
-    const username = this.shadowRoot.querySelector('#username').value;
-    const full_name = this.shadowRoot.querySelector('#full_name').value;
-    const passwordEl = this.shadowRoot.querySelector('#password');
-    const password = passwordEl.value;
-    const confirmEl = this.shadowRoot.querySelector('#confirm');
-    const confirm = confirmEl.value;
-    const description = this.shadowRoot.querySelector('#description').value;
-    const status = this.shadowRoot.querySelector('#status').value;
-    const need_password_change = this.shadowRoot.querySelector('#need_password_change').selected;
-
-    this._togglePasswordInputRequired();
-
-    if (!passwordEl.checkValidity() || !confirmEl.checkValidity()) {
-      return;
-    }
-
-    if (password !== confirm) {
-      this.notification.text = _text('environment.PasswordsDoNotMatch');
-      this.notification.show();
-      return;
-    }
-
-    const input: any = Object();
-
-    if (password !== '') {
-      input.password = password;
-    }
-
-    if (username !== this.userInfo.username) {
-      input.username = username;
-    }
-
-    if (full_name !== this.userInfo.full_name) {
-      input.full_name = full_name;
-    }
-
-    if (description !== this.userInfo.description) {
-      input.description = description;
-    }
-
-    if (need_password_change !== this.userInfo.need_password_change) {
-      input.need_password_change = need_password_change;
-    }
-
-    if (status !== this.userInfo.status) {
-      input.status = status;
-    }
-
-    if (Object.entries(input).length === 0) {
-      this._hideDialog(event);
-
-      this.notification.text = _text('environment.NoChangeMade');
-      this.notification.show();
-
-      return;
-    }
-
-    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
-    globalThis.backendaiclient.user.update(this.userInfo.email, input)
-      .then((res) => {
-        if (res.modify_user.ok) {
-          this.shadowRoot.querySelector('#user-info-dialog').hide();
-
-          this.notification.text = _text('environment.SuccessfullyModified');
-          this.userInfo = {...this.userInfo, ...input, password: null};
-          this._refreshUserData();
-          this.shadowRoot.querySelector('#password').value = '';
-          this.shadowRoot.querySelector('#confirm').value = '';
-        } else {
-          this.notification.text = PainKiller.relieve(res.modify_user.msg);
-          this.shadowRoot.querySelector('#username').value = this.userInfo.username;
-          this.shadowRoot.querySelector('#description').value = this.userInfo.description;
-        }
-        this.notification.show();
-        this.refresh();
-      }).catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-
-    // if updated user info is current user, then apply it right away
-    if (this.userInfo.email === globalThis.backendaiclient.email) {
-      const event = new CustomEvent('current-user-info-changed', {detail: input});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
-   * Get user id according to configuration
-   *
-   * @param {string} userId
-   * @return {string}
-   */
-  _getUserId(userId = '') {
-    if (userId && this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
-    }
-    return userId;
-  }
-
-  _getUsername(username = '') {
-    if (username && this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = username.length - maskStartIdx;
-      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
-    }
-    return username;
+  totpActivatedRenderer(root, column?, rowData?) {
+    render(
+      html`
+        <div class="layout horizontal center center-justified wrap">
+          ${rowData.item?.totp_activated ? html`
+            <mwc-icon class="fg green totp">check_circle</mwc-icon>
+          ` : html`
+            <mwc-icon class="fg red totp">block</mwc-icon>
+          `}
+        </div>
+      `, root
+    );
   }
 
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <vaadin-grid theme="row-stripes column-borders compact"
-                   aria-label="User list" id="user-grid" .items="${this.users}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                            .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-        <vaadin-grid-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
-                            .renderer="${this._userIdRenderer.bind(this)}"></vaadin-grid-filter-column>
-        <vaadin-grid-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
-                            .renderer="${this._userNameRenderer}"></vaadin-grid-filter-column>
-        ${this.condition !== 'active' ? html`
-          <vaadin-grid-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
-                            .renderer="${this._userStatusRenderer}"></vaadin-grid-filter-column>` : html``}
-        <vaadin-grid-column resizable header="${_t('general.Control')}"
-            .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact"
+                    aria-label="User list" id="user-grid" .items="${this.users}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
+                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
+          <lablup-grid-sort-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
+                              .renderer="${this._userIdRenderer.bind(this)}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
+                              .renderer="${this._userNameRenderer}"></lablup-grid-sort-filter-column>
+          ${this.totpSupported ? html`
+            <vaadin-grid-sort-column auto-width flex-grow="0" path="totp_activated" header="${_t('webui.menu.TotpActivated')}" resizable
+                              .renderer="${this._totpActivatedRenderer.bind(this)}"></vaadin-grid-sort-column>
+          `: html``}
+          ${this.condition !== 'active' ? html`
+            <lablup-grid-sort-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
+                              .renderer="${this._userStatusRenderer}"></lablup-grid-sort-filter-column>` : html``}
+          <vaadin-grid-column resizable header="${_t('general.Control')}"
+              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
@@ -702,7 +857,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="password"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern=${BackendAiCommonUtils.passwordRegex}
                       maxLength="64"
                       label="${_text('general.NewPassword')}"
                       @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
@@ -716,7 +871,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="confirm"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern=${BackendAiCommonUtils.passwordRegex}
                       maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
                       label="${_text('webui.menu.NewPasswordAgain')}"></mwc-textfield>
@@ -730,7 +885,7 @@ export default class BackendAIUserList extends BackendAIPage {
                     label="${_text('credential.Description')}"
                     placeholder="${_text('maxLength.500chars')}"
                     value="${this.userInfo.description}"
-                    id="description"></mwc-textfield>`: html``}
+                    id="description"></mwc-textarea>`: html``}
               ${this.editMode ? html`
                 <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
                   ${Object.keys(this.userStatus).map((item) => html`
@@ -742,15 +897,31 @@ export default class BackendAIUserList extends BackendAIPage {
                   <mwc-switch
                       id="need_password_change"
                       ?selected=${this.userInfo.need_password_change}></mwc-switch>
-                </div>` : html`
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescActiveUser')}"
-                        value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                    <mwc-textfield
-                        disabled
-                        label="${_text('credential.DescRequirePasswordChange')}"
-                        value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                </div>
+                ${this.totpSupported ? html`
+                  <div class="horizontal layout center">
+                    <p class="label">${_text('webui.menu.TotpActivated')}</p>
+                    <mwc-switch
+                        id="totp_activated_change"
+                        ?selected=${this.userInfo.totp_activated}
+                        @click="${() => this._toggleActivatingSwitch()}"></mwc-switch>
+                  </div>
+                ` : html``}
+                ` : html`
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescActiveUser')}"
+                    value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                <mwc-textfield
+                    disabled
+                    label="${_text('credential.DescRequirePasswordChange')}"
+                    value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                ${this.totpSupported ? html`
+                  <mwc-textfield
+                      disabled
+                      label="${_text('webui.menu.TotpActivated')}"
+                      value="${this.userInfo.totp_activated ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
+                ` : html``}
             `}
           </div>
         </div>
@@ -788,6 +959,24 @@ export default class BackendAIUserList extends BackendAIPage {
               label="${_t('button.SaveChanges')}"
               icon="check"
               @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
+        <span slot="title">${_t('webui.menu.SetupTotp')}</span>
+        <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
+          <p>${_t('totp.ScanQRToEnable')}</p>
+          <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
+          <p>${_t('totp.TypeInAuthKey')}</p>
+          <blockquote>${this.totpKey}</blockquote>
+        </div>
+        <div slot="content" class="layout vertical" style="width: 300px">
+          <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
+          <mwc-textfield id="totp-confirm-otp" type="number" no-label-float placeholder="000000"
+            min="0" max="999999" style="margin-left:1em;width:120px;">
+            </mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated @click="${() => this._confirmOtpSetup()}">${_t('button.Confirm')}</mwc-button>
         </div>
       </backend-ai-dialog>
     `;

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -19,18 +19,13 @@ import 'weightless/title';
 
 @customElement('backend-ai-indicator')
 export default class BackendAIIndicator extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: Number}) delay = 1000;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
   @property({type: Object}) dialog;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -47,7 +42,7 @@ export default class BackendAIIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#app-progress-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {

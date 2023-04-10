@@ -19,6 +19,11 @@ autoLogout = false                      # If true, user will be automatically lo
 debug = false                           # Please refer to `[Debug mode](https://github.com/lablup/backend.ai-webui#debug-mode)` in README
 maskUserInfo = false                    # If true, then account information in header, session list will be masked
 #singleSignOnVendors = "saml"           # Comma-separated list of vendors that support single sign-on.
+enableContainerCommit = false           # If true, then user can request container commit corres ponding to the session in running status
+hideAgents = true                       # If false, show the `Agent Summary` menu in the sidebar.
+enable2FA = false                       # If true and backend.ai-totp-plugin is installed, users can activate 2FA.
+force2FA = false                        # If true, user should be register the 2FA to use Backend.AI WebUI.
+appDownloadUrl = ""                     # URL to download the electron app. If blank, https://github.com/lablup/backend.ai-webui/releases/download will be used.
 
 [wsproxy]
 proxyURL = "[Proxy URL]"
@@ -31,6 +36,7 @@ proxyListenIP = "[Websocket proxy configuration IP.]"
 
 [resources]
 openPortToPublic = false            # Show option to open app proxy port to anyone.
+allowPreferredPort = false          # Preferred web service port number. Backend.AI try to assign the entered port number first for the web service.
 maxCPUCoresPerContainer = 256       # Maximum CPU per container.
 maxMemoryPerContainer = 64          # Maximum memory per container.
 maxCUDADevicesPerContainer = 8      # Maximum CUDA devices per container.

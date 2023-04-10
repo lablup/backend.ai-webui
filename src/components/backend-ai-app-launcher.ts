@@ -1,19 +1,18 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button';
-import '@material/mwc-checkbox';
+import {Checkbox} from '@material/mwc-checkbox';
 import '@material/mwc-icon-button';
-import '@material/mwc-textfield';
+import {TextField} from '@material/mwc-textfield';
 import 'macro-carousel';
 
-import './lablup-loading-spinner';
-import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -32,11 +31,10 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('backend-ai-app-launcher')
 export default class BackendAiAppLauncher extends BackendAIPage {
-  public shadowRoot: any;
-
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = true;
   @property({type: String}) condition = 'running';
   @property({type: Object}) jobs = Object();
+  @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
@@ -44,22 +42,38 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) _selected_items = [];
   @property({type: Boolean}) refreshing = false;
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
+  @property({type: Number}) vscodeDesktopPort = 0;
   @property({type: String}) tensorboardPath = '';
+  @property({type: String}) endpointURL = '';
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
   @property({type: Object}) openPortToPublic = false;
+  @property({type: Object}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
+  @query('#app-dialog') dialog!: BackendAIDialog;
+  @query('#app-port') appPort!: TextField;
+  @query('#custom-subdomain') customSubdomain!: TextField;
+  @query('#chk-open-to-public') checkOpenToPublic!: Checkbox;
+  @query('#chk-preferred-port') checkPreferredPort!: Checkbox;
+  @query('#force-use-v1-proxy') forceUseV1Proxy!: Checkbox;
+  @query('#force-use-v2-proxy') forceUseV2Proxy!: Checkbox;
+  @query('#app-launch-confirmation-dialog') appLaunchConfirmationDialog!: BackendAIDialog;
+  @query('#ssh-dialog') sshDialog!: BackendAIDialog;
+  @query('#tensorboard-dialog') tensorboardDialog!: BackendAIDialog;
+  @query('#terminal-guide') terminalGuideDialog!: BackendAIDialog;
+  @query('#vnc-dialog') vncDialog!: BackendAIDialog;
+  @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
+  @query('#vscode-desktop-dialog') vscodeDesktopDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -67,7 +81,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     this.appSupportOption = [];
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -104,6 +118,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .app-icon {
           margin-left: 15px;
           margin-right: 5px;
+          margin-bottom: 15px;
         }
 
         .app-icon .label {
@@ -125,6 +140,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+        }
+
+        #vscode-desktop-dialog {
+          --component-width: 450px;
         }
 
         #allowed-client-ips-container {
@@ -214,6 +233,37 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: inline-block;
         }
 
+        mwc-textfield#vscode-desktop-password {
+          width: 360px;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        .vscode-desktop-password {
+          min-height: 80px;
+          overflow-y: scroll;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          scrollbar-width: none; /* firefox */
+        }
+
+        wl-button.vscode-desktop-password {
+          display: inline-block;
+          margin: 10px;
+        }
+
+        wl-button.copy {
+          --button-font-size: 10px;
+          display: inline-block;
+          max-width: 15px !important;
+          max-height: 15px !important;
+        }
+
+        wl-icon#vscode-desktop-password-icon {
+          color: var(--paper-indigo-700);
+        }
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -225,31 +275,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   firstUpdated() {
     this._initializeAppTemplate();
     this.refreshTimer = null;
-    fetch('resources/image_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
-        this.imageInfo = json.imageInfo;
-        for (const key in this.imageInfo) {
-          if ({}.hasOwnProperty.call(this.imageInfo, key)) {
-            this.kernel_labels[key] = [];
-            if ('label' in this.imageInfo[key]) {
-              this.kernel_labels[key] = this.imageInfo[key].label;
-            } else {
-              this.kernel_labels[key] = [];
-            }
-          }
-        }
-      }
-    );
+    this.imageInfo = globalThis.backendaimetadata.imageInfo;
+    this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically
     this._createDonotShowOption();
     this.notification = globalThis.lablupNotification;
-    const checkbox = this.shadowRoot.querySelector('#hide-guide');
-    checkbox.addEventListener('change', (event) => {
-      if (!event.target.checked) {
+    const checkbox = this.shadowRoot?.querySelector('#hide-guide');
+    checkbox?.addEventListener('change', (event) => {
+      if (!(event.target as Checkbox).checked) {
         localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
@@ -330,7 +366,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (sessionUuid) {
       const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
       if (wsproxyVersion !== 'v1') {
-        url += `${wsproxyVersion}/`;
+        url = new URL(`${wsproxyVersion}/`, url).href;
       }
     }
     return url;
@@ -345,6 +381,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @return {string} wsproxy version
    */
   async _getWSProxyVersion(sessionUuid) {
+    if (globalThis.backendaiwebui.debug === true) {
+      if (this.forceUseV1Proxy.checked) return 'v1';
+      else if (this.forceUseV2Proxy.checked) return 'v2';
+    }
+
     const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
     const scalingGroupId = kInfo.compute_session.scaling_group;
     const groupId = globalThis.backendaiclient.current_group_id();
@@ -371,16 +412,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @return {void}
    */
   _showAppLauncher(controls) {
+    this.controls = controls;
     const sessionUuid = controls['session-uuid'];
     const accessKey = controls['access-key'];
     const appServices = controls['app-services'];
+    const mode = controls['mode'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
+      param['mode'] = mode;
       param['session-uuid'] = sessionUuid;
       param['app-name'] = controls['runtime'];
       param['url-postfix'] = '';
-      param['file-name'] = controls['filename'];
+      if ('filename' in controls) {
+        param['file-name'] = controls['filename'];
+      }
       if (param['app-name'] === 'jupyter') {
         param['url-postfix'] = '&redirect=/notebooks/' + param['file-name'];
       }
@@ -454,12 +500,27 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
+
+    if (
+      globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
+      globalThis.isElectron &&
+      !appServices.includes('vscode-desktop')
+    ) {
+      const insertAfterIndex = this.appSupportList.findIndex((item) => item.name === 'vscode');
+      this.appSupportList.splice(insertAfterIndex + 1, 0, {
+        name: 'vscode-desktop',
+        title: 'Visual Studio Code (Desktop)',
+        category: '2.Development',
+        redirect: '',
+        src: './resources/icons/vscode.svg'
+      });
+    }
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
+    this.allowPreferredPort = globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
-    const dialog = this.shadowRoot.querySelector('#app-dialog');
-    dialog.setAttribute('session-uuid', sessionUuid);
-    dialog.setAttribute('access-key', accessKey);
-    this.shadowRoot.querySelector('#app-dialog').show();
+    this.dialog.setAttribute('session-uuid', sessionUuid);
+    this.dialog.setAttribute('access-key', accessKey);
+    this.dialog.show();
     return;
   }
 
@@ -467,7 +528,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * Hide the app launcher.
    */
   _hideAppLauncher() {
-    this.shadowRoot.querySelector('#app-dialog').hide();
+    this.dialog.hide();
   }
 
   async _resolveV1ProxyUri(sessionUuid: string, app: string): Promise<string | undefined> {
@@ -476,7 +537,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     };
     if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
       param['mode'] = 'SESSION';
-      param['session'] = globalThis.backendaiclient._config._session_id;
+      if (globalThis.backendaiclient._loginSessionId) {
+        param['auth_mode'] = 'header';
+        param['session'] = globalThis.backendaiclient._loginSessionId;
+      } else {
+        param['auth_mode'] = 'cookie';
+        param['session'] = globalThis.backendaiclient._config._session_id;
+      }
     } else {
       param['mode'] = 'API';
       param['access_key'] = globalThis.backendaiclient._config.accessKey;
@@ -549,7 +616,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
 
-    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group'], sessionUuid);
+    const kInfo = await globalThis.backendaiclient.computeSession.get(['scaling_group', 'service_ports'], sessionUuid);
     if (kInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
@@ -557,21 +624,31 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.notification.show();
       return Promise.resolve(false);
     }
+    const servicePortInfo = JSON.parse(kInfo.compute_session.service_ports).find(({name}) => name === app);
+    if (servicePortInfo === undefined) {
+      this.indicator.end();
+      this.notification.text = _text('session.CreationFailed'); // TODO: Change text
+      if (app !== 'vscode-desktop') {
+        this.notification.show();
+      }
+      return Promise.resolve(false);
+    }
 
     // Apply v1 when executing in electron mode
     const wsproxyVersion = await this._getWSProxyVersion(sessionUuid);
     let uri = (wsproxyVersion == 'v1') ? await this._resolveV1ProxyUri(sessionUuid, app) : await this._resolveV2ProxyUri(sessionUuid, app, null, envs, args);
     if (!uri) {
+      this.indicator.end();
       return Promise.resolve(false);
     }
-    const openToPublicCheckBox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedClientIps = this.shadowRoot.querySelector('#allowed-client-ips')?.value;
+    const allowedClientIps = (this.shadowRoot?.querySelector('#allowed-client-ips') as TextField)?.value;
     let openToPublic = false;
-    if (openToPublicCheckBox == null) { // Null or undefined
+    if (this.checkOpenToPublic == null) { // Null or undefined check. When user click console button without app launcher dialog, it will be undefined.
     } else {
-      openToPublic = openToPublicCheckBox.checked;
-      openToPublicCheckBox.checked = false;
+      openToPublic = this.checkOpenToPublic.checked;
+      this.checkOpenToPublic.checked = false;
     }
+
 
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
@@ -588,6 +665,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (args !== null && Object.keys(args).length > 0) {
       uri = uri + '&args=' + encodeURI(JSON.stringify(args));
     }
+    if (this.customSubdomain?.value) {
+      uri = uri + '&subdomain=' + encodeURI(this.customSubdomain.value);
+    }
+    if (servicePortInfo.is_inference) {
+      uri = uri + '&is_inference=true';
+    }
+    uri += '&protocol=' + (servicePortInfo.protocol || 'tcp');
     this.indicator.set(50, _text('session.launcher.AddingKernelToSocketQueue'));
     const rqst_proxy = {
       method: 'GET',
@@ -612,7 +696,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
     const token = globalThis.backendaiclient._config.accessKey;
     let uri = await this._getProxyURL(sessionUuid);
-    uri += `proxy/${token}/${sessionUuid}/delete?app=${app}`;
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
     const rqst_proxy = {
       method: 'GET',
       app: app,
@@ -633,7 +717,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = param['url-postfix'];
     const appName = param['app-name'];
     const envs = null;
+    const mode = param['mode'];
     let args = null;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -649,6 +735,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._openTensorboardDialog();
       return;
     }
+    if (appName === 'ttyd') {
+      const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
+      if (!isVisible || isVisible === 'true') {
+        this._openTerminalGuideDialog();
+      }
+    }
+    if (appName === 'vscode-desktop') {
+      this._openVSCodeDesktopDialog();
+      return;
+    }
 
     if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
@@ -660,16 +756,30 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      if (globalThis.isElectron && appName === 'vscode-desktop') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd';
+      }
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
-            await this._connectToProxyWorker(response.url, urlPostfix);
-            this.indicator.set(100, _text('session.applauncher.Prepared'));
-            setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
-              // console.log(appName + " proxy loaded: ");
-              // console.log(sessionUuid);
-            }, 1000);
+            if (mode === 'inference') {
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              this.endpointURL = response.proxy;
+              delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
+              this._showAppLauncher(this.controls);
+            } else {
+              await this._connectToProxyWorker(response.url, urlPostfix);
+              this.indicator.set(100, _text('session.applauncher.Prepared'));
+              setTimeout(() => {
+                globalThis.open(response.url + urlPostfix, '_blank');
+                // console.log(appName + " proxy loaded: ");
+                // console.log(sessionUuid);
+              }, 1000);
+            }
           }
         });
     }
@@ -739,6 +849,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = config['url-postfix'];
     const envs = null;
     const args = null;
+    const defaultPreferredPortNumber = 10250;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -768,12 +880,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      const usePreferredPort = this.shadowRoot.querySelector('#chk-preferred-port').checked;
-      const userPort = parseInt(this.shadowRoot.querySelector('#app-port').value);
-      if (usePreferredPort && userPort) {
+      if (globalThis.isElectron && appName === 'vscode-desktop') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd';
+      }
+      const userPort = (this.appPort === null || this.appPort === undefined) ? defaultPreferredPortNumber : parseInt(this.appPort?.value);
+      if (this.checkPreferredPort !== null && this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
@@ -792,6 +910,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.xrdpPort = response.port;
             this._openXRDPDialog();
+          } else if (appName === 'vscode-desktop') {
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.vscodeDesktopPort = response.port;
+            this._readTempPasswd(sessionUuid);
+            this._openVSCodeDesktopDialog();
+            setTimeout(() => {
+              this.indicator.end();
+            }, 1000);
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
@@ -810,7 +936,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readSSHKey(sessionUuid) {
-    const downloadLinkEl = this.shadowRoot.querySelector('#sshkey-download-link');
+    const downloadLinkEl = this.shadowRoot?.querySelector('#sshkey-download-link') as HTMLAnchorElement;
     const file = '/home/work/id_container';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     // TODO: This blob has additional leading letters in front of key texts.
@@ -820,6 +946,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const trimmedBlob = await blob.slice(index, blob.size, blob.type);
     downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
     downloadLinkEl.download = 'id_container';
+  }
+
+  /**
+   * Read temp password
+   *
+   * @param {string} sessionUuid
+   */
+  async _readTempPasswd(sessionUuid) {
+    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-desktop-password') as HTMLInputElement;
+    const file = '/home/work/.password';
+    const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
+    const rawText = await blob.text();
+    vscodePasswordEl.value = rawText;
   }
 
   /**
@@ -855,49 +994,44 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    *
    * @param{Event} e
    */
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   _openAppLaunchConfirmationDialog(e) {
-    const dialog = this.shadowRoot.querySelector('#app-launch-confirmation-dialog');
-    dialog.show();
+    this.appLaunchConfirmationDialog.show();
   }
 
   /**
    * Open a SSH dialog.
    */
   _openSSHDialog() {
-    const dialog = this.shadowRoot.querySelector('#ssh-dialog');
-    dialog.show();
+    this.sshDialog.show();
   }
 
   /**
    * Open a VNC dialog.
    */
   _openVNCDialog() {
-    const dialog = this.shadowRoot.querySelector('#vnc-dialog');
-    dialog.show();
+    this.vncDialog.show();
   }
 
   /**
    * Open a XRDP dialog.
    */
   _openXRDPDialog() {
-    const dialog = this.shadowRoot.querySelector('#xrdp-dialog');
-    dialog.show();
+    this.xrdpDialog.show();
   }
 
   /**
    * Open a Tensorboard dialog for path input.
    */
   _openTensorboardDialog() {
-    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
-    dialog.show();
+    this.tensorboardDialog.show();
   }
 
   /**
    * Close a Tensorboard dialog.
    */
   _hideTensorboardDialog() {
-    const dialog = this.shadowRoot.querySelector('#tensorboard-dialog');
-    dialog.hide();
+    this.tensorboardDialog.hide();
   }
 
   /**
@@ -905,7 +1039,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    */
 
   async _addTensorboardPath(e) {
-    this.tensorboardPath = this.shadowRoot.querySelector('#tensorboard-path').value;
+    this.tensorboardPath = (this.shadowRoot?.querySelector('#tensorboard-path') as TextField).value;
     const button = e.target;
     button.setAttribute('disabled', true);
     try {
@@ -929,8 +1063,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         button.removeAttribute('disabled');
         setTimeout(() => {
           globalThis.open(response.url + urlPostfix, '_blank');
-          console.log(appName + ' proxy loaded: ');
-          console.log(sessionUuid);
+          // console.log(appName + ' proxy loaded: ');
+          // console.log(sessionUuid);
         }, 1000);
       });
     } catch (e) {
@@ -939,19 +1073,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   /**
+   * Open a VS Code dialog.
+   */
+  _openVSCodeDesktopDialog() {
+    this.vscodeDesktopDialog.show();
+  }
+
+  /**
    * Open a guide for terminal
    */
   _openTerminalGuideDialog() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    dialog.show();
+    this.terminalGuideDialog.show();
   }
 
   /**
    * Dynamically add Do not show Option
    */
   _createDonotShowOption() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    const lastChild = dialog.children[dialog.children.length - 1];
+    const lastChild = this.terminalGuideDialog.children[this.terminalGuideDialog.children.length - 1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'horizontal layout flex center');
 
@@ -977,19 +1116,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const maxPortNumber = 65534;
     if (preferredPortNumber) {
       if (preferredPortNumber < minPortNumber || preferredPortNumber > maxPortNumber) {
-        this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+        this.appPort.value = defaultPreferredPortNumber.toString();
       }
     } else {
-      this.shadowRoot.querySelector('#app-port').value = defaultPreferredPortNumber;
+      this.appPort.value = defaultPreferredPortNumber.toString();
     }
+  }
+
+  _adjustCustomSubdomain(e) {
+    const subdomain = e.target.value;
+    this.customSubdomain.value = subdomain;
   }
 
   /**
    * Dynamically add Web Terminal Guide Carousel
    */
   _createTerminalGuide() {
-    const dialog = this.shadowRoot.querySelector('#terminal-guide');
-    const content = dialog.children[1];
+    const content = this.terminalGuideDialog.children[1];
     const div: HTMLElement = document.createElement('div');
     div.setAttribute('class', 'vertical layout flex');
     let lang = globalThis.backendaioptions.get('current_language');
@@ -1034,24 +1177,63 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   _toggleChkOpenToPublic() {
-    const checkbox = this.shadowRoot.querySelector('#chk-open-to-public');
-    const allowedClientIpsContainer = this.shadowRoot.querySelector('#allowed-client-ips-container');
-    if (!checkbox || !allowedClientIpsContainer) return;
-    if (checkbox.checked) {
+    const allowedClientIpsContainer = this.shadowRoot?.querySelector('#allowed-client-ips-container') as HTMLDivElement;
+    if (!this.checkOpenToPublic || !allowedClientIpsContainer) return;
+    if (this.checkOpenToPublic.checked) {
       allowedClientIpsContainer.style.display = 'block';
     } else {
       allowedClientIpsContainer.style.display = 'none';
     }
   }
 
+  /**
+   * Copy Remote VS Code password to clipboard
+   *
+   * @param {string} vscodePassword - ssh(remote VS Code) access password
+   * */
+  _copyVSCodePassword(vscodePassword: string) {
+    if (vscodePassword !== '') {
+      const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
+      if (copyText.length == 0) {
+        this.notification.text = _text('usersettings.NoExistingVSCodePassword');
+        this.notification.show();
+      } else {
+        if (navigator.clipboard !== undefined) { // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then( () => {
+            this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
+            this.notification.show();
+          }, (err) => {
+            console.error('Could not copy text: ', err);
+          });
+        } else { // other browsers
+          const tmpInputElement = document.createElement('input');
+          tmpInputElement.type = 'text';
+          tmpInputElement.value = copyText;
+
+          document.body.appendChild(tmpInputElement);
+          tmpInputElement.select();
+          document.execCommand('copy'); // copy operation
+          document.body.removeChild(tmpInputElement);
+        }
+      }
+    }
+  }
+
+
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="app-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal layout center">
-          <span>App</span>
+          <span>${_t('session.applauncher.App')}</span>
         </div>
         <div slot="content">
+          ${this.endpointURL !== '' ? html`
+          <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+            <span style="font-weight:600;margin-left:20px;margin-right:15px;">Endpoint URL: </span> <span style="font-family:monospace;">${this.endpointURL}</span>
+          </div>
+          `: html``}
           <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
             ${this.appSupportList.map((item) => html`
               ${item.category === 'divider' ? html`
@@ -1080,13 +1262,34 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                                .helper="(${_t('session.CommaSeparated')})"></mwc-textfield>
               </div>
             `}
+            ${this.allowPreferredPort ? html`
+              <div id="preferred-app-port-config-box" class="horizontal layout center">
+                <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
+                ${_t('session.TryPreferredPort')}
+                <mwc-textfield id="app-port" type="number" no-label-float value="10250"
+                              min="1025" max="65534" style="margin-left:1em;width:90px;"
+                              @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+              </div>
+            ` : html``}
             <div class="horizontal layout center">
-              <mwc-checkbox id="chk-preferred-port" style="margin-right:0.5em;"></mwc-checkbox>
-              ${_t('session.TryPreferredPort')}
-              <mwc-textfield id="app-port" type="number" no-label-float value="10250"
-                             min="1025" max="65534" style="margin-left:1em;width:90px;"
-                             @change="${(e) => this._adjustPreferredAppPortNumber(e)}"></mwc-textfield>
+            ${globalThis.backendaiwebui.debug === true ? html`
+              <mwc-checkbox id="force-use-v1-proxy" style="margin-right:0.5em;"></mwc-checkbox>
+              Force use of V1
+              <mwc-checkbox id="force-use-v2-proxy" style="margin-right:0.5em;"></mwc-checkbox>
+              Force use of V2
+            `: ``}
             </div>
+          </div>
+          <div style="padding:10px 20px 15px 20px">
+            ${globalThis.backendaiwebui.debug === true ? html`
+            <div class="horizontal layout center">
+              <mwc-checkbox id="chk-custom-subdomain" style="margin-right:0.5em;"></mwc-checkbox>
+              ${_t('session.UseSubdomain')}
+              <mwc-textfield id="custom-subdomain" type="string"
+                            style="margin-left:1em;width:90px;"
+                            @change="${(e) => this._adjustCustomSubdomain(e)}"></mwc-textfield>
+            </div>
+            `: ``}
           </div>
         </div>
       </backend-ai-dialog>
@@ -1112,7 +1315,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="tensorboard-dialog" fixed>
         <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
-          <div>${_t('session.InputTensorboardPath')}</div>
+        <div>${_t('session.InputTensorboardPath')}</div>
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
@@ -1177,6 +1380,43 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="vscode-desktop-dialog" fixed backdrop>
+        <span slot="title">${_t('session.VSCodeRemoteConnection')}</span>
+        <div slot="content">
+          <div>${_t('session.VSCodeRemoteDescription')}</div>
+          <section class="vertical layout wrap start start-justified">
+            <h3>${_t('session.ConnectionInformation')}</h4>
+            <div slot="content">
+              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
+              <mwc-textfield
+                readonly
+                class="vscode-desktop-password"
+                id="vscode-desktop-password"
+              ></mwc-textfield>
+              <mwc-icon-button
+                id="copy-vscode-password-button"
+                icon="content_copy"
+                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
+              ></mwc-icon-button>
+            </div>
+            <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
+              <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
+              <p style="margin:auto 10px;">
+                <pre style="white-space:pre-line; margin:10px 10px 0 10px">
+                  Host 127.0.0.1
+                  &nbsp;&nbsp;StrictHostKeyChecking no
+                  &nbsp;&nbsp;UserKnownHostsFile /dev/null
+                </pre>
+              </p>
+            </div>
+          </section>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodeDesktopPort}/home/work">
+            <mwc-button unelevated fullwidth>${_t('OpenVSCodeRemote')}</mwc-button>
+          </a>
+        </div>
       </backend-ai-dialog>
     `;
   }

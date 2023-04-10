@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -8,16 +8,17 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -33,48 +34,68 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
+class BigNumber {
+  static getValue() {
+    return 1000000;
+  }
+}
+
 @customElement('backend-ai-resource-policy-list')
 export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Boolean}) visible = false;
+  @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: String}) condition = 'active';
-  @property({type: Object}) cpu_resource = {};
-  @property({type: Object}) ram_resource = {};
-  @property({type: Object}) gpu_resource = {};
-  @property({type: Object}) fgpu_resource = {};
-  @property({type: Object}) concurrency_limit = {};
-  @property({type: Object}) idle_timeout = {};
-  @property({type: Object}) session_lifetime = {};
-  @property({type: Object}) vfolder_capacity = {};
-  @property({type: Object}) vfolder_max_limit= {};
-  @property({type: Object}) container_per_session_limit = {};
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
   @property({type: Number}) selectAreaHeight;
   @property({type: Boolean}) enableSessionLifetime = false;
+  @property({type: Boolean}) enableParsingStoragePermissions = false;
   @property({type: Object}) _boundResourceRenderer = Object();
   @property({type: Object}) _boundConcurrencyRenderer = this.concurrencyRenderer.bind(this);
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _boundPolicyNameRenderer = this.policyNameRenderer.bind(this);
   @property({type: Object}) _boundClusterSizeRenderer = this.clusterSizeRenderer.bind(this);
   @property({type: Object}) _boundStorageNodesRenderer = this.storageNodesRenderer.bind(this);
+  @query('#dropdown-area') dropdownArea!: HTMLDivElement;
+  @query('#vfolder-count-limit') vfolderCountLimitInput!: TextField;
+  @query('#vfolder-capacity-limit') vfolderCapacityLimit!: TextField;
+  @query('#cpu-resource') cpuResource!: TextField;
+  @query('#ram-resource') ramResource!: TextField;
+  @query('#gpu-resource') gpuResource!: TextField;
+  @query('#fgpu-resource') fgpuResource!: TextField;
+  @query('#concurrency-limit') concurrencyLimit!: TextField;
+  @query('#idle-timeout') idleTimeout!: TextField;
+  @query('#container-per-session-limit') containerPerSessionLimit!: TextField;
+  @query('#session-lifetime') sessionLifetime!: TextField;
+  @query('#delete-policy-dialog') deletePolicyDialog!: BackendAIDialog;
+  @query('#modify-policy-dialog') modifyPolicyDialog!: BackendAIDialog;
   @query('#allowed-vfolder-hosts') private allowedVfolderHostsSelect;
+  @query('#id_new_policy_name') newPolicyName!: TextField;
+  @query('#list-status') private _listStatus!: BackendAIListStatus;
   @state() private all_vfolder_hosts;
   @state() private allowed_vfolder_hosts;
   @state() private is_super_admin = false;
+  @state() private vfolderPermissions;
 
   constructor() {
     super();
     this.all_vfolder_hosts = [];
-    this.allowed_vfolder_hosts = [];
+    this.allowed_vfolder_hosts = {};
+    this.vfolderPermissions = [];
     this.resource_policy_names = [];
     this._boundResourceRenderer = this.resourceRenderer.bind(this);
   }
 
-  static get styles(): CSSResultGroup | undefined {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -84,7 +105,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 300px);
+          height: calc(100vh - 229px);
         }
 
         wl-icon.indicator {
@@ -117,7 +138,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
 
         div.configuration {
-          width: 70px !important;
+          width: 100px !important;
         }
 
         div.configuration wl-icon {
@@ -212,21 +233,24 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     // language=HTML
     // FIXME: Need a proper reason to limit cpu/mem/gpu resources, leaving MAX_INT32 for now...
     return html`
-      <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
-                  .items="${this.resourcePolicy}">
-        <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
-            .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
-        <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
-        </vaadin-grid-column>
-        <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
-        </vaadin-grid-column>
-      </vaadin-grid>
+      <div class="list-wrapper">
+        <vaadin-grid theme="row-stripes column-borders compact" aria-label="Resource Policy list"
+                    .items="${this.resourcePolicy}">
+          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
+          <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.ClusterSize')}" path="max_containers_per_session"
+              .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
+          <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
+          </vaadin-grid-column>
+          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+          </vaadin-grid-column>
+        </vaadin-grid>
+        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
+      </div>
       <backend-ai-dialog id="modify-policy-dialog" fixed backdrop blockscrolling narrowLayout>
         <span slot="title">${_t('resourcePolicy.UpdateResourcePolicy')}</span>
         <div slot="content">
@@ -363,6 +387,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     `;
   }
 
+  /**
+   * Render an index.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
     render(
@@ -373,6 +404,31 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  _displayResourcesByResourceUnit(value = 0, enableUnitConvert = false, resourceName = '') {
+    let decimalPoint = 0;
+    const resourceValue = this._markIfUnlimited(value, enableUnitConvert);
+    resourceName = resourceName.toLowerCase();
+    switch (resourceName) {
+    case 'cpu':
+    case 'cuda_device':
+    case 'max_vfolder_count':
+      decimalPoint = 0;
+      break;
+    case 'mem':
+    case 'cuda_shares':
+    case 'max_vfolder_size':
+      decimalPoint = 1;
+    }
+    return ['∞', '-'].includes(resourceValue) ? resourceValue : Number(resourceValue).toFixed(decimalPoint);
+  }
+
+  /**
+   * Render a resource.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   resourceRenderer(root, column?, rowData?) {
     let maxVfolderSizeUnit = 'GiB';
     let maxVfolderSize = this._markIfUnlimited(rowData.item.max_vfolder_size);
@@ -384,12 +440,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cpu)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cpu, false, 'cpu')}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.mem)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.mem, false, 'mem')}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -398,7 +454,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_device)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_device, false, 'cuda_device')}</span>
             <span class="indicator">GPU</span>
           </div>
 ` : html``}
@@ -406,7 +462,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.total_resource_slots.cuda_shares)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_shares, false, 'cuda_shares')}</span>
             <span class="indicator">fGPU</span>
           </div>
 ` : html``}
@@ -414,12 +470,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">cloud_queue</wl-icon>
-            <span>${maxVfolderSize}</span>
-            <span class="indicator">${maxVfolderSizeUnit}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_size, true, 'max_vfolder_size')}</span>
+            <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">folder</wl-icon>
-            <span>${this._markIfUnlimited(rowData.item.max_vfolder_count)}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_count, false, 'max_vfolder_count')}</span>
             <span class="indicator">Folders</span>
           </div>
         </div>
@@ -427,6 +483,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a concurrency.
+   *
+   * @param {DOMelement} root
+   * @param {object} column (<vaadin-grid-column> element)
+   * @param {object} rowData
+   */
   concurrencyRenderer(root, column?, rowData?) {
     // FIXME: need to distinguish zero and infinity not only in client-side but also server-side.
     render(
@@ -436,6 +499,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render control buttons
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
   controlRenderer(root, column?, rowData?) {
     render(
       html`
@@ -452,6 +521,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render resource policy name
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
   policyNameRenderer(root, column?, rowData?) {
     render(
       // language=HTML
@@ -463,6 +538,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a cluster size
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
   clusterSizeRenderer(root, column?, rowData?) {
     // FIXME: need to distinguish zero and infinity not only in client-side but also server-side.
     render(
@@ -473,13 +554,23 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     );
   }
 
+  /**
+   * Render a storage nodes
+   * @param {DOMelement} root
+   * @param {object} column
+   * @param {object} rowData
+   */
   storageNodesRenderer(root, column?, rowData?) {
+    let allowedVFolderHostsInfo = JSON.parse(rowData.item.allowed_vfolder_hosts);
+    if (this.enableParsingStoragePermissions) {
+      allowedVFolderHostsInfo = Object.keys(allowedVFolderHostsInfo);
+    }
     render(
       // language=HTML
       html`
       <div class="layout horizontal center flex">
         <div class="vertical start layout around-justified">
-          ${rowData.item.allowed_vfolder_hosts.map((host) => html`
+          ${allowedVFolderHostsInfo.map((host) => html`
             <lablup-shields app="" color="darkgreen" ui="round" description="${host}" style="margin-bottom:3px;"></lablup-shields>`
           )}
         </div>
@@ -491,10 +582,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     // monkeypatch for height calculation.
-    this.selectAreaHeight = this.shadowRoot.querySelector('#dropdown-area').offsetHeight ? this.shadowRoot.querySelector('#dropdown-area').offsetHeight : '123px';
+    this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
   }
 
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return;
@@ -502,16 +593,31 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+        this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
         this.is_super_admin = globalThis.backendaiclient.is_superadmin;
         this._refreshPolicyData();
-        this._getResourceInfo();
+        if (this.enableParsingStoragePermissions) {
+          this._getVfolderPermissions();
+        }
       }, true);
     } else { // already connected
       this.enableSessionLifetime = globalThis.backendaiclient.supports('session-lifetime');
+      this.enableParsingStoragePermissions = globalThis.backendaiclient.supports('fine-grained-storage-permissions');
       this.is_super_admin = globalThis.backendaiclient.is_superadmin;
       this._refreshPolicyData();
-      this._getResourceInfo();
+      if (this.enableParsingStoragePermissions) {
+        this._getVfolderPermissions();
+      }
     }
+  }
+
+  /**
+   * Get All grantable permissions per action on storage hosts and vfolder
+   */
+  _getVfolderPermissions() {
+    globalThis.backendaiclient.storageproxy.getAllPermissions().then((res) => {
+      this.vfolderPermissions = res.vfolder_host_permission_list;
+    });
   }
 
   _launchResourcePolicyDialog(e) {
@@ -519,7 +625,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._getAllStorageHostsInfo().then(() => {
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = this.allowed_vfolder_hosts;
-      this.shadowRoot.querySelector('#modify-policy-dialog').show();
+      this.modifyPolicyDialog.show();
     }).catch((err) => {
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -531,7 +637,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
 
   _openDeleteResourcePolicyListDialog(e) {
     this.updateCurrentPolicyToDialog(e);
-    this.shadowRoot.querySelector('#delete-policy-dialog').show();
+    this.deletePolicyDialog.show();
   }
 
   updateCurrentPolicyToDialog(e) {
@@ -539,37 +645,45 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const policyName = controls['policy-name'];
     const resourcePolicies = globalThis.backendaiclient.utils.gqlToObject(this.resourcePolicy, 'name');
     const resourcePolicy = resourcePolicies[policyName];
-
-    this.resource_policy_names = Object.keys(resourcePolicies);
-    this.shadowRoot.querySelector('#id_new_policy_name').value = policyName;
+    let allowedStorageHosts;
+    if (this.enableParsingStoragePermissions) {
+      allowedStorageHosts = Object.keys(JSON.parse(resourcePolicy.allowed_vfolder_hosts));
+    } else {
+      allowedStorageHosts = resourcePolicy.allowed_vfolder_hosts;
+    }
+    this.newPolicyName.value = policyName;
     this.current_policy_name = policyName;
-    this.cpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
-    this.ram_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
-    this.gpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
-    this.fgpu_resource['value'] = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_shares']);
-    this.concurrency_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
-    this.idle_timeout['value'] = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
-    this.container_per_session_limit['value'] = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
-    this.vfolder_capacity['value'] = this._byteToGiB(this._updateUnlimitedValue(resourcePolicy.max_vfolder_size), this._countDecimals(this.vfolder_capacity['step'])); // starts from GiB
+    this.cpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cpu']);
+    this.ramResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['mem']);
+    this.gpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_device']);
+    this.fgpuResource.value = this._updateUnlimitedValue(resourcePolicy.total_resource_slots['cuda_shares']);
+    this.concurrencyLimit.value = this._updateUnlimitedValue(resourcePolicy.max_concurrent_sessions);
+    this.idleTimeout.value = this._updateUnlimitedValue(resourcePolicy.idle_timeout);
+    this.containerPerSessionLimit.value = this._updateUnlimitedValue(resourcePolicy.max_containers_per_session);
+    this.vfolderCapacityLimit.value = this._updateUnlimitedValue(resourcePolicy.max_vfolder_size);
 
     if (this.enableSessionLifetime) {
-      this.session_lifetime['value'] = this._updateUnlimitedValue(resourcePolicy.max_session_lifetime);
-      this._updateInputStatus(this.session_lifetime);
+      this.sessionLifetime.value = this._updateUnlimitedValue(resourcePolicy.max_session_lifetime);
+      this._updateInputStatus(this.sessionLifetime);
     }
 
-    this._updateInputStatus(this.cpu_resource);
-    this._updateInputStatus(this.ram_resource);
-    this._updateInputStatus(this.gpu_resource);
-    this._updateInputStatus(this.fgpu_resource);
-    this._updateInputStatus(this.concurrency_limit);
-    this._updateInputStatus(this.idle_timeout);
-    this._updateInputStatus(this.container_per_session_limit);
-    this._updateInputStatus(this.vfolder_capacity);
-    this.shadowRoot.querySelector('#vfolder-count-limit').value = resourcePolicy.max_vfolder_count;
-    this.allowed_vfolder_hosts = resourcePolicy.allowed_vfolder_hosts;
+    this._updateInputStatus(this.cpuResource);
+    this._updateInputStatus(this.ramResource);
+    this._updateInputStatus(this.gpuResource);
+    this._updateInputStatus(this.fgpuResource);
+    this._updateInputStatus(this.concurrencyLimit);
+    this._updateInputStatus(this.idleTimeout);
+    this._updateInputStatus(this.containerPerSessionLimit);
+    this._updateInputStatus(this.vfolderCapacityLimit);
+
+    this.vfolderCountLimitInput.value = resourcePolicy.max_vfolder_count;
+    this.vfolderCapacityLimit.value = BackendAIResourcePolicyList.bytesToGB(resourcePolicy.max_vfolder_size, 1);
+    this.allowed_vfolder_hosts = allowedStorageHosts;
   }
 
   _refreshPolicyData() {
+    this.listCondition = 'loading';
+    this._listStatus?.show();
     return globalThis.backendaiclient.resourcePolicy.get().then((response) => {
       const rp = response.keypair_resource_policies;
       // let resourcePolicy = globalThis.backendaiclient.utils.gqlToObject(rp, 'name');
@@ -608,7 +722,13 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
       });
       this.resourcePolicy = resourcePolicies;
+      if (Object.keys(this.resourcePolicy).length == 0) {
+        this.listCondition = 'no-data';
+      } else {
+        this._listStatus?.hide();
+      }
     }).catch((err) => {
+      this._listStatus?.hide();
       console.log(err);
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -626,49 +746,72 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
-  _byteToGiB(value: number, decimals=0) {
-    const gigabyte = Math.pow(2, 30);
-    const unitToFix = Math.pow(10, decimals);
-    return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
+
+  /**
+   * Convert the value bytes to GB with decimal point to 0 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GB
+   */
+  static bytesToGB(value: number, decimalPoint = 0) {
+    const unitToFix = Math.pow(10, decimalPoint);
+    return (Math.round(value / (10 ** 9) * unitToFix) / unitToFix).toFixed(decimalPoint);
   }
 
-  _giBToByte(value: number, decimals = 0) {
-    const gigabyte = Math.pow(2, 30);
-    return Math.round(value * gigabyte);
+  /**
+   * Convert the value GB to bytes
+   *
+   * @param {number} value
+   * @return {number}
+   */
+  static gBToBytes(value = 0) {
+    return Math.round((10 ** 9) * value);
+  }
+
+  /**
+   * Parse simple allowed vfodler host list with fine-grained permissions
+   *
+   * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
+   * @return {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   */
+  _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
+    const obj = {};
+    storageList.forEach((storage) => {
+      Object.assign(obj, {
+        [storage]: this.vfolderPermissions
+      });
+    });
+    return obj;
   }
 
   _readResourcePolicyInput() {
     const total_resource_slots = {};
-    const vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
-    try {
-      this._validateUserInput(this.cpu_resource);
-      this._validateUserInput(this.ram_resource);
-      this._validateUserInput(this.gpu_resource);
-      this._validateUserInput(this.fgpu_resource);
-
-      // Integer (4byte)
-      this._validateUserInput(this.concurrency_limit);
-      this._validateUserInput(this.container_per_session_limit);
-      this._validateUserInput(this.vfolder_max_limit);
-
-      // BigInt
-      this._validateUserInput(this.vfolder_capacity);
-      this._validateUserInput(this.idle_timeout);
-    } catch (err) {
-      throw err;
+    let vfolder_hosts;
+    if (this.enableParsingStoragePermissions) {
+      vfolder_hosts = JSON.stringify(this._parseSelectedAllowedVfolderHostWithPermissions(this.allowedVfolderHostsSelect.selectedItemList));
+    } else {
+      vfolder_hosts = this.allowedVfolderHostsSelect.selectedItemList;
     }
+    this._validateUserInput(this.cpuResource);
+    this._validateUserInput(this.ramResource);
+    this._validateUserInput(this.gpuResource);
+    this._validateUserInput(this.fgpuResource);
+    this._validateUserInput(this.concurrencyLimit);
+    this._validateUserInput(this.idleTimeout);
+    this._validateUserInput(this.containerPerSessionLimit);
+    this._validateUserInput(this.vfolderCapacityLimit);
+    this._validateUserInput(this.vfolderCountLimitInput);
 
-    total_resource_slots['cpu'] = this.cpu_resource['value'];
-    total_resource_slots['mem'] = this.ram_resource['value'] + 'g';
-    total_resource_slots['cuda.device'] = parseInt(this.gpu_resource['value']);
-    total_resource_slots['cuda.shares'] = parseFloat(this.fgpu_resource['value']);
-
-    this.concurrency_limit['value'] = ['', 0].includes(this.concurrency_limit['value']) ? 0 : parseInt(this.concurrency_limit['value']);
-    this.container_per_session_limit['value'] = ['', 0].includes(this.container_per_session_limit['value']) ? 0 : parseInt(this.container_per_session_limit['value']);
-    this.vfolder_max_limit['value'] = (this.vfolder_max_limit['value'] === '') ? 0 : parseInt(this.vfolder_max_limit['value']);
-
-    this.idle_timeout['value'] = (this.idle_timeout['value'] === '') ? 0 : parseInt(this.idle_timeout['value']);
-    this.vfolder_capacity['value'] = (this.vfolder_capacity['value'] === '') ? 0 : parseFloat(this.vfolder_capacity['value']);
+    total_resource_slots['cpu'] = this.cpuResource.value;
+    total_resource_slots['mem'] = this.ramResource.value + 'g';
+    total_resource_slots['cuda.device'] = parseInt(this.gpuResource.value);
+    total_resource_slots['cuda.shares'] = parseFloat(this.fgpuResource.value);
+    this.concurrencyLimit.value = ['', 0].includes(this.concurrencyLimit.value) ? BigNumber.getValue().toString() : this.concurrencyLimit.value;
+    this.idleTimeout.value = this.idleTimeout.value === '' ? '0' : this.idleTimeout.value;
+    this.containerPerSessionLimit.value = ['', 0].includes(this.containerPerSessionLimit.value) ? BigNumber.getValue().toString() : this.containerPerSessionLimit.value;
+    this.vfolderCapacityLimit.value = this.vfolderCapacityLimit.value === '' ? '0' : this.vfolderCapacityLimit.value;
+    this.vfolderCountLimitInput.value = this.vfolderCountLimitInput.value === '' ? '0' : this.vfolderCountLimitInput.value;
 
     Object.keys(total_resource_slots).map((resource) => {
       if (isNaN(parseFloat(total_resource_slots[resource]))) {
@@ -678,17 +821,17 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const input = {
       'default_for_unspecified': 'UNLIMITED',
       'total_resource_slots': JSON.stringify(total_resource_slots),
-      'max_concurrent_sessions': this.concurrency_limit['value'],
-      'max_containers_per_session': this.container_per_session_limit['value'],
-      'idle_timeout': this.idle_timeout['value'],
-      'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this._giBToByte(this.vfolder_capacity['value']),
-      'allowed_vfolder_hosts': vfolder_hosts
+      'max_concurrent_sessions': this.concurrencyLimit.value,
+      'max_containers_per_session': this.containerPerSessionLimit.value,
+      'idle_timeout': this.idleTimeout.value,
+      'max_vfolder_count': this.vfolderCountLimitInput.value,
+      'max_vfolder_size': BackendAIResourcePolicyList.gBToBytes(Number(this.vfolderCapacityLimit.value)),
+      'allowed_vfolder_hosts': vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
-      this._validateUserInput(this.session_lifetime);
-      this.session_lifetime['value'] = (this.session_lifetime['value'] === '') ? 0 : parseInt(this.session_lifetime['value']);
-      input['max_session_lifetime'] = this.session_lifetime['value'];
+      this._validateUserInput(this.sessionLifetime);
+      this.sessionLifetime.value = this.sessionLifetime.value === '' ? '0' : this.sessionLifetime.value;
+      input['max_session_lifetime'] = this.sessionLifetime.value;
     }
 
     return input;
@@ -700,12 +843,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       globalThis.backendaiclient.resourcePolicy.mutate(this.current_policy_name, input)
         .then(({modify_keypair_resource_policy}) => {
           if (modify_keypair_resource_policy.ok) {
-            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.modifyPolicyDialog.hide();
             this.notification.text = _text('resourcePolicy.SuccessfullyUpdated');
             this.notification.show();
             this.refresh();
           } else if (modify_keypair_resource_policy.msg) {
-            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.modifyPolicyDialog.hide();
             this.notification.text = PainKiller.relieve(modify_keypair_resource_policy.msg);
             this.notification.show();
             this.refresh();
@@ -714,7 +857,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         .catch((err) => {
           console.log(err);
           if (err && err.message) {
-            this.shadowRoot.querySelector('#modify-policy-dialog').hide();
+            this.modifyPolicyDialog.hide();
             this.notification.text = PainKiller.relieve(err.title);
             this.notification.detail = err.message;
             this.notification.show(true, err);
@@ -730,12 +873,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const name = this.current_policy_name;
     globalThis.backendaiclient.resourcePolicy.delete(name).then(({delete_keypair_resource_policy}) => {
       if (delete_keypair_resource_policy.ok) {
-        this.shadowRoot.querySelector('#delete-policy-dialog').hide();
+        this.deletePolicyDialog.hide();
         this.notification.text = _text('resourcePolicy.SuccessfullyDeleted');
         this.notification.show();
         this.refresh();
       } else if (delete_keypair_resource_policy.msg) {
-        this.shadowRoot.querySelector('#delete-policy-dialog').hide();
+        this.deletePolicyDialog.hide();
         this.notification.text = PainKiller.relieve(delete_keypair_resource_policy.msg);
         this.notification.show();
         this.refresh();
@@ -828,6 +971,11 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     }
   }
 
+  /**
+  * update status of user input.
+  *
+  * @param {object} resource
+  */
   _updateInputStatus(resource) {
     const textfield = resource;
     const maxIntUsingResources: string[] = ['concurrency-limit', 'container-per-session-limit', 'session-lifetime', 'vfolder-capacity-limit'];
@@ -861,22 +1009,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else if (['NaN', NaN].includes(value)) {
       return '-';
     } else {
-      return enableUnitConvert ? this._byteToGiB(value, 1) : value;
-    }
-  }
-
-  _getResourceInfo() {
-    this.cpu_resource = this.shadowRoot.querySelector('#cpu-resource');
-    this.ram_resource = this.shadowRoot.querySelector('#ram-resource');
-    this.gpu_resource = this.shadowRoot.querySelector('#gpu-resource');
-    this.fgpu_resource = this.shadowRoot.querySelector('#fgpu-resource');
-    this.concurrency_limit = this.shadowRoot.querySelector('#concurrency-limit');
-    this.idle_timeout = this.shadowRoot.querySelector('#idle-timeout');
-    this.container_per_session_limit = this.shadowRoot.querySelector('#container-per-session-limit');
-    this.vfolder_capacity = this.shadowRoot.querySelector('#vfolder-capacity-limit');
-    this.vfolder_max_limit = this.shadowRoot.querySelector('#vfolder-count-limit');
-    if (this.enableSessionLifetime) {
-      this.session_lifetime = this.shadowRoot.querySelector('#session-lifetime');
+      return enableUnitConvert ? BackendAIResourcePolicyList.bytesToGB(value, 1) : value;
     }
   }
 

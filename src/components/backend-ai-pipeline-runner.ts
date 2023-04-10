@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -22,6 +22,13 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type LablupCodemirror = HTMLElementTagNameMap['lablup-codemirror'];
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
+
 /**
  Backend AI Pipeline Runner
 
@@ -32,19 +39,13 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-runner')
 export default class BackendAIPipelineRunner extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: String}) pipelineFolderName = '';
-
-  constructor() {
-    super();
-  }
+  @query('#loading-spinner', true) spinner!: LablupLoadingSpinner;
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
   }
 
@@ -64,8 +65,8 @@ export default class BackendAIPipelineRunner extends BackendAIPipelineCommon {
   async editCode(folderName, nodeInfo) {
     this.spinner.show();
     const code = await this._ensureComponentMainCode(nodeInfo);
-    const dialog = this.shadowRoot.querySelector('#codemirror-dialog');
-    const editor = this.shadowRoot.querySelector('#codemirror-editor');
+    const dialog = this.shadowRoot?.querySelector('#codemirror-dialog') as BackendAIDialog;
+    const editor = this.shadowRoot?.querySelector('#codemirror-editor') as LablupCodemirror;
     editor.setValue(code);
     // dialog.querySelector('span[slot="title"]').textContent = component.title;
     dialog.show();

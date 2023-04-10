@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -39,7 +39,6 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('lablup-terms-of-service')
 export default class LablupTermsOfService extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: String}) tosEntryURL = '/resources/documents/terms-of-service.en.html';
   @property({type: String}) tosEntry = 'terms-of-service';
   @property({type: String}) tosContent = '';
@@ -119,6 +118,7 @@ export default class LablupTermsOfService extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="terms-of-service-dialog" class="terms-of-service-dialog" fixed blockscrolling persistent scrollable @dialog-closed=${() => this.close()}>
         <span slot="title">${this.title}</span>
         <div slot="action" class="horizontal end-justified center flex layout">
@@ -150,7 +150,7 @@ export default class LablupTermsOfService extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    this.dialog = this.shadowRoot.querySelector('#terms-of-service-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#terms-of-service-dialog');
     this.dialog.addEventListener('didShow', () => {
       this._syncOpenState();
     });
@@ -182,7 +182,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   changeLanguage() {
-    const language = this.shadowRoot.querySelector('#select-language').value;
+    const language = (this.shadowRoot?.querySelector('#select-language') as any).value;
     this.tosContent = '';
     this.tosLanguage = this.tosLanguages.filter((item) => item.text === language).map((item) => item.code).toString();
     this._showTOSdialog(true);
@@ -235,7 +235,7 @@ export default class LablupTermsOfService extends LitElement {
         } else {
           this.tosContent = '';
         }
-        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = this.tosContent;
+        (this.shadowRoot?.querySelector('#terms-of-service-dialog-content') as HTMLDivElement).innerHTML = this.tosContent;
         this.show = true;
         if (reuseDialog === false) {
           this.dialog.show();
@@ -247,7 +247,7 @@ export default class LablupTermsOfService extends LitElement {
           this.notification.detail = err.message;
           this.notification.show(true, err);
         }
-        this.shadowRoot.querySelector('#terms-of-service-dialog-content').innerHTML = 'Problem found while loading contents. Please try again later.';
+        (this.shadowRoot?.querySelector('#terms-of-service-dialog-content') as HTMLDivElement).innerHTML = 'Problem found while loading contents. Please try again later.';
       });
     } else {
       this.show = true;

@@ -54,8 +54,13 @@
       "Menu": "Цэс",
       "Run": "Ажиллуулах",
       "UserName": "Хэрэглэгчийн нэр",
+      "PipelineJob": "__NOT_TRANSLATED__",
       "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
-      "PasswordChangePlace": "__NOT_TRANSLATED__"
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "НЭВТРЭХ ШААРДЛАГАТАЙ",
     "YouAreOffline": "Та одоо офлайн байна",
@@ -106,7 +111,10 @@
     "NoInvitations": "Үзүүлэх урилга байхгүй байна.",
     "AcceptSharedVFolder": "Та энэ фолдер рүү нэвтрэх боломжтой боллоо:",
     "DeclineSharedVFolder": "Энэхүү фолдерын уралгыг устгалаа:",
-    "connectingToCluster": "Backend.AI кластерт холбогдож байна ..."
+    "connectingToCluster": "Backend.AI кластерт холбогдож байна ...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -232,7 +240,14 @@
       "BatchModeConfig": "__NOT_TRANSLATED__",
       "StartUpCommand": "__NOT_TRANSLATED__",
       "ScheduleTime": "__NOT_TRANSLATED__",
-      "Architecture": "__NOT_TRANSLATED__"
+      "Architecture": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -268,7 +283,8 @@
       "AppMustBeRun": "Апп аль хэдийн ажиллаж байх үед л эхлээрэй",
       "AppMustBeRunDialog": "Энэ програмыг зөвхөн терминал дээр ажиллаж байгаа тохиолдолд л нэвтрэх, ашиглах боломжтой. Хэрэв тийм биш бол програм ажиллахгүй байх үед гарах алдааны хуудас руу чиглүүлэх болно.",
       "ConfirmAndRun": "Шалгасан тул эхлүүлж болно",
-      "Prepared": "Бэлтгэсэн"
+      "Prepared": "Бэлтгэсэн",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "TensorBoard-ийн бүртгэлийн лавлах",
     "InputTensorboardPath": "TensorBoard-ийн лавлах лавлах санг оруулна уу. Бүртгэлийн лавлах автоматаар үүсгэхгүй гэдгийг анхаарна уу.",
@@ -306,7 +322,49 @@
       "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
       "SluggedStrings": "__NOT_TRANSLATED__"
     },
-    "AlreadyTerminatingSession": "__NOT_TRANSLATED__"
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "зурвас",
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "BypassAuthentication": "__NOT_TRANSLATED__",
+    "App": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__",
+    "UtilizationIdleChecks": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "Threshold": "__NOT_TRANSLATED__",
+    "IdleChecks": "__NOT_TRANSLATED__",
+    "IdleChecksDesc": "__NOT_TRANSLATED__",
+    "MaxSessionLifetime": "__NOT_TRANSLATED__",
+    "MaxSessionLifetimeDesc": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeout": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeout": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "GracePeriod": "__NOT_TRANSLATED__",
+    "GracePeriodDesc": "__NOT_TRANSLATED__",
+    "UtilizationThreshold": "__NOT_TRANSLATED__",
+    "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
+    "ExpiresAfter": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -336,7 +394,12 @@
     "Generate": "Үүсгэх",
     "Continue": "Үргэлжлүүлэх",
     "GoBackToSummaryPage": "Дүгнэлт хуудас руу буцах",
-    "ForceTerminate": "Хүчээр цуцлах"
+    "ForceTerminate": "Хүчээр цуцлах",
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Дахин тохируулах",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Төгсгөлийн цэг",
@@ -356,7 +419,12 @@
     "NoChanges": "__NOT_TRANSLATED__",
     "Schedulable": "__NOT_TRANSLATED__",
     "AgentSetting": "__NOT_TRANSLATED__",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "цөм",
@@ -450,7 +518,16 @@
     "UserNotFound": "Дараах хэрэглэгчийн ID олдсонгүй тул итгэмжлэл үүсгэх амжилтгүй боллоо.",
     "UserIDRequired": "Хэрэглэгчийн ID шаардлагатай.",
     "Status": "__NOT_TRANSLATED__",
-    "UserStatus": "__NOT_TRANSLATED__"
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Фолдерууд",
@@ -525,7 +602,12 @@
       "FolderQuota": "__NOT_TRANSLATED__",
       "MaxFolderQuota": "__NOT_TRANSLATED__",
       "FolderUsage": "__NOT_TRANSLATED__",
-      "FolderUsing": "__NOT_TRANSLATED__"
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Устгах ...",
@@ -580,13 +662,24 @@
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Shared": "Бүлгийн фолдерыг амжилттай хуваалцав",
       "NoOneWasShared": "Бүлгийн фолдерыг хуваалцаж чадсангүй",
-      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй."
+      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Өөрчлөлт оруулаагүй болно",
       "PermissionModified": "Зөвшөөрөл шинэчлэгдсэн"
     },
-    "NoStorageDescriptionFound": "Тайлбар алга."
+    "NoStorageDescriptionFound": "Тайлбар алга.",
+    "DialogModelFolder": "__NOT_TRANSLATED__",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {
@@ -654,7 +747,8 @@
     "ProblemOccurred": "Асуудал гарсан",
     "PasswordsDoNotMatch": "Нууц үг ба баталгаажуулалт таарахгүй байна.",
     "NoChangeMade": "Өөрчлөлт ороогүй",
-    "Architecture": "__NOT_TRANSLATED__"
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Нөөцийн урьдчилсан тохируулга",
@@ -675,7 +769,8 @@
     "MinimumShmemUnit": "Хамтарсан санах ойн хамгийн бага нэгж нь 0.01 ГБ байна.",
     "RAM": "RAM (GB)",
     "SharedMemory": "Хуваалцсан санах ой (GB)",
-    "Deleted": "__NOT_TRANSLATED__"
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Ерөнхий",
@@ -728,7 +823,11 @@
     "Edit_ShellScriptTitle_2": " бүрхүүлийн скрипт",
     "AutoLogout": "Автоматаар гарах",
     "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
-    "BootstrapScriptDescription": "__NOT_TRANSLATED__"
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
+    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Дэвшилтэт вэб терминалын хэрэглээ: Терминалын агуулгыг хуулах",
@@ -749,7 +848,8 @@
     "RequestUrl": "Url хүсэх",
     "Parameters": "Параметрүүд",
     "ErrorType": "Алдааны төрөл",
-    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан."
+    "LogMessageRemoved": "Бүртгэлийн мессежүүдийг устгасан.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Нөөц",
@@ -775,7 +875,8 @@
     "SuccessfullyDeleted": "Нөөцийн бодлогыг амжилттай устгасан.",
     "PolicyNameEmpty": "Бодлогын нэр хоосон байж болохгүй.",
     "AboutToDeleteResourcePolicy": "Та энэ нөөцийн бодлогыг устгах гэж байна:",
-    "MaxSessionLifeTime": "__NOT_TRANSLATED__"
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Хостын нэр",
@@ -809,7 +910,8 @@
     "RescanFailed": "Дахин шалгаж чадсангүй.",
     "PleaseSelectOption": "Нэг сонголтыг сонгоно уу.",
     "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
-    "ModifyRegistry": "__NOT_TRANSLATED__"
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Нөөцийн бүлгүүд",
@@ -839,7 +941,9 @@
     "SetSchedulerOptions": "Хуваарьлагчийн сонголтыг тохируулна уу",
     "TimeoutSeconds": "Секунд",
     "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
-    "RetriesToSkip": "__NOT_TRANSLATED__"
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__",
+    "AllowedSessionTypes": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Ерөнхий",
@@ -978,7 +1082,13 @@
     "OverlayNetworkSettings": "__NOT_TRANSLATED__",
     "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
     "MTUDescription": "__NOT_TRANSLATED__",
-    "OutOfRange": "__NOT_TRANSLATED__"
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Амжилттай шинэчлэгдсэн",
@@ -1057,7 +1167,12 @@
     "InvalidChangePasswordToken": "Буруу Token",
     "InvalidChangePasswordTokenMessage": "Нууц үгийг өөрчлөхийн тулд гаргасан токенд алдаа гарсан байна. Нууц үгээ өөрчлөхийн тулд өөр имэйл илгээж, дахин оролдоно уу.",
     "PleaseInputLoginInfo": "Нэвтрэхийн тулд ID болон нууц үгээ оруулна уу.",
-    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна."
+    "TooManyAttempt": "Хэт олон нэвтрэх оролдлого хийсэн. Нэвтрэх оролдлогыг хэсэг хугацаанд хаасан байна.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
@@ -1225,5 +1340,16 @@
   "explorer": {
     "ValueRequired": "Утга Шаардлагатай",
     "InputTooShort": "Хэт богино байна"
+  },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
   }
 }

@@ -10,6 +10,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 import '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
+import '@vanillawc/wc-codemirror/mode/yaml/yaml';
 import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
 import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 
@@ -31,7 +32,6 @@ declare const window: any;
 
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   public editor: any;
 
   @property({type: Object}) config = Object();
@@ -67,13 +67,14 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot.querySelector('#codemirror-editor');
+    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as any;
     if (!cm.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;
     }
     this.editor = cm.editor;
     Object.assign(this.editor.options, this.config);
+    this.editor.setOption('lineWrapping', this.useLineWrapping); // works only in here
     this.refresh();
   }
 
@@ -145,5 +146,11 @@ export default class LablupCodemirror extends LitElement {
         <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
       </wc-codemirror>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'lablup-codemirror': LablupCodemirror;
   }
 }
