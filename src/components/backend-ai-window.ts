@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -486,6 +486,11 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
+    if (globalThis.backendaiwindowmanager?.mode === 'tab') {
+      this.viewType = 'tab';
+    } else {
+      this.viewType = 'win';
+    }
     this.setWindowMode();
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();

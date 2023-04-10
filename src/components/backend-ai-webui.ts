@@ -27,6 +27,7 @@ import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@material/mwc-formfield';
 
 import toml from 'markty-toml';
 
@@ -844,7 +845,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   }
 
   _updateSidebarSelection() {
-    let list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
+    const list  = this.sidebarMenu.querySelectorAll('mwc-list-item');
     let topPage: string | null = globalThis.backendaiwindowmanager.topWindowName;
     if (!topPage) {
       topPage = this._page;
