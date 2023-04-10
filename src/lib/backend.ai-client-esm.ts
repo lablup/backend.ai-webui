@@ -3499,7 +3499,7 @@ class Maintenance {
   async recalculate_usage() : Promise<any> {
     if (this.client.is_superadmin === true) {
       let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/recalculate-usage`, null);
-      return this.client._wrapWithPromise(rqst, undefined, null, 60 * 1000);
+      return this.client._wrapWithPromise(rqst, false, null, 60 * 1000);
     }
   }
 }
