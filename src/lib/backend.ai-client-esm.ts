@@ -1426,8 +1426,8 @@ class Client {
 
   getEncodedPayload(body) {
     let iv = this.generateRandomStr(16);
-    // let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
-    let key = (this._config.endpoint.toString('base64') + iv + iv).substring(0,32);
+    //let key = (btoa(this._config.endpoint) + iv + iv).substring(0,32); // btoa is deprecated. Now monitoring toString.
+    let key = (this._getBase64FromString(this._config.endpoint) + iv + iv).substring(0,32);
     let result = CryptoES.AES.encrypt(body,
       CryptoES.enc.Utf8.parse(key),
       {
@@ -1437,7 +1437,25 @@ class Client {
       });
     return (iv + ':' + result.toString());
   }
-
+  _getBase64FromString(str: string) {
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+    let strBytes: number[] = [];
+    for (let i = 0; i < str.length; i++) {
+      strBytes.push(str.charCodeAt(i));
+    }
+    let strBase64 = '';
+    let i = 0;
+    while (i < strBytes.length) {
+      const byte1 = strBytes[i++];
+      const byte2 = i < strBytes.length ? strBytes[i++] : 0;
+      const byte3 = i < strBytes.length ? strBytes[i++] : 0;
+      const triplet = (byte1 << 16) + (byte2 << 8) + byte3;
+      strBase64 += charset.charAt((triplet >> 18) & 0x3F) + charset.charAt((triplet >> 12) & 0x3F) + charset.charAt((triplet >> 6) & 0x3F) + charset.charAt(triplet & 0x3F);
+    }
+    return strBase64;
+    //const key = (endpointBase64 + iv + iv).substring(0, 32);
+  }
+  
   sign(key, key_encoding, msg, digest_type) {
     const hashDigest = CryptoES.enc.Utf8.parse(msg);
     let hmacDigest;
