@@ -486,31 +486,7 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
-    if (this.viewType === 'win') {
-      if (this.posX !== 0) {
-        this.win.style.left = this.posX + 'px';
-      } else {
-        this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
-      }
-      if (this.posY !== 0) {
-        this.win.style.top = this.posY + 'px';
-      } else {
-        this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
-      }
-      this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
-      this.win.style.width = this.defaultWidth;
-      if (this.defaultHeight !== '') {
-        this.win.style.height = this.defaultHeight;
-      } else {
-        this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
-      }
-    } else { // Tab mode
-      this.win.style.left = '0px';
-      this.win.style.top = '0px';
-      this.win.style.height ='calc(100vh - 64px)';
-      this.win.style.width = 'calc(100%)';
-      this.contents.style.height = 'calc(100vh - 64px - 32px)';
-    }
+    this.setWindowMode();
     if (this.posZ !== 1000) {
       this.win.style.zIndex = this.posZ.toString();
     } else {
@@ -538,6 +514,33 @@ export default class BackendAIWindow extends LitElement {
     globalThis.backendaiwindowmanager.addWindow(this);
   }
 
+  setWindowMode() {
+    if (this.viewType === 'win') {
+      if (this.posX !== 0) {
+        this.win.style.left = this.posX + 'px';
+      } else {
+        this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      }
+      if (this.posY !== 0) {
+        this.win.style.top = this.posY + 'px';
+      } else {
+        this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+      }
+      this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
+      this.win.style.width = this.defaultWidth;
+      if (this.defaultHeight !== '') {
+        this.win.style.height = this.defaultHeight;
+      } else {
+        this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
+      }
+    } else { // Tab mode
+      this.win.style.left = '0px';
+      this.win.style.top = '0px';
+      this.win.style.height ='calc(100vh - 64px)';
+      this.win.style.width = 'calc(100%)';
+      this.contents.style.height = 'calc(100vh - 64px - 32px)';
+    }
+  }
   setPosZ(value) {
     this.posZ = 1000 + (value * 10);
     this.win.style.zIndex = this.posZ.toString();
@@ -545,6 +548,7 @@ export default class BackendAIWindow extends LitElement {
 
   setViewType(viewType: viewType = 'win') {
     this.viewType = viewType;
+    this.setWindowMode();
   }
 
   setName() {

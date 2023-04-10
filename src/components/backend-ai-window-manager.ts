@@ -139,6 +139,7 @@ export default class BackendAIWindowManager extends LitElement {
     for (const [index, name] of this.zOrder.entries()) {
       this.windows[name]?.setViewType(viewType);
     }
+    this.mode = viewType;
   }
 
   constructor() {

@@ -1373,6 +1373,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     </mwc-icon-button>
                   </div>
                 </div>
+                <div slot="actionItems">
+                    <mwc-formfield label="Tab mode">
+                    <mwc-switch @click="${()=> {
+    globalThis.backendaiwindowmanager.mode === 'win' ? globalThis.backendaiwindowmanager.setViewType('tab') : globalThis.backendaiwindowmanager.setViewType('win');
+  }}"></mwc-switch>
+                    </mwc-formfield>
+                </div>
               </mwc-top-app-bar-fixed>
 
               <div class="content" style="box-sizing:border-box; padding:0;">

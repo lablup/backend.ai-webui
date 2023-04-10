@@ -211,12 +211,6 @@ export default class BackendAISessionView extends BackendAIPage {
       }
       return;
     }
-<<<<<<< HEAD
-    this.resourceMonitor?.setAttribute('active', 'true');
-    this.runningJobs.setAttribute('active', 'true');
-    this._status = 'active';
-=======
-
     const _init = () => {
       this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
       this.resourceMonitor.setAttribute('active', 'true');
@@ -230,7 +224,6 @@ export default class BackendAISessionView extends BackendAIPage {
     } else {
       _init();
     }
->>>>>>> main
   }
 
   /**
@@ -483,7 +476,6 @@ export default class BackendAISessionView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-<<<<<<< HEAD
     <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Sessions')}" name="job"
                        icon="resources/menu_icons/session.svg">
       <link rel="stylesheet" href="resources/custom.css">
