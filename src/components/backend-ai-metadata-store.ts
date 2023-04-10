@@ -15,7 +15,7 @@ import {BackendAIPage} from './backend-ai-page';
   @group Backend.AI Web UI
  */
 @customElement('backend-ai-metadata-store')
-export default class BackendAiMetadataStore extends BackendAIPage {
+export default class BackendAIMetadataStore extends BackendAIPage {
   @property({type: Object}) options = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
@@ -107,6 +107,6 @@ export default class BackendAiMetadataStore extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-metadata-store': BackendAiMetadataStore;
+    'backend-ai-metadata-store': BackendAIMetadataStore;
   }
 }
