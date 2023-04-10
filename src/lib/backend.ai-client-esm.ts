@@ -1455,7 +1455,7 @@ class Client {
     return strBase64;
     //const key = (endpointBase64 + iv + iv).substring(0, 32);
   }
-  
+
   sign(key, key_encoding, msg, digest_type) {
     const hashDigest = CryptoES.enc.Utf8.parse(msg);
     let hmacDigest;
@@ -3524,7 +3524,7 @@ class User {
    * };
    */
   async list(is_active = true,
-    fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) {
+    fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status']) : Promise<any> {
     let q, v;
     if (this.client._apiVersionMajor < 5) {
       q = this.client.is_admin ? `
@@ -3627,7 +3627,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async create(email = null, input) {
+  async create(email = null, input) : Promise<any> {
     // let fields = ['username', 'password', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups{id, name}'];
     if (this.client.is_admin === true) {
       let q = `mutation($email: String!, $input: UserInput!) {` +
@@ -3662,7 +3662,7 @@ class User {
    *   'group_ids': List(UUID)  // Group Ids for user. Shoule be list of UUID strings.
    * };
    */
-  async update(email = null, input) {
+  async update(email = null, input) : Promise<any> {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!, $input: ModifyUserInput!) {` +
         `  modify_user(email: $email, props: $input) {` +
@@ -3684,7 +3684,7 @@ class User {
    *
    * @param {string} email - E-mail address as user id to delete.
    */
-  async delete(email) {
+  async delete(email) : Promise<any> {
     if (this.client.is_superadmin === true) {
       let q = `mutation($email: String!) {` +
         `  delete_user(email: $email) {` +
@@ -3714,7 +3714,7 @@ class ScalingGroup {
     this.client = client;
   }
 
-  async list_available() {
+  async list_available() : Promise<any> {
     if (this.client.is_superadmin === true) {
       const fields = ["name", "description", "is_active", "created_at", "driver", "driver_opts", "scheduler", "scheduler_opts"];
       if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
@@ -3730,7 +3730,7 @@ class ScalingGroup {
     }
   }
 
-  async list(group = 'default') {
+  async list(group = 'default') : Promise<any> {
     const queryString = `/scaling-groups?group=${group}`;
     const rqst = this.client.newSignedRequest("GET", queryString, null, null);
     return this.client._wrapWithPromise(rqst);
@@ -3743,7 +3743,7 @@ class ScalingGroup {
    * @param {string} scalingGroup - Scaling group name
    * @param {string} groupId - Project (group) ID
    */
-  async getWsproxyVersion(scalingGroup, groupId) {
+  async getWsproxyVersion(scalingGroup, groupId) : Promise<any> {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       return Promise.resolve({ wsproxy_version: 'v1' }); // for manager<=21.03 compatibility.
     }
@@ -3767,7 +3767,7 @@ class ScalingGroup {
    *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */
-  async create(name, input) {
+  async create(name, input) : Promise<any> {
     let q = `mutation($name: String!, $input: CreateScalingGroupInput!) {` +
       `  create_scaling_group(name: $name, props: $input) {` +
       `    ok msg` +
@@ -3786,7 +3786,7 @@ class ScalingGroup {
    * @param {string} domain - domain name
    * @param {string} scaling_group - scaling group name
    */
-  async associate_domain(domain, scaling_group) {
+  async associate_domain(domain, scaling_group) : Promise<any> {
     let q = `mutation($domain: String!, $scaling_group: String!) {` +
       `  associate_scaling_group_with_domain(domain: $domain, scaling_group: $scaling_group) {` +
       `    ok msg` +
@@ -3814,7 +3814,7 @@ class ScalingGroup {
    *   'wsproxy_addr': String         // NEW in manager 21.09
    * }
    */
-  async update(name, input) {
+  async update(name, input) : Promise<any> {
     if (!this.client.isManagerVersionCompatibleWith('21.09.0')) {
       delete input.wsproxy_addr;
       if (Object.keys(input).length < 1) {
@@ -3839,7 +3839,7 @@ class ScalingGroup {
    *
    * @param {string} name - name of scaling group to be deleted
    */
-  async delete(name) {
+  async delete(name) : Promise<any> {
     let q = `mutation($name: String!) {` +
       `  delete_scaling_group(name: $name) {` +
       `    ok msg` +
@@ -3860,12 +3860,12 @@ class Registry {
     this.client = client;
   }
 
-  async list() {
+  async list() : Promise<any> {
     const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": "config/docker/registry", "prefix": true });
     return this.client._wrapWithPromise(rqst);
   }
 
-  async set(key, value) {
+  async set(key: string, value) : Promise<any> {
     key = encodeURIComponent(key);
     let regkey = `config/docker/registry/${key}`;
     const rqst = this.client.newSignedRequest("POST", "/config/set", {
@@ -3875,7 +3875,7 @@ class Registry {
     return this.client._wrapWithPromise(rqst);
   }
 
-  async delete(key) {
+  async delete(key) : Promise<any> {
     key = encodeURIComponent(key);
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `config/docker/registry/${key}`,
@@ -3903,7 +3903,7 @@ class Setting {
    *
    * @param {string} prefix - prefix to get. This command will return every settings starting with the prefix.
    */
-  async list(prefix = "") {
+  async list(prefix = "") : Promise<any> {
     prefix = `config/${prefix}`;
     const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": prefix, "prefix": true });
     return this.client._wrapWithPromise(rqst);
@@ -3914,7 +3914,7 @@ class Setting {
    *
    * @param {string} key - prefix to get. This command will return every settings starting with the prefix.
    */
-  async get(key) {
+  async get(key) : Promise<any> {
     key = `config/${key}`;
     const rqst = this.client.newSignedRequest("POST", "/config/get", { "key": key, "prefix": false });
     return this.client._wrapWithPromise(rqst);
@@ -3926,7 +3926,7 @@ class Setting {
    * @param {string} key - key to add.
    * @param {object} value - value to add.
    */
-  async set(key, value) {
+  async set(key, value) : Promise<any> {
     key = `config/${key}`;
     const rqst = this.client.newSignedRequest("POST", "/config/set", { key, value });
     return this.client._wrapWithPromise(rqst);
@@ -3938,7 +3938,7 @@ class Setting {
    * @param {string} key - key to delete
    * @param {boolean} prefix - prefix to delete. if prefix is true, this command will delete every settings starting with the key.
    */
-  async delete(key, prefix = false) {
+  async delete(key, prefix = false) : Promise<any> {
     key = `config/${key}`;
     const rqst = this.client.newSignedRequest("POST", "/config/delete", {
       "key": `${key}`,
@@ -3966,7 +3966,7 @@ class Service {
    * Get announcements
    *
    */
-  async get_announcement() {
+  async get_announcement() : Promise<any> {
     const rqst = this.client.newSignedRequest("GET", "/manager/announcement", null);
     return this.client._wrapWithPromise(rqst);
   }
@@ -3977,7 +3977,7 @@ class Service {
    * @param {boolean} enabled - Enable / disable announcement. Default is True.
    * @param {string} message - Announcement content. Usually in Markdown syntax.
    */
-  async update_announcement(enabled = true, message) {
+  async update_announcement(enabled = true, message) : Promise<any> {
     const rqst = this.client.newSignedRequest("POST", "/manager/announcement", {
       "enabled": enabled,
       "message": message
@@ -4003,7 +4003,7 @@ class UserConfig {
   /**
    * Get content of bootstrap script of a keypair.
    */
-  async get_bootstrap_script() {
+  async get_bootstrap_script() : Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -4016,7 +4016,7 @@ class UserConfig {
    *
    * @param {string} script - text content of bootstrap script.
    */
-  async update_bootstrap_script(script: string) {
+  async update_bootstrap_script(script: string) : Promise<any> {
     const rqst = this.client.newSignedRequest("POST", "/user-config/bootstrap-script", { script });
     return this.client._wrapWithPromise(rqst);
   }
@@ -4026,7 +4026,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async create(data: string = '', path: string) {
+  async create(data: string = '', path: string) : Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -4042,7 +4042,7 @@ class UserConfig {
   /**
    * Get content of script dotfile
    */
-  async get() {
+  async get() : Promise<any> {
     if (!this.client._config.accessKey) {
       throw 'Your access key is not set';
     }
@@ -4059,7 +4059,7 @@ class UserConfig {
    * @param {string} data - text content of script dotfile.
    * @param {string} path - path of script dotfile. (cwd: home directory)
    */
-  async update(data: string, path: string) {
+  async update(data: string, path: string) : Promise<any> {
     let params = {
       "data": data,
       "path": path,
@@ -4074,7 +4074,7 @@ class UserConfig {
    *
    * @param {string} path - path of script dotfile.
    */
-  async delete(path: string) {
+  async delete(path: string) : Promise<any> {
     let params = {
       "path": path
     }
@@ -4101,7 +4101,7 @@ class Enterprise {
   /**
    * Get the current enterprise license.
    */
-  async getLicense() {
+  async getLicense() : Promise<any> {
     if (this.client.is_superadmin === true) {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
@@ -4133,7 +4133,7 @@ class Cloud {
   /**
    * Check if cloud endpoint is available.
    */
-  async ping() {
+  async ping() : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/cloud/ping');
     return this.client._wrapWithPromise(rqst);
   }
@@ -4143,7 +4143,7 @@ class Cloud {
    *
    * @param {string} token - JWT token which is delivered to user's email.
    */
-  async verify_email(token: string) {
+  async verify_email(token: string) : Promise<any> {
     const body = { "verification_code": token };
     const rqst = this.client.newSignedRequest("POST", "/cloud/verify-email", body);
     return this.client._wrapWithPromise(rqst);
@@ -4154,7 +4154,7 @@ class Cloud {
    *
    * @param {string} email - user's email.
    */
-  async send_verification_email(email: string) {
+  async send_verification_email(email: string) : Promise<any> {
     const body = { email };
     const rqst = this.client.newSignedRequest("POST", "/cloud/send-verification-email", body);
     return this.client._wrapWithPromise(rqst);
@@ -4165,7 +4165,7 @@ class Cloud {
    *
    * @param {string} email - user's email.
    */
-  async send_password_change_email(email: string) {
+  async send_password_change_email(email: string) : Promise<any> {
     const body = { email };
     const rqst = this.client.newSignedRequest("POST", "/cloud/send-password-change-email", body);
     return this.client._wrapWithPromise(rqst);
@@ -4178,7 +4178,7 @@ class Cloud {
    * @param {string} password - new password.
    * @param {string} token - JWT token which is delivered to user's email.
    */
-  async change_password(email: string, password: string, token: string) {
+  async change_password(email: string, password: string, token: string) : Promise<any> {
     const body = { email, password, token };
     const rqst = this.client.newSignedRequest("POST", "/cloud/change-password", body);
     return this.client._wrapWithPromise(rqst);
@@ -4212,7 +4212,7 @@ class Pipeline {
    *    'secret_key': string,
    * }
    */
-  async login(input) {
+  async login(input) : Promise<boolean> {
     const rqst = this.client.newSignedRequest("POST", `/auth-token/`, input, "pipeline");
     let result;
     try {
@@ -4239,7 +4239,7 @@ class Pipeline {
     }
   }
 
-  async logout() {
+  async logout() : Promise<any> {
     const rqst = this.client.newSignedRequest("DELETE", `/auth-token/`, null, "pipeline");
     try {
       await this.client._wrapWithPromise(rqst);
@@ -4254,19 +4254,19 @@ class Pipeline {
     }
   }
 
-  async check_login() {
+  async check_login() : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `/api/users/me/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
 
-  getPipelineToken() {
+  getPipelineToken() : string {
     return this._getCookieByName(this.tokenName);
   }
 
   /**
    * List all pipelines
    */
-  async list() {
+  async list() : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4276,7 +4276,7 @@ class Pipeline {
    *
    * @param {string} id - pipeline id
    */
-  async info(id) {
+  async info(id) : Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4293,7 +4293,7 @@ class Pipeline {
    *    'is_active': boolean
    * }
    */
-  async create(input) {
+  async create(input): Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4311,7 +4311,7 @@ class Pipeline {
    *    'is_active': boolean, // TODO
    * }
    */
-  async update(id, input) {
+  async update(id, input): Promise<any> {
     let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4321,7 +4321,7 @@ class Pipeline {
    *
    * @param {string} id - pipeline id
    */
-  async delete(id) {
+  async delete(id): Promise<any> {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4339,7 +4339,7 @@ class Pipeline {
    *    'is_active': boolean,
    * }
    */
-  async run(id, input) {
+  async run(id, input): Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/${id}/run/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4350,7 +4350,7 @@ class Pipeline {
    * @param {string} name - cookie name
    * @returns {string} cookieValue
    */
-  _getCookieByName(name = '') {
+  _getCookieByName(name = ''): string {
     let cookieValue: string = '';
     if (document.cookie && document.cookie !== '') {
       const cookies = document.cookie.split(';');
@@ -4394,7 +4394,7 @@ class PipelineJob {
   /**
    * List all pipeline jobs
    */
-  async list() {
+  async list(): Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4404,7 +4404,7 @@ class PipelineJob {
    *
    * @param {string} id - pipeline id
    */
-  async info(id) {
+  async info(id): Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4414,7 +4414,7 @@ class PipelineJob {
    *
    * @param {string} id - pipeline id
    */
-  async stop(id) {
+  async stop(id): Promise<any> {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/stop/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4441,7 +4441,7 @@ class PipelineTaskInstance {
    *
    * @param {string} pipelineJobId - pipeline job id
    */
-  async list(pipelineJobId = '') {
+  async list(pipelineJobId: string = ''): Promise<any> {
     let queryString = `${this.urlPrefix}`;
     queryString += (pipelineJobId) ? `/?pipeline_job=${pipelineJobId}` : `/`;
     let rqst = this.client.newSignedRequest('GET', queryString, null, "pipeline");
@@ -4453,7 +4453,7 @@ class PipelineTaskInstance {
    *
    * @param {string} id - task instance id
    */
-  async info(id) {
+  async info(id): Promise<any> {
     let rqst = this.client.newSignedRequest('GET', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4463,7 +4463,7 @@ class PipelineTaskInstance {
    *
    * @param {json} input
    */
-  async create(input) {
+  async create(input): Promise<any> {
     let rqst = this.client.newSignedRequest('POST', `${this.urlPrefix}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4474,7 +4474,7 @@ class PipelineTaskInstance {
    * @param {string} id - task instance id
    * @param {json} input - task-instance specification and data.
    */
-  async update(id, input) {
+  async update(id, input): Promise<any> {
     let rqst = this.client.newSignedRequest('PATCH', `${this.urlPrefix}/${id}/`, input, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4484,7 +4484,7 @@ class PipelineTaskInstance {
    *
    * @param {string} id - task instance id
    */
-  async delete(id) {
+  async delete(id): Promise<any> {
     let rqst = this.client.newSignedRequest('DELETE', `${this.urlPrefix}/${id}/`, null, "pipeline");
     return this.client._wrapWithPromise(rqst);
   }
@@ -4507,7 +4507,7 @@ class EduApp {
   /**
    * Check if EduApp endpoint is available.
    */
-  async ping() {
+  async ping(): Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/ping');
     return this.client._wrapWithPromise(rqst);
   }
@@ -4515,7 +4515,7 @@ class EduApp {
   /**
    * Get mount folders for auto-mount.
    */
-  async get_mount_folders() {
+  async get_mount_folders(): Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
@@ -4687,7 +4687,7 @@ Object.defineProperty(Client, 'ERR_UNKNOWN', {
 // @ts-ignore
 const backend = {
   Client: Client,
-  ClientConfig: ClientConfig,
+  ClientConfig: ClientConfig
 };
 /* For Node.JS library
 // for use like "ai.backend.Client"
