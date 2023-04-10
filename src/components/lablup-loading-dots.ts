@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -22,7 +22,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 @customElement('lablup-loading-dots')
 export default class LablupLoadingdots extends LitElement {
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @query('#dots') dots!: HTMLDivElement;
 
   static get styles(): CSSResultGroup {

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
@@ -24,7 +24,7 @@ import 'weightless/progress-spinner';
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
   @property({type: Object}) spinner;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -45,6 +45,7 @@ export default class LablupLoadingSpinner extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-progress-spinner id="spinner"></wl-progress-spinner>
     `;
   }

@@ -34,6 +34,7 @@ export class BackendAIPage extends LitElement {
       return newVal;
     },
   }) active = false;
+  // @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) is; // Component name
   @property({type: BackendAIWindow}) windowNode;

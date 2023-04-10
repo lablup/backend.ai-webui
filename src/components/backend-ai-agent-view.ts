@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
@@ -120,6 +120,7 @@ export default class BackendAIAgentView extends BackendAIPage {
     return html`
       <backend-ai-window defaultWidth="80%" active="${this.active}" title="${_t('webui.menu.ComputationResources')}" name="agent"
                              icon="resources/menu_icons/agent.svg">
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal center layout">

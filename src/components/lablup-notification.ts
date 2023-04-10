@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from 'lit-translate';
@@ -40,7 +40,8 @@ export default class LablupNotification extends LitElement {
   @property({type: String}) timestamp = '';
   @property({type: Object}) indicator;
   @property({type: Array}) notifications;
-  @property({type: Boolean}) active = true;
+  @property({type: Array}) notificationstore;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();
@@ -183,7 +184,11 @@ export default class LablupNotification extends LitElement {
    * @param {object} log - Log object that contains detail information
    * */
   async show(persistent = false, log: Record<string, unknown> = Object()) {
+    if (this.text === '_DISCONNECTED') {
+      return;
+    }
     const snackbar = document.querySelector('mwc-snackbar[timeoutMs=\'-1\']');
+    // const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = [] as any; // Reset notifications
       document.body.removeChild(snackbar);

@@ -32,6 +32,7 @@ import './backend-ai-window';
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import JsonToCsv from '../lib/json_to_csv';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -409,7 +410,7 @@ export default class BackendAICredentialView extends BackendAIPage {
    * Parse simple allowed vfodler host list with fine-grained permissions
    *
    * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
-   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   * @return {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
    */
   _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
     const obj = {};
@@ -597,7 +598,7 @@ export default class BackendAICredentialView extends BackendAIPage {
       'max_containers_per_session': this.container_per_session_limit['value'],
       'idle_timeout': this.idle_timeout['value'],
       'max_vfolder_count': this.vfolder_max_limit['value'],
-      'max_vfolder_size': this._gBToByte(this.vfolder_capacity['value']),
+      'max_vfolder_size': BackendAICredentialView.gBToBytes(this.vfolder_capacity['value']),
       'allowed_vfolder_hosts': vfolder_hosts,
     };
     if (this.enableSessionLifetime) {
@@ -1034,8 +1035,8 @@ export default class BackendAICredentialView extends BackendAIPage {
     isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
   }
 
-  _gBToByte(value = 0) {
-    const gigabyte = Math.pow(2, 30);
+  static gBToBytes(value = 0) {
+    const gigabyte = Math.pow(10, 9);
     return Math.round(gigabyte * value);
   }
 
@@ -1043,13 +1044,13 @@ export default class BackendAICredentialView extends BackendAIPage {
     const regex = /action=(add)$/; // If there is a new action, add it with |action after it.
     const isActionExist = regex.test(location.search);
 
-    if(isActionExist) {
+    if (isActionExist) {
       const action = location.search.split('action=')[1];
 
       switch (action) {
-        case 'add':
-          await this._launchKeyPairDialog();
-          break;
+      case 'add':
+        await this._launchKeyPairDialog();
+        break;
       }
     }
   }
@@ -1059,6 +1060,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     return html`
       <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.UserCredentials&Policies')}" name="credential"
                              icon="resources/menu_icons/user.svg">
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
           <h3 class="tab horizontal wrap layout">
@@ -1328,7 +1330,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.Password')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern=${BackendAiCommonUtils.passwordRegex}
                 validationMessage="${_text('signup.PasswordInvalid')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">
@@ -1345,7 +1347,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 label="${_t('general.ConfirmPassword')}"
                 autoValidate
                 required
-                pattern="^(?=.*?[a-zA-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$"
+                pattern=${BackendAiCommonUtils.passwordRegex}
                 validationMessage="${_text('signup.PasswordNotMatched')}"
                 @change="${() => this._validatePassword()}"
                 maxLength="64">

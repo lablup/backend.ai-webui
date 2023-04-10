@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -17,13 +17,14 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/lablup-shields/lablup-shields';
-import './lablup-loading-spinner';
 import './backend-ai-dialog';
+import './lablup-grid-sort-filter-column';
+import './lablup-loading-spinner';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -54,6 +55,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 @customElement('backend-ai-environment-list')
 export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Array}) images;
+  @property({type: Object}) resourceBroker;
   @property({type: Array}) allowed_registries;
   @property({type: Array}) servicePorts;
   @property({type: Number}) selectedIndex = 0;
@@ -62,6 +64,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _cuda_fgpu_disabled = false;
   @property({type: Boolean}) _rocm_gpu_disabled = false;
   @property({type: Boolean}) _tpu_disabled = false;
+  @property({type: Boolean}) _ipu_disabled = false;
+  @property({type: Boolean}) _atom_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Array}) installImageNameList;
@@ -77,9 +81,11 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       '1GB', '2GB', '4GB', '8GB',
       '16GB', '32GB', '256GB', '512GB'],
     'cuda-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
-    'cuda-fgpu': ['0', '0.1', '0.2', '0.5', '1.0', '2.0'],
+    'cuda-fgpu': ['0', '0.1', '0.2', '0.5', '1.0', '2.0', '4.0', '8.0'],
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
-    'tpu': ['0', '1', '2']};
+    'tpu': ['0', '1', '2', '3', '4'],
+    'ipu': ['0', '1', '2', '3', '4'],
+    'atom': ['0', '1', '2', '3', '4']};
   @property({type: Number}) cpuValue = 0;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
@@ -95,6 +101,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-cuda-fgpu') modifyImageCudaFGpu!: Button;
   @query('#modify-image-rocm-gpu') modifyImageRocmGpu!: Button;
   @query('#modify-image-tpu') modifyImageTpu!: Button;
+  @query('#modify-image-ipu') modifyImageIpu!: Button;
+  @query('#modify-image-atom') modifyImageAtom!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -123,7 +131,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
          vaadin-grid {
            border: 0;
            font-size: 14px;
-           height: calc(100vh - 225px);
+           height: calc(100vh - 229px);
          }
          h4 {
           font-weight: 200;
@@ -265,6 +273,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   firstUpdated() {
     this.indicator = globalThis.lablupIndicator;
     this.notification = globalThis.lablupNotification;
+    this.resourceBroker = globalThis.resourceBroker;
 
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -419,8 +428,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Get backend.ai client images.
-      */
+    * Get backend.ai client images.
+    */
   _getImages() {
     this.listCondition = 'loading';
     this._listStatus?.show();
@@ -437,7 +446,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             image.baseversion = tags[0];
             image.baseimage = tags[1];
             if (tags[2] !== undefined) {
-              image.additional_req = this._humanizeName(tags[2]);
+              image.additional_req = this._humanizeName(tags.slice(2).join('-'));
             }
           } else if (image.tag !== undefined) {
             image.baseversion = image.tag;
@@ -489,14 +498,21 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'tpu.device') {
               resource.key = 'tpu_device';
             }
+            if (resource.key == 'ipu.device') {
+              resource.key = 'ipu_device';
+            }
+            if (resource.key == 'atom.device') {
+              resource.key = 'atom_device';
+            }
             if (resource.min !== null && resource.min !== undefined) {
               image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             }
             if (resource.max !== null && resource.max !== undefined) {
               image[resource.key + '_limit_max'] = this._addUnit(resource.max);
+            } else {
+              image[resource.key + '_limit_max'] = Infinity;
             }
           });
-
           image.labels = image.labels.reduce((acc, cur) => ({...acc, [cur.key]: cur.value}), {});
           domainImages.push(image);
         }
@@ -505,7 +521,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // console.log(image_keys);
       // let sorted_images = {};
       // image_keys.sort();
-      this.images = domainImages;
+      const sortedImages = domainImages.sort((a, b) => b["installed"] - a["installed"]);
+
+      this.images = sortedImages;
       if (this.images.length == 0) {
         this.listCondition = 'no-data';
       } else {
@@ -525,31 +543,31 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Add unit to the value.
-      *
-      * @param {string} value
-      * @return {string} value with proper unit
-      */
+    * Add unit to the value.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _addUnit(value) {
     const unit = value.substr(-1);
     if (unit == 'm') {
-      return value.slice(0, -1) + 'MB';
+      return value.slice(0, -1) + 'MiB';
     }
     if (unit == 'g') {
-      return value.slice(0, -1) + 'GB';
+      return value.slice(0, -1) + 'GiB';
     }
     if (unit == 't') {
-      return value.slice(0, -1) + 'TB';
+      return value.slice(0, -1) + 'TiB';
     }
     return value;
   }
 
   /**
-      * Change unit to symbol.
-      *
-      * @param {string} value
-      * @return {string} value with proper unit
-      */
+    * Change unit to symbol.
+    *
+    * @param {string} value
+    * @return {string} value with proper unit
+    */
   _symbolicUnit(value) {
     const unit = value.substr(-2);
     if (unit == 'MB') {
@@ -565,102 +583,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   }
 
   /**
-      * Humanize the value.
-      *
-      * @param {string} value - Language name, version, environment or identifier
-      * @return {string} Humanized value for value
-      */
+    * Humanize the value.
+    *
+    * @param {string} value - Language name, version, environment or identifier
+    * @return {string} Humanized value for value
+    */
   _humanizeName(value) {
-    this.alias = {
-      'python': 'Python',
-      'tensorflow': 'TensorFlow',
-      'pytorch': 'PyTorch',
-      'lua': 'Lua',
-      'r': 'R',
-      'r-base': 'R',
-      'julia': 'Julia',
-      'rust': 'Rust',
-      'cpp': 'C++',
-      'gcc': 'GCC',
-      'go': 'Go',
-      'tester': 'Tester',
-      'haskell': 'Haskell',
-      'matlab': 'MATLAB',
-      'sagemath': 'Sage',
-      'texlive': 'TeXLive',
-      'java': 'Java',
-      'php': 'PHP',
-      'octave': 'Octave',
-      'nodejs': 'Node',
-      'caffe': 'Caffe',
-      'scheme': 'Scheme',
-      'scala': 'Scala',
-      'base': 'Base',
-      'cntk': 'CNTK',
-      'h2o': 'H2O.AI',
-      'triton-server': 'Triton Server',
-      'digits': 'DIGITS',
-      'ubuntu-linux': 'Ubuntu Linux',
-      'tf1': 'TensorFlow 1',
-      'tf2': 'TensorFlow 2',
-      'py3': 'Python 3',
-      'py2': 'Python 2',
-      'py27': 'Python 2.7',
-      'py35': 'Python 3.5',
-      'py36': 'Python 3.6',
-      'py37': 'Python 3.7',
-      'py38': 'Python 3.8',
-      'py39': 'Python 3.9',
-      'py310': 'Python 3.10',
-      'py311': 'Python 3.11',
-      'ji15': 'Julia 1.5',
-      'ji16': 'Julia 1.6',
-      'ji17': 'Julia 1.7',
-      'ji18': 'Julia 1.8',
-      'lxde': 'LXDE',
-      'lxqt': 'LXQt',
-      'xfce': 'XFCE',
-      'xrdp': 'XRDP',
-      'gnome': 'GNOME',
-      'kde': 'KDE',
-      'ubuntu16.04': 'Ubuntu 16.04',
-      'ubuntu18.04': 'Ubuntu 18.04',
-      'ubuntu20.04': 'Ubuntu 20.04',
-      'ubuntu22.04': 'Ubuntu 22.04',
-      'intel': 'Intel MKL',
-      '2018': '2018',
-      '2019': '2019',
-      '2020': '2020',
-      '2021': '2021',
-      '2022': '2022',
-      '2023': '2023',
-      'tpu': 'TPU:TPUv3',
-      'rocm': 'GPU:ROCm',
-      'cuda9': 'GPU:CUDA9',
-      'cuda10': 'GPU:CUDA10',
-      'cuda10.0': 'GPU:CUDA10',
-      'cuda10.1': 'GPU:CUDA10.1',
-      'cuda10.2': 'GPU:CUDA10.2',
-      'cuda10.3': 'GPU:CUDA10.3',
-      'cuda11': 'GPU:CUDA11',
-      'cuda11.0': 'GPU:CUDA11',
-      'cuda11.1': 'GPU:CUDA11.1',
-      'cuda11.2': 'GPU:CUDA11.2',
-      'cuda11.3': 'GPU:CUDA11.3',
-      'cuda11.4': 'GPU:CUDA11.4',
-      'cuda11.5': 'GPU:CUDA11.5',
-      'cuda11.6': 'GPU:CUDA11.6',
-      'cuda11.7': 'GPU:CUDA11.7',
-      'cuda12': 'GPU:CUDA12',
-      'cuda12.0': 'GPU:CUDA12',
-      'miniconda': 'Miniconda',
-      'anaconda2018.12': 'Anaconda 2018.12',
-      'anaconda2019.12': 'Anaconda 2019.12',
-      'alpine3.8': 'Alpine Linux 3.8',
-      'alpine3.12': 'Alpine Linux 3.12',
-      'ngc': 'Nvidia GPU Cloud',
-      'ff': 'Research Env.',
-    };
+    this.alias = this.resourceBroker.imageTagAlias;
+    const tagReplace = this.resourceBroker.imageTagReplace;
+    for (const [key, replaceString] of Object.entries(tagReplace)) {
+      const pattern = new RegExp(key);
+      if (pattern.test(value)) {
+        return value.replace(pattern, replaceString);
+      }
+    }
     if (value in this.alias) {
       return this.alias[value];
     } else {
@@ -721,6 +657,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const fgpu = this.modifyImageCudaFGpu.label;
     const rocm_gpu = this.modifyImageRocmGpu.label;
     const tpu = this.modifyImageTpu.label;
+    const ipu = this.modifyImageIpu.label;
+    const atom = this.modifyImageAtom.label;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
@@ -736,6 +674,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (!this._cuda_fgpu_disabled && fgpu !== resource_limits[2].min) input['cuda.shares'] = {'min': fgpu};
     if (!this._rocm_gpu_disabled && rocm_gpu !== resource_limits[3].min) input['rocm.device'] = {'min': rocm_gpu};
     if (!this._tpu_disabled && tpu !== resource_limits[4].min) input['tpu.device'] = {'min': tpu};
+    if (!this._ipu_disabled && ipu !== resource_limits[5].min) input['ipu.device'] = {'min': ipu};
+    if (!this._atom_disabled && atom !== resource_limits[6].min) input['atom.device'] = {'min': atom};
 
     const image = this.images[this.selectedIndex];
 
@@ -802,7 +742,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       let isGPURequired = false;
       const imageResource = Object();
       if ('resource_limits' in image) {
-        image['resource_limits'].forEach((el) => {
+        (image['resource_limits'] as Array<any>).forEach((el) => {
           imageResource[el['key'].replace('_', '.')] = el.min;
         });
       }
@@ -852,18 +792,23 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         delete imageResource['cuda.device'];
       }
 
+      // Return immediately after enqueueing the session. Usually, image
+      // pulling takes a long time so it is not appropriate to wait for
+      // the job completion.
+      imageResource.enqueueOnly = true;
+      imageResource.type = 'batch';
+      imageResource.startupCommand = 'echo "Image is installed"';
+
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
       const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
-
-      globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
-        indicator.set(100, _text('import.Installed'));
+      globalThis.backendaiclient.image.install(
+        imageName,
+        image['architecture'],
+        imageResource
+      ).then(() => {
         indicator.end(1000);
-
-        // change installing -> installed
-        this._grid.querySelector(selectedImageLabel).className = 'installed';
-        this._grid.querySelector(selectedImageLabel).innerHTML = _text('environment.Installed');
       }).catch((err) => {
         // if something goes wrong during installation
         this._grid.querySelector(selectedImageLabel).className = _text('environment.Installing');
@@ -914,52 +859,77 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._cuda_fgpu_disabled = resource_limits.filter((e) => e.key === 'cuda_shares').length === 0;
     this._rocm_gpu_disabled = resource_limits.filter((e) => e.key === 'rocm_device').length === 0;
     this._tpu_disabled = resource_limits.filter((e) => e.key === 'tpu_device').length === 0;
-    this.modifyImageCpu.label = resource_limits[0].min;
+    this._ipu_disabled = resource_limits.filter((e) => e.key === 'ipu_device').length === 0;
+    this._atom_disabled = resource_limits.filter((e) => e.key === 'atom_device').length === 0;
+    const resources = resource_limits.reduce((result, item) => {
+      const {key, ...rest} = item;
+      const value = rest;
+      result[item['key']] = value;
+      return result;
+    }, {});
+    this.modifyImageCpu.label = resources['cpu'].min;
     if (!this._cuda_gpu_disabled) {
-      this.modifyImageCudaGpu.label = resource_limits[1].min;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = this._range['cuda-gpu'].indexOf(this._range['cpu'].filter((value) => {
-        return value === resource_limits[0].min;
+      this.modifyImageCudaGpu.label = resources['cuda_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = this._range['cuda-gpu'].indexOf(this._range['cuda-gpu'].filter((value) => {
+        return value === resources['cuda_device'].min;
       })[0]);
     } else {
       this.modifyImageCudaGpu.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = 0;
     }
     if (!this._cuda_fgpu_disabled) {
-      this.modifyImageCudaFGpu.label = resource_limits[2].min;
-      (this.shadowRoot?.querySelector('mwc-slider#cuda-fgpu') as Slider).value = this._range['cuda-fgpu'].indexOf(this._range['cpu'].filter((value) => {
-        return value === resource_limits[0].min;
+      this.modifyImageCudaFGpu.label = resources['cuda_shares'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#cuda-fgpu') as Slider).value = this._range['cuda-fgpu'].indexOf(this._range['cuda-fgpu'].filter((value) => {
+        return value === resources['cuda_shares'].min;
       })[0]);
     } else {
       this.modifyImageCudaFGpu.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#cuda-gpu') as Slider).value = 0;
     }
     if (!this._rocm_gpu_disabled) {
-      this.modifyImageRocmGpu.label = resource_limits[3].min;
-      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value = this._range['rocm-gpu'].indexOf(this._range['cpu'].filter((value) => {
-        return value === resource_limits[0].min;
+      this.modifyImageRocmGpu.label = resources['rocm_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value = this._range['rocm-gpu'].indexOf(this._range['rocm-gpu'].filter((value) => {
+        return value === resources['rocm_device'].min;
       })[0]);
     } else {
       this.modifyImageRocmGpu.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#rocm-gpu') as Slider).value = 0;
     }
     if (!this._tpu_disabled) {
-      this.modifyImageTpu.label = resource_limits[4].min;
-      (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = this._range['tpu'].indexOf(this._range['cpu'].filter((value) => {
-        return value === resource_limits[0].min;
+      this.modifyImageTpu.label = resources['tpu_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = this._range['tpu'].indexOf(this._range['tpu'].filter((value) => {
+        return value === resources['tpu_device'].min;
       })[0]);
     } else {
       this.modifyImageTpu.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#tpu') as Slider).value = 0;
     }
+    if (!this._ipu_disabled) {
+      this.modifyImageIpu.label = resources['ipu_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#ipu') as Slider).value = this._range['ipu'].indexOf(this._range['ipu'].filter((value) => {
+        return value === resources['ipu_device'].min;
+      })[0]);
+    } else {
+      this.modifyImageTpu.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#ipu') as Slider).value = 0;
+    }
+    if (!this._atom_disabled) {
+      this.modifyImageAtom.label = resources['atom_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#atom') as Slider).value = this._range['atom'].indexOf(this._range['atom'].filter((value) => {
+        return value === resources['atom_device'].min;
+      })[0]);
+    } else {
+      this.modifyImageAtom.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#atom') as Slider).value = 0;
+    }
 
-    const mem_idx = this._cuda_gpu_disabled ? (this._cuda_fgpu_disabled ? 1 : 2) : (this._cuda_fgpu_disabled ? 2 : 3);
-    this.modifyImageMemory.label = this._addUnit(resource_limits[mem_idx].min);
+    this.modifyImageMemory.label = this._addUnit(resources['mem'].min);
 
     (this.shadowRoot?.querySelector('mwc-slider#cpu') as Slider).value = this._range['cpu'].indexOf(this._range['cpu'].filter((value) => {
-      return value === resource_limits[0].min;
+      return value === resources['cpu'].min;
     })[0]);
     (this.shadowRoot?.querySelector('mwc-slider#mem') as Slider).value = this._range['mem'].indexOf(this._range['mem'].filter((value) => {
-      return value === this._addUnit(resource_limits[mem_idx].min);
+      return value === this._addUnit(resources['mem'].min);
     })[0]);
 
     this._updateSliderLayout();
@@ -1115,7 +1085,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    <wl-icon class="fg green">apps</wl-icon>
                    <span>${rowData.item.cuda_shares_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
-                   <span class="indicator">CUDA fGPU</span>
+                   <span class="indicator">CUDA FGPU</span>
                  </div>
                </div>
                ` : html``}
@@ -1132,14 +1102,34 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.tpu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <img class="indicator-icon fg green" src="/resources/icons/tpu.svg" />
+                   <wl-icon class="fg green">apps</wl-icon>
                    <span>${rowData.item.tpu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                    <span class="indicator">TPU</span>
                  </div>
                </div>
                ` : html``}
-         `, root
+           ${rowData.item.ipu_device_limit_min ? html`
+              <div class="layout horizontal center flex">
+                 <div class="layout horizontal configuration">
+                   <wl-icon class="fg green">apps</wl-icon>
+                   <span>${rowData.item.ipu_device_limit_min}</span> ~
+                   <span>${this._markIfUnlimited(rowData.item.ipu_device_limit_max)}</span>
+                   <span class="indicator">IPU</span>
+                 </div>
+               </div>
+               ` : html``}
+              ${rowData.item.atom_device_limit_min ? html`
+              <div class="layout horizontal center flex">
+                 <div class="layout horizontal configuration">
+                   <wl-icon class="fg green">apps</wl-icon>
+                   <span>${rowData.item.atom_device_limit_min}</span> ~
+                   <span>${this._markIfUnlimited(rowData.item.atom_device_limit_max)}</span>
+                   <span class="indicator">ATOM</span>
+                 </div>
+               </div>
+               ` : html``}
+          `, root
     );
   }
 
@@ -1287,22 +1277,22 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </vaadin-grid-selection-column>
           <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-filter-column path="registry" width="80px" resizable
-              header="${_t('environment.Registry')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="architecture" width="80px" resizable
-              header="${_t('environment.Architecture')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="namespace" width="60px" resizable
-              header="${_t('environment.Namespace')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="lang" resizable
-              header="${_t('environment.Language')}"></vaadin-grid-filter-column>
-          <vaadin-grid-filter-column path="baseversion" resizable
-              header="${_t('environment.Version')}"></vaadin-grid-filter-column>
-          <vaadin-grid-column resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-column width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
-          </vaadin-grid-column>
-          <vaadin-grid-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
-          </vaadin-grid-filter-column>
+          <lablup-grid-sort-filter-column path="registry" width="80px" resizable
+              header="${_t('environment.Registry')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="architecture" width="80px" resizable
+              header="${_t('environment.Architecture')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="namespace" width="60px" resizable
+              header="${_t('environment.Namespace')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="lang" resizable
+              header="${_t('environment.Language')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="baseversion" resizable
+              header="${_t('environment.Version')}"></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="baseimage" resizable width="110px" header="${_t('environment.Base')}" .renderer="${this._boundBaseImageRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="additional_req" width="50px" resizable header="${_t('environment.Constraint')}" .renderer="${this._boundConstraintRenderer}">
+          </lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column path="digest" resizable header="${_t('environment.Digest')}" .renderer="${this._boundDigestRenderer}">
+          </lablup-grid-sort-filter-column>
           <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
@@ -1320,7 +1310,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="cpu"
                    step="1"
                    markers
-                   max="7"
+                   max="8"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cpu" disabled></mwc-button>
              </div>
@@ -1330,40 +1320,40 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="mem"
                    markers
                    step="1"
-                   max="11"
+                   max="12"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-mem" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">cuda GPU</span>
+               <span class="resource-limit-title">CUDA GPU</span>
                <mwc-slider
                    ?disabled="${this._cuda_gpu_disabled}"
                    id="cuda-gpu"
                    markers
                    step="1"
-                   max="7"
+                   max="8"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cuda-gpu" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">cuda FGPU</span>
+               <span class="resource-limit-title">CUDA FGPU</span>
                <mwc-slider
                    ?disabled="${this._cuda_fgpu_disabled}"
                    id="cuda-fgpu"
                    markers
                    step="1"
-                   max="5"
+                   max="8"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-cuda-fgpu" disabled></mwc-button>
              </div>
              <div class="horizontal layout flex center">
-               <span class="resource-limit-title">rocm GPU</span>
+               <span class="resource-limit-title">ROCm GPU</span>
                <mwc-slider
                    ?disabled="${this._rocm_gpu_disabled}"
                    id="rocm-gpu"
                    markers
                    step="1"
-                   max="2"
+                   max="8"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-rocm-gpu" disabled></mwc-button>
              </div>
@@ -1374,9 +1364,31 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    id="tpu"
                    markers
                    step="1"
-                   max="11"
+                   max="5"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-tpu" disabled></mwc-button>
+             </div>
+             <div class="horizontal layout flex center">
+               <span class="resource-limit-title">IPU</span>
+               <mwc-slider
+                   ?disabled="${this._ipu_disabled}"
+                   id="ipu"
+                   markers
+                   step="1"
+                   max="5"
+                   @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+               <mwc-button class="range-value" id="modify-image-ipu" disabled></mwc-button>
+             </div>
+             <div class="horizontal layout flex center">
+               <span class="resource-limit-title">ATOM</span>
+               <mwc-slider
+                   ?disabled="${this._atom_disabled}"
+                   id="atom"
+                   markers
+                   step="1"
+                   max="5"
+                   @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+               <mwc-button class="range-value" id="modify-image-atom" disabled></mwc-button>
              </div>
            </div>
          </div>

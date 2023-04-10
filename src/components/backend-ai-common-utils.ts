@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
@@ -20,6 +20,18 @@ export default class BackendAiCommonUtils extends BackendAIPage {
 
   constructor() {
     super();
+  }
+
+  /**
+   * Returns password regex match with under condition
+   * - at least one or more Alphabet regardless of upper / lower case
+   * - at least one or more digit number (0-9)
+   * - at least one or more special character includes (^, -, _)
+   *
+   * @return {string} regex string
+   */
+  static get passwordRegex() {
+    return '^(?=.*\\d)(?=.*[a-zA-Z])(?=.*[_\\W]).{8,}$';
   }
 
   /**
@@ -59,14 +71,21 @@ export default class BackendAiCommonUtils extends BackendAIPage {
     globalThis.backendaioptions.delete('projectGroup.' + endpointId);
   }
 
-  _humanReadableFileSize(bytes, decimals = 2) {
+  /**
+   * Convert file size with binary unit to human readable unit and value
+   *
+   * @param {number} bytes
+   * @param {number} decimalPoint decimal point set to 2 as a default
+   * @return {string} converted file size to human readable value
+   */
+  _humanReadableFileSize(bytes = 0, decimalPoint = 2) {
     if (bytes === 0) return '0 Bytes';
-    const k = Math.pow(2, 10);
-    const dm = decimals < 0 ? 0 : decimals;
-    const sizes = ['Bytes', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
-    let i = Math.floor(Math.log(bytes) / Math.log(k));
+    const k = Math.pow(10, 3);
+    decimalPoint = decimalPoint < 0 ? 0 : decimalPoint;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB'];
+    let i = Math.floor(Math.log(Math.round(bytes)) / Math.log(k));
     i = i < 0 ? 0 : i; // avoid negative value
-    return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + sizes[i];
   }
 
   /**
@@ -148,6 +167,10 @@ export default class BackendAiCommonUtils extends BackendAIPage {
       link.click();
       document.body.removeChild(link);
     }
+  }
+
+  isEmpty(str) {
+    return str === '' || str === null || str === undefined || typeof str === 'undefined';
   }
 
   render() {

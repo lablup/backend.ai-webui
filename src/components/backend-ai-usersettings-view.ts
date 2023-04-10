@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -187,6 +187,7 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
     // language=HTML
     return html`
       <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Settings&Logs')}" name="usersettings">
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
         <lablup-activity-panel noheader narrow autowidth attachInner>
         <div slot="message">
