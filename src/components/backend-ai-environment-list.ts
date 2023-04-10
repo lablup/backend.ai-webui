@@ -521,7 +521,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       // console.log(image_keys);
       // let sorted_images = {};
       // image_keys.sort();
-      this.images = domainImages;
+      const sortedImages = domainImages.sort((a, b) => b["installed"] - a["installed"]);
+
+      this.images = sortedImages;
       if (this.images.length == 0) {
         this.listCondition = 'no-data';
       } else {
@@ -790,18 +792,23 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         delete imageResource['cuda.device'];
       }
 
+      // Return immediately after enqueueing the session. Usually, image
+      // pulling takes a long time so it is not appropriate to wait for
+      // the job completion.
+      imageResource.enqueueOnly = true;
+      imageResource.type = 'batch';
+      imageResource.startupCommand = 'echo "Image is installed"';
+
       this.notification.text = _text('environment.InstallingImage') + imageName + _text('environment.TakesTime');
       this.notification.show();
       const indicator = await this.indicator.start('indeterminate');
       indicator.set(10, _text('import.Downloading'));
-
-      globalThis.backendaiclient.image.install(imageName, image['architecture'], imageResource).then((response) => {
-        indicator.set(100, _text('import.Installed'));
+      globalThis.backendaiclient.image.install(
+        imageName,
+        image['architecture'],
+        imageResource
+      ).then(() => {
         indicator.end(1000);
-
-        // change installing -> installed
-        this._grid.querySelector(selectedImageLabel).className = 'installed';
-        this._grid.querySelector(selectedImageLabel).innerHTML = _text('environment.Installed');
       }).catch((err) => {
         // if something goes wrong during installation
         this._grid.querySelector(selectedImageLabel).className = _text('environment.Installing');

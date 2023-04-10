@@ -151,7 +151,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     MiB: Math.pow(2, 20),
     GiB: Math.pow(2, 30),
     TiB: Math.pow(2, 40),
-    PiB: Math.pow(2, 50),
+    PiB: Math.pow(2, 50)
   };
   @property({type: Object}) maxSize = {
     value: 0,

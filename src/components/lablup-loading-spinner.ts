@@ -24,7 +24,7 @@ import 'weightless/progress-spinner';
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
   @property({type: Object}) spinner;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
 
   static get styles(): CSSResultGroup | undefined {
     return [
