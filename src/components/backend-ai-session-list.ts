@@ -1524,6 +1524,7 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    console.log(this.selectedSessionStatus)
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot?.querySelector('#status-detail') as HTMLDivElement;
     const statusDialogContent: Array<TemplateResult> = [];
@@ -1579,9 +1580,9 @@ export default class BackendAISessionList extends BackendAIPage {
           </div>
           <wl-expansion name="predicates" open>
           <div slot="title" class="horizontal layout center start-justified">
-            ${failedCount > 0 ? `
+            ${failedCount > 0 ? html`
               <mwc-icon class="fg red">cancel</mwc-icon>
-              ` : `
+              ` : html`
               <mwc-icon class="fg green">check_circle</mwc-icon>
             `}
             Predicate Checks
