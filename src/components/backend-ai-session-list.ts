@@ -3,7 +3,7 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultGroup, html, render} from 'lit';
+import {css, CSSResultGroup, TemplateResult, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
@@ -1524,18 +1524,19 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
+    console.log(this.selectedSessionStatus)
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot?.querySelector('#status-detail') as HTMLDivElement;
-
-    statusDetailEl.innerHTML = `
+    const statusDialogContent: Array<TemplateResult> = [];
+    statusDialogContent.push(html`
     <div class="vertical layout justified start">
       <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.Status')}</h3>
       <lablup-shields color="${this.statusColorTable[this.selectedSessionStatus.info]}"
           description="${this.selectedSessionStatus.info}" ui="round" style="padding-left:15px;"></lablup-shields>
-    </div>`;
+    </div>`);
 
     if (tmpSessionStatus.hasOwnProperty('kernel') || tmpSessionStatus.hasOwnProperty('session')) {
-      statusDetailEl.innerHTML += `
+      statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
@@ -1552,11 +1553,11 @@ export default class BackendAISessionList extends BackendAIPage {
             </mwc-list>
           </div>
         </div>
-      `;
+      `);
     } else if (tmpSessionStatus.hasOwnProperty('scheduler')) {
       const failedCount: number = tmpSessionStatus.scheduler.failed_predicates?.length ?? 0;
       const passedCount: number = tmpSessionStatus.scheduler.passed_predicates?.length ?? 0;
-      statusDetailEl.innerHTML += `
+      statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
           <div style="width:100%;">
             <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
@@ -1564,7 +1565,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <mwc-list>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.Message')}</span>
-                  <span class="monospace predicate-check-comment predicate-detail-message" slot="secondary"></span>
+                  <span class="monospace predicate-check-comment" slot="secondary">${tmpSessionStatus.scheduler.msg}</span>
                 </mwc-list-item>
                 <mwc-list-item twoline noninteractive class="predicate-check">
                   <span class="subheading">${_text('session.TotalRetries')}</span>
@@ -1579,94 +1580,91 @@ export default class BackendAISessionList extends BackendAIPage {
           </div>
           <wl-expansion name="predicates" open>
           <div slot="title" class="horizontal layout center start-justified">
-            ${failedCount > 0 ? `
+            ${failedCount > 0 ? html`
               <mwc-icon class="fg red">cancel</mwc-icon>
-              ` : `
+              ` : html`
               <mwc-icon class="fg green">check_circle</mwc-icon>
             `}
             Predicate Checks
           </div>
           <span slot="description">
-          ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
-          ${passedCount + ` Passed`}
+            ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
+            ${passedCount + ` Passed`}
           </span>
           <mwc-list>
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
-    return `
-          ${item.name === 'reserved_time' ? `
+    return html`
+          ${item.name === 'reserved_time' ? html`
               <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
                 <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
-              </mwc-list-item>` : `
+              </mwc-list-item>` : html`
               <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
                 <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>`}
-              <li divider role="separator"></li>
-              `;
-  }).join('')}
+              <li divider role="separator"></li>`;
+  })}
           ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
-    return `
-                <mwc-list-item graphic="icon" noninteractive>
-                  <span style="padding-left:3px;">${item.name}</span>
-                  <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked</mwc-icon>
-                </mwc-list-item>
-                <li divider role="separator"></li>
-                `;
-  }).join('')}
+            return html`
+              <mwc-list-item graphic="icon" noninteractive>
+                <span style="padding-left:3px;">${item.name}</span>
+                <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked
+                </mwc-icon>
+              </mwc-list-item>
+              <li divider role="separator"></li>
+            `;
+          })}
           </mwc-list>
         </wl-expansion>
         </div>
-    `;
-    (statusDetailEl.getElementsByClassName('predicate-detail-message')[0] as HTMLElement).innerText = tmpSessionStatus.scheduler.msg;
+    `);
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
-      const sanitizeErrMsg = (msg) => {
-        return (msg.match(/'(.*?)'/g) !== null) ? msg.match(/'(.*?)'/g)[0].replace(/'/g, '') : encodedStr(msg);
-      };
-      // FIXME: stopgap for handling html entities in msg
-      const encodedStr = (str) => {
-        return str.replace(/[\u00A0-\u9999<>\&]/gmi, (i) => {
-          return '&#' + i.charCodeAt(0) + ';';
-        });
-      };
       const errorList = tmpSessionStatus.error.collection ?? [tmpSessionStatus.error];
-      statusDetailEl.innerHTML += `
+      statusDialogContent.push(html`
       <div class="vertical layout start flex" style="width:100%;">
         <div style="width:100%;">
           <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.StatusDetail')}</h3>
             ${errorList.map((item) => {
-    return `
+    return html`
               <div style="border-radius: 4px;background-color:var(--paper-grey-300);padding:10px;margin:10px;">
                 <div class="vertical layout start">
                   <span class="subheading">Error</span>
                   <lablup-shields color="red" description=${item.name} ui="round"></lablup-shields>
                 </div>
-                ${this.is_superadmin && item.agent_id ? `
+                ${this.is_superadmin && item.agent_id ? html`
                   <div class="vertical layout start">
                     <span class="subheading">Agent ID</span>
                     <span>${item.agent_id}</span>
                   </div>
-                `: ``}
+                `: html``}
                 <div class="vertical layout start">
                   <span class="subheading">Message</span>
-                  <span class="error-description">${sanitizeErrMsg(item.repr)}</span>
+                  <span class="error-description">${item.repr}</span>
                 </div>
+                ${item.traceback ? html`
+                  <div class="vertical layout start">
+                    <span class="subheading">Traceback</span>
+                    <pre style="display: block; overflow: auto; width: 100%; height: 400px;">${item.traceback}</pre>
+                  </div>
+                `: html``}
               </div>
               `;
-  }).join('')}
+        })}
         </div>
       </div>
-      `;
+      `);
     } else {
-      statusDetailEl.innerHTML += `
+      statusDialogContent.push(html`
         <div class="vertical layout start flex" style="width:100%;">
         <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">Detail</h3>
-        <span style="margin:20px;">No Details.</span>
+        <span style="margin:20px;">No Detail.</span>
         </div>
-      `;
+      `);
     }
+    render(statusDialogContent, statusDetailEl);
   }
 
   _openStatusDetailDialog(statusInfo: string, statusData: string, reservedTime: string) {
