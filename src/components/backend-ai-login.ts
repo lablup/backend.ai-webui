@@ -1431,7 +1431,7 @@ export default class BackendAILogin extends BackendAIPage {
           }
         }).map((item) => {
           return item.name;
-        });
+        }).sort();
         const groupMap = Object();
         groups.forEach(function(element) {
           groupMap[element.name] = element.id;

@@ -312,7 +312,7 @@ export const BackendAIWebUIStyles = [
       font-weight: bold;
     }
 
-    mwc-select#group-select {
+    mwc-select#project-select {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-size: 14px;
