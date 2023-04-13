@@ -38,7 +38,7 @@ i18n
       ko
     },
     //@ts-ignore
-    lng: globalThis?.backendaioptions?.get('language') || "en", 
+    lng: globalThis?.backendaioptions?.get('current_language') || "en", 
     fallbackLng: "en",
     interpolation: {
       escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
@@ -48,7 +48,7 @@ i18n
 
 const useCurrentLanguage = () => {
   //@ts-ignore
-  const [lang, _setLang] = useState(globalThis.backendaioptions.get('language'));
+  const [lang, _setLang] = useState(globalThis.backendaioptions.get('current_language'));
   const {i18n}= useTranslation();
 
   useEffect(()=>{
