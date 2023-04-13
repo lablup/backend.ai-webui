@@ -5,6 +5,7 @@ import ExampleComponent from "./components/ExampleComponent";
 import ProjectSelect from "./components/ProjectSelect";
 import ResourceMonitor from "./components/ResourceMonitor";
 import reactToWebComponent from "./helper/react-to-webcomponent";
+import { useTranslation } from "react-i18next";
 // customElements.define(
 //   "backend-ai-webui-react-example",
 //   reactToWebComponentWithDefault(ExampleComponent)
@@ -33,8 +34,12 @@ customElements.define(
   reactToWebComponent((props) => {
     const [open, setOpen] = useState(false);
     const [open2, setOpen2] = useState(false);
+    
+    const { t } = useTranslation();
+    
     return (
       <DefaultProviders {...props}>
+        {t('Welcome to React')}<br/>
         <DatePicker transitionName="" />
         <Select
           options={[

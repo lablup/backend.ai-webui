@@ -1,8 +1,16 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
+import i18n from "i18next";
+import { useTranslation, initReactI18next } from "react-i18next";
+
+import ko from '../locales/ko.json';
+import en from '../locales/en.json';
+
+import en_US from 'antd/locale/en_US';
+import ko_KR from 'antd/locale/ko_KR';
 
 interface WebComponentContextType {
   props: ReactWebComponentProps;
@@ -10,6 +18,7 @@ interface WebComponentContextType {
   resourceBroker?: any;
 }
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
+
 export function useWebComponentInfo() {
   return React.useContext(WebComponentContext);
 }
@@ -21,13 +30,56 @@ export interface DefaultProvidersProps extends ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
+i18n
+  .use(initReactI18next) // passes i18n down to react-i18next
+  .init({
+    resources: {
+      en,
+      ko
+    },
+    //@ts-ignore
+    lng: globalThis?.backendaioptions?.get('language') || "en", 
+    fallbackLng: "en",
+    interpolation: {
+      escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+    }
+  });
+  
+
+const useCurrentLanguage = () => {
+  //@ts-ignore
+  const [lang, _setLang] = useState(globalThis.backendaioptions.get('language'));
+  const {i18n}= useTranslation();
+
+  useEffect(()=>{
+    // TODO: remove this hack to initialize i18next
+    setTimeout(()=> i18n.changeLanguage(lang), 0);
+  },[]);
+
+  useEffect(()=>{
+    const handler = (e:Event) => {
+      //@ts-ignore
+      _setLang(e.detail.lang)
+      //@ts-ignore
+      const lang:string = e.detail?.lang || "en";
+      i18n.changeLanguage(lang);
+    }
+    window.addEventListener('langChanged',handler);
+    return ()=> window.removeEventListener('langChanged',handler);
+  },[i18n]);
+
+  return [lang] as const;
+}
+
 const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   children,
   ...props
 }) => {
   const cache = useMemo(() => createCache(), []);
+  const [lang] = useCurrentLanguage();
+
   return (
-    <>
+    <React.StrictMode>
       <style>{props.styles}</style>
       <WebComponentContext.Provider
         value={{
@@ -45,6 +97,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
               }
               return props.shadowRoot;
             }}
+            locale={"ko" === lang ? ko_KR : en_US}
             theme={{
               token: {
                 fontFamily: `'Ubuntu', Roboto, sans-serif`,
@@ -70,12 +123,12 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
             }}
           >
             <StyleProvider container={props.shadowRoot} cache={cache}>
-              <React.StrictMode>{children}</React.StrictMode>
+              {children}
             </StyleProvider>
           </ConfigProvider>
         </QueryClientProvider>
       </WebComponentContext.Provider>
-    </>
+    </React.StrictMode>
   );
 };
 
