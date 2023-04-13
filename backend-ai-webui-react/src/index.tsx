@@ -39,7 +39,7 @@ customElements.define(
     
     return (
       <DefaultProviders {...props}>
-        {t('Welcome to React')}<br/>
+        {t('webui.menu.WelcomeMessage')}<br/>
         <DatePicker transitionName="" />
         <Select
           options={[

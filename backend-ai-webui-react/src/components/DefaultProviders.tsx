@@ -5,9 +5,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
-
-import ko from '../locales/ko.json';
-import en from '../locales/en.json';
+import Backend from 'i18next-http-backend';
 
 import en_US from 'antd/locale/en_US';
 import ko_KR from 'antd/locale/ko_KR';
@@ -32,10 +30,10 @@ export interface DefaultProvidersProps extends ReactWebComponentProps {
 
 i18n
   .use(initReactI18next) // passes i18n down to react-i18next
+  .use(Backend)
   .init({
-    resources: {
-      en,
-      ko
+    backend: {
+      loadPath: '/resources/i18n/{{lng}}.json',
     },
     //@ts-ignore
     lng: globalThis?.backendaioptions?.get('current_language') || "en", 
