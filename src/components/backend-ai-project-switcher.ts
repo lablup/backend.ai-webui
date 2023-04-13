@@ -5,7 +5,7 @@
 
 
 import {customElement, property} from 'lit/decorators.js';
-import {LitElement, html, CSSResultGroup} from 'lit';
+import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
 import '@material/mwc-select';
 import '@material/mwc-icon-button-toggle';
@@ -44,8 +44,15 @@ export default class BackendAIProjectSwitcher extends LitElement {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning
-    ];
+      IronPositioning,
+      // language=CSS
+      css`
+        #project-sort-box {
+          padding-left: 16px;
+          padding-right: 10px;
+          border-bottom: 1px solid #ccc;
+        }
+      `];
   }
   firstUpdated() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -94,7 +101,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
           <div class="horizontal center center-justified layout">
             <mwc-select id="project-select" value="${this.currentProject}"
                 @selected="${(e) => this.changeGroup(e)}">
-              <div id="project-sort-box" class="horizontal layout center space-between" style="padding-left:16px;padding-right:10px;">
+              <div id="project-sort-box" class="horizontal layout center space-between">
                 <div>${_text('webui.menu.SelectProject')}</div>
                 <span class="flex"></span>
                 <mwc-icon-button-toggle on onIcon="arrow_drop_up" offIcon="arrow_drop_down"
