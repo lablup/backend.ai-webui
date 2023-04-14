@@ -624,8 +624,9 @@
       "Serve": "Serve"
     },
     "explorer": {
-      "Delete": "Delete...",
-      "UploadFiles": "Upload Files...",
+      "Delete": "Delete",
+      "UploadFiles": "Upload Files",
+      "UploadFolder": "Upload Folder",
       "NewFolder": "New Folder",
       "StopUploading": "Stop Uploading",
       "RenameAFile": "Rename File",
@@ -666,7 +667,8 @@
       "NotEnoughResourceForFileBrowserSession": "No enough resources(cpu: 1 Core, mem: 0.5GB) to create the session for filebrowser. please check the available resources.",
       "NoImagesSupportingFileBrowser": "There is no image supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
       "ReadOnlyFolderOnFileBrowser": "Opening read-only folder in filebrowser, only downloading file(s)/folder(s) are allowed.",
-      "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button."
+      "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button.",
+      "DuplicatedFolderName": "Duplicated folder name"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
