@@ -83,7 +83,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
     if (isAscending) {
       this.projects = [...this.projects.sort()];
     } else {
-      this.projects = [...this.projects.reverse()];
+      this.projects = [...this.projects.sort().reverse()];
     }
   }
 
