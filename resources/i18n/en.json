@@ -1177,7 +1177,8 @@
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "SingleSignOn": {
       "LoginWithSAML": "Login with SAML"
-    }
+    },
+    "EndpointStartWith": "Endpoint must start with http:// or https://."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
