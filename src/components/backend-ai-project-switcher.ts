@@ -85,6 +85,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
     } else {
       this.projects = [...this.projects.sort().reverse()];
     }
+    e.preventDefault();
   }
 
   _refreshUserGroupSelector(): void {
