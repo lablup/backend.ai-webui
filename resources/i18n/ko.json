@@ -1261,7 +1261,13 @@
     "ImportGitlabRepo": "Gitlab 저장소 가져오기",
     "GitlabRepoWillBeFolder": "가져온 Gitlab 저장소는 폴더로 변환되며, 세션을 시작할 때 마운트할 수 있습니다.",
     "GitlabURL": "Gitlab 주소",
-    "GitlabDefaultBranch": "Gitlab 브랜치 이름"
+    "GitlabDefaultBranch": "Gitlab 브랜치 이름",
+    "GithubBadRequest": "Github Bad Request",
+    "GithubBadCredentials": "GithubBadCredentials",
+    "GitlabBadRequest": "GitlabBadRequest",
+    "GitlabBadCredentials": "GitlabBadCredentials",
+    "GitlabAPILimitError": "GitlabAPILimitError",
+    "GitlabAPIEtcError": "GitlabAPIEtcError"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "이번달 통계",

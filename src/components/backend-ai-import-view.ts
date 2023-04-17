@@ -295,6 +295,10 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.split('.git')[0];
     }
 
+
+    // if github.com url 
+    // else github enterprise?
+
     if (url.includes('/tree')) { // Branch.
       const version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
       const nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
@@ -313,9 +317,51 @@ export default class BackendAIImport extends BackendAIPage {
         return false;
       }
     } else {
+      // github.com
+      // otherwise ( github enterprise)
       name = url.split('/').slice(-1)[0]; // TODO: can be undefined.
       const repoUrl = `https://api.github.com/repos` + new URL(url).pathname;
-      const getRepoUrl = async () => {
+
+
+      return this.fetchGithubUrlWithOptionalHeaders(repoUrl).then((result) => {
+        tree = result;
+        url = url.replace('https://github.com', 'https://codeload.github.com');
+        url = url + '/zip/' + tree;
+        const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+        if (['http', 'https'].includes(protocol)) {
+          return this.importRepoFromURL(url, name, service);
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importNotebookMessage = this.notification.text;
+          this.notification.show();
+          return false;
+        }
+      }).catch((e) => { // check exception
+        console.log('getRepoUrl().then()');
+        console.log(e);
+        switch (e) {
+        case 'WrongURLType':
+          this.notification.text = _text('import.WrongURLType');
+          break;
+        case 'GithubInternalError':
+          this.notification.text = _text('import.GithubInternalError');
+          break;
+        default:
+          if (e.indexOf('|') !== -1) {
+            this.notification.text = _text('import.GithubAPILimitError');
+          } else {
+            this.notification.text = _text('import.GithubAPIEtcError');
+          }
+          break;
+        }
+        this.importNotebookMessage = this.notification.text;
+        this.notification.show();
+        return false;
+      });
+    }
+
+/*
+      const getRepoUrla = async () => {
         // TODO need refactor
         try {
           const response = await fetch(repoUrl);
@@ -343,7 +389,8 @@ export default class BackendAIImport extends BackendAIPage {
         } catch (error) {
           throw error;
         }
-      };
+      };*/
+/*
       return getRepoUrl().then((result) => {
         tree = result;
         url = url.replace('https://github.com', 'https://codeload.github.com');
@@ -358,6 +405,8 @@ export default class BackendAIImport extends BackendAIPage {
           return false;
         }
       }).catch((e) => { // check exception
+        console.log('getRepoUrl().then()');
+        console.log(e);
         switch (e) {
         case 'WrongURLType':
           this.notification.text = _text('import.WrongURLType');
@@ -377,6 +426,81 @@ export default class BackendAIImport extends BackendAIPage {
         this.notification.show();
         return false;
       });
+    }*/
+  }
+
+  async fetchGithubUrlWithOptionalHeaders(url: string, headers?: HeadersInit) {
+    try {
+      const response = await fetch(url, headers ? { headers } : undefined);
+      if (response.status === 200) {
+        const responseJson = await response.json();
+        return responseJson.default_branch;
+      } else if (response.status === 400) { // api parameter is wrong
+        throw 'GithubBadRequest';
+      } else if (response.status === 401) { // wrong token 
+        throw 'GithubBadCredentials'
+      } else if (response.status === 404) {
+        throw 'WrongURLType';
+      } else if (response.status === 403 || response.status === 429) { // forbidden & Too Many Requests
+        const limitCnt = response.headers.get('x-ratelimit-limit');
+        const limitUsedCnt = response.headers.get('x-ratelimit-used');
+        const limitRemainingCnt = response.headers.get('x-ratelimit-remaining');
+        console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
+        if (limitRemainingCnt === '0') {
+          throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+        } else {
+          throw 'GithubAPIEtcError';
+        }
+      } else if (response.status === 500) {
+        throw 'GithubInternalError';
+      } else {
+        console.log(`error statusCode: ${response.status}, body: ${response.text}`);
+        throw 'GithubAPIEtcError';
+      }
+    } catch (error) {
+      console.log("fetch url none header error");
+      console.log(error)
+      if (error === 'WrongURLType') {
+        console.log('Anomaly detected. Retrying with headers...');
+        console.log(headers);
+        if (typeof headers === 'undefined') {
+          headers = {
+            "Authorization": "Bearer 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",
+            "X-GitHub-Api-Version": "2022-11-28" 
+          };
+          return this.fetchGithubUrlWithOptionalHeaders(url, headers);
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importNotebookMessage = this.notification.text;
+          this.notification.show();
+          throw error;
+        }
+      } else {
+        switch (error) {
+          case 'WrongURLType':
+            this.notification.text = _text('import.WrongURLType');
+            break;
+          case 'GithubInternalError':
+            this.notification.text = _text('import.GithubInternalError');
+            break;
+          case 'GithubBadRequest':
+            this.notification.text = _text('import.GithubBadRequest');
+            break;
+          case 'GithubBadCredentials':
+            this.notification.text = _text('import.GithubBadCredentials');
+            break;
+          default:
+            if (error.indexOf('|') !== -1) {
+              this.notification.text = _text('import.GithubAPILimitError');
+            } else {
+              this.notification.text = _text('import.GithubAPIEtcError');
+            }
+            break;
+        }
+        this.importNotebookMessage = this.notification.text;
+        this.notification.show();
+        throw error;
+      }
     }
   }
 
@@ -393,39 +517,170 @@ export default class BackendAIImport extends BackendAIPage {
     if (url.substring(url.length - 4, url.length) === '.git') {
       url = url.split('.git')[0];
     }
+    // check 
+    try {
+      let urlobj = new URL(url);
+      const pathname = urlobj.pathname;
+      const splitPaths = pathname.split('/');
+      let id = splitPaths[1];
+      let project = splitPaths[2];
+      let checkRepoUrl = urlobj.protocol + '//' + urlobj.hostname + '/api/v4/projects/' + id + '%2F' + project;
+      return this.fetchGitlabStatusUrlWithOptionalHeaders(checkRepoUrl).then((result) => {
+        let token = '';
+        if (typeof result !== 'undefined' && typeof result.token !== 'undefined' &&  result.token !== null) {
+          token = result.token;
+        }
 
-    if (url.includes('/tree')) { // Branch.
-      const pathname = new URL(url).pathname;
-      const splitPaths = pathname.split( '/' );
-      name = splitPaths[2];
-      tree = splitPaths[splitPaths.length -1];
-      url = url.replace('/tree/', '/archive/');
-      url += '/' + name + '-' + tree + '.zip';
-      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-      if (['http', 'https'].includes(protocol)) {
-        return this.importRepoFromURL(url, name, service);
+        if (url.includes('/tree')) { // Branch.
+          const pathname = new URL(url).pathname;
+          const splitPaths = pathname.split( '/' );
+          name = splitPaths[2];
+          tree = splitPaths[splitPaths.length -1];
+          url = url.replace('/tree/', '/archive/');
+          url += '/' + name + '-' + tree + '.zip';
+          const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+          if (['http', 'https'].includes(protocol)) {
+            return this.importRepoFromURL(url, name, service, token);
+          } else {
+            this.notification.text = _text('import.WrongURLType');
+            this.importNotebookMessage = this.notification.text;
+            this.notification.show();
+            return false;
+          }
+        } else {
+          name = url.split('/').slice(-1)[0];
+          url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip';
+          const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+          if (['http', 'https'].includes(protocol)) {
+            return this.importRepoFromURL(url, name, service, token);
+          } else {
+            this.notification.text = _text('import.WrongURLType');
+            this.importGitlabMessage = this.notification.text;
+            this.notification.show();
+            return false;
+          }
+        }
+      });
+    } catch (error) {
+      console.log("getGitlabRepoFromURL error");
+      console.log(error);
+      switch (error) {
+        case 'WrongURLType':
+          this.notification.text = _text('import.WrongURLType');
+          break;
+        case 'GitlabInternalError':
+          this.notification.text = _text('import.GitlabInternalError');
+          break;
+        case 'GitlabBadRequest':
+          this.notification.text = _text('import.GitlabBadRequest');
+          break;
+        case 'GitlabBadCredentials':
+          this.notification.text = _text('import.GitlabBadCredentials');
+          break;
+        default:
+          this.notification.text = _text('import.GitlabAPIEtcError');
+          break;
+      }
+      this.importNotebookMessage = this.notification.text;
+      this.notification.show();
+      return false;
+    }
+  }
+
+  async fetchGitlabStatusUrlWithOptionalHeaders(url: string, headers?: HeadersInit, token?: string) {
+    try {
+      const response = await fetch(url, headers ? {headers } : undefined);
+      switch(response.status) {
+        case 200:
+          const responseJson = await response.json();
+          let useAccessToken = false;
+          if (typeof headers !== 'undefined') {
+            useAccessToken = true;
+          }
+          let obj = {
+            'default_branch': responseJson.default_branch,
+            'useAccessToken': useAccessToken,
+            'token': token
+          };
+          return obj;
+        case 401:  // api parameter is wrong (has token)
+          throw 'GitlabBadRequest';
+        case 404:
+          throw 'WrongURLType';
+        case 500:
+          throw 'GitlabInternalError';
+        default:
+          console.log(`error statusCode: ${response.status}, body: ${response.text}`);
+          throw 'GitlabAPIEtcError';
+      }
+
+    } catch (error) {
+      console.log("gitlab fetch url none header error");
+      console.log("error");
+      if (error === 'WrongURLType') {
+        console.log('Anomaly detected. Retrying with headers...');
+        let isExistToken = false;
+        if (typeof headers === 'undefined') {
+          await globalThis.backendaiclient.userConfig.fetchGitToken().then((resp) => {
+            for (let i = 0; i < resp.length; i++) {
+              if (resp[i].domain === new URL(url).hostname ) {
+                isExistToken = true;
+                token = resp[i].token;
+                headers = {
+                  "Authorization": "Bearer " + resp[i].token
+                }
+              }
+            }
+          }).catch((err) => {
+            this.spinner.hide();
+            console.log(err);
+            if (err && err.message) {
+              this.notification.text = PainKiller.relieve(err.title);
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+              throw err;
+            }
+          });
+          if (isExistToken) {
+            return this.fetchGitlabStatusUrlWithOptionalHeaders(url, headers, token);
+          } else {
+            this.notification.text = _text('import.WrongURLType');
+            this.importNotebookMessage = this.notification.text;
+            this.notification.show();
+            throw error;
+          }
+        } else {
+          this.notification.text = _text('import.WrongURLType');
+          this.importNotebookMessage = this.notification.text;
+          this.notification.show();
+          throw error;
+        }
       } else {
-        this.notification.text = _text('import.WrongURLType');
+        switch (error) {
+          case 'WrongURLType':
+            this.notification.text = _text('import.WrongURLType');
+            break;
+          case 'GitlabInternalError':
+            this.notification.text = _text('import.GitlabInternalError');
+            break;
+          case 'GitlabBadCredentials':
+            this.notification.text = _text('import.GitlabBadCredentials');
+            break;
+          case 'GitlabBadRequest':
+            this.notification.text = _text('import.GitlabBadRequest');
+            break;
+          default:
+            this.notification.text = _text('import.GitlabAPIEtcError');
+            break;
+        }
         this.importNotebookMessage = this.notification.text;
         this.notification.show();
-        return false;
-      }
-    } else {
-      name = url.split('/').slice(-1)[0];
-      url = url + '/-/archive/' + tree + '/' + name + '-' + tree + '.zip';
-      const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-      if (['http', 'https'].includes(protocol)) {
-        return this.importRepoFromURL(url, name, service);
-      } else {
-        this.notification.text = _text('import.WrongURLType');
-        this.importGitlabMessage = this.notification.text;
-        this.notification.show();
-        return false;
+        throw error;
       }
     }
   }
 
-  async importRepoFromURL(url, folderName, service) {
+  async importRepoFromURL(url, folderName, service, token?) {
     // Create folder to
     const imageResource: Record<string, unknown> = {};
     imageResource['cpu'] = 1;
@@ -438,7 +693,16 @@ export default class BackendAIImport extends BackendAIPage {
     await this._addFolderWithName(folderName, service);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
-    imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
+    let urlHeaderStr = '';
+    if(typeof token !== 'undefined') {
+      if (service === 'github') {
+        urlHeaderStr = '-H X-GitHub-Api-Version: 2022-11-28 -H Authorization: Bearer ' + token;
+      } else if (service === 'gitlab') {
+        urlHeaderStr = '-H Authorization: Bearer ' + token;
+      }
+    }
+    imageResource['bootstrap_script'] = '#!/bin/sh\ncurl ' + urlHeaderStr + ' -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
+
     return globalThis.backendaiclient.get_resource_slots().then(() => {
       // let results = response;
       indicator.set(50, _text('import.Downloading'));
@@ -691,7 +955,6 @@ export default class BackendAIImport extends BackendAIPage {
             <div class="horizontal wrap layout center">
               <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
                              autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})$"
                              maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
                              @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', 'importGitlabMessage')}"></mwc-textfield>
               <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"

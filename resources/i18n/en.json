@@ -1268,7 +1268,13 @@
     "ImportGitlabRepo": "Import Gitlab Repository",
     "GitlabRepoWillBeFolder": "Imported Gitlab repositories are converted to folders and can be mounted when session starts.",
     "GitlabURL": "Gitlab URL",
-    "GitlabDefaultBranch": "Gitlab Branch Name"
+    "GitlabDefaultBranch": "Gitlab Branch Name",
+    "GithubBadRequest": "Github Bad Request",
+    "GithubBadCredentials": "GithubBadCredentials",
+    "GitlabBadRequest": "GitlabBadRequest",
+    "GitlabBadCredentials": "GitlabBadCredentials",
+    "GitlabAPILimitError": "GitlabAPILimitError",
+    "GitlabAPIEtcError": "GitlabAPIEtcError"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Statistics for This Month",
