@@ -652,7 +652,8 @@
       "NotEnoughResourceForFileBrowserSession": "Tidak ada sumber daya yang cukup (cpu: 1 Core, mem: 0.5GB) untuk membuat sesi untuk filebrowser. Mohon periksa sumber daya yang tersedia.",
       "NoImagesSupportingFileBrowser": "Belum ada image yang mendukung file browser. Setidaknya satu atau lebih image yang mendukung file browser diperlukan untuk mengunggah folder.",
       "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
-      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__"
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "UploadFolder": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",
