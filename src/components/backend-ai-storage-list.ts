@@ -806,7 +806,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   id="add-btn"
                   icon="upload_file"
                   ?disabled=${!this.isWritable}
-                  @click="${(e) => this._uploadBtnClick()}">
+                  @click="${(e) => this._uploadBtnClick(e)}">
                   <span>${_t('data.explorer.UploadFiles')}</span>
               </mwc-button>
             </div>
@@ -815,7 +815,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   id="add-folder-btn"
                   icon="drive_folder_upload"
                   ?disabled=${!this.isWritable}
-                  @click="${(e) => this._uploadBtnClick(true)}">
+                  @click="${(e) => this._uploadBtnClick(e, true)}">
                   <span>${_t('data.explorer.UploadFolder')}</span>
               </mwc-button>
             </div>
@@ -868,8 +868,8 @@ export default class BackendAiStorageList extends BackendAIPage {
               ` : html``}
             </div>
             <div id="dropzone"><p>drag</p></div>
-            <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
-            <input type="file" id="folderInput" @change="${(e) => this._uploadFileChange(e, true)}" hidden webkitdirectory directory multiple>
+            <input type="file" id="fileInput" @change="${(e) => this._uploadInputChange(e)}" hidden multiple>
+            <input type="file" id="folderInput" @change="${(e) => this._uploadInputChange(e)}" hidden webkitdirectory directory multiple>
             ${this.uploadFilesExist ? html`
             <div class="horizontal layout start-justified">
               <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
@@ -2329,16 +2329,12 @@ export default class BackendAiStorageList extends BackendAIPage {
     this._clearExplorer(tempBreadcrumb.join('/'), this.explorer.id, false);
   }
 
-  _mkdir(e = null, forceMkdir = false) {
+  _mkdir(e) {
     const newfolder = this.mkdirNameInput.value;
     const explorer = this.explorer;
     this.mkdirNameInput.reportValidity();
-
-    if (forceMkdir || this.mkdirNameInput.checkValidity()) {
+    if (this.mkdirNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
-        if (forceMkdir) {
-          return;
-        }
         if (err & err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -2450,7 +2446,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
 
         for (let i = 0; i < this.uploadFiles.length; i++) {
-          this.upload(this.uploadFiles[i]);
+          this.fileUpload(this.uploadFiles[i]);
           this._clearExplorer();
         }
       } else {
@@ -2463,9 +2459,10 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Create MouseEvents when cloud_upload button is clicked.
    *
+   * @param {Event} e - click the cloud_upload button.
    * @param {Boolean} isFolder - set event element as #folderInput if it is true.
    * */
-  _uploadBtnClick(isFolder = false) {
+  _uploadBtnClick(e, isFolder = false) {
     const elem = isFolder ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     if (elem && document.createEvent) { // sanity check
       const evt = document.createEvent('MouseEvents');
@@ -2474,21 +2471,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
-  getRelativeDirectoryPath(file: File) {
-    const filePath = file.webkitRelativePath || file.name;
-    const fileName = file.name;
-    const fileNameIndex = filePath.lastIndexOf(fileName);
-    const relativePath = filePath.substring(0, fileNameIndex - 1);
-    return relativePath;
-  }
 
   /**
    * If file is added, call the fileUpload() function and initialize fileInput string
    *
    * @param {Event} e - add file to the input element
-   * @param {Boolean} isFolder - set event element as #folderInput if it is true.
    * */
-  _uploadFileChange(e, isFolder = false) {
+  _uploadInputChange(e) {
     const length = e.target.files.length;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
@@ -2528,10 +2517,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     for (let i = 0; i < this.uploadFiles.length; i++) {
-      this.upload(this.uploadFiles[i]);
+      this.fileUpload(this.uploadFiles[i]);
     }
-    (this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement).value = '';
-    (this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement).value = '';
+    const inputElement = e.target.id === 'fileInput' ? this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement : this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement;
+    inputElement.value = '';
   }
 
   /**
@@ -2558,22 +2547,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    *
    * @param {Object} fileObj - file object
    * */
-  upload(fileObj) {
+  fileUpload(fileObj) {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
     const path = this.explorer.breadcrumb.concat(fileObj.webkitRelativePath || fileObj.name).join('/');
-    // mkdir if folder doesn't exist.
-    if (fileObj.webkitRelativePath.length > 0 && ![...this.explorer.files].includes(this.getRelativeDirectoryPath(fileObj))) {
-      this.mkdirNameInput.value = this.getRelativeDirectoryPath(fileObj);
-      try {
-        this._validatePathName();
-        this._mkdir(null, true);
-      } catch {
-        return;
-      } finally {
-        this.mkdirNameInput.value = '';
-      }
-    }
     const job = globalThis.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then((url) => {
       const start_date = new Date().getTime();
