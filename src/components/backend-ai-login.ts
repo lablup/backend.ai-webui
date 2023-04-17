@@ -1040,7 +1040,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
   private _showSignupDialog() {
-    this.api_endpoint = this.apiEndpointInput.value || this.api_endpoint.trim();
+    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '') || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
       this.notification.show();
