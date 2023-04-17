@@ -815,7 +815,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                   id="add-folder-btn"
                   icon="drive_folder_upload"
                   ?disabled=${!this.isWritable}
-                  @click="${(e) => this._uploadBtnClick(e, true)}">
+                  @click="${(e) => this._uploadBtnClick(e)}">
                   <span>${_t('data.explorer.UploadFolder')}</span>
               </mwc-button>
             </div>
@@ -2460,9 +2460,9 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Create MouseEvents when cloud_upload button is clicked.
    *
    * @param {Event} e - click the cloud_upload button.
-   * @param {Boolean} isFolder - set event element as #folderInput if it is true.
    * */
-  _uploadBtnClick(e, isFolder = false) {
+  _uploadBtnClick(e) {
+    const isFolder = e.target.id === 'add-folder-btn';
     const elem = isFolder ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     if (elem && document.createEvent) { // sanity check
       const evt = document.createEvent('MouseEvents');
