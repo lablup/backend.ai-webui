@@ -869,7 +869,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
             <div id="dropzone"><p>drag</p></div>
             <input type="file" id="fileInput" @change="${(e) => this._uploadInputChange(e)}" hidden multiple>
-            <input type="file" id="folderInput" @change="${(e) => this._uploadInputChange(e)}" hidden webkitdirectory directory multiple>
+            <input type="file" id="folderInput" @change="${(e) => this._uploadInputChange(e)}" hidden webkitdirectory mozdirectory directory multiple>
             ${this.uploadFilesExist ? html`
             <div class="horizontal layout start-justified">
               <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
