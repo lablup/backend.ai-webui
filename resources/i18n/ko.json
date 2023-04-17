@@ -1170,7 +1170,8 @@
     "TooManyAttempt": "너무 많은 로그인 시도가 있었습니다. 잠시동안 로그인 시도가 차단되었습니다.",
     "SingleSignOn": {
       "LoginWithSAML": "SAML 로그인"
-    }
+    },
+    "EndpointStartWith": "http:// 혹은 https:// 로 시작해야 합니다."
   },
   "signup": {
     "SignupBETA": "가입 (베타 초대 대상)",

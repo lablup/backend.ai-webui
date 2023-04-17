@@ -1040,7 +1040,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
   private _showSignupDialog() {
-    this.api_endpoint = this.api_endpoint.trim();
+    this.api_endpoint = this.apiEndpointInput.value || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
       this.notification.show();
@@ -1671,6 +1671,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </mwc-menu>
                   <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
                       maxLength="2048" label="${_t('login.Endpoint')}"
+                      pattern="^https?:\/\/(.*)" auto-validate validationMessage="${_text('login.EndpointStartWith')}"
                       value="${this.api_endpoint}"
                       @keyup="${this._submitIfEnter}">
                   </mwc-textfield>
