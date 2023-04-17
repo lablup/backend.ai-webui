@@ -5,12 +5,12 @@
 
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -33,6 +33,7 @@ import '@material/mwc-textarea/mwc-textarea';
 import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
+import './backend-ai-multi-select';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -67,11 +68,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @property({type: Array}) resourceGroups;
   @property({type: Array}) schedulerTypes;
   @property({type: Object}) schedulerOpts;
-  @property({type: Object}) allowedSessionTypesObjects = {
-    'interactive': 'interactive',
-    'batch': 'batch',
-    'both': 'both (interactive, batch)'
-  };
+  @state() private allowedSessionTypes = ['interactive', 'batch', 'inference'];
+  // {
+  //   'interactive': 'interactive',
+  //   'batch': 'batch',
+  //   'inference': 'inference',
+  //   'general': 'general (interactive, batch)',
+  //   'all': 'all (interactive, batch, inference)'
+  // };
   @property({type: Boolean}) enableSchedulerOpts = false;
   @property({type: Boolean}) enableWSProxyAddr = false;
   @property({type: Number}) functionCount = 0;
@@ -81,7 +85,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   @query('#resource-group-scheduler') resourceGroupSchedulerSelect!: Select;
   @query('#resource-group-active') resourceGroupActiveSwitch!: Switch;
   @query('#resource-group-wsproxy-address') resourceGroupWSProxyaddressInput!: TextField;
-  @query('#allowed-session-types') allowedSessionTypesSelect!: Select;
+  @query('#allowed-session-types') private allowedSessionTypesSelect;
   @query('#num-retries-to-skip') numberOfRetriesToSkip!: TextField;
   @query('#pending-timeout') timeoutInput!: TextField;
   @query('#delete-resource-group') deleteResourceGroupInput!: TextField;
@@ -213,7 +217,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 225px);
+          height: calc(100vh - 228px);
         }
 
         vaadin-item {
@@ -538,8 +542,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _initializeCreateSchedulerOpts() {
     const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
-
-    this.allowedSessionTypesSelect.value= 'both';
+    this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
+    this.allowedSessionTypesSelect.selectedItemList = [];
     schedulerOptsInputForms.checked = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
@@ -556,18 +560,21 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * @param {Any} value - scheduler option value in selected resource group(scaling group)
    * */
   _initializeModifySchedulerOpts(name = '', value: any) {
-    if ('allowed_session_types' === name) {
-      if (value.includes('interactive') && value.includes('batch')) {
-        this.allowedSessionTypesSelect.value = 'both';
-      } else {
-        this.allowedSessionTypesSelect.value = value[0];
-      }
-    } else if ('pending_timeout' === name) {
-      this.timeoutInput.value = value;
-    } else if ('config' === name) {
-      this, this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
-    } else {
-      // other scheduler options
+    switch(name) {
+      case 'allowed_session_types':
+        this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
+        this.allowedSessionTypesSelect.selectedItemList = value;
+        break;
+      case 'pending_timeout':
+        this.timeoutInput.value = value;
+        break;
+      case 'config':
+        this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
+
+        break;
+      default:
+        // other scheduler options;
+        break;
     }
   }
 
@@ -578,7 +585,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _verifyCreateSchedulerOpts() {
     const validityCheckResult = [
-      this.allowedSessionTypesSelect,
       this.timeoutInput,
       this.numberOfRetriesToSkip
     ].filter((fn) => !fn.checkValidity());
@@ -596,7 +602,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _verifyModifySchedulerOpts() {
     const validityCheckResult = [
-      this.allowedSessionTypesSelect,
       this.timeoutInput,
       this.numberOfRetriesToSkip
     ].filter((fn) => !fn.checkValidity());
@@ -612,12 +617,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * */
   _saveSchedulerOpts() {
     this.schedulerOpts = {};
-
-    if (this.allowedSessionTypesSelect.value === 'both') {
-      this.schedulerOpts['allowed_session_types'] = ['interactive', 'batch'];
-    } else {
-      this.schedulerOpts['allowed_session_types'] = [this.allowedSessionTypesSelect.value];
-    }
+    this.schedulerOpts['allowed_session_types'] = this.allowedSessionTypesSelect.selectedItemList;
     if (this.timeoutInput.value !== '') {
       this.schedulerOpts['pending_timeout'] = this.timeoutInput.value;
     }
@@ -766,36 +766,37 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           ${this.enableSchedulerOpts ? html`
             <wl-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
-              <mwc-select id="allowed-session-types" label="allowed session types" required>
-                ${Object.entries(this.allowedSessionTypesObjects).map(([key, value]) => {
-    return html`<mwc-list-item value="${key}">${value}</mwc-list-item>`;
-  })
-}
-              </mwc-select>
-              <mwc-textfield
-                type="number"
-                value="0"
-                id="pending-timeout"
-                label="pending timeout"
-                placeholder="0"
-                suffix="${_t('resourceGroup.TimeoutSeconds')}"
-                validationMessage="${_t('settings.InvalidValue')}"
-                autoValidate
-                min="0"
-                value="${this.resourceGroupInfo?.scheduler_opts?.pending_timeout ?? ''}"
-              ></mwc-textfield>
-              <mwc-textfield
-                  type="number"
-                  value="0"
-                  id="num-retries-to-skip"
-                  label="# retries to skip pending session"
-                  placeholder="0"
-                  suffix="${_t('resourceGroup.RetriesToSkip')}"
-                  validationMessage="${_t('settings.InvalidValue')}"
-                  autoValidate
-                  min="0"
-                  value="${this.resourceGroupInfo?.scheduler_opts?.config?.num_retries_to_skip ?? ''}"
+              <div class="vertical layout flex">
+                <backend-ai-multi-select
+                    open-up
+                    id="allowed-session-types"
+                    label="${_t('resourceGroup.AllowedSessionTypes')}"
+                    style="width:100%;"></backend-ai-multi-select>
+                <mwc-textfield
+                    type="number"
+                    value="0"
+                    id="pending-timeout"
+                    label="pending timeout"
+                    placeholder="0"
+                    suffix="${_t('resourceGroup.TimeoutSeconds')}"
+                    validationMessage="${_t('settings.InvalidValue')}"
+                    autoValidate
+                    min="0"
+                    value="${this.resourceGroupInfo?.scheduler_opts?.pending_timeout ?? ''}"
                 ></mwc-textfield>
+                <mwc-textfield
+                    type="number"
+                    value="0"
+                    id="num-retries-to-skip"
+                    label="# retries to skip pending session"
+                    placeholder="0"
+                    suffix="${_t('resourceGroup.RetriesToSkip')}"
+                    validationMessage="${_t('settings.InvalidValue')}"
+                    autoValidate
+                    min="0"
+                    value="${this.resourceGroupInfo?.scheduler_opts?.config?.num_retries_to_skip ?? ''}"
+                  ></mwc-textfield>
+              </div>
             </wl-expansion>
             ` : html``}
         </div>
@@ -884,32 +885,32 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                   <div role="listbox">
                     ${this.enableSchedulerOpts ? html`
                       ${Object.entries(JSON.parse(this.resourceGroupInfo?.scheduler_opts)).map(([key, value]: any) => {
-    if (key === 'allowed_session_types') {
-      return html`
-                                  <vaadin-item>
-                                    <div><strong>allowed session types</strong></div>
-                                    <div class="scheduler-option-value">${value.join(', ')}</div>
-                                  </vaadin-item>`;
-    } else if (key === 'pending_timeout') {
-      return html`
-      <vaadin-item>
-      <div><strong>pending timeout</strong></div>
-      <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
-    </vaadin-item>`;
-    } else if (key === 'config') {
-      if (value['num_retries_to_skip']) {
-        return html`
-        <vaadin-item>
-        <div><strong># retries to skip pending session</strong></div>
-        <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
-      </vaadin-item>`;
-      } else {
-        return '';
-      }
-    } else {
-      return '';
-    }
-  })}
+                        if (key === 'allowed_session_types') {
+                          return html`
+                                                      <vaadin-item>
+                                                        <div><strong>allowed session types</strong></div>
+                                                        <div class="scheduler-option-value">${value.join(', ')}</div>
+                                                      </vaadin-item>`;
+                        } else if (key === 'pending_timeout') {
+                          return html`
+                          <vaadin-item>
+                          <div><strong>pending timeout</strong></div>
+                          <div class="scheduler-option-value">${value + ' ' + _text('resourceGroup.TimeoutSeconds')}</div>
+                        </vaadin-item>`;
+                        } else if (key === 'config') {
+                          if (value['num_retries_to_skip']) {
+                            return html`
+                            <vaadin-item>
+                            <div><strong># retries to skip pending session</strong></div>
+                            <div class="scheduler-option-value">${value['num_retries_to_skip'] + ' ' + _text('resourceGroup.RetriesToSkip')}</div>
+                          </vaadin-item>`;
+                          } else {
+                            return '';
+                          }
+                        } else {
+                          return '';
+                        }
+                      })}
                     ` : html``}
                   </div>
                 </div>

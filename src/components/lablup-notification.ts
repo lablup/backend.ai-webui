@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from 'lit-translate';
@@ -39,7 +39,7 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Array}) notifications;
   @property({type: Array}) notificationstore;
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();

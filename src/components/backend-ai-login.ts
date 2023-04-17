@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -103,6 +103,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) always_enqueue_compute_session = false;
   @property({type: Boolean}) allowSignupWithoutConfirmation = false;
   @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) allowPreferredPort= false;
   @property({type: Boolean}) maxCPUCoresPerContainer = 64;
   @property({type: Boolean}) maxMemoryPerContainer = 16;
   @property({type: Number}) maxCUDADevicesPerContainer = 16;
@@ -111,6 +112,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) maxFileUploadSize = -1;
   @property({type: Boolean}) maskUserInfo = false;
   @property({type: Boolean}) hideAgents = true;
+  @property({type: Boolean}) enable2FA = false;
+  @property({type: Boolean}) force2FA = false;
   @property({type: Array}) singleSignOnVendors: string[] = [];
   @property({type: Array}) allow_image_list;
   @property({type: Array}) endpoints;
@@ -134,6 +137,7 @@ export default class BackendAILogin extends BackendAIPage {
   @query('#id_secret_key') secretKeyInput!: TextField;
   @query('#otp') otpInput!: TextField;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#waiting-animation') waitingAnimation!: HTMLDivElement;
 
   constructor() {
     super();
@@ -326,7 +330,7 @@ export default class BackendAILogin extends BackendAIPage {
           text-align: center;
         }
 
-        .waiting-animation {
+        #waiting-animation {
           top: 20%;
           left: 40%;
           position: absolute;
@@ -716,6 +720,22 @@ export default class BackendAILogin extends BackendAIPage {
         value: (generalConfig?.hideAgents),
       } as ConfigValueObject) as boolean;
 
+    // Enable enable 2FA flag
+    this.enable2FA = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.enable2FA),
+      } as ConfigValueObject) as boolean;
+
+    // Enable force 2FA flag
+    this.force2FA = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.force2FA),
+      } as ConfigValueObject) as boolean;
+
     // Enable pipeline flag
     // FIXME: temporally disable pipeline feature in manual
     this._enablePipeline = this._getConfigValueByExists(generalConfig,
@@ -767,6 +787,14 @@ export default class BackendAILogin extends BackendAIPage {
        defaultValue: false,
        value: resourcesConfig?.openPortToPublic,
      } as ConfigValueObject) as boolean;
+
+    // Preferred port flag
+    this.allowPreferredPort = this._getConfigValueByExists(resourcesConfig,
+    {
+      valueType: 'boolean',
+      defaultValue: false,
+      value: resourcesConfig?.allowPreferredPort,
+    } as ConfigValueObject) as boolean;
 
     // Max CPU cores per container number
     this.maxCPUCoresPerContainer = this._getConfigValueByExists(resourcesConfig,
@@ -1012,7 +1040,7 @@ export default class BackendAILogin extends BackendAIPage {
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
   private _showSignupDialog() {
-    this.api_endpoint = this.api_endpoint.trim();
+    this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '') || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
       this.notification.show();
@@ -1196,7 +1224,7 @@ export default class BackendAILogin extends BackendAIPage {
           return;
         }
 
-        this.client?.login(this.otp).then((response) => {
+        this.client?.login(this.otp).then(async (response) => {
           if (response === false) {
             this.open();
             if (this.user_id !== '' && this.password !== '') {
@@ -1208,7 +1236,11 @@ export default class BackendAILogin extends BackendAIPage {
             this.open();
             if (response.fail_reason == 'OTP not provided') {
               this.otpRequired = true;
+              await this.otpInput.updateComplete;
+              this.otpInput.focus();
+
               this._disableUserInput();
+              this.waitingAnimation.style.display = 'none';
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
@@ -1422,6 +1454,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.allow_manual_image_name_for_session = this.allow_manual_image_name_for_session;
       globalThis.backendaiclient._config.always_enqueue_compute_session = this.always_enqueue_compute_session;
       globalThis.backendaiclient._config.openPortToPublic = this.openPortToPublic;
+      globalThis.backendaiclient._config.allowPreferredPort = this.allowPreferredPort;
       globalThis.backendaiclient._config.maxCPUCoresPerContainer = this.maxCPUCoresPerContainer;
       globalThis.backendaiclient._config.maxMemoryPerContainer = this.maxMemoryPerContainer;
       globalThis.backendaiclient._config.maxCUDADevicesPerContainer = this.maxCUDADevicesPerContainer;
@@ -1434,6 +1467,8 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
+      globalThis.backendaiclient._config.enable2FA = this.enable2FA;
+      globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1521,7 +1556,7 @@ export default class BackendAILogin extends BackendAIPage {
       this.apiKeyInput.disabled = true;
       this.secretKeyInput.disabled = true;
     }
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'flex';
+    this.waitingAnimation.style.display = 'flex';
   }
 
   private _enableUserInput() {
@@ -1529,7 +1564,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.passwordInput.disabled = false;
     this.apiKeyInput.disabled = false;
     this.secretKeyInput.disabled = false;
-    (this.shadowRoot?.querySelector('.waiting-animation') as HTMLDivElement).style.display = 'none';
+    this.waitingAnimation.style.display = 'none';
   }
 
   private _showEndpointDescription(e?) {
@@ -1567,7 +1602,7 @@ export default class BackendAILogin extends BackendAIPage {
             ` : html``}
           </h3>
           <div class="login-form">
-            <div class="waiting-animation horizontal layout wrap">
+            <div id="waiting-animation" class="horizontal layout wrap">
               <div class="sk-folding-cube">
                 <div class="sk-cube1 sk-cube"></div>
                 <div class="sk-cube2 sk-cube"></div>
@@ -1636,6 +1671,7 @@ export default class BackendAILogin extends BackendAIPage {
                   </mwc-menu>
                   <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
                       maxLength="2048" label="${_t('login.Endpoint')}"
+                      pattern="^https?:\/\/(.*)" auto-validate validationMessage="${_text('login.EndpointStartWith')}"
                       value="${this.api_endpoint}"
                       @keyup="${this._submitIfEnter}">
                   </mwc-textfield>

@@ -1,15 +1,16 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 
 import {customElement, property, query} from 'lit/decorators.js';
-import {LitElement, html, CSSResultGroup} from 'lit';
+import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
 import '@material/mwc-select';
 import '@material/mwc-icon-button';
 
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
@@ -50,6 +51,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Boolean}) isUserInfoMaskEnabled = true;
   @property({type: Boolean}) totpSupported = false;
   @property({type: Boolean}) totpActivated = false;
+  @property({type: Boolean}) forceTotp = false;
   @property({type: String}) totpKey = '';
   @property({type: String}) totpUri = '';
 
@@ -72,9 +74,24 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning
+      IronPositioning,
+      css`
+        span.dropdown-menu-name {
+          display: inline-block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 135px;
+        }
+
+        #dropdown-area {
+          position: relative;
+          right: 50px;
+        }
+      `,
     ];
   }
+
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
@@ -87,6 +104,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     }
   }
+
   /**
    * Refresh the user information panel.
    */
@@ -105,7 +123,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = this.fullName ? this.fullName : this.userId;
+    let name = (this.fullName.replace(/\s+/g, '').length > 0) ? this.fullName : this.userId;
     // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
@@ -143,12 +161,22 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showTotpActivated() {
-    this.totpSupported = await globalThis.backendaiclient.supports['2FA-authentication'];
+    this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
     if (this.totpSupported) {
-      const userInfo = await globalThis.backendaiclient.user.get(
+      const userInfo = await globalThis.backendaiclient?.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
       );
       this.totpActivated = userInfo.user.totp_activated;
+      this.forceTotp = globalThis.backendaiclient?.supports('force2FA') && globalThis.backendaiclient?._config.force2FA;
+      const properties = ['open', 'noclosebutton', 'persistent', 'escapeKeyAction', 'scrimClickAction'];
+      if (this.forceTotp && !this.totpActivated) {
+        properties.forEach((property) => {
+          this.totpSetupDialog?.setAttribute(property, '');
+        });
+        this._openTotpSetupDialog();
+      } else {
+        this.totpSetupDialog?.removeAttribute(properties.join(' '));
+      }
     }
   }
 
@@ -465,7 +493,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       this.notification.show();
       await this._showTotpActivated();
       this._hideTotpSetupDialog();
-      this._openUserPrefDialog();
+      if (!this.forceTotp) {
+        this._openUserPrefDialog();
+      }
     } catch (e) {
       this.notification.text = _text('totp.InvalidTotpCode');
       this.notification.show();
@@ -481,7 +511,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal flex center layout">
-        <div class="vertical layout center" style="position:relative;right:50px;">
+        <div class="vertical layout center" id="dropdown-area">
           <mwc-menu id="dropdown-menu" class="user-menu">
             ${this.domain !== 'default' && this.domain !== '' ? html`
             <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
@@ -490,7 +520,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
             ` : html``}
             <mwc-list-item class="horizontal layout start center" style="pointer-events:none;">
                 <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
-                <span class="dropdown-menu-name">${this._getUsername()}</span>
+                 <span class="dropdown-menu-name">${this._getUsername()}</span>
             </mwc-list-item>
             <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
                 <mwc-icon class="dropdown-menu">email</mwc-icon>
@@ -588,7 +618,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
               type="password" maxLength="64"
               auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-              pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+              pattern=${BackendAiCommonUtils.passwordRegex}
               @change="${this._validatePassword}">
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"

@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
@@ -44,7 +44,7 @@ import './pipeline-list';
 export default class PipelineView extends BackendAIPage {
   public shadowRoot: any; // ShadowRoot
   @property({type: String}) _activeTab = 'pipeline-list';
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) isNodeSelected = false;
   @property({type: Object}) selectedNode = Object();
   @property({type: PipelineInfoExtended}) pipelineInfo;
@@ -83,7 +83,7 @@ export default class PipelineView extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        mwc-button { 
+        mwc-button {
           margin: 10px;
         }
 
@@ -95,7 +95,7 @@ export default class PipelineView extends BackendAIPage {
           font-size: 1.2rem;
           margin: auto 10px;
           color: #555;
-          min-width: 100px; 
+          min-width: 100px;
         }
 
         pipeline-flow {
@@ -320,7 +320,7 @@ export default class PipelineView extends BackendAIPage {
     // FIXME: type casting `any` for suppress undefined posibility error
     const parsedPipelineInfo: any = PipelineUtils._parsePipelineInfo(this.pipelineInfo);
     // convert object to string (dataflow)
-    Object.assign(parsedPipelineInfo.yaml, {tasks: PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group'])})    
+    Object.assign(parsedPipelineInfo.yaml, {tasks: PipelineUtils._parseTaskListInfo(this.pipelineInfo.dataflow, parsedPipelineInfo.yaml.environment['scaling-group'])})
     this.pipelineInfo = PipelineUtils._stringifyPipelineInfo(parsedPipelineInfo);
   }
 
@@ -461,7 +461,7 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Render Run Pipeline dialog with current(selected) pipeline
-   * 
+   *
    * @returns {string} stringified html
    */
   renderRunPipelineDialogTemplate() {
@@ -482,7 +482,7 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Render Edit Pipeline dialog
-   * 
+   *
    * @returns {string} stringified html
    */
   renderEditPipelineDialogTemplate() {
@@ -502,7 +502,7 @@ export default class PipelineView extends BackendAIPage {
 
   /**
    * Render Pipeline Task dialog (Add / Edit)
-   * 
+   *
    * @returns {string} stringified html
    */
   renderPipelineTaskDialogTemplate() {

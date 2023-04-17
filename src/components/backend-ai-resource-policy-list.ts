@@ -1,6 +1,6 @@
 /**
  @license
-Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 
 import {get as _text, translate as _t} from 'lit-translate';
@@ -15,10 +15,10 @@ import '@material/mwc-button/mwc-button';
 import '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import 'weightless/button';
 import 'weightless/icon';
@@ -52,7 +52,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
   @property({type: Object}) keypairs = {};
   @property({type: Array}) resourcePolicy = [];
   @property({type: Object}) keypairInfo = {};
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: String}) condition = 'active';
   @property({type: Array}) resource_policy_names;
   @property({type: String}) current_policy_name = '';
@@ -105,7 +105,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 226px);
+          height: calc(100vh - 229px);
         }
 
         wl-icon.indicator {
@@ -408,15 +408,15 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     const resourceValue = this._markIfUnlimited(value, enableUnitConvert);
     resourceName = resourceName.toLowerCase();
     switch (resourceName) {
-      case 'cpu':
-      case 'cuda_device':
-      case 'max_vfolder_count':
-        decimalPoint = 0;
-        break;
-      case 'mem':
-      case 'cuda_shares':
-      case 'max_vfolder_size':
-        decimalPoint = 1;
+    case 'cpu':
+    case 'cuda_device':
+    case 'max_vfolder_count':
+      decimalPoint = 0;
+      break;
+    case 'mem':
+    case 'cuda_shares':
+    case 'max_vfolder_size':
+      decimalPoint = 1;
     }
     return ['∞', '-'].includes(resourceValue) ? resourceValue : Number(resourceValue).toFixed(decimalPoint);
   }
@@ -434,12 +434,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">developer_board</wl-icon>
-            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cpu, false ,'cpu')}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cpu, false, 'cpu')}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">memory</wl-icon>
-            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.mem, false ,'mem')}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.mem, false, 'mem')}</span>
             <span class="indicator">GB</span>
           </div>
         </div>
@@ -456,7 +456,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     html`
           <div class="layout horizontal configuration">
             <wl-icon class="fg green indicator">view_module</wl-icon>
-            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_shares, false,'cuda_shares')}</span>
+            <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_shares, false, 'cuda_shares')}</span>
             <span class="indicator">fGPU</span>
           </div>
 ` : html``}
@@ -670,7 +670,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     this._updateInputStatus(this.vfolderCapacityLimit);
 
     this.vfolderCountLimitInput.value = resourcePolicy.max_vfolder_count;
-    this.vfolderCapacityLimit.value = this._byteToGB(resourcePolicy.max_vfolder_size, 1);
+    this.vfolderCapacityLimit.value = BackendAIResourcePolicyList.bytesToGB(resourcePolicy.max_vfolder_size, 1);
     this.allowed_vfolder_hosts = allowedStorageHosts;
   }
 
@@ -739,22 +739,34 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     return this.condition === 'active';
   }
 
-  _byteToGB(value: number, decimals=0) {
-    const gigabyte = Math.pow(2, 30);
-    const unitToFix = Math.pow(10, decimals);
-    return (Math.round(value / gigabyte * unitToFix) / unitToFix).toFixed(decimals);
+
+  /**
+   * Convert the value bytes to GB with decimal point to 0 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GB
+   */
+  static bytesToGB(value: number, decimalPoint = 0) {
+    const unitToFix = Math.pow(10, decimalPoint);
+    return (Math.round(value / (10 ** 9) * unitToFix) / unitToFix).toFixed(decimalPoint);
   }
 
-  _gBToByte(value = 0) {
-    const gigabyte = Math.pow(2, 30);
-    return Math.round(gigabyte * value);
+  /**
+   * Convert the value GB to bytes
+   *
+   * @param {number} value
+   * @return {number}
+   */
+  static gBToBytes(value = 0) {
+    return Math.round((10 ** 9) * value);
   }
 
   /**
    * Parse simple allowed vfodler host list with fine-grained permissions
    *
    * @param {Array<string>} storageList - storage list selected in `backend-ai-multi-select`
-   * @returns {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
+   * @return {Object<string, array>} - k-v object for storage host based permissions (all-allowed)
    */
   _parseSelectedAllowedVfolderHostWithPermissions(storageList: Array<string>) {
     const obj = {};
@@ -807,7 +819,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
       'max_containers_per_session': this.containerPerSessionLimit.value,
       'idle_timeout': this.idleTimeout.value,
       'max_vfolder_count': this.vfolderCountLimitInput.value,
-      'max_vfolder_size': this._gBToByte(Number(this.vfolderCapacityLimit.value)),
+      'max_vfolder_size': BackendAIResourcePolicyList.gBToBytes(Number(this.vfolderCapacityLimit.value)),
       'allowed_vfolder_hosts': vfolder_hosts,
     };
 
@@ -982,7 +994,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     } else if (['NaN', NaN].includes(value)) {
       return '-';
     } else {
-      return enableUnitConvert ? this._byteToGB(value, 1) : value;
+      return enableUnitConvert ? BackendAIResourcePolicyList.bytesToGB(value, 1) : value;
     }
   }
 

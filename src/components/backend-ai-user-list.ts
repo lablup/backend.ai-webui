@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
@@ -13,11 +13,11 @@ import './backend-ai-dialog';
 import './backend-ai-list-status';
 import './lablup-grid-sort-filter-column';
 
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-icons/vaadin-icons';
-import '@vaadin/vaadin-item/vaadin-item';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
@@ -35,6 +35,7 @@ import '@material/mwc-switch';
 import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -131,7 +132,7 @@ export default class BackendAIUserList extends BackendAIPage {
         vaadin-grid {
           border: 0;
           font-size: 14px;
-          height: calc(100vh - 226px);
+          height: calc(100vh - 229px);
         }
 
         backend-ai-dialog h4,
@@ -255,14 +256,14 @@ export default class BackendAIUserList extends BackendAIPage {
     }
     // If disconnected
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async() => {
-        this.totpSupported = globalThis.backendaiclient?.supports['2FA-authentication'];
+      document.addEventListener('backend-ai-connected', async () => {
+        this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
         this._refreshUserData();
         this.isAdmin = globalThis.backendaiclient.is_admin;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       }, true);
     } else { // already connected
-      this.totpSupported = globalThis.backendaiclient?.supports['2FA-authentication'];
+      this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
@@ -348,7 +349,8 @@ export default class BackendAIUserList extends BackendAIPage {
 
   _signoutUser() {
     globalThis.backendaiclient.user.delete(this.signoutUserName).then((response) => {
-      this.notification.text = PainKiller.relieve('Signout finished.');
+      this.notification.text = _text('credential.SignoutSeccessfullyFinished');
+      this.notification.show();
       this._refreshUserData();
       this.signoutUserDialog.hide();
     }).catch((err) => { // Signout failed
@@ -855,7 +857,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="password"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern=${BackendAiCommonUtils.passwordRegex}
                       maxLength="64"
                       label="${_text('general.NewPassword')}"
                       @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
@@ -869,7 +871,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       id="confirm"
                       autoValidate
                       validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern="^(?=.*[A-Za-z])(?=.*\\d)(?=.*[@$!%*#?&])[A-Za-z\\d@$!%*#?&]{8,}$"
+                      pattern=${BackendAiCommonUtils.passwordRegex}
                       maxLength="64"
                       @change=${() => this._togglePasswordInputRequired()}
                       label="${_text('webui.menu.NewPasswordAgain')}"></mwc-textfield>

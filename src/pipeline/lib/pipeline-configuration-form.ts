@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2022 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement, render} from 'lit';
@@ -16,7 +16,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineInfoExtended, PipelineYAML, 
+import {PipelineInfo, PipelineInfoExtended, PipelineYAML,
         PipelineTask, PipelineTaskDetail, PipelineTaskNode,
         PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
 import {default as YAML} from 'js-yaml';
@@ -59,7 +59,7 @@ export default class PipelineConfigurationForm extends LitElement {
   public shadowRoot: any; // ShadowRoot
   @property({type: Object, attribute: 'configuration-type'}) configurationType = 'pipeline' as ConfigurationType;
   @property({type: Boolean, attribute: 'is-editmode'}) isEditmode = false;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Object}) userInfo;
   @property({type: String}) _activeTab = 'general';
   @property({type: Object}) resourceBroker;
@@ -312,7 +312,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Load pipelineInfo to each of corresponding input field in pipeline dialog
-   * 
+   *
    * @param {PipelineInfo} pipeline
    */
   async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
@@ -359,7 +359,7 @@ export default class PipelineConfigurationForm extends LitElement {
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
-    
+
     // virtual folders
     const enableForceInitializeSelectedVFolder = true;
     this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineYaml.mounts);
@@ -370,7 +370,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Initialize pipeline task configuration on pipeline task creation by applying default values from pipeline
-   * 
+   *
    * @param {PipelineInfo | PipelineInfoExtended} pipeline
    */
   async _initPipelineTaskConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
@@ -421,7 +421,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Load pipelineTask to each of corresponding input field in pipeline task dialog
-   * 
+   *
    * @param {string} pipelineFolder
    * @param {PipelineTask} pipelineTask
    */
@@ -477,7 +477,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Set default vfolder which is created for pipeline only
-   * 
+   *
    * @param {string} pipelineVfolder
    */
   _setDefaultPipelineVfolder(pipelineVfolder: string = '') {
@@ -485,7 +485,7 @@ export default class PipelineConfigurationForm extends LitElement {
   }
 
   /**
-   * Activate tab received from argument and display corresponding tab content 
+   * Activate tab received from argument and display corresponding tab content
    * with hiding/deactivating other tab and tab contents
    *
    * @param {HTMLElement} tab - mwc-tab
@@ -512,7 +512,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Auto-fill input with value
-   * 
+   *
    * @param {any} inputElement - mwc element mostly `mwc-textfield` and `mwc-select`
    * @param {string} value
    */
@@ -531,9 +531,9 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Auto-select default mounts in vfolder grid
-   * 
+   *
    * @param {boolean} forceInitialize  - whether to initialize selected vfolder or not
-   * @param {Array<string>} mountFolderList 
+   * @param {Array<string>} mountFolderList
    */
   _loadDefaultMounts(forceInitialize = false, mountFolderList: Array<string> = []) {
     this.defaultSelectedVfolders = mountFolderList;
@@ -552,7 +552,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Show kernel description according to event target
-   * 
+   *
    * @param {Event} e
    * @param {any} item
    */
@@ -577,8 +577,8 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Show path description according to event target
-   * 
-   * @param e 
+   *
+   * @param e
    */
   _showPathDescription(e?: Event) {
     if (e != undefined) {
@@ -645,10 +645,10 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Update Folder map by input folder name and alias
-   * 
-   * @param {string} folder 
-   * @param {string} alias 
-   * @returns 
+   *
+   * @param {string} folder
+   * @param {string} alias
+   * @returns
    */
   async _updateFolderMap(folder, alias) {
     if (alias === '') {
@@ -844,8 +844,8 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Check validity of each input in group and return false if one of input fields is invalid
-   * 
-   * @param {Array<any>}inputGroup 
+   *
+   * @param {Array<any>}inputGroup
    * @returns {boolean} - true when valid, false when one of input field in group is invalid
    */
   static _validityCheckByGroup(inputGroup: Array<any>) {
@@ -856,7 +856,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Check validity of each input field of pipeline configuration
-   * 
+   *
    * @returns {boolean} - true when valid, false one of input fields invalid
    */
   _validatePipelineConfigInput() {
@@ -889,7 +889,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Check validity of each input field of pipeline task configuration
-   * 
+   *
    * @returns {boolean} - true when valid, false one of input fields invalid
    */
   _validatePipelineTaskConfigInput() {
@@ -922,7 +922,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Returns object (pipelineInfo | pipelineTaskNode) from input fields
-   * 
+   *
    * @param isPipelineType - check whether return type would be pipelineInfo or not
    * @returns {PipelineInfo | PipelineTaskNode} object
    */
@@ -1151,10 +1151,10 @@ export default class PipelineConfigurationForm extends LitElement {
   _loadDataToCmdEditor(data: string = '') {
     this._cmdEditor.setValue(data);
   }
-  
+
   /**
    * Render Mount list of vfolder
-   * 
+   *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
@@ -1190,7 +1190,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render folder path alias
-   * 
+   *
    * @param {DOMelement} root
    * @param {object} column (<vaadin-grid-column> element)
    * @param {object} rowData
@@ -1209,7 +1209,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render name input field with label
-   * 
+   *
    * @param {string} label - name input
    * @returns {string} stringified html
    */
@@ -1222,7 +1222,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render description input field with label
-   * 
+   *
    * @param {string} label - description input
    * @returns {string} stringified html
    */
@@ -1236,7 +1236,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render type of pipeline in forms of select(dropdown) UI with label
-   * 
+   *
    * @returns {string} stringified html
    */
   renderPipelineTypeTemplate() {
@@ -1253,7 +1253,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render type of pipeline task in forms of select(dropdown) UI with label
-   * 
+   *
    * @param {boolean} isEdit - enable/disable type of pipeline task
    * @returns {string} stringified html
    */
@@ -1273,7 +1273,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render type of scaling group(resource group) in forms of select(dropdown) UI with label
-   * 
+   *
    * @returns {string} stringified html
    */
   renderScalingGroupTemplate() {
@@ -1288,13 +1288,13 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render type of environment(image) in forms of select(dropdown) UI with label
-   * 
+   *
    * @returns {string} stringified html
    */
   renderEnvironmentTemplate() {
     // language=HTML
     return html`
-      <mwc-select class="full-width" id="environment-select" icon="code" label="${_text('session.launcher.Environments')}" 
+      <mwc-select class="full-width" id="environment-select" icon="code" label="${_text('session.launcher.Environments')}"
         required fixedMenuPosition>
       <mwc-list-item selected graphic="icon" style="display:none!important;">
         ${_t('session.launcher.ChooseEnvironment')}
@@ -1352,7 +1352,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render command editor
-   * 
+   *
    * @returns {string} stringified html
    */
   renderCmdEditorTemplate() {
@@ -1368,7 +1368,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render general tab content
-   * 
+   *
    * @returns {string} stringified html
    */
   renderGeneralTabTemplate() {
@@ -1385,7 +1385,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render general task tab content
-   * 
+   *
    * @param {boolean} isEdit - enable/disable type of pipeline task
    * @returns {string} stringified html
    */
@@ -1402,7 +1402,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render resources task tab content
-   * 
+   *
    * @param {boolean} isRequired - configure input field is required or not
    * @returns {string} stringified html
    */
@@ -1417,7 +1417,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render resources tab content
-   * 
+   *
    * @param {boolean} isRequired - configure input field is required or not
    * @returns {string} stringified html
    */
@@ -1431,7 +1431,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render resource content
-   * 
+   *
    * @param {boolean} isRequired - set input field as required if true
    * @returns {string} stringified html
    */
@@ -1447,7 +1447,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render mounts tab content
-   * 
+   *
    * @returns {string} stringified html
    */
   renderMountsTabTemplate() {
@@ -1474,7 +1474,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render mounts task tab content
-   * 
+   *
    * @returns {string} stringified html
    */
   renderMountsTaskTabTemplate() {
@@ -1488,7 +1488,7 @@ export default class PipelineConfigurationForm extends LitElement {
 
   /**
    * Render additional vfolder list
-   * 
+   *
    * @returns {string} stringified html
    */
   renderAdditionalVFolderListTemplate() {
