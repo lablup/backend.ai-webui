@@ -47,18 +47,20 @@ export default class BackendAIProjectSwitcher extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        html, :host {
-          font-family: var(--general-font-family) !important;
+        html, :host, :host > * {
+          --lumo-font-family: 'Roboto';
+          font-size: 14px;
+          --lumo-primary-color: green;
+          --lumo-primary-text-color: green;
         }
 
-        vaadin-combo-box, vaadin-combo-box-item {
+        vaadin-combo-box {
           font-size: 14px;
-          font-family: var(--general-font-family) !important;
+          --lumo-font-family: var(--general-font-family) !important;
         }
 
         vaadin-combo-box::part(input-field) {
           background-color: transparent;
-          font-size: 14px;
         }
       `];
   }
