@@ -656,6 +656,9 @@ export default class BackendAISessionList extends BackendAIPage {
     } else {
       fields.push('containers {container_id occupied_slots live_stat last_stat}');
     }
+    if (!globalThis.backendaiclient._config.hideAgents) {
+      fields.push('containers {agent}');
+    }
     const group_id = globalThis.backendaiclient.current_group_id();
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -1634,7 +1637,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   <span class="subheading">Error</span>
                   <lablup-shields color="red" description=${item.name} ui="round"></lablup-shields>
                 </div>
-                ${this.is_superadmin && item.agent_id ? html`
+                ${(this.is_superadmin || !globalThis.backendaiclient._config.hideAgents) && item.agent_id ? html`
                   <div class="vertical layout start">
                     <span class="subheading">Agent ID</span>
                     <span>${item.agent_id}</span>
@@ -2780,7 +2783,7 @@ export default class BackendAISessionList extends BackendAIPage {
           ${this._isIntegratedCondition ? html`
             <lablup-grid-sort-filter-column path="type" width="140px" flex-grow="0" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
         ` : html``}
-          ${this.is_superadmin ? html`
+          ${this.is_superadmin || !globalThis.backendaiclient._config.hideAgents ? html`
             <lablup-grid-sort-filter-column path="agent" auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                                 .renderer="${this._boundAgentRenderer}">
             </lablup-grid-sort-filter-column>
