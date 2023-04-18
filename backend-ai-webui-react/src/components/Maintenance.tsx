@@ -4,7 +4,7 @@ import { ReloadOutlined, DeleteOutlined } from "@ant-design/icons";
 import { Card, Button, Typography } from "antd";
 import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
 import { useWebComponentInfo } from "./DefaultProviders";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
 
 const { Text } = Typography;
@@ -20,7 +20,7 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
   } = useWebComponentInfo();
 
   return (
-    <Flex direction="column">
+    <Flex>
       <Flex>
         <Card 
           title={t('maintenance.MatchDatabase')}
@@ -32,12 +32,18 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
               onClick={() => {
                 dispatchEvent && dispatchEvent("", {value: ""})
               }}
-            >{t('maintenance.RecalculateUsage')}</Button>,
+            >
+              {t('maintenance.RecalculateUsage')}
+            </Button>,
           ]}
         >
           <Flex direction="column" align="start">
             <Text strong>{t('maintenance.MatchDatabase')}</Text>
-            <Text type="secondary">{t('maintenance.DescMatchDatabase')}</Text>
+            <Text type="secondary">
+              <Trans>
+                {t('maintenance.DescMatchDatabase')}
+              </Trans>
+            </Text>
           </Flex>
         </Card>
       </Flex>
@@ -57,7 +63,11 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
         >
           <Flex direction="column" align="start">
             <Text strong>{t('maintenance.RescanImageList')}</Text>
-            <Text type="secondary">{t('maintenance.DescRescanImageList')}</Text>
+            <Text type="secondary">
+              <Trans>
+                {t('maintenance.DescRescanImageList')}
+              </Trans>
+            </Text>
           </Flex>
         </Card>
       </Flex>
