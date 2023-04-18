@@ -2,7 +2,7 @@ import { useState } from "react";
 import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import { Descriptions, Typography, Tag, Card } from "antd";
 import { useWebComponentInfo } from "./DefaultProviders";
-import { useTranslation } from "react-i18next";
+import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
 
 const { Text } = Typography;
@@ -55,12 +55,17 @@ const Information: React.FC<InformationProps> = () => {
           <Descriptions.Item label={t('information.DefaultAdministratorAccountChanged')}>
             <Flex>
               {accountChanged ? <CheckOutlined /> : <WarningOutlined />}
-              {t('information.DescDefaultAdministratorAccountChanged')}          </Flex>
+              <Trans>
+                {t('information.DescDefaultAdministratorAccountChanged')}          
+              </Trans>
+            </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.UsesSSL')}>
             <Flex>
               {useSsl ? <CheckOutlined /> : <WarningOutlined />}
-              {t('information.DescUsesSSL')}
+              <Trans>
+                {t('information.DescUsesSSL')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
         </Descriptions>
@@ -74,25 +79,33 @@ const Information: React.FC<InformationProps> = () => {
           <Descriptions.Item label={t('information.DockerVersion')}>
             <Flex>
               <Tag>{t('information.Compatible')}</Tag>
-              {t('information.DescDockerVersion')}
+              <Trans>
+                {t('information.DescDockerVersion')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.PostgreSQLVersion')}>
             <Flex>
               <Tag>{t('information.Compatible')}</Tag>
-              {t('information.DescPostgreSQLVersion')}
+              <Trans>
+                {t('information.DescPostgreSQLVersion')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.ETCDVersion')}>
             <Flex>
               <Tag>{t('information.Compatible')}</Tag>
-              {t('information.DescETCDVersion')}
+              <Trans>
+                {t('information.DescETCDVersion')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.RedisVersion')}>
             <Flex>
               <Tag>{t('information.Compatible')}</Tag>
-              {t('information.DescRedisVersion')}
+              <Trans>
+                {t('information.DescRedisVersion')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
         </Descriptions>
@@ -106,31 +119,41 @@ const Information: React.FC<InformationProps> = () => {
           <Descriptions.Item label={t('information.IsLicenseValid')}>
             <Flex>
               {licenseValid ? <CheckOutlined /> : <WarningOutlined />}
-              {t('information.DescIsLicenseValid')}
+              <Trans>
+                {t('information.DescIsLicenseValid')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.LicenseType')}>
             <Flex>
               <Tag>{licenseType ? t('information.FixedLicense') : t('information.DynamicLicense')}</Tag>
-              {t('information.DescLicenseType')}
+              <Trans>
+                {t('information.DescLicenseType')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.Licensee')}>
             <Flex>
               <Tag>{licensee}</Tag>
-              {t('information.DescLicensee')}
+              <Trans>
+                {t('information.DescLicensee')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.LicenseKey')}>
             <Flex>
               <Tag>{licenseKey}</Tag>
-              {t('information.DescLicenseKey')}
+              <Trans>
+                {t('information.DescLicenseKey')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t('information.Expiration')}>
             <Flex>
               <Tag>{licenseExpiration}</Tag>
-              {t('information.DescExpiration')}
+              <Trans>
+                {t('information.DescExpiration')}
+              </Trans>
             </Flex>
           </Descriptions.Item>
         </Descriptions>
