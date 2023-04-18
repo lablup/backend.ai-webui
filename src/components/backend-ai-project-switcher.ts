@@ -62,6 +62,9 @@ export default class BackendAIProjectSwitcher extends LitElement {
         vaadin-combo-box::part(input-field) {
           background-color: transparent;
         }
+        vaadin-combo-box-overlay {
+          background-color: transparent;
+        }
       `];
   }
 
@@ -100,6 +103,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
 
   override render() {
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal center center-justified layout">
         <p id="project">${_t('webui.menu.Project')}</p>
         <div id="project-select-box">
