@@ -24,6 +24,11 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
       <Flex>
         <Card 
           title={t('maintenance.MatchDatabase')}
+          style={{
+            width: '400px',
+            minHeight: '250px',
+            margin: '10px',
+          }}
           actions={[
             <Button
               key="recalculating"
@@ -37,7 +42,7 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
             </Button>,
           ]}
         >
-          <Flex direction="column" align="start">
+          <Flex direction="column" align="start" justify="center" style={{ minHeight: '88px' }}>
             <Text strong>{t('maintenance.MatchDatabase')}</Text>
             <Text type="secondary">
               <Trans>
@@ -48,8 +53,13 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
         </Card>
       </Flex>
       <Flex>
-        <Card 
+        <Card
           title={t('maintenance.ImagesEnvironment')}
+          style={{
+            width: '400px',
+            minHeight: '250px',
+            margin: '10px',
+          }}
           actions={[
             <Button
               key="cleanup"
@@ -61,7 +71,7 @@ const Maintenance: React.FC<MaintenanceProps> = () => {
             >{t('maintenance.RescanImages')}</Button>,
           ]}
         >
-          <Flex direction="column" align="start">
+          <Flex direction="column" align="start" justify="center" style={{ minHeight: '88px' }}>
             <Text strong>{t('maintenance.RescanImageList')}</Text>
             <Text type="secondary">
               <Trans>
