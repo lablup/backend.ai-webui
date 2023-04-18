@@ -4,6 +4,8 @@ import DefaultProviders from "./components/DefaultProviders";
 import ExampleComponent from "./components/ExampleComponent";
 import ProjectSelect from "./components/ProjectSelect";
 import ResourceMonitor from "./components/ResourceMonitor";
+import Maintenance from "./components/Maintenance";
+import Information from "./components/Information";
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import { useTranslation } from "react-i18next";
 // customElements.define(
@@ -71,4 +73,22 @@ customElements.define(
       </DefaultProviders>
     );
   })
+);
+
+customElements.define(
+  "backend-ai-react-maintenance",
+  reactToWebComponent((props) => (
+    <DefaultProviders {...props}>
+      <Maintenance />
+    </DefaultProviders>
+  ))
+);
+
+customElements.define(
+  "backend-ai-react-information",
+  reactToWebComponent((props) => (
+    <DefaultProviders {...props}>
+      <Information />
+    </DefaultProviders>
+  ))
 );
