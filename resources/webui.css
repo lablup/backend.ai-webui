@@ -3,6 +3,8 @@ body {
  --general-font-family: 'Ubuntu', Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", AppleSDGothic, "Apple SD Gothic Neo", NanumGothic, "NanumGothicOTF", "Nanum Gothic", "Malgun Gothic", sans-serif;
   font-family: var(--general-font-family);
   --lumo-font-family: var(--general-font-family);
+  --lumo-primary-text-color: #27824F;
+  --lumo-primary-color-50pct: #27824F;
   background-color: rgba(247, 247, 246, 1);
   background-image: url("images/loading-background-large.jpg");
   background-repeat: no-repeat;
