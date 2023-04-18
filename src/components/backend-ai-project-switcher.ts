@@ -3,12 +3,9 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-
 import {customElement, property, query} from 'lit/decorators.js';
 import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
-import '../plastics/mwc/mwc-sort-select';
-import '@material/mwc-icon-button-toggle';
 import '@vaadin/combo-box';
 
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
@@ -19,7 +16,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import {get as _text} from 'lit-translate/util';
+import type {ComboBox} from '@vaadin/combo-box';
+
 /**
  Backend AI Project Switcher
 
@@ -34,7 +32,8 @@ import {get as _text} from 'lit-translate/util';
 export default class BackendAIProjectSwitcher extends LitElement {
   @property({type: Array}) projects: string[] = [];
   @property({type: String}) currentProject = '';
-  @query('#project-select') projectSelect!: any;
+  @query('#project-select') projectSelect!: ComboBox;
+
   constructor() {
     super();
   }
@@ -49,18 +48,21 @@ export default class BackendAIProjectSwitcher extends LitElement {
       // language=CSS
       css`
         html, :host {
-          font-family: var(--general-font-family)!important;
+          font-family: var(--general-font-family) !important;
         }
+
         vaadin-combo-box, vaadin-combo-box-item {
-          font-size:14px;
-          font-family: var(--general-font-family)!important;
+          font-size: 14px;
+          font-family: var(--general-font-family) !important;
         }
+
         vaadin-combo-box::part(input-field) {
-          background-color:transparent;
-          font-size:14px;
+          background-color: transparent;
+          font-size: 14px;
         }
       `];
   }
+
   firstUpdated() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
@@ -72,6 +74,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
       globalThis.backendaiutils._writeRecentProjectGroup(this.currentProject);
     }
   }
+
   /**
    * Change the backend.ai client's current group.
    *
@@ -100,7 +103,7 @@ export default class BackendAIProjectSwitcher extends LitElement {
         <div id="project-select-box">
           <div class="horizontal center center-justified layout">
             <vaadin-combo-box id="project-select" value="${this.currentProject}" .items="${this.projects}"
-                @change="${(e) => this.changeGroup(e)}">
+                              @change="${(e) => this.changeGroup(e)}">
             </vaadin-combo-box>
           </div>
         </div>
