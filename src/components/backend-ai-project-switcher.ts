@@ -4,11 +4,12 @@
  */
 
 
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
-import '@material/mwc-select';
+import '../plastics/mwc/mwc-sort-select';
 import '@material/mwc-icon-button-toggle';
+import '@vaadin/combo-box';
 
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
@@ -17,8 +18,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import {get as _text} from 'lit-translate/util';
 
+import {get as _text} from 'lit-translate/util';
 /**
  Backend AI Project Switcher
 
@@ -31,9 +32,9 @@ import {get as _text} from 'lit-translate/util';
  */
 @customElement('backend-ai-project-switcher')
 export default class BackendAIProjectSwitcher extends LitElement {
-  @property({type: Array}) projects = [];
+  @property({type: Array}) projects: string[] = [];
   @property({type: String}) currentProject = '';
-
+  @query('#project-select') projectSelect!: any;
   constructor() {
     super();
   }
@@ -47,10 +48,16 @@ export default class BackendAIProjectSwitcher extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        #project-sort-box {
-          padding-left: 16px;
-          padding-right: 10px;
-          border-bottom: 1px solid #ccc;
+        html, :host {
+          font-family: var(--general-font-family)!important;
+        }
+        vaadin-combo-box, vaadin-combo-box-item {
+          font-size:14px;
+          font-family: var(--general-font-family)!important;
+        }
+        vaadin-combo-box::part(input-field) {
+          background-color:transparent;
+          font-size:14px;
         }
       `];
   }
@@ -70,48 +77,31 @@ export default class BackendAIProjectSwitcher extends LitElement {
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-  changeGroup(e) {
+  protected changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
     this.currentProject = globalThis.backendaiclient.current_group;
     globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
+    e.stopPropagation();
   }
 
-  _sortProjects(e) {
-    const isAscending = e.target.on;
-    if (isAscending) {
-      this.projects = [...this.projects.sort()];
-    } else {
-      this.projects = [...this.projects.sort().reverse()];
-    }
-    e.preventDefault();
-  }
-
-  _refreshUserGroupSelector(): void {
+  protected _refreshUserGroupSelector(): void {
     this.currentProject = globalThis.backendaiutils._readRecentProjectGroup();
     globalThis.backendaiclient.current_group = this.currentProject;
     this.projects = globalThis.backendaiclient.groups;
+    this.projectSelect.selectedItem = this.currentProject;
   }
 
-  render() {
+  override render() {
     return html`
       <div class="horizontal center center-justified layout">
         <p id="project">${_t('webui.menu.Project')}</p>
         <div id="project-select-box">
           <div class="horizontal center center-justified layout">
-            <mwc-select id="project-select" value="${this.currentProject}"
-                @selected="${(e) => this.changeGroup(e)}">
-              <div id="project-sort-box" class="horizontal layout center space-between">
-                <div>${_text('webui.menu.SelectProject')}</div>
-                <span class="flex"></span>
-                <mwc-icon-button-toggle on onIcon="arrow_drop_up" offIcon="arrow_drop_down"
-                    @click="${(e) => this._sortProjects(e)}"></mwc-icon-button-toggle>
-              </div>
-              ${this.projects.map((group) => html`
-                <mwc-list-item value="${group}" ?selected="${this.currentProject === group}">${group}</mwc-list-item>
-              `)}
-            </mwc-select>
+            <vaadin-combo-box id="project-select" value="${this.currentProject}" .items="${this.projects}"
+                @change="${(e) => this.changeGroup(e)}">
+            </vaadin-combo-box>
           </div>
         </div>
       </div>
