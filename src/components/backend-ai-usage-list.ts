@@ -3,9 +3,10 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -14,6 +15,7 @@ import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 import './backend-ai-monthly-usage-panel';
+import './backend-ai-dialog';
 
 import {
   IronFlex,
@@ -21,6 +23,11 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+* This type definition is a workaround for resolving both Type error and Importing error.
+*/
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Usage List
@@ -61,7 +68,12 @@ export default class BackendAIUsageList extends BackendAIPage {
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
   @property({type: Number}) elapsedDays = 0;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
   @query('#period-selector') periodSelec!: Select;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+
   public data: any;
 
   constructor() {
@@ -97,6 +109,11 @@ export default class BackendAIUsageList extends BackendAIPage {
           --mdc-list-item__primary-text: {
             height: 20px;
           };
+        }
+
+        #help-description {
+          --component-width: 70vw;
+          --component-padding: 20px 40px;
         }
       `
     ];
@@ -261,7 +278,6 @@ export default class BackendAIUsageList extends BackendAIPage {
    * */
   pulldownChange(e) {
     this.period = e.target.value;
-    console.log(this.period);
     const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
@@ -285,6 +301,33 @@ export default class BackendAIUsageList extends BackendAIPage {
     }
   }
 
+  _launchUsageHistoryInfoDialog() {
+    this._helpDescriptionTitle = _text('statistics.UsageHistory');
+    this._helpDescription = `
+      <p>${_text('statistics.UsageHistoryDesc')}</p>
+      <strong>Sessions</strong>
+      <p>${_text('statistics.SessionsDesc')}</p>
+      <strong>CPU</strong>
+      <p>${_text('statistics.CPUDesc')}</p>
+      <strong>Memory</strong>
+      <p>${_text('statistics.MemoryDesc')}</p>
+      <strong>GPU</strong>
+      <p>${_text('statistics.GPUDesc')}</p>
+      <strong>IO-Read</strong>
+      <p>${_text('statistics.IOReadDesc')}</p>
+      <strong>IO-Write</strong>
+      <p>${_text('statistics.IOWriteDesc')}</p>
+      <div class="note-container">
+        <div class="note-title">
+          <mwc-icon class="fg white">info</mwc-icon>
+          <div>Note</div>
+        </div>
+        <div class="note-contents">${_text('statistics.UsageHistoryNote')}</div>
+      </div>
+    `;
+    this.helpDescriptionDialog.show();
+  }
+
   render() {
     // language=HTML
     return html`
@@ -303,6 +346,7 @@ export default class BackendAIUsageList extends BackendAIPage {
             ` : html``}
           </mwc-select>
           <span class="flex"></span>
+          <mwc-icon-button class="fg green" icon="info" @click="${() => this._launchUsageHistoryInfoDialog()}"></mwc-icon-button>
         </h3>
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
@@ -320,6 +364,16 @@ export default class BackendAIUsageList extends BackendAIPage {
             `
     ) : html``}
       </div>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:5px;">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }
