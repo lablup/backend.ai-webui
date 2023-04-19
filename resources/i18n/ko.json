@@ -1005,7 +1005,7 @@
     }
   },
   "statistics": {
-    "Usage": "사용량",
+    "UsageHistory": "사용 기록",
     "SelectPeriod": "기간을 선택하세요",
     "1Day": "1일",
     "1Week": "1주"

@@ -1012,7 +1012,7 @@
     }
   },
   "statistics": {
-    "Usage": "Usage",
+    "UsageHistory": "Usage History",
     "SelectPeriod": "Select Period",
     "1Day": "1 Day",
     "1Week": "1 Week"

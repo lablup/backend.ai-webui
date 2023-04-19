@@ -1006,7 +1006,7 @@
     }
   },
   "statistics": {
-    "Usage": "Usage",
+    "UsageHistory": "Usage Historique",
     "SelectPeriod": "Sélectionnez la période",
     "1Day": "Un jour",
     "1Week": "1 semaine"

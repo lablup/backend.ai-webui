@@ -1006,7 +1006,7 @@
     }
   },
   "statistics": {
-    "Usage": "Pemakaian",
+    "UsageHistory": "Riwayat Penggunaan",
     "SelectPeriod": "Pilih Periode",
     "1Day": "1 Hari",
     "1Week": "1 Minggu"
