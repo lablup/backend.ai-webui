@@ -653,7 +653,9 @@
       "NoImagesSupportingFileBrowser": "Пока нет изображений, поддерживающих просмотрщик файлов. Для загрузки папок требуется по крайней мере одно или несколько изображений, поддерживающих просмотрщик файлов.",
       "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
-      "UploadFolder": "__NOT_TRANSLATED__"
+      "UploadFolder": "__NOT_TRANSLATED__",
+      "EmptyFilesAreNotUploaded": "__NOT_TRANSLATED__",
+      "EmptyFoldersAreNotUploaded": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",

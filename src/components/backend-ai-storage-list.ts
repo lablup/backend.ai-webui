@@ -2479,6 +2479,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _uploadInputChange(e) {
     const length = e.target.files.length;
+    const isFolderUpload = e.target.id === 'folderInput';
+    let isEmptyFileIncluded = false;
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -2490,6 +2492,9 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
         this.notification.show();
         return;
+      } else if (file.size === 0) { // skip the empty file upload
+        isEmptyFileIncluded = true;
+        continue;
       } else {
         const reUploadFile = this.explorerFiles.find((elem: any) => elem.filename === file.name);
         if (reUploadFile) {
@@ -2519,7 +2524,15 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-    const inputElement = e.target.id === 'fileInput' ? this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement : this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement;
+    if (isEmptyFileIncluded) {
+      this.notification.text = _text('data.explorer.EmptyFilesAreNotUploaded');
+      this.notification.show();
+    }
+    if (isFolderUpload) {
+      this.notification.text = _text('data.explorer.EmptyFoldersAreNotUploaded');
+      this.notification.show();
+    }
+    const inputElement = isFolderUpload ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     inputElement.value = '';
   }
 
