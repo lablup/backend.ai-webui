@@ -26,11 +26,12 @@ export default class BackendAIMetadataStore extends BackendAIPage {
   @property({type: Object}) tags = Object();
   @property({type: Object}) icons = Object();
   @property({type: Object}) deviceInfo = Object();
+  @property({type: Array}) deviceNames = [];
 
   constructor() {
     super();
     this.readImageMetadata();
-    //this.readDeviceMetadata();
+    this.readDeviceMetadata();
   }
 
   firstUpdated() {
@@ -88,6 +89,7 @@ export default class BackendAIMetadataStore extends BackendAIPage {
         console.log(this.deviceInfo);
         for (const key in this.deviceInfo) {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
+            this.deviceNames.push(key);
           }
         }
       }

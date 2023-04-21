@@ -58,8 +58,8 @@
     "tpu.device": {
       "slot_name": "tpu.device",
       "human_readable_name": "TPU",
-      "description": "TPU device",
-      "display_unit": "GPU",
+      "description": "Google TPU",
+      "display_unit": "TPU",
       "number_format": {
         "binary": false,
         "round_length": 0
@@ -69,7 +69,7 @@
     "ipu.device": {
       "slot_name": "ipu.device",
       "human_readable_name": "IPU",
-      "description": "IPU device",
+      "description": "GraphCore IPU",
       "display_unit": "IPU",
       "number_format": {
         "binary": false,
@@ -77,7 +77,7 @@
       },
       "display_icon": "ipu"
     },
-    "atom": {
+    "atom.device": {
       "slot_name": "atom.device",
       "description": "ATOM",
       "human_readable_name": "ATOM Device",
@@ -87,6 +87,17 @@
         "round_length": 0
       },
       "display_icon": "rebel"
+    },
+    "warboy.device": {
+      "slot_name": "warboy.device",
+      "description": "Warboy",
+      "human_readable_name": "Warboy Device",
+      "display_unit": "WARBOY",
+      "number_format": {
+        "binary": false,
+        "round_length": 0
+      },
+      "display_icon": "ipu"
     }
   }
 }
