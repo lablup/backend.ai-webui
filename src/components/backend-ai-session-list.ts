@@ -504,10 +504,15 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.refreshTimer = null;
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_icons = globalThis.backendaimetadata.icons;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.imageInfo = globalThis.backendaimetadata.imageInfo;
+      this.kernel_icons = globalThis.backendaimetadata.icons;
+      this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    }, {once: true});
+    this.refreshTimer = null;
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
