@@ -788,7 +788,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-list>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
+      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout scrimClickAction>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
@@ -2471,6 +2471,10 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  getFolderName(file: File) {
+    const filePath = file.webkitRelativePath || file.name;
+    return filePath.split('/')?.[0];
+  }
 
   /**
    * If file is added, call the fileUpload() function and initialize fileInput string
@@ -2480,7 +2484,24 @@ export default class BackendAiStorageList extends BackendAIPage {
   _uploadInputChange(e) {
     const length = e.target.files.length;
     const isFolderUpload = e.target.id === 'folderInput';
+    const inputElement = isFolderUpload ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     let isEmptyFileIncluded = false;
+    let reUploadFolderConfirmed = false;
+    // plain javascript modal to confirm whether proceed to overwrite "folder" operation or not
+    /*
+    *  TODO: replace confirm operation with customized dialog
+    */
+    if (e.target.files.length > 0 && isFolderUpload) {
+      const f = e.target.files[0];
+      const reUploadFolder = this.explorerFiles.find((elem: any) => elem.filename === this.getFolderName(f));
+      if (reUploadFolder) {
+        reUploadFolderConfirmed = window.confirm(`${_text('data.explorer.FolderAlreadyExists')}\n${this.getFolderName(f)}\n${_text('data.explorer.DoYouWantToOverwrite')}`);
+        if (!reUploadFolderConfirmed) {
+          inputElement.value = '';
+          return;
+        }
+      }
+    }
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -2498,7 +2519,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       } else {
         const reUploadFile = this.explorerFiles.find((elem: any) => elem.filename === file.name);
         if (reUploadFile) {
-          // plain javascript modal to confirm whether proceed to overwrite operation or not
+          // plain javascript modal to confirm whether proceed to overwrite "file" operation or not
           /*
            *  TODO: replace confirm operation with customized dialog
            */
@@ -2528,7 +2549,6 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.text = _text('data.explorer.EmptyFilesAndFoldersAreNotUploaded');
       this.notification.show();
     }
-    const inputElement = isFolderUpload ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     inputElement.value = '';
   }
 
