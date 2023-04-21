@@ -91,6 +91,11 @@ export default class BackendAIMetadataStore extends BackendAIPage {
           }
         }
       }
+    ).then(
+      () => {
+        const event: CustomEvent = new CustomEvent('backend-ai-metadata-device-loaded', {'detail': ''});
+        document.dispatchEvent(event);
+      }
     );
   }
 
