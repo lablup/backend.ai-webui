@@ -2518,7 +2518,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         continue;
       } else {
         const reUploadFile = this.explorerFiles.find((elem: any) => elem.filename === file.name);
-        if (reUploadFile) {
+        if (reUploadFile && !reUploadFolderConfirmed) {
           // plain javascript modal to confirm whether proceed to overwrite "file" operation or not
           /*
            *  TODO: replace confirm operation with customized dialog
