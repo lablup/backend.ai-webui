@@ -15,7 +15,7 @@ import {BackendAIPage} from './backend-ai-page';
   @group Backend.AI Web UI
  */
 @customElement('backend-ai-metadata-store')
-export default class BackendAiMetadataStore extends BackendAIPage {
+export default class BackendAIMetadataStore extends BackendAIPage {
   @property({type: Object}) options = Object();
   @property({type: Object}) imageInfo = Object();
   @property({type: Object}) imageNames = Object();
@@ -36,8 +36,8 @@ export default class BackendAiMetadataStore extends BackendAIPage {
   firstUpdated() {
   }
 
-  readImageMetadata() {
-    fetch('resources/image_metadata.json').then(
+  async readImageMetadata() {
+    return fetch('resources/image_metadata.json').then(
       (response) => response.json()
     ).then(
       (json) => {
@@ -71,6 +71,11 @@ export default class BackendAiMetadataStore extends BackendAIPage {
         this.imageTagAlias = json.tagAlias;
         this.imageTagReplace = json.tagReplace;
       }
+    ).then(
+      () => {
+        const event: CustomEvent = new CustomEvent('backend-ai-metadata-image-loaded', {'detail': ''});
+        document.dispatchEvent(event);
+      }
     );
   }
 
@@ -85,6 +90,11 @@ export default class BackendAiMetadataStore extends BackendAIPage {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
           }
         }
+      }
+    ).then(
+      () => {
+        const event: CustomEvent = new CustomEvent('backend-ai-metadata-device-loaded', {'detail': ''});
+        document.dispatchEvent(event);
       }
     );
   }
@@ -107,6 +117,6 @@ export default class BackendAiMetadataStore extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-metadata-store': BackendAiMetadataStore;
+    'backend-ai-metadata-store': BackendAIMetadataStore;
   }
 }

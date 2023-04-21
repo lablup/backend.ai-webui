@@ -662,7 +662,8 @@
       "InvitationError": "Приглашение не прошло. Пользователь уже может быть приглашен.",
       "Shared": "Успешно предоставлен доступ к групповой папке",
       "NoOneWasShared": "Не удалось предоставить общий доступ к папке группы",
-      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту."
+      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Никаких изменений не внесено",
@@ -1171,7 +1172,8 @@
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
-    "DescEndpoint": "__NOT_TRANSLATED__"
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",

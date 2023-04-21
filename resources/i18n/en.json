@@ -339,10 +339,10 @@
     "EnterValidSessionName": "EnterValidSessionName",
     "EnvironmentInfo": "Environment Info",
     "DownloadingSessionLogs": "Downloading session logs.",
-    "VSCodeRemoteConnection": "Connect Visual Studio Code Remote",
-    "VSCodeRemotePasswordTitle": "Visual Studio Code Remote Password",
-    "VSCodeRemoteDescription": "If you want to run Visual Studio Code Remote, need to enter a password",
-    "VSCodeRemoteNoticeSSHConfig": "You can add the following to the `$HOME/.ssh/config` file to seamlessly remote connection to the Visual Studio Code.",
+    "VSCodeRemoteConnection": "VSCode Remote Connection",
+    "VSCodeRemotePasswordTitle": "Visual Studio Code remote SSH password",
+    "VSCodeRemoteDescription": "You can launch your local Visual Studio Code application and connect to the remote compute session (via SSH) using the password below. Please copy the password before clicking the button. (NOTE: You have to install Visual Studio Code in your local machine.)",
+    "VSCodeRemoteNoticeSSHConfig": "To set up a seamless connection for Visual Studio Code to the remote compute session, create or edit the $HOME/.ssh/config file and add the following block.",
     "ElapsedTime": "Elapsed Time",
     "Timeout": "Timeout",
     "TimeoutExceeded": "Time reached. Checking...",
@@ -676,7 +676,8 @@
       "InvitationError": "Invitation failed. User may already be invited.",
       "Shared": "Successfully shared the group folder",
       "NoOneWasShared": "Failed to share the group folder",
-      "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project."
+      "SharingError": "Sharing failed. User may already be shared or does not belong to appropriate project.",
+      "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s): "
     },
     "permission": {
       "NoChanges": "No changes made",
@@ -1176,7 +1177,8 @@
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "SingleSignOn": {
       "LoginWithSAML": "Login with SAML"
-    }
+    },
+    "EndpointStartWith": "Endpoint must start with http:// or https://."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",
@@ -1279,7 +1281,7 @@
     "Minutes": "m"
   },
   "DownloadSSHKey": "Download SSH Key",
-  "OpenVSCodeRemote": "open Visual Studio Code for Remote",
+  "OpenVSCodeRemote": "Open local Visual Studio Code",
   "license": {
     "Perpetual": "Perpetual",
     "Subscription": "Subscription",
@@ -1320,7 +1322,9 @@
     "LoginSucceededManagerNotResponding": "Login succeed but manager is not responding.",
     "UserNameAlreadyExist": "Username already exists. It cannot be duplicated.",
     "ResourcePolicyStillReferenced": "There exist keypairs which reference this resource policy.",
-    "InvalidSignupToken": "Invalid signup token"
+    "InvalidSignupToken": "Invalid signup token",
+    "CannotSharePrivateAutomountFolder": "Cannot share automount vfolders in line with the policy.",
+    "FolderSharingNotAvailableToUser": "Folder sharing is not available for requested user(s)."
   },
   "maxLength": {
     "20chars": "(maximum 20 chars)",

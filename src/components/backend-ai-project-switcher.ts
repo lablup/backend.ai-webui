@@ -3,11 +3,10 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-
 import {customElement, property, query} from 'lit/decorators.js';
-import {LitElement, html, CSSResultGroup} from 'lit';
+import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
-import '@material/mwc-select';
+import '@vaadin/combo-box';
 
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
@@ -16,7 +15,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import {get as _text} from 'lit-translate/util';
+
+import type {ComboBox} from '@vaadin/combo-box';
 
 /**
  Backend AI Project Switcher
@@ -30,10 +30,9 @@ import {get as _text} from 'lit-translate/util';
  */
 @customElement('backend-ai-project-switcher')
 export default class BackendAIProjectSwitcher extends LitElement {
-  @property({type: Array}) groups = [];
-  @property({type: String}) currentGroup = '';
-
-  @query('#group-select-box') groupSelectionBox: HTMLDivElement | undefined;
+  @property({type: Array}) projects: string[] = [];
+  @property({type: String}) currentProject = '';
+  @query('#project-select') projectSelect!: ComboBox;
 
   constructor() {
     super();
@@ -45,76 +44,65 @@ export default class BackendAIProjectSwitcher extends LitElement {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning
-    ];
+      IronPositioning,
+      // language=CSS
+      css`
+        vaadin-combo-box {
+          font-size: 14px;
+          --lumo-font-family: var(--general-font-family) !important;
+        }
+
+        vaadin-combo-box::part(input-field) {
+          background-color: transparent;
+        }
+      `];
   }
+
   firstUpdated() {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshUserGroupSelector();
-        globalThis.backendaiutils._writeRecentProjectGroup(this.currentGroup);
+        globalThis.backendaiutils._writeRecentProjectGroup(this.currentProject);
       }, true);
     } else {
       this._refreshUserGroupSelector();
-      globalThis.backendaiutils._writeRecentProjectGroup(this.currentGroup);
+      globalThis.backendaiutils._writeRecentProjectGroup(this.currentProject);
     }
   }
+
   /**
    * Change the backend.ai client's current group.
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-  changeGroup(e) {
+  protected changeGroup(e) {
     globalThis.backendaiclient.current_group = e.target.value;
-    this.currentGroup = globalThis.backendaiclient.current_group;
+    this.currentProject = globalThis.backendaiclient.current_group;
     globalThis.backendaiutils._writeRecentProjectGroup(globalThis.backendaiclient.current_group);
     const event: CustomEvent = new CustomEvent('backend-ai-group-changed', {'detail': globalThis.backendaiclient.current_group});
     document.dispatchEvent(event);
+    e.stopPropagation();
   }
 
-  _refreshUserGroupSelector(): void {
-    this.currentGroup = globalThis.backendaiutils._readRecentProjectGroup();
-    globalThis.backendaiclient.current_group = this.currentGroup;
-    this.groups = globalThis.backendaiclient.groups;
-    // Detached from template to support live-update after creating new group (will need it)
-    if (this.groupSelectionBox?.hasChildNodes()) {
-      this.groupSelectionBox?.removeChild(this.groupSelectionBox.firstChild as ChildNode);
-    }
-    const div = document.createElement('div');
-    div.className = 'horizontal center center-justified layout';
-    const select = document.createElement('mwc-select');
-    select.id = 'group-select';
-    select.value = this.currentGroup;
-    // select.style = 'width: auto;max-width: 200px;';
-    select.style.width = 'auto';
-    select.style.maxWidth = '200px';
-    select.addEventListener('selected', (e) => this.changeGroup(e));
-    let opt = document.createElement('mwc-list-item');
-    opt.setAttribute('disabled', 'true');
-    opt.innerHTML = _text('webui.menu.SelectProject');
-    opt.style.borderBottom = '1px solid #ccc';
-    select.appendChild(opt);
-    this.groups.map((group) => {
-      opt = document.createElement('mwc-list-item');
-      opt.value = group;
-      if (this.currentGroup === group) {
-        opt.selected = true;
-      } else {
-        opt.selected = false;
-      }
-      opt.innerHTML = group;
-      select.appendChild(opt);
-    });
-    // select.updateOptions();
-    div.appendChild(select);
-    this.groupSelectionBox?.appendChild(div);
+  protected _refreshUserGroupSelector(): void {
+    this.currentProject = globalThis.backendaiutils._readRecentProjectGroup();
+    globalThis.backendaiclient.current_group = this.currentProject;
+    this.projects = globalThis.backendaiclient.groups;
+    this.projectSelect.selectedItem = this.currentProject;
   }
 
-  render() {
+  override render() {
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal center center-justified layout">
         <p id="project">${_t('webui.menu.Project')}</p>
-        <div id="group-select-box"></div>
+        <div id="project-select-box">
+          <div class="horizontal center center-justified layout">
+            <vaadin-combo-box id="project-select" value="${this.currentProject}" .items="${this.projects}"
+                              @change="${(e) => this.changeGroup(e)}">
+            </vaadin-combo-box>
+          </div>
+        </div>
       </div>
     `;
   }

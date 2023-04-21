@@ -1079,9 +1079,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     //@ts-ignore
     const params = (new URL(document.location)).searchParams;
     const folderName = params.get('folder');
-    if(folderName){
+    if (folderName) {
       // alert(folderName);
-      console.log(this.folders);
     }
   }
 
@@ -3037,18 +3036,34 @@ export default class BackendAiStorageList extends BackendAIPage {
     } else {
       rqstJob = globalThis.backendaiclient.vfolder.share(permission, emailArray, this.selectedFolder);
     }
+
+    const getRqstFailedEmailList = (requestedEmailList, resultEmailList) => {
+      return requestedEmailList.filter((email) => !resultEmailList.includes(email));
+    };
+
     rqstJob
       .then((res) => {
         let msg;
+        // FIXME: 
+        // we need to replace more proper word to distinguish folder sharing on user and group(project).
+        // For now, invite means sharing `user` folder and share means sharing `group(project)` folder
         if (this.selectedFolderType === 'user') {
           if (res.invited_ids && res.invited_ids.length > 0) {
             msg = _text('data.invitation.Invited');
+            const failedInvitingEmailList = getRqstFailedEmailList(emailArray, res.invited_ids);
+            if (failedInvitingEmailList.length > 0) {
+              msg = _text('data.invitation.FolderSharingNotAvailableToUser') + failedInvitingEmailList.join(', ');
+            }
           } else {
             msg = _text('data.invitation.NoOneWasInvited');
           }
         } else {
           if (res.shared_emails && res.shared_emails.length > 0) {
             msg = _text('data.invitation.Shared');
+            const failedSharingEmailList = getRqstFailedEmailList(emailArray, res.shared_emails);
+            if (failedSharingEmailList.length > 0) {
+              msg = _text('data.invitation.FolderSharingNotAvailableToUser') + failedSharingEmailList.join(', ');
+            }
           } else {
             msg = _text('data.invitation.NoOneWasShared');
           }
@@ -3061,15 +3076,16 @@ export default class BackendAiStorageList extends BackendAIPage {
           element.parentElement?.removeChild(element);
         }
       }).catch((err) => {
-        if (this.selectedFolderType === 'user') {
-          this.notification.text = _text('data.invitation.InvitationError');
-        } else {
-          this.notification.text = _text('data.invitation.SharingError');
-        }
+        // if (this.selectedFolderType === 'user') {
+        //   this.notification.text = _text('data.invitation.InvitationError');
+        // } else {
+        //   this.notification.text = _text('data.invitation.SharingError');
+        // }
         if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.message);
           this.notification.detail = err.message;
         }
-        this.notification.show(true, err);
+        this.notification.show();
       });
   }
 

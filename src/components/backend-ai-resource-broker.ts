@@ -152,6 +152,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.tags = globalThis.backendaimetadata.tags;
+      this.icons = globalThis.backendaimetadata.icons;
+      this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
+      this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    }, {once: true});
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();

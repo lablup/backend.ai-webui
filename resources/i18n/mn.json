@@ -662,7 +662,8 @@
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Shared": "Бүлгийн фолдерыг амжилттай хуваалцав",
       "NoOneWasShared": "Бүлгийн фолдерыг хуваалцаж чадсангүй",
-      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй."
+      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Өөрчлөлт оруулаагүй болно",
@@ -1171,7 +1172,8 @@
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
-    "DescEndpoint": "__NOT_TRANSLATED__"
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
