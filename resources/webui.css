@@ -171,10 +171,10 @@ ul {
 
 /* Global Vaadin components */
 
-vaadin-combo-box-item[selected] {
+vaadin-combo-box-item[selected], vaadin-select-item[selected] {
     background-color: rgba(232, 247, 232, 1);
 }
 
-vaadin-combo-box-item:hover {
+vaadin-combo-box-item:hover, vaadin-select-item:hover {
     background-color: rgba(247, 247, 246, 1);
 }

@@ -55,6 +55,7 @@
     "@vaadin/icons": "^24.0.0",
     "@vaadin/item": "^24.0.0",
     "@vaadin/progress-bar": "^24.0.0",
+    "@vaadin/select": "^24.0.2",
     "@vaadin/text-field": "^24.0.0",
     "@vaadin/tooltip": "^24.0.0",
     "@vanillawc/wc-codemirror": "^2.1.0",

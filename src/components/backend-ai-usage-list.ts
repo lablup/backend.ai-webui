@@ -10,12 +10,14 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {Select} from '@material/mwc-select';
+import '@vaadin/select';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 import './backend-ai-monthly-usage-panel';
 import './backend-ai-dialog';
+
+import type {Select} from '@vaadin/select';
 
 import {
   IronFlex,
@@ -64,6 +66,7 @@ export default class BackendAIUsageList extends BackendAIPage {
       'length': 4 * 24 * 7
     }
   };
+  @property({type: Array}) periodSelectItems = new Array<object>();
   @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
@@ -90,25 +93,24 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        mwc-select {
-          width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
-          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: var(--general-sidebar-color);
-          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 25px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-          };
+        vaadin-select {
+          font-size: 14px;
+        }
+
+        vaadin-select-item {
+          font-size: 14px;
+          --lumo-font-family: var(--general-font-family) !important;
+        }
+
+        vaadin-select::part(input-field) {
+          background-color: transparent;
+        }
+
+        #select-period {
+          font-size: 12px;
+          color: #8c8484;
+          padding-left: 20px;
+          padding-right: 8px;
         }
 
         #help-description {
@@ -163,18 +165,10 @@ export default class BackendAIUsageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._getUserInfo();
         this.init();
-        setTimeout(() => {
-          // TODO remove protected field assignment
-          (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim() ?? '';
-        }, 100);
       }, true);
     } else { // already connected
       this._getUserInfo();
       this.init();
-      setTimeout(() => {
-        // TODO remove protected field assignment
-        (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim();
-      }, 100);
     }
   }
 
@@ -188,6 +182,20 @@ export default class BackendAIUsageList extends BackendAIPage {
       const seconds = Math.floor((current_time.getTime() - start_time.getTime()) / msec_to_sec);
       const days = Math.floor(seconds / seconds_to_day);
       this.elapsedDays = days;
+      const periodSelectItems = [
+        {
+          label: _text('statistics.1Day'),
+          value: '1D',
+        },
+      ];
+      if (this.elapsedDays > 7) {
+        periodSelectItems.push({
+          label: _text('statistics.1Week'),
+          value: '1W',
+        });
+      }
+      this.periodSelectItems = periodSelectItems;
+      this.periodSelec.value = '1D';
     });
   }
 
@@ -334,20 +342,11 @@ export default class BackendAIUsageList extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <div class="card" elevation="0">
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
-        <h3 class="horizontal center layout">
-          <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:150px; border:1px solid #ccc;"
-              @change="${(e) => {
-    this.pulldownChange(e);
-  }}">
-            <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
-            ${this.elapsedDays > 7 ? html`
-              <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
-            ` : html``}
-          </mwc-select>
-          <span class="flex"></span>
+        <div class="horizontal layout center">
+          <p id="select-period">${_t('statistics.SelectPeriod')}</p>
+          <vaadin-select id="period-selector" .items="${this.periodSelectItems}" @change="${(e) => this.pulldownChange(e)}"></vaadin-select>
           <mwc-icon-button class="fg green" icon="info" @click="${() => this._launchUsageHistoryInfoDialog()}"></mwc-icon-button>
-        </h3>
+        </div>
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
       html`
