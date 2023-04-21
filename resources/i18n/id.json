@@ -654,8 +654,7 @@
       "ClickFilebrowserButton": "Untuk mengunggah Folder, Silakan klik tombol Jalankan file browser.",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
-      "EmptyFilesAreNotUploaded": "__NOT_TRANSLATED__",
-      "EmptyFoldersAreNotUploaded": "__NOT_TRANSLATED__"
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Masukkan alamat email",

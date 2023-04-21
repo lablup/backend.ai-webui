@@ -654,8 +654,7 @@
       "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
-      "EmptyFilesAreNotUploaded": "__NOT_TRANSLATED__",
-      "EmptyFoldersAreNotUploaded": "__NOT_TRANSLATED__"
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",

@@ -654,8 +654,7 @@
       "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
-      "EmptyFilesAreNotUploaded": "__NOT_TRANSLATED__",
-      "EmptyFoldersAreNotUploaded": "__NOT_TRANSLATED__"
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",

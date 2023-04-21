@@ -2524,12 +2524,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-    if (isEmptyFileIncluded) {
-      this.notification.text = _text('data.explorer.EmptyFilesAreNotUploaded');
-      this.notification.show();
-    }
-    if (isFolderUpload) {
-      this.notification.text = _text('data.explorer.EmptyFoldersAreNotUploaded');
+    if (isEmptyFileIncluded || isFolderUpload) {
+      this.notification.text = _text('data.explorer.EmptyFilesAndFoldersAreNotUploaded');
       this.notification.show();
     }
     const inputElement = isFolderUpload ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
