@@ -26,7 +26,7 @@ export default class BackendAIMetadataStore extends BackendAIPage {
   @property({type: Object}) tags = Object();
   @property({type: Object}) icons = Object();
   @property({type: Object}) deviceInfo = Object();
-  @property({type: Array}) deviceNames = [];
+  @property({type: Array}) deviceNames: string[] = [];
 
   constructor() {
     super();
