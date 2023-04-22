@@ -5,7 +5,7 @@
 
 import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -85,6 +85,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resource_metadata = Object();
 
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @state() private now_in_sync = false;
 
   static get styles(): CSSResultGroup {
     return [
@@ -296,6 +297,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
         }, 15000);
       }
     }).catch((err) => {
+      console.log('totalResourceInformation fetch failed');
       this.spinner.hide();
       if (err && err.message) {
         this.notification.text = PainKiller.relieve(err.title);
@@ -327,15 +329,14 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   }
 
   _sync_resource_values() {
+    if (this.now_in_sync === true) {
+      return;
+    }
+    this.now_in_sync = true;
     this.manager_version = globalThis.backendaiclient.managerVersion;
     this.webui_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    for (const device of this.resource_metadata.deviceNames ) {
-      if (device in this.resources && isNaN(this.resources[device].total)) {
-        this.resources[device].total = 0;
-      }
-    }
     this.cpu_used = this.resources.cpu.used;
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
@@ -356,11 +357,18 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.mem_current_usage_percent = this.mem_total_usage_ratio.toFixed(2);// (this.mem_allocated / this.mem_total_usage_ratio * 100.0).toFixed(2);
     }
+    // Devices
+    for (const device of this.resource_metadata.deviceNames ) {
+      if (device in this.resources && isNaN(this.resources[device]['total'])) {
+        this.resources[device].total = 0;
+      }
+    }
     this.agents = this.resources.agents.total;
 
     if (isNaN(parseFloat(this.mem_current_usage_percent))) {
       this.mem_current_usage_percent = '0';
     }
+    this.now_in_sync = false;
   }
 
   async _viewStateChanged(active: boolean) {
@@ -368,6 +376,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     if (active === false) {
       return;
     }
+    this.now_in_sync = false;
     this._init_resource_values();
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {

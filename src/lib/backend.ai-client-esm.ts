@@ -3154,7 +3154,8 @@ class Resources {
     this.resources.mem.total = 0;
     this.resources.mem.allocated = 0;
     this.resources.mem.used = 0;
-    this.resources.gpu = {};
+
+    /*this.resources.gpu = {};
     this.resources.gpu.total = 0;
     this.resources.gpu.used = 0;
     this.resources['cuda.device'] = {};
@@ -3177,7 +3178,7 @@ class Resources {
     this.resources['ipu.device'].used = 0;
     this.resources['atom.device'] = {};
     this.resources['atom.device'].total = 0;
-    this.resources['atom.device'].used = 0;
+    this.resources['atom.device'].used = 0;*/
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3218,65 +3219,45 @@ class Resources {
           if (occupied_slots.mem === undefined) {
             occupied_slots.mem = 0;
           }
+
           this.resources.mem.total = parseFloat(this.resources.mem.total) + parseInt(this.client.utils.changeBinaryUnit(available_slots.mem, 'b'));
           this.resources.mem.allocated = parseInt(this.resources.mem.allocated) + parseInt(this.client.utils.changeBinaryUnit(occupied_slots.mem, 'b'));
           this.resources.mem.used = parseInt(this.resources.mem.used) + parseInt(this.client.utils.changeBinaryUnit(value.mem_cur_bytes, 'b'));
-
-          if ('cuda.device' in available_slots) {
-            this.resources['cuda.device'].total = parseInt(this.resources['cuda.device'].total) + Math.floor(Number(available_slots['cuda.device']));
-          }
-          if ('cuda.device' in occupied_slots) {
-            this.resources['cuda.device'].used = parseInt(this.resources['cuda.device'].used) + Math.floor(Number(occupied_slots['cuda.device']));
-          }
-          if ('cuda.shares' in available_slots) {
-            this.resources['cuda.shares'].total = parseFloat(this.resources['cuda.shares'].total) + parseFloat(available_slots['cuda.shares']);
-          }
-          if ('cuda.shares' in occupied_slots) {
-            this.resources['cuda.shares'].used = parseFloat(this.resources['cuda.shares'].used) + parseFloat(occupied_slots['cuda.shares']);
-          }
-          if ('rocm.device' in available_slots) {
-            this.resources['rocm.device'].total = parseInt(this.resources['rocm.device'].total) + Math.floor(Number(available_slots['rocm.device']));
-          }
-          if ('rocm.device' in occupied_slots) {
-            this.resources['rocm.device'].used = parseInt(this.resources['rocm.device'].used) + Math.floor(Number(occupied_slots['rocm.device']));
-          }
-          if ('tpu.device' in available_slots) {
-            this.resources['tpu.device'].total = parseInt(this.resources['tpu.device'].total) + Math.floor(Number(available_slots['tpu.device']));
-          }
-          if ('tpu.device' in occupied_slots) {
-            this.resources['tpu.device'].used = parseInt(this.resources['tpu.device'].used) + Math.floor(Number(occupied_slots['tpu.device']));
-          }
-          if ('ipu.device' in available_slots) {
-            this.resources['ipu.device'].total = parseInt(this.resources['ipu.device'].total) + Math.floor(Number(available_slots['ipu.device']));
-          }
-          if ('ipu.device' in occupied_slots) {
-            this.resources['ipu.device'].used = parseInt(this.resources['ipu.device'].used) + Math.floor(Number(occupied_slots['ipu.device']));
-          }
-          if ('atom.device' in available_slots) {
-            this.resources['atom.device'].total = parseInt(this.resources['atom.device'].total) + Math.floor(Number(available_slots['atom.device']));
-          }
-          if ('atom.device' in occupied_slots) {
-            this.resources['atom.device'].used = parseInt(this.resources['atom.device'].used) + Math.floor(Number(occupied_slots['atom.device']));
-          }
-
+          Object.entries(available_slots).forEach(([device, value]) => {
+            if (!(device in this.resources)) {
+              this.resources[device] = {}; // TODO: change the code to refer resource-slots query result.
+              if (this.client.utils.numberType(available_slots[device]) == 'int') { // Integer. TODO: use server-side metadata query.
+                this.resources[device]['unit_type'] = 'int';
+              } else { // Float
+                this.resources[device]['unit_type'] = 'float';
+              }
+            }
+            if(!['cpu', 'mem'].includes(device)) {
+              if (this.resources[device]['unit_type'] == 'float') {
+                this.resources[device]['total'] = parseFloat(this.resources[device]['total']) + parseFloat(available_slots[device]);
+                this.resources[device]['used'] = 0.0;
+              } else {
+                this.resources[device]['total'] = parseInt(this.resources[device]['total']) + Math.floor(Number(available_slots[device]));
+                this.resources[device]['used'] = 0;
+              }
+            }
+          });
+          Object.entries(occupied_slots).forEach(([device, value]) => {
+            if(!['cpu', 'mem'].includes(device)) {
+              if (this.resources[device]['unit_type'] == 'float') {
+                this.resources[device]['used'] = parseFloat(this.resources[device]['used']) + parseFloat(value as string);
+              } else {
+                this.resources[device]['used'] = parseInt(this.resources[device]['used']) + Math.floor(Number(value as string));
+              }
+            }
+          });
           if (isNaN(this.resources.cpu.used)) {
             this.resources.cpu.used = 0;
           }
           if (isNaN(this.resources.mem.used)) {
             this.resources.mem.used = 0;
           }
-          if (isNaN(this.resources.gpu.used)) {
-            this.resources.gpu.used = 0;
-          }
-          if (isNaN(this.resources.fgpu.used)) {
-            this.resources.fgpu.used = 0;
-          }
         });
-        // Legacy code
-        this.resources.gpu.total = this.resources['cuda.device'].total;
-        this.resources.gpu.used = this.resources['cuda.device'].used;
-        this.resources.fgpu.used = this.resources['cuda.shares'].used.toFixed(2);
-        this.resources.fgpu.total = this.resources['cuda.shares'].total.toFixed(2);
         this.resources.agents.total = Object.keys(this.agents).length; // TODO : remove terminated agents
         this.resources.agents.using = Object.keys(this.agents).length;
         return Promise.resolve(this.resources);
@@ -4658,6 +4639,16 @@ class utils {
       result.push(element[key]);
     });
     return result;
+  }
+
+  numberType(value): "int" | "float" | "nonum" {
+    if (/^-?\d+$/.test(value)) {
+      return 'int';
+    } else if (/^-?\d+(\.\d+)?$/.test(value)) {
+      return 'float';
+    } else {
+      return 'nonum';
+    }
   }
 }
 
