@@ -11,7 +11,7 @@
       },
       "display_icon": "cpu"
     },
-    "ram": {
+    "mem": {
       "slot_name": "ram",
       "description": "Memory",
       "human_readable_name": "RAM",
@@ -58,7 +58,7 @@
     "tpu.device": {
       "slot_name": "tpu.device",
       "human_readable_name": "TPU",
-      "description": "Google TPU",
+      "description": "Google TPU enabled",
       "display_unit": "TPU",
       "number_format": {
         "binary": false,
@@ -79,8 +79,8 @@
     },
     "atom.device": {
       "slot_name": "atom.device",
-      "description": "ATOM",
-      "human_readable_name": "ATOM Device",
+      "description": "Rebellions ATOM enabled",
+      "human_readable_name": "ATOM",
       "display_unit": "ATOM",
       "number_format": {
         "binary": false,
@@ -90,9 +90,20 @@
     },
     "warboy.device": {
       "slot_name": "warboy.device",
-      "description": "Warboy",
-      "human_readable_name": "Warboy Device",
+      "description": "Furiosa Warboy enabled",
+      "human_readable_name": "Warboy",
       "display_unit": "WARBOY",
+      "number_format": {
+        "binary": false,
+        "round_length": 0
+      },
+      "display_icon": "ipu"
+    },
+    "sapeon.device": {
+      "slot_name": "sapeon.device",
+      "description": "Sapeon",
+      "human_readable_name": "Sapeon",
+      "display_unit": "SAPEON",
       "number_format": {
         "binary": false,
         "round_length": 0

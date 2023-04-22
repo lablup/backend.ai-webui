@@ -82,6 +82,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
   @property({type: Number}) height = 0;
+  @property({type: Object}) resource_metadata = Object();
+
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
 
   static get styles(): CSSResultGroup {
@@ -200,6 +202,10 @@ export default class BackendAIResourcePanel extends BackendAIPage {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
+    this.resource_metadata = globalThis.backendaimetadata;
+    document.addEventListener('backend-ai-metadata-device-loaded', () => {
+      this.resource_metadata = globalThis.backendaimetadata;
+    }, {once: true});
   }
 
   _refreshHealthPanel() {
@@ -308,24 +314,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.mem.total = 0;
     this.resources.mem.allocated = 0;
     this.resources.mem.used = 0;
-    this.resources.cuda_gpu = {};
-    this.resources.cuda_gpu.total = 0;
-    this.resources.cuda_gpu.used = 0;
-    this.resources.cuda_fgpu = {};
-    this.resources.cuda_fgpu.total = 0;
-    this.resources.cuda_fgpu.used = 0;
-    this.resources.rocm_gpu = {};
-    this.resources.rocm_gpu.total = 0;
-    this.resources.rocm_gpu.used = 0;
-    this.resources.tpu = {};
-    this.resources.tpu.total = 0;
-    this.resources.tpu.used = 0;
-    this.resources.ipu = {};
-    this.resources.ipu.total = 0;
-    this.resources.ipu.used = 0;
-    this.resources.atom = {};
-    this.resources.atom.total = 0;
-    this.resources.atom.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -343,50 +331,17 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.webui_version = globalThis.packageVersion;
     this.cpu_total = this.resources.cpu.total;
     this.mem_total = parseFloat(globalThis.backendaiclient.utils.changeBinaryUnit(this.resources.mem.total, 'g')).toFixed(2);
-    if (isNaN(this.resources['cuda.device'].total)) {
-      this.cuda_gpu_total = 0;
-    } else {
-      this.cuda_gpu_total = this.resources['cuda.device'].total;
-    }
-    if (isNaN(this.resources['cuda.shares'].total)) {
-      this.cuda_fgpu_total = 0;
-    } else {
-      this.cuda_fgpu_total = this.resources['cuda.shares'].total;
-    }
-    if (isNaN(this.resources['rocm.device'].total)) {
-      this.rocm_gpu_total = 0;
-    } else {
-      this.rocm_gpu_total = this.resources['rocm.device'].total;
-    }
-    if (isNaN(this.resources['tpu.device'].total)) {
-      this.tpu_total = 0;
-    } else {
-      this.tpu_total = this.resources['tpu.device'].total;
-    }
-    if (isNaN(this.resources['ipu.device'].total)) {
-      this.ipu_total = 0;
-    } else {
-      this.ipu_total = this.resources['ipu.device'].total;
-    }
-    if (isNaN(this.resources['atom.device'].total)) {
-      this.atom_total = 0;
-    } else {
-      this.atom_total = this.resources['atom.device'].total;
+    for (const device of this.resource_metadata.deviceNames ) {
+      if (device in this.resources && isNaN(this.resources[device].total)) {
+        this.resources[device].total = 0;
+      }
     }
     this.cpu_used = this.resources.cpu.used;
-    this.cuda_gpu_used = this.resources['cuda.device'].used;
-    this.cuda_fgpu_used = this.resources['cuda.shares'].used;
-    this.rocm_gpu_used = this.resources['rocm.device'].used;
-    this.tpu_used = this.resources['tpu.device'].used;
-    this.ipu_used = this.resources['ipu.device'].used;
-    this.atom_used = this.resources['atom.device'].used;
-
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
     // this.cpu_total_percent = ((parseFloat(this.cpu_percent) / (this.cpu_total * 100.0)) * 100.0).toFixed(2);
     this.cpu_total_usage_ratio = this.resources.cpu.used / this.resources.cpu.total * 100.0;
     this.cpu_current_usage_ratio = this.resources.cpu.percent / this.resources.cpu.total;
-
 
     // mem.total: total memory
     // mem.allocated: allocated by backend.ai
@@ -513,106 +468,29 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
               </div>
             </div>
-            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total || this.ipu_total || this.atom_total? html`
+            <!-- modern -->
             <div class="resource-line"></div>
-            <div class="layout horizontal center flex resource">
-              <div class="layout vertical center center-justified resource-name">
-                <div class="gauge-name">GPU/NPU</div>
-              </div>
-              ${this.cuda_gpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="gpu-usage-bar" class="start"
-                  progress="${this.cuda_gpu_used / this.cuda_gpu_total}"
-                  description="${this.cuda_gpu_used} / ${this.cuda_gpu_total} CUDA GPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="gpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.FractionalGPUScalingEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.cuda_gpu_used !== 0 ? (this.cuda_gpu_used / this.cuda_gpu_total * 100).toFixed(1) : 0}%</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>
-              `: html``}
-              ${this.cuda_fgpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="fgpu-usage-bar" class="start"
-                  progress="${this.cuda_fgpu_used / this.cuda_fgpu_total}"
-                  description="${this.cuda_fgpu_used} / ${this.cuda_fgpu_total} CUDA FGPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="fgpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.FractionalGPUScalingEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.cuda_fgpu_used !== 0 ? (this.cuda_fgpu_used / this.cuda_fgpu_total * 100).toFixed(1) : 0}%</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>
-              `: html``}
-              ${this.rocm_gpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="rocm-gpu-usage-bar" class="start"
-                  progress="${this.rocm_gpu_used / 100.0}"
-                  description="${this.rocm_gpu_used} / ${this.rocm_gpu_total} ROCm GPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="rocm-gpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.ROCMGPUEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.rocm_gpu_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar">&nbsp;</span>
-              </div>`: html``}
-              ${this.tpu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="tpu-usage-bar" class="start"
-                  progress="${this.tpu_used / 100.0}"
-                  description="${this.tpu_used} / ${this.tpu_total} TPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="tpu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.TPUEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.tpu_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
-              ${this.ipu_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="ipu-usage-bar" class="start"
-                  progress="${this.ipu_used / 100.0}"
-                  description="${this.ipu_used} / ${this.ipu_total} IPUs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="ipu-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.IPUEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.ipu_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
-              ${this.atom_total ? html`
-              <div class="layout vertical start-justified wrap">
-                <lablup-progress-bar id="atom-usage-bar" class="start"
-                  progress="${this.atom_used / 100.0}"
-                  description="${this.atom_used} / ${this.atom_total} ATOMs ${_t('summary.reserved')}."
-                ></lablup-progress-bar>
-                <lablup-progress-bar id="atom-usage-bar-2" class="end"
-                  progress="0"
-                  description="${_t('summary.ATOMEnabled')}."
-                ></lablup-progress-bar>
-              </div>
-              <div class="layout vertical center center-justified">
-                <span class="percentage start-bar">${this.atom_used.toFixed(1) + '%'}</span>
-                <span class="percentage end-bar"></span>
-              </div>`: html``}
-
-            </div>`: html``}
+              ${this.resource_metadata.deviceNames.map((device) => ( !['cpu', 'mem'].includes(device) && device in this.resources && this.resources[device]['total'] > 0 ? html`
+                <div class="layout horizontal center flex resource">
+                  <div class="layout vertical center center-justified resource-name">
+                    <div class="gauge-name">${this.resource_metadata.deviceInfo[device]['human_readable_name']}</div>
+                  </div>
+                  <div class="layout vertical start-justified wrap">
+                    <lablup-progress-bar id="gpu-usage-bar" class="start"
+                                         progress="${this.resources[device]['used'] / this.resources[device]['total']}"
+                                         description="${this.resources[device]['used']} / ${this.resources[device]['total']} ${this.resource_metadata.deviceInfo[device]['display_unit']} ${_t('summary.reserved')}."
+                    ></lablup-progress-bar>
+                    <lablup-progress-bar id="gpu-usage-bar-2" class="end"
+                                         progress="0"
+                                         description="${this.resource_metadata.deviceInfo[device]['description']}"
+                    ></lablup-progress-bar>
+                  </div>
+                  <div class="layout vertical center center-justified">
+                    <span class="percentage start-bar">${this.resources[device]['used'] !== 0 ? (this.resources[device]['used'] / this.resources[device]['total'] * 100).toFixed(1) : 0}%</span>
+                    <span class="percentage end-bar">&nbsp;</span>
+                  </div>
+                </div>` : html``)
+  )}
             <div class="vertical start layout" style="margin-top:30px;">
               <div class="horizontal layout resource-legend-stack">
                 <div class="resource-legend-icon start"></div>
