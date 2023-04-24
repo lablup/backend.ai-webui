@@ -45,6 +45,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
+  @property({type: String}) sshHost = '127.0.0.1';
   @property({type: Number}) sshPort = 0;
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
@@ -292,6 +293,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
+      }
+    });
+    document.addEventListener('backend-ai-launch-ssh-dialog', (e: any) => {
+      if (e.detail) {
+        this.sshPort = e.detail.port;
+        this.sshHost = e.detail.host;
+        this._openSSHDialog();
       }
     });
   }
@@ -1302,9 +1310,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a>
+            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}:${this.sshPort}</a>
             </div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
+            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${this.sshPort}">sftp://${this.sshHost}:${this.sshPort}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
           </section>

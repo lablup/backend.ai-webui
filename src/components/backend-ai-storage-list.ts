@@ -141,6 +141,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     mem: 0.5
   };
   @property({type: Array}) filebrowserSupportedImages = [];
+  @property({type: Array}) serviceSessionSupportedImages = [];
   @property({type: Object}) volumeInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
@@ -510,9 +511,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           filter: grayscale(1.0);
         }
 
-        img#filebrowser-img {
-          width:24px;
-          margin:15px 10px;
+        img#filebrowser-img, img#ssh-img {
+          width: 18px;
+          margin: 15px 10px;
         }
 
         @media screen and (max-width: 700px) {
@@ -834,8 +835,20 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <img
                   id="filebrowser-img"
                   alt="File Browser"
-                  src="./resources/icons/filebrowser.svg"></img>
+                  src="./resources/icons/filebrowser.svg" />
                 <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
+            </mwc-button>
+          </div>
+          <div id="">
+            <mwc-button
+              title="SSH / SFTP"
+              @click="${() => this._executeSSHProxyAgent()}"
+            >
+              <img
+                id="ssh-img"
+                alt="SSH / SFTP"
+                src="/resources/icons/sftp.png"/>
+              <span>${_t('data.explorer.ExecuteSSH/SFTP')}</span>
             </mwc-button>
           </div>
         </div>
@@ -1668,7 +1681,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Check the images that supports filebrowser application
    *
    */
-  async _checkFilebrowserSupported() {
+  async _checkImageSupported() {
     const fields = [
       'name', 'tag', 'registry', 'digest', 'installed',
       'labels { key value }',
@@ -1683,7 +1696,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         label.value.toLowerCase().includes('filebrowser'),
       ),
     );
+    // Filter service supported images.
+    this.serviceSessionSupportedImages = images.filter((image) =>
+      image.labels.find((label) =>
+        label.key === 'ai.backend.role' &&
+        label.value.toLowerCase().includes('system'),
+      ),
+    );
   }
+
 
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -1699,7 +1720,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this._getAllowedVFolderHostsByCurrentUserInfo();
-        this._checkFilebrowserSupported();
+        this._checkImageSupported();
         this._getVolumeInformation();
         this._triggerFolderListChanged();
         this._refreshFolderList(false, 'viewStatechanged');
@@ -1712,7 +1733,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this._getAllowedVFolderHostsByCurrentUserInfo();
-      this._checkFilebrowserSupported();
+      this._checkImageSupported();
       this._getVolumeInformation();
       this._triggerFolderListChanged();
       this._refreshFolderList(false, 'viewStatechanged');
@@ -2237,7 +2258,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.explorerFiles = this.explorer.files;
     if (dialog) {
       if (this.filebrowserSupportedImages.length === 0) {
-        await this._checkFilebrowserSupported();
+        await this._checkImageSupported();
       }
       this._toggleFilebrowserButton();
       this.openDialog('folder-explorer-dialog');
@@ -2709,7 +2730,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         if ((isNotificationVisible == null || isNotificationVisible === 'true') && !this.isWritable) {
           this.fileBrowserNotificationDialog.show();
         }
-        this._launchSession();
+        this._launchFileBrowserSession();
         this._toggleFilebrowserButton();
       } else {
         this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
@@ -2738,7 +2759,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Open the session launcher dialog to execute filebrowser app.
    *
    */
-  async _launchSession() {
+  async _launchFileBrowserSession() {
     let appOptions;
     const imageResource: Record<string, unknown> = {};
     // monkeypatch for filebrowser applied environment
@@ -2783,6 +2804,20 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.show(true, err);
       indicator.end(1000);
     });
+  }
+
+  _executeSSHProxyAgent() {
+    this._launchSSHSession();
+  }
+
+  _launchSSHSession() {
+    // get publicHost
+    // TODO: fix me
+    const host = '127.0.0.1';
+    const port = 58000;
+
+    const event = new CustomEvent('backend-ai-launch-ssh-dialog', {'detail': {host: host, port: port}});
+    document.dispatchEvent(event);
   }
 
   /**
