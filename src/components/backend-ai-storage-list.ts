@@ -141,7 +141,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     mem: 0.5
   };
   @property({type: Array}) filebrowserSupportedImages = [];
-  @property({type: Array}) serviceSessionSupportedImages = [];
+  @property({type: Array}) systemRoleSupportedImages = [];
   @property({type: Object}) volumeInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
@@ -841,6 +841,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </div>
           <div id="">
             <mwc-button
+              id="ssh-btn"
               title="SSH / SFTP"
               @click="${() => this._executeSSHProxyAgent()}"
             >
@@ -1697,7 +1698,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       ),
     );
     // Filter service supported images.
-    this.serviceSessionSupportedImages = images.filter((image) =>
+    this.systemRoleSupportedImages = images.filter((image) =>
       image.labels.find((label) =>
         label.key === 'ai.backend.role' &&
         label.value.toLowerCase().includes('system'),
@@ -2257,10 +2258,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this.explorerFiles = this.explorer.files;
     if (dialog) {
-      if (this.filebrowserSupportedImages.length === 0) {
+      if (this.filebrowserSupportedImages.length === 0 || this.systemRoleSupportedImages.length === 0) {
         await this._checkImageSupported();
       }
       this._toggleFilebrowserButton();
+      this._toggleSSHSessionButton();
       this.openDialog('folder-explorer-dialog');
     }
   }
@@ -2807,10 +2809,16 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _executeSSHProxyAgent() {
-    this._launchSSHSession();
+    if (this.systemRoleSupportedImages.length > 0) {
+      this._launchSystemRoleSSHSession();
+      this._toggleSSHSessionButton();
+    } else {
+      this.notification.text = _text('data.explorer.NoImagesSupportingSystemSession');
+      this.notification.show();
+    }
   }
 
-  _launchSSHSession() {
+  _launchSystemRoleSSHSession() {
     // get publicHost
     // TODO: fix me
     const host = '127.0.0.1';
@@ -2818,6 +2826,17 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     const event = new CustomEvent('backend-ai-launch-ssh-dialog', {'detail': {host: host, port: port}});
     document.dispatchEvent(event);
+  }
+
+  _toggleSSHSessionButton() {
+    const isSystemRoleSupported = this.systemRoleSupportedImages.length > 0;
+    const sshImageIcon = this.shadowRoot?.querySelector('#ssh-img');
+    const sshImageBtn = this.shadowRoot?.querySelector('#ssh-btn') as Button;
+    if (sshImageIcon && sshImageBtn) {
+      sshImageBtn.disabled = !isSystemRoleSupported;
+      const filterClass = isSystemRoleSupported ? '' : 'apply-grayscale';
+      sshImageIcon.setAttribute('class', filterClass);
+    }
   }
 
   /**
