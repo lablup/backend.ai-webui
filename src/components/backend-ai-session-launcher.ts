@@ -226,7 +226,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'environment': '',
     'version': ['']
   };
-  @query('#image-name') manualImageName;
+  @query('#image-name') manualImageNameInput;
   @query('#session-type') sessionTypeSelector!: Select;
   @query('#session-name') sessionNameInput!: TextField;
   @query('#version') versionSelector!: Select;
@@ -1177,7 +1177,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
-   * derive session infomation from manualImageName or selector and save it in sessionInfoObj.
+   * derive session infomation from manualImageNameInput or selector and save it in sessionInfoObj.
    *
    * @return {Boolean}
    * */
@@ -1185,8 +1185,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let environmentString;
     let versionArray;
 
-    if (this.manualImageName?.value) {
-      const nameFragments = this.manualImageName.value.split(':');
+    if (this.manualImageNameInput?.value) {
+      const nameFragments = this.manualImageNameInput.value.split(':');
       environmentString = nameFragments[0];
       versionArray = nameFragments.slice(-1)[0].split('-');
     } else if (this.kernel !== undefined && this.versionSelector?.disabled === false) {
@@ -1344,8 +1344,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     let kernel: string;
     let version: string;
     let architecture: string | undefined;
-    if (this.manualImageName && this.manualImageName.value) {
-      const nameFragments = this.manualImageName.value.split(':');
+    if (this.manualImageNameInput && this.manualImageNameInput.value) {
+      const nameFragments = this.manualImageNameInput.value.split(':');
       version = nameFragments.splice(-1, 1)[0];
       kernel = nameFragments.join(':');
       // TODO: Add support for selecting image architecture when starting kernel with manual image name
@@ -1453,8 +1453,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
 
     let kernelName: string;
-    if ((this._debug && this.manualImageName.value !== '') || ( this.manualImageName && this.manualImageName.value !== '')) {
-      kernelName = this.manualImageName.value;
+    if ((this._debug && this.manualImageNameInput.value !== '') || ( this.manualImageNameInput && this.manualImageNameInput.value !== '')) {
+      kernelName = this.manualImageNameInput.value;
     } else {
       kernelName = this._generateKernelIndex(kernel, version);
     }
@@ -2296,11 +2296,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
     // additional settings on certain condition
     // TODO:
-    // add manual image name and disable environment/version field if enabled
     // add delegate session info if enabled
-    // add model storage to mount if mounted
     // add openMP optimization mode if disabled
-
     globalThis.backendaioptions.set('current_session_config', sessionConfig);
   }
 
@@ -3289,7 +3286,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    */
   _toggleEnvironmentSelectUI() {
-    const isManualImageEnabled = this.manualImageName?.value ? true : false;
+    const isManualImageEnabled = this.manualImageNameInput?.value ? true : false;
     this.environmentSelector.disabled = this.versionSelector.disabled = isManualImageEnabled;
     // select none(-1) when manual image is enabled
     const selectedIndex = isManualImageEnabled ? -1 : 1;
