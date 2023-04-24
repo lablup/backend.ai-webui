@@ -247,7 +247,8 @@
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
       "DescAIAccelerator": "__NOT_TRANSLATED__",
-      "SessionAlreadyExists": "__NOT_TRANSLATED__"
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "SetDefault": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

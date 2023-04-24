@@ -246,7 +246,8 @@
       "ImageDoesNotProvideModelPath": "모델 경로를 지정하지 않은 컨테이너 이미지입니다. 수정이 필요합니다.",
       "ModelStorageToMount": "마운트할 모델 스토리지 폴더",
       "AIAccelerator": "AI 가속기",
-      "DescAIAccelerator": "<p>AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 몇 일로 줄입니다.</p>"
+      "DescAIAccelerator": "<p>AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 몇 일로 줄입니다.</p>",
+      "SetDefault": "기본값으로 설정"
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

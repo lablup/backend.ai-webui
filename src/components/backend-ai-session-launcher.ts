@@ -3909,8 +3909,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           </div>
           <div id="progress-04" class="progress center layout fade">
             <div class="horizontal layout flex justified center" id="save-configuration-area">
-              <p class="title" style="font-size:1rem;">Set as a default</p>
-              <mwc-checkbox id="save-configuration"></mwc-checkbox>
+              <p class="title" style="font-size:1rem;">${_t('session.launcher.SetDefault')}</p>
+              <mwc-checkbox id="save-configuration" @change=${(e) => this._toggleSaveSessionConfigCheckbox(e)}></mwc-checkbox>
             </div>
             <p class="title">${_t('session.SessionInfo')}</p>
             <div class="vertical layout cluster-total-allocation-container">

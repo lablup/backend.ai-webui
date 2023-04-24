@@ -256,7 +256,8 @@
       "InferenceMode": "Inference",
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
       "AIAccelerator": "AI Accelerator",
-      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>"
+      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>",
+      "SetDefault": "Set as a default"
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
