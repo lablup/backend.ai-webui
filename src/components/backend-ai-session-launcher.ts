@@ -1125,8 +1125,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.selectedVfolders = selectedFolders;
       for (const folder of this.selectedVfolders) {
-        const alias = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
-        if (alias.length > 0) {
+        const alias = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField)?.value;
+        if (alias && alias.length > 0) {
           this.folderMapping[folder] = (this.shadowRoot?.querySelector('#vfolder-alias-' + folder) as VaadinTextField).value;
         }
         if (folder in this.folderMapping && this.selectedVfolders.includes(this.folderMapping[folder])) {
@@ -1296,7 +1296,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._updateSelectedResourceGroup();
       /* To reflect current resource policy */
       await this._refreshResourcePolicy();
-      this._loadCurrentSessionConfig();
+
+
+      // Set session config if enabled.
+      this.saveConfigurationCheckbox.checked = globalThis.backendaioptions.get('store_default_session_config') ?? false;
+      if (this.saveConfigurationCheckbox.checked) {
+        this._loadCurrentSessionConfig();
+      }
       this.requestUpdate();
       this._toggleScheduleTime(!this.useScheduledTime);
       this.newSessionDialog.show();
@@ -1539,8 +1545,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
 
     // if checked, set all input as a default
-    if (this.saveConfigurationCheckbox) {
+    if (this.saveConfigurationCheckbox.checked) {
       this._saveCurrentSessionConfig();
+    } else {
+      globalThis.backendaioptions.delete('current_session_config');
     }
 
     const createSessionQueue = sessions.map((item) => {
@@ -2270,20 +2278,41 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _saveCurrentSessionConfig() {
-    const sessionConfig: object = {
+    let environment;
+    let version;
+    let is_manual_image;
+
+    // add manual image name and disable environment/version field if enabled
+    if (this.manualImageNameInput && this.manualImageNameInput.value) {
+      const nameFragments = this.manualImageNameInput.value.split(':');
+      version = nameFragments.splice(-1, 1)[0];
+      environment = nameFragments.join(':');
+      is_manual_image = true;
+    } else {
+      version = this.versionSelector.value;
+      environment = this.environmentSelector.value;
+      is_manual_image = false;
+    }
+
+    const sessionConfig = {
       // progress-01
       session_type: this.sessionTypeSelector.value,
-      environment: this.environmentSelector.value,
-      version: this.versionSelector.value,
+      environment: environment,
+      version: version,
       session_name: this.sessionNameInput.value,
       environment_variables: this.environ,
+      is_manual_image: is_manual_image,
 
       // progress-02
       vfolders: this.selectedVfolders,
+      // add model storage to mount if mounted
+      ...(this.enableInferenceWorkload && {model_vfolders: this._modelFolderGrid.selectedItems.map((item) => item.name)}),
 
       // progress-03
       resource_group: this.resourceGroupSelect.value,
       resource_preset: this.resourceTemplatesSelect.value,
+      // FIXME: for now this is the only way to distinguish resource allocation is customized or not.
+      is_custom_allocation: ((this.resourceTemplatesSelect as any).selectedText == _text('session.launcher.CustomResourceApplied')),
       resource_indicator: {
         cpu: this.cpuResourceSlider.value,
         memory: this.memoryResourceSlider.value,
@@ -2292,7 +2321,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       },
       cluster_mode: this.cluster_mode,
       cluster_size: this.cluster_size,
-    }
+    };
 
     // additional settings on certain condition
     // TODO:
@@ -2305,25 +2334,50 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sessionConfig = globalThis.backendaioptions.get('current_session_config') ?? {};
     if (Object.keys(sessionConfig).length > 0) {
       this.sessionTypeSelector.value = sessionConfig.session_type;
-      this.environmentSelector.value = sessionConfig.environment;
-      this.versionSelector.value = sessionConfig.version;
+
+      if (sessionConfig.is_manual_image) {
+        this.manualImageNameInput.value = sessionConfig.environment + sessionConfig.version;
+        this._toggleEnvironmentSelectUI();
+        // this.environmentSelector.disabled = true;
+        // this.versionSelector.disabled = true;
+      } else {
+        this.environmentSelector.value = sessionConfig.environment;
+        this.versionSelector.value = sessionConfig.version;
+      }
+
       this.sessionNameInput.value = sessionConfig.session_name;
       this.environ = sessionConfig.environment_variables;
-      this.vfolders = sessionConfig.vfolders;
+
+      // manually set selectedItems on non-automounted folder
+      this._nonAutoMountedFolderGrid.selectedItems = this._filterSelectedItemListFromGridByName(this._nonAutoMountedFolderGrid.items, sessionConfig.vfolders);
+      if (this.enableInferenceWorkload) {
+        this._modelFolderGrid.selectedItems = this._filterSelectedItemListFromGridByName(this._modelFolderGrid.items, sessionConfig.model_vfolders);
+      }
       this.resourceGroupSelect.value = sessionConfig.resource_group;
-      this.resourceTemplatesSelect.value = sessionConfig.resource_preset;
+      if (sessionConfig.is_custom_allocation) {
+        this._resourceTemplateToCustom();
+      } else {
+        this.resourceTemplatesSelect.value = sessionConfig.resource_preset;
+      }
       this.cpuResourceSlider.value = sessionConfig.resource_indicator.cpu;
       this.memoryResourceSlider.value = sessionConfig.resource_indicator.memory;
       this.sharedmemoryResourceSlider.value = sessionConfig.resource_indicator.shmem;
       this.npuResourceSlider.value = sessionConfig.resource_indicator.npu;
       this.cluster_mode = sessionConfig.cluster_mode;
       this.cluster_size = sessionConfig.cluster_size;
-
     } else {
       // no saved session config
-      console.log('no session configuration to load.')
+      console.log('no session configuration to load.');
     }
+  }
 
+  _filterSelectedItemListFromGridByName(itemList, folderNameList) {
+    return itemList.filter((item) => folderNameList.includes(item.name));
+  }
+
+  _toggleSaveSessionConfigCheckbox(e) {
+    const isChecked = e.target.checked ?? false;
+    globalThis.backendaioptions.set('store_default_session_config', isChecked);
   }
 
   folderToMountListRenderer(root, column, rowData) {
@@ -2606,10 +2660,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       globalThis.backendaiclient._config.default_session_environment !== '') {
       if (this.languages.map((item) => item.name).includes(globalThis.backendaiclient._config.default_session_environment)) {
         this.default_language = globalThis.backendaiclient._config.default_session_environment;
-      } else if (this.languages[0].name !== ''){
-         this.default_language = this.languages[0].name;
+      } else if (this.languages[0].name !== '') {
+        this.default_language = this.languages[0].name;
       } else {
-         this.default_language = this.languages[1].name;
+        this.default_language = this.languages[1].name;
       }
     } else if (this.languages.length > 1) {
       this.default_language = this.languages[1].name;
@@ -3781,8 +3835,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                     <lablup-slider id="mem-resource" class="mem"
                                    pin snaps expand step=0.05 editable markers tabindex="0"
                                    @change="${(e) => {
-                                     this._applyResourceValueChanges(e);
-                                     this._updateShmemLimit();
+                                      this._applyResourceValueChanges(e);
+                                      this._updateShmemLimit();
                                   }}"
                                    marker_limit="${this.marker_limit}" suffix="GB"
                                    min="${this.mem_metric.min}" max="${this.mem_metric.max}"
@@ -3926,16 +3980,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                       style="margin-right:3px;"></lablup-shields>
                       <div class="horizontal layout">
                         ${this.sessionInfoObj.version.map((item, index) => {
-                            if (index > 0) {
-                              return html`
+                          if (index > 0) {
+                            return html`
                                 <lablup-shields color="green" description="${item}" ui="round"
                                   style="margin-top:3px;margin-right:3px;"></lablup-shields>
                               `;
-                            } else {
-                              return html``;
-                            }
+                          } else {
+                            return html``;
                           }
-                          )}
+                        }
+                        )}
                       </div>
                       <lablup-shields color="blue"
                                       description="${this.mode === 'inference' ? this.mode.toUpperCase() : this.sessionType.toUpperCase()}"
