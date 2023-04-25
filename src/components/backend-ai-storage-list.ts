@@ -2839,7 +2839,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     // add current folder
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
-    imageResource['mem'] = '256g';
+    imageResource['mem'] = '256m';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');

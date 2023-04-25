@@ -908,6 +908,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.sshHost = '127.0.0.1';
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
