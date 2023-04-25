@@ -2290,6 +2290,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   _folderExplorer(rowData) {
     const folderName = rowData.item.name;
     const isWritable = this._hasPermission(rowData.item, 'w') || rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin);
+    this.vhost = rowData.item.host;
 
     const explorer = {
       id: folderName,
@@ -2808,13 +2809,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
-  _isSftpScalingGroups() {
-    // TODO: Check sftp_scaling_groups exist
-    return true;
-  }
-
   _executeSSHProxyAgent() {
-    if (this._isSftpScalingGroups()) {
+    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups.includes('ssh')) {
       if (this.systemRoleSupportedImages.length > 0) {
         this._launchSystemRoleSSHSession();
         this._toggleSSHSessionButton();
