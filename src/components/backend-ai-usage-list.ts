@@ -102,10 +102,6 @@ export default class BackendAIUsageList extends BackendAIPage {
           --lumo-font-family: var(--general-font-family) !important;
         }
 
-        vaadin-select::part(input-field) {
-          background-color: transparent;
-        }
-
         #select-period {
           font-size: 12px;
           color: #8c8484;
@@ -312,6 +308,13 @@ export default class BackendAIUsageList extends BackendAIPage {
   _launchUsageHistoryInfoDialog() {
     this._helpDescriptionTitle = _text('statistics.UsageHistory');
     this._helpDescription = `
+      <div class="note-container">
+        <div class="note-title">
+          <mwc-icon class="fg white">info</mwc-icon>
+          <div>Note</div>
+        </div>
+        <div class="note-contents">${_text('statistics.UsageHistoryNote')}</div>
+      </div>
       <p>${_text('statistics.UsageHistoryDesc')}</p>
       <strong>Sessions</strong>
       <p>${_text('statistics.SessionsDesc')}</p>
@@ -325,13 +328,6 @@ export default class BackendAIUsageList extends BackendAIPage {
       <p>${_text('statistics.IOReadDesc')}</p>
       <strong>IO-Write</strong>
       <p>${_text('statistics.IOWriteDesc')}</p>
-      <div class="note-container">
-        <div class="note-title">
-          <mwc-icon class="fg white">info</mwc-icon>
-          <div>Note</div>
-        </div>
-        <div class="note-contents">${_text('statistics.UsageHistoryNote')}</div>
-      </div>
     `;
     this.helpDescriptionDialog.show();
   }
