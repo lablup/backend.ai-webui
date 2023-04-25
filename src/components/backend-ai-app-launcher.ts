@@ -295,8 +295,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
       }
     });
-    document.addEventListener('backend-ai-launch-ssh-dialog', (e: any) => {
+    document.addEventListener('read-ssh-key-and-launch-ssh-dialog', (e: any) => {
       if (e.detail) {
+        this._readSSHKey(e.detail.sessionUuid);
         this.sshPort = e.detail.port;
         this.sshHost = e.detail.host;
         this._openSSHDialog();

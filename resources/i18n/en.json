@@ -667,7 +667,9 @@
       "NoImagesSupportingFileBrowser": "There is no image supporting filebrowser yet. At least one or more image that supports filebrowser is required to upload folder(s).",
       "ReadOnlyFolderOnFileBrowser": "Opening read-only folder in filebrowser, only downloading file(s)/folder(s) are allowed.",
       "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button.",
-      "ExecuteSSH/SFTP": "Execute SSH / SFTP"
+      "ExecuteSSH/SFTP": "Execute SSH / SFTP",
+      "NoImagesSupportingSystemSession": "There is no image supporting SSH / SFTP yet. At least one or more image that supports system role images to use SSH / SFTP.",
+      "SftpScalingGroupsDoNotExist": "Sftp scaling groups do not exist."
     },
     "invitation": {
       "EnterEmail": "Enter email address",

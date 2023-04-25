@@ -2808,24 +2808,73 @@ export default class BackendAiStorageList extends BackendAIPage {
     });
   }
 
+  _isSftpScalingGroups() {
+    // TODO: Check sftp_scaling_groups exist
+    return true;
+  }
+
   _executeSSHProxyAgent() {
-    if (this.systemRoleSupportedImages.length > 0) {
-      this._launchSystemRoleSSHSession();
-      this._toggleSSHSessionButton();
+    if (this._isSftpScalingGroups()) {
+      if (this.systemRoleSupportedImages.length > 0) {
+        this._launchSystemRoleSSHSession();
+        this._toggleSSHSessionButton();
+      } else {
+        this.notification.text = _text('data.explorer.NoImagesSupportingSystemSession');
+        this.notification.show();
+      }
     } else {
-      this.notification.text = _text('data.explorer.NoImagesSupportingSystemSession');
+      this.notification.text = _text('data.explorer.SftpScalingGroupsDoNotExist');
       this.notification.show();
     }
   }
 
-  _launchSystemRoleSSHSession() {
-    // get publicHost
-    // TODO: fix me
-    const host = '127.0.0.1';
-    const port = 58000;
+  /**
+   * Launch system role filebrowser image and open the dialog that includes the ssh link.
+   */
+  async _launchSystemRoleSSHSession() {
+    let appOptions;
+    const imageResource: Record<string, unknown> = {};
+    const configSshImage = globalThis.backendaiclient._config.systemSSHImage;
+    const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
 
-    const event = new CustomEvent('backend-ai-launch-ssh-dialog', {'detail': {host: host, port: port}});
-    document.dispatchEvent(event);
+    // select one image to launch system role supported session
+    const preferredImage = configSshImage.length > 0 ? configSshImage : images[0];
+    const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+    // add current folder
+    imageResource['mounts'] = [this.explorer.id];
+    imageResource['cpu'] = 1;
+    imageResource['mem'] = '256g';
+    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    const indicator = await this.indicator.start('indeterminate');
+
+    // TODO: Check the user has enough resource
+    return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined)
+      .then(async (res) => {
+        const host = '127.0.0.1';
+        const port = 58000;
+        const service_info = res.servicePorts;
+        appOptions = {
+          'session-uuid': res.sessionId,
+          'session-name': res.sessionName,
+          'access-key': '',
+          'runtime': 'filebrowser',
+          'arguments': {'--root': '/home/work/' + this.explorer.id}
+        };
+        // only launch filebrowser app when it has valid service ports
+        if (service_info.length > 0 && service_info.filter((el) => el.name === 'filebrowser').length > 0) {
+          globalThis.appLauncher.showLauncher(appOptions);
+        }
+        // open ssh dialog
+        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: res.sessionId, host: host, port: port}});
+        document.dispatchEvent(event);
+        indicator.end(1000);
+      }).catch((err) => {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        indicator.end(1000);
+      });
   }
 
   _toggleSSHSessionButton() {

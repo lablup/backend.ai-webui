@@ -653,7 +653,9 @@
       "NoImagesSupportingFileBrowser": "Il n'y a pas encore d'images prenant en charge le navigateur de fichiers. Au moins une ou plusieurs images prenant en charge le navigateur de fichiers sont requises pour télécharger le(s) dossier(s).",
       "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers.",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
-      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__"
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Entrer l'adresse e-mail",

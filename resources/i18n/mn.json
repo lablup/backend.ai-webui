@@ -653,7 +653,9 @@
       "NoImagesSupportingFileBrowser": "Файл хөтөчийг дэмжих зураг хараахан алга байна. Фолдер хөтөчийг дэмждэг дор хаяж нэг буюу түүнээс дээш дүрс оруулах шаардлагатай.",
       "ClickFilebrowserButton": "Фолдер (ууд) -ыг байршуулахын тулд файл дарах товчийг ажиллуулах товчийг дарна уу.",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
-      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__"
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",

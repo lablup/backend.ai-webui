@@ -660,7 +660,9 @@
       "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
       "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요.",
       "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다.",
-      "ExecuteSSH/SFTP": "SSH / SFTP 실행"
+      "ExecuteSSH/SFTP": "SSH / SFTP 실행",
+      "NoImagesSupportingSystemSession": "SSH / SFTP를 지원하는 이미지가 없습니다. SSH / SFTP를 이용하려면 시스템 이미지가 필요합니다.",
+      "SftpScalingGroupsDoNotExist": "Sftp 자원 그룹이 없습니다."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
