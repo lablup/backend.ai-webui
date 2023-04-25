@@ -669,7 +669,8 @@
       "ClickFilebrowserButton": "To upload Folder(s), Please click Execute filebrowser button.",
       "ExecuteSSH/SFTP": "Execute SSH / SFTP",
       "NoImagesSupportingSystemSession": "There is no image supporting SSH / SFTP yet. At least one or more image that supports system role images to use SSH / SFTP.",
-      "SftpScalingGroupsDoNotExist": "Sftp scaling groups do not exist."
+      "SftpScalingGroupsDoNotExist": "Sftp scaling groups do not exist.",
+      "ExecutingSSH/SFTPSession": "Executing SSH/SFTP Session..."
     },
     "invitation": {
       "EnterEmail": "Enter email address",

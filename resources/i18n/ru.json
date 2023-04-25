@@ -655,7 +655,8 @@
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
       "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
       "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
-      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__"
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",

@@ -2828,9 +2828,10 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Launch system role filebrowser image and open the dialog that includes the ssh link.
    */
   async _launchSystemRoleSSHSession() {
-    let appOptions;
+    let sessionId;
     const imageResource: Record<string, unknown> = {};
     const configSshImage = globalThis.backendaiclient._config.systemSSHImage;
+    // TODO: use lablup/openssh-server image
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
 
     // select one image to launch system role supported session
@@ -2844,33 +2845,25 @@ export default class BackendAiStorageList extends BackendAIPage {
     imageResource['group_name'] = globalThis.backendaiclient.current_group;
     const indicator = await this.indicator.start('indeterminate');
 
-    // TODO: Check the user has enough resource
-    return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined)
-      .then(async (res) => {
-        const host = '127.0.0.1';
-        const port = 58000;
-        const service_info = res.servicePorts;
-        appOptions = {
-          'session-uuid': res.sessionId,
-          'session-name': res.sessionName,
-          'access-key': '',
-          'runtime': 'filebrowser',
-          'arguments': {'--root': '/home/work/' + this.explorer.id}
-        };
-        // only launch filebrowser app when it has valid service ports
-        if (service_info.length > 0 && service_info.filter((el) => el.name === 'filebrowser').length > 0) {
-          globalThis.appLauncher.showLauncher(appOptions);
-        }
-        // open ssh dialog
-        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: res.sessionId, host: host, port: port}});
-        document.dispatchEvent(event);
-        indicator.end(1000);
-      }).catch((err) => {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        indicator.end(1000);
-      });
+    return globalThis.backendaiclient.get_resource_slots().then(() => {
+      indicator.set(200, _text('data.explorer.ExecutingSSH/SFTPSession'));
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
+    }).then(async (res) => {
+      sessionId = res.sessionId;
+      return globalThis.backendaiclient.get_direct_access_host(sessionId);
+    }).then((res) => {
+      const host = res.publicHost;
+      const port = res.sshdPorts;
+      // open ssh dialog
+      const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
+      document.dispatchEvent(event);
+      indicator.end(1000);
+    }).catch((err) => {
+      this.notification.text = PainKiller.relieve(err.title);
+      this.notification.detail = err.message;
+      this.notification.show(true, err);
+      indicator.end(1000);
+    });
   }
 
   _toggleSSHSessionButton() {

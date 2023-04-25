@@ -1074,6 +1074,17 @@ class Client {
   }
 
   /**
+   * Get the IP or URL that use to access publicly
+   * 
+   * @param {string} sessionId - the sessionId given when created
+   */
+  async get_direct_access_host(sessionId, ownerKey = null) : Promise<any> {
+    let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-host`;
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Obtain the session container logs by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
