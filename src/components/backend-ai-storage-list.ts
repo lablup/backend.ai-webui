@@ -2849,10 +2849,10 @@ export default class BackendAiStorageList extends BackendAIPage {
       return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
     }).then(async (res) => {
       sessionId = res.sessionId;
-      return globalThis.backendaiclient.get_direct_access_host(sessionId);
+      return globalThis.backendaiclient.get_direct_access_info(sessionId);
     }).then((res) => {
-      const host = res.publicHost;
-      const port = res.sshdPorts;
+      const host = res.public_host;
+      const port = res.sshd_ports;
       // open ssh dialog
       const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
       document.dispatchEvent(event);
