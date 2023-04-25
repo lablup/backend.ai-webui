@@ -36,8 +36,8 @@ export default class BackendAIMetadataStore extends BackendAIPage {
   firstUpdated() {
   }
 
-  readImageMetadata() {
-    fetch('resources/image_metadata.json').then(
+  async readImageMetadata() {
+    return fetch('resources/image_metadata.json').then(
       (response) => response.json()
     ).then(
       (json) => {
@@ -71,6 +71,11 @@ export default class BackendAIMetadataStore extends BackendAIPage {
         this.imageTagAlias = json.tagAlias;
         this.imageTagReplace = json.tagReplace;
       }
+    ).then(
+      () => {
+        const event: CustomEvent = new CustomEvent('backend-ai-metadata-image-loaded', {'detail': ''});
+        document.dispatchEvent(event);
+      }
     );
   }
 
@@ -85,6 +90,11 @@ export default class BackendAIMetadataStore extends BackendAIPage {
           if ({}.hasOwnProperty.call(this.deviceInfo, key)) {
           }
         }
+      }
+    ).then(
+      () => {
+        const event: CustomEvent = new CustomEvent('backend-ai-metadata-device-loaded', {'detail': ''});
+        document.dispatchEvent(event);
       }
     );
   }
