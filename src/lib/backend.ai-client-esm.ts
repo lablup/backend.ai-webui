@@ -1078,7 +1078,7 @@ class Client {
    * 
    * @param {string} sessionId - the sessionId given when created
    */
-  async get_direct_access_host(sessionId, ownerKey = null) : Promise<any> {
+  async get_direct_access_host(sessionId) : Promise<any> {
     let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-host`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);

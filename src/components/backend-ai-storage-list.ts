@@ -2782,7 +2782,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
-      indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
+      indicator.set(20, _text('data.explorer.ExecutingFileBrowser'));
       return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
     }).then(async (res) => {
       const service_info = res.servicePorts;
@@ -2805,12 +2805,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      indicator.end(1000);
+      indicator.end(100);
     });
   }
 
   _executeSSHProxyAgent() {
-    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups.includes('ssh')) {
+    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups?.includes('ssh')) {
       if (this.systemRoleSupportedImages.length > 0) {
         this._launchSystemRoleSSHSession();
         this._toggleSSHSessionButton();
@@ -2831,9 +2831,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     let sessionId;
     const imageResource: Record<string, unknown> = {};
     const configSshImage = globalThis.backendaiclient._config.systemSSHImage;
-    // TODO: use lablup/openssh-server image
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
-
+    // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
     const preferredImage = configSshImage.length > 0 ? configSshImage : images[0];
     const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
@@ -2846,7 +2845,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient.get_resource_slots().then(() => {
-      indicator.set(200, _text('data.explorer.ExecutingSSH/SFTPSession'));
+      indicator.set(20, _text('data.explorer.ExecutingSSH/SFTPSession'));
       return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
     }).then(async (res) => {
       sessionId = res.sessionId;
@@ -2857,12 +2856,12 @@ export default class BackendAiStorageList extends BackendAIPage {
       // open ssh dialog
       const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
       document.dispatchEvent(event);
-      indicator.end(1000);
+      indicator.end(100);
     }).catch((err) => {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      indicator.end(1000);
+      indicator.end(100);
     });
   }
 

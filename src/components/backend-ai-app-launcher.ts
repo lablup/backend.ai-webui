@@ -46,7 +46,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
   @property({type: String}) sshHost = '127.0.0.1';
-  @property({type: Number}) sshPort = 0;
+  @property({type: String}) sshPort = '';
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
   @property({type: Number}) vscodeDesktopPort = 0;
