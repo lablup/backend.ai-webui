@@ -1312,11 +1312,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}:${this.sshPort}</a>
+            <div><span>User:</span> work</div>
+            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
             </div>
-            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${this.sshPort}">sftp://${this.sshHost}:${this.sshPort}</a>
+            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${this.sshPort}">sftp://${this.sshHost}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
+            <h4>${_t('session.ConnectionExample')}</h4>
+            <div class="monospace"><span>sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span></div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">

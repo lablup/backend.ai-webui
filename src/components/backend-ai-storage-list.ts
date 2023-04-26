@@ -849,7 +849,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 id="ssh-img"
                 alt="SSH / SFTP"
                 src="/resources/icons/sftp.png"/>
-              <span>${_t('data.explorer.ExecuteSSH/SFTP')}</span>
+              <span>${_t('data.explorer.RunSSH/SFTPserver')}</span>
             </mwc-button>
           </div>
         </div>
@@ -2810,7 +2810,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _executeSSHProxyAgent() {
-    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups?.includes('ssh')) {
+    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups?.length > 0) {
       if (this.systemRoleSupportedImages.length > 0) {
         this._launchSystemRoleSSHSession();
         this._toggleSSHSessionButton();
@@ -2819,7 +2819,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.show();
       }
     } else {
-      this.notification.text = _text('data.explorer.SftpScalingGroupsDoNotExist');
+      this.notification.text = _text('data.explorer.SFTPSessionNotAvailable');
       this.notification.show();
     }
   }
@@ -2830,28 +2830,30 @@ export default class BackendAiStorageList extends BackendAIPage {
   async _launchSystemRoleSSHSession() {
     let sessionId;
     const imageResource: Record<string, unknown> = {};
-    const configSshImage = globalThis.backendaiclient._config.systemSSHImage;
+    const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
-    const preferredImage = configSshImage !== '' ? configSshImage : images[0];
-    const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+    const preferredImage = images[0];
+    const environment = configSSHImage !== '' ? configSSHImage : preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+
     // add current folder
     imageResource['mounts'] = [this.explorer.id];
     imageResource['cpu'] = 1;
     imageResource['mem'] = '256m';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    imageResource['group_name'] = globalThis.backendaiclient.current_group;
+    imageResource['group_name'] = this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient.get_resource_slots().then(() => {
-      indicator.set(20, _text('data.explorer.ExecutingSSH/SFTPSession'));
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
+      indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
+      // TODO: change 'arm64' to undefined
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 15000, 'arm64');
     }).then(async (res) => {
       sessionId = res.sessionId;
       return globalThis.backendaiclient.get_direct_access_info(sessionId);
     }).then((res) => {
-      const host = res.public_host;
+      const host = res.public_host.replace(/^https?:\/\//, '');
       const port = res.sshd_ports;
       // open ssh dialog
       const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
@@ -3135,7 +3137,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     rqstJob
       .then((res) => {
         let msg;
-        // FIXME: 
+        // FIXME:
         // we need to replace more proper word to distinguish folder sharing on user and group(project).
         // For now, invite means sharing `user` folder and share means sharing `group(project)` folder
         if (this.selectedFolderType === 'user') {

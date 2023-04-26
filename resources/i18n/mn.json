@@ -364,7 +364,8 @@
     "GracePeriodDesc": "__NOT_TRANSLATED__",
     "UtilizationThreshold": "__NOT_TRANSLATED__",
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
-    "ExpiresAfter": "__NOT_TRANSLATED__"
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Цуцлах",
@@ -656,7 +657,10 @@
       "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
       "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
       "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
-      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__"
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Цахим хаягаа оруулна уу",
