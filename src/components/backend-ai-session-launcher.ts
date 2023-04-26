@@ -1508,7 +1508,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
 
-    console.log(config['env'])
     this.launchButton.disabled = true;
     this.launchButtonMessage.textContent = _text('session.Preparing');
     this.notification.text = _text('session.PreparingSession');
