@@ -839,7 +839,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
             </mwc-button>
           </div>
-          <div id="">
+          <div>
             <mwc-button
               id="ssh-btn"
               title="SSH / SFTP"
@@ -2834,7 +2834,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
     // TODO: use lablup/openssh-server image
     // select one image to launch system role supported session
-    const preferredImage = configSshImage.length > 0 ? configSshImage : images[0];
+    const preferredImage = configSshImage !== '' ? configSshImage : images[0];
     const environment = preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
     // add current folder
     imageResource['mounts'] = [this.explorer.id];
