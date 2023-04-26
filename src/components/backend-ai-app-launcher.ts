@@ -1308,7 +1308,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
-        <div slot="content" style="padding:15px;">
+        <div slot="content">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
@@ -1319,7 +1319,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
-            <div class="monospace"><span>sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span></div>
+            <div class="monospace" style="background-color:#242424;padding:15px;">
+              <span style="color:#ffffff;">sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span>
+            </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
