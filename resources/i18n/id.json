@@ -1006,10 +1006,18 @@
     }
   },
   "statistics": {
-    "Usage": "Pemakaian",
+    "UsageHistory": "Riwayat Penggunaan",
     "SelectPeriod": "Pilih Periode",
     "1Day": "1 Hari",
-    "1Week": "1 Minggu"
+    "1Week": "1 Minggu",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "Peramban web",

@@ -1006,10 +1006,18 @@
     }
   },
   "statistics": {
-    "Usage": "Применение",
+    "UsageHistory": "История использования",
     "SelectPeriod": "Выберите период",
     "1Day": "1 день",
-    "1Week": "1 неделя"
+    "1Week": "1 неделя",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "Браузер",
