@@ -2847,8 +2847,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     return globalThis.backendaiclient.get_resource_slots().then(() => {
       indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
-      // TODO: change 'arm64' to undefined
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 15000, 'arm64');
+      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 15000, undefined);
     }).then(async (res) => {
       sessionId = res.sessionId;
       return globalThis.backendaiclient.get_direct_access_info(sessionId);
