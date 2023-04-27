@@ -943,7 +943,8 @@
     "ResourceGroupDetail": "Détail du groupe de ressources",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Domaine"
   },
   "maintenance": {
     "General": "Général",

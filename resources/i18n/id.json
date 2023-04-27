@@ -943,7 +943,8 @@
     "ResourceGroupDetail": "Detail Grup Sumber Daya",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Domain"
   },
   "maintenance": {
     "General": "Umum",

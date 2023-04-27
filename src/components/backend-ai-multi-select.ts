@@ -53,6 +53,7 @@ export default class BackendAIMultiSelect extends LitElement {
   // TODO: AutoComplete(filtering)
   @property({type: Boolean, attribute: 'enable-clear-button'}) enableClearButton = false;
   @property({type: Boolean, attribute: 'open-up'}) openUp = false;
+  @property({type: Boolean, attribute: 'required'}) required = false;
 
   constructor() {
     super();
@@ -114,6 +115,10 @@ export default class BackendAIMultiSelect extends LitElement {
 
         mwc-list > mwc-check-list-item {
           background-color: var(--select-background-color, #efefef);
+        }
+
+        div.invalid {
+          border: 1px solid var(--paper-red-400);
         }
 
         .selected-area {
@@ -236,7 +241,7 @@ export default class BackendAIMultiSelect extends LitElement {
     return html`
     <span class="title">${this.label}</span>
     <div class="layout ${this.openUp ? `vertical-reverse` : `vertical`}">
-      <div class="horizontal layout justified start selected-area center">
+      <div class="horizontal layout justified start selected-area center ${this.required && this.selectedItemList.length === 0 ? 'invalid' : ''}">
         <div class="horizontal layout start-justified wrap">
           ${this.selectedItemList.map((item) => html`
             <mwc-button unelevated trailingIcon label=${item} icon="close"

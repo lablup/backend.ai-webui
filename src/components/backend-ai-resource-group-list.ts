@@ -543,7 +543,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   _initializeCreateSchedulerOpts() {
     const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
     this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
-    this.allowedSessionTypesSelect.selectedItemList = [];
+    this.allowedSessionTypesSelect.selectedItemList = ['interactive', 'batch'];
     schedulerOptsInputForms.checked = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
@@ -560,21 +560,21 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * @param {Any} value - scheduler option value in selected resource group(scaling group)
    * */
   _initializeModifySchedulerOpts(name = '', value: any) {
-    switch(name) {
-      case 'allowed_session_types':
-        this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
-        this.allowedSessionTypesSelect.selectedItemList = value;
-        break;
-      case 'pending_timeout':
-        this.timeoutInput.value = value;
-        break;
-      case 'config':
-        this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
+    switch (name) {
+    case 'allowed_session_types':
+      this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
+      this.allowedSessionTypesSelect.selectedItemList = value;
+      break;
+    case 'pending_timeout':
+      this.timeoutInput.value = value;
+      break;
+    case 'config':
+      this.numberOfRetriesToSkip.value = value['num_retries_to_skip'] ?? '';
 
-        break;
-      default:
-        // other scheduler options;
-        break;
+      break;
+    default:
+      // other scheduler options;
+      break;
     }
   }
 
@@ -588,6 +588,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       this.timeoutInput,
       this.numberOfRetriesToSkip
     ].filter((fn) => !fn.checkValidity());
+    // Required items
+    validityCheckResult.push(...[this.allowedSessionTypesSelect.selectedItemList].filter((fn) => fn.length === 0));
 
     if (validityCheckResult.length > 0) {
       return false;
@@ -605,6 +607,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       this.timeoutInput,
       this.numberOfRetriesToSkip
     ].filter((fn) => !fn.checkValidity());
+    // Required items
+    validityCheckResult.push(...[this.allowedSessionTypesSelect.selectedItemList].filter((fn) => fn.length === 0));
 
     if (validityCheckResult.length > 0) {
       return false;
@@ -711,6 +715,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <span slot="title"> ${this.resourceGroupInfo?.name ? _t('resourceGroup.ModifyResourceGroup'): _t('resourceGroup.CreateResourceGroup')}</span>
         <div slot="content" class="login-panel intro centered">
           ${Object.keys(this.resourceGroupInfo).length > 0 ? html`
+            <div class="horizontal layout center" style="margin:10px;">
+              <mwc-textfield disabled label="${_t('resourceGroup.Domain')}" value="${this.resourceGroupDomainSelect.value}"></mwc-textfield>
+              <mwc-textfield disabled label="${_t('resourceGroup.ResourceGroupName')}" value="${this.resourceGroupInfo.name}"></mwc-textfield>
+            </div>
             <div class="horizontal layout flex wrap center justified">
               <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
                 ${_t('resourceGroup.Active')}
@@ -769,8 +777,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <div class="vertical layout flex">
                 <backend-ai-multi-select
                     open-up
+                    required
                     id="allowed-session-types"
-                    label="${_t('resourceGroup.AllowedSessionTypes')}"
+                    label="${_t('resourceGroup.AllowedSessionTypes')}*"
                     style="width:100%;"></backend-ai-multi-select>
                 <mwc-textfield
                     type="number"
@@ -887,10 +896,10 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                       ${Object.entries(JSON.parse(this.resourceGroupInfo?.scheduler_opts)).map(([key, value]: any) => {
                         if (key === 'allowed_session_types') {
                           return html`
-                                                      <vaadin-item>
-                                                        <div><strong>allowed session types</strong></div>
-                                                        <div class="scheduler-option-value">${value.join(', ')}</div>
-                                                      </vaadin-item>`;
+                            <vaadin-item>
+                              <div><strong>allowed session types</strong></div>
+                              <div class="scheduler-option-value">${value.join(', ')}</div>
+                            </vaadin-item>`;
                         } else if (key === 'pending_timeout') {
                           return html`
                           <vaadin-item>

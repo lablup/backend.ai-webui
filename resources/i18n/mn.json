@@ -943,7 +943,8 @@
     "ResourceGroupDetail": "Нөөцийн бүлгийн дэлгэрэнгүй",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Домэйн"
   },
   "maintenance": {
     "General": "Ерөнхий",

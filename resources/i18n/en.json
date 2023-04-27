@@ -949,7 +949,8 @@
     "ResourceGroupDetail": "Resource Group Detail",
     "RetriesToSkip": "Times",
     "NoGroupToDisplay": "NoGroupToDisplay",
-    "AllowedSessionTypes": "Allowed session types"
+    "AllowedSessionTypes": "Allowed session types",
+    "Domain": "Domain"
   },
   "maintenance": {
     "General": "General",
