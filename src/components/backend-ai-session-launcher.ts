@@ -2365,6 +2365,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       this.sessionNameInput.value = sessionConfig.session_name;
       this.environ = sessionConfig.environment_variables;
+      this._loadEnv();
 
       // manually set selectedItems on non-automounted folder
       this._nonAutoMountedFolderGrid.selectedItems = this._filterSelectedItemListFromGridByName(this._nonAutoMountedFolderGrid.items, sessionConfig.vfolders);
