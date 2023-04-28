@@ -1505,13 +1505,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const useScheduledTime = this.useScheduledTimeSwitch.selected;
       if (scheduledTime && useScheduledTime) {
         // modify client timezone offset
-        const getClientTimezoneOffset = () => {
-          let offset = new Date().getTimezoneOffset();
-          const sign = offset < 0 ? '+' : '-';
-          offset = Math.abs(offset);
-          return sign + (offset / 60 | 0).toString().padStart(2, '0') + ':' + (offset % 60).toString().padStart(2, '0');
-        };
-        config['startsAt'] = scheduledTime + getClientTimezoneOffset();
+        config['startsAt'] = this._calculateSessionScheduleTime(scheduledTime);
       }
     }
     if (this.environValues && Object.keys(this.environValues).length !== 0) {
@@ -2277,6 +2271,16 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this._updateVersions(kernel);
   }
 
+  _calculateSessionScheduleTime(scheduledTime) {
+    const getClientTimezoneOffset = () => {
+      let offset = new Date().getTimezoneOffset();
+      const sign = offset < 0 ? '+' : '-';
+      offset = Math.abs(offset);
+      return sign + (offset / 60 | 0).toString().padStart(2, '0') + ':' + (offset % 60).toString().padStart(2, '0');
+    };
+    return scheduledTime + getClientTimezoneOffset();
+  }
+
   _saveCurrentSessionConfig() {
     let environment;
     let version;
@@ -2297,6 +2301,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sessionConfig = {
       // progress-01
       session_type: this.sessionTypeSelector.value,
+      // add command if session is batch-mode
+      ...(this.sessionTypeSelector.value == 'batch' && {
+        startup_command: (this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror).getValue(),
+        ...(this.useScheduledTimeSwitch.selected && {
+          starts_at: this._calculateSessionScheduleTime(this.dateTimePicker.value)
+        }),
+      }),
       environment: environment,
       version: version,
       session_name: this.sessionNameInput.value,
@@ -2334,6 +2345,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const sessionConfig = globalThis.backendaioptions.get('current_session_config') ?? {};
     if (Object.keys(sessionConfig).length > 0) {
       this.sessionTypeSelector.value = sessionConfig.session_type;
+
+      if (sessionConfig.session_type === 'batch') {
+        (this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror).setValue(sessionConfig.startup_command);
+        if (sessionConfig.starts_at) {
+          this.dateTimePicker.value = sessionConfig.starts_at;
+        }
+      }
 
       if (sessionConfig.is_manual_image) {
         this.manualImageNameInput.value = sessionConfig.environment + sessionConfig.version;
