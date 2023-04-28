@@ -625,8 +625,8 @@
       "Serve": "Serve"
     },
     "explorer": {
-      "Delete": "Delete...",
-      "UploadFiles": "Upload Files...",
+      "Delete": "Delete",
+      "UploadFiles": "Upload Files",
       "NewFolder": "New Folder",
       "StopUploading": "Stop Uploading",
       "RenameAFile": "Rename File",

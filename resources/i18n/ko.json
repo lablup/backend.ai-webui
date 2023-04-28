@@ -618,8 +618,8 @@
       "Serve": "서비스"
     },
     "explorer": {
-      "Delete": "삭제...",
-      "UploadFiles": "파일 업로드...",
+      "Delete": "삭제",
+      "UploadFiles": "파일 업로드",
       "NewFolder": "새 폴더",
       "StopUploading": "업로드 취소",
       "RenameAFile": "파일 이름 변경",
