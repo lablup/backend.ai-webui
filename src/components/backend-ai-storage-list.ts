@@ -2842,7 +2842,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     imageResource['cpu'] = 1;
     imageResource['mem'] = '256m';
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
-    imageResource['group_name'] = this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
+    imageResource['scaling_group'] = this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient.get_resource_slots().then(() => {
