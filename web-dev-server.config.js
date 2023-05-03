@@ -2,7 +2,7 @@ module.exports = {
   plugins: [
     {
       // This plugin is for injecting the react bundle to the index.html. (only for development)
-      // For production, the react bundle is injected by react project. Please check `build` script in backend-ai-webui-react/package.json
+      // For production, the react bundle is injected by react project. Please check `build` script in react/package.json
       name: "inject-react-bundle-script-for-dev",
       transform(ctx) {
         if (ctx.url.startsWith("/index.html")) {
