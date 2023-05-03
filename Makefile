@@ -49,6 +49,7 @@ dep:
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
 	sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html
+	sed -i -E 's/\/static\/js\/main/es6:\/static\/js\/main/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
 	mkdir -p ./build/electron-app/node_modules/markty
