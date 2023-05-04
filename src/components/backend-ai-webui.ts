@@ -47,13 +47,13 @@ import './backend-ai-splash';
 import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
 import BackendAISettingsStore from './backend-ai-settings-store';
-import BackendAiMetadataStore from './backend-ai-metadata-store';
+import BackendAIMetadataStore from './backend-ai-metadata-store';
 import BackendAITasker from './backend-ai-tasker';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 import './lablup-notification';
 import LablupTermsOfService from './lablup-terms-of-service';
-import '../lib/backend.ai-client-esm';
+// import '../lib/backend.ai-client-esm';
 import {default as TabCount} from '../lib/TabCounter';
 
 import {
@@ -68,7 +68,7 @@ registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
 globalThis.backendaioptions = new BackendAISettingsStore;
-globalThis.backendaimetadata = new BackendAiMetadataStore;
+globalThis.backendaimetadata = new BackendAIMetadataStore;
 globalThis.tasker = new BackendAITasker;
 globalThis.backendaiutils = new BackendAICommonUtils;
 
@@ -1480,7 +1480,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230316</small>
+                <small class="sidebar-footer" style="font-size:9px;">23.03.0.230410</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1504,7 +1504,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230316</small>
+              <small class="sidebar-footer" style="font-size:9px;">23.03.0.230410</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>

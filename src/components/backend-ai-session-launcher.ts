@@ -31,6 +31,7 @@ import 'weightless/checkbox';
 import 'weightless/expansion';
 import 'weightless/icon';
 import 'weightless/label';
+import 'weightless/textfield';
 
 import './lablup-codemirror';
 import './lablup-progress-bar';
@@ -1502,9 +1503,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     if (this.openMPSwitch.selected === false) {
       const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
       const openBLASCoreValue = (this.shadowRoot?.querySelector('#OpenBLASCore') as TextField).value;
+      config['env'] = config['env'] ?? {}; // need to initialize it first
       config['env']['OMP_NUM_THREADS'] = openMPCoreValue ? Math.max(0, parseInt(openMPCoreValue)).toString() : '1';
       config['env']['OPENBLAS_NUM_THREADS'] = openBLASCoreValue ? Math.max(0, parseInt(openBLASCoreValue)).toString() : '1';
     }
+
     this.launchButton.disabled = true;
     this.launchButtonMessage.textContent = _text('session.Preparing');
     this.notification.text = _text('session.PreparingSession');

@@ -246,7 +246,8 @@
       "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
-      "DescAIAccelerator": "__NOT_TRANSLATED__"
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__"
     },
     "Preparing": "Бэлтгэж байна ...",
     "PreparingSession": "Session бэлтгэж байна ...",
@@ -331,6 +332,10 @@
     "Message": "зурвас",
     "EnvironmentInfo": "__NOT_TRANSLATED__",
     "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
     "ElapsedTime": "__NOT_TRANSLATED__",
     "Timeout": "__NOT_TRANSLATED__",
     "SessionLifetime": "__NOT_TRANSLATED__",
@@ -657,7 +662,8 @@
       "InvitationError": "Урилга амжилтгүй боллоо. Хэрэглэгчийг аль хэдийн урьсан байж магадгүй.",
       "Shared": "Бүлгийн фолдерыг амжилттай хуваалцав",
       "NoOneWasShared": "Бүлгийн фолдерыг хуваалцаж чадсангүй",
-      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй."
+      "SharingError": "Хуваалцаж чадсангүй. Хэрэглэгчийг аль хэдийн хуваалцсан эсвэл зохих төсөлд хамрагдаагүй байж болзошгүй.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Өөрчлөлт оруулаагүй болно",
@@ -818,6 +824,8 @@
     "AutoLogout": "Автоматаар гарах",
     "DescAutoLogout": "Аппликешнд зориулж суулгасан хуудсуудаас бусад нэвтэрсэн бүх хуудсыг хаасан тохиолдолд автоматаар гарах болно (ж.нь. Jupyter Notebook, вэб терминал гэх мэт).",
     "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
+    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
     "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
@@ -998,10 +1006,18 @@
     }
   },
   "statistics": {
-    "Usage": "Хэрэглээ",
+    "UsageHistory": "Хэрэглээ түүх",
     "SelectPeriod": "Хугацаа сонгох",
     "1Day": "1 өдөр",
-    "1Week": "1 долоо хоног"
+    "1Week": "1 долоо хоног",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "Хөтөч",
@@ -1164,7 +1180,8 @@
       "LoginWithSAML": "__NOT_TRANSLATED__"
     },
     "EndpointInfo": "__NOT_TRANSLATED__",
-    "DescEndpoint": "__NOT_TRANSLATED__"
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Бүртгүүлэх (зөвхөн бета урилга)",
@@ -1333,6 +1350,7 @@
     "ValueRequired": "Утга Шаардлагатай",
     "InputTooShort": "Хэт богино байна"
   },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
   "totp": {
     "OTP": "__NOT_TRANSLATED__",
     "TotpRemoved": "__NOT_TRANSLATED__",
