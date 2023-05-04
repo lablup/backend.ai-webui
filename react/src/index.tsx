@@ -1,17 +1,26 @@
-import { Button, DatePicker, Drawer, Modal, Select, Tooltip } from "antd";
-import { useState } from "react";
-import DefaultProviders from "./components/DefaultProviders";
-import ExampleComponent from "./components/ExampleComponent";
-import ProjectSelect from "./components/ProjectSelect";
-import ResourceMonitor from "./components/ResourceMonitor";
-import Maintenance from "./components/Maintenance";
-import Information from "./components/Information";
+// import Information from "./components/Information";
+
+
 import reactToWebComponent from "./helper/react-to-webcomponent";
-import { useTranslation } from "react-i18next";
+import React from "react";
 // customElements.define(
 //   "backend-ai-webui-react-example",
 //   reactToWebComponentWithDefault(ExampleComponent)
 // );
+
+const DefaultProviders = React.lazy(() => import("./components/DefaultProviders"));
+const ExampleComponent = React.lazy(() => import("./components/ExampleComponent"));
+const Information = React.lazy(() => import("./components/Information"));
+const ProjectSelect = React.lazy(() => import("./components/ProjectSelect"));
+const ResourceMonitor = React.lazy(() => import("./components/ResourceMonitor"));
+const Maintenance = React.lazy(() => import("./components/Maintenance"));
+
+// import DefaultProviders from "./components/DefaultProviders";
+// import ExampleComponent from "./components/ExampleComponent";
+// import ProjectSelect from "./components/ProjectSelect";
+// import ResourceMonitor from "./components/ResourceMonitor";
+// import Maintenance from "./components/Maintenance";
+
 
 customElements.define(
   "backend-ai-webui-react-example",
@@ -34,42 +43,10 @@ customElements.define(
 customElements.define(
   "backend-ai-webui-react-project-select",
   reactToWebComponent((props) => {
-    const [open, setOpen] = useState(false);
-    const [open2, setOpen2] = useState(false);
-    
-    const { t } = useTranslation();
     
     return (
       <DefaultProviders {...props}>
-        {t('webui.menu.WelcomeMessage')}<br/>
-        <DatePicker transitionName="" />
-        <Select
-          options={[
-            { label: "option2", value: "option2" },
-            { label: "option1", value: "option1" },
-          ]}
-          placeholder="please select one"
-          transitionName=""
-          choiceTransitionName=""
-        ></Select>
-        <Tooltip title="Hey!" transitionName="">
-          <Button onClick={() => setOpen(true)}>Open Drawer</Button>
-        </Tooltip>
-        <Button onClick={() => setOpen2(true)}>Open Modal</Button>
-        <Drawer
-          open={open}
-          onClose={() => setOpen(false)}
-          getContainer={props.shadowRoot}
-        ></Drawer>
-        <div id="hello"></div>
-        <Modal
-          open={open2}
-          onCancel={() => setOpen2(false)}
-          transitionName=""
-          maskTransitionName=""
-        >
-          Modal
-        </Modal>
+        <ProjectSelect/>
       </DefaultProviders>
     );
   })
