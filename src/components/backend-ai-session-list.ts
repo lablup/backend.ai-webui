@@ -816,6 +816,9 @@ export default class BackendAISessionList extends BackendAIPage {
           if ('atom.device' in occupiedSlots) {
             sessions[objectKey].atom_slot = parseInt(occupiedSlots['atom.device']);
           }
+          if ('warboy.device' in occupiedSlots) {
+            sessions[objectKey].warboy_slot = parseInt(occupiedSlots['warboy.device']);
+          }
           if ('cuda.shares' in occupiedSlots) {
             // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
             sessions[objectKey].cuda_fgpu_slot = parseFloat(occupiedSlots['cuda.shares']).toFixed(2);
@@ -2253,12 +2256,18 @@ export default class BackendAISessionList extends BackendAIPage {
               <span>${rowData.item.atom_slot}</span>
               <span class="indicator">ATOM</span>
               ` : html``}
+            ${rowData.item.warboy_slot ? html`
+              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <span>${rowData.item.warboy_slot}</span>
+              <span class="indicator">Warboy</span>
+              ` : html``}
             ${!rowData.item.cuda_gpu_slot &&
       !rowData.item.cuda_fgpu_slot &&
       !rowData.item.rocm_gpu_slot &&
       !rowData.item.tpu_slot &&
       !rowData.item.ipu_slot &&
-      !rowData.item.atom_slot ? html`
+      !rowData.item.atom_slot &&
+      !rowData.item.warboy_slot ? html`
               <wl-icon class="fg green indicator">view_module</wl-icon>
               <span>-</span>
               <span class="indicator">GPU</span>

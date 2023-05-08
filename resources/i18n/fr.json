@@ -114,7 +114,8 @@
     "connectingToCluster": "Connexion au cluster Backend.AI...",
     "DownloadWebUIApp": "__NOT_TRANSLATED__",
     "IPUEnabled": "__NOT_TRANSLATED__",
-    "ATOMEnabled": "__NOT_TRANSLATED__"
+    "ATOMEnabled": "__NOT_TRANSLATED__",
+    "WarboyEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -1088,7 +1089,10 @@
     "ATOMsupport": "__NOT_TRANSLATED__",
     "DescATOMsupport": "__NOT_TRANSLATED__",
     "RequireIPUPlugin": "__NOT_TRANSLATED__",
-    "RequireATOMPlugin": "__NOT_TRANSLATED__"
+    "RequireATOMPlugin": "__NOT_TRANSLATED__",
+    "Warboysupport": "__NOT_TRANSLATED__",
+    "DescWarboysupport": "__NOT_TRANSLATED__",
+    "RequireWarboyPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Mise à jour réussie",
