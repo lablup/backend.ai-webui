@@ -1015,10 +1015,18 @@
     }
   },
   "statistics": {
-    "Usage": "Usage",
+    "UsageHistory": "Usage History",
     "SelectPeriod": "Select Period",
     "1Day": "1 Day",
-    "1Week": "1 Week"
+    "1Week": "1 Week",
+    "UsageHistoryDesc": "On the Usage History tab, you can check simple statistics related to the use of compute sessions via a graph. You can check the usage history statistics for a day or a week by selecting the usage period from the select period menu on the upper left. Displayed items are as follows.",
+    "SessionsDesc": "The number of compute sessions created.",
+    "CPUDesc": "The number of CPU cores allocated to the compute sessions.",
+    "MemoryDesc": "The amount of memory allocated to the compute sessions.",
+    "GPUDesc": "The number of GPU units allocated to the compute sessions. If the Fractional GPU feature is enabled, it may not match the physics GPU.",
+    "IOReadDesc": "This amount of the data read from the compute session. (The amount of data read from externally mounted devices such as data folders is not included.)",
+    "IOWriteDesc": "The amount of the data write from the compute session. (The amount of data write from externally mounted devices such as data folders is not included.)",
+    "UsageHistoryNote": "The usage history shown here are based on terminated compute sessions. Also, one week usage history may not be shown for the users whose account is created no longer than a week."
   },
   "language": {
     "Browser": "Browser",
@@ -1180,7 +1188,8 @@
     "TooManyAttempt": "There were too many login attempts. Login attempts have been blocked for a while.",
     "SingleSignOn": {
       "LoginWithSAML": "Login with SAML"
-    }
+    },
+    "EndpointStartWith": "Endpoint must start with http:// or https://."
   },
   "signup": {
     "SignupBETA": "Signup (Beta invitation only)",

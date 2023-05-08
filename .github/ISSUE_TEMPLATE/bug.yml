@@ -20,7 +20,7 @@ body:
     attributes:
       label: Backend.AI version
       description: "The commit hash, tag name, or package version"
-      placeholder: "22.09.0b1"
+      placeholder: "23.09.0b1"
     validations:
       required: true
   - type: textarea
