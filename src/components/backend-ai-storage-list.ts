@@ -94,6 +94,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) selectedFolderType = '';
   @property({type: String}) downloadURL = '';
   @property({type: Array}) uploadFiles = [];
+  @property({type: Object}) currentUploadFile = Object();
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
   @property({type: Number}) concurrentFileUploadLimit = 2;
@@ -876,10 +877,21 @@ export default class BackendAiStorageList extends BackendAIPage {
                 ${_t('data.explorer.StopUploading')}
               </mwc-button>
             </div>
-          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
+            <div class="horizontal layout center progress-item flex">
+              ${this.currentUploadFile?.complete ? html`
+                <wl-icon>check</wl-icon>
+              ` : html``}
+              <div class="vertical layout progress-item" style="width:100%;">
+                <span>${this.currentUploadFile?.name}</span>
+                <vaadin-progress-bar value="${this.currentUploadFile?.progress}"></vaadin-progress-bar>
+                <span>${this.currentUploadFile?.caption}</span>
+              </div>
+            </div>
+          <!-- <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
             <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this._boundUploadListRenderer}"></vaadin-grid-column>
             <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
-          </vaadin-grid>` : html``}
+          </vaadin-grid> -->
+          ` : html``}
           <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
@@ -2595,10 +2607,12 @@ export default class BackendAiStorageList extends BackendAIPage {
         },
         onError: (error) => {
           console.log('Failed because: ' + error);
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           this.fileUploadCount = this.fileUploadCount - 1;
           this.runFileUploadQueue();
         },
         onProgress: (bytesUploaded, bytesTotal) => {
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
             (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `Canceling...`;
@@ -2630,6 +2644,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         },
         onSuccess: () => {
           this._clearExplorer();
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].complete = true;
           this.uploadFiles = this.uploadFiles.slice();
           setTimeout(() => {
