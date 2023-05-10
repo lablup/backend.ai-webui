@@ -8,6 +8,8 @@ import {
   theme,
   DescriptionsProps,
   Spin,
+  Row,
+  Col,
 } from "antd";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useTranslation, Trans } from "react-i18next";
@@ -95,78 +97,91 @@ const Information: React.FC<InformationProps> = () => {
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-      <Card>
-        <Descriptions
-          title={t("information.Core")}
-          bordered
-          column={columnSetting}
-        >
-          <Descriptions.Item
-            label={<DescriptionLabel title={t("information.ManagerVersion")} />}
+      <Row gutter={[token.margin, token.margin]}>
+        <Col xs={24} xxl={12}>
+          <Card
+            style={{
+              height: "100%",
+            }}
           >
-            <Flex
-              direction="column"
-              style={{ gap: token.marginXXS }}
-              align="start"
+            <Descriptions
+              title={t("information.Core")}
+              bordered
+              column={columnSetting}
             >
-              Backend.AI {backendaiclient.managerVersion}
-              <DoubleTag
-                label={t("information.Installation")}
-                value={backendaiclient.managerVersion}
-              />
-              {/* TODO: get manager_version_latest  */}
-              {/* <DoubleTag
+              <Descriptions.Item
+                label={
+                  <DescriptionLabel title={t("information.ManagerVersion")} />
+                }
+              >
+                <Flex
+                  direction="column"
+                  style={{ gap: token.marginXXS }}
+                  align="start"
+                >
+                  Backend.AI {backendaiclient.managerVersion}
+                  <DoubleTag
+                    label={t("information.Installation")}
+                    value={backendaiclient.managerVersion}
+                  />
+                  {/* TODO: get manager_version_latest  */}
+                  {/* <DoubleTag
                 label={t("information.LatestRelease")}
                 value={"manager_version_latest"}
               /> */}
-            </Flex>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={<DescriptionLabel title={t("information.APIVersion")} />}
-          >
-            {backendaiclient.apiVersion}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
-      <Card>
-        <Descriptions
-          title={t("information.Security")}
-          bordered
-          column={columnSetting}
-        >
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.DefaultAdministratorAccountChanged")}
-                subtitle={t(
-                  "information.DescDefaultAdministratorAccountChanged"
+                </Flex>
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={<DescriptionLabel title={t("information.APIVersion")} />}
+              >
+                {backendaiclient.apiVersion}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+        <Col xs={24} xxl={12}>
+          <Card>
+            <Descriptions
+              title={t("information.Security")}
+              bordered
+              column={columnSetting}
+            >
+              <Descriptions.Item
+                label={
+                  <DescriptionLabel
+                    title={t("information.DefaultAdministratorAccountChanged")}
+                    subtitle={t(
+                      "information.DescDefaultAdministratorAccountChanged"
+                    )}
+                  />
+                }
+              >
+                {/* TODO: accountChanged  */}
+                {true ? (
+                  <CheckOutlined title="Yes" />
+                ) : (
+                  <WarningOutlined style={{ color: "red" }} title="No" />
                 )}
-              />
-            }
-          >
-            {/* TODO: accountChanged  */}
-            {true ? (
-              <CheckOutlined title="Yes" />
-            ) : (
-              <WarningOutlined style={{ color: "red" }} title="No" />
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.UsesSSL")}
-                subtitle={t("information.DescUsesSSL")}
-              />
-            }
-          >
-            {backendaiclient?._config.endpoint.startsWith("https:") ? (
-              <CheckOutlined title="Yes" />
-            ) : (
-              <WarningOutlined style={{ color: "red" }} title="No" />
-            )}
-          </Descriptions.Item>
-        </Descriptions>
-      </Card>
+              </Descriptions.Item>
+              <Descriptions.Item
+                label={
+                  <DescriptionLabel
+                    title={t("information.UsesSSL")}
+                    subtitle={t("information.DescUsesSSL")}
+                  />
+                }
+              >
+                {backendaiclient?._config.endpoint.startsWith("https:") ? (
+                  <CheckOutlined title="Yes" />
+                ) : (
+                  <WarningOutlined style={{ color: "red" }} title="No" />
+                )}
+              </Descriptions.Item>
+            </Descriptions>
+          </Card>
+        </Col>
+      </Row>
+
       <Card>
         <Descriptions
           title={t("information.Component")}
