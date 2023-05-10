@@ -5,15 +5,19 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
 import i18n from "i18next";
 import { useTranslation, initReactI18next } from "react-i18next";
-import Backend from 'i18next-http-backend';
+import Backend from "i18next-http-backend";
 
-import en_US from 'antd/locale/en_US';
-import ko_KR from 'antd/locale/ko_KR';
+import en_US from "antd/locale/en_US";
+import ko_KR from "antd/locale/ko_KR";
+
+// @ts-nocheck
+// import type { Client } from "../../../src/lib/backend.ai-client-esm";
 
 interface WebComponentContextType {
   props: ReactWebComponentProps;
   // @ts-ignore
   resourceBroker?: any;
+  backendaiclient?: any;
 }
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 
@@ -33,41 +37,42 @@ i18n
   .use(Backend)
   .init({
     backend: {
-      loadPath: '/resources/i18n/{{lng}}.json',
+      loadPath: "/resources/i18n/{{lng}}.json",
     },
     //@ts-ignore
-    lng: globalThis?.backendaioptions?.get('current_language') || "en", 
+    lng: globalThis?.backendaioptions?.get("current_language") || "en",
     fallbackLng: "en",
     interpolation: {
-      escapeValue: false // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
-    }
+      escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
+    },
   });
-  
 
 const useCurrentLanguage = () => {
-  //@ts-ignore
-  const [lang, _setLang] = useState(globalThis.backendaioptions.get('current_language'));
-  const {i18n}= useTranslation();
+  const [lang, _setLang] = useState(
+    //@ts-ignore
+    globalThis.backendaioptions.get("current_language")
+  );
+  const { i18n } = useTranslation();
 
-  useEffect(()=>{
+  useEffect(() => {
     // TODO: remove this hack to initialize i18next
-    setTimeout(()=> i18n.changeLanguage(lang), 0);
-  },[]);
+    setTimeout(() => i18n.changeLanguage(lang), 0);
+  }, []);
 
-  useEffect(()=>{
-    const handler = (e:Event) => {
+  useEffect(() => {
+    const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e.detail.lang)
+      _setLang(e.detail.lang);
       //@ts-ignore
-      const lang:string = e.detail?.lang || "en";
+      const lang: string = e.detail?.lang || "en";
       i18n.changeLanguage(lang);
-    }
-    window.addEventListener('langChanged',handler);
-    return ()=> window.removeEventListener('langChanged',handler);
-  },[i18n]);
+    };
+    window.addEventListener("langChanged", handler);
+    return () => window.removeEventListener("langChanged", handler);
+  }, [i18n]);
 
   return [lang] as const;
-}
+};
 
 const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   children,
@@ -84,6 +89,8 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
           props,
           //@ts-ignore
           resourceBroker: globalThis?.resourceBroker,
+          //@ts-ignore
+          backendaiclient: globalThis?.backendaiclient,
         }}
       >
         <QueryClientProvider client={queryClient}>

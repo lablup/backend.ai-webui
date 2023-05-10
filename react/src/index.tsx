@@ -3,10 +3,6 @@
 
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import React from "react";
-// customElements.define(
-//   "backend-ai-webui-react-example",
-//   reactToWebComponentWithDefault(ExampleComponent)
-// );
 
 const DefaultProviders = React.lazy(() => import("./components/DefaultProviders"));
 const ExampleComponent = React.lazy(() => import("./components/ExampleComponent"));

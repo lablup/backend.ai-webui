@@ -11,6 +11,7 @@ import {
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
+import { useQuery } from "react-query";
 
 const { Text } = Typography;
 
@@ -43,21 +44,34 @@ const DoubleTag: React.FC<{
 
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {
-  const [accountChanged, setAccountChanged] = useState(true);
   const [useSsl, setUseSsl] = useState(true);
-  const [licenseValid, setLicenseValid] = useState(false);
-  const [licenseType, setLicenseType] = useState("information.CannotRead");
-  const [licensee, setLicensee] = useState("information.CannotRead");
-  const [licenseKey, setLicenseKey] = useState("information.CannotRead");
-  const [licenseExpiration, setLicenseExpiration] = useState(
-    "information.CannotRead"
-  );
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const {
     props: { value },
   } = useWebComponentInfo();
+  const { backendaiclient } = useWebComponentInfo();
+
+  let { data: licenseInfo, error } = useQuery<{
+    valid: boolean;
+    type: string;
+    licensee: string;
+    key: string;
+    expiration: string;
+  }>("licenseInfo", () => {
+    return backendaiclient?.enterprise.getLicense();
+  });
+
+  if (!licenseInfo) {
+    licenseInfo = {
+      valid: false,
+      type: t("information.CannotRead"),
+      licensee: t("information.CannotRead"),
+      key: t("information.CannotRead"),
+      expiration: t("information.CannotRead"),
+    };
+  }
 
   const columnSetting: DescriptionsProps["column"] = {
     xxl: 4,
@@ -67,9 +81,14 @@ const Information: React.FC<InformationProps> = () => {
     sm: 1,
     xs: 1,
   };
+
   return (
-    <div>
-      <Card style={{ margin: token.margin }}>
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{ margin: token.marginSM, gap: token.margin }}
+    >
+      <Card>
         <Descriptions
           title={t("information.Core")}
           bordered
@@ -83,25 +102,26 @@ const Information: React.FC<InformationProps> = () => {
               style={{ gap: token.marginXXS }}
               align="start"
             >
-              Backend.AI manager_version
+              Backend.AI {backendaiclient.managerVersion}
               <DoubleTag
                 label={t("information.Installation")}
-                value={"manager_version"}
+                value={backendaiclient.managerVersion}
               />
-              <DoubleTag
+              {/* TODO: get manager_version_latest  */}
+              {/* <DoubleTag
                 label={t("information.LatestRelease")}
                 value={"manager_version_latest"}
-              />
+              /> */}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item
             label={<DescriptionLabel title={t("information.APIVersion")} />}
           >
-            <Flex>api_version</Flex>
+            {backendaiclient.apiVersion}
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: "20px" }}>
+      <Card>
         <Descriptions
           title={t("information.Security")}
           bordered
@@ -117,13 +137,12 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Flex>
-              {accountChanged ? (
-                <CheckOutlined title="Yes" />
-              ) : (
-                <WarningOutlined style={{ color: "red" }} title="No" />
-              )}
-            </Flex>
+            {/* TODO: accountChanged  */}
+            {true ? (
+              <CheckOutlined title="Yes" />
+            ) : (
+              <WarningOutlined style={{ color: "red" }} title="No" />
+            )}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -133,17 +152,15 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Flex>
-              {useSsl ? (
-                <CheckOutlined title="Yes" />
-              ) : (
-                <WarningOutlined style={{ color: "red" }} title="No" />
-              )}
-            </Flex>
+            {backendaiclient?._config.endpoint.startsWith("https:") ? (
+              <CheckOutlined title="Yes" />
+            ) : (
+              <WarningOutlined style={{ color: "red" }} title="No" />
+            )}
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: "20px" }}>
+      <Card>
         <Descriptions
           title={t("information.Component")}
           bordered
@@ -194,7 +211,7 @@ const Information: React.FC<InformationProps> = () => {
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: "20px" }}>
+      <Card>
         <Descriptions
           title={t("information.License")}
           bordered
@@ -215,7 +232,11 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            {licenseValid ? <CheckOutlined /> : <WarningOutlined />}
+            {licenseInfo.valid ? (
+              <CheckOutlined />
+            ) : (
+              <WarningOutlined style={{ color: "red" }} />
+            )}
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -228,7 +249,7 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            {licenseType
+            {licenseInfo.type == "fixed"
               ? t("information.FixedLicense")
               : t("information.DynamicLicense")}
           </Descriptions.Item>
@@ -240,7 +261,7 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Tag>{licensee}</Tag>
+            <Tag>{licenseInfo.licensee}</Tag>
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -253,7 +274,7 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Tag>{licenseKey}</Tag>
+            <Tag>{licenseInfo.key}</Tag>
           </Descriptions.Item>
           <Descriptions.Item
             label={
@@ -266,11 +287,11 @@ const Information: React.FC<InformationProps> = () => {
               />
             }
           >
-            <Tag>{licenseExpiration}</Tag>
+            <Tag>{licenseInfo.expiration}</Tag>
           </Descriptions.Item>
         </Descriptions>
       </Card>
-    </div>
+    </Flex>
   );
 };
 
