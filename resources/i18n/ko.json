@@ -617,8 +617,9 @@
       "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
-      "Delete": "삭제...",
-      "UploadFiles": "파일 업로드...",
+      "Delete": "삭제",
+      "UploadFiles": "파일 업로드",
+      "UploadFolder": "폴더 업로드",
       "NewFolder": "새 폴더",
       "StopUploading": "업로드 취소",
       "RenameAFile": "파일 이름 변경",
@@ -648,6 +649,7 @@
       "WritePermissionRequiredInUploadFiles": "파일을 업로드하기 위해서는 쓰기(write) 권한이 필요합니다.",
       "ReadonlyFolder": "읽기 전용 폴더",
       "FileAlreadyExists": "다음 파일은 이미 존재합니다.",
+      "FolderAlreadyExists": "다음 폴더는 이미 존재합니다.",
       "DoYouWantToOverwrite": "덮어쓰시겠습니까?",
       "FileExtensionChanged": "파일 확장자를 변경하시겠습니까?",
       "KeepFileExtension": " 유지",
@@ -659,7 +661,8 @@
       "NotEnoughResourceForFileBrowserSession": "파일브라우저용 세션 생성을 위한 충분한 자원(cpu: 1 Core, mem: 0.5GB)이 없습니다. 자원 확인 후 다시 시도하십시오.",
       "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
       "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요.",
-      "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다."
+      "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다.",
+      "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
