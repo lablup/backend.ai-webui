@@ -7,11 +7,13 @@ import {
   Card,
   theme,
   DescriptionsProps,
+  Spin,
 } from "antd";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
 import { useQuery } from "react-query";
+import { useSuspendedBackendaiClient } from "../hooks";
 
 const { Text } = Typography;
 
@@ -48,20 +50,25 @@ const Information: React.FC<InformationProps> = () => {
 
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const {
-    props: { value },
-  } = useWebComponentInfo();
-  const { backendaiclient } = useWebComponentInfo();
 
-  let { data: licenseInfo, error } = useQuery<{
+  const backendaiclient = useSuspendedBackendaiClient();
+
+  let { data: licenseInfo, isLoading: isLoadingLicenseInfo } = useQuery<{
     valid: boolean;
     type: string;
     licensee: string;
     key: string;
     expiration: string;
-  }>("licenseInfo", () => {
-    return backendaiclient?.enterprise.getLicense();
-  });
+  }>(
+    "licenseInfo",
+    () => {
+      return backendaiclient?.enterprise.getLicense();
+    },
+    {
+      // for to render even this fail query failed
+      suspense: false,
+    }
+  );
 
   if (!licenseInfo) {
     licenseInfo = {
@@ -212,84 +219,89 @@ const Information: React.FC<InformationProps> = () => {
         </Descriptions>
       </Card>
       <Card>
-        <Descriptions
-          title={t("information.License")}
-          bordered
-          column={{
-            xxl: 2,
-            xl: 2,
-            lg: 2,
-            md: 1,
-            sm: 1,
-            xs: 1,
-          }}
-        >
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.IsLicenseValid")}
-                subtitle={t("information.DescIsLicenseValid")}
-              />
-            }
+        <Spin spinning={isLoadingLicenseInfo}>
+          <Descriptions
+            title={t("information.License")}
+            bordered
+            column={{
+              xxl: 2,
+              xl: 2,
+              lg: 2,
+              md: 1,
+              sm: 1,
+              xs: 1,
+            }}
           >
-            {licenseInfo.valid ? (
-              <CheckOutlined />
-            ) : (
-              <WarningOutlined style={{ color: "red" }} />
-            )}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.LicenseType")}
-                subtitle={t("information.DescLicenseType").replace(
-                  "<br/>",
-                  "\n"
-                )}
-              />
-            }
-          >
-            {licenseInfo.type == "fixed"
-              ? t("information.FixedLicense")
-              : t("information.DynamicLicense")}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.Licensee")}
-                subtitle={t("information.DescLicensee").replace("<br/>", "\n")}
-              />
-            }
-          >
-            <Tag>{licenseInfo.licensee}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.LicenseKey")}
-                subtitle={t("information.DescLicenseKey").replace(
-                  "<br/>",
-                  "\n"
-                )}
-              />
-            }
-          >
-            <Tag>{licenseInfo.key}</Tag>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <DescriptionLabel
-                title={t("information.Expiration")}
-                subtitle={t("information.DescExpiration").replace(
-                  "<br/>",
-                  "\n"
-                )}
-              />
-            }
-          >
-            <Tag>{licenseInfo.expiration}</Tag>
-          </Descriptions.Item>
-        </Descriptions>
+            <Descriptions.Item
+              label={
+                <DescriptionLabel
+                  title={t("information.IsLicenseValid")}
+                  subtitle={t("information.DescIsLicenseValid")}
+                />
+              }
+            >
+              {licenseInfo.valid ? (
+                <CheckOutlined />
+              ) : (
+                <WarningOutlined style={{ color: "red" }} />
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={
+                <DescriptionLabel
+                  title={t("information.LicenseType")}
+                  subtitle={t("information.DescLicenseType").replace(
+                    "<br/>",
+                    "\n"
+                  )}
+                />
+              }
+            >
+              {licenseInfo.type == "fixed"
+                ? t("information.FixedLicense")
+                : t("information.DynamicLicense")}
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={
+                <DescriptionLabel
+                  title={t("information.Licensee")}
+                  subtitle={t("information.DescLicensee").replace(
+                    "<br/>",
+                    "\n"
+                  )}
+                />
+              }
+            >
+              <Tag>{licenseInfo.licensee}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={
+                <DescriptionLabel
+                  title={t("information.LicenseKey")}
+                  subtitle={t("information.DescLicenseKey").replace(
+                    "<br/>",
+                    "\n"
+                  )}
+                />
+              }
+            >
+              <Tag>{licenseInfo.key}</Tag>
+            </Descriptions.Item>
+            <Descriptions.Item
+              label={
+                <DescriptionLabel
+                  title={t("information.Expiration")}
+                  subtitle={t("information.DescExpiration").replace(
+                    "<br/>",
+                    "\n"
+                  )}
+                />
+              }
+            >
+              <Tag>{licenseInfo.expiration}</Tag>
+            </Descriptions.Item>
+          </Descriptions>
+        </Spin>
       </Card>
     </Flex>
   );

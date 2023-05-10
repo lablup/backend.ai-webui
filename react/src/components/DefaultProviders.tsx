@@ -26,7 +26,14 @@ export function useWebComponentInfo() {
 }
 
 // Create a client
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
 
 export interface DefaultProvidersProps extends ReactWebComponentProps {
   children?: React.ReactNode;
