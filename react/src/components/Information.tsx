@@ -1,164 +1,276 @@
 import { useState } from "react";
 import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
-import { Descriptions, Typography, Tag, Card } from "antd";
+import {
+  Descriptions,
+  Typography,
+  Tag,
+  Card,
+  theme,
+  DescriptionsProps,
+} from "antd";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
 
 const { Text } = Typography;
 
+const DescriptionLabel: React.FC<{
+  title: string;
+  subtitle?: string | null;
+}> = ({ title, subtitle }) => {
+  const { token } = theme.useToken();
+  return (
+    <Flex direction="column" align="start">
+      <Typography.Text strong>{title}</Typography.Text>
+      {subtitle && (
+        <Typography.Text type="secondary">{subtitle}</Typography.Text>
+      )}
+    </Flex>
+  );
+};
+
+const DoubleTag: React.FC<{
+  label: string;
+  value: string;
+}> = ({ label, value }) => {
+  return (
+    <Flex direction="row">
+      <Tag style={{ margin: 0, marginRight: -1, zIndex: 1 }}>{label}</Tag>
+      <Tag color="green">{value}</Tag>
+    </Flex>
+  );
+};
+
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {
   const [accountChanged, setAccountChanged] = useState(true);
   const [useSsl, setUseSsl] = useState(true);
   const [licenseValid, setLicenseValid] = useState(false);
-  const [licenseType, setLicenseType] = useState('information.CannotRead');
-  const [licensee, setLicensee] = useState('information.CannotRead');
-  const [licenseKey, setLicenseKey] = useState('information.CannotRead');
-  const [licenseExpiration, setLicenseExpiration] = useState('information.CannotRead');
+  const [licenseType, setLicenseType] = useState("information.CannotRead");
+  const [licensee, setLicensee] = useState("information.CannotRead");
+  const [licenseKey, setLicenseKey] = useState("information.CannotRead");
+  const [licenseExpiration, setLicenseExpiration] = useState(
+    "information.CannotRead"
+  );
 
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const {
     props: { value },
   } = useWebComponentInfo();
+
+  const columnSetting: DescriptionsProps["column"] = {
+    xxl: 4,
+    xl: 4,
+    lg: 2,
+    md: 1,
+    sm: 1,
+    xs: 1,
+  };
   return (
-    <>
-      <Card style={{ margin: '20px' }}>
+    <div>
+      <Card style={{ margin: token.margin }}>
         <Descriptions
-          title={t('information.Core')}
+          title={t("information.Core")}
           bordered
+          column={columnSetting}
         >
-          <Descriptions.Item label={t('information.ManagerVersion')}>
-            <Flex>
-              Backend.AI 
-            </Flex>
-            <Flex direction="row" style={{ margin: '5px auto' }}>
-              <Tag style={{ margin: 0 }}>{t('information.Installation')}</Tag>
-              <Tag color="green">manager_version</Tag>
-            </Flex>
-            <Flex style={{ margin: '5px auto' }}>
-              <Tag style={{ margin: 0 }}>{t('information.LatestRelease')}</Tag>
-              <Tag color="green">manager_version_latest</Tag>
+          <Descriptions.Item
+            label={<DescriptionLabel title={t("information.ManagerVersion")} />}
+          >
+            <Flex
+              direction="column"
+              style={{ gap: token.marginXXS }}
+              align="start"
+            >
+              Backend.AI manager_version
+              <DoubleTag
+                label={t("information.Installation")}
+                value={"manager_version"}
+              />
+              <DoubleTag
+                label={t("information.LatestRelease")}
+                value={"manager_version_latest"}
+              />
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.APIVersion')}>
+          <Descriptions.Item
+            label={<DescriptionLabel title={t("information.APIVersion")} />}
+          >
             <Flex>api_version</Flex>
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: '20px' }}>
+      <Card style={{ margin: "20px" }}>
         <Descriptions
-          title={t('information.Security')}
+          title={t("information.Security")}
           bordered
-          column={{ xxl: 2, xl: 2, lg: 2, md: 2, sm: 2, xs: 1 }}
+          column={columnSetting}
         >
-          <Descriptions.Item label={t('information.DefaultAdministratorAccountChanged')}>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.DefaultAdministratorAccountChanged")}
+                subtitle={t(
+                  "information.DescDefaultAdministratorAccountChanged"
+                )}
+              />
+            }
+          >
             <Flex>
-              {accountChanged ? <CheckOutlined /> : <WarningOutlined />}
-              <Trans>
-                {t('information.DescDefaultAdministratorAccountChanged')}          
-              </Trans>
+              {accountChanged ? (
+                <CheckOutlined title="Yes" />
+              ) : (
+                <WarningOutlined style={{ color: "red" }} title="No" />
+              )}
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.UsesSSL')}>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.UsesSSL")}
+                subtitle={t("information.DescUsesSSL")}
+              />
+            }
+          >
             <Flex>
-              {useSsl ? <CheckOutlined /> : <WarningOutlined />}
-              <Trans>
-                {t('information.DescUsesSSL')}
-              </Trans>
+              {useSsl ? (
+                <CheckOutlined title="Yes" />
+              ) : (
+                <WarningOutlined style={{ color: "red" }} title="No" />
+              )}
             </Flex>
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: '20px' }}>
+      <Card style={{ margin: "20px" }}>
         <Descriptions
-          title={t('information.Component')}
+          title={t("information.Component")}
           bordered
-          column={2}
+          column={{ xxl: 4, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
         >
-          <Descriptions.Item label={t('information.DockerVersion')}>
-            <Flex>
-              <Tag>{t('information.Compatible')}</Tag>
-              <Trans>
-                {t('information.DescDockerVersion')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.DockerVersion")}
+                subtitle={t("information.DescDockerVersion")}
+              />
+            }
+          >
+            <Tag>{t("information.Compatible")}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.PostgreSQLVersion')}>
-            <Flex>
-              <Tag>{t('information.Compatible')}</Tag>
-              <Trans>
-                {t('information.DescPostgreSQLVersion')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.PostgreSQLVersion")}
+                subtitle={t("information.DescPostgreSQLVersion")}
+              />
+            }
+          >
+            <Tag>{t("information.Compatible")}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.ETCDVersion')}>
-            <Flex>
-              <Tag>{t('information.Compatible')}</Tag>
-              <Trans>
-                {t('information.DescETCDVersion')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.ETCDVersion")}
+                subtitle={t("information.DescETCDVersion")}
+              />
+            }
+          >
+            <Tag>{t("information.Compatible")}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.RedisVersion')}>
-            <Flex>
-              <Tag>{t('information.Compatible')}</Tag>
-              <Trans>
-                {t('information.DescRedisVersion')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.RedisVersion")}
+                subtitle={t("information.DescRedisVersion").replace(
+                  "<br />",
+                  "\n"
+                )}
+              />
+            }
+          >
+            <Tag>{t("information.Compatible")}</Tag>
           </Descriptions.Item>
         </Descriptions>
       </Card>
-      <Card style={{ margin: '20px' }}>
+      <Card style={{ margin: "20px" }}>
         <Descriptions
-          title={t('information.License')}
+          title={t("information.License")}
           bordered
-          column={2}
+          column={{
+            xxl: 2,
+            xl: 2,
+            lg: 2,
+            md: 1,
+            sm: 1,
+            xs: 1,
+          }}
         >
-          <Descriptions.Item label={t('information.IsLicenseValid')}>
-            <Flex>
-              {licenseValid ? <CheckOutlined /> : <WarningOutlined />}
-              <Trans>
-                {t('information.DescIsLicenseValid')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.IsLicenseValid")}
+                subtitle={t("information.DescIsLicenseValid")}
+              />
+            }
+          >
+            {licenseValid ? <CheckOutlined /> : <WarningOutlined />}
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.LicenseType')}>
-            <Flex>
-              <Tag>{licenseType ? t('information.FixedLicense') : t('information.DynamicLicense')}</Tag>
-              <Trans>
-                {t('information.DescLicenseType')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.LicenseType")}
+                subtitle={t("information.DescLicenseType").replace(
+                  "<br/>",
+                  "\n"
+                )}
+              />
+            }
+          >
+            {licenseType
+              ? t("information.FixedLicense")
+              : t("information.DynamicLicense")}
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.Licensee')}>
-            <Flex>
-              <Tag>{licensee}</Tag>
-              <Trans>
-                {t('information.DescLicensee')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.Licensee")}
+                subtitle={t("information.DescLicensee").replace("<br/>", "\n")}
+              />
+            }
+          >
+            <Tag>{licensee}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.LicenseKey')}>
-            <Flex>
-              <Tag>{licenseKey}</Tag>
-              <Trans>
-                {t('information.DescLicenseKey')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.LicenseKey")}
+                subtitle={t("information.DescLicenseKey").replace(
+                  "<br/>",
+                  "\n"
+                )}
+              />
+            }
+          >
+            <Tag>{licenseKey}</Tag>
           </Descriptions.Item>
-          <Descriptions.Item label={t('information.Expiration')}>
-            <Flex>
-              <Tag>{licenseExpiration}</Tag>
-              <Trans>
-                {t('information.DescExpiration')}
-              </Trans>
-            </Flex>
+          <Descriptions.Item
+            label={
+              <DescriptionLabel
+                title={t("information.Expiration")}
+                subtitle={t("information.DescExpiration").replace(
+                  "<br/>",
+                  "\n"
+                )}
+              />
+            }
+          >
+            <Tag>{licenseExpiration}</Tag>
           </Descriptions.Item>
         </Descriptions>
       </Card>
-    </>
+    </div>
   );
 };
 
