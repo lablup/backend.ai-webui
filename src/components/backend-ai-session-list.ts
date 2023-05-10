@@ -2788,10 +2788,12 @@ export default class BackendAISessionList extends BackendAIPage {
           <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable auto-width flex-grow="0"
-                              .headerRenderer="${this._boundIdleChecksHeaderderer}"
-                              .renderer="${this._boundIdleChecksRenderer}">
-          </vaadin-grid-column>
+          ${globalThis.backendaiclient.supports('idle-checks') && this.activeIdleCheckList.size > 0 ? html`
+            <vaadin-grid-column resizable auto-width flex-grow="0"
+                                .headerRenderer="${this._boundIdleChecksHeaderderer}"
+                                .renderer="${this._boundIdleChecksRenderer}">
+            </vaadin-grid-column>
+          ` : html``}
           <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
                                      .renderer="${this._boundArchitectureRenderer}">
           </lablup-grid-sort-filter-column>
