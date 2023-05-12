@@ -1879,8 +1879,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} utilizationExtra - idle_checks.utilization.extra
    */
   _createUtilizationIdleCheckDropdown(e, utilizationExtra) {
-    // Prevent re-rendering
-    if (document.getElementsByClassName('util-dropdown-menu').length > 0) return;
+    this._removeUtilizationIdleCheckDropdown();
 
     const menuDiv: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as Menu;
