@@ -48,8 +48,6 @@ const DoubleTag: React.FC<{
 
 interface InformationProps {}
 const Information: React.FC<InformationProps> = () => {
-  const [useSsl, setUseSsl] = useState(true);
-
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
