@@ -1879,9 +1879,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} utilizationExtra - idle_checks.utilization.extra
    */
   _createUtilizationIdleCheckDropdown(e, utilizationExtra) {
-    // Prevent re-rendering
-    if (document.getElementsByClassName('util-dropdown-menu').length > 0) return;
-
     const menuDiv: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as Menu;
     menu.anchor = menuDiv;
@@ -2505,17 +2502,34 @@ export default class BackendAISessionList extends BackendAIPage {
         );
       }
 
+      let button;
+      if (key === 'utilization') {
+        button = html`
+          <button
+            class="idle-check-key"
+            style="color:#42a5f5;"
+            @mouseenter="${(e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources)}"
+            @mouseleave="${() => this._removeUtilizationIdleCheckDropdown()}"
+          >
+            ${_text('session.' + this.idleChecksTable[key])}
+          </button>
+        `;
+      } else {
+        button = html`
+          <button
+            class="idle-check-key"
+            style="color:#222222;"
+          >
+            ${_text('session.' + this.idleChecksTable[key])}
+          </button>
+        `;
+      }
+
       if (key in this.idleChecksTable) {
         return html`
           <div class="layout vertical" style="padding:3px auto;">
             <div style="margin:4px;">
-              <button
-                id="${key}"
-                class="idle-check-key"
-                style="color:${key === 'utilization' ? '#42a5f5' : '#222222'}"
-              >
-                ${_text('session.' + this.idleChecksTable[key])}
-              </button>
+              ${button}
               <br/>
               <strong style="color:${remainingColor}">${remaining}</strong>
               <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
@@ -2529,10 +2543,6 @@ export default class BackendAISessionList extends BackendAIPage {
 
     const contentTemplate = html`${contentTemplates}`;
     render(contentTemplate, root);
-
-    const utilization = root.querySelector('#utilization');
-    utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources));
-    utilization?.addEventListener('mouseleave', () => this._removeUtilizationIdleCheckDropdown());
   }
 
   /**
