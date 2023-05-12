@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import {
   Descriptions,
@@ -16,12 +16,14 @@ import { useTranslation, Trans } from "react-i18next";
 import Flex from "./Flex";
 import { useQuery } from "react-query";
 import { useSuspendedBackendaiClient } from "../hooks";
+import _ from "lodash";
+import { newLineToBrElement } from "../helper";
 
 const { Text } = Typography;
 
 const DescriptionLabel: React.FC<{
   title: string;
-  subtitle?: string | null;
+  subtitle?: ReactNode | string | null;
 }> = ({ title, subtitle }) => {
   const { token } = theme.useToken();
   return (
@@ -220,10 +222,7 @@ const Information: React.FC<InformationProps> = () => {
             label={
               <DescriptionLabel
                 title={t("information.RedisVersion")}
-                subtitle={t("information.DescRedisVersion").replace(
-                  "<br />",
-                  "\n"
-                )}
+                subtitle={newLineToBrElement(t("information.DescRedisVersion"))}
               />
             }
           >
@@ -263,9 +262,8 @@ const Information: React.FC<InformationProps> = () => {
               label={
                 <DescriptionLabel
                   title={t("information.LicenseType")}
-                  subtitle={t("information.DescLicenseType").replace(
-                    "<br/>",
-                    "\n"
+                  subtitle={newLineToBrElement(
+                    t("information.DescLicenseType")
                   )}
                 />
               }
@@ -280,10 +278,7 @@ const Information: React.FC<InformationProps> = () => {
               label={
                 <DescriptionLabel
                   title={t("information.Licensee")}
-                  subtitle={t("information.DescLicensee").replace(
-                    "<br/>",
-                    "\n"
-                  )}
+                  subtitle={t("information.DescLicensee")}
                 />
               }
             >
@@ -293,10 +288,7 @@ const Information: React.FC<InformationProps> = () => {
               label={
                 <DescriptionLabel
                   title={t("information.LicenseKey")}
-                  subtitle={t("information.DescLicenseKey").replace(
-                    "<br/>",
-                    "\n"
-                  )}
+                  subtitle={t("information.DescLicenseKey")}
                 />
               }
             >
@@ -306,10 +298,7 @@ const Information: React.FC<InformationProps> = () => {
               label={
                 <DescriptionLabel
                   title={t("information.Expiration")}
-                  subtitle={t("information.DescExpiration").replace(
-                    "<br/>",
-                    "\n"
-                  )}
+                  subtitle={t("information.DescExpiration")}
                 />
               }
             >
