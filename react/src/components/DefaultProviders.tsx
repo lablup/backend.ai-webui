@@ -17,7 +17,6 @@ interface WebComponentContextType {
   props: ReactWebComponentProps;
   // @ts-ignore
   resourceBroker?: any;
-  backendaiclient?: any;
 }
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 
@@ -96,8 +95,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
           props,
           //@ts-ignore
           resourceBroker: globalThis?.resourceBroker,
-          //@ts-ignore
-          backendaiclient: globalThis?.backendaiclient,
         }}
       >
         <QueryClientProvider client={queryClient}>

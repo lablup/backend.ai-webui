@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
 import {
   Descriptions,
@@ -11,8 +11,7 @@ import {
   Row,
   Col,
 } from "antd";
-import { useWebComponentInfo } from "./DefaultProviders";
-import { useTranslation, Trans } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
 import { useQuery } from "react-query";
 import { useSuspendedBackendaiClient } from "../hooks";
@@ -53,7 +52,7 @@ const Information: React.FC<InformationProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const backendaiclient = useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
 
   let { data: licenseInfo, isLoading: isLoadingLicenseInfo } = useQuery<{
     valid: boolean;
@@ -64,7 +63,7 @@ const Information: React.FC<InformationProps> = () => {
   }>(
     "licenseInfo",
     () => {
-      return backendaiclient?.enterprise.getLicense();
+      return baiClient.enterprise.getLicense();
     },
     {
       // for to render even this fail query failed
@@ -119,10 +118,10 @@ const Information: React.FC<InformationProps> = () => {
                   style={{ gap: token.marginXXS }}
                   align="start"
                 >
-                  Backend.AI {backendaiclient.managerVersion}
+                  Backend.AI {baiClient.managerVersion}
                   <DoubleTag
                     label={t("information.Installation")}
-                    value={backendaiclient.managerVersion}
+                    value={baiClient.managerVersion}
                   />
                   {/* TODO: get manager_version_latest  */}
                   {/* <DoubleTag
@@ -134,7 +133,7 @@ const Information: React.FC<InformationProps> = () => {
               <Descriptions.Item
                 label={<DescriptionLabel title={t("information.APIVersion")} />}
               >
-                {backendaiclient.apiVersion}
+                {baiClient.apiVersion}
               </Descriptions.Item>
             </Descriptions>
           </Card>
@@ -171,7 +170,7 @@ const Information: React.FC<InformationProps> = () => {
                   />
                 }
               >
-                {backendaiclient?._config.endpoint.startsWith("https:") ? (
+                {baiClient?._config.endpoint.startsWith("https:") ? (
                   <CheckOutlined title="Yes" />
                 ) : (
                   <WarningOutlined style={{ color: "red" }} title="No" />
