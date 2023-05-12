@@ -2506,7 +2506,6 @@ export default class BackendAISessionList extends BackendAIPage {
       if (key === 'utilization') {
         button = html`
             <button
-            id="${key}"
             class="idle-check-key"
             style="color:#42a5f5;"
             @mouseenter="${(e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources)}"
@@ -2518,7 +2517,6 @@ export default class BackendAISessionList extends BackendAIPage {
       } else {
         button = html`
             <button
-            id="${key}"
             class="idle-check-key"
             style="color:#222222;"
           >
