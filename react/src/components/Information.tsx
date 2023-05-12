@@ -272,9 +272,11 @@ const Information: React.FC<InformationProps> = () => {
                 />
               }
             >
-              {licenseInfo.type == "fixed"
-                ? t("information.FixedLicense")
-                : t("information.DynamicLicense")}
+              <Tag>
+                {licenseInfo.type === "fixed"
+                  ? t("information.FixedLicense")
+                  : t("information.DynamicLicense")}
+              </Tag>
             </Descriptions.Item>
             <Descriptions.Item
               label={
