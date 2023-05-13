@@ -1,90 +1,89 @@
-import React, { CSSProperties, ReactNode } from "react";
+import { theme } from "antd";
+import React, { CSSProperties, PropsWithChildren } from "react";
 
-export interface FlexPropsType {
+interface FlexProps
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, "dir">,
+    PropsWithChildren {
   direction?: "row" | "row-reverse" | "column" | "column-reverse";
   wrap?: "nowrap" | "wrap" | "wrap-reverse";
   justify?: "start" | "end" | "center" | "between" | "around";
-  align?: "start" | "center" | "end" | "baseline" | "stretch";
-  children?: ReactNode;
-  disabled?: boolean;
+  // | "evenly";
+  align?: "start" | "end" | "center" | "baseline" | "stretch";
+  gap?: number | "xxs" | "xs" | "s" | "m" | "l" | "xl" | "xxl";
 }
 
-export interface FlexProps
-  extends FlexPropsType,
-    React.HTMLAttributes<HTMLDivElement> {}
+const Flex: React.FC<FlexProps> = ({
+  direction = "row",
+  wrap = "nowrap",
+  justify = "flex-start",
+  align = "center",
+  gap = 0,
+  style,
+  children,
+  ...restProps
+}) => {
+  const { token } = theme.useToken();
 
-export default class Flex extends React.Component<FlexProps, any> {
-  static Item: any;
+  const transferConst = [justify, align];
+  const transferConstStyle = transferConst.map((el) => {
+    let tempTxt;
+    switch (el) {
+      case "start":
+        tempTxt = "flex-start";
+        break;
+      case "end":
+        tempTxt = "flex-end";
+        break;
+      case "between":
+        tempTxt = "space-between";
+        break;
+      case "around":
+        tempTxt = "space-around";
+        break;
+      default:
+        tempTxt = el;
+        break;
+    }
 
-  static defaultProps = {
-    direction: "row",
-    wrap: "nowrap",
-    justify: "start",
-    align: "center",
+    return tempTxt;
+  });
+  const flexStyle: CSSProperties = {
+    display: "flex",
+    flexDirection: direction,
+    flexWrap: wrap,
+    justifyContent: transferConstStyle[0],
+    alignItems: transferConstStyle[1],
+    ...style,
   };
 
-  render() {
-    const { style, direction, wrap, justify, align, children, ...restProps } =
-      this.props;
-    const transferConst = [justify, align];
-    const transferConstStyle = transferConst.map((el) => {
-      let tempTxt;
-      switch (el) {
-        case "start":
-          tempTxt = "flex-start";
-          break;
-        case "end":
-          tempTxt = "flex-end";
-          break;
-        case "between":
-          tempTxt = "space-between";
-          break;
-        case "around":
-          tempTxt = "space-around";
-          break;
-        default:
-          tempTxt = el;
-          break;
-      }
+  return (
+    <div
+      style={{
+        alignItems: "stretch",
+        backgroundColor: "transparent",
+        border: "0 solid black",
+        boxSizing: "border-box",
+        display: "flex",
+        flexBasis: "auto",
+        flexDirection: "column",
+        flexShrink: 0,
+        listStyle: "none",
+        margin: 0,
+        minHeight: 0,
+        minWidth: 0,
+        padding: 0,
+        position: "relative",
+        textDecoration: "none",
+        gap:
+          // @ts-ignore
+          typeof gap === "string" ? token["padding" + gap.toUpperCase()] : gap,
+        ...flexStyle,
+      }}
+      {...restProps}
+    >
+      {children}
+    </div>
+  );
+};
 
-      return tempTxt;
-    });
-    const flexStyle: CSSProperties = {
-      display: "flex",
-      flexDirection: direction,
-      flexWrap: wrap,
-      justifyContent: transferConstStyle[0],
-      alignItems: transferConstStyle[1],
-    };
-
-    const inner = (
-      <div
-        style={{
-          alignItems: "stretch",
-          backgroundColor: "transparent",
-          border: "0 solid black",
-          boxSizing: "border-box",
-          display: "flex",
-          flexBasis: "auto",
-          flexDirection: "column",
-          flexShrink: 0,
-          listStyle: "none",
-          margin: 0,
-          minHeight: 0,
-          minWidth: 0,
-          padding: 0,
-          position: "relative",
-          textDecoration: "none",
-          zIndex: 0,
-          ...flexStyle,
-          ...style,
-        }}
-        {...restProps}
-      >
-        {children}
-      </div>
-    );
-
-    return inner;
-  }
-}
+export default Flex;

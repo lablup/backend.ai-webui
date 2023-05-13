@@ -47,7 +47,9 @@ export default function (
                 })
               );
             }}
-          ></ReactComponent>
+          >
+            <slot />
+          </ReactComponent>
         )
       );
     }

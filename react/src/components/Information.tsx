@@ -14,9 +14,9 @@ import {
 import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
 import { useQuery } from "react-query";
-import { useSuspendedBackendaiClient } from "../hooks";
 import _ from "lodash";
 import { newLineToBrElement } from "../helper";
+import { useSuspendedBackendaiClient } from "./BackendaiClientProvider";
 
 const { Text } = Typography;
 
@@ -24,7 +24,7 @@ const DescriptionLabel: React.FC<{
   title: string;
   subtitle?: ReactNode | string | null;
 }> = ({ title, subtitle }) => {
-  const { token } = theme.useToken();
+  // const { token } = theme.useToken();
   return (
     <Flex direction="column" align="start">
       <Typography.Text strong>{title}</Typography.Text>

@@ -9,20 +9,17 @@ import Backend from "i18next-http-backend";
 
 import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
-
-// @ts-nocheck
-// import type { Client } from "../../../src/lib/backend.ai-client-esm";
+import { BackendaiClientProvider } from "./BackendaiClientProvider";
 
 interface WebComponentContextType {
-  props: ReactWebComponentProps;
-  // @ts-ignore
-  resourceBroker?: any;
+  value?: ReactWebComponentProps["value"];
+  dispatchEvent?: ReactWebComponentProps["dispatchEvent"];
 }
-const WebComponentContext = React.createContext<WebComponentContextType>(null!);
 
-export function useWebComponentInfo() {
-  return React.useContext(WebComponentContext);
-}
+const WebComponentContext = React.createContext<WebComponentContextType>(null!);
+const ShadowRootContext = React.createContext<ShadowRoot>(null!);
+export const useShadowRoot = () => React.useContext(ShadowRootContext);
+export const useWebComponentInfo = () => React.useContext(WebComponentContext);
 
 // Create a client
 const queryClient = new QueryClient({
@@ -30,6 +27,7 @@ const queryClient = new QueryClient({
     queries: {
       suspense: true,
       refetchOnWindowFocus: false,
+      retry: false,
     },
   },
 });
@@ -82,61 +80,70 @@ const useCurrentLanguage = () => {
 
 const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   children,
-  ...props
+  value,
+  styles,
+  shadowRoot,
+  dispatchEvent,
 }) => {
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
 
+  const componentValues = useMemo(() => {
+    return {
+      value,
+      dispatchEvent,
+    };
+  }, [value, dispatchEvent]);
+
   return (
     <React.StrictMode>
-      <style>{props.styles}</style>
-      <WebComponentContext.Provider
-        value={{
-          props,
-          //@ts-ignore
-          resourceBroker: globalThis?.resourceBroker,
-        }}
-      >
-        <QueryClientProvider client={queryClient}>
-          <ConfigProvider
-            // @ts-ignore
-            getPopupContainer={(triggerNode) => {
-              if (triggerNode?.parentNode) {
-                return triggerNode.parentNode;
-              }
-              return props.shadowRoot;
-            }}
-            locale={"ko" === lang ? ko_KR : en_US}
-            theme={{
-              token: {
-                fontFamily: `'Ubuntu', Roboto, sans-serif`,
-                colorPrimary: "#37B076",
-                colorLink: "#37B076",
-                colorLinkHover: "#71b98c",
-                colorSuccess: "#37B076",
-              },
-              components: {
-                Tag: {
-                  borderRadiusSM: 1,
-                },
-                Collapse: {
-                  colorFillAlter: "#FAFAFA",
-                  borderRadiusLG: 0,
-                },
-                Menu: {
-                  colorItemBgSelected: "transparent",
-                  colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
-                  radiusItem: 0,
-                },
-              },
-            }}
-          >
-            <StyleProvider container={props.shadowRoot} cache={cache}>
-              {children}
-            </StyleProvider>
-          </ConfigProvider>
-        </QueryClientProvider>
-      </WebComponentContext.Provider>
+      <style>{styles}</style>
+      <QueryClientProvider client={queryClient}>
+        <ShadowRootContext.Provider value={shadowRoot}>
+          <BackendaiClientProvider>
+            <WebComponentContext.Provider value={componentValues}>
+              <ConfigProvider
+                // @ts-ignore
+                getPopupContainer={(triggerNode) => {
+                  if (triggerNode?.parentNode) {
+                    return triggerNode.parentNode;
+                  }
+                  return shadowRoot;
+                }}
+                //TODO: apply other supported locales
+                locale={"ko" === lang ? ko_KR : en_US}
+                theme={{
+                  token: {
+                    fontFamily: `'Ubuntu', Roboto, sans-serif`,
+                    colorPrimary: "#37B076",
+                    colorLink: "#37B076",
+                    colorLinkHover: "#71b98c",
+                    colorSuccess: "#37B076",
+                  },
+                  components: {
+                    Tag: {
+                      borderRadiusSM: 1,
+                    },
+                    Collapse: {
+                      colorFillAlter: "#FAFAFA",
+                      borderRadiusLG: 0,
+                    },
+                    Menu: {
+                      colorItemBgSelected: "transparent",
+                      colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
+                      radiusItem: 0,
+                    },
+                  },
+                }}
+              >
+                <StyleProvider container={shadowRoot} cache={cache}>
+                  {children}
+                </StyleProvider>
+              </ConfigProvider>
+            </WebComponentContext.Provider>
+          </BackendaiClientProvider>
+        </ShadowRootContext.Provider>
+      </QueryClientProvider>
     </React.StrictMode>
   );
 };
