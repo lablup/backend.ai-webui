@@ -351,7 +351,7 @@
     "Utilization": "사용률",
     "Threshold": "수거 기준값",
     "IdleChecks": "유휴 상태 검사",
-    "IdleChecksDesc": "연산 세션을 자동 삭제하는 세 가지 기준을 제공합니다.",
+    "IdleChecksDesc": "연산 세션을 자동 삭제하는 기준을 제공합니다.",
     "MaxSessionLifetime": "최대 세션 수명 시간",
     "MaxSessionLifetimeDesc": "세션 생성 후 이 시간이 지나면 세션을 강제 종료합니다. 세션이 무한으로 실행되는 것을 막을 수 있습니다.",
     "NetworkIdleTimeout": "네트워크 트래픽 기반 유휴 시간",
