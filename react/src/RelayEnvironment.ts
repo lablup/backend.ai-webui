@@ -1,3 +1,4 @@
+import _ from "lodash";
 import {
   Environment,
   Network,
@@ -6,8 +7,12 @@ import {
   Observable,
   FetchFunction,
   SubscribeFunction,
+  RelayFeatureFlags,
 } from "relay-runtime";
 // import { createClient } from "graphql-ws";
+import * as RelayRuntime from "relay-runtime";
+
+RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
 const HTTP_ENDPOINT = "http://localhost:5000/graphql";
 const WEBSOCKET_ENDPOINT = "ws://localhost:5000/graphql";
@@ -36,6 +41,8 @@ const fetchFn: FetchFunction = async (
 
   // globalThis.backendaiclient.
 
+  console.log("###", request.text, variables);
+  console.log(removeSkipDirective(request.text || "", variables));
   const reqBody = {
     query: request.text, // <-- The GraphQL document composed by Relay
     variables,
@@ -110,3 +117,38 @@ function createRelayEnvironment() {
 }
 
 export const RelayEnvironment = createRelayEnvironment();
+
+function parseDirectives(str: string) {
+  const pattern = /(\w+)\s@\s*(\w+)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/g;
+  const directives = [];
+
+  let result;
+  while ((result = pattern.exec(str)) !== null) {
+    const [originFieldStr, fieldName, directive, argumentName, argumentValue] =
+      result;
+    directives.push({
+      fieldName,
+      directive,
+      argumentName,
+      argumentValue,
+      originFieldStr,
+    });
+  }
+
+  return directives;
+}
+
+function removeSkipDirective(str: string, variables: any) {
+  const directives = parseDirectives(str);
+  directives.forEach((directive) => {
+    if (
+      directive.directive === "skip" &&
+      directive.argumentName === "if" &&
+      directive.argumentValue &&
+      variables[directive.argumentValue.replace("$", "")] === true
+    ) {
+      str = str.replace(directive.originFieldStr, "");
+    }
+  });
+  return str;
+}
