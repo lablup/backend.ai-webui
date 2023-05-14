@@ -55,9 +55,9 @@ export default function (
     }
 
     connectedCallback() {
-      const title = this.getAttribute("value") || "";
+      const value = this.getAttribute("value") || "";
       const styles = this.getAttribute("styles") || "";
-      this.reactRoot.render(this.createReactElement(title, styles));
+      this.reactRoot.render(this.createReactElement(value, styles));
     }
 
     disconnectedCallback() {

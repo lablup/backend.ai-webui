@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { RelayEnvironmentProvider } from "react-relay";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -10,6 +11,7 @@ import Backend from "i18next-http-backend";
 import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
 import { BackendaiClientProvider } from "./BackendaiClientProvider";
+import { RelayEnvironment } from "../RelayEnvironment";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
@@ -96,55 +98,57 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   }, [value, dispatchEvent]);
 
   return (
-    <React.StrictMode>
-      <style>{styles}</style>
-      <QueryClientProvider client={queryClient}>
-        <ShadowRootContext.Provider value={shadowRoot}>
-          <BackendaiClientProvider>
-            <WebComponentContext.Provider value={componentValues}>
-              <ConfigProvider
-                // @ts-ignore
-                getPopupContainer={(triggerNode) => {
-                  if (triggerNode?.parentNode) {
-                    return triggerNode.parentNode;
-                  }
-                  return shadowRoot;
-                }}
-                //TODO: apply other supported locales
-                locale={"ko" === lang ? ko_KR : en_US}
-                theme={{
-                  token: {
-                    fontFamily: `'Ubuntu', Roboto, sans-serif`,
-                    colorPrimary: "#37B076",
-                    colorLink: "#37B076",
-                    colorLinkHover: "#71b98c",
-                    colorSuccess: "#37B076",
-                  },
-                  components: {
-                    Tag: {
-                      borderRadiusSM: 1,
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <React.StrictMode>
+        <style>{styles}</style>
+        <QueryClientProvider client={queryClient}>
+          <ShadowRootContext.Provider value={shadowRoot}>
+            <BackendaiClientProvider>
+              <WebComponentContext.Provider value={componentValues}>
+                <ConfigProvider
+                  // @ts-ignore
+                  getPopupContainer={(triggerNode) => {
+                    if (triggerNode?.parentNode) {
+                      return triggerNode.parentNode;
+                    }
+                    return shadowRoot;
+                  }}
+                  //TODO: apply other supported locales
+                  locale={"ko" === lang ? ko_KR : en_US}
+                  theme={{
+                    token: {
+                      fontFamily: `'Ubuntu', Roboto, sans-serif`,
+                      colorPrimary: "#37B076",
+                      colorLink: "#37B076",
+                      colorLinkHover: "#71b98c",
+                      colorSuccess: "#37B076",
                     },
-                    Collapse: {
-                      colorFillAlter: "#FAFAFA",
-                      borderRadiusLG: 0,
+                    components: {
+                      Tag: {
+                        borderRadiusSM: 1,
+                      },
+                      Collapse: {
+                        colorFillAlter: "#FAFAFA",
+                        borderRadiusLG: 0,
+                      },
+                      Menu: {
+                        colorItemBgSelected: "transparent",
+                        colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
+                        radiusItem: 0,
+                      },
                     },
-                    Menu: {
-                      colorItemBgSelected: "transparent",
-                      colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
-                      radiusItem: 0,
-                    },
-                  },
-                }}
-              >
-                <StyleProvider container={shadowRoot} cache={cache}>
-                  {children}
-                </StyleProvider>
-              </ConfigProvider>
-            </WebComponentContext.Provider>
-          </BackendaiClientProvider>
-        </ShadowRootContext.Provider>
-      </QueryClientProvider>
-    </React.StrictMode>
+                  }}
+                >
+                  <StyleProvider container={shadowRoot} cache={cache}>
+                    {children}
+                  </StyleProvider>
+                </ConfigProvider>
+              </WebComponentContext.Provider>
+            </BackendaiClientProvider>
+          </ShadowRootContext.Provider>
+        </QueryClientProvider>
+      </React.StrictMode>
+    </RelayEnvironmentProvider>
   );
 };
 

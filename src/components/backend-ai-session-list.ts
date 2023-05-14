@@ -692,6 +692,7 @@ export default class BackendAISessionList extends BackendAIPage {
           previousSessionKeys.push(previousSessions[objectKey]['session_id']);
         });
         Object.keys(sessions).map((objectKey, index) => {
+          console.log('### objectKey', objectKey)
           const session = sessions[objectKey];
           const occupiedSlots = JSON.parse(session.occupied_slots);
           const kernelImage = sessions[objectKey].image.split('/')[2] || sessions[objectKey].image.split('/')[1];
@@ -894,6 +895,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Event} e
    * */
   _refreshWorkDialogUI(e) {
+    console.log('####', e.detail['mini-ui'])
     if (Object.prototype.hasOwnProperty.call(e.detail, 'mini-ui') && e.detail['mini-ui'] === true) {
       this.workDialog.classList.add('mini_ui');
     } else {
@@ -1183,6 +1185,7 @@ export default class BackendAISessionList extends BackendAIPage {
   _showAppLauncher(e) {
     const controller = e.target;
     const controls = controller.closest('#controls');
+    console.log(controls);
     return globalThis.appLauncher.showLauncher(controls);
   }
 

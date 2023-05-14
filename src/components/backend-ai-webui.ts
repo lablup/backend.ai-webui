@@ -127,7 +127,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
-  @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
+  @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job', 'session',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'settings', 'maintenance',
     'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
@@ -1054,6 +1054,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
+            <mwc-list-item graphic="icon" ?selected="${this._page === 'session'}" @click="${() => this._moveTo('/session')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Sessions')} new</span>
+            </mwc-list-item>
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
                 <i class="fas fa-flask" slot="graphic"></i>
@@ -1222,6 +1226,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+                    <backend-ai-session-view-2 class="page" name="session" ?active="${this._page === 'session'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-2>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
