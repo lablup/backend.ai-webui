@@ -946,3 +946,5 @@ type VirtualFolderPermissionList implements PaginatedList {
   items: [VirtualFolderPermission]!
   total_count: Int!
 }
+
+directive @skipOnClient(if: Boolean) on FIELD

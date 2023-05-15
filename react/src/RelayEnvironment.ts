@@ -11,6 +11,7 @@ import {
 } from "relay-runtime";
 // import { createClient } from "graphql-ws";
 import * as RelayRuntime from "relay-runtime";
+import { removeSkipOnClientDirective } from "./helper/graphql-transformer";
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
@@ -23,35 +24,16 @@ const fetchFn: FetchFunction = async (
   // cacheConfig,
   // uploadables
 ) => {
-  // const resp = await fetch(HTTP_ENDPOINT, {
-  //   method: "POST",
-  //   headers: {
-  //     Accept:
-  //       "application/graphql-response+json; charset=utf-8, application/json; charset=utf-8",
-  //     "Content-Type": "application/json",
-  //     // <-- Additional headers like 'Authorization' would go here
-  //   },
-  //   body: JSON.stringify({
-  //     query: request.text, // <-- The GraphQL document composed by Relay
-  //     variables,
-  //   }),
-  // });
+  // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
+  const transformedData = removeSkipOnClientDirective(
+    request.text || "",
+    variables
+  );
 
-  // return await resp.json();
-
-  // globalThis.backendaiclient.
-
-  console.log("###", request.text, variables);
-  console.log(removeSkipDirective(request.text || "", variables));
   const reqBody = {
-    query: request.text, // <-- The GraphQL document composed by Relay
-    variables,
+    query: transformedData.query,
+    variables: transformedData.variables,
   };
-  // const reqBody = {
-  //   query:
-  //     "query($limit:Int!, $offset:Int!, $ak:String, $group_id:String, $status:String) {\n      compute_session_list(limit:$limit, offset:$offset, access_key:$ak, group_id:$group_id, status:$status) {\n        items { name hello}\n        total_count\n      }\n    }",
-  //   variables: { limit: 1000, offset: 0, status: "RUNNING", ak: null },
-  // };
 
   //@ts-ignore
   const reqInfo = globalThis.backendaiclient.newSignedRequest(
@@ -69,16 +51,7 @@ const fetchFn: FetchFunction = async (
     0
   );
 
-  console.log("##", result);
   return result;
-
-  // const resp = await fetch(reqInfo.uri, {
-  //   method: reqInfo.method,
-  //   headers: reqInfo.headers,
-  //   body: reqInfo.body,
-  //   cache: "no-cache",
-  // });
-  // return await resp.json();
 };
 
 let subscribeFn: SubscribeFunction;
@@ -117,38 +90,3 @@ function createRelayEnvironment() {
 }
 
 export const RelayEnvironment = createRelayEnvironment();
-
-function parseDirectives(str: string) {
-  const pattern = /(\w+)\s@\s*(\w+)\s*\(\s*(\w+)\s*:\s*(\$?\w+)\s*\)/g;
-  const directives = [];
-
-  let result;
-  while ((result = pattern.exec(str)) !== null) {
-    const [originFieldStr, fieldName, directive, argumentName, argumentValue] =
-      result;
-    directives.push({
-      fieldName,
-      directive,
-      argumentName,
-      argumentValue,
-      originFieldStr,
-    });
-  }
-
-  return directives;
-}
-
-function removeSkipDirective(str: string, variables: any) {
-  const directives = parseDirectives(str);
-  directives.forEach((directive) => {
-    if (
-      directive.directive === "skip" &&
-      directive.argumentName === "if" &&
-      directive.argumentValue &&
-      variables[directive.argumentValue.replace("$", "")] === true
-    ) {
-      str = str.replace(directive.originFieldStr, "");
-    }
-  });
-  return str;
-}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<43dbcc8149942a6a5c96f94fec858c11>>
+ * @generated SignedSource<<dba84fc4086a3db3dab584fd7cdcbbf4>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,9 +20,8 @@ export type SessionListQuery$variables = {
 export type SessionListQuery$data = {
   readonly compute_session_list: {
     readonly items: ReadonlyArray<{
-      readonly domain_name?: string | null;
       readonly id: string | null;
-      readonly name?: string | null;
+      readonly name: string | null;
     } | null>;
   } | null;
 };
@@ -113,32 +112,11 @@ v6 = [
             "storageKey": null
           },
           {
-            "condition": "skipCodejong",
-            "kind": "Condition",
-            "passingValue": true,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "name",
-                "storageKey": null
-              }
-            ]
-          },
-          {
-            "condition": "skipCodejong",
-            "kind": "Condition",
-            "passingValue": false,
-            "selections": [
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "domain_name",
-                "storageKey": null
-              }
-            ]
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
           }
         ],
         "storageKey": null
@@ -179,16 +157,16 @@ return {
     "selections": (v6/*: any*/)
   },
   "params": {
-    "cacheID": "3abaf8042be2e2cb5f98137040b8c28e",
+    "cacheID": "6ad1c202435e9471109c9e0a38690c6c",
     "id": null,
     "metadata": {},
     "name": "SessionListQuery",
     "operationKind": "query",
-    "text": "query SessionListQuery(\n  $limit: Int!\n  $offset: Int!\n  $ak: String\n  $group_id: String\n  $status: String\n  $skipCodejong: Boolean!\n) {\n  compute_session_list(limit: $limit, offset: $offset, access_key: $ak, group_id: $group_id, status: $status) {\n    items {\n      id\n      name @include(if: $skipCodejong)\n      domain_name @skip(if: $skipCodejong)\n    }\n  }\n}\n"
+    "text": "query SessionListQuery(\n  $limit: Int!\n  $offset: Int!\n  $ak: String\n  $group_id: String\n  $status: String\n  $skipCodejong: Boolean!\n) {\n  compute_session_list(limit: $limit, offset: $offset, access_key: $ak, group_id: $group_id, status: $status) {\n    items {\n      id\n      name @skipOnClient(if: $skipCodejong)\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "157f4bad33d9776d5bc3adb0b215d295";
+(node as any).hash = "6d82525faec3db4433e46382915a54fa";
 
 export default node;

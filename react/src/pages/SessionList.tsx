@@ -39,9 +39,9 @@ const SessionList: React.FC<PropsWithChildren> = ({ children }) => {
           items {
             id
             # hello
-            name @include(if: $skipCodejong)
-
-            domain_name @skip(if: $skipCodejong)
+            name @skipOnClient(if: $skipCodejong)
+            # group_name @skip(if: $skipCodejong)
+            # domain_name @required(action: LOG)
             # codejong
             # @graphql-ignore
             # hello @skip(if: true)
