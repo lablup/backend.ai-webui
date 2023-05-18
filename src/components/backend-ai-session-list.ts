@@ -634,7 +634,7 @@ export default class BackendAISessionList extends BackendAIPage {
     const fields = [
       'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
-      'service_ports', 'mounts',
+      'service_ports', 'mounts', 'resource_opts',
       'occupied_slots', 'access_key', 'starts_at', 'type',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
@@ -1007,6 +1007,18 @@ export default class BackendAISessionList extends BackendAIPage {
    */
   static bytesToMB(value, decimalPoint = 1) {
     return Number(value / (10 ** 6)).toFixed(1);
+  }
+
+  /**
+   * Convert the value bytes to GiB with decimal point to 2 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GiB
+   */
+  static bytesToGiB(value, decimalPoint = 2) {
+    if (!value) return value;
+    return (value / (2 ** 30)).toFixed(decimalPoint);
   }
 
   /**
@@ -2230,6 +2242,11 @@ export default class BackendAISessionList extends BackendAIPage {
             <span class="indicator">GiB</span>
           </div>
           <div class="layout horizontal center configuration">
+            <wl-icon class="fg green indicator">bento</wl-icon>
+            <span>${this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))}</span>
+            <span class="indicator">GiB</span>
+          </div>
+          <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
               <img class="indicator-icon fg green" src="/resources/icons/file_type_cuda.svg" />
               <span>${rowData.item.cuda_gpu_slot}</span>
@@ -2584,6 +2601,21 @@ export default class BackendAISessionList extends BackendAIPage {
     } else {
       this.multipleActionButtons.style.display = 'none';
     }
+  }
+
+  /**
+   * Aggregate shared memory allocated in session
+   * 
+   * @param {Object} sharedMemoryObj 
+   * @return {string} converted value from Bytes to GiB
+   */
+  _aggregateSharedMemory(sharedMemoryObj) {
+    // FIXME: for now temporally sum up shared memory
+    let shmem = 0;
+    Object.keys(sharedMemoryObj).forEach(item => {
+      shmem += Number(sharedMemoryObj[item]?.shmem ?? 0);
+    });
+    return BackendAISessionList.bytesToGiB(shmem);
   }
 
   /**
