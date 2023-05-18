@@ -94,6 +94,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: String}) selectedFolderType = '';
   @property({type: String}) downloadURL = '';
   @property({type: Array}) uploadFiles = [];
+  @property({type: Object}) currentUploadFile = Object();
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
   @property({type: Number}) concurrentFileUploadLimit = 2;
@@ -788,7 +789,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           </mwc-list>
         </div>
       </backend-ai-dialog>
-      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout>
+      <backend-ai-dialog id="folder-explorer-dialog" class="folder-explorer" narrowLayout scrimClickAction>
         <span slot="title" style="margin-right:1rem;">${this.explorer.id}</span>
         <div slot="action" class="horizontal layout space-between folder-action-buttons center">
           <div class="flex"></div>
@@ -804,10 +805,19 @@ export default class BackendAiStorageList extends BackendAIPage {
             <div id="add-btn-cover">
               <mwc-button
                   id="add-btn"
-                  icon="cloud_upload"
+                  icon="upload_file"
                   ?disabled=${!this.isWritable}
-                  @click="${(e) => this._uploadFileBtnClick(e)}">
+                  @click="${(e) => this._uploadBtnClick(e)}">
                   <span>${_t('data.explorer.UploadFiles')}</span>
+              </mwc-button>
+            </div>
+            <div>
+              <mwc-button
+                  id="add-folder-btn"
+                  icon="drive_folder_upload"
+                  ?disabled=${!this.isWritable}
+                  @click="${(e) => this._uploadBtnClick(e)}">
+                  <span>${_t('data.explorer.UploadFolder')}</span>
               </mwc-button>
             </div>
             <div id="mkdir-cover">
@@ -859,17 +869,29 @@ export default class BackendAiStorageList extends BackendAIPage {
               ` : html``}
             </div>
             <div id="dropzone"><p>drag</p></div>
-            <input type="file" id="fileInput" @change="${(e) => this._uploadFileChange(e)}" hidden multiple>
+            <input type="file" id="fileInput" @change="${(e) => this._uploadInputChange(e)}" hidden multiple>
+            <input type="file" id="folderInput" @change="${(e) => this._uploadInputChange(e)}" hidden webkitdirectory mozdirectory directory multiple>
             ${this.uploadFilesExist ? html`
             <div class="horizontal layout start-justified">
               <mwc-button icon="cancel" id="cancel_upload" @click="${() => this._cancelUpload()}">
                 ${_t('data.explorer.StopUploading')}
               </mwc-button>
             </div>
-          <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
+            <div class="horizontal layout center progress-item flex">
+              ${this.currentUploadFile?.complete ? html`
+                <wl-icon>check</wl-icon>
+              ` : html``}
+              <div class="vertical layout progress-item" style="width:100%;">
+                <span>${this.currentUploadFile?.name}</span>
+                <vaadin-progress-bar value="${this.currentUploadFile?.progress}"></vaadin-progress-bar>
+                <span>${this.currentUploadFile?.caption}</span>
+              </div>
+            </div>
+          <!-- <vaadin-grid class="progress" theme="row-stripes compact" aria-label="uploadFiles" .items="${this.uploadFiles}" height-by-rows>
             <vaadin-grid-column width="100px" flex-grow="0" .renderer="${this._boundUploadListRenderer}"></vaadin-grid-column>
             <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
-          </vaadin-grid>` : html``}
+          </vaadin-grid> -->
+          ` : html``}
           <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
@@ -2325,7 +2347,6 @@ export default class BackendAiStorageList extends BackendAIPage {
     this.mkdirNameInput.reportValidity();
     if (this.mkdirNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.mkdir([...explorer.breadcrumb, newfolder].join('/'), explorer.id).catch((err) => {
-        // console.log(err);
         if (err & err.message) {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
@@ -2450,10 +2471,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   /**
    * Create MouseEvents when cloud_upload button is clicked.
    *
-   * @param {Event} e - click the cloud_upload button
+   * @param {Event} e - click the cloud_upload button.
    * */
-  _uploadFileBtnClick(e) {
-    const elem = this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
+  _uploadBtnClick(e) {
+    const isFolder = e.target.id === 'add-folder-btn';
+    const elem = isFolder ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
     if (elem && document.createEvent) { // sanity check
       const evt = document.createEvent('MouseEvents');
       evt.initEvent('click', true, false);
@@ -2461,13 +2483,37 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
   }
 
+  getFolderName(file: File) {
+    const filePath = file.webkitRelativePath || file.name;
+    return filePath.split('/')?.[0];
+  }
+
   /**
    * If file is added, call the fileUpload() function and initialize fileInput string
    *
    * @param {Event} e - add file to the input element
    * */
-  _uploadFileChange(e) {
+  _uploadInputChange(e) {
     const length = e.target.files.length;
+    const isFolderUpload = e.target.id === 'folderInput';
+    const inputElement = isFolderUpload ? this.shadowRoot?.querySelector('#folderInput') as HTMLInputElement : this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement;
+    let isEmptyFileIncluded = false;
+    let reUploadFolderConfirmed = false;
+    // plain javascript modal to confirm whether proceed to overwrite "folder" operation or not
+    /*
+    *  TODO: replace confirm operation with customized dialog
+    */
+    if (e.target.files.length > 0 && isFolderUpload) {
+      const f = e.target.files[0];
+      const reUploadFolder = this.explorerFiles.find((elem: any) => elem.filename === this.getFolderName(f));
+      if (reUploadFolder) {
+        reUploadFolderConfirmed = window.confirm(`${_text('data.explorer.FolderAlreadyExists')}\n${this.getFolderName(f)}\n${_text('data.explorer.DoYouWantToOverwrite')}`);
+        if (!reUploadFolderConfirmed) {
+          inputElement.value = '';
+          return;
+        }
+      }
+    }
     for (let i = 0; i < length; i++) {
       const file = e.target.files[i];
 
@@ -2479,10 +2525,14 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.notification.text = _text('data.explorer.FileUploadSizeLimit') + ` (${globalThis.backendaiutils._humanReadableFileSize(this._maxFileUploadSize)})`;
         this.notification.show();
         return;
+      } else if (file.size === 0) { // skip the empty file upload
+        isEmptyFileIncluded = true;
+        continue;
       } else {
         const reUploadFile = this.explorerFiles.find((elem: any) => elem.filename === file.name);
-        if (reUploadFile) {
-          // plain javascript modal to confirm whether proceed to overwrite operation or not
+        if (reUploadFile && !reUploadFolderConfirmed) {
+          // plain javascript modal to confirm whether proceed to overwrite "file" operation or not
+          // if the user already confirms to overwrite the "folder", the modal doesn't appear.
           /*
            *  TODO: replace confirm operation with customized dialog
            */
@@ -2508,7 +2558,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     for (let i = 0; i < this.uploadFiles.length; i++) {
       this.fileUpload(this.uploadFiles[i]);
     }
-    (this.shadowRoot?.querySelector('#fileInput') as HTMLInputElement).value = '';
+    if (isEmptyFileIncluded || isFolderUpload) {
+      this.notification.text = _text('data.explorer.EmptyFilesAndFoldersAreNotUploaded');
+      this.notification.show();
+    }
+    inputElement.value = '';
   }
 
   /**
@@ -2538,7 +2592,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   fileUpload(fileObj) {
     this._uploadFlag = true;
     this.uploadFilesExist = this.uploadFiles.length > 0;
-    const path = this.explorer.breadcrumb.concat(fileObj.name).join('/');
+    const path = this.explorer.breadcrumb.concat(fileObj.webkitRelativePath || fileObj.name).join('/');
     const job = globalThis.backendaiclient.vfolder.create_upload_session(path, fileObj, this.explorer.id);
     job.then((url) => {
       const start_date = new Date().getTime();
@@ -2553,10 +2607,12 @@ export default class BackendAiStorageList extends BackendAIPage {
         },
         onError: (error) => {
           console.log('Failed because: ' + error);
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           this.fileUploadCount = this.fileUploadCount - 1;
           this.runFileUploadQueue();
         },
         onProgress: (bytesUploaded, bytesTotal) => {
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
             (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `Canceling...`;
@@ -2588,6 +2644,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         },
         onSuccess: () => {
           this._clearExplorer();
+          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
           (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].complete = true;
           this.uploadFiles = this.uploadFiles.slice();
           setTimeout(() => {
