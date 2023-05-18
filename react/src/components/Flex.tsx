@@ -9,7 +9,7 @@ interface FlexProps
   justify?: "start" | "end" | "center" | "between" | "around";
   // | "evenly";
   align?: "start" | "end" | "center" | "baseline" | "stretch";
-  gap?: number | "xxs" | "xs" | "s" | "m" | "l" | "xl" | "xxl";
+  gap?: number | "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
 }
 
 const Flex: React.FC<FlexProps> = ({
