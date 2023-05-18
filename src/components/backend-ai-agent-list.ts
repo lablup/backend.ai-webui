@@ -862,7 +862,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           ${rowData.item.warboy_slots ? html`
             <div class="layout horizontal center-justified flex progress-bar-section">
               <div class="layout horizontal start resource-indicator">
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+              <img class="indicator-icon fg green" src="/resources/icons/furiosa.svg"/>
                 <span class="monospace" style="padding-left:5px;">${rowData.item.used_warboy_slots}/${rowData.item.warboy_slots}</span>
                 <span class="indicator">Warboy</span>
               </div>

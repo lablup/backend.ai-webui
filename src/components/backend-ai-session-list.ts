@@ -2257,7 +2257,7 @@ export default class BackendAISessionList extends BackendAIPage {
               <span class="indicator">ATOM</span>
               ` : html``}
             ${rowData.item.warboy_slot ? html`
-              <wl-icon class="fg green indicator">view_module</wl-icon>
+              <img class="indicator-icon fg green" src="/resources/icons/furiosa.svg" />
               <span>${rowData.item.warboy_slot}</span>
               <span class="indicator">Warboy</span>
               ` : html``}
