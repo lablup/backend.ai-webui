@@ -364,7 +364,7 @@
     "UtilizationThreshold": "Utilization Threshold",
     "ExpiresAfter": "Expires After",
     "GracePeriod": "Grace Period",
-    "IdleChecksDesc": "Backend.AI supports three types of inactivity (idleness) criteria for automatic garbage collection of compute sessions.",
+    "IdleChecksDesc": "Backend.AI supports inactivity (idleness) criteria for automatic garbage collection of compute sessions.",
     "MaxSessionLifetimeDesc": "Force-terminate sessions after this time from creation. It prevents the session from running infinitely.",
     "NetworkIdleTimeoutDesc": "Force-terminate sessions that do not exchange data with the user (browser or web app) after this time. Traffic between the user and the compute session continuously occurs when the user interacts with an app, like terminal or Jupyter, by keyboard input, Jupyter cell creation, etc. Jupyter cell creation, etc. If there is no interaction for a certain period, the condition of garbage collection will be met. Even if there is a process executing a job in the compute session, it is subject to termination if there is no user interaction.",
     "UtilizationIdleTimeoutDesc": "Force-terminate sessions based only on the utilization of resources allocated to them.",
@@ -627,6 +627,7 @@
     "explorer": {
       "Delete": "Delete",
       "UploadFiles": "Upload Files",
+      "UploadFolder": "Upload Folder",
       "NewFolder": "New Folder",
       "StopUploading": "Stop Uploading",
       "RenameAFile": "Rename File",
@@ -656,6 +657,7 @@
       "WritePermissionRequiredInUploadFiles": "Write permission is required in uploading file(s).",
       "ReadonlyFolder": "Read-only Folder",
       "FileAlreadyExists": "The file about to be uploaded already exists.",
+      "FolderAlreadyExists": "The folder about to be uploaded already exists.",
       "DoYouWantToOverwrite": "Do you want to overwrite?",
       "FileExtensionChanged": "Would you like to change the file extension?",
       "KeepFileExtension": "Keep ",
@@ -674,7 +676,8 @@
       "ExecutingSSH/SFTPSession": "Executing SSH/SFTP Session...",
       "RunSSH/SFTPserver": "Run SFTP server",
       "SFTPSessionNotAvailable": "SFTP Session is not available now",
-      "StartingSSH/SFTPSession": "Starting SFTP session..."
+      "StartingSSH/SFTPSession": "Starting SFTP session...",
+      "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
