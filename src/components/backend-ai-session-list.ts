@@ -2240,11 +2240,7 @@ export default class BackendAISessionList extends BackendAIPage {
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
             <span class="indicator">GiB</span>
-          </div>
-          <div class="layout horizontal center configuration">
-            <wl-icon class="fg green indicator">bento</wl-icon>
-            <span>${this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))}</span>
-            <span class="indicator">GiB</span>
+            <span class="indicator">${`(SHM: `+this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))+`GiB)`}</span>
           </div>
           <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
@@ -2822,7 +2818,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width=${this._isContainerCommitEnabled ? '260px': '210px'} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
+          <vaadin-grid-column width="200px" flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t('session.Usage')}"
                               .renderer="${this._boundUsageRenderer}">
