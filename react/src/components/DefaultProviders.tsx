@@ -10,6 +10,7 @@ import Backend from "i18next-http-backend";
 import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
 import { BackendaiClientProvider } from "./BackendaiClientProvider";
+import { useCustomThemeConfig } from "../helper/customeThemeConfig";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
@@ -87,6 +88,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
 }) => {
   const cache = useMemo(() => createCache(), []);
   const [lang] = useCurrentLanguage();
+  const themeConfig = useCustomThemeConfig();
 
   const componentValues = useMemo(() => {
     return {
@@ -94,7 +96,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
       dispatchEvent,
     };
   }, [value, dispatchEvent]);
-
   return (
     <React.StrictMode>
       <style>{styles}</style>
@@ -112,29 +113,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                 }}
                 //TODO: apply other supported locales
                 locale={"ko" === lang ? ko_KR : en_US}
-                theme={{
-                  token: {
-                    fontFamily: `'Ubuntu', Roboto, sans-serif`,
-                    colorPrimary: "#37B076",
-                    colorLink: "#37B076",
-                    colorLinkHover: "#71b98c",
-                    colorSuccess: "#37B076",
-                  },
-                  components: {
-                    Tag: {
-                      borderRadiusSM: 1,
-                    },
-                    Collapse: {
-                      colorFillAlter: "#FAFAFA",
-                      borderRadiusLG: 0,
-                    },
-                    Menu: {
-                      colorItemBgSelected: "transparent",
-                      colorItemTextSelected: "rgb(114,235,81)", //"#37B076",
-                      radiusItem: 0,
-                    },
-                  },
-                }}
+                theme={themeConfig}
               >
                 <StyleProvider container={shadowRoot} cache={cache}>
                   {children}

@@ -1,5 +1,10 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
+import { ThemeConfig } from "antd/lib/config-provider";
 import React from "react";
+import { loadCustomThemeConfig } from "./helper/customeThemeConfig";
+
+// Load custom theme config once in react/index.tsx
+loadCustomThemeConfig();
 
 const DefaultProviders = React.lazy(
   () => import("./components/DefaultProviders")
