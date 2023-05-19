@@ -2124,6 +2124,7 @@ export default class BackendAISessionList extends BackendAIPage {
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"
                                @click="${(e) => this._showAppLauncher(e)}"
+                               ?disabled="${!mySession}"
                                icon="apps">
             </mwc-icon-button>
             <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
