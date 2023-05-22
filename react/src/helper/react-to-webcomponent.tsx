@@ -4,7 +4,7 @@ import ReactDOM from "react-dom/client";
 export interface ReactWebComponentProps {
   value?: string;
   styles?: string;
-  dispatchEvent?: (name: string, detail: any) => void;
+  dispatchEvent: (name: string, detail: any) => void;
   shadowRoot: ShadowRoot;
   children?: React.ReactNode;
 }

@@ -1,15 +1,23 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { PropsWithChildren } from "react";
 import { useQuery } from "react-query";
 
-const BackendaiClientContext = React.createContext<any>(null!);
-export const useSuspendedBackendaiClient = () =>
-  React.useContext(BackendaiClientContext);
+const BackendaiClientContext = React.createContext<{
+  client: any;
+  refetch: () => void;
+}>(null!);
+export const useSuspendedBackendaiClient = () => {
+  const { client, refetch } = React.useContext(BackendaiClientContext);
+  useMemo(() => {
+    refetch();
+  }, []);
+  return client;
+};
 
 export const BackendaiClientProvider: React.FC<PropsWithChildren> = ({
   children,
 }) => {
-  const { data: client } = useQuery<any>({
+  const { data: client, refetch } = useQuery<any>({
     queryKey: "backendai-client-for-suspense",
     queryFn: () =>
       new Promise((resolve) => {
@@ -33,10 +41,18 @@ export const BackendaiClientProvider: React.FC<PropsWithChildren> = ({
         }
       }),
     retry: false,
+    enabled: false,
     suspense: true,
   });
+  const value = useMemo(
+    () => ({
+      client,
+      refetch,
+    }),
+    [client, refetch]
+  );
   return (
-    <BackendaiClientContext.Provider value={client}>
+    <BackendaiClientContext.Provider value={value}>
       {children}
     </BackendaiClientContext.Provider>
   );

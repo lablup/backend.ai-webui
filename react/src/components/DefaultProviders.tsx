@@ -12,9 +12,12 @@ import ko_KR from "antd/locale/ko_KR";
 import { BackendaiClientProvider } from "./BackendaiClientProvider";
 import { useCustomThemeConfig } from "../helper/customeThemeConfig";
 
+// @ts-ignore
+import rawFixAntCss from "../fix_antd.css?raw";
+
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
-  dispatchEvent?: ReactWebComponentProps["dispatchEvent"];
+  dispatchEvent: ReactWebComponentProps["dispatchEvent"];
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
@@ -98,7 +101,10 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   }, [value, dispatchEvent]);
   return (
     <React.StrictMode>
-      <style>{styles}</style>
+      <style>
+        {styles}
+        {rawFixAntCss}
+      </style>
       <QueryClientProvider client={queryClient}>
         <ShadowRootContext.Provider value={shadowRoot}>
           <BackendaiClientProvider>
