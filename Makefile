@@ -37,7 +37,7 @@ dep:
 	if [ ! -f "./config.toml" ]; then \
 		cp config.toml.sample config.toml; \
 	fi
-	if [ ! -d "./build/rollup/" ];then \
+	if [ ! -d "./build/rollup/" ] || ! grep -q 'es6://static/js/main' react/build/index.html; then \
 		make compile; \
 		make compile_wsproxy; \
 	fi
