@@ -715,10 +715,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <span slot="title"> ${this.resourceGroupInfo?.name ? _t('resourceGroup.ModifyResourceGroup'): _t('resourceGroup.CreateResourceGroup')}</span>
         <div slot="content" class="login-panel intro centered">
           ${Object.keys(this.resourceGroupInfo).length > 0 ? html`
-            <div class="horizontal layout center" style="margin:10px;">
-              <mwc-textfield disabled label="${_t('resourceGroup.Domain')}" value="${this.resourceGroupDomainSelect.value}"></mwc-textfield>
-              <mwc-textfield disabled label="${_t('resourceGroup.ResourceGroupName')}" value="${this.resourceGroupInfo.name}"></mwc-textfield>
-            </div>
             <div class="horizontal layout flex wrap center justified">
               <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
                 ${_t('resourceGroup.Active')}
