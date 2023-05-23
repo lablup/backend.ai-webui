@@ -127,6 +127,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) notification = Object();
   @property({type: Boolean}) enableScalingGroup = false;
+  @property({type: Boolean}) isDisplayingAllocatedShmemEnabled = false;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
@@ -548,6 +549,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+        this.isDisplayingAllocatedShmemEnabled = globalThis.backendaiclient.supports('display-allocated-shmem');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         // check whether image commit supported via both configuration variable and version(22.09)
@@ -571,6 +573,7 @@ export default class BackendAISessionList extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+      this.isDisplayingAllocatedShmemEnabled = globalThis.backendaiclient.supports('display-allocated-shmem');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       // check whether image commit supported via both configuration variable and version(22.09)
@@ -2240,7 +2243,11 @@ export default class BackendAISessionList extends BackendAIPage {
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
             <span class="indicator">GiB</span>
-            <span class="indicator">${`(SHM: `+this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))+`GiB)`}</span>
+            ${this.isDisplayingAllocatedShmemEnabled ? html`
+              <span class="indicator">
+                ${`(SHM: `+this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))+`GiB)`}
+              </span>
+            ` : html``}
           </div>
           <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
