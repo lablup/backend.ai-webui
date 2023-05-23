@@ -596,6 +596,7 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03')) {
       this._features['inference-workload'] = true;
       this._features['local-vscode-remote-connection'] = true;
+      this._features['display-allocated-shmem'] = true;
     }
   }
 
