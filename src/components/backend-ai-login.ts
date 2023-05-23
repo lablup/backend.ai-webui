@@ -1242,7 +1242,7 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
-            }  else if (response.fail_reason == 'Should change password') {
+            }  else if (response.fail_reason.indexOf('Password expired on ') === 0) {
               this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
