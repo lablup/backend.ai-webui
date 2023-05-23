@@ -135,6 +135,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Set}) activeIdleCheckList;
   @property({type: Proxy}) statusColorTable = new Proxy({
     'idle-timeout': 'green',
     'user-requested': 'green',
@@ -202,6 +203,7 @@ export default class BackendAISessionList extends BackendAIPage {
     super();
     this._selected_items = [];
     this.terminationQueue = [];
+    this.activeIdleCheckList = new Set();
   }
 
   static get styles(): CSSResultGroup {
@@ -358,7 +360,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         #help-description {
-          --component-width: 70vw;
+          --component-max-width: 70vw;
         }
 
         #help-description p, #help-description strong {
@@ -504,10 +506,15 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   firstUpdated() {
-    this.refreshTimer = null;
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_icons = globalThis.backendaimetadata.icons;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.imageInfo = globalThis.backendaimetadata.imageInfo;
+      this.kernel_icons = globalThis.backendaimetadata.icons;
+      this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    }, {once: true});
+    this.refreshTimer = null;
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
     document.addEventListener('backend-ai-group-changed', (e) => this.refreshList(true, false));
@@ -656,6 +663,9 @@ export default class BackendAISessionList extends BackendAIPage {
     } else {
       fields.push('containers {container_id occupied_slots live_stat last_stat}');
     }
+    if (!globalThis.backendaiclient._config.hideAgents) {
+      fields.push('containers {agent}');
+    }
     const group_id = globalThis.backendaiclient.current_group_id();
 
     if (this._isContainerCommitEnabled && status.includes('RUNNING')) {
@@ -701,12 +711,15 @@ export default class BackendAISessionList extends BackendAIPage {
             }
             if (idleChecks && idleChecks.network_timeout && idleChecks.network_timeout.remaining) {
               sessions[objectKey].idle_checks.network_timeout.remaining = BackendAISessionList.secondsToDHMS(idleChecks.network_timeout.remaining);
+              this.activeIdleCheckList?.add('network_timeout');
             }
             if (idleChecks && idleChecks.session_lifetime && idleChecks.session_lifetime.remaining) {
               sessions[objectKey].idle_checks.session_lifetime.remaining = BackendAISessionList.secondsToDHMS(idleChecks.session_lifetime.remaining);
+              this.activeIdleCheckList?.add('session_lifetime');
             }
             if (idleChecks && idleChecks.utilization && idleChecks.utilization.remaining) {
               sessions[objectKey].idle_checks.utilization.remaining = BackendAISessionList.secondsToDHMS(idleChecks.utilization.remaining);
+              this.activeIdleCheckList?.add('utilization');
             }
           }
           if (sessions[objectKey].containers && sessions[objectKey].containers.length > 0) {
@@ -1524,7 +1537,6 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _renderStatusDetail() {
     const tmpSessionStatus = JSON.parse(this.selectedSessionStatus.data);
-    console.log(this.selectedSessionStatus)
     tmpSessionStatus.reserved_time = this.selectedSessionStatus.reserved_time;
     const statusDetailEl = this.shadowRoot?.querySelector('#status-detail') as HTMLDivElement;
     const statusDialogContent: Array<TemplateResult> = [];
@@ -1532,7 +1544,7 @@ export default class BackendAISessionList extends BackendAIPage {
     <div class="vertical layout justified start">
       <h3 style="width:100%;padding-left:15px;border-bottom:1px solid #ccc;">${_text('session.Status')}</h3>
       <lablup-shields color="${this.statusColorTable[this.selectedSessionStatus.info]}"
-          description="${this.selectedSessionStatus.info}" ui="round" style="padding-left:15px;"></lablup-shields>
+          description="${this.selectedSessionStatus.info}" ui="round" style="padding-left:10px;padding-right:10px;"></lablup-shields>
     </div>`);
 
     if (tmpSessionStatus.hasOwnProperty('kernel') || tmpSessionStatus.hasOwnProperty('session')) {
@@ -1634,7 +1646,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   <span class="subheading">Error</span>
                   <lablup-shields color="red" description=${item.name} ui="round"></lablup-shields>
                 </div>
-                ${this.is_superadmin && item.agent_id ? html`
+                ${(this.is_superadmin || !globalThis.backendaiclient._config.hideAgents) && item.agent_id ? html`
                   <div class="vertical layout start">
                     <span class="subheading">Agent ID</span>
                     <span>${item.agent_id}</span>
@@ -1806,22 +1818,28 @@ export default class BackendAISessionList extends BackendAIPage {
     this._helpDescriptionTitle = _text('session.IdleChecks');
     this._helpDescription = `
       <p>${_text('session.IdleChecksDesc')}</p>
-      <strong>${_text('session.MaxSessionLifetime')}</strong>
-      <p>${_text('session.MaxSessionLifetimeDesc')}</p>
-      <strong>${_text('session.NetworkIdleTimeout')}</strong>
-      <p>${_text('session.NetworkIdleTimeoutDesc')}</p>
-      <strong>${_text('session.UtilizationIdleTimeout')}</strong>
-      <p>${_text('session.UtilizationIdleTimeoutDesc')}</p>
-      <div style="margin:10px 5% 20px 5%;">
-        <li>
-          <span style="font-weight:500">${_text('session.GracePeriod')}</span>
-          <div style="padding-left:20px;">${_text('session.GracePeriodDesc')}</div>
-        </li>
-        <li>
-          <span style="font-weight:500">${_text('session.UtilizationThreshold')}</span>
-          <div style="padding-left:20px;">${_text('session.UtilizationThresholdDesc')}</div>
-        </li>
-      </div>
+      ${this.activeIdleCheckList?.has('session_lifetime') ? `
+        <strong>${_text('session.MaxSessionLifetime')}</strong>
+        <p>${_text('session.MaxSessionLifetimeDesc')}</p>
+        ` : ``}
+      ${this.activeIdleCheckList?.has('network_timeout') ? `
+        <strong>${_text('session.NetworkIdleTimeout')}</strong>
+        <p>${_text('session.NetworkIdleTimeoutDesc')}</p>
+      ` : ``}
+      ${this.activeIdleCheckList?.has('utilization') ? `
+        <strong>${_text('session.UtilizationIdleTimeout')}</strong>
+        <p>${_text('session.UtilizationIdleTimeoutDesc')}</p>
+        <div style="margin:10px 5% 20px 5%;">
+          <li>
+            <span style="font-weight:500">${_text('session.GracePeriod')}</span>
+            <div style="padding-left:20px;">${_text('session.GracePeriodDesc')}</div>
+          </li>
+          <li>
+            <span style="font-weight:500">${_text('session.UtilizationThreshold')}</span>
+            <div style="padding-left:20px;">${_text('session.UtilizationThresholdDesc')}</div>
+          </li>
+        </div>
+      ` : ``}
     `;
     this.helpDescriptionDialog.show();
   }
@@ -1871,9 +1889,6 @@ export default class BackendAISessionList extends BackendAIPage {
    * @param {Object} utilizationExtra - idle_checks.utilization.extra
    */
   _createUtilizationIdleCheckDropdown(e, utilizationExtra) {
-    // Prevent re-rendering
-    if (document.getElementsByClassName('util-dropdown-menu').length > 0) return;
-
     const menuDiv: HTMLElement = e.target;
     const menu = document.createElement('mwc-menu') as Menu;
     menu.anchor = menuDiv;
@@ -2109,6 +2124,7 @@ export default class BackendAISessionList extends BackendAIPage {
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"
                                @click="${(e) => this._showAppLauncher(e)}"
+                               ?disabled="${!mySession}"
                                icon="apps">
             </mwc-icon-button>
             <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
@@ -2497,17 +2513,34 @@ export default class BackendAISessionList extends BackendAIPage {
         );
       }
 
+      let button;
+      if (key === 'utilization') {
+        button = html`
+          <button
+            class="idle-check-key"
+            style="color:#42a5f5;"
+            @mouseenter="${(e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources)}"
+            @mouseleave="${() => this._removeUtilizationIdleCheckDropdown()}"
+          >
+            ${_text('session.' + this.idleChecksTable[key])}
+          </button>
+        `;
+      } else {
+        button = html`
+          <button
+            class="idle-check-key"
+            style="color:#222222;"
+          >
+            ${_text('session.' + this.idleChecksTable[key])}
+          </button>
+        `;
+      }
+
       if (key in this.idleChecksTable) {
         return html`
           <div class="layout vertical" style="padding:3px auto;">
             <div style="margin:4px;">
-              <button
-                id="${key}"
-                class="idle-check-key"
-                style="color:${key === 'utilization' ? '#42a5f5' : '#222222'}"
-              >
-                ${_text('session.' + this.idleChecksTable[key])}
-              </button>
+              ${button}
               <br/>
               <strong style="color:${remainingColor}">${remaining}</strong>
               <div class="idle-type">${_text('session.' + this.idleChecksTable[remainingTimeType])}</div>
@@ -2521,10 +2554,6 @@ export default class BackendAISessionList extends BackendAIPage {
 
     const contentTemplate = html`${contentTemplates}`;
     render(contentTemplate, root);
-
-    const utilization = root.querySelector('#utilization');
-    utilization?.addEventListener('mouseenter', (e) => this._createUtilizationIdleCheckDropdown(e, rowData.item.idle_checks?.utilization?.extra?.resources));
-    utilization?.addEventListener('mouseleave', () => this._removeUtilizationIdleCheckDropdown());
   }
 
   /**
@@ -2770,17 +2799,19 @@ export default class BackendAISessionList extends BackendAIPage {
           <vaadin-grid-sort-column resizable width="180px" flex-grow="0" header="${_t('session.Reservation')}"
                                    path="created_at" .renderer="${this._boundReservationRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable auto-width flex-grow="0"
-                              .headerRenderer="${this._boundIdleChecksHeaderderer}"
-                              .renderer="${this._boundIdleChecksRenderer}">
-          </vaadin-grid-column>
+          ${globalThis.backendaiclient.supports('idle-checks') && this.activeIdleCheckList.size > 0 ? html`
+            <vaadin-grid-column resizable auto-width flex-grow="0"
+                                .headerRenderer="${this._boundIdleChecksHeaderderer}"
+                                .renderer="${this._boundIdleChecksRenderer}">
+            </vaadin-grid-column>
+          ` : html``}
           <lablup-grid-sort-filter-column width="110px" path="architecture" header="${_t('session.Architecture')}" resizable
                                      .renderer="${this._boundArchitectureRenderer}">
           </lablup-grid-sort-filter-column>
           ${this._isIntegratedCondition ? html`
             <lablup-grid-sort-filter-column path="type" width="140px" flex-grow="0" header="${_t('session.launcher.SessionType')}" resizable .renderer="${this._boundSessionTypeRenderer}"></lablup-grid-sort-filter-column>
         ` : html``}
-          ${this.is_superadmin ? html`
+          ${this.is_superadmin || !globalThis.backendaiclient._config.hideAgents ? html`
             <lablup-grid-sort-filter-column path="agent" auto-width flex-grow="0" resizable header="${_t('session.Agent')}"
                                 .renderer="${this._boundAgentRenderer}">
             </lablup-grid-sort-filter-column>

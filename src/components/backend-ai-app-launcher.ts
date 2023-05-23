@@ -273,11 +273,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._initializeAppTemplate();
-    this.refreshTimer = null;
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
-
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.imageInfo = globalThis.backendaimetadata.imageInfo;
+      this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    }, {once: true});
+    this._initializeAppTemplate();
+    this.refreshTimer = null;
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically

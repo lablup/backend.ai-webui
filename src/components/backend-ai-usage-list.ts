@@ -3,17 +3,21 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {translate as _t} from 'lit-translate';
+import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import {Select} from '@material/mwc-select';
+import '@vaadin/select';
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 import './backend-ai-monthly-usage-panel';
+import './backend-ai-dialog';
+
+import type {Select} from '@vaadin/select';
 
 import {
   IronFlex,
@@ -21,6 +25,11 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+* This type definition is a workaround for resolving both Type error and Importing error.
+*/
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend AI Usage List
@@ -57,11 +66,17 @@ export default class BackendAIUsageList extends BackendAIPage {
       'length': 4 * 24 * 7
     }
   };
+  @property({type: Array}) periodSelectItems = new Array<object>();
   @property({type: Object}) collection = Object();
   @property({type: String}) period = '1D';
   @property({type: Boolean}) updating = false;
   @property({type: Number}) elapsedDays = 0;
+  @property({type: String}) _helpDescription = '';
+  @property({type: String}) _helpDescriptionTitle = '';
+  @property({type: String}) _helpDescriptionIcon = '';
   @query('#period-selector') periodSelec!: Select;
+  @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+
   public data: any;
 
   constructor() {
@@ -78,25 +93,25 @@ export default class BackendAIUsageList extends BackendAIPage {
       IronPositioning,
       // language=CSS
       css`
-        mwc-select {
-          width: 100%;
-          font-family: var(--general-font-family);
-          --mdc-typography-subtitle1-font-family: var(--general-font-family);
-          --mdc-theme-primary: var(--general-sidebar-color);
-          --mdc-select-fill-color: transparent;
-          --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-focused-dropdown-icon-color: var(--general-sidebar-color);
-          --mdc-select-disabled-dropdown-icon-color: var(--general-sidebar-color);
-          --mdc-select-idle-line-color: rgba(0, 0, 0, 0.42);
-          --mdc-select-hover-line-color: var(--general-sidebar-color);
-          --mdc-select-outlined-idle-border-color: var(--general-sidebar-color);
-          --mdc-select-outlined-hover-border-color: var(--general-sidebar-color);
-          --mdc-theme-surface: white;
-          --mdc-list-vertical-padding: 5px;
-          --mdc-list-side-padding: 25px;
-          --mdc-list-item__primary-text: {
-            height: 20px;
-          };
+        vaadin-select {
+          font-size: 14px;
+        }
+
+        vaadin-select-item {
+          font-size: 14px;
+          --lumo-font-family: var(--general-font-family) !important;
+        }
+
+        #select-period {
+          font-size: 12px;
+          color: #8c8484;
+          padding-left: 20px;
+          padding-right: 8px;
+        }
+
+        #help-description {
+          --component-width: 70vw;
+          --component-padding: 20px 40px;
         }
       `
     ];
@@ -146,18 +161,10 @@ export default class BackendAIUsageList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this._getUserInfo();
         this.init();
-        setTimeout(() => {
-          // TODO remove protected field assignment
-          (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim() ?? '';
-        }, 100);
       }, true);
     } else { // already connected
       this._getUserInfo();
       this.init();
-      setTimeout(() => {
-        // TODO remove protected field assignment
-        (this.periodSelec as any).selectedText = this.periodSelec.selected?.textContent?.trim();
-      }, 100);
     }
   }
 
@@ -171,6 +178,20 @@ export default class BackendAIUsageList extends BackendAIPage {
       const seconds = Math.floor((current_time.getTime() - start_time.getTime()) / msec_to_sec);
       const days = Math.floor(seconds / seconds_to_day);
       this.elapsedDays = days;
+      const periodSelectItems = [
+        {
+          label: _text('statistics.1Day'),
+          value: '1D',
+        },
+      ];
+      if (this.elapsedDays > 7) {
+        periodSelectItems.push({
+          label: _text('statistics.1Week'),
+          value: '1W',
+        });
+      }
+      this.periodSelectItems = periodSelectItems;
+      this.periodSelec.value = '1D';
     });
   }
 
@@ -261,7 +282,6 @@ export default class BackendAIUsageList extends BackendAIPage {
    * */
   pulldownChange(e) {
     this.period = e.target.value;
-    console.log(this.period);
     const {data, period, collection, _map, templates} = this;
 
     if (!(period in collection)) {
@@ -285,25 +305,44 @@ export default class BackendAIUsageList extends BackendAIPage {
     }
   }
 
+  _launchUsageHistoryInfoDialog() {
+    this._helpDescriptionTitle = _text('statistics.UsageHistory');
+    this._helpDescription = `
+      <div class="note-container">
+        <div class="note-title">
+          <mwc-icon class="fg white">info</mwc-icon>
+          <div>Note</div>
+        </div>
+        <div class="note-contents">${_text('statistics.UsageHistoryNote')}</div>
+      </div>
+      <p>${_text('statistics.UsageHistoryDesc')}</p>
+      <strong>Sessions</strong>
+      <p>${_text('statistics.SessionsDesc')}</p>
+      <strong>CPU</strong>
+      <p>${_text('statistics.CPUDesc')}</p>
+      <strong>Memory</strong>
+      <p>${_text('statistics.MemoryDesc')}</p>
+      <strong>GPU</strong>
+      <p>${_text('statistics.GPUDesc')}</p>
+      <strong>IO-Read</strong>
+      <p>${_text('statistics.IOReadDesc')}</p>
+      <strong>IO-Write</strong>
+      <p>${_text('statistics.IOWriteDesc')}</p>
+    `;
+    this.helpDescriptionDialog.show();
+  }
+
   render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="card" elevation="0">
         <!--<backend-ai-monthly-usage-panel></backend-ai-monthly-usage-panel>-->
-        <h3 class="horizontal center layout">
-          <mwc-select label="${_t('statistics.SelectPeriod')}"
-              id="period-selector" style="width:150px; border:1px solid #ccc;"
-              @change="${(e) => {
-    this.pulldownChange(e);
-  }}">
-            <mwc-list-item value="1D" selected>${_t('statistics.1Day')}</mwc-list-item>
-            ${this.elapsedDays > 7 ? html`
-              <mwc-list-item value="1W">${_t('statistics.1Week')}</mwc-list-item>
-            ` : html``}
-          </mwc-select>
-          <span class="flex"></span>
-        </h3>
+        <div class="horizontal layout center">
+          <p id="select-period">${_t('statistics.SelectPeriod')}</p>
+          <vaadin-select id="period-selector" .items="${this.periodSelectItems}" @change="${(e) => this.pulldownChange(e)}"></vaadin-select>
+          <mwc-icon-button class="fg green" icon="info" @click="${() => this._launchUsageHistoryInfoDialog()}"></mwc-icon-button>
+        </div>
         ${Object.keys(this.collection).length > 0 ?
     Object.keys(this._map).map((key, idx) =>
       html`
@@ -320,6 +359,16 @@ export default class BackendAIUsageList extends BackendAIPage {
             `
     ) : html``}
       </div>
+      <backend-ai-dialog id="help-description" fixed backdrop>
+        <span slot="title">${this._helpDescriptionTitle}</span>
+        <div slot="content" class="horizontal layout center" style="margin:5px;">
+        ${this._helpDescriptionIcon == '' ? html`` : html`
+          <img slot="graphic" alt="help icon" src="resources/icons/${this._helpDescriptionIcon}"
+               style="width:64px;height:64px;margin-right:10px;"/>
+        `}
+          <div style="font-size:14px;">${unsafeHTML(this._helpDescription)}</div>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

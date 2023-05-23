@@ -123,7 +123,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = (this.fullName.replace(/\s+/g, '').length > 0) ? this.fullName : this.userId;
+    let name = (this.fullName?.replace(/\s+/g, '').length > 0) ? this.fullName : this.userId;
     // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
