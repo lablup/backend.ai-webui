@@ -78,12 +78,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   // };
   @property({type: Boolean}) enableSchedulerOpts = false;
   @property({type: Boolean}) enableWSProxyAddr = false;
+  @property({type: Boolean}) enableIsPublic = false;
   @property({type: Number}) functionCount = 0;
   @query('#resource-group-name') resourceGroupNameInput!: TextField;
   @query('#resource-group-description') resourceGroupDescriptionInput!: TextArea;
   @query('#resource-group-domain') resourceGroupDomainSelect!: Select;
   @query('#resource-group-scheduler') resourceGroupSchedulerSelect!: Select;
   @query('#resource-group-active') resourceGroupActiveSwitch!: Switch;
+  @query('#resource-group-public') resourceGroupPublicSwitch!: Switch;
   @query('#resource-group-wsproxy-address') resourceGroupWSProxyaddressInput!: TextField;
   @query('#allowed-session-types') private allowedSessionTypesSelect;
   @query('#num-retries-to-skip') numberOfRetriesToSkip!: TextField;
@@ -257,6 +259,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.enableSchedulerOpts = globalThis.backendaiclient.supports('scheduler-opts');
         this.enableWSProxyAddr = globalThis.backendaiclient.supports('wsproxy-addr');
+        this.enableIsPublic = globalThis.backendaiclient.supports('is-public');
         globalThis.backendaiclient.scalingGroup.list_available()
           .then((res) => {
             this.resourceGroups = res.scaling_groups;
@@ -279,6 +282,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     } else { // already connected
       this.enableSchedulerOpts = globalThis.backendaiclient.supports('scheduler-opts');
       this.enableWSProxyAddr = globalThis.backendaiclient.supports('wsproxy-addr');
+      this.enableIsPublic = globalThis.backendaiclient.supports('is-public');
 
       globalThis.backendaiclient.scalingGroup.list_available()
         .then((res) => {
@@ -308,6 +312,20 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           app=""
           color=${rowData.item.is_active ? 'green' : 'red'}
           description=${rowData.item.is_active ? 'active' : 'inactive'}
+          ui="flat"
+        ></lablup-shields>
+    `,
+      root
+    );
+  }
+
+  _isPublicRenderer(root, column, rowData) {
+    render(
+      html`
+        <lablup-shields
+          app=""
+          color=${rowData.item.is_public ? 'blue' : 'darkgreen'}
+          description=${rowData.item.is_public ? 'public' : 'private'}
           ui="flat"
         ></lablup-shields>
     `,
@@ -399,13 +417,15 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       this._saveSchedulerOpts();
       const resourceGroupName = this.resourceGroupNameInput.value;
       const description = this.resourceGroupDescriptionInput.value;
+      const scheduler = this.resourceGroupSchedulerSelect.value;
+      const isActive = this.resourceGroupActiveSwitch.selected;
       const domain = this.resourceGroupDomainSelect.value;
       const input = {
         description: description,
-        is_active: true,
+        is_active: isActive,
         driver: 'static',
         driver_opts: '{}',
-        scheduler: 'fifo',
+        scheduler: scheduler,
       };
 
       if (this.enableSchedulerOpts) {
@@ -414,6 +434,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       if (this.enableWSProxyAddr) {
         const wsproxyAddress = this.resourceGroupWSProxyaddressInput.value;
         input['wsproxy_addr'] = wsproxyAddress;
+      }
+      if (this.enableIsPublic) {
+        input['is_public'] = this.resourceGroupPublicSwitch?.selected;
       }
       globalThis.backendaiclient.scalingGroup.create(resourceGroupName, input)
         .then(({create_scaling_group: res}) => {
@@ -453,7 +476,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
   }
 
   /**
-   * Modify resource group(scaling group) such as description, scheduler, is_active, and name.
+   * Modify resource group(scaling group) such as description, scheduler, is_active, is_public and name.
    * */
   _modifyResourceGroup() {
     if (this._verifyModifySchedulerOpts() === false) {
@@ -462,14 +485,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     this._saveSchedulerOpts();
     const description = this.resourceGroupDescriptionInput.value;
     const scheduler = this.resourceGroupSchedulerSelect.value;
-    const is_active = this.resourceGroupActiveSwitch.selected;
+    const isActive = this.resourceGroupActiveSwitch.selected;
     const schedulerOptions = this.schedulerOpts;
     const name = this.resourceGroupInfo.name;
 
     const input = {};
     if (description !== this.resourceGroupInfo.description) input['description'] = description;
     if (scheduler !== this.resourceGroupInfo.scheduler) input['scheduler'] = scheduler;
-    if (is_active !== this.resourceGroupInfo.is_active) input['is_active'] = is_active;
+    if (isActive !== this.resourceGroupInfo.is_active) input['is_active'] = isActive;
     if (this.enableWSProxyAddr) {
       let wsproxy_addr: string = this.resourceGroupWSProxyaddressInput.value;
       if (wsproxy_addr.endsWith('/')) {
@@ -482,6 +505,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       if (schedulerOptions !== this.resourceGroupInfo.scheduler_opts) {
         input['scheduler_opts'] = JSON.stringify(schedulerOptions);
       }
+    }
+
+    if (this.enableIsPublic) {
+      const isPublic = this.resourceGroupPublicSwitch?.selected;
+      if (isPublic !== this.resourceGroupInfo.is_public) input['is_public'] = isPublic;
     }
 
     if (Object.keys(input).length === 0) {
@@ -694,18 +722,20 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.resourceGroups}">
         <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name" resizable>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description" resizable>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" .renderer=${this._activeStatusRenderer}>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.ActiveStatus')}" resizable .renderer=${this._activeStatusRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" path="driver">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.PublicStatus')}" resizable .renderer=${this._isPublicRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler">
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Driver')}" path="driver" resizable>
+        </vaadin-grid-column>
+        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Scheduler')}" path="scheduler" resizable>
         </vaadin-grid-column>
         ${this.enableWSProxyAddr ? html`
-        <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr">
+        <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr" resizable>
         </vaadin-grid-column>
         ` : html``}
         <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
@@ -714,23 +744,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
       <backend-ai-dialog id="resource-group-dialog" fixed backdrop blockscrolling>
         <span slot="title"> ${this.resourceGroupInfo?.name ? _t('resourceGroup.ModifyResourceGroup'): _t('resourceGroup.CreateResourceGroup')}</span>
         <div slot="content" class="login-panel intro centered">
-          ${Object.keys(this.resourceGroupInfo).length > 0 ? html`
-            <div class="horizontal layout flex wrap center justified">
-              <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
-                ${_t('resourceGroup.Active')}
-              </p>
-              <mwc-switch id="resource-group-active" style="margin-right:10px;" ?selected="${this.resourceGroupInfo.is_active}">
-              </mwc-switch>
-            </div>
-            <mwc-select
-              id="resource-group-scheduler"
-              label="${_t('resourceGroup.SelectScheduler')}"
-              value="${this.resourceGroupInfo.length === 0 ? '' : this.resourceGroupInfo.scheduler}">
-              ${this.schedulerTypes.map((sched) => html`
-                <mwc-list-item value="${sched}">${sched}</mwc-list-item>
-              `)}
-            </mwc-select>
-          ` : html`
+          ${Object.keys(this.resourceGroupInfo).length === 0 ? html`
           <mwc-select required id="resource-group-domain" label="${_t('resourceGroup.SelectDomain')}">
             ${this.domains.map((domain, idx) => html`
               <mwc-list-item value="${domain.name}" ?selected=${idx === 0}>
@@ -749,7 +763,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             autoValidate
             @change="${() => this._validateResourceGroupName()}"
           ></mwc-textfield>
-          `}
+          ` : html``}
           <mwc-textarea
             name="description"
             id="resource-group-description"
@@ -758,6 +772,15 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             placeholder="${_t('maxLength.512chars')}"
             value="${this.resourceGroupInfo?.description ?? ''}"
           ></mwc-textarea>
+          <mwc-select
+            id="resource-group-scheduler"
+            label="${_t('resourceGroup.SelectScheduler')}"
+            required
+            value="${Object.keys(this.resourceGroupInfo).length === 0 ? 'fifo' : this.resourceGroupInfo.scheduler}">
+            ${this.schedulerTypes.map((sched, idx) => html`
+              <mwc-list-item value="${sched}" ?selected=${Object.keys(this.resourceGroupInfo).length === 0 && idx === 0}>${sched}</mwc-list-item>
+            `)}
+          </mwc-select>
           ${this.enableWSProxyAddr ? html`
           <mwc-textfield
                 id="resource-group-wsproxy-address"
@@ -767,7 +790,22 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                 value="${this.resourceGroupInfo?.wsproxy_addr ?? ''}"
               ></mwc-textfield>
             ` : html``}
+          <div class="horizontal layout flex wrap center justified">
+            <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+              ${_t('resourceGroup.Active')}
+            </p>
+            <mwc-switch id="resource-group-active" style="margin-right:10px;" ?selected="${Object.keys(this.resourceGroupInfo).length > 0 ? this.resourceGroupInfo.is_active : true}">
+            </mwc-switch>
+            ${this.enableIsPublic ? html`
+              <p style="margin-left: 18px;color:rgba(0, 0, 0, 0.6);">
+                ${_t('resourceGroup.Public')}
+              </p>
+              <mwc-switch id="resource-group-public" style="margin-right:10px;" ?selected="${Object.keys(this.resourceGroupInfo).length > 0 ? this.resourceGroupInfo.is_public : true}">
+              </mwc-switch>
+            ` : html``}
+          </div>
           ${this.enableSchedulerOpts ? html`
+            <br/>
             <wl-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <div class="vertical layout flex">
@@ -867,6 +905,17 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                       ui="flat"
                     ></lablup-shields>
                   </vaadin-item>
+                  ${this.enableIsPublic ? html`
+                    <vaadin-item>
+                      <div><strong>${_text('resourceGroup.PublicStatus')}</strong></div>
+                      <lablup-shields
+                        app=""
+                        color=${this.resourceGroupInfo.is_public ? 'blue' : 'darkgreen'}
+                        description=${this.resourceGroupInfo?.is_public ? 'public' : 'private'}
+                        ui="flat"
+                      ></lablup-shields>
+                    </vaadin-item>
+                  ` : html``}
                   <vaadin-item>
                     <div><strong>${_text('resourceGroup.Driver')}</strong></div>
                     <div class="scheduler-option-value">${this.resourceGroupInfo?.driver}</div>

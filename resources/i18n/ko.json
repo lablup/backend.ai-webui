@@ -955,7 +955,9 @@
     "RetriesToSkip": "회",
     "NoGroupToDisplay": "그룹이 없습니다.",
     "AllowedSessionTypes": "허용된 세션 타입",
-    "Domain": "도메인"
+    "Domain": "도메인",
+    "Public": "공개",
+    "PublicStatus": "공개 상태"
   },
   "maintenance": {
     "General": "일반",
