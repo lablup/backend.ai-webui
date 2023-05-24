@@ -136,6 +136,18 @@ const ResetPasswordRequired = () => {
                 pattern: passwordPattern,
                 message: t("webui.menu.InvalidPasswordMessage").toString(),
               },
+              () => ({
+                validator(_, value) {
+                  if (!value || currentPassword === value) {
+                    return Promise.reject(
+                      new Error(
+                        t("webui.menu.NewPasswordCannotBeSame").toString()
+                      )
+                    );
+                  }
+                  return Promise.resolve();
+                },
+              }),
             ]}
             hasFeedback
           >
