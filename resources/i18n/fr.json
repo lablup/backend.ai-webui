@@ -503,7 +503,8 @@
       "PleaseSelectOption": "Veuillez sélectionner une option",
       "LetterNumber-_dot": "Autorise les lettres, les chiffres et -_.",
       "NameAlreadyExists": "Le nom de la stratégie existe déjà !",
-      "ValidationFailed": "Validation échouée"
+      "ValidationFailed": "Validation échouée",
+      "PleaseSelectOptions": "Veuillez sélectionner optios."
     },
     "ProjectAndGroup": "Projets & Groupes",
     "ModifyKeypairResourcePolicy": "Modifier la stratégie de ressource de paire de clés",
@@ -946,7 +947,8 @@
     "ResourceGroupDetail": "Détail du groupe de ressources",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Domaine"
   },
   "maintenance": {
     "General": "Général",
