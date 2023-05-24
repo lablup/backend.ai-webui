@@ -509,7 +509,7 @@
       "LetterNumber-_dot": "문자, 숫자 및 -_. 만 허용됩니다.",
       "NameAlreadyExists": "그 이름은 이미 사용중입니다.",
       "ValidationFailed": "인증에 실패하였습니다.",
-      "PleaseSelectOptions": "옵션 선택은 필수 입니다."
+      "PleaseSelectOptions": "하나 이상의 옵션을 선택해주세요."
     },
     "ProjectAndGroup": "프로젝트 및 그룹",
     "ModifyKeypairResourcePolicy": "키페어 자원 정책 수정",
