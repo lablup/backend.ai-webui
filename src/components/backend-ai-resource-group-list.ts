@@ -572,6 +572,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
     this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
     this.allowedSessionTypesSelect.selectedItemList = ['interactive', 'batch'];
+    this.resourceGroupSchedulerSelect.value = 'fifo';
     schedulerOptsInputForms.checked = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
@@ -777,9 +778,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             label="${_t('resourceGroup.SelectScheduler')}"
             required
             value="${Object.keys(this.resourceGroupInfo).length === 0 ? 'fifo' : this.resourceGroupInfo.scheduler}">
-            ${this.schedulerTypes.map((sched, idx) => html`
-              <mwc-list-item value="${sched}"
-                  ?selected=${Object.keys(this.resourceGroupInfo).length === 0 && idx === 0 || Object.keys(this.resourceGroupInfo).length > 0 && this.resourceGroupInfo.scheduler}>${sched}</mwc-list-item>
+            ${this.schedulerTypes.map((sched) => html`
+              <mwc-list-item value="${sched}">${sched}</mwc-list-item>
             `)}
           </mwc-select>
           ${this.enableWSProxyAddr ? html`
