@@ -55,9 +55,9 @@ export default function (
     }
 
     connectedCallback() {
-      const title = this.getAttribute("value") || "";
+      const value = this.getAttribute("value") || "";
       const styles = this.getAttribute("styles") || "";
-      this.reactRoot.render(this.createReactElement(title, styles));
+      this.reactRoot.render(this.createReactElement(value, styles));
     }
 
     disconnectedCallback() {
@@ -70,7 +70,7 @@ export default function (
         this.reactRoot.render(
           this.createReactElement(newValue, this.getAttribute("styles") || "")
         );
-      } else if (name == "styles") {
+      } else if (name === "styles") {
         this.reactRoot.render(
           this.createReactElement(this.getAttribute("value") || "", newValue)
         );
