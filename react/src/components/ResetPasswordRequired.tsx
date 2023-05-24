@@ -4,12 +4,9 @@ import Flex from "./Flex";
 import { useTranslation } from "react-i18next";
 import { WarningTwoTone } from "@ant-design/icons";
 import { useMutation as useTanMutation } from "react-query";
-import { parse } from "path";
 import { useAnonymousBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useEffect } from "react";
-// import * as ai from "../lib/backend.ai-cleint-esm_on_react";
-// import { useSuspendedBackendaiClient } from "./BackendaiClientProvider";
 
 // src/components/backend-ai-common-utils.ts
 export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
@@ -45,13 +42,9 @@ const ResetPasswordRequired = () => {
     if (open) {
       form.resetFields();
     }
-  }, [open]);
+  }, [open, form]);
 
   const anonymousBaiClient = useAnonymousBackendaiClient({ api_endpoint });
-
-  //@ts-ignore
-
-  // console.log(baiClient);
 
   const mutation = useTanMutation({
     mutationFn: (body: {
@@ -138,7 +131,7 @@ const ResetPasswordRequired = () => {
               },
               () => ({
                 validator(_, value) {
-                  if (!value || currentPassword === value) {
+                  if (currentPassword === value) {
                     return Promise.reject(
                       new Error(
                         t("webui.menu.NewPasswordCannotBeSame").toString()

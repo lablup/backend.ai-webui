@@ -1,7 +1,7 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import { ThemeConfig } from "antd/lib/config-provider";
 import React from "react";
-import { loadCustomThemeConfig } from "./helper/customeThemeConfig";
+import { loadCustomThemeConfig } from "./helper/customThemeConfig";
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();

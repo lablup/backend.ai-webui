@@ -10,8 +10,8 @@ import Backend from "i18next-http-backend";
 
 import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
-import { useCustomThemeConfig } from "../helper/customeThemeConfig";
 import { RelayEnvironment } from "../RelayEnvironment";
+import { useCustomThemeConfig } from "../helper/customThemeConfig";
 
 // @ts-ignore
 import rawFixAntCss from "../fix_antd.css?raw";
@@ -66,6 +66,7 @@ const useCurrentLanguage = () => {
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
     setTimeout(() => i18n.changeLanguage(lang), 0);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

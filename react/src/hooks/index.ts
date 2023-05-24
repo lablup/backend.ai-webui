@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 export const useBackendAIConnectedState = () => {
@@ -76,7 +76,7 @@ export const useAnonymousBackendaiClient = ({
 };
 
 export const useSuspendedBackendaiClient = () => {
-  const { data: client, refetch } = useQuery<any>({
+  const { data: client } = useQuery<any>({
     queryKey: "backendai-client-for-suspense",
     queryFn: () =>
       new Promise((resolve) => {

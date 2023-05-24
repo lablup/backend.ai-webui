@@ -25,6 +25,7 @@ export const useCustomThemeConfig = () => {
         document.removeEventListener("custom-theme-loaded", handler);
       };
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return customThemeConfig;

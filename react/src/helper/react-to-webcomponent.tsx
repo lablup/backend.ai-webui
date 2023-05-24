@@ -9,7 +9,7 @@ export interface ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
-export default function (
+export default function reactToWebComponent(
   ReactComponent:
     | React.FC<ReactWebComponentProps>
     | React.ComponentClass<ReactWebComponentProps>
