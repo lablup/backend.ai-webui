@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
 import { useSuspendedBackendaiClient } from "../components/BackendaiClientProvider";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
@@ -54,4 +53,24 @@ export const useCurrentProjectValue = () => {
   });
 
   return project;
+};
+
+export const useAnonymousBackendaiClient = ({
+  api_endpoint,
+}: {
+  api_endpoint: string;
+}) => {
+  const client = useMemo(() => {
+    //@ts-ignore
+    const clientConfig = new globalThis.BackendAIClientConfig(
+      "",
+      "",
+      api_endpoint,
+      "SESSION"
+    );
+    //@ts-ignore
+    return new globalThis.BackendAIClient(clientConfig, "Backend.AI Console.");
+  }, [api_endpoint]);
+
+  return client;
 };

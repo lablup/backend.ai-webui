@@ -24,6 +24,10 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
+//@ts-ignore for react-based component
+globalThis.BackendAIClient = ai.backend.Client;
+//@ts-ignore for react-based component
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 import {
   IronFlex,
@@ -123,6 +127,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: Boolean}) otpRequired = false;
   @property({type: String}) otp;
+  @property({type: Boolean}) needToResetPassword = false;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -631,7 +636,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
-       defaultValue: '',
+       defaultValue: this.api_endpoint || '',
        value: generalConfig?.apiEndpoint
      } as ConfigValueObject) as string;
     if (this.api_endpoint === '') {
@@ -972,12 +977,12 @@ export default class BackendAILogin extends BackendAIPage {
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION') {
+    if (this.connection_mode === 'SESSION' as ConnectionMode) {
       if (globalThis.isElectron) {
         this._loadConfigFromWebServer();
       }
       return this._checkLoginUsingSession();
-    } else if (this.connection_mode === 'API') {
+    } else if (this.connection_mode === 'API' as ConnectionMode) {
       return Promise.resolve(false);
     } else {
       return Promise.resolve(false);
@@ -1209,7 +1214,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async () => {
-      const isLogon = await this.client?.check_login();
+      const isLogon = await this.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
 
@@ -1241,6 +1246,8 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
+            }  else if (response.fail_reason.indexOf('Password expired on ') === 0) {
+              this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
@@ -1717,6 +1724,23 @@ export default class BackendAILogin extends BackendAIPage {
               </fieldset>
             </form>
           </div>
+          <backend-ai-react-reset-password-required-modal 
+            value="${JSON.stringify({
+              open: this.needToResetPassword,
+              username: this.user_id,
+              currentPassword: this.password,
+              api_endpoint: this.api_endpoint,
+            })}" 
+            @cancel="${(e)=> this.needToResetPassword = false}" 
+            @ok="${(e)=> {
+              this.needToResetPassword = false;
+              this.passwordInput.value = "";
+              
+              this.notification.text = _text('login.PasswordChanged');
+              this.notification.show();
+            }}"
+          >
+          </backend-ai-react-reset-password-required-modal>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>

@@ -19,7 +19,7 @@ import rawFixAntCss from "../fix_antd.css?raw";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
-  dispatchEvent?: ReactWebComponentProps["dispatchEvent"];
+  dispatchEvent: ReactWebComponentProps["dispatchEvent"];
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);

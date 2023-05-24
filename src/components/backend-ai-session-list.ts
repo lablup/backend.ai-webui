@@ -127,6 +127,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) notification = Object();
   @property({type: Boolean}) enableScalingGroup = false;
+  @property({type: Boolean}) isDisplayingAllocatedShmemEnabled = false;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
@@ -548,6 +549,7 @@ export default class BackendAISessionList extends BackendAIPage {
         this.is_superadmin = globalThis.backendaiclient.is_superadmin;
         this._connectionMode = globalThis.backendaiclient._config._connectionMode;
         this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+        this.isDisplayingAllocatedShmemEnabled = globalThis.backendaiclient.supports('display-allocated-shmem');
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
         // check whether image commit supported via both configuration variable and version(22.09)
@@ -571,6 +573,7 @@ export default class BackendAISessionList extends BackendAIPage {
       this.is_superadmin = globalThis.backendaiclient.is_superadmin;
       this._connectionMode = globalThis.backendaiclient._config._connectionMode;
       this.enableScalingGroup = globalThis.backendaiclient.supports('scaling-group');
+      this.isDisplayingAllocatedShmemEnabled = globalThis.backendaiclient.supports('display-allocated-shmem');
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
       // check whether image commit supported via both configuration variable and version(22.09)
@@ -634,7 +637,7 @@ export default class BackendAISessionList extends BackendAIPage {
     const fields = [
       'id', 'session_id', 'name', 'image', 'architecture',
       'created_at', 'terminated_at', 'status', 'status_info',
-      'service_ports', 'mounts',
+      'service_ports', 'mounts', 'resource_opts',
       'occupied_slots', 'access_key', 'starts_at', 'type',
     ];
     if (globalThis.backendaiclient.supports('multi-container')) {
@@ -1007,6 +1010,18 @@ export default class BackendAISessionList extends BackendAIPage {
    */
   static bytesToMB(value, decimalPoint = 1) {
     return Number(value / (10 ** 6)).toFixed(1);
+  }
+
+  /**
+   * Convert the value bytes to GiB with decimal point to 2 as a default
+   *
+   * @param {number} value
+   * @param {number} decimalPoint decimal point to show
+   * @return {string} converted value from Bytes to GiB
+   */
+  static bytesToGiB(value, decimalPoint = 2) {
+    if (!value) return value;
+    return (value / (2 ** 30)).toFixed(decimalPoint);
   }
 
   /**
@@ -2124,6 +2139,7 @@ export default class BackendAISessionList extends BackendAIPage {
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"
                                @click="${(e) => this._showAppLauncher(e)}"
+                               ?disabled="${!mySession}"
                                icon="apps">
             </mwc-icon-button>
             <vaadin-tooltip for="${rowData.index+'-apps'}" text="${_t('session.SeeAppDialog')}" position="top-start"></vaadin-tooltip>
@@ -2228,6 +2244,11 @@ export default class BackendAISessionList extends BackendAIPage {
             <wl-icon class="fg green indicator">memory</wl-icon>
             <span>${rowData.item.mem_slot}</span>
             <span class="indicator">GiB</span>
+            ${this.isDisplayingAllocatedShmemEnabled ? html`
+              <span class="indicator">
+                ${`(SHM: `+this._aggregateSharedMemory(JSON.parse(rowData.item.resource_opts))+`GiB)`}
+              </span>
+            ` : html``}
           </div>
           <div class="layout horizontal center configuration">
             ${rowData.item.cuda_gpu_slot ? html`
@@ -2587,6 +2608,21 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   /**
+   * Aggregate shared memory allocated in session
+   * 
+   * @param {Object} sharedMemoryObj 
+   * @return {string} converted value from Bytes to GiB
+   */
+  _aggregateSharedMemory(sharedMemoryObj) {
+    // FIXME: for now temporally sum up shared memory
+    let shmem = 0;
+    Object.keys(sharedMemoryObj).forEach(item => {
+      shmem += Number(sharedMemoryObj[item]?.shmem ?? 0);
+    });
+    return BackendAISessionList.bytesToGiB(shmem);
+  }
+
+  /**
    * Render a checkbox
    *
    * @param {Element} root - the row details content DOM element
@@ -2790,7 +2826,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width=${this._isContainerCommitEnabled ? '260px': '210px'} flex-grow="0" resizable header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
-          <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('session.Configuration')}"
+          <vaadin-grid-column width="200px" flex-grow="0" resizable header="${_t('session.Configuration')}"
                               .renderer="${this._boundConfigRenderer}"></vaadin-grid-column>
           <vaadin-grid-column width="140px" flex-grow="0" resizable header="${_t('session.Usage')}"
                               .renderer="${this._boundUsageRenderer}">
