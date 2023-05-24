@@ -6,7 +6,6 @@ import { SessionListQuery } from "./__generated__/SessionListQuery.graphql";
 import { useTranslation } from "react-i18next";
 import SessionInfoCell from "./SessionListColums/SessionInfoCell";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
-import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 
 type Session = NonNullable<
   SessionListQuery["response"]["compute_session_list"]

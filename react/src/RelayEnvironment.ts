@@ -1,22 +1,16 @@
-import _ from "lodash";
 import {
   Environment,
   Network,
   RecordSource,
   Store,
-  Observable,
   FetchFunction,
   SubscribeFunction,
   RelayFeatureFlags,
 } from "relay-runtime";
 // import { createClient } from "graphql-ws";
-import * as RelayRuntime from "relay-runtime";
 import { removeSkipOnClientDirective } from "./helper/graphql-transformer";
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
-
-const HTTP_ENDPOINT = "http://localhost:5000/graphql";
-const WEBSOCKET_ENDPOINT = "ws://localhost:5000/graphql";
 
 const fetchFn: FetchFunction = async (
   request,

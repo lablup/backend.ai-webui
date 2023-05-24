@@ -9,7 +9,7 @@ import {
 import React, { PropsWithChildren, Suspense, useState } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
-import { ThunderboltFilled, ThunderboltTwoTone } from "@ant-design/icons";
+import { ThunderboltTwoTone } from "@ant-design/icons";
 import SessionList from "../components/SessionList";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
