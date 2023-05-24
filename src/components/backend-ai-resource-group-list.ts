@@ -778,7 +778,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             required
             value="${Object.keys(this.resourceGroupInfo).length === 0 ? 'fifo' : this.resourceGroupInfo.scheduler}">
             ${this.schedulerTypes.map((sched, idx) => html`
-              <mwc-list-item value="${sched}" ?selected=${Object.keys(this.resourceGroupInfo).length === 0 && idx === 0}>${sched}</mwc-list-item>
+              <mwc-list-item value="${sched}"
+                  ?selected=${Object.keys(this.resourceGroupInfo).length === 0 && idx === 0 || Object.keys(this.resourceGroupInfo).length > 0 && this.resourceGroupInfo.scheduler}>${sched}</mwc-list-item>
             `)}
           </mwc-select>
           ${this.enableWSProxyAddr ? html`
