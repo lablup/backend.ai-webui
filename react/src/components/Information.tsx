@@ -16,7 +16,7 @@ import Flex from "./Flex";
 import { useQuery } from "react-query";
 import _ from "lodash";
 import { newLineToBrElement } from "../helper";
-import { useSuspendedBackendaiClient } from "./BackendaiClientProvider";
+import { useSuspendedBackendaiClient } from "../hooks";
 
 const { Text } = Typography;
 

@@ -3,10 +3,9 @@ import React, { useDeferredValue } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { SessionListQuery } from "./__generated__/SessionListQuery.graphql";
-import { useSuspendedBackendaiClient } from "./BackendaiClientProvider";
 import { useTranslation } from "react-i18next";
 import SessionInfoCell from "./SessionListColums/SessionInfoCell";
-import { useUpdatableState } from "../hooks";
+import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { HomeOutlined, LoadingOutlined } from "@ant-design/icons";
 
 type Session = NonNullable<

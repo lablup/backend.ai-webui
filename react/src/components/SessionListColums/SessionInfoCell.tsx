@@ -4,13 +4,12 @@ import graphql from "babel-plugin-relay/macro";
 import { SessionInfoCellFragment$key } from "./__generated__/SessionInfoCellFragment.graphql";
 
 import { Button, Form, FormProps, Input, Typography, theme } from "antd";
-import { useSuspendedBackendaiClient } from "../BackendaiClientProvider";
 import { EditOutlined } from "@ant-design/icons";
 import Flex from "../Flex";
 import { useTranslation } from "react-i18next";
 import { useMutation as useTanMutation } from "react-query";
 import { SessionInfoCellMutation } from "./__generated__/SessionInfoCellMutation.graphql";
-import { useUpdatableState } from "../../hooks";
+import { useSuspendedBackendaiClient, useUpdatableState } from "../../hooks";
 
 const isRunningStatus = (status: string = "") => {
   return [

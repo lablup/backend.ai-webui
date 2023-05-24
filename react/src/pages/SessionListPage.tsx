@@ -10,9 +10,8 @@ import React, { PropsWithChildren, Suspense, useState } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import { ThunderboltFilled, ThunderboltTwoTone } from "@ant-design/icons";
-import { useSuspendedBackendaiClient } from "../components/BackendaiClientProvider";
 import SessionList from "../components/SessionList";
-import { useCurrentProjectValue } from "../hooks";
+import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
 const RUNNINGS = [
   "RUNNING",
