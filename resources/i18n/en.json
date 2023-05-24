@@ -62,7 +62,8 @@
       "TotpActivated": "2FA Enabled",
       "AIAccelerator": "AI Accelerator",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
-      "CurrentPassword": "Current Password"
+      "CurrentPassword": "Current Password",
+      "NewPasswordCannotBeSame": "Please enter a password that is different from your current password."
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
