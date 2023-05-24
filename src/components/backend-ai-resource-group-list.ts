@@ -776,6 +776,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     required
                     id="allowed-session-types"
                     label="${_t('resourceGroup.AllowedSessionTypes')}*"
+                    validation-message="${_t('credential.validation.PleaseSelectOptions')}"
                     style="width:100%;"></backend-ai-multi-select>
                 <mwc-textfield
                     type="number"

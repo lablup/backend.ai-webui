@@ -503,7 +503,8 @@
       "PleaseSelectOption": "Нэг сонголтыг сонгоно уу",
       "LetterNumber-_dot": "Үсэг, тоо ба -_-г зөвшөөрдөг.",
       "NameAlreadyExists": "Бодлогын нэр аль хэдийн байна!",
-      "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо"
+      "ValidationFailed": "Баталгаажуулалт амжилтгүй боллоо",
+      "PleaseSelectOptions": "сонголтуудыг сонгоно уу"
     },
     "ProjectAndGroup": "Төсөл ба бүлгүүд",
     "ModifyKeypairResourcePolicy": "Түлхүүр хосын нөөцийн бодлогыг өөрчлөх",

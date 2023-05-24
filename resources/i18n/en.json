@@ -513,6 +513,7 @@
       "PolicyName": "Policy name Required.",
       "NumbersOnly": "Allows numbers only",
       "PleaseSelectOption": "Please select one option",
+      "PleaseSelectOptions": "Please select options",
       "LetterNumber-_dot": "Allows letters, numbers and -_.",
       "NameAlreadyExists": "Policy Name Already Exists!",
       "ValidationFailed": "Validation failed"

@@ -503,7 +503,8 @@
       "PleaseSelectOption": "Пожалуйста, выберите один вариант",
       "LetterNumber-_dot": "Допускает буквы, цифры и -_.",
       "NameAlreadyExists": "Название политики уже существует!",
-      "ValidationFailed": "Проверка не удалась"
+      "ValidationFailed": "Проверка не удалась",
+      "PleaseSelectOptions": "Пожалуйста, выберите варианты"
     },
     "ProjectAndGroup": "Проекты и группы",
     "ModifyKeypairResourcePolicy": "Изменить политику ресурсов пары ключей",

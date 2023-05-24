@@ -503,7 +503,8 @@
       "PleaseSelectOption": "Mohon pilih satu pilihan",
       "LetterNumber-_dot": "Huruf, angka, dan -_. diizinkan",
       "NameAlreadyExists": "Nama Kebijakan Sudah Ada!",
-      "ValidationFailed": "Validasi gagal"
+      "ValidationFailed": "Validasi gagal",
+      "PleaseSelectOptions": "Mohon pilih satu pilihan"
     },
     "ProjectAndGroup": "Proyek & Grup",
     "ModifyKeypairResourcePolicy": "Ubah kebijakan sumber daya pasangan kunci",
