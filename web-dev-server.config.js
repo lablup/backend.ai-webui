@@ -1,7 +1,12 @@
+const { hmrPlugin, presets } = require('@open-wc/dev-server-hmr');
+
+
 module.exports = {
+  open: false,
+  watch: true,
   plugins: [
     {
-      // This plugin is for injecting the react bundle to the index.html. (only for development)
+      // This plugin is for injecting the react bundle bto the index.html. (only for development)
       // For production, the react bundle is injected by react project. Please check `build` script in react/package.json
       name: "inject-react-bundle-script-for-dev",
       transform(ctx) {
@@ -15,5 +20,14 @@ module.exports = {
         }
       },
     },
+    hmrPlugin({
+      include: ['src/**/*'],
+      // only v3
+      // presets: [presets.lit],
+      // only v2
+      // presets: [presets.litElement],
+      // both v3 & v2
+      presets: [presets.lit, presets.litElement],
+    }),
   ],
 };
