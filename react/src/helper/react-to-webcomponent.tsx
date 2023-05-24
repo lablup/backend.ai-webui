@@ -9,7 +9,7 @@ export interface ReactWebComponentProps {
   children?: React.ReactNode;
 }
 
-export default function (
+export default function reactToWebComponent(
   ReactComponent:
     | React.FC<ReactWebComponentProps>
     | React.ComponentClass<ReactWebComponentProps>
@@ -70,7 +70,7 @@ export default function (
         this.reactRoot.render(
           this.createReactElement(newValue, this.getAttribute("styles") || "")
         );
-      } else if (name == "styles") {
+      } else if (name === "styles") {
         this.reactRoot.render(
           this.createReactElement(this.getAttribute("value") || "", newValue)
         );
