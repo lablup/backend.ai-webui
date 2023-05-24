@@ -1,0 +1,964 @@
+schema {
+  query: Queries
+  mutation: Mutations
+}
+
+type Agent implements Item {
+  id: ID
+  status: String
+  status_changed: DateTime
+  region: String
+  scaling_group: String
+  schedulable: Boolean
+  available_slots: JSONString
+  occupied_slots: JSONString
+  addr: String
+  architecture: String
+  first_contact: DateTime
+  lost_at: DateTime
+  live_stat: JSONString
+  version: String
+  compute_plugins: JSONString
+  hardware_metadata: JSONString
+  local_config: JSONString
+  mem_slots: Int
+  cpu_slots: Float
+  gpu_slots: Float
+  tpu_slots: Float
+  used_mem_slots: Int
+  used_cpu_slots: Float
+  used_gpu_slots: Float
+  used_tpu_slots: Float
+  cpu_cur_pct: Float
+  mem_cur_bytes: Float
+  compute_containers(status: String): [ComputeContainer]
+}
+
+type AgentList implements PaginatedList {
+  items: [Agent]!
+  total_count: Int!
+}
+
+type AgentSummary implements Item {
+  id: ID
+  status: String
+  scaling_group: String
+  schedulable: Boolean
+  available_slots: JSONString
+  occupied_slots: JSONString
+  architecture: String
+}
+
+type AgentSummaryList implements PaginatedList {
+  items: [AgentSummary]!
+  total_count: Int!
+}
+
+type AliasImage {
+  ok: Boolean
+  msg: String
+}
+
+type AssociateScalingGroupWithDomain {
+  ok: Boolean
+  msg: String
+}
+
+type AssociateScalingGroupWithKeyPair {
+  ok: Boolean
+  msg: String
+}
+
+type AssociateScalingGroupWithUserGroup {
+  ok: Boolean
+  msg: String
+}
+
+scalar BigInt
+
+type ClearImages {
+  ok: Boolean
+  msg: String
+}
+
+type ComputeContainer implements Item {
+  id: ID
+  idx: Int
+  role: String
+  hostname: String
+  cluster_idx: Int
+  local_rank: Int
+  cluster_role: String
+  cluster_hostname: String
+  session_id: UUID
+  image: String
+  architecture: String
+  registry: String
+  status: String
+  status_changed: DateTime
+  status_info: String
+  status_data: JSONString
+  created_at: DateTime
+  terminated_at: DateTime
+  starts_at: DateTime
+  abusing_report: JSONString
+  agent: String
+  agent_addr: String
+  container_id: String
+  resource_opts: JSONString
+  occupied_slots: JSONString
+  live_stat: JSONString
+  last_stat: JSONString
+}
+
+type ComputeContainerList implements PaginatedList {
+  items: [ComputeContainer]!
+  total_count: Int!
+}
+
+type ComputeSession implements Item {
+  id: ID
+  session_id: UUID
+  main_kernel_id: UUID
+  tag: String
+  name: String
+  type: String
+  image: String
+  architecture: String
+  registry: String
+  cluster_template: String
+  cluster_mode: String
+  cluster_size: Int
+  domain_name: String
+  group_name: String
+  group_id: UUID
+  user_email: String
+  full_name: String
+  user_id: UUID
+  access_key: String
+  created_user_email: String
+  created_user_id: UUID
+  status: String
+  status_changed: DateTime
+  status_info: String
+  status_data: JSONString
+  status_history: JSONString
+  created_at: DateTime
+  terminated_at: DateTime
+  starts_at: DateTime
+  startup_command: String
+  result: String
+  commit_status: String
+  abusing_reports: [JSONString]
+  idle_checks: JSONString
+  resource_opts: JSONString
+  scaling_group: String
+  service_ports: JSONString
+  mounts: [String]
+  vfolder_mounts: [String]
+  occupying_slots: JSONString
+  occupied_slots: JSONString
+  num_queries: BigInt
+  containers: [ComputeContainer]
+  dependencies: [ComputeSession]
+  inference_metrics: JSONString
+}
+
+type ComputeSessionList implements PaginatedList {
+  items: [ComputeSession]!
+  total_count: Int!
+}
+
+type CreateDomain {
+  ok: Boolean
+  msg: String
+  domain: Domain
+}
+
+type CreateGroup {
+  ok: Boolean
+  msg: String
+  group: Group
+}
+
+type CreateKeyPair {
+  ok: Boolean
+  msg: String
+  keypair: KeyPair
+}
+
+type CreateKeyPairResourcePolicy {
+  ok: Boolean
+  msg: String
+  resource_policy: KeyPairResourcePolicy
+}
+
+input CreateKeyPairResourcePolicyInput {
+  default_for_unspecified: String!
+  total_resource_slots: JSONString!
+  max_session_lifetime: Int! = 0
+  max_concurrent_sessions: Int!
+  max_containers_per_session: Int!
+  idle_timeout: BigInt!
+  max_vfolder_count: Int!
+  max_vfolder_size: BigInt!
+  allowed_vfolder_hosts: JSONString
+}
+
+type CreateResourcePreset {
+  ok: Boolean
+  msg: String
+  resource_preset: ResourcePreset
+}
+
+input CreateResourcePresetInput {
+  resource_slots: JSONString!
+  shared_memory: String
+}
+
+type CreateScalingGroup {
+  ok: Boolean
+  msg: String
+  scaling_group: ScalingGroup
+}
+
+input CreateScalingGroupInput {
+  description: String
+  is_active: Boolean
+  is_public: Boolean
+  wsproxy_addr: String
+  driver: String!
+  driver_opts: JSONString
+  scheduler: String!
+  scheduler_opts: JSONString
+  use_host_network: Boolean
+}
+
+type CreateUser {
+  ok: Boolean
+  msg: String
+  user: User
+}
+
+scalar DateTime
+
+type DealiasImage {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteDomain {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteGroup {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteKeyPair {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteKeyPairResourcePolicy {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteResourcePreset {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteScalingGroup {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteUser {
+  ok: Boolean
+  msg: String
+}
+
+type DisassociateAllScalingGroupsWithDomain {
+  ok: Boolean
+  msg: String
+}
+
+type DisassociateAllScalingGroupsWithGroup {
+  ok: Boolean
+  msg: String
+}
+
+type DisassociateScalingGroupWithDomain {
+  ok: Boolean
+  msg: String
+}
+
+type DisassociateScalingGroupWithKeyPair {
+  ok: Boolean
+  msg: String
+}
+
+type DisassociateScalingGroupWithUserGroup {
+  ok: Boolean
+  msg: String
+}
+
+type Domain {
+  name: String
+  description: String
+  is_active: Boolean
+  created_at: DateTime
+  modified_at: DateTime
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  allowed_docker_registries: [String]
+  integration_id: String
+  scaling_groups: [String]
+}
+
+input DomainInput {
+  description: String
+  is_active: Boolean
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  allowed_docker_registries: [String]
+  integration_id: String
+}
+
+type Endpoint implements Item {
+  id: ID
+  endpoint_id: UUID
+  image: String
+  model: UUID
+  domain: String
+  project: UUID
+  resource_group: String
+  resource_slots: JSONString
+  url: String
+  routings: [Routing]
+}
+
+type EndpointList implements PaginatedList {
+  items: [Endpoint]!
+  total_count: Int!
+}
+
+type ForgetImage {
+  ok: Boolean
+  msg: String
+}
+
+type Group {
+  id: UUID
+  name: String
+  description: String
+  is_active: Boolean
+  created_at: DateTime
+  modified_at: DateTime
+  domain_name: String
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  integration_id: String
+  scaling_groups: [String]
+}
+
+input GroupInput {
+  description: String
+  is_active: Boolean
+  domain_name: String!
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  integration_id: String
+}
+
+type Image {
+  id: UUID
+  name: String
+  humanized_name: String
+  tag: String
+  registry: String
+  architecture: String
+  is_local: Boolean
+  digest: String
+  labels: [KVPair]
+  aliases: [String]
+  size_bytes: BigInt
+  resource_limits: [ResourceLimit]
+  supported_accelerators: [String]
+  installed: Boolean
+  installed_agents: [String]
+  hash: String
+}
+
+interface Item {
+  id: ID
+}
+
+scalar JSONString
+
+type KVPair {
+  key: String
+  value: String
+}
+
+input KVPairInput {
+  key: String
+  value: String
+}
+
+type KeyPair implements Item {
+  id: ID
+  user_id: String
+  full_name: String
+  access_key: String
+  secret_key: String
+  is_active: Boolean
+  is_admin: Boolean
+  resource_policy: String
+  created_at: DateTime
+  last_used: DateTime
+  rate_limit: Int
+  num_queries: Int
+  user: UUID
+  ssh_public_key: String
+  vfolders: [VirtualFolder]
+  compute_sessions(status: String): [ComputeSession]
+  concurrency_used: Int
+  user_info: UserInfo
+  concurrency_limit: Int @deprecated(reason: "Moved to KeyPairResourcePolicy object as the max_concurrent_sessions field.")
+}
+
+input KeyPairInput {
+  is_active: Boolean
+  is_admin: Boolean
+  resource_policy: String!
+  concurrency_limit: Int
+  rate_limit: Int!
+}
+
+type KeyPairList implements PaginatedList {
+  items: [KeyPair]!
+  total_count: Int!
+}
+
+type KeyPairResourcePolicy {
+  name: String
+  created_at: DateTime
+  default_for_unspecified: String
+  total_resource_slots: JSONString
+  max_session_lifetime: Int
+  max_concurrent_sessions: Int
+  max_containers_per_session: Int
+  idle_timeout: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt
+  allowed_vfolder_hosts: JSONString
+}
+
+type LegacyComputeSession implements Item {
+  id: ID
+  tag: String
+  sess_id: String
+  sess_type: String
+  session_name: String
+  session_type: String
+  role: String
+  image: String
+  architecture: String
+  registry: String
+  domain_name: String
+  group_name: String
+  group_id: UUID
+  scaling_group: String
+  user_uuid: UUID
+  access_key: String
+  status: String
+  status_changed: DateTime
+  status_info: String
+  created_at: DateTime
+  terminated_at: DateTime
+  startup_command: String
+  result: String
+  agent: String
+  container_id: String
+  service_ports: JSONString
+  occupied_slots: JSONString
+  occupied_shares: JSONString
+  mounts: [[String]]
+  resource_opts: JSONString
+  num_queries: BigInt
+  live_stat: JSONString
+  last_stat: JSONString
+  user_email: String
+  lang: String
+  mem_slot: Int
+  cpu_slot: Float
+  gpu_slot: Float
+  tpu_slot: Float
+  cpu_used: BigInt
+  cpu_using: Float
+  mem_max_bytes: BigInt
+  mem_cur_bytes: BigInt
+  net_rx_bytes: BigInt
+  net_tx_bytes: BigInt
+  io_read_bytes: BigInt
+  io_write_bytes: BigInt
+  io_max_scratch_size: BigInt
+  io_cur_scratch_size: BigInt
+}
+
+type LegacyComputeSessionList implements PaginatedList {
+  items: [LegacyComputeSession]!
+  total_count: Int!
+}
+
+type ModifyAgent {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyAgentInput {
+  schedulable: Boolean
+  scaling_group: String
+}
+
+type ModifyDomain {
+  ok: Boolean
+  msg: String
+  domain: Domain
+}
+
+input ModifyDomainInput {
+  name: String
+  description: String
+  is_active: Boolean
+  total_resource_slots: JSONString
+  allowed_vfolder_hosts: JSONString
+  allowed_docker_registries: [String]
+  integration_id: String
+}
+
+type ModifyGroup {
+  ok: Boolean
+  msg: String
+  group: Group
+}
+
+input ModifyGroupInput {
+  name: String
+  description: String
+  is_active: Boolean
+  domain_name: String
+  total_resource_slots: JSONString
+  user_update_mode: String
+  user_uuids: [String]
+  allowed_vfolder_hosts: JSONString
+  integration_id: String
+}
+
+type ModifyImage {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyImageInput {
+  name: String
+  registry: String
+  image: String
+  tag: String
+  architecture: String
+  is_local: Boolean
+  size_bytes: Int
+  type: String
+  digest: String
+  labels: [KVPairInput]
+  supported_accelerators: [String]
+  resource_limits: [ResourceLimitInput]
+}
+
+type ModifyKeyPair {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyKeyPairInput {
+  is_active: Boolean
+  is_admin: Boolean
+  resource_policy: String
+  concurrency_limit: Int
+  rate_limit: Int
+}
+
+type ModifyKeyPairResourcePolicy {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyKeyPairResourcePolicyInput {
+  default_for_unspecified: String
+  total_resource_slots: JSONString
+  max_session_lifetime: Int
+  max_concurrent_sessions: Int
+  max_containers_per_session: Int
+  idle_timeout: BigInt
+  max_vfolder_count: Int
+  max_vfolder_size: BigInt
+  allowed_vfolder_hosts: JSONString
+}
+
+type ModifyResourcePreset {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyResourcePresetInput {
+  resource_slots: JSONString
+  shared_memory: String
+}
+
+type ModifyScalingGroup {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyScalingGroupInput {
+  description: String
+  is_active: Boolean
+  is_public: Boolean
+  wsproxy_addr: String
+  driver: String
+  driver_opts: JSONString
+  scheduler: String
+  scheduler_opts: JSONString
+  use_host_network: Boolean
+}
+
+type ModifySession {
+  ok: Boolean
+  msg: String
+  compute_session: ComputeSession
+}
+
+input ModifySessionInput {
+  name: String!
+}
+
+type ModifyUser {
+  ok: Boolean
+  msg: String
+  user: User
+}
+
+input ModifyUserInput {
+  username: String
+  password: String
+  need_password_change: Boolean
+  full_name: String
+  description: String
+  is_active: Boolean
+  status: String
+  domain_name: String
+  role: String
+  group_ids: [String]
+  allowed_client_ip: [String]
+  totp_activated: Boolean
+}
+
+type Mutations {
+  modify_agent(id: String!, props: ModifyAgentInput!): ModifyAgent
+  create_domain(name: String!, props: DomainInput!): CreateDomain
+  modify_domain(name: String!, props: ModifyDomainInput!): ModifyDomain
+  delete_domain(name: String!): DeleteDomain
+  purge_domain(name: String!): PurgeDomain
+  create_group(name: String!, props: GroupInput!): CreateGroup
+  modify_group(gid: UUID!, props: ModifyGroupInput!): ModifyGroup
+  delete_group(gid: UUID!): DeleteGroup
+  purge_group(gid: UUID!): PurgeGroup
+  create_user(email: String!, props: UserInput!): CreateUser
+  modify_user(email: String!, props: ModifyUserInput!): ModifyUser
+  delete_user(email: String!): DeleteUser
+  purge_user(email: String!, props: PurgeUserInput!): PurgeUser
+  create_keypair(props: KeyPairInput!, user_id: String!): CreateKeyPair
+  modify_keypair(access_key: String!, props: ModifyKeyPairInput!): ModifyKeyPair
+  delete_keypair(access_key: String!): DeleteKeyPair
+  rescan_images(registry: String): RescanImages
+  preload_image(references: [String]!, target_agents: [String]!): PreloadImage
+  unload_image(references: [String]!, target_agents: [String]!): UnloadImage
+  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
+  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
+  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
+  dealias_image(alias: String!): DealiasImage
+  clear_images(registry: String): ClearImages
+  create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy
+  modify_keypair_resource_policy(name: String!, props: ModifyKeyPairResourcePolicyInput!): ModifyKeyPairResourcePolicy
+  delete_keypair_resource_policy(name: String!): DeleteKeyPairResourcePolicy
+  create_resource_preset(name: String!, props: CreateResourcePresetInput!): CreateResourcePreset
+  modify_resource_preset(name: String!, props: ModifyResourcePresetInput!): ModifyResourcePreset
+  delete_resource_preset(name: String!): DeleteResourcePreset
+  create_scaling_group(name: String!, props: CreateScalingGroupInput!): CreateScalingGroup
+  modify_scaling_group(name: String!, props: ModifyScalingGroupInput!): ModifyScalingGroup
+  delete_scaling_group(name: String!): DeleteScalingGroup
+  associate_scaling_group_with_domain(domain: String!, scaling_group: String!): AssociateScalingGroupWithDomain
+  associate_scaling_group_with_user_group(scaling_group: String!, user_group: UUID!): AssociateScalingGroupWithUserGroup
+  associate_scaling_group_with_keypair(access_key: String!, scaling_group: String!): AssociateScalingGroupWithKeyPair
+  disassociate_scaling_group_with_domain(domain: String!, scaling_group: String!): DisassociateScalingGroupWithDomain
+  disassociate_scaling_group_with_user_group(scaling_group: String!, user_group: UUID!): DisassociateScalingGroupWithUserGroup
+  disassociate_scaling_group_with_keypair(access_key: String!, scaling_group: String!): DisassociateScalingGroupWithKeyPair
+  disassociate_all_scaling_groups_with_domain(domain: String!): DisassociateAllScalingGroupsWithDomain
+  disassociate_all_scaling_groups_with_group(user_group: UUID!): DisassociateAllScalingGroupsWithGroup
+  modify_compute_session(id: String!, props: ModifySessionInput!): ModifySession
+}
+
+interface PaginatedList {
+  items: [Item]!
+  total_count: Int!
+}
+
+type PredefinedAtomicPermission {
+  vfolder_host_permission_list: [String]
+}
+
+type PreloadImage {
+  ok: Boolean
+  msg: String
+  task_id: String
+}
+
+type PurgeDomain {
+  ok: Boolean
+  msg: String
+}
+
+type PurgeGroup {
+  ok: Boolean
+  msg: String
+}
+
+type PurgeUser {
+  ok: Boolean
+  msg: String
+}
+
+input PurgeUserInput {
+  purge_shared_vfolders: Boolean
+}
+
+type Queries {
+  agent(agent_id: String!): Agent
+  agent_list(limit: Int!, offset: Int!, filter: String, order: String, scaling_group: String, status: String): AgentList
+  agents(scaling_group: String, status: String): [Agent]
+  agent_summary(agent_id: String!): AgentSummary
+  agent_summary_list(limit: Int!, offset: Int!, filter: String, order: String, scaling_group: String, status: String): AgentSummaryList
+  domain(name: String): Domain
+  domains(is_active: Boolean): [Domain]
+  group(id: UUID!, domain_name: String): Group
+  groups_by_name(name: String!, domain_name: String): [Group]
+  groups(domain_name: String, is_active: Boolean): [Group]
+  image(reference: String!, architecture: String = "aarch64"): Image
+  images(is_installed: Boolean, is_operation: Boolean): [Image]
+  user(domain_name: String, email: String): User
+  user_from_uuid(domain_name: String, user_id: ID): User
+  users(domain_name: String, group_id: UUID, is_active: Boolean, status: String): [User]
+  user_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: UUID, is_active: Boolean, status: String): UserList
+  keypair(domain_name: String, access_key: String): KeyPair
+  keypairs(domain_name: String, email: String, is_active: Boolean): [KeyPair]
+  keypair_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, email: String, is_active: Boolean): KeyPairList
+  keypair_resource_policy(name: String): KeyPairResourcePolicy
+  keypair_resource_policies: [KeyPairResourcePolicy]
+  resource_preset(name: String): ResourcePreset
+  resource_presets: [ResourcePreset]
+  scaling_group(name: String): ScalingGroup
+  scaling_groups(name: String, is_active: Boolean): [ScalingGroup]
+  scaling_groups_for_domain(domain: String!, is_active: Boolean): [ScalingGroup]
+  scaling_groups_for_user_group(user_group: String!, is_active: Boolean): [ScalingGroup]
+  scaling_groups_for_keypair(access_key: String!, is_active: Boolean): [ScalingGroup]
+  storage_volume(id: String): StorageVolume
+  storage_volume_list(limit: Int!, offset: Int!, filter: String, order: String): StorageVolumeList
+  vfolder_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: UUID, access_key: String): VirtualFolderList
+  vfolder_permission_list(limit: Int!, offset: Int!, filter: String, order: String): VirtualFolderPermissionList
+  vfolders(domain_name: String, group_id: String, access_key: String): [VirtualFolder]
+  compute_session(id: UUID!): ComputeSession
+  compute_container(id: UUID!): ComputeContainer
+  compute_session_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: String, access_key: String, status: String): ComputeSessionList
+  compute_container_list(limit: Int!, offset: Int!, filter: String, order: String, session_id: ID!, role: String): ComputeContainerList
+  legacy_compute_session_list(limit: Int!, offset: Int!, order_key: String, order_asc: Boolean, domain_name: String, group_id: String, access_key: String, status: String): LegacyComputeSessionList
+  legacy_compute_session(sess_id: String!, domain_name: String, access_key: String): LegacyComputeSession
+  vfolder_host_permissions: PredefinedAtomicPermission
+  endpoint(endpoint_id: UUID!): Endpoint
+  endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, project: UUID): EndpointList
+  routing(routing_id: UUID!): Routing
+  routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
+}
+
+type RescanImages {
+  ok: Boolean
+  msg: String
+  task_id: UUID
+}
+
+type ResourceLimit {
+  key: String
+  min: String
+  max: String
+}
+
+input ResourceLimitInput {
+  key: String
+  min: String
+  max: String
+}
+
+type ResourcePreset {
+  name: String
+  resource_slots: JSONString
+  shared_memory: BigInt
+}
+
+type Routing implements Item {
+  id: ID
+  routing_id: UUID
+  endpoint: String
+  session: UUID
+  traffic_ratio: Float
+}
+
+type RoutingList implements PaginatedList {
+  items: [Routing]!
+  total_count: Int!
+}
+
+type ScalingGroup {
+  name: String
+  description: String
+  is_active: Boolean
+  is_public: Boolean
+  created_at: DateTime
+  wsproxy_addr: String
+  driver: String
+  driver_opts: JSONString
+  scheduler: String
+  scheduler_opts: JSONString
+  use_host_network: Boolean
+}
+
+type StorageVolume implements Item {
+  id: ID
+  backend: String
+  fsprefix: String
+  path: String
+  capabilities: [String]
+  hardware_metadata: JSONString
+  performance_metric: JSONString
+  usage: JSONString
+}
+
+type StorageVolumeList implements PaginatedList {
+  items: [StorageVolume]!
+  total_count: Int!
+}
+
+scalar UUID
+
+type UnloadImage {
+  ok: Boolean
+  msg: String
+  task_id: String
+}
+
+type User implements Item {
+  id: ID
+  uuid: UUID
+  username: String
+  email: String
+  need_password_change: Boolean
+  full_name: String
+  description: String
+  is_active: Boolean
+  status: String
+  status_info: String
+  created_at: DateTime
+  modified_at: DateTime
+  domain_name: String
+  role: String
+  allowed_client_ip: [String]
+  totp_activated: Boolean
+  totp_activated_at: DateTime
+  groups: [UserGroup]
+}
+
+type UserGroup {
+  id: UUID
+  name: String
+}
+
+type UserInfo {
+  email: String
+  full_name: String
+}
+
+input UserInput {
+  username: String!
+  password: String!
+  need_password_change: Boolean!
+  full_name: String
+  description: String
+  is_active: Boolean
+  status: String
+  domain_name: String!
+  role: String
+  group_ids: [String]
+  allowed_client_ip: [String]
+  totp_activated: Boolean
+}
+
+type UserList implements PaginatedList {
+  items: [User]!
+  total_count: Int!
+}
+
+type VirtualFolder implements Item {
+  id: ID
+  host: String
+  name: String
+  user: UUID
+  user_email: String
+  group: UUID
+  group_name: String
+  creator: String
+  unmanaged_path: String
+  usage_mode: String
+  permission: String
+  ownership_type: String
+  max_files: Int
+  max_size: BigInt
+  created_at: DateTime
+  last_used: DateTime
+  num_files: Int
+  cur_size: BigInt
+  cloneable: Boolean
+  status: String
+}
+
+type VirtualFolderList implements PaginatedList {
+  items: [VirtualFolder]!
+  total_count: Int!
+}
+
+type VirtualFolderPermission implements Item {
+  id: ID
+  permission: String
+  vfolder: UUID
+  vfolder_name: String
+  user: UUID
+  user_email: String
+}
+
+type VirtualFolderPermissionList implements PaginatedList {
+  items: [VirtualFolderPermission]!
+  total_count: Int!
+}
+

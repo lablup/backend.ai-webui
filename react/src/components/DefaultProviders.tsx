@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { RelayEnvironmentProvider } from "react-relay";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -11,6 +12,10 @@ import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
 import { BackendaiClientProvider } from "./BackendaiClientProvider";
 import { useCustomThemeConfig } from "../helper/customeThemeConfig";
+import { RelayEnvironment } from "../RelayEnvironment";
+
+// @ts-ignore
+import rawFixAntCss from "../fix_antd.css?raw";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
@@ -97,33 +102,38 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     };
   }, [value, dispatchEvent]);
   return (
-    <React.StrictMode>
-      <style>{styles}</style>
-      <QueryClientProvider client={queryClient}>
-        <ShadowRootContext.Provider value={shadowRoot}>
-          <BackendaiClientProvider>
-            <WebComponentContext.Provider value={componentValues}>
-              <ConfigProvider
-                // @ts-ignore
-                getPopupContainer={(triggerNode) => {
-                  if (triggerNode?.parentNode) {
-                    return triggerNode.parentNode;
-                  }
-                  return shadowRoot;
-                }}
-                //TODO: apply other supported locales
-                locale={"ko" === lang ? ko_KR : en_US}
-                theme={themeConfig}
-              >
-                <StyleProvider container={shadowRoot} cache={cache}>
-                  {children}
-                </StyleProvider>
-              </ConfigProvider>
-            </WebComponentContext.Provider>
-          </BackendaiClientProvider>
-        </ShadowRootContext.Provider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <RelayEnvironmentProvider environment={RelayEnvironment}>
+      <React.StrictMode>
+        <style>
+          {styles}
+          {rawFixAntCss}
+        </style>
+        <QueryClientProvider client={queryClient}>
+          <ShadowRootContext.Provider value={shadowRoot}>
+            <BackendaiClientProvider>
+              <WebComponentContext.Provider value={componentValues}>
+                <ConfigProvider
+                  // @ts-ignore
+                  getPopupContainer={(triggerNode) => {
+                    if (triggerNode?.parentNode) {
+                      return triggerNode.parentNode;
+                    }
+                    return shadowRoot;
+                  }}
+                  //TODO: apply other supported locales
+                  locale={"ko" === lang ? ko_KR : en_US}
+                  theme={themeConfig}
+                >
+                  <StyleProvider container={shadowRoot} cache={cache}>
+                    {children}
+                  </StyleProvider>
+                </ConfigProvider>
+              </WebComponentContext.Provider>
+            </BackendaiClientProvider>
+          </ShadowRootContext.Provider>
+        </QueryClientProvider>
+      </React.StrictMode>
+    </RelayEnvironmentProvider>
   );
 };
 

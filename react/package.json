@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@ant-design/icons": "^5.0.1",
+    "@ant-design/icons": "^5.1.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -12,7 +12,7 @@
     "@types/node": "^16.18.12",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.10",
-    "antd": "^5.4.0",
+    "antd": "^5.5.0",
     "dayjs": "^1.11.7",
     "i18next": "^22.4.14",
     "i18next-http-backend": "^2.2.0",
@@ -21,6 +21,7 @@
     "react-dom": "^18.2.0",
     "react-i18next": "^12.2.0",
     "react-query": "^3.39.3",
+    "react-relay": "^15.0.0",
     "react-router-dom": "^6.8.1",
     "react-scripts": "5.0.1",
     "react-shadow": "^20.0.0",
@@ -32,7 +33,8 @@
     "build": "craco build && npm run cp:build",
     "cp:build": "cp -r ./build/* ../build/rollup/",
     "test": "craco test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "relay": "relay-compiler"
   },
   "eslintConfig": {
     "extends": [
@@ -53,6 +55,10 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^7.0.0"
+    "@craco/craco": "^7.0.0",
+    "@types/react-relay": "^14.1.3",
+    "@types/relay-runtime": "^14.1.10",
+    "babel-plugin-relay": "^15.0.0",
+    "relay-compiler": "^15.0.0"
   }
 }
