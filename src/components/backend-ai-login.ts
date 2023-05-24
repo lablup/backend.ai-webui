@@ -24,6 +24,10 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
+//@ts-ignore for react-based component
+globalThis.BackendAIClient = ai.backend.Client;
+//@ts-ignore for react-based component
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 import {
   IronFlex,
@@ -1721,9 +1725,20 @@ export default class BackendAILogin extends BackendAIPage {
             </form>
           </div>
           <backend-ai-react-reset-password-required-modal 
-            value="${this.needToResetPassword}" 
+            value="${JSON.stringify({
+              open: this.needToResetPassword,
+              username: this.user_id,
+              currentPassword: this.password,
+              api_endpoint: this.api_endpoint,
+            })}" 
             @cancel="${(e)=> this.needToResetPassword = false}" 
-            @ok="${(e)=> this.needToResetPassword = false}"
+            @ok="${(e)=> {
+              this.needToResetPassword = false;
+              this.passwordInput.value = "";
+              
+              this.notification.text = _text('login.PasswordChanged');
+              this.notification.show();
+            }}"
           >
           </backend-ai-react-reset-password-required-modal>
         </div>

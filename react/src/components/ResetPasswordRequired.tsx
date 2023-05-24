@@ -3,15 +3,89 @@ import { useWebComponentInfo } from "./DefaultProviders";
 import Flex from "./Flex";
 import { useTranslation } from "react-i18next";
 import { WarningTwoTone } from "@ant-design/icons";
+import { useMutation as useTanMutation } from "react-query";
+import { parse } from "path";
+import { useAnonymousBackendaiClient } from "../hooks";
+import { baiSignedRequestWithPromise } from "../helper";
+import { useEffect } from "react";
+// import * as ai from "../lib/backend.ai-cleint-esm_on_react";
+// import { useSuspendedBackendaiClient } from "./BackendaiClientProvider";
 
 // src/components/backend-ai-common-utils.ts
 export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;
 
 const ResetPasswordRequired = () => {
   const { value, dispatchEvent } = useWebComponentInfo();
-  const open = value === "true";
+  let parsedValue: {
+    open: boolean;
+    currentPassword: string;
+    username: string;
+    api_endpoint: string;
+  };
+  try {
+    parsedValue = JSON.parse(value || "");
+  } catch (error) {
+    parsedValue = {
+      open: false,
+      currentPassword: "",
+      username: "",
+      api_endpoint: "",
+    };
+  }
+  const { open, currentPassword, username, api_endpoint } = parsedValue;
+
   const { token } = theme.useToken();
+  const [form] = Form.useForm<{
+    newPassword: string;
+    confirm: string;
+  }>();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (open) {
+      form.resetFields();
+    }
+  }, [open]);
+
+  const anonymousBaiClient = useAnonymousBackendaiClient({ api_endpoint });
+
+  //@ts-ignore
+
+  // console.log(baiClient);
+
+  const mutation = useTanMutation({
+    mutationFn: (body: {
+      username: string;
+      current_password: string;
+      new_password: string;
+    }) => {
+      return baiSignedRequestWithPromise({
+        method: "POST",
+        url: "/server/update-password-no-auth",
+        body,
+        client: anonymousBaiClient,
+      });
+    },
+  });
+
+  const onSubmit = () => {
+    form.validateFields().then((values) => {
+      mutation.mutate(
+        {
+          username: username,
+          current_password: currentPassword,
+          new_password: values.newPassword,
+        },
+        {
+          onSuccess(data, variables, context) {
+            dispatchEvent("ok", null);
+          },
+          onError(error, variables, context) {},
+        }
+      );
+    });
+  };
+
   return (
     <Modal
       open={open}
@@ -20,14 +94,12 @@ const ResetPasswordRequired = () => {
       onCancel={() => {
         dispatchEvent("cancel", null);
       }}
-      onOk={() => {
-        dispatchEvent("ok", null);
-      }}
       keyboard={false}
       maskClosable={false}
       footer={null}
-      width={400}
-      // title="Reset Password Required"
+      width={450}
+      destroyOnClose={true}
+      forceRender
     >
       <Flex
         direction="column"
@@ -45,18 +117,14 @@ const ResetPasswordRequired = () => {
           {t("webui.menu.PleaseChangeYourPassword")}
         </Typography.Title>
         {t("webui.menu.YouMushChangeYourPassword")}
-        <Form layout="vertical">
-          {/* <Form.Item
-            name="curPassword"
-            label={t("webui.menu.CurrentPassword")}
-            rules={[
-              {
-                required: true,
-              },
-            ]}
-          >
-            <Input.Password />
-          </Form.Item> */}
+        <Form
+          form={form}
+          layout="vertical"
+          initialValues={{
+            currentPassword: currentPassword,
+          }}
+          disabled={mutation.isLoading}
+        >
           <Form.Item
             name="newPassword"
             label={t("webui.menu.NewPassword")}
@@ -95,24 +163,12 @@ const ResetPasswordRequired = () => {
               }),
             ]}
           >
-            <Input.Password />
+            <Input.Password onPressEnter={onSubmit} />
           </Form.Item>
-          {/* <Form.Item
-            label="New Password"
-            name="password"
-            rules={[
-              {
-                pattern: passwordPattern,
-              },
-            ]}
-          >
-            <Input type="password" />
-          </Form.Item>
-          <Form.Item label="Confirm Password" name="confirmPassword">
-            <Input type="password" />
-          </Form.Item> */}
         </Form>
-        <Button type="primary">{t("webui.menu.Update")}</Button>
+        <Button type="primary" onClick={onSubmit} loading={mutation.isLoading}>
+          {t("webui.menu.Update")}
+        </Button>
       </Flex>
     </Modal>
   );
