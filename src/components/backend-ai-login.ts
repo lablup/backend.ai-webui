@@ -631,7 +631,7 @@ export default class BackendAILogin extends BackendAIPage {
     this.api_endpoint = this._getConfigValueByExists(generalConfig,
      {
        valueType: 'string',
-       defaultValue: '',
+       defaultValue: this.api_endpoint || '',
        value: generalConfig?.apiEndpoint
      } as ConfigValueObject) as string;
     if (this.api_endpoint === '') {
@@ -972,12 +972,12 @@ export default class BackendAILogin extends BackendAIPage {
       }
     }
     this.api_endpoint = this.api_endpoint.trim();
-    if (this.connection_mode === 'SESSION') {
+    if (this.connection_mode === 'SESSION' as ConnectionMode) {
       if (globalThis.isElectron) {
         this._loadConfigFromWebServer();
       }
       return this._checkLoginUsingSession();
-    } else if (this.connection_mode === 'API') {
+    } else if (this.connection_mode === 'API' as ConnectionMode) {
       return Promise.resolve(false);
     } else {
       return Promise.resolve(false);
@@ -1209,7 +1209,7 @@ export default class BackendAILogin extends BackendAIPage {
       `Backend.AI Console.`,
     );
     return this.client.get_manager_version().then(async () => {
-      const isLogon = await this.client?.check_login();
+      const isLogon = await this.check_login();
       if (isLogon === false) { // Not authenticated yet.
         this.block(_text('login.PleaseWait'), _text('login.ConnectingToCluster'));
 
