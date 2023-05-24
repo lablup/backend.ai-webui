@@ -36,3 +36,35 @@ export const useAnonymousBackendaiClient = ({
 
   return client;
 };
+
+export const useSuspendedBackendaiClient = () => {
+  const { data: client, refetch } = useQuery<any>({
+    queryKey: "backendai-client-for-suspense",
+    queryFn: () =>
+      new Promise((resolve) => {
+        if (
+          //@ts-ignore
+          typeof globalThis.backendaiclient === "undefined" ||
+          //@ts-ignore
+          globalThis.backendaiclient === null ||
+          //@ts-ignore
+          globalThis.backendaiclient.ready === false
+        ) {
+          const listener = () => {
+            // @ts-ignore
+            resolve(globalThis.backendaiclient);
+            document.removeEventListener("backend-ai-connected", listener);
+          };
+          document.addEventListener("backend-ai-connected", listener);
+        } else {
+          //@ts-ignore
+          return resolve(globalThis.backendaiclient);
+        }
+      }),
+    retry: false,
+    // enabled: false,
+    suspense: true,
+  });
+
+  return client;
+};
