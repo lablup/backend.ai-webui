@@ -26,17 +26,6 @@ const isPreparing = (status: string = "") => {
   return ["RESTARTING", "PREPARING", "PULLING"].includes(status);
 };
 
-// TODO:
-// 1. updateSession mutation for renaming (it should be return compute session object)
-
-// 2 implement Query node (id:ID)
-// type Query {
-//   "Fetches an object given its ID"
-//   node(
-//     "The ID of an object"
-//     id: ID!
-//   ): Node
-
 const SessionInfoCell: React.FC<{
   sessionFrgmt: SessionInfoCellFragment$key;
   onRename?: () => void;
@@ -55,7 +44,7 @@ const SessionInfoCell: React.FC<{
     `,
     sessionFrgmt
   );
-  // console.log(session);
+
   const mutation = useTanMutation({
     mutationFn: (newName: string) => {
       const sessionId =
@@ -63,26 +52,6 @@ const SessionInfoCell: React.FC<{
       return baiClient.rename(sessionId, newName);
     },
   });
-
-  // const [commitSessionMutation, isInflightSessionMutation] =
-  //   useMutation<SessionInfoCellMutation>(graphql`
-  //     mutation SessionInfoCellMutation(
-  //       $id: String!
-  //       $props: ModifySessionInput!
-  //     ) {
-  //       modify_compute_session(id: $id, props: $props) {
-  //         ok
-  //         msg
-  //         compute_session {
-  //           # ...SessionInfoCellFragment
-  //           id
-  //           name
-  //           cluster_mode
-  //           domain_name
-  //         }
-  //       }
-  //     }
-  //   `);
 
   const [form] = Form.useForm();
   const { t } = useTranslation();
@@ -105,22 +74,7 @@ const SessionInfoCell: React.FC<{
         onError: (error) => {
           setOptimisticName(session.name);
         },
-        // onSettled:
       });
-      // if (session.session_id) {
-      //   commitSessionMutation({
-      //     variables: {
-      //       id: session.session_id,
-      //       props: {
-      //         name,
-      //       },
-      //     },
-      //     onCompleted: (result) => {
-      //       console.log("####", result);
-      //       setEditing(false);
-      //     },
-      //   });
-      // }
     });
   };
 
