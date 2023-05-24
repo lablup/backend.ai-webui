@@ -362,7 +362,8 @@
     "GracePeriodDesc": "자원 사용량 기반 체커를 이 시간 동안 작동하지 않게 합니다. 이 시간이 지나기 전에는 사용량이 적더라도 연산 세션이 삭제되지 않습니다.",
     "UtilizationThreshold": "자원 사용량 기준",
     "UtilizationThresholdDesc": "연산 세션의 자원 사용량 기준입니다. 연산 세션의 자원 사용량이 일정 시간 동안 설정된 기준값을 넘지 못하면, 그 세션은 자동으로 삭제됩니다. 예를 들어, CUDA 사용률 기준을 1%로 설정했다면, 일정 시간 동안 1% 미만의 CUDA GPU 사용률을 보이는 연산 세션이 삭제됩니다. 값이 설정되지 않는 자원은 자동 삭제 기준에서 제외됩니다.",
-    "ExpiresAfter": "남은 시간"
+    "ExpiresAfter": "남은 시간",
+    "ConnectionExample": "접속 예제"
   },
   "button": {
     "Cancel": "취소",
@@ -615,7 +616,7 @@
       "FolderUsing": "사용량",
       "FolderQuota": "가용량",
       "MaxFolderQuota": "최대 할당 가능 용량",
-      "Serve": "__NOT_TRANSLATED__"
+      "Serve": "서비스"
     },
     "explorer": {
       "Delete": "삭제",
@@ -663,6 +664,13 @@
       "NoImagesSupportingFileBrowser": "파일브라우저를 지원하는 이미지가 없습니다. 폴더를 업로드하려면 파일브라우저 지원 이미지가 필요합니다.",
       "ClickFilebrowserButton": "폴더를 업로드하려면 파일브라우저 실행 버튼을 클릭해주세요.",
       "ReadOnlyFolderOnFileBrowser": "파일브라우저에서 읽기 전용 폴더를 열게 되면, 파일 또는 폴더 다운로드만 허용됩니다.",
+      "ExecuteSSH/SFTP": "SSH / SFTP 실행",
+      "NoImagesSupportingSystemSession": "SSH / SFTP를 지원하는 이미지가 없습니다. SSH / SFTP를 이용하려면 시스템 이미지가 필요합니다.",
+      "SftpScalingGroupsDoNotExist": "Sftp 자원 그룹이 없습니다.",
+      "ExecutingSSH/SFTPSession": "SSH / SFTP 세션을 실행합니다...",
+      "RunSSH/SFTPserver": "SFTP 서버 사용",
+      "SFTPSessionNotAvailable": "현재 SFTP 세션 사용이 불가능합니다.",
+      "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다."
     },
     "invitation": {

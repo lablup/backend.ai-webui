@@ -364,7 +364,8 @@
     "GracePeriodDesc": "__NOT_TRANSLATED__",
     "UtilizationThreshold": "__NOT_TRANSLATED__",
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
-    "ExpiresAfter": "__NOT_TRANSLATED__"
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -654,6 +655,13 @@
       "NoImagesSupportingFileBrowser": "Пока нет изображений, поддерживающих просмотрщик файлов. Для загрузки папок требуется по крайней мере одно или несколько изображений, поддерживающих просмотрщик файлов.",
       "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
       "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
       "FolderAlreadyExists": "__NOT_TRANSLATED__"

@@ -45,7 +45,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Number}) sshPort = 0;
+  @property({type: String}) sshHost = '127.0.0.1';
+  @property({type: String}) sshPort = '';
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
   @property({type: Number}) vscodeDesktopPort = 0;
@@ -292,6 +293,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
+      }
+    });
+    document.addEventListener('read-ssh-key-and-launch-ssh-dialog', (e: any) => {
+      if (e.detail) {
+        this._readSSHKey(e.detail.sessionUuid);
+        this.sshPort = e.detail.port;
+        this.sshHost = e.detail.host;
+        this._openSSHDialog();
       }
     });
   }
@@ -899,6 +908,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.sshHost = '127.0.0.1';
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
@@ -1298,15 +1308,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
-        <div slot="content" style="padding:15px;">
+        <div slot="content">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a>
+            <div><span>User:</span> work</div>
+            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
             </div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
+            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${this.sshPort}">sftp://${this.sshHost}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
+            <h4>${_t('session.ConnectionExample')}</h4>
+            <div class="monospace" style="background-color:#242424;padding:15px;">
+              <span style="color:#ffffff;">sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span>
+            </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
