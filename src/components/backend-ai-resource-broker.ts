@@ -152,6 +152,12 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     this.icons = globalThis.backendaimetadata.icons;
     this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
     this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.tags = globalThis.backendaimetadata.tags;
+      this.icons = globalThis.backendaimetadata.icons;
+      this.imageTagAlias = globalThis.backendaimetadata.imageTagAlias;
+      this.imageTagReplace = globalThis.backendaimetadata.imageTagReplace;
+    }, {once: true});
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         this._refreshImageList();
@@ -248,7 +254,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
 
       // Reload number of sessions
       const fields = ['name'];
-      await globalThis.backendaiclient.computeSession.list(fields, 'RUNNING', null, 1000)
+      await globalThis.backendaiclient?.computeSession?.list(fields, 'RUNNING', null, 1000)
         .then((res) => {
           if (!res.compute_session_list && res.legacy_compute_session_list) {
             res.compute_session_list = res.legacy_compute_session_list;
@@ -350,8 +356,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     if (Date.now() - this.lastVFolderQueryTime < 2000) {
       return Promise.resolve(false);
     }
-    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts(globalThis.backendaiclient.current_group_id());
-    const allowedHosts = vhostInfo.allowed;
+    const vhostInfo = await globalThis.backendaiclient?.vfolder?.list_hosts(globalThis.backendaiclient?.current_group_id());
+    const allowedHosts = vhostInfo?.allowed;
     const l = globalThis.backendaiclient.vfolder.list(globalThis.backendaiclient.current_group_id(), userEmail);
     return l.then((value) => {
       this.lastVFolderQueryTime = Date.now();
@@ -841,7 +847,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
             privateImages[supportsKey].push(item.tag);
           }
-          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE'].includes(label['value'])) {
+          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE', 'SYSTEM'].includes(label['value'])) {
             this.imageRoles[`${supportsKey}`] = label['value'];
           }
           if (label['key'] === 'ai.backend.model-path') {
@@ -946,7 +952,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       if (kernelName in this.icons) {
         icon = this.icons[kernelName];
       }
-      if ( globalThis.backendaiclient._config.allow_image_list !== undefined &&
+      if (globalThis.backendaiclient._config &&
+        globalThis.backendaiclient._config.allow_image_list !== undefined &&
         globalThis.backendaiclient._config.allow_image_list.length > 0 &&
         !globalThis.backendaiclient._config.allow_image_list.includes(item)) {
         // Do nothing

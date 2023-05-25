@@ -45,9 +45,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) refreshTimer = Object();
   @property({type: Object}) kernel_labels = Object();
   @property({type: Object}) indicator = Object();
-  @property({type: Number}) sshPort = 0;
+  @property({type: String}) sshHost = '127.0.0.1';
+  @property({type: String}) sshPort = '';
   @property({type: Number}) vncPort = 0;
   @property({type: Number}) xrdpPort = 0;
+  @property({type: Number}) vscodeDesktopPort = 0;
   @property({type: String}) tensorboardPath = '';
   @property({type: String}) endpointURL = '';
   @property({type: Boolean}) isPathConfigured = false;
@@ -72,6 +74,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @query('#terminal-guide') terminalGuideDialog!: BackendAIDialog;
   @query('#vnc-dialog') vncDialog!: BackendAIDialog;
   @query('#xrdp-dialog') xrdpDialog!: BackendAIDialog;
+  @query('#vscode-desktop-dialog') vscodeDesktopDialog!: BackendAIDialog;
 
   constructor() {
     super();
@@ -116,6 +119,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         .app-icon {
           margin-left: 15px;
           margin-right: 5px;
+          margin-bottom: 15px;
         }
 
         .app-icon .label {
@@ -137,6 +141,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         #app-dialog {
           --component-width: 400px;
+        }
+
+        #vscode-desktop-dialog {
+          --component-width: 450px;
         }
 
         #allowed-client-ips-container {
@@ -226,6 +234,37 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: inline-block;
         }
 
+        mwc-textfield#vscode-desktop-password {
+          width: 360px;
+          --mdc-text-field-fill-color: transparent;
+          --mdc-theme-primary: var(--general-textfield-selected-color);
+          --mdc-typography-font-family: var(--general-font-family);
+        }
+
+        .vscode-desktop-password {
+          min-height: 80px;
+          overflow-y: scroll;
+          white-space: pre-wrap;
+          word-wrap: break-word;
+          scrollbar-width: none; /* firefox */
+        }
+
+        wl-button.vscode-desktop-password {
+          display: inline-block;
+          margin: 10px;
+        }
+
+        wl-button.copy {
+          --button-font-size: 10px;
+          display: inline-block;
+          max-width: 15px !important;
+          max-height: 15px !important;
+        }
+
+        wl-icon#vscode-desktop-password-icon {
+          color: var(--paper-indigo-700);
+        }
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -235,11 +274,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._initializeAppTemplate();
-    this.refreshTimer = null;
     this.imageInfo = globalThis.backendaimetadata.imageInfo;
     this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
-
+    document.addEventListener('backend-ai-metadata-image-loaded', () => {
+      this.imageInfo = globalThis.backendaimetadata.imageInfo;
+      this.kernel_labels = globalThis.backendaimetadata.kernel_labels;
+    }, {once: true});
+    this._initializeAppTemplate();
+    this.refreshTimer = null;
     // add WebTerminalGuide UI dynamically
     this._createTerminalGuide();
     // add DonotShowOption dynamically
@@ -251,6 +293,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         localStorage.setItem('backendaiwebui.terminalguide', 'true');
       } else {
         localStorage.setItem('backendaiwebui.terminalguide', 'false');
+      }
+    });
+    document.addEventListener('read-ssh-key-and-launch-ssh-dialog', (e: any) => {
+      if (e.detail) {
+        this._readSSHKey(e.detail.sessionUuid);
+        this.sshPort = e.detail.port;
+        this.sshHost = e.detail.host;
+        this._openSSHDialog();
       }
     });
   }
@@ -462,6 +512,21 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
       }
     });
+
+    if (
+      globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
+      globalThis.isElectron &&
+      !appServices.includes('vscode-desktop')
+    ) {
+      const insertAfterIndex = this.appSupportList.findIndex((item) => item.name === 'vscode');
+      this.appSupportList.splice(insertAfterIndex + 1, 0, {
+        name: 'vscode-desktop',
+        title: 'Visual Studio Code (Desktop)',
+        category: '2.Development',
+        redirect: '',
+        src: './resources/icons/vscode.svg'
+      });
+    }
     this.openPortToPublic = globalThis.backendaiclient._config.openPortToPublic;
     this.allowPreferredPort = globalThis.backendaiclient._config.allowPreferredPort;
     this._toggleChkOpenToPublic();
@@ -575,8 +640,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (servicePortInfo === undefined) {
       this.indicator.end();
       this.notification.text = _text('session.CreationFailed'); // TODO: Change text
-
-      this.notification.show();
+      if (app !== 'vscode-desktop') {
+        this.notification.show();
+      }
       return Promise.resolve(false);
     }
 
@@ -665,6 +731,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const envs = null;
     const mode = param['mode'];
     let args = null;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -680,6 +747,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this._openTensorboardDialog();
       return;
     }
+    if (appName === 'ttyd') {
+      const isVisible = localStorage.getItem('backendaiwebui.terminalguide');
+      if (!isVisible || isVisible === 'true') {
+        this._openTerminalGuideDialog();
+      }
+    }
+    if (appName === 'vscode-desktop') {
+      this._openVSCodeDesktopDialog();
+      return;
+    }
 
     if (typeof globalThis.backendaiwsproxy === 'undefined' || globalThis.backendaiwsproxy === null) {
       this._hideAppLauncher();
@@ -691,12 +768,18 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      if (globalThis.isElectron && appName === 'vscode-desktop') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd';
+      }
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           if (response.url) {
             if (mode === 'inference') {
               this.indicator.set(100, _text('session.applauncher.Prepared'));
-              console.log(response);
               this.endpointURL = response.proxy;
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
@@ -778,6 +861,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let urlPostfix = config['url-postfix'];
     const envs = null;
     const args = null;
+    const defaultPreferredPortNumber = 10250;
+    let sendAppName = appName;
     if (appName === undefined || appName === null) {
       return;
     }
@@ -807,15 +892,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           port = null;
         }
       }
-      const userPort = parseInt(this.appPort?.value);
-      if (this.checkPreferredPort?.checked && userPort) {
+      if (globalThis.isElectron && appName === 'vscode-desktop') {
+        port = globalThis.backendaioptions.get('custom_ssh_port', 0);
+        if (port === '0' || port === 0) { // setting store does not accept null.
+          port = null;
+        }
+        sendAppName = 'sshd';
+      }
+      const userPort = (this.appPort === null || this.appPort === undefined) ? defaultPreferredPortNumber : parseInt(this.appPort?.value);
+      if (this.checkPreferredPort !== null && this.checkPreferredPort?.checked && userPort) {
         port = userPort;
       }
-      this._open_wsproxy(sessionUuid, appName, port, envs, args)
+      this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
           await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.sshHost = '127.0.0.1';
             this.sshPort = response.port;
             this._readSSHKey(sessionUuid);
             this._openSSHDialog();
@@ -830,6 +923,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.xrdpPort = response.port;
             this._openXRDPDialog();
+          } else if (appName === 'vscode-desktop') {
+            this.indicator.set(100, _text('session.applauncher.Prepared'));
+            this.vscodeDesktopPort = response.port;
+            this._readTempPasswd(sessionUuid);
+            this._openVSCodeDesktopDialog();
+            setTimeout(() => {
+              this.indicator.end();
+            }, 1000);
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
@@ -858,6 +959,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const trimmedBlob = await blob.slice(index, blob.size, blob.type);
     downloadLinkEl.href = globalThis.URL.createObjectURL(trimmedBlob);
     downloadLinkEl.download = 'id_container';
+  }
+
+  /**
+   * Read temp password
+   *
+   * @param {string} sessionUuid
+   */
+  async _readTempPasswd(sessionUuid) {
+    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-desktop-password') as HTMLInputElement;
+    const file = '/home/work/.password';
+    const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
+    const rawText = await blob.text();
+    vscodePasswordEl.value = rawText;
   }
 
   /**
@@ -962,13 +1076,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         button.removeAttribute('disabled');
         setTimeout(() => {
           globalThis.open(response.url + urlPostfix, '_blank');
-          console.log(appName + ' proxy loaded: ');
-          console.log(sessionUuid);
+          // console.log(appName + ' proxy loaded: ');
+          // console.log(sessionUuid);
         }, 1000);
       });
     } catch (e) {
       button.removeAttribute('disabled');
     }
+  }
+
+  /**
+   * Open a VS Code dialog.
+   */
+  _openVSCodeDesktopDialog() {
+    this.vscodeDesktopDialog.show();
   }
 
   /**
@@ -1078,6 +1199,40 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  /**
+   * Copy Remote VS Code password to clipboard
+   *
+   * @param {string} vscodePassword - ssh(remote VS Code) access password
+   * */
+  _copyVSCodePassword(vscodePassword: string) {
+    if (vscodePassword !== '') {
+      const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
+      if (copyText.length == 0) {
+        this.notification.text = _text('usersettings.NoExistingVSCodePassword');
+        this.notification.show();
+      } else {
+        if (navigator.clipboard !== undefined) { // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then( () => {
+            this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
+            this.notification.show();
+          }, (err) => {
+            console.error('Could not copy text: ', err);
+          });
+        } else { // other browsers
+          const tmpInputElement = document.createElement('input');
+          tmpInputElement.type = 'text';
+          tmpInputElement.value = copyText;
+
+          document.body.appendChild(tmpInputElement);
+          tmpInputElement.select();
+          document.execCommand('copy'); // copy operation
+          document.body.removeChild(tmpInputElement);
+        }
+      }
+    }
+  }
+
+
   render() {
     // language=HTML
     return html`
@@ -1153,15 +1308,20 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       </backend-ai-dialog>
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
-        <div slot="content" style="padding:15px;">
+        <div slot="content">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h4>${_t('session.ConnectionInformation')}</h4>
-            <div><span>SSH URL:</span> <a href="ssh://127.0.0.1:${this.sshPort}">ssh://127.0.0.1:${this.sshPort}</a>
+            <div><span>User:</span> work</div>
+            <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
             </div>
-            <div><span>SFTP URL:</span> <a href="sftp://127.0.0.1:${this.sshPort}">sftp://127.0.0.1:${this.sshPort}</a>
+            <div><span>SFTP URL:</span> <a href="sftp://${this.sshHost}:${this.sshPort}">sftp://${this.sshHost}</a>
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
+            <h4>${_t('session.ConnectionExample')}</h4>
+            <div class="monospace" style="background-color:#242424;padding:15px;">
+              <span style="color:#ffffff;">sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span>
+            </div>
           </section>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -1173,7 +1333,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="tensorboard-dialog" fixed>
         <span slot="title">${_t('session.TensorboardPath')}</span>
         <div slot="content" class="vertical layout">
-          <div>${_t('session.InputTensorboardPath')}</div>
+        <div>${_t('session.InputTensorboardPath')}</div>
           <mwc-textfield id="tensorboard-path" value="${_t('session.DefaultTensorboardPath')}"></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal end-justified center flex layout">
@@ -1238,6 +1398,43 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <span slot="title">${_t('webTerminalUsageGuide.CopyGuide')}</span>
         <div slot="content"></div>
         <div slot="footer"></div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="vscode-desktop-dialog" fixed backdrop>
+        <span slot="title">${_t('session.VSCodeRemoteConnection')}</span>
+        <div slot="content">
+          <div>${_t('session.VSCodeRemoteDescription')}</div>
+          <section class="vertical layout wrap start start-justified">
+            <h3>${_t('session.ConnectionInformation')}</h4>
+            <div slot="content">
+              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
+              <mwc-textfield
+                readonly
+                class="vscode-desktop-password"
+                id="vscode-desktop-password"
+              ></mwc-textfield>
+              <mwc-icon-button
+                id="copy-vscode-password-button"
+                icon="content_copy"
+                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
+              ></mwc-icon-button>
+            </div>
+            <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
+              <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
+              <p style="margin:auto 10px;">
+                <pre style="white-space:pre-line; margin:10px 10px 0 10px">
+                  Host 127.0.0.1
+                  &nbsp;&nbsp;StrictHostKeyChecking no
+                  &nbsp;&nbsp;UserKnownHostsFile /dev/null
+                </pre>
+              </p>
+            </div>
+          </section>
+        </div>
+        <div slot="footer" class="horizontal center-justified flex layout">
+          <a id="vscode-link" style="margin-top:15px;width:100%;" href="vscode://vscode-remote/ssh-remote+work@127.0.0.1%3A${this.vscodeDesktopPort}/home/work">
+            <mwc-button unelevated fullwidth>${_t('OpenVSCodeRemote')}</mwc-button>
+          </a>
+        </div>
       </backend-ai-dialog>
     `;
   }

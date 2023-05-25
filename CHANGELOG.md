@@ -1,7 +1,18 @@
 # Changelog
 
-## v22.09.18 (26/03/2023)
+## v22.09.19 (03/04/2023)
+## What's Changed
+* feat: add support for setting `inference` as allowed session type by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1668
+* fix: escape status info detail message text. by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1670
+* refactor: change idle checks column based on changed data structure by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1666
+* fix: display explicit message when a user tries to create a session with the same name of a running session by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1674
+* fix: add `enqueueOnly` option to image installation by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1672
+* fix: unable to open app launcher dialog by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1677
+* fix: incorrect display of grace idle period over one day by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1678
 
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.18...v22.09.19
+
+## v22.09.18 (26/03/2023)
 ## What's Changed
 * fix: use SI unit (e.g., GB not GiB) for quota-related fields by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1650
 * fix : remain highlight after click on help button by @kin4496 in https://github.com/lablup/backend.ai-webui/pull/1655
