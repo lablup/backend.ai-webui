@@ -83,7 +83,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	security list-keychain -d user -s login.keychain
 	security list-keychain -d user -s "${KEYCHAIN_NAME}"
 	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
-	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
+	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME})
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
