@@ -28,7 +28,7 @@ versiontag:
 compile_keepversion:
 	BUILD_TARGET=electron npm run build
 compile: versiontag
-	BUILD_TARGET=electron npm run build
+	npm run build
 compile_wsproxy:
 	cd ./src/wsproxy; npx webpack --config webpack.config.js
 	#cd ./src/wsproxy; rollup -c rollup.config.ts
@@ -81,7 +81,7 @@ endif  # BAI_APP_SIGN_KEYCHAIN_PASSWORD
 	security list-keychain -d user -s login.keychain
 	security list-keychain -d user -s "${KEYCHAIN_NAME}"
 	security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "${KEYCHAIN_NAME}"
-	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME}) 
+	$(eval BAI_APP_SIGN_KEYCHAIN := ${KEYCHAIN_NAME})
 	echo Keychain ${KEYCHAIN_NAME} created for build
 endif  # BAI_APP_SIGN_KEYCHAIN_B64
 endif  # BAI_APP_SIGN_KEYCHAIN
