@@ -24,6 +24,10 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
+//@ts-ignore for react-based component
+globalThis.BackendAIClient = ai.backend.Client;
+//@ts-ignore for react-based component
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 import {
   IronFlex,
@@ -124,6 +128,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: Boolean}) otpRequired = false;
   @property({type: String}) otp;
+  @property({type: Boolean}) needToResetPassword = false;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -1250,6 +1255,8 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
+            }  else if (response.fail_reason.indexOf('Password expired on ') === 0) {
+              this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
@@ -1727,6 +1734,23 @@ export default class BackendAILogin extends BackendAIPage {
               </fieldset>
             </form>
           </div>
+          <backend-ai-react-reset-password-required-modal 
+            value="${JSON.stringify({
+              open: this.needToResetPassword,
+              username: this.user_id,
+              currentPassword: this.password,
+              api_endpoint: this.api_endpoint,
+            })}" 
+            @cancel="${(e)=> this.needToResetPassword = false}" 
+            @ok="${(e)=> {
+              this.needToResetPassword = false;
+              this.passwordInput.value = "";
+              
+              this.notification.text = _text('login.PasswordChanged');
+              this.notification.show();
+            }}"
+          >
+          </backend-ai-react-reset-password-required-modal>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
