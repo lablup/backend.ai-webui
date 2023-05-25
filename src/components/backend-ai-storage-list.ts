@@ -2886,7 +2886,6 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Launch system role filebrowser image and open the dialog that includes the ssh link.
    */
   async _launchSystemRoleSSHSession() {
-    let sessionId;
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
@@ -2920,7 +2919,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         const directAccessInfo = await globalThis.backendaiclient.get_direct_access_info(sessionResponse.sessionId);
         const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
         const port = directAccessInfo.sshd_ports;
-        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
+        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionResponse.sessionId, host: host, port: port}});
         document.dispatchEvent(event);
         indicator.end(100);
       } catch (err) {
