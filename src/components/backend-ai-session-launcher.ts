@@ -2100,7 +2100,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
             this.npuResouceSlider.disabled = true;
           }
-          console.log(atom_device_metric);
           this._NPUDeviceNameOnSlider = 'ATOM';
           this.npu_device_metric = atom_device_metric;
         }
