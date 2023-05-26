@@ -242,7 +242,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#next-button') nextButton!: IconButton;
   @query('#OpenMPswitch') openMPSwitch!: Switch;
   @query('#cpu-resource') cpuResouceSlider!: LablupSlider;
-  @query('#gpu-resource') npuResouceSlider!: LablupSlider;
+  @query('#gpu-resource') npmResourceSlider!: LablupSlider;
   @query('#mem-resource') memoryResouceSlider!: LablupSlider;
   @query('#shmem-resource') sharedMemoryResouceSlider!: LablupSlider;
   @query('#session-resource') sessionResouceSlider!: LablupSlider;
@@ -1354,7 +1354,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.cpu_request = parseInt(this.cpuResouceSlider.value);
     this.mem_request = parseFloat(this.memoryResouceSlider.value);
     this.shmem_request = parseFloat(this.sharedMemoryResouceSlider.value);
-    this.gpu_request = parseFloat(this.npuResouceSlider.value);
+    this.gpu_request = parseFloat(this.npmResourceSlider.value);
     this.session_request = parseInt(this.sessionResouceSlider.value);
     this.num_sessions = this.session_request;
     if (this.sessions_list.includes(sessionName)) {
@@ -1894,7 +1894,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       // Post-UI markup to disable unchangeable values
       this.cpuResouceSlider.disabled = false;
       this.memoryResouceSlider.disabled = false;
-      this.npuResouceSlider.disabled = false;
+      this.npmResourceSlider.disabled = false;
       if (globalThis.backendaiclient.supports('multi-container')) { // initialize cluster_size
         this.cluster_size = 1;
         this.clusterSizeSlider.value = this.cluster_size;
@@ -1976,7 +1976,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_device_metric.min = cuda_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
           this.npu_device_metric = cuda_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -2002,7 +2002,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               cuda_shares_metric.min = cuda_shares_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
 
           this.cuda_shares_metric = cuda_shares_metric;
@@ -2020,7 +2020,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               rocm_device_metric.min = rocm_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
           this.npu_device_metric = rocm_device_metric;
           this._NPUDeviceNameOnSlider = 'GPU';
@@ -2046,7 +2046,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               tpu_device_metric.min = tpu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
           this.npu_device_metric = tpu_device_metric;
           this._NPUDeviceNameOnSlider = 'TPU';
@@ -2072,7 +2072,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ipu_device_metric.min = ipu_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
           this.npu_device_metric = ipu_device_metric;
           this._NPUDeviceNameOnSlider = 'IPU';
@@ -2098,9 +2098,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               atom_device_metric.min = atom_device_metric.max;
               disableLaunch = true;
             }
-            this.npuResouceSlider.disabled = true;
+            this.npmResourceSlider.disabled = true;
           }
-          console.log(atom_device_metric);
           this._NPUDeviceNameOnSlider = 'ATOM';
           this.npu_device_metric = atom_device_metric;
         }
@@ -2165,8 +2164,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
       // GPU metric
       if (this.npu_device_metric.min == 0 && this.npu_device_metric.max == 0) { // GPU is disabled (by image,too).
-        this.npuResouceSlider.disabled = true;
-        this.npuResouceSlider.value = 0;
+        this.npmResourceSlider.disabled = true;
+        this.npmResourceSlider.value = 0;
         if (this.resource_templates.length > 0) { // Remove mismatching templates
           const new_resource_templates: any = [];
           for (let i = 0; i < this.resource_templates.length; i++) {
@@ -2205,7 +2204,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (disableLaunch) {
         this.cpuResouceSlider.disabled = true; // Not enough CPU. so no session.
         this.memoryResouceSlider.disabled = true;
-        this.npuResouceSlider.disabled = true;
+        this.npmResourceSlider.disabled = true;
         this.sessionResouceSlider.disabled = true;
         this.sharedMemoryResouceSlider.disabled = true;
         this.launchButton.disabled = true;
@@ -2217,7 +2216,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this.cpuResouceSlider.disabled = false;
         this.memoryResouceSlider.disabled = false;
-        this.npuResouceSlider.disabled = false;
+        this.npmResourceSlider.disabled = false;
         this.sessionResouceSlider.disabled = false;
         this.sharedMemoryResouceSlider.disabled = false;
         this.launchButton.disabled = false;
@@ -2228,7 +2227,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       if (this.npu_device_metric.min == this.npu_device_metric.max &&
           this.npu_device_metric.max < 1) {
-        this.npuResouceSlider.disabled = true;
+        this.npmResourceSlider.disabled = true;
       }
       if (this.concurrency_limit <= 1) {
         // this.shadowRoot.querySelector('#cluster-size').disabled = true;
@@ -2509,7 +2508,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _updateResourceIndicator(cpu, mem, gpu_type, gpu_value) {
     this.cpuResouceSlider.value = cpu;
     this.memoryResouceSlider.value = mem;
-    this.npuResouceSlider.value = gpu_value;
+    this.npmResourceSlider.value = gpu_value;
     this.sharedMemoryResouceSlider.value = this.shmem_request;
     this.cpu_request = cpu;
     this.mem_request = mem;
