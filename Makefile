@@ -26,7 +26,7 @@ versiontag:
 	sed -i -E 's/globalThis.buildVersion = "\([^"]*\)"/globalThis.buildVersion = "${BUILD_DATE}\.${BUILD_TIME}"/g' index.html
 	sed -i -E 's/\<small class="sidebar-footer" style="font-size:9px;"\>\([^"]*\)\<\/small\>/\<small class="sidebar-footer" style="font-size:9px;"\>${BUILD_VERSION}.${BUILD_DATE}\<\/small\>/g' ./src/components/backend-ai-webui.ts
 compile_keepversion:
-	BUILD_TARGET=electron npm run build
+	npm run build
 compile: versiontag
 	npm run build
 compile_wsproxy:
@@ -48,6 +48,8 @@ dep:
 	cp -Rp build/rollup build/electron-app/app
 	cp -Rp build/rollup/resources build/electron-app
 	cp -Rp build/rollup/manifest build/electron-app
+	BUILD_TARGET=electron npm run build:react-only
+	cp -Rp react/build/* build/electron-app/app/
 	sed -i -E 's/\.\/dist\/components\/backend-ai-webui.js/es6:\/\/dist\/components\/backend-ai-webui.js/g' build/electron-app/app/index.html
 	mkdir -p ./build/electron-app/app/wsproxy
 	cp ./src/wsproxy/dist/wsproxy.js ./build/electron-app/app/wsproxy/wsproxy.js
