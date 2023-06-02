@@ -142,6 +142,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     mem: 0.5
   };
   @property({type: Array}) filebrowserSupportedImages = [];
+  @property({type: Array}) systemRoleSupportedImages = [];
   @property({type: Object}) volumeInfo = Object();
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
   @property({type: Object}) quotaUnit = {
@@ -511,9 +512,9 @@ export default class BackendAiStorageList extends BackendAIPage {
           filter: grayscale(1.0);
         }
 
-        img#filebrowser-img {
-          width:24px;
-          margin:15px 10px;
+        img#filebrowser-img, img#ssh-img {
+          width: 18px;
+          margin: 15px 10px;
         }
 
         @media screen and (max-width: 700px) {
@@ -844,8 +845,21 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <img
                   id="filebrowser-img"
                   alt="File Browser"
-                  src="./resources/icons/filebrowser.svg"></img>
+                  src="./resources/icons/filebrowser.svg" />
                 <span>${_t('data.explorer.ExecuteFileBrowser')}</span>
+            </mwc-button>
+          </div>
+          <div>
+            <mwc-button
+              id="ssh-btn"
+              title="SSH / SFTP"
+              @click="${() => this._executeSSHProxyAgent()}"
+            >
+              <img
+                id="ssh-img"
+                alt="SSH / SFTP"
+                src="/resources/icons/sftp.png"/>
+              <span>${_t('data.explorer.RunSSH/SFTPserver')}</span>
             </mwc-button>
           </div>
         </div>
@@ -1690,7 +1704,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Check the images that supports filebrowser application
    *
    */
-  async _checkFilebrowserSupported() {
+  async _checkImageSupported() {
     const fields = [
       'name', 'tag', 'registry', 'digest', 'installed',
       'labels { key value }',
@@ -1705,7 +1719,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         label.value.toLowerCase().includes('filebrowser'),
       ),
     );
+    // Filter service supported images.
+    this.systemRoleSupportedImages = images.filter((image) =>
+      image.labels.find((label) =>
+        label.key === 'ai.backend.role' &&
+        label.value.toLowerCase().includes('system'),
+      ),
+    );
   }
+
 
   async _viewStateChanged(active) {
     await this.updateComplete;
@@ -1721,7 +1743,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
         this._getAllowedVFolderHostsByCurrentUserInfo();
-        this._checkFilebrowserSupported();
+        this._checkImageSupported();
         this._getVolumeInformation();
         this._triggerFolderListChanged();
         this._refreshFolderList(false, 'viewStatechanged');
@@ -1734,7 +1756,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
       this._getAllowedVFolderHostsByCurrentUserInfo();
-      this._checkFilebrowserSupported();
+      this._checkImageSupported();
       this._getVolumeInformation();
       this._triggerFolderListChanged();
       this._refreshFolderList(false, 'viewStatechanged');
@@ -2258,10 +2280,11 @@ export default class BackendAiStorageList extends BackendAIPage {
     }
     this.explorerFiles = this.explorer.files;
     if (dialog) {
-      if (this.filebrowserSupportedImages.length === 0) {
-        await this._checkFilebrowserSupported();
+      if (this.filebrowserSupportedImages.length === 0 || this.systemRoleSupportedImages.length === 0) {
+        await this._checkImageSupported();
       }
       this._toggleFilebrowserButton();
+      this._toggleSSHSessionButton();
       this.openDialog('folder-explorer-dialog');
     }
   }
@@ -2289,9 +2312,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   _folderExplorer(rowData) {
     const folderName = rowData.item.name;
     const isWritable = this._hasPermission(rowData.item, 'w') || rowData.item.is_owner || (rowData.item.type === 'group' && this.is_admin);
+    this.vhost = rowData.item.host;
 
     const explorer = {
       id: folderName,
+      uuid: rowData.item.id,
       breadcrumb: ['.'],
     };
 
@@ -2766,7 +2791,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         if ((isNotificationVisible == null || isNotificationVisible === 'true') && !this.isWritable) {
           this.fileBrowserNotificationDialog.show();
         }
-        this._launchSession();
+        this._launchFileBrowserSession();
         this._toggleFilebrowserButton();
       } else {
         this.notification.text = _text('data.explorer.NoImagesSupportingFileBrowser');
@@ -2795,7 +2820,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Open the session launcher dialog to execute filebrowser app.
    *
    */
-  async _launchSession() {
+  async _launchFileBrowserSession() {
     let appOptions;
     const imageResource: Record<string, unknown> = {};
     // monkeypatch for filebrowser applied environment
@@ -2815,7 +2840,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     const indicator = await this.indicator.start('indeterminate');
 
     return globalThis.backendaiclient.get_resource_slots().then((response) => {
-      indicator.set(200, _text('data.explorer.ExecutingFileBrowser'));
+      indicator.set(20, _text('data.explorer.ExecutingFileBrowser'));
       return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 10000, undefined);
     }).then(async (res) => {
       const service_info = res.servicePorts;
@@ -2838,8 +2863,83 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.notification.text = PainKiller.relieve(err.title);
       this.notification.detail = err.message;
       this.notification.show(true, err);
-      indicator.end(1000);
+      indicator.end(100);
     });
+  }
+
+  _executeSSHProxyAgent() {
+    if (this.volumeInfo[this.vhost]?.sftp_scaling_groups?.length > 0) {
+      if (this.systemRoleSupportedImages.length > 0) {
+        this._launchSystemRoleSSHSession();
+        this._toggleSSHSessionButton();
+      } else {
+        this.notification.text = _text('data.explorer.NoImagesSupportingSystemSession');
+        this.notification.show();
+      }
+    } else {
+      this.notification.text = _text('data.explorer.SFTPSessionNotAvailable');
+      this.notification.show();
+    }
+  }
+
+  /**
+   * Launch system role filebrowser image and open the dialog that includes the ssh link.
+   */
+  async _launchSystemRoleSSHSession() {
+    const imageResource: Record<string, unknown> = {};
+    const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
+    const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
+    // TODO: use lablup/openssh-server image
+    // select one image to launch system role supported session
+    const preferredImage = images[0];
+    const environment = configSSHImage !== '' ? configSSHImage : preferredImage['registry'] + '/' + preferredImage['name'] + ':' + preferredImage['tag'];
+
+    // add current folder
+    imageResource['mounts'] = [this.explorer.id];
+    imageResource['cpu'] = 1;
+    imageResource['mem'] = '256m';
+    imageResource['domain'] = globalThis.backendaiclient._config.domainName;
+    imageResource['scaling_group'] = this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
+    const indicator = await this.indicator.start('indeterminate');
+    return (async () => {
+      try {
+        await globalThis.backendaiclient.get_resource_slots();
+        indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
+        const sessionResponse = await globalThis.backendaiclient.createIfNotExists(environment, `sftp-${this.explorer.uuid}`, imageResource, 15000, undefined);
+        if (sessionResponse.status === "CANCELLED") { // Max # of upload sessions exceeded for this used
+          this.notification.text = PainKiller.relieve(_text('data.explorer.NumberOfSFTPSessionsExceededTitle'));
+          this.notification.detail = _text('data.explorer.NumberOfSFTPSessionsExceededBody');
+          this.notification.show(true, {
+            title: _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
+            message: _text('data.explorer.NumberOfSFTPSessionsExceededBody')
+          });
+          indicator.end(100);
+          return;
+        }
+        const directAccessInfo = await globalThis.backendaiclient.get_direct_access_info(sessionResponse.sessionId);
+        const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
+        const port = directAccessInfo.sshd_ports;
+        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionResponse.sessionId, host: host, port: port}});
+        document.dispatchEvent(event);
+        indicator.end(100);
+      } catch (err) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        indicator.end(100);
+      }
+    })();
+  }
+
+  _toggleSSHSessionButton() {
+    const isSystemRoleSupported = this.systemRoleSupportedImages.length > 0;
+    const sshImageIcon = this.shadowRoot?.querySelector('#ssh-img');
+    const sshImageBtn = this.shadowRoot?.querySelector('#ssh-btn') as Button;
+    if (sshImageIcon && sshImageBtn) {
+      sshImageBtn.disabled = !isSystemRoleSupported;
+      const filterClass = isSystemRoleSupported ? '' : 'apply-grayscale';
+      sshImageIcon.setAttribute('class', filterClass);
+    }
   }
 
   /**
@@ -3101,7 +3201,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     rqstJob
       .then((res) => {
         let msg;
-        // FIXME: 
+        // FIXME:
         // we need to replace more proper word to distinguish folder sharing on user and group(project).
         // For now, invite means sharing `user` folder and share means sharing `group(project)` folder
         if (this.selectedFolderType === 'user') {

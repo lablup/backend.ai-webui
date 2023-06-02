@@ -88,6 +88,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockMessage = '';
   @property({type: String}) appDownloadUrl;
   @property({type: String}) connection_mode = 'SESSION' as ConnectionMode;
+  @property({type: String}) systemSSHImage = '';
   @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
@@ -715,6 +716,14 @@ export default class BackendAILogin extends BackendAIPage {
         valueType: 'string',
         defaultValue: 'https://github.com/lablup/backend.ai-webui/releases/download',
         value: (generalConfig?.appDownloadUrl),
+      } as ConfigValueObject) as string;
+
+    // System role ssh image
+    this.systemSSHImage = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'string',
+        defaultValue: '',
+        value: (generalConfig?.systemSSHImage),
       } as ConfigValueObject) as string;
 
     // Enable hide agent flag
@@ -1473,6 +1482,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+      globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;

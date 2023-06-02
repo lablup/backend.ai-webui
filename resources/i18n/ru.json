@@ -364,7 +364,9 @@
     "GracePeriodDesc": "__NOT_TRANSLATED__",
     "UtilizationThreshold": "__NOT_TRANSLATED__",
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
-    "ExpiresAfter": "__NOT_TRANSLATED__"
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -503,7 +505,8 @@
       "PleaseSelectOption": "Пожалуйста, выберите один вариант",
       "LetterNumber-_dot": "Допускает буквы, цифры и -_.",
       "NameAlreadyExists": "Название политики уже существует!",
-      "ValidationFailed": "Проверка не удалась"
+      "ValidationFailed": "Проверка не удалась",
+      "PleaseSelectOptions": "Пожалуйста, выберите варианты"
     },
     "ProjectAndGroup": "Проекты и группы",
     "ModifyKeypairResourcePolicy": "Изменить политику ресурсов пары ключей",
@@ -653,9 +656,18 @@
       "NoImagesSupportingFileBrowser": "Пока нет изображений, поддерживающих просмотрщик файлов. Для загрузки папок требуется по крайней мере одно или несколько изображений, поддерживающих просмотрщик файлов.",
       "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
       "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
-      "FolderAlreadyExists": "__NOT_TRANSLATED__"
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",
@@ -946,7 +958,8 @@
     "ResourceGroupDetail": "Сведения о группе ресурсов",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Домен"
   },
   "maintenance": {
     "General": "Общий",

@@ -2030,9 +2030,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           tpu_device_metric.min = parseInt(tpu_device_metric.min);
           if ('tpu.device' in this.userResourceLimit) {
             if (parseInt(tpu_device_metric.max) !== 0 && tpu_device_metric.max !== 'Infinity' && !isNaN(tpu_device_metric.max) && tpu_device_metric.max != null) {
-              tpu_device_metric.max = Math.min(parseInt(tpu_device_metric.max), parseInt(this.userResourceLimit['tpu.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+              tpu_device_metric.max = Math.min(parseInt(tpu_device_metric.max), parseInt(this.userResourceLimit['tpu.device']), available_slot['tpu_device'], this.max_tpu_device_per_container);
             } else {
-              tpu_device_metric.max = Math.min(parseInt(this.userResourceLimit['tpu.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+              tpu_device_metric.max = Math.min(parseInt(this.userResourceLimit['tpu.device']), parseInt(available_slot['tpu_device']), this.max_tpu_device_per_container);
             }
           } else {
             if (parseInt(tpu_device_metric.max) !== 0 && tpu_device_metric.max !== 'Infinity' && !isNaN(tpu_device_metric.max) && tpu_device_metric.max != null) {
@@ -2056,9 +2056,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           ipu_device_metric.min = parseInt(ipu_device_metric.min);
           if ('ipu.device' in this.userResourceLimit) {
             if (parseInt(ipu_device_metric.max) !== 0 && ipu_device_metric.max !== 'Infinity' && !isNaN(ipu_device_metric.max) && ipu_device_metric.max != null) {
-              ipu_device_metric.max = Math.min(parseInt(ipu_device_metric.max), parseInt(this.userResourceLimit['ipu.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+              ipu_device_metric.max = Math.min(parseInt(ipu_device_metric.max), parseInt(this.userResourceLimit['ipu.device']), available_slot['ipu_device'], this.max_ipu_device_per_container);
             } else {
-              ipu_device_metric.max = Math.min(parseInt(this.userResourceLimit['ipu.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+              ipu_device_metric.max = Math.min(parseInt(this.userResourceLimit['ipu.device']), parseInt(available_slot['ipu_device']), this.max_ipu_device_per_container);
             }
           } else {
             if (parseInt(ipu_device_metric.max) !== 0 && ipu_device_metric.max !== 'Infinity' && !isNaN(ipu_device_metric.max) && ipu_device_metric.max != null) {
@@ -2082,9 +2082,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           atom_device_metric.min = parseInt(atom_device_metric.min);
           if ('atom.device' in this.userResourceLimit) {
             if (parseInt(atom_device_metric.max) !== 0 && atom_device_metric.max !== 'Infinity' && !isNaN(atom_device_metric.max) && atom_device_metric.max != null) {
-              atom_device_metric.max = Math.min(parseInt(atom_device_metric.max), parseInt(this.userResourceLimit['atom.device']), available_slot['cuda_device'], this.max_cuda_device_per_container);
+              atom_device_metric.max = Math.min(parseInt(atom_device_metric.max), parseInt(this.userResourceLimit['atom.device']), available_slot['atom_device'], this.max_atom_device_per_container);
             } else {
-              atom_device_metric.max = Math.min(parseInt(this.userResourceLimit['atom.device']), parseInt(available_slot['cuda_device']), this.max_cuda_device_per_container);
+              atom_device_metric.max = Math.min(parseInt(this.userResourceLimit['atom.device']), parseInt(available_slot['atom_device']), this.max_atom_device_per_container);
             }
           } else {
             if (parseInt(atom_device_metric.max) !== 0 && atom_device_metric.max !== 'Infinity' && !isNaN(atom_device_metric.max) && atom_device_metric.max != null) {
@@ -2100,7 +2100,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             }
             this.npuResouceSlider.disabled = true;
           }
-          console.log(atom_device_metric);
           this._NPUDeviceNameOnSlider = 'ATOM';
           this.npu_device_metric = atom_device_metric;
         }

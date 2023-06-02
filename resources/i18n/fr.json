@@ -364,7 +364,9 @@
     "GracePeriodDesc": "__NOT_TRANSLATED__",
     "UtilizationThreshold": "__NOT_TRANSLATED__",
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
-    "ExpiresAfter": "__NOT_TRANSLATED__"
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Annuler",
@@ -503,7 +505,8 @@
       "PleaseSelectOption": "Veuillez sélectionner une option",
       "LetterNumber-_dot": "Autorise les lettres, les chiffres et -_.",
       "NameAlreadyExists": "Le nom de la stratégie existe déjà !",
-      "ValidationFailed": "Validation échouée"
+      "ValidationFailed": "Validation échouée",
+      "PleaseSelectOptions": "Veuillez sélectionner optios."
     },
     "ProjectAndGroup": "Projets & Groupes",
     "ModifyKeypairResourcePolicy": "Modifier la stratégie de ressource de paire de clés",
@@ -653,9 +656,18 @@
       "NoImagesSupportingFileBrowser": "Il n'y a pas encore d'images prenant en charge le navigateur de fichiers. Au moins une ou plusieurs images prenant en charge le navigateur de fichiers sont requises pour télécharger le(s) dossier(s).",
       "ClickFilebrowserButton": "Pour télécharger le(s) dossier(s), veuillez cliquer sur le bouton Exécuter le navigateur de fichiers.",
       "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
       "UploadFolder": "__NOT_TRANSLATED__",
       "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
-      "FolderAlreadyExists": "__NOT_TRANSLATED__"
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Entrer l'adresse e-mail",
@@ -946,7 +958,8 @@
     "ResourceGroupDetail": "Détail du groupe de ressources",
     "RetriesToSkip": "__NOT_TRANSLATED__",
     "NoGroupToDisplay": "__NOT_TRANSLATED__",
-    "AllowedSessionTypes": "__NOT_TRANSLATED__"
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Domaine"
   },
   "maintenance": {
     "General": "Général",

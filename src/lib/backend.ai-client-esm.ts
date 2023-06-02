@@ -597,6 +597,7 @@ class Client {
       this._features['inference-workload'] = true;
       this._features['local-vscode-remote-connection'] = true;
       this._features['display-allocated-shmem'] = true;
+      this._features['sftp-scaling-group'] = true;
     }
   }
 
@@ -1075,6 +1076,17 @@ class Client {
   }
 
   /**
+   * Get the IP or URL that use to access publicly
+   * 
+   * @param {string} sessionId - the sessionId given when created
+   */
+  async get_direct_access_info(sessionId) : Promise<any> {
+    let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-info`;
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
    * Obtain the session container logs by given sessionId.
    *
    * @param {string} sessionId - the sessionId given when created
@@ -1460,10 +1472,19 @@ class Client {
     let i = 0;
     while (i < strBytes.length) {
       const byte1 = strBytes[i++];
-      const byte2 = i < strBytes.length ? strBytes[i++] : 0;
-      const byte3 = i < strBytes.length ? strBytes[i++] : 0;
-      const triplet = (byte1 << 16) + (byte2 << 8) + byte3;
-      strBase64 += charset.charAt((triplet >> 18) & 0x3F) + charset.charAt((triplet >> 12) & 0x3F) + charset.charAt((triplet >> 6) & 0x3F) + charset.charAt(triplet & 0x3F);
+      const byte2 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const byte3 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const triplet = (
+        (byte1 << 16) +
+        ((byte2 != -1 ? byte2 : 0) << 8) +
+        (byte3 != -1 ? byte3 : 0)
+      );
+      strBase64 += (
+        charset.charAt((triplet >> 18) & 0x3F) +
+        charset.charAt((triplet >> 12) & 0x3F) +
+        charset.charAt(byte2 != -1 ? (triplet >> 6) & 0x3F : 64) +
+        charset.charAt(byte3 != -1 ? triplet & 0x3F : 64)
+      );
     }
     return strBase64;
   }

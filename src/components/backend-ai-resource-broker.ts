@@ -847,7 +847,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
             }
             privateImages[supportsKey].push(item.tag);
           }
-          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE'].includes(label['value'])) {
+          if (label['key'] === 'ai.backend.role' && ['COMPUTE', 'INFERENCE', 'SYSTEM'].includes(label['value'])) {
             this.imageRoles[`${supportsKey}`] = label['value'];
           }
           if (label['key'] === 'ai.backend.model-path') {
