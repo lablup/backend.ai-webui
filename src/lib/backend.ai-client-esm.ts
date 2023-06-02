@@ -597,6 +597,8 @@ class Client {
       this._features['inference-workload'] = true;
       this._features['local-vscode-remote-connection'] = true;
       this._features['display-allocated-shmem'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.03.3')) {
       this._features['sftp-scaling-group'] = true;
     }
   }
