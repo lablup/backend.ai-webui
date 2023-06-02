@@ -44,12 +44,3 @@ customElements.define(
     </DefaultProviders>
   ))
 );
-
-customElements.define(
-  "backend-ai-react-reset-password-required-modal",
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <ResetPasswordRequired />
-    </DefaultProviders>
-  ))
-);
