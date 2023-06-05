@@ -294,7 +294,7 @@
     "AllowedClientIps": "Allowed client IPs",
     "CommaSeparated": "comma-separated",
     "TryPreferredPort": "Try preferred port",
-    "SFTPDescription": "Use your favorite SSH/SFTP application to connect.",
+    "SFTPDescription": "You can upload files quickly and securely through an SSH/SFTP client. If you haven't uploaded your SSH key pair beforehand, please click the "SSH Key Download" button to save your SSH key first. You can then use that key to execute commands such as SFTP, SCP, and Rsync. On the "Session - Upload Session" page, you can manage the list of sessions for file uploads. It is recommended to delete sessions after they have been used, as there is a limit on the number of sessions. Sessions that are not used for uploading files within a certain period of time may be automatically deleted.",
     "ConnectionInformation": "Connection Information",
     "DownloadSSHKey": "Download SSH key file (id_container)",
     "VNCconnection": "VNC connection",
