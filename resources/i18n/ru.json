@@ -366,7 +366,9 @@
     "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
     "ExpiresAfter": "__NOT_TRANSLATED__",
     "ConnectionExample": "__NOT_TRANSLATED__",
-    "System": "__NOT_TRANSLATED__"
+    "System": "__NOT_TRANSLATED__",
+    "SFTPExtraNotification": "__NOT_TRANSLATED__",
+    "ConnectionNotice": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
