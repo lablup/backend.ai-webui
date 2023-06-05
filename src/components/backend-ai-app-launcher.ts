@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
@@ -113,7 +113,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         #ssh-dialog {
-          --component-width: 330px;
+          --component-width: 375px;
         }
 
         .app-icon {
@@ -1311,6 +1311,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         <div slot="content">
           <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
+            <div style="background-color:var(--paper-orange-400);">
+              <div style="background-color:var(--paper-orange-700);padding:5px 15px">
+                <span style="font-weight:700;">${_t('session.ConnectionNotice')}</span>
+              </div>
+            <div style="padding:15px;">${_tr('session.SFTPExtraNotification')}</div>
+            </div>
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div><span>User:</span> work</div>
             <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
@@ -1320,7 +1326,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
             <div class="monospace" style="background-color:#242424;padding:15px;">
-              <span style="color:#ffffff;">sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span>
+              <span style="color:#ffffff;">
+                sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}<br/>
+                scp -i ./id_container -P ${this.sshPort} -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
+                rsync -av -e "ssh -i ./id_container" /path/to/source/ work@${this.sshHost}:~/<vfolder-name>/<br/>
             </div>
           </section>
         </div>
