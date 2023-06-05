@@ -882,6 +882,11 @@ export default class BackendAILogin extends BackendAIPage {
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenParam = urlParams.get("token");
+      if (this.signup_support && this.api_endpoint !== '' && tokenParam !== undefined && tokenParam !== null) {
+        this._showSignupDialog(tokenParam);
+      }
     }
     if (this.blockPanel.open === true) {
       this.blockPanel.hide();
@@ -1053,7 +1058,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
-  private _showSignupDialog() {
+  private _showSignupDialog(token?: string) {
     this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '') || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
@@ -1063,7 +1068,7 @@ export default class BackendAILogin extends BackendAIPage {
     const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup;
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
-    signupDialog.open();
+    signupDialog.open(token);
   }
 
   private _showChangePasswordEmailDialog() {
