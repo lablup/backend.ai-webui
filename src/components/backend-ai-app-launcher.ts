@@ -164,6 +164,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin: 0 10px;
         }
 
+        #collapsible-btn {
+          background: none;
+          border: none;
+          padding: 10px 0px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-family: Ubuntu;
+          color: #0000EE;
+          font-weight: 500;
+        }
+
+        #collapsible-btn:hover {
+          color: var(--general-button-background-color);
+        }
+
+        #expandable-desc {
+          // default height for 3line ellpsis
+          height: auto;
+          max-height: 83px;
+          overflow-y: hidden;
+        }
+
         .slide {
           display: flex;
           align-items: center;
@@ -1199,6 +1221,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  _toggleCollapsibleArea(e) {
+    const btn = e.target;
+    const isFolded = (btn.textContent.replace(/\s/g, '') == _text('session.Readmore').replace(/\s/g, ''));
+    const collapsibleArea = (this.shadowRoot?.querySelector('#expandable-desc')) as HTMLElement;
+    // FIXME: temporally set maxHeight with hardcoded value
+    collapsibleArea.style.maxHeight = isFolded ? '100%': '83px';
+    btn.textContent = isFolded ? _text('session.Readless') : _text('session.Readmore');
+  }
+
   /**
    * Copy Remote VS Code password to clipboard
    *
@@ -1309,14 +1340,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
-          <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
-            <div style="background-color:var(--paper-orange-400);">
-              <div style="background-color:var(--paper-orange-700);padding:5px 15px">
-                <span style="font-weight:700;">${_t('session.ConnectionNotice')}</span>
+            <div id="expandable-desc">
+              <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
+              <div style="background-color:var(--paper-blue-400);">
+                <div style="background-color:var(--paper-blue-700);padding:5px 15px">
+                  <span style="font-weight:700;">${_t('session.ConnectionNotice')}</span>
+                </div>
+              <div style="padding:15px;">${_tr('session.SFTPExtraNotification')}</div>
               </div>
-            <div style="padding:15px;">${_tr('session.SFTPExtraNotification')}</div>
             </div>
+            <button id="collapsible-btn" @click="${(e) => this._toggleCollapsibleArea(e)}">
+              ${_t('session.Readmore')}
+            </button>
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div><span>User:</span> work</div>
             <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
