@@ -369,7 +369,9 @@
     "ConnectionExample": "접속 예제",
     "System": "업로드 세션",
     "SFTPExtraNotification": "개수 제한이 있으므로 다 사용한 후에는 삭제하는 것이 좋습니다. 일정 시간 업로드를 하지 않는 세션은 자동으로 삭제될 수 있습니다.",
-    "ConnectionNotice": "주의"
+    "ConnectionNotice": "주의",
+    "Readmore": "더 알아보기...",
+    "Readless": "내용 접기"
   },
   "button": {
     "Cancel": "취소",
