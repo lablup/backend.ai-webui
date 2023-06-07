@@ -1343,8 +1343,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <section class="vertical layout wrap start start-justified">
             <div id="expandable-desc">
               <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
-              <div style="background-color:var(--paper-blue-400);">
-                <div style="background-color:var(--paper-blue-700);padding:5px 15px">
+              <div style="background-color:var(--paper-blue-200);">
+                <div style="background-color:var(--paper-blue-400);padding:5px 15px">
                   <span style="font-weight:700;">${_t('session.ConnectionNotice')}</span>
                 </div>
               <div style="padding:15px;">${_tr('session.SFTPExtraNotification')}</div>
