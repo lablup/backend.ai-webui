@@ -3318,7 +3318,9 @@ class Resources {
    */
   async user_stats() : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/resource/stats/user/month', null);
-    return this.client._wrapWithPromise(rqst);
+    // return this.client._wrapWithPromise(rqst);
+    // FIXME: temporally use hardcoded timeout value (10sec) for preventing timeout error on fetching data
+    return this.client._wrapWithPromise(rqst, false, null, 10 * 1000);
   }
 }
 
