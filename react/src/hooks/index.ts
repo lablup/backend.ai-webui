@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 
 export const useBackendAIConnectedState = () => {
@@ -17,9 +17,29 @@ export const useBackendAIConnectedState = () => {
   return time;
 };
 
+export const useAnonymousBackendaiClient = ({
+  api_endpoint,
+}: {
+  api_endpoint: string;
+}) => {
+  const client = useMemo(() => {
+    //@ts-ignore
+    const clientConfig = new globalThis.BackendAIClientConfig(
+      "",
+      "",
+      api_endpoint,
+      "SESSION"
+    );
+    //@ts-ignore
+    return new globalThis.BackendAIClient(clientConfig, "Backend.AI Console.");
+  }, [api_endpoint]);
+
+  return client;
+};
+
 export const useSuspendedBackendaiClient = () => {
-  const { data } = useQuery<any>({
-    queryKey: "backendai-client",
+  const { data: client } = useQuery<any>({
+    queryKey: "backendai-client-for-suspense",
     queryFn: () =>
       new Promise((resolve) => {
         if (
@@ -42,7 +62,9 @@ export const useSuspendedBackendaiClient = () => {
         }
       }),
     retry: false,
+    // enabled: false,
     suspense: true,
   });
-  return data;
+
+  return client;
 };

@@ -2316,6 +2316,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
     const explorer = {
       id: folderName,
+      uuid: rowData.item.id,
       breadcrumb: ['.'],
     };
 
@@ -2885,7 +2886,6 @@ export default class BackendAiStorageList extends BackendAIPage {
    * Launch system role filebrowser image and open the dialog that includes the ssh link.
    */
   async _launchSystemRoleSSHSession() {
-    let sessionId;
     const imageResource: Record<string, unknown> = {};
     const configSSHImage = globalThis.backendaiclient._config.systemSSHImage;
     const images = this.systemRoleSupportedImages.filter((image: any) => (image['name'].toLowerCase().includes('filebrowser') && image['installed']));
@@ -2901,26 +2901,34 @@ export default class BackendAiStorageList extends BackendAIPage {
     imageResource['domain'] = globalThis.backendaiclient._config.domainName;
     imageResource['scaling_group'] = this.volumeInfo[this.vhost]?.sftp_scaling_groups[0];
     const indicator = await this.indicator.start('indeterminate');
-
-    return globalThis.backendaiclient.get_resource_slots().then(() => {
-      indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
-      return globalThis.backendaiclient.createIfNotExists(environment, null, imageResource, 15000, undefined);
-    }).then(async (res) => {
-      sessionId = res.sessionId;
-      return globalThis.backendaiclient.get_direct_access_info(sessionId);
-    }).then((res) => {
-      const host = res.public_host.replace(/^https?:\/\//, '');
-      const port = res.sshd_ports;
-      // open ssh dialog
-      const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionId, host: host, port: port}});
-      document.dispatchEvent(event);
-      indicator.end(100);
-    }).catch((err) => {
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true, err);
-      indicator.end(100);
-    });
+    return (async () => {
+      try {
+        await globalThis.backendaiclient.get_resource_slots();
+        indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
+        const sessionResponse = await globalThis.backendaiclient.createIfNotExists(environment, `sftp-${this.explorer.uuid}`, imageResource, 15000, undefined);
+        if (sessionResponse.status === "CANCELLED") { // Max # of upload sessions exceeded for this used
+          this.notification.text = PainKiller.relieve(_text('data.explorer.NumberOfSFTPSessionsExceededTitle'));
+          this.notification.detail = _text('data.explorer.NumberOfSFTPSessionsExceededBody');
+          this.notification.show(true, {
+            title: _text('data.explorer.NumberOfSFTPSessionsExceededTitle'),
+            message: _text('data.explorer.NumberOfSFTPSessionsExceededBody')
+          });
+          indicator.end(100);
+          return;
+        }
+        const directAccessInfo = await globalThis.backendaiclient.get_direct_access_info(sessionResponse.sessionId);
+        const host = directAccessInfo.public_host.replace(/^https?:\/\//, '');
+        const port = directAccessInfo.sshd_ports;
+        const event = new CustomEvent('read-ssh-key-and-launch-ssh-dialog', {'detail': {sessionUuid: sessionResponse.sessionId, host: host, port: port}});
+        document.dispatchEvent(event);
+        indicator.end(100);
+      } catch (err) {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        indicator.end(100);
+      }
+    })();
   }
 
   _toggleSSHSessionButton() {

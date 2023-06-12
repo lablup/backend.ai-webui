@@ -601,6 +601,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03.1')) {
       this._features['is-public'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.03.3')) {
+      this._features['sftp-scaling-group'] = true;
+    }
   }
 
   /**
@@ -1474,10 +1477,19 @@ class Client {
     let i = 0;
     while (i < strBytes.length) {
       const byte1 = strBytes[i++];
-      const byte2 = i < strBytes.length ? strBytes[i++] : 0;
-      const byte3 = i < strBytes.length ? strBytes[i++] : 0;
-      const triplet = (byte1 << 16) + (byte2 << 8) + byte3;
-      strBase64 += charset.charAt((triplet >> 18) & 0x3F) + charset.charAt((triplet >> 12) & 0x3F) + charset.charAt((triplet >> 6) & 0x3F) + charset.charAt(triplet & 0x3F);
+      const byte2 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const byte3 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const triplet = (
+        (byte1 << 16) +
+        ((byte2 != -1 ? byte2 : 0) << 8) +
+        (byte3 != -1 ? byte3 : 0)
+      );
+      strBase64 += (
+        charset.charAt((triplet >> 18) & 0x3F) +
+        charset.charAt((triplet >> 12) & 0x3F) +
+        charset.charAt(byte2 != -1 ? (triplet >> 6) & 0x3F : 64) +
+        charset.charAt(byte3 != -1 ? triplet & 0x3F : 64)
+      );
     }
     return strBase64;
   }
@@ -3309,7 +3321,9 @@ class Resources {
    */
   async user_stats() : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/resource/stats/user/month', null);
-    return this.client._wrapWithPromise(rqst);
+    // return this.client._wrapWithPromise(rqst);
+    // FIXME: temporally use hardcoded timeout value (10sec) for preventing timeout error on fetching data
+    return this.client._wrapWithPromise(rqst, false, null, 10 * 1000);
   }
 }
 

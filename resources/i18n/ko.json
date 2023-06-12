@@ -60,7 +60,10 @@
       "PasswordChangePlace": "상단바의 사람 아이콘을 클릭하고 \"사용자 정보 변경\" 메뉴로 이동하세요.",
       "SetupTotp": "이중 인증 활성화",
       "TotpActivated": "이중 인증 사용",
-      "AIAccelerator": "AI 가속기"
+      "AIAccelerator": "AI 가속기",
+      "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
+      "CurrentPassword": "현재 비밀번호",
+      "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요."
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -275,7 +278,7 @@
     "AllowedClientIps": "허용된 클라이언트 IP",
     "CommaSeparated": "콤마로 구분",
     "TryPreferredPort": "선호 포트",
-    "SFTPDescription": "SSH/SFTP 클라이언트를 이용해서 접속하세요.",
+    "SFTPDescription": "SSH/SFTP 클라이언트를 통해 빠르고 안정적으로 파일을 업로드할 수 있습니다. 미리 SSH 키페어를 업로드하지 않으셨다면, \"SSH키 다운로드\" 버튼을 클릭하여 SSH 키를 먼저 저장하십시오. 그 키를 이용해서 sftp, scp, rsync 등의 명령을 사용할 수 있습니다. 세션 - 업로드 세션페이지에서 파일 업로드를 위한 세션 리스트를 관리할 수 있습니다.",
     "ConnectionInformation": "연결 정보",
     "DownloadSSHKey": "SSH 키 파일 다운로드 (id_container)",
     "VNCconnection": "VNC 연결",
@@ -363,7 +366,12 @@
     "UtilizationThreshold": "자원 사용량 기준",
     "UtilizationThresholdDesc": "연산 세션의 자원 사용량 기준입니다. 연산 세션의 자원 사용량이 일정 시간 동안 설정된 기준값을 넘지 못하면, 그 세션은 자동으로 삭제됩니다. 예를 들어, CUDA 사용률 기준을 1%로 설정했다면, 일정 시간 동안 1% 미만의 CUDA GPU 사용률을 보이는 연산 세션이 삭제됩니다. 값이 설정되지 않는 자원은 자동 삭제 기준에서 제외됩니다.",
     "ExpiresAfter": "남은 시간",
-    "ConnectionExample": "접속 예제"
+    "ConnectionExample": "접속 예제",
+    "System": "업로드 세션",
+    "SFTPExtraNotification": "개수 제한이 있으므로 다 사용한 후에는 삭제하는 것이 좋습니다. 일정 시간 업로드를 하지 않는 세션은 자동으로 삭제될 수 있습니다.",
+    "ConnectionNotice": "주의",
+    "Readmore": "더 알아보기...",
+    "Readless": "내용 접기"
   },
   "button": {
     "Cancel": "취소",
@@ -671,7 +679,9 @@
       "RunSSH/SFTPserver": "SFTP 서버 사용",
       "SFTPSessionNotAvailable": "현재 SFTP 세션 사용이 불가능합니다.",
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
-      "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다."
+      "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
+      "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
