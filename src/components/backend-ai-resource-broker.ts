@@ -588,7 +588,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         total_project_slot['cuda_shares'] = parseFloat(total_project_slot['cuda_shares']).toFixed(2);
       }
 
-      this.total_slot = total_slot;
+      // clamp into two decimal point as maximum
+      this.total_slot = this._roundResourceDecimalPlaces(total_slot);
       if (!globalThis.backendaiclient._config.hideAgents) {
         // When `hideAgents` is false, we display the total resources of the current resoure group.
 
@@ -656,7 +657,8 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.used_resource_group_slot = used_resource_group_slot;
       }
       this.total_project_slot = total_project_slot;
-      this.used_slot = used_slot;
+      // clamp into two decimal point as maximum
+      this.used_slot = this._roundResourceDecimalPlaces(used_slot);
       this.used_project_slot = used_project_slot;
 
       const used_slot_percent = {};
@@ -754,6 +756,20 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.aggregate_updating = false;
       throw err;
     });
+  }
+
+  _roundResourceDecimalPlaces(resourceSlots: Object, roundUpNumber = 2) {
+    Object.keys(resourceSlots).map((resource) => {
+      // convert undefined or NaN to 0
+      let resourceValue = Number(resourceSlots[resource] ?? 0).toString();
+
+      // clamp to roundUpNumber if the number of decimal place exceeds
+      if (!Number.isInteger(Number(resourceValue)) && resourceValue.split('.')[1].length > roundUpNumber) {
+        resourceValue = (Math.round(Number(resourceValue)* 100) / 100).toFixed(2);
+      }
+      resourceSlots[resource] = resourceValue;
+    });
+    return resourceSlots;
   }
 
   /**
