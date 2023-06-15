@@ -732,10 +732,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       throw err;
     }
   }
+
   _roundResourceDecimalPlaces(resourceSlots: Object, roundUpNumber = 2) {
     Object.keys(resourceSlots).map((resource) => {
       // convert undefined or NaN to 0
-      let resourceValue = Number(resourceSlots[resource] ?? 0).toString();
+      let resourceValue = Number(isNaN(resourceSlots[resource]) ? 0 : resourceSlots[resource]).toString();
 
       // clamp to roundUpNumber if the number of decimal place exceeds
       if (!Number.isInteger(Number(resourceValue)) && resourceValue.split('.')[1].length > roundUpNumber) {
