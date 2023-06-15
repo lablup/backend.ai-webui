@@ -398,9 +398,10 @@ export default class BackendAiResourceBroker extends BackendAIPage {
     const total_slot = {};
     const total_resource_group_slot: any = {};
     const total_project_slot = {};
-
-    return globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']).then(async (response) => {
-      this.concurrency_used = response.keypair.concurrency_used;
+    
+    try {
+      const keypairInfo = await globalThis.backendaiclient.keypair.info(globalThis.backendaiclient._config.accessKey, ['concurrency_used']);
+      this.concurrency_used = keypairInfo.keypair.concurrency_used;
       if (this.current_user_group === '') {
         this.current_user_group = globalThis.backendaiclient.current_group;
       }
@@ -423,12 +424,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         }
         param['scaling_group'] = this.scaling_group;
       }
-      return globalThis.backendaiclient.resourcePreset.check(param);
-    }).then(async (response) => {
-      const resource_remaining = response.keypair_remaining;
-      const resource_using = response.keypair_using;
-      const project_resource_total = response.group_limits;
-      const project_resource_using = response.group_using;
+      const resourcePresetInfo = await globalThis.backendaiclient.resourcePreset.check(param);
+      const resource_remaining = resourcePresetInfo.keypair_remaining;
+      const resource_using = resourcePresetInfo.keypair_using;
+      const project_resource_total = resourcePresetInfo.group_limits;
+      const project_resource_using = resourcePresetInfo.group_using;
       const device_list = {
         'cuda.device': 'cuda_device',
         'cuda.shares': 'cuda_shares',
@@ -448,7 +448,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         'atom.device': 'atom_device'
       };
       if (this.scaling_group === '' && this.scaling_groups.length > 0) { // no scaling group in the current project
-        response.scaling_groups[''] = {
+        resourcePresetInfo.scaling_groups[''] = {
           using: {'cpu': 0, 'mem': 0},
           remaining: {'cpu': 0, 'mem': 0},
         };
@@ -456,11 +456,9 @@ export default class BackendAiResourceBroker extends BackendAIPage {
         this.aggregate_updating = false;
         return Promise.resolve(false);
       }
-      const scaling_group_resource_using = response.scaling_groups[this.scaling_group].using;
-      const scaling_group_resource_remaining = response.scaling_groups[this.scaling_group].remaining;
-
-      const keypair_resource_limit = response.keypair_limits;
-
+      const scaling_group_resource_using = resourcePresetInfo.scaling_groups[this.scaling_group].using;
+      const scaling_group_resource_remaining = resourcePresetInfo.scaling_groups[this.scaling_group].remaining;
+      const keypair_resource_limit = resourcePresetInfo.keypair_limits;
 
       if ('cpu' in keypair_resource_limit) {
         total_resource_group_slot['cpu'] = Number(scaling_group_resource_remaining.cpu) + Number(scaling_group_resource_using.cpu);
@@ -687,7 +685,7 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.used_resource_group_slot_percent = this._roundResourceDecimalPlaces(used_resource_group_slot_percent);
 
       const enqueueSession = globalThis.backendaiclient._config.always_enqueue_compute_session === true;
-      const availablePresets = response.presets.map((item) => {
+      const availablePresets = resourcePresetInfo.presets.map((item) => {
         if (item.allocatable === true) {
           for (const [slotKey, slotName] of Object.entries(slotList)) {
             if (slotKey in item.resource_slots) {
@@ -728,11 +726,11 @@ export default class BackendAiResourceBroker extends BackendAIPage {
       this.aggregate_updating = false;
       return Promise.resolve(true);
       // return this.available_slot;
-    }).catch((err) => {
+    } catch(err) {
       this.lastQueryTime = Date.now();
       this.aggregate_updating = false;
       throw err;
-    });
+    }
   }
 
   _roundResourceDecimalPlaces(resourceSlots: Object, roundUpNumber = 2) {
