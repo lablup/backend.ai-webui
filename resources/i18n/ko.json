@@ -5,6 +5,7 @@
       "WelcomeMessage_2": "님",
       "Summary": "요약",
       "Sessions": "세션",
+      "Serving": "모델 서빙",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
       "AgentSummary": "자원 요약",
