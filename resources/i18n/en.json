@@ -440,6 +440,24 @@
     "NoNetworkSignal": "No network signals.",
     "DiskPerc": "Disk %"
   },
+  "storageHost": {
+    "Resource": "Resource",
+    "Control": "Control",
+    "Usage": "Usage",
+    "Total": "Total",
+    "Used": "Used",
+    "Detail": "Detail",
+    "Settings": "Settings",
+    "ForProject": "For Project",
+    "ForUser": "For User",
+    "DefaultSettings": "Default Settings",
+    "Name": "Name",
+    "MaxFileCount": "Max File Count",
+    "SoftLimit": "Soft Limit",
+    "HardLimit": "Hard Limit",
+    "Search": "Search",
+    "VendorOptions": "Vendor Options"
+  },
   "general": {
     "cores": "cores",
     "ResourceGroup": "Resource Group",

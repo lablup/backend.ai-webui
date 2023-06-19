@@ -129,11 +129,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
-    'environment', 'agent', 'settings', 'maintenance',
+    'environment', 'agent', 'storage-host-settings', 'settings', 'maintenance',
     'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
-  @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
+  @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent', 'storage-host-settings',
     'settings', 'maintenance', 'information'];
-  @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
+  @property({type: Array}) superAdminOnlyPages = ['agent', 'storage-host-settings', 'settings', 'maintenance', 'information'];
   @property({type: Array}) optionalPages;
   @property({type: Number}) timeoutSec = 5;
   private _useExperiment = false;
@@ -1227,6 +1227,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${this._page === 'agent-summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
+                    <backend-ai-storage-host-settings-view class="page" name="storage-host-settings" ?active="${this._page === 'storage-host-settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
                     <!--<pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
                     <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->
