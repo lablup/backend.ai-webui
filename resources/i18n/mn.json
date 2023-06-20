@@ -1067,7 +1067,7 @@
     "DescAllowAgentSideRegistration": "Агентэд өөрийгөө менежерт бүртгүүлэхийг зөвшөөрөх. <br/> Зөвхөн Backend.AI кластерийг аюулгүй байршилд удирдаж байгаа тохиолдолд л ашиглана уу.",
     "Plugins": "Залгаасууд",
     "CUDAGPUsupport": "CUDA GPU дэмжлэг",
-    "DescCUDAGPUsupport": "NVidia CUDA GPU дэмжлэг. <br/> Backend.AI CUDA залгаас шаарддаг.",
+    "DescCUDAGPUsupport": "NVIDIA CUDA GPU дэмжлэг. <br/> Backend.AI CUDA залгаас шаарддаг.",
     "CUDAGPUdisabledByFGPUsupport": "Систем нь бутархай GPU залгаас ашигладаг тул идэвхгүй болгосон",
     "ROCMGPUsupport": "ROCm GPU дэмжлэг",
     "DescROCMGPUsupport": "AMD ROCm GPU дэмжлэг. <br/> Backend шаардлагатай. AI ROCm залгаас.",

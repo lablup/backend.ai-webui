@@ -1067,7 +1067,7 @@
     "DescAllowAgentSideRegistration": "Autoriser l'agent à s'inscrire auprès du gestionnaire. <br/> À utiliser uniquement si le cluster Backend.AI est géré sur un emplacement sécurisé.",
     "Plugins": "Plugins",
     "CUDAGPUsupport": "Prise en charge du processeur graphique CUDA",
-    "DescCUDAGPUsupport": "Prise en charge du GPU NVidia CUDA. <br/> Nécessite le plugin Backend.AI CUDA.",
+    "DescCUDAGPUsupport": "Prise en charge du GPU NVIDIA CUDA. <br/> Nécessite le plugin Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Désactivé car le système utilise le plug-in Fractional GPU",
     "ROCMGPUsupport": "Prise en charge du GPU ROCm",
     "DescROCMGPUsupport": "Prise en charge du GPU AMD ROCm. <br/> Nécessite le plugin Backend.AI ROCm.",
