@@ -139,7 +139,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
           <div slot="message">
             <h3 class="tab horizontal center layout">
               <mwc-tab-bar>
-                <mwc-tab title="usage" label="${_t('statistics.Usage')}"></mwc-tab>
+                <mwc-tab title="usage" label="${_t('statistics.UsageHistory')}"></mwc-tab>
               </mwc-tab-bar>
             </h3>
             <div class="horizontal wrap layout">

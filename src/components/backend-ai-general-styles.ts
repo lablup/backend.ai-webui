@@ -72,11 +72,13 @@ export const BackendAiStyles = [
       --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
                                        linear-gradient(to left, #722cd7, #5c7cfa);
+      --lumo-font-family: var(--general-font-family);
     }
 
     body {
       background-color: var(--general-background-color, #fafafa);
       font-family: var(--general-font-family);
+      --lumo-font-family: var(--general-font-family);
       font-weight: 400;
       font-size: 14px;
       color: #222222;
@@ -844,6 +846,7 @@ export const BackendAiStyles = [
     }
 
     vaadin-grid {
+      --lumo-font-family: var(--general-font-family);
       font-family: var(--general-font-family);
     }
 
@@ -885,5 +888,29 @@ export const BackendAiStyles = [
       font-weight: 200;
       display: block;
       color: #999999;
+    }
+
+    div.note-container {
+      background-color: var(--paper-green-100);
+    }
+
+    div.note-title {
+      background-color: var(--paper-green-400);
+      padding: 5px 10px;
+      color: #ffffff;
+      display: -ms-flexbox;
+      display: -webkit-flex;
+      display: flex;
+      -ms-flex-align: center;
+      -webkit-align-items: center;
+      align-items: center;
+    }
+
+    div.note-title mwc-icon {
+      margin-right: 6px;
+    }
+
+    div.note-contents {
+      padding: 20px;
     }
   `];

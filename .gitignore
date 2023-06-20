@@ -64,7 +64,7 @@ typings/
 # next.js build output
 .next
 
-.vscode
+.vscode/*
 .DS_Store
 public
 build
@@ -76,7 +76,7 @@ app
 
 # IDEA
 .idea
-.vscode
+.vscode/*
 
 # webui config
 config.ini
@@ -123,3 +123,7 @@ tags
 #plugins
 src/plugins
 src/plugins/*
+
+
+# 
+!.vscode/i18n-ally-*

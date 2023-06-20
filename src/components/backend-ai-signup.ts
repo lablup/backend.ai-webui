@@ -57,6 +57,7 @@ export default class BackendAiSignup extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) client;
   @property({type: String}) TOSlanguage = 'en';
+  @property({type: String}) preloadedToken;
   @property({type: Boolean}) allowSignupWithoutConfirmation;
   @query('#id_user_email') userEmailInput!: TextField;
   @query('#id_user_name') userNameInput!: TextField;
@@ -185,7 +186,9 @@ export default class BackendAiSignup extends BackendAIPage {
     }
   }
 
-  open() {
+  async open(preloadedToken?: string) {
+    await this.updateComplete;
+    this.preloadedToken = preloadedToken;
     if (this.signupPanel.open !== true) {
       this._clearUserInput();
       this.signupPanel.show();
@@ -232,6 +235,9 @@ export default class BackendAiSignup extends BackendAIPage {
     inputFields.forEach((el) => {
       el.value = '';
     });
+    if (this.preloadedToken !== undefined) {
+      this.tokenInput.value = this.preloadedToken
+    }
     (this.shadowRoot?.querySelector('#signup-button-message') as HTMLSpanElement).innerHTML = _text('signup.Signup');
   }
 
