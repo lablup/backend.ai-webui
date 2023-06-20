@@ -10,6 +10,7 @@ const DefaultProviders = React.lazy(
 );
 const Information = React.lazy(() => import("./components/Information"));
 const SessionList = React.lazy(() => import("./pages/SessionListPage"));
+const ServingList = React.lazy(() => import("./pages/ServingListPage"))
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
@@ -35,6 +36,17 @@ customElements.define(
     );
   })
 );
+
+customElements.define(
+  "backend-ai-react-serving-list",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ServingList>{props.children}</ServingList>
+      </DefaultProviders>
+    )
+  })
+  );
 
 customElements.define(
   "backend-ai-react-reset-password-required-modal",

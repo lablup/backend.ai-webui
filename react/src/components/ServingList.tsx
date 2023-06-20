@@ -1,10 +1,7 @@
-import { Table, TableProps } from "antd";
+import { Space, Table, TableProps, Tag } from "antd";
+import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
-import { useLazyLoadQuery } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-// import { ServingListQuery } from "./__generated__/ServingListQuery.graphql";
 import { useTranslation } from "react-i18next";
-// import SessionInfoCell from "./ServingListColums/SessionInfoCell";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 
 
@@ -23,6 +20,15 @@ interface ServingListProps extends Omit<TableProps<any>, "dataSource"> {
   // filter: (item: Session) => boolean;
   extraFetchKey?: string;
 }
+
+interface DataType {
+  key: string;
+  name: string;
+  age: number;
+  address: string;
+  tags: string[];
+}
+
 const ServingList: React.FC<ServingListProps> = ({
   status = [],
   limit = 50,
@@ -39,122 +45,85 @@ const ServingList: React.FC<ServingListProps> = ({
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
 
-  if (
-    !baiClient.supports("avoid-hol-blocking") &&
-    status.includes("SCHEDULED")
-  ) {
-    status = status.filter((e) => e !== "SCHEDULED");
-  }
-
-  // TODO: ????
-  // if (baiClient.supports('detailed-session-states')) {
-  //   status = status.join(',');
-  // }
-
-  const { compute_session_list } = useLazyLoadQuery<SessionListQuery>(
-    graphql`
-      query ServingListQuery(
-        $limit: Int!
-        $offset: Int!
-        $ak: String
-        $group_id: String
-        $status: String
-        $skipClusterSize: Boolean!
-      ) {
-        compute_session_list(
-          limit: $limit
-          offset: $offset
-          access_key: $ak
-          group_id: $group_id
-          status: $status
-        ) {
-          items {
-            id
-            type
-            session_id
-            name
-            image
-            architecture
-            created_at
-            terminated_at
-            status
-            status_info
-            service_ports
-            mounts
-            occupied_slots
-            access_key
-            starts_at
-            # type @skip(if: $skipClusterSize)
-
-            cluster_size @skipOnClient(if: $skipClusterSize)
-            # id
-            # # hello
-            # name @skipOnClient(if: $skipCodejong)
-            # group_name @skip(if: $skipCodejong)
-            # domain_name @required(action: LOG)
-            # codejong
-            # @graphql-ignore
-            # hello @skip(if: true)
-
-            # @ts-ignore
-
-            # id session_id name image architecture created_at terminated_at status status_info service_ports mounts occupied_slots access_key starts_at type cluster_size cluster_mode status_data idle_checks inference_metrics scaling_group user_email containers {container_id agent occupied_slots live_stat last_stat} containers {agent}
-            ...SessionInfoCellFragment
-          }
-        }
-      }
-    `,
+  const columns: ColumnsType<DataType> = [
     {
-      // skipCodejong: false,
-      limit: pageSize,
-      offset: (currentPage - 1) * pageSize,
-      status: status?.join(","),
-      group_id: projectId,
-
-      // skipOnClients
-      skipClusterSize: !baiClient.supports("multi-container"),
+      title: 'Name',
+      dataIndex: 'name',
+      key: 'name',
+      render: text => <a>{text}</a>,
     },
     {
-      fetchKey: deferredMergedFetchKey,
-      fetchPolicy: "network-only",
-    }
-  );
+      title: 'Age',
+      dataIndex: 'age',
+      key: 'age',
+    },
+    {
+      title: 'Address',
+      dataIndex: 'address',
+      key: 'address',
+    },
+    {
+      title: 'Tags',
+      key: 'tags',
+      dataIndex: 'tags',
+      render: (_, { tags }) => (
+        <>
+          {tags.map(tag => {
+            let color = tag.length > 5 ? 'geekblue' : 'green';
+            if (tag === 'loser') {
+              color = 'volcano';
+            }
+            return (
+              <Tag color={color} key={tag}>
+                {tag.toUpperCase()}
+              </Tag>
+            );
+          })}
+        </>
+      ),
+    },
+    {
+      title: 'Action',
+      key: 'action',
+      render: (_, record) => (
+        <Space size="middle">
+          <a>Invite {record.name}</a>
+          <a>Delete</a>
+        </Space>
+      ),
+    },
+  ];
+
+  const data: DataType[] = [
+    {
+      key: '1',
+      name: 'John Brown',
+      age: 32,
+      address: 'New York No. 1 Lake Park',
+      tags: ['nice', 'developer'],
+    },
+    {
+      key: '2',
+      name: 'Jim Green',
+      age: 42,
+      address: 'London No. 1 Lake Park',
+      tags: ['loser'],
+    },
+    {
+      key: '3',
+      name: 'Joe Black',
+      age: 32,
+      address: 'Sidney No. 1 Lake Park',
+      tags: ['cool', 'teacher'],
+    },
+  ];
+  
 
   return (
     <>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Table
-        columns={[
-          {
-            title: t("session.SessionInfo"),
-            render(value, record, index) {
-              return (
-                <SessionInfoCell
-                  key={record.session_id}
-                  sessionFrgmt={record}
-                  onRename={() => {
-                    updateFetchKey(
-                      record.session_id + new Date().toISOString()
-                    );
-                  }}
-                />
-              );
-            },
-          },
-          {
-            title: "ID",
-            dataIndex: "id",
-          },
-        ]}
-        // @ts-ignore
-        dataSource={(compute_session_list?.items || []).filter(filter)}
-        // dataSource={_.filter(compute_session_list?.items || [], () => {})}
-        // pagination={{
-
-        // }}
-        {...tableProps}
-      />
+      <Table columns={columns} dataSource={data} />
     </>
   );
 };
