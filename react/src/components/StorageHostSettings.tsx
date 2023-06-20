@@ -3,9 +3,6 @@ import {
   Typography,
   Card,
   theme,
-  Spin,
-  Row,
-  Col,
   Progress,
   Descriptions,
   Table,
@@ -45,14 +42,23 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
   const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
 
   // TODO: move data and columns to external
-  const data = [
+  const data: StorageHostSettingData[] = [
     {
       key: 'local:volume1',
       name: 'local:volume1',
-      id: 'foo',
+      id: 'foo1',
       max_file_count: 200,
       soft_limit: 100,
       hard_limit: 300,
+      vendor_options: {},
+    },
+    {
+      key: 'test',
+      name: 'test',
+      id: 'foo2',
+      max_file_count: 500,
+      soft_limit: 200,
+      hard_limit: 250,
       vendor_options: {},
     },
   ];
@@ -61,22 +67,27 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
     {
       title: t('storageHost.Name'),
       dataIndex: 'name',
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: 'ID',
       dataIndex: 'id',
+      sorter: (a, b) => a.id.localeCompare(b.id),
     },
     {
       title: t('storageHost.MaxFileCount'),
       dataIndex: 'max_file_count',
+      sorter: (a, b) => (a.max_file_count || 0) - (b.max_file_count || 0),
     },
     {
       title: t('storageHost.SoftLimit'),
       dataIndex: 'soft_limit',
+      sorter: (a, b) => (a.soft_limit || 0) - (b.soft_limit || 0),
     },
     {
       title: t('storageHost.HardLimit'),
       dataIndex: 'hard_limit',
+      sorter: (a, b) => (a.hard_limit || 0) - (b.hard_limit || 0),
     },
     {
       title: t('storageHost.VendorOptions'),
