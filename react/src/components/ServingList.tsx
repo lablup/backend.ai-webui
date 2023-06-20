@@ -1,4 +1,4 @@
-import { Space, Table, TableProps, Tag } from "antd";
+import { Space, Table, TableProps, Tag, Radio } from "antd";
 import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
 import { useTranslation } from "react-i18next";
@@ -44,6 +44,12 @@ const ServingList: React.FC<ServingListProps> = ({
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
+
+  const rowSelection = {
+    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+      console.log(`selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`, selectedRows);
+    }
+  }
 
   const columns: ColumnsType<DataType> = [
     {
@@ -117,13 +123,16 @@ const ServingList: React.FC<ServingListProps> = ({
       tags: ['cool', 'teacher'],
     },
   ];
-  
 
   return (
     <>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Table columns={columns} dataSource={data} />
+      <Table
+        rowSelection={{
+            type: 'radio',
+            ...rowSelection}}
+        columns={columns} dataSource={data} />
     </>
   );
 };
