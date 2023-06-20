@@ -1312,10 +1312,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
 <<<<<<< HEAD
+<<<<<<< HEAD
                 <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230403</small>
 =======
                 <small class="sidebar-footer" style="font-size:9px;">22.09.16.230319</small>
 >>>>>>> cf41ebdb (update: version index (22.09))
+=======
+                <small class="sidebar-footer" style="font-size:9px;">22.09.17.230323</small>
+>>>>>>> 43194f97 (update: version index (#208))
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1340,10 +1344,14 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
 <<<<<<< HEAD
+<<<<<<< HEAD
               <small class="sidebar-footer" style="font-size:9px;">23.03.0a1.230403</small>
 =======
               <small class="sidebar-footer" style="font-size:9px;">22.09.16.230319</small>
 >>>>>>> cf41ebdb (update: version index (22.09))
+=======
+              <small class="sidebar-footer" style="font-size:9px;">22.09.17.230323</small>
+>>>>>>> 43194f97 (update: version index (#208))
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
