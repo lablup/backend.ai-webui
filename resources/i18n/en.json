@@ -456,7 +456,11 @@
     "SoftLimit": "Soft Limit",
     "HardLimit": "Hard Limit",
     "Search": "Search",
-    "VendorOptions": "Vendor Options"
+    "VendorOptions": "Vendor Options",
+    "quotaSettings": {
+      "Type": "Type",
+      "Host": "Host"
+    }
   },
   "general": {
     "cores": "cores",

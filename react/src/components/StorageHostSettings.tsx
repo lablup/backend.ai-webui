@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import {
   Typography,
   Card,
@@ -8,7 +8,6 @@ import {
   Col,
   Progress,
   Descriptions,
-  Tabs,
   Table,
   Dropdown,
   Input,
@@ -24,8 +23,6 @@ import {
 import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
 import { useToggle } from "ahooks";
-import { useQuery } from "react-query";
-import { newLineToBrElement } from "../helper";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { StorageHostSettingData } from "../hooks/backendai";
 import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
@@ -221,7 +218,7 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
         <StorageHostQuotaSettingModal
           open={visibleQuotaSettingModal}
           destroyOnClose
-          onRequestClose={(envs) => {
+          onRequestClose={(settings) => {
             toggleQuotaSettingModal();
           }}
         />
