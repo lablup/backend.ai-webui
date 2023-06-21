@@ -127,13 +127,21 @@ const QuotaSettingVarForm: React.FC<QuotaSettingVarFormProps> = ({
         </Select>
       </Form.Item>
       <Form.Item label={t('storageHost.MaxFileCount')}>
-        <InputNumber min={0}/>
+        <InputNumber 
+          min={0}
+          style={{ width: '70%' }}/>
       </Form.Item>
       <Form.Item label={t('storageHost.SoftLimit')}>
-        <InputNumber min={0}/>
+        <InputNumber
+          min={0}
+          addonAfter="bytes"
+          style={{ width: '70%' }}/>
       </Form.Item>
       <Form.Item label={t('storageHost.HardLimit')}>
-        <InputNumber min={0}/>
+      <InputNumber
+          min={0}
+          addonAfter="bytes"
+          style={{ width: '70%' }}/>
       </Form.Item>
       <Form.Item label={t('storageHost.VendorOptions')}>
         <Input.TextArea rows={3} />

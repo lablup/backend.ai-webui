@@ -80,12 +80,12 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
       sorter: (a, b) => (a.max_file_count || 0) - (b.max_file_count || 0),
     },
     {
-      title: t('storageHost.SoftLimit'),
+      title: t('storageHost.SoftLimit') + ' (bytes)',
       dataIndex: 'soft_limit',
       sorter: (a, b) => (a.soft_limit || 0) - (b.soft_limit || 0),
     },
     {
-      title: t('storageHost.HardLimit'),
+      title: t('storageHost.HardLimit') + ' (bytes)',
       dataIndex: 'hard_limit',
       sorter: (a, b) => (a.hard_limit || 0) - (b.hard_limit || 0),
     },
@@ -199,8 +199,8 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
           >
           <Descriptions>
             <Descriptions.Item label={t('storageHost.MaxFileCount')}>200</Descriptions.Item>
-            <Descriptions.Item label={t('storageHost.SoftLimit')}>100</Descriptions.Item>
-            <Descriptions.Item label={t('storageHost.HardLimit')}>300</Descriptions.Item>
+            <Descriptions.Item label={t('storageHost.SoftLimit') + ' (bytes)'}>100</Descriptions.Item>
+            <Descriptions.Item label={t('storageHost.HardLimit') + ' (bytes)'}>300</Descriptions.Item>
             <Descriptions.Item label={t('storageHost.VendorOptions')}>{}</Descriptions.Item>
           </Descriptions>
         </Card>
