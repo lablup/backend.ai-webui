@@ -39,17 +39,19 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         align="stretch"
         style={{ padding: token.padding, gap: token.margin }}
       >
+      { false ? (
+        <Suspense fallback={<div>loading..</div>}>
+          <RoutingList
+            projectId={curProject.id}
+            status={[]}
+            extraFetchKey={""}
+          />
+        </Suspense>
+      ) : (<></>)}
       {children}
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
-          <Suspense fallback={<div>loading..</div>}>
-            <RoutingList
-              projectId={curProject.id}
-              status={[]}
-              extraFetchKey={""}
-            />
-          </Suspense>
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
           <Flex style={{ flex: 1 }}>
