@@ -9,12 +9,13 @@ import {
   Dropdown,
   Input,
   Button,
+  Form,
 } from "antd";
 import type { ColumnsType } from 'antd/es/table';
+import { useForm } from "antd/es/form/Form";
 import { 
   EllipsisOutlined,
   ControlFilled,
-  SearchOutlined,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from "react-i18next";
@@ -36,13 +37,21 @@ interface StorageHostSettingsProps {
 const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
   const [usage, setUsage] = useState({percent: 60});
+
   const [currentMode, setCurrentMode] = useState<"project" | "user">("project");
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+
   const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
 
-  // TODO: move data and columns to external
-  const data: StorageHostSettingData[] = [
+  const [search, setSearch] = useState<string>();
+  const [searchForm] = useForm<{
+    search: string;
+  }>();
+  
+  const [data, setData] = useState<StorageHostSettingData[]>([
     {
       key: 'local:volume1',
       name: 'local:volume1',
@@ -61,7 +70,7 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
       hard_limit: 250,
       vendor_options: {},
     },
-  ];
+  ]);
 
   const columns: ColumnsType<StorageHostSettingData> = [
     {
@@ -91,8 +100,16 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
     },
     {
       title: t('storageHost.VendorOptions'),
-      dataIndex: 'vendor_options'
+      dataIndex: 'vendor_options',
     },
+    {
+      title: t('general.Control'),
+      dataIndex: 'controls',
+      render: (_, record: { key: React.Key }) => 
+        data.length >= 1 ? (
+          <Button type="text" danger>{t('button.Delete')}</Button>
+        ) : null,
+    }
   ];
 
   const baiClient = useSuspendedBackendaiClient();
@@ -211,11 +228,17 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
             align="stretch"
             justify="between"
           >
-            <Input 
-              prefix={<SearchOutlined />}
-              placeholder={t('storageHost.Search') || "Search"}
-              style={{ marginBottom: 10, width: '30%' }}
-            />
+            <Form form={searchForm} style={{ marginBottom: 10 }}>
+              <Form.Item name="search" noStyle>
+                <Input.Search
+                  placeholder={t('storageHost.Search') || "Search"}
+                  allowClear
+                  onSearch={(value) => {
+                    setSearch(value);
+                  }}
+                />
+              </Form.Item>
+            </Form>
             <Button 
               icon={<PlusOutlined />}
               onClick={() => {
