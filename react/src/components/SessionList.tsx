@@ -121,10 +121,12 @@ const SessionList: React.FC<SessionListProps> = ({
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
       <Table
+        scroll={{ x: true }}
         columns={[
           {
             title: t("session.SessionInfo"),
             render(value, record, index) {
+              console.log(record);
               return (
                 <SessionInfoCell
                   key={record.session_id}
@@ -137,10 +139,32 @@ const SessionList: React.FC<SessionListProps> = ({
                 />
               );
             },
+            fixed: "left",
           },
           {
-            title: "ID",
-            dataIndex: "id",
+            title: t("session.Status"),
+            dataIndex: "status",
+          },
+          {
+            title: t("general.Control"),
+          },
+          {
+            title: t("session.Configuration"),
+          },
+          {
+            title: t("session.Usage"),
+          },
+          {
+            title: t("session.Reservation"),
+          },
+          {
+            title: t("session.Architecture"),
+          },
+          {
+            title: t("session.SessionType"),
+          },
+          {
+            title: t("session.Agent"),
           },
         ]}
         // @ts-ignore

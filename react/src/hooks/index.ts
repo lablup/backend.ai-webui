@@ -106,3 +106,87 @@ export const useSuspendedBackendaiClient = () => {
 
   return client;
 };
+
+interface ImageMetadata {
+  name: string;
+  description: string;
+  group: string;
+  tags: string[];
+  icon: string;
+  label: {
+    category: string;
+    tag: string;
+    color: string;
+  }[];
+}
+
+export const useBackendaiImageMetaData = () => {
+  const { data: metadata } = useQuery({
+    queryKey: "backendai-metadata-for-suspense",
+    queryFn: () => {
+      return fetch("resources/image_metadata.json")
+        .then((response) => response.json())
+        .then(
+          (json: {
+            imageInfo: {
+              [key: string]: ImageMetadata;
+            };
+            tagAlias: {
+              [key: string]: string;
+            };
+            tagReplace: {
+              [key: string]: string;
+            };
+          }) => {
+            return json;
+          }
+        );
+    },
+    suspense: true,
+    retry: false,
+  });
+
+  const getImageMeta = (imageName: string) => {
+    // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
+    // key = python, tags = [3.9, ubuntu20.04]
+    console.log(imageName);
+    const specs = imageName.split("/");
+
+    const [key, tag] = (specs[2] || specs[1]).split(":");
+    const tags = tag.split("-");
+
+    return { key, tags };
+  };
+
+  return [
+    metadata,
+    {
+      getImageAliasName: (imageName: string) => {
+        const { key } = getImageMeta(imageName);
+        return metadata?.imageInfo[key].name || key;
+      },
+      getImageIcon: (imageName?: string | null, path = "resources/icons/") => {
+        if (!imageName) return "default.png";
+        const { key } = getImageMeta(imageName);
+        return (
+          path +
+          (metadata?.imageInfo[key].icon !== undefined
+            ? metadata?.imageInfo[key].icon
+            : "default.png")
+        );
+      },
+      getImageTags: (imageName: string) => {
+        const { key, tags } = getImageMeta(imageName);
+      },
+      getBaseVersion: (imageName: string) => {
+        const { key, tags } = getImageMeta(imageName);
+
+        return tags[0];
+      },
+      getBaseImage: (imageName: string) => {
+        const { key, tags } = getImageMeta(imageName);
+        return tags[1];
+      },
+    },
+  ] as const;
+};

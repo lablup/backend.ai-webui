@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3783c31b97e6927c8866a8795f8dfd37>>
+ * @generated SignedSource<<e20c7bf2aca0db11dea165540b77fda0>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -338,12 +338,12 @@ return {
     ]
   },
   "params": {
-    "cacheID": "60ba1098fb1381d9f6c3523f07063dec",
+    "cacheID": "e152f44d42d7fc4a33606a935adc582f",
     "id": null,
     "metadata": {},
     "name": "SessionListQuery",
     "operationKind": "query",
-    "text": "query SessionListQuery(\n  $limit: Int!\n  $offset: Int!\n  $ak: String\n  $group_id: String\n  $status: String\n  $skipClusterSize: Boolean!\n) {\n  compute_session_list(limit: $limit, offset: $offset, access_key: $ak, group_id: $group_id, status: $status) {\n    items {\n      id\n      type\n      session_id\n      name\n      image\n      architecture\n      created_at\n      terminated_at\n      status\n      status_info\n      service_ports\n      mounts\n      occupied_slots\n      access_key\n      starts_at\n      cluster_size @skipOnClient(if: $skipClusterSize)\n      ...SessionInfoCellFragment\n    }\n  }\n}\n\nfragment SessionInfoCellFragment on ComputeSession {\n  id\n  session_id\n  name\n  status\n  user_email\n}\n"
+    "text": "query SessionListQuery(\n  $limit: Int!\n  $offset: Int!\n  $ak: String\n  $group_id: String\n  $status: String\n  $skipClusterSize: Boolean!\n) {\n  compute_session_list(limit: $limit, offset: $offset, access_key: $ak, group_id: $group_id, status: $status) {\n    items {\n      id\n      type\n      session_id\n      name\n      image\n      architecture\n      created_at\n      terminated_at\n      status\n      status_info\n      service_ports\n      mounts\n      occupied_slots\n      access_key\n      starts_at\n      cluster_size @skipOnClient(if: $skipClusterSize)\n      ...SessionInfoCellFragment\n    }\n  }\n}\n\nfragment SessionInfoCellFragment on ComputeSession {\n  id\n  session_id\n  name\n  status\n  user_email\n  image\n}\n"
   }
 };
 })();

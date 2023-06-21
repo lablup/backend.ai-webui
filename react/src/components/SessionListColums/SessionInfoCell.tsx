@@ -8,7 +8,12 @@ import { EditOutlined } from "@ant-design/icons";
 import Flex from "../Flex";
 import { useTranslation } from "react-i18next";
 import { useMutation as useTanMutation } from "react-query";
-import { useSuspendedBackendaiClient } from "../../hooks";
+import {
+  useBackendaiImageMetaData,
+  useSuspendedBackendaiClient,
+} from "../../hooks";
+import ImageMetaIcon from "../ImageMetaIcon";
+import SessionKernelTag from "../SessionKernelTag";
 
 const isRunningStatus = (status: string = "") => {
   return [
@@ -40,10 +45,13 @@ const SessionInfoCell: React.FC<{
         name
         status
         user_email
+        image
       }
     `,
     sessionFrgmt
   );
+
+  const metadata = useBackendaiImageMetaData();
 
   const mutation = useTanMutation({
     mutationFn: (newName: string) => {
@@ -80,58 +88,64 @@ const SessionInfoCell: React.FC<{
 
   const isPendingRename = mutation.isLoading || optimisticName !== session.name;
 
+  // sessions[objectKey].icon = this._getKernelIcon(session.image);
+  //         sessions[objectKey].sessionTags = this._getKernelInfo(session.image);
   return (
-    <Flex direction="row">
-      <Form form={form}>
-        {editing ? (
-          <Form.Item
-            style={{ margin: 0 }}
-            name={"name"}
-            rules={[
-              {
-                required: true,
-              },
-              {
-                max: 64,
-              },
-              {
-                pattern: /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
-                message: t(
-                  "session.Validation.EnterValidSessionName"
-                ).toString(),
-              },
-            ]}
-          >
-            <Input
-              autoFocus
-              onPressEnter={() => save()}
-              onKeyUp={(e) => {
-                if (e.key === "Escape") setEditing(false);
-              }}
-            />
-          </Form.Item>
-        ) : (
-          <>
-            <Typography.Text style={{ opacity: isPendingRename ? 0.5 : 1 }}>
-              {optimisticName}
-            </Typography.Text>
-            {editable && (
-              <Button
-                loading={isPendingRename}
-                type="ghost"
-                icon={<EditOutlined />}
-                style={{ color: token.colorLink }}
-                onClick={() => {
-                  form.setFieldsValue({
-                    name: session.name,
-                  });
-                  setEditing(true);
+    <Flex direction="column">
+      <Flex direction="row">
+        <Form form={form}>
+          {editing ? (
+            <Form.Item
+              style={{ margin: 0 }}
+              name={"name"}
+              rules={[
+                {
+                  required: true,
+                },
+                {
+                  max: 64,
+                },
+                {
+                  pattern: /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
+                  message: t(
+                    "session.Validation.EnterValidSessionName"
+                  ).toString(),
+                },
+              ]}
+            >
+              <Input
+                autoFocus
+                onPressEnter={() => save()}
+                onKeyUp={(e) => {
+                  if (e.key === "Escape") setEditing(false);
                 }}
-              ></Button>
-            )}
-          </>
-        )}
-      </Form>
+              />
+            </Form.Item>
+          ) : (
+            <>
+              <Typography.Text style={{ opacity: isPendingRename ? 0.5 : 1 }}>
+                {optimisticName}
+              </Typography.Text>
+              {editable && (
+                <Button
+                  loading={isPendingRename}
+                  type="ghost"
+                  icon={<EditOutlined />}
+                  style={{ color: token.colorLink }}
+                  onClick={() => {
+                    form.setFieldsValue({
+                      name: session.name,
+                    });
+                    setEditing(true);
+                  }}
+                ></Button>
+              )}
+            </>
+          )}
+        </Form>
+      </Flex>
+      <ImageMetaIcon image={session.image} />
+      <SessionKernelTag image={session.image} />
     </Flex>
   );
 };
