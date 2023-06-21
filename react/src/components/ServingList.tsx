@@ -1,7 +1,7 @@
 import { Space, Table, TableProps, Tag, Radio } from "antd";
 import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 
 
