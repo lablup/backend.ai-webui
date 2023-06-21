@@ -11,6 +11,7 @@ import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import { ThunderboltTwoTone } from "@ant-design/icons";
 import ServingList from "../components/ServingList";
+import RoutingList from "../components/RoutingList";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
 
@@ -42,7 +43,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
-
+          <Suspense fallback={<div>loading..</div>}>
+            <RoutingList
+              projectId={curProject.id}
+              status={[]}
+              extraFetchKey={""}
+            />
+          </Suspense>
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
           <Flex style={{ flex: 1 }}>
