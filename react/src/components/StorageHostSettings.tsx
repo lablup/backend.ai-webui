@@ -10,6 +10,7 @@ import {
   Input,
   Button,
   Form,
+  Spin
 } from "antd";
 import type { ColumnsType } from 'antd/es/table';
 import { useForm } from "antd/es/form/Form";
@@ -19,10 +20,12 @@ import {
   PlusOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from "react-i18next";
-import Flex from "./Flex";
 import { useToggle } from "ahooks";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { StorageHostSettingData } from "../hooks/backendai";
+import { useQuery } from "react-query";
+import { _humanReadableFileSize } from "../helper/index";
+import Flex from "./Flex";
 import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
 
 const { Meta } = Card;
@@ -31,14 +34,49 @@ const usageIndicatorColor = (percentage:number) => {
   return percentage < 70 ? 'rgba(58, 178, 97, 1)' : percentage < 90 ? 'rgb(223, 179, 23)' : '#ef5350';
 };
 
-interface StorageHostSettingsProps {
-  // storageHostId: string;
-}
-const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
+interface StorageHostSettingsProps {}
+const StorageHostSettings: React.FC<StorageHostSettingsProps> = () => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const [usage, setUsage] = useState({percent: 60});
+  const storageHostId = window.location.href.split('/').pop()?? "";
+
+  const baiClient = useSuspendedBackendaiClient();
+
+  let { data: storageInfo, isLoading: isLoadingStorageInfo } = useQuery<{
+    storage_volume: {
+      id: string,
+      backend: string,
+      capabilities: string[],
+      path: string,
+      fsprefix: string,
+      performance_metric: string,
+      usage: string,
+    },
+  }>(
+    "storageInfo",
+    () => {
+      return baiClient.storageproxy.detail(storageHostId, ['id', 'backend', 'capabilities', 'path', 'fsprefix', 'performance_metric', 'usage'])
+    },
+    {
+      // for to render even this fail query failed
+      suspense: false,
+    }
+  );
+
+  if (!storageInfo) {
+    storageInfo = {
+      storage_volume: {
+        id: t('storageHost.CannotRead'),
+        backend: t('storageHost.CannotRead'),
+        capabilities: [],
+        path: t('storageHost.CannotRead'),
+        fsprefix: t('storageHost.CannotRead'),
+        performance_metric: t('storageHost.CannotRead'),
+        usage: '{}',
+      },
+    };
+  }
 
   const [currentMode, setCurrentMode] = useState<"project" | "user">("project");
 
@@ -50,11 +88,21 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
   const [searchForm] = useForm<{
     search: string;
   }>();
+
+  const parsedUsage = JSON.parse(storageInfo?.storage_volume.usage || '{}');
+  const usedBytes = parsedUsage?.used_bytes;
+  const capacityBytes = parsedUsage?.capacity_bytes;
+  const usageRatio = capacityBytes > 0 ? usedBytes / capacityBytes : 0;
+  const storageUsage = {
+    used_bytes: usedBytes,
+    capacity_bytes: capacityBytes,
+    percent: Number((usageRatio  * 100).toFixed(1)),
+  };
   
-  const [data, setData] = useState<StorageHostSettingData[]>([
+  const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
     {
-      key: 'local:volume1',
-      name: 'local:volume1',
+      key: 'test1',
+      name: 'test1',
       id: 'foo1',
       max_file_count: 200,
       soft_limit: 100,
@@ -62,8 +110,8 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
       vendor_options: {},
     },
     {
-      key: 'test',
-      name: 'test',
+      key: 'test2',
+      name: 'test2',
       id: 'foo2',
       max_file_count: 500,
       soft_limit: 200,
@@ -106,13 +154,11 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
       title: t('general.Control'),
       dataIndex: 'controls',
       render: (_, record: { key: React.Key }) => 
-        data.length >= 1 ? (
+        storageData.length >= 1 ? (
           <Button type="text" danger>{t('button.Delete')}</Button>
         ) : null,
     }
   ];
-
-  const baiClient = useSuspendedBackendaiClient();
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     console.log('selectedRowKeys changed: ', newSelectedRowKeys);
@@ -131,7 +177,7 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-      <Typography.Title level={2}>local:volume1</Typography.Title>
+      <Typography.Title level={2}>{storageInfo?.storage_volume.id}</Typography.Title>
       <Card
         title={t('storageHost.Resource')}
         extra={
@@ -154,25 +200,27 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
               <Meta title={t('storageHost.Usage')}></Meta>
               <Flex
                 style={{ margin: token.marginSM, gap: token.margin }}>
-                  {usage.percent < 100 ? (
-                    <Progress type="circle" size={120} strokeWidth={15} percent={usage.percent} strokeColor={usageIndicatorColor(usage.percent)}></Progress>
+                  {storageUsage.percent < 100 ? (
+                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage.percent} strokeColor={usageIndicatorColor(storageUsage.percent)}></Progress>
                   ) : (
-                    <Progress type="circle" size={120} strokeWidth={15} percent={usage.percent} status="exception"></Progress>
+                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage.percent} status="exception"></Progress>
                   )
                   } 
                   <Descriptions column={1} style={{ marginLeft: 20 }}>
-                    <Descriptions.Item label={t('storageHost.Total')}>125 GB</Descriptions.Item>
-                    <Descriptions.Item label={t('storageHost.Used')}>75 GB</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Total')}>{_humanReadableFileSize(storageUsage.used_bytes)}</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Used')}>{_humanReadableFileSize(storageUsage.capacity_bytes)}</Descriptions.Item>
                   </Descriptions>
               </Flex>
             </Card>
             <Card bordered={false}>
               <Meta title={t('storageHost.Detail')}></Meta>
-              <Descriptions column={1} style={{ marginTop: 20 }}>
-                <Descriptions.Item label={t('agent.Endpoint')}>/Users/sujinkim/lablup/backend.ai/vfroot/local</Descriptions.Item>
-                <Descriptions.Item label={t('agent.BackendType')}>vfs</Descriptions.Item>
-                <Descriptions.Item label={t('agent.Capabilities')}>vfolder</Descriptions.Item>
-              </Descriptions>
+              <Spin spinning={isLoadingStorageInfo}>
+                <Descriptions column={1} style={{ marginTop: 20 }}>
+                  <Descriptions.Item label={t('agent.Endpoint')}>{storageInfo?.storage_volume.path}</Descriptions.Item>
+                  <Descriptions.Item label={t('agent.BackendType')}>{storageInfo?.storage_volume.backend}</Descriptions.Item>
+                  <Descriptions.Item label={t('agent.Capabilities')}>{storageInfo?.storage_volume.capabilities?.join(',')}</Descriptions.Item>
+                </Descriptions>
+              </Spin>
             </Card>
           </Flex>
       </Card>
@@ -246,7 +294,7 @@ const StorageHostSettings: React.FC<StorageHostSettingsProps> = ({}) => {
               }}  
             ></Button>
           </Flex>
-          <Table rowSelection={rowSelection} columns={columns} dataSource={data}></Table>
+          <Table rowSelection={rowSelection} columns={columns} dataSource={storageData}></Table>
         </Card>
         </Card>
         <StorageHostQuotaSettingModal

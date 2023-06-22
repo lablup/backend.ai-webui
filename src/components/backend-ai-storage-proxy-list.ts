@@ -224,8 +224,8 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
    */
   _moveTo(url = '') {
     const page = url !== '' ? url : 'summary';
-    globalThis.history.pushState({}, '', '/summary');
-    store.dispatch(navigate(decodeURIComponent('/' + page), {}));
+    globalThis.history.pushState({}, '', page);
+    store.dispatch(navigate(decodeURIComponent(page), {}));
   }
 
   /**
@@ -259,7 +259,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <button
           style="border:none;background:none;"
           class="fg blue"
-          @click="${() => this._moveTo('storage-host-settings')}">
+          @click="${() => this._moveTo(`/agent/storage/${rowData.item.id}`)}">
         ${rowData.item.id}
         </button>
         <div class="indicator monospace">${rowData.item.path}</div>

@@ -457,6 +457,7 @@
     "HardLimit": "Hard Limit",
     "Search": "Search",
     "VendorOptions": "Vendor Options",
+    "CannotRead": "Cannot Read",
     "quotaSettings": {
       "Type": "Type",
       "Host": "Host"
