@@ -7,5 +7,5 @@ module.exports = {
     // "./relay-directives.graphql",
     "./react/data/client-directives.graphql"
   ],
-  documents: ["./src/**/*.{tsx,ts,jsx,js,graphql}"],
+  documents: ["./src/**/*.{tsx,ts,jsx,js,graphql}","./react/**/*.{tsx,ts,jsx,js,graphql}"],
 };
