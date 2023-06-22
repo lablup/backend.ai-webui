@@ -50,6 +50,7 @@
     "@material/mwc-textarea": "^0.27.0",
     "@material/mwc-textfield": "^0.27.0",
     "@material/mwc-top-app-bar-fixed": "^0.27.0",
+    "@open-wc/dev-server-hmr": "^0.1.2-next.0",
     "@vaadin/combo-box": "^24.0.2",
     "@vaadin/date-time-picker": "^24.0.0",
     "@vaadin/grid": "^24.0.0",

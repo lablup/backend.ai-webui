@@ -9,6 +9,7 @@ const DefaultProviders = React.lazy(
   () => import("./components/DefaultProviders")
 );
 const Information = React.lazy(() => import("./components/Information"));
+const SessionList = React.lazy(() => import("./pages/SessionListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
@@ -16,11 +17,24 @@ const StorageHostSettings = React.lazy(() => import("./components/StorageHostSet
 
 customElements.define(
   "backend-ai-react-information",
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <Information />
-    </DefaultProviders>
-  ))
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Information />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-session-list",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SessionList>{props.children}</SessionList>
+      </DefaultProviders>
+    );
+  })
 );
 
 customElements.define(
