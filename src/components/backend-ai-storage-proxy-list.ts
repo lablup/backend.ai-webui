@@ -259,7 +259,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
         <button
           style="border:none;background:none;"
           class="fg blue"
-          @click="${() => this._moveTo(`/agent/storage/${rowData.item.id}`)}">
+          @click="${() => this._moveTo(`/storage-settings/${rowData.item.id}`)}">
         ${rowData.item.id}
         </button>
         <div class="indicator monospace">${rowData.item.path}</div>

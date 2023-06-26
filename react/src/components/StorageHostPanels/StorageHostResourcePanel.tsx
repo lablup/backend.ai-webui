@@ -9,6 +9,7 @@ import { EllipsisOutlined, ControlFilled } from '@ant-design/icons';
 import { useSuspendedBackendaiClient } from "../../hooks";
 import { _humanReadableFileSize } from "../../helper/index";
 import Flex from "../Flex";
+import { useWebComponentInfo } from "../DefaultProviders";
 
 const { Meta } = Card;
 
@@ -21,6 +22,9 @@ const StorageHostResourcePanel: React.FC<{
 }> = ({ resourceFrgmt }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
+
+  const { moveTo } = useWebComponentInfo();
+
   const resource = useFragment(
     graphql`
       fragment StorageHostResourcePanelFragment on StorageVolume {
@@ -59,7 +63,8 @@ const StorageHostResourcePanel: React.FC<{
                 {
                   key: 'control',
                   label: t('storageHost.Control'),
-                  icon: <ControlFilled />
+                  icon: <ControlFilled />,
+                  onClick: () => moveTo("/agent"),
                 },
               ],
             }}>

@@ -13,6 +13,8 @@ import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import {store} from '../store';
+import {navigate} from '../backend-ai-app';
 
 /**
 Backend.AI Storage Host Settings View
@@ -49,7 +51,11 @@ export default class BackendAIStorageHostSettingsView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-storage-host-settings></backend-ai-react-storage-host-settings>
+      <backend-ai-react-storage-host-settings @moveTo="${(e: CustomEvent) => {
+    const path = e.detail.path;
+    globalThis.history.pushState({}, '', path);
+    store.dispatch(navigate(decodeURIComponent(path), {}));
+  }}"></backend-ai-react-storage-host-settings>
     `;
   }
 }

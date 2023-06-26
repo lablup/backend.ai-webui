@@ -1,6 +1,7 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import React from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
+import { Routes, Route } from "react-router-dom";
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
@@ -13,7 +14,7 @@ const SessionList = React.lazy(() => import("./pages/SessionListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
-const StorageHostSettings = React.lazy(() => import("./components/StorageHostSettings"));
+const StorageHostSettingPage = React.lazy(() => import("./pages/StorageHostSettingPage"));
 
 customElements.define(
   "backend-ai-react-information",
@@ -50,7 +51,10 @@ customElements.define(
   "backend-ai-react-storage-host-settings",
   reactToWebComponent((props) => (
     <DefaultProviders {...props}>
-      <StorageHostSettings />
+      <Routes>
+        <Route path="storage-settings" element={<StorageHostSettingPage />} />
+        <Route path="storage-settings/:storageHostId" element={<StorageHostSettingPage />} />
+      </Routes>
     </DefaultProviders>
   ))
 );
