@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { ThunderboltTwoTone } from "@ant-design/icons";
 import ServingList from "../components/ServingList";
 import RoutingList from "../components/RoutingList";
+import ServiceLauncher from "../components/ServiceLauncher";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
 
@@ -99,11 +100,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       <Button icon={<DownloadOutlined />} type="ghost" />
                     </Tooltip> */}
                       {/* @ts-ignore */}
-                      <backend-ai-session-launcher
-                        location="session"
-                        id="session-launcher"
-                        active
-                      />
+                      <ServiceLauncher></ServiceLauncher>
                     </Flex>
                   ),
                 }}
