@@ -18,8 +18,8 @@ export const baiSignedRequestWithPromise = ({
   body?: any;
   client: any;
 }) => {
-  let request = client.newSignedRequest(method, url, body, null);
-  return client._wrapWithPromise(request);
+  let request = client?.newSignedRequest(method, url, body, null);
+  return client?._wrapWithPromise(request);
 };
 
 /**
