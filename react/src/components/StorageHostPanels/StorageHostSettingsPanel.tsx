@@ -9,7 +9,8 @@ import {
   Button,
   Form,
 } from "antd";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
+import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { 
   EllipsisOutlined,
@@ -96,7 +97,10 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
       dataIndex: 'controls',
       render: (_, record: { key: React.Key }) => 
         storageData.length >= 1 ? (
-          <Button type="text" danger>{t('button.Delete')}</Button>
+          <>
+            <Button type="text" icon={<EditFilled />} onClick={() => toggleQuotaSettingModal()}>{t('button.Edit')}</Button>
+            <Button type="text" danger icon={<DeleteFilled />}>{t('button.Delete')}</Button>
+          </>
         ) : null,
     }
   ];
@@ -183,9 +187,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
             </Form>
             <Button 
               icon={<PlusOutlined />}
-              onClick={() => {
-                toggleQuotaSettingModal();
-              }}  
             ></Button>
           </Flex>
           <Table rowSelection={rowSelection} columns={columns} dataSource={storageData}></Table>
