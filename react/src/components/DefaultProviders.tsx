@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
 import { RelayEnvironmentProvider } from "react-relay";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
@@ -15,10 +15,12 @@ import { useCustomThemeConfig } from "../helper/customThemeConfig";
 
 // @ts-ignore
 import rawFixAntCss from "../fix_antd.css?raw";
+import { BrowserRouter } from "react-router-dom";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
   dispatchEvent: ReactWebComponentProps["dispatchEvent"];
+  moveTo: (path: string) => void;
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
@@ -99,6 +101,9 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     return {
       value,
       dispatchEvent,
+      moveTo: (path: string) => {
+        dispatchEvent("moveTo", { path });
+      },
     };
   }, [value, dispatchEvent]);
   return (
@@ -124,7 +129,10 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                 theme={themeConfig}
               >
                 <StyleProvider container={shadowRoot} cache={cache}>
-                  {children}
+                  <Suspense fallback="">
+                    <BrowserRouter>{children}</BrowserRouter>
+                  </Suspense>
+                  {/* {children} */}
                 </StyleProvider>
               </ConfigProvider>
             </WebComponentContext.Provider>
