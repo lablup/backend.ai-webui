@@ -10,7 +10,7 @@ const DefaultProviders = React.lazy(
 );
 const Information = React.lazy(() => import("./components/Information"));
 const SessionList = React.lazy(() => import("./pages/SessionListPage"));
-const ServingList = React.lazy(() => import("./pages/ServingListPage"))
+const ServingList = React.lazy(() => import("./pages/ServingListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
