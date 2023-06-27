@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { useParams } from "react-router-dom";
+
 import {
   Card,
   theme,
@@ -8,6 +10,7 @@ import {
   Input,
   Button,
   Form,
+  Empty,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
@@ -28,7 +31,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
-  const storageHostId = window.location.href.split('/').pop()?? "";
+  const { storageHostId } = useParams<{
+    storageHostId: string;  // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
+  }>();
 
   const [currentMode, setCurrentMode] = useState<"project" | "user">("project");
 
@@ -40,27 +45,27 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
   const [searchForm] = useForm<{
     search: string;
   }>();
-  
-  const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
-    {
-      key: 'test1',
-      name: 'test1',
-      id: 'foo1',
-      max_file_count: 200,
-      soft_limit: 100,
-      hard_limit: 300,
-      vendor_options: {},
-    },
-    {
-      key: 'test2',
-      name: 'test2',
-      id: 'foo2',
-      max_file_count: 500,
-      soft_limit: 200,
-      hard_limit: 250,
-      vendor_options: {},
-    },
-  ]);
+  const [storageData, setStorageData] = useState<StorageHostSettingData[]>([]);
+  // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
+  //   {
+  //     key: 'test1',
+  //     name: 'test1',
+  //     id: 'foo1',
+  //     max_file_count: 200,
+  //     soft_limit: 100,
+  //     hard_limit: 300,
+  //     vendor_options: {},
+  //   },
+  //   {
+  //     key: 'test2',
+  //     name: 'test2',
+  //     id: 'foo2',
+  //     max_file_count: 500,
+  //     soft_limit: 200,
+  //     hard_limit: 250,
+  //     vendor_options: {},
+  //   },
+  // ]);
 
   const columns: ColumnsType<StorageHostSettingData> = [
     {
@@ -115,6 +120,24 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
     onChange: onSelectChange,
   };
   const hasSelected = selectedRowKeys.length > 0;
+
+  const addUserWhenEmpty = (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={(
+        <>
+          <div
+            style={{ margin: 10 }}>
+            {t('storageHost.quotaSettings.ClickCustomButton')}
+          </div> 
+          <Button
+            icon={<PlusOutlined />}>
+            {currentMode === 'project' ? t('storageHost.quotaSettings.AddProject') : t('storageHost.quotaSettings.AddUser')}
+          </Button>
+        </>
+      )}
+    />
+  );
 
   return (
     <Flex
@@ -189,7 +212,11 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
               icon={<PlusOutlined />}
             ></Button>
           </Flex>
-          <Table rowSelection={rowSelection} columns={columns} dataSource={storageData}></Table>
+          <Table 
+            rowSelection={rowSelection}
+            columns={columns}
+            dataSource={storageData}
+            locale={{ emptyText: addUserWhenEmpty }}></Table>
         </Card>
         </Card>
         <StorageHostQuotaSettingModal

@@ -460,7 +460,10 @@
     "CannotRead": "Cannot Read",
     "quotaSettings": {
       "Type": "Type",
-      "Host": "Host"
+      "Host": "Host",
+      "ClickCustomButton": "If you want to use different settings from the default values for each project or user, click the button below.",
+      "AddProject": "Add Project",
+      "AddUser": "Add User"
     }
   },
   "general": {
