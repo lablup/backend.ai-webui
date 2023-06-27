@@ -22,9 +22,9 @@ import {
 } from '@ant-design/icons';
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import Flex from "../Flex";
-import StorageHostQuotaSettingModal from "../StorageHostQuotaSettingModal";
-import { StorageHostSettingData } from "../../hooks/backendai";
+import Flex from "./Flex";
+import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
+import { StorageHostSettingData } from "../hooks/backendai";
 
 interface StorageHostSettingsPanelProps {}
 const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => {
@@ -45,27 +45,27 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
   const [searchForm] = useForm<{
     search: string;
   }>();
-  const [storageData, setStorageData] = useState<StorageHostSettingData[]>([]);
-  // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
-  //   {
-  //     key: 'test1',
-  //     name: 'test1',
-  //     id: 'foo1',
-  //     max_file_count: 200,
-  //     soft_limit: 100,
-  //     hard_limit: 300,
-  //     vendor_options: {},
-  //   },
-  //   {
-  //     key: 'test2',
-  //     name: 'test2',
-  //     id: 'foo2',
-  //     max_file_count: 500,
-  //     soft_limit: 200,
-  //     hard_limit: 250,
-  //     vendor_options: {},
-  //   },
-  // ]);
+  // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([]);
+  const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
+    {
+      key: 'test1',
+      name: 'test1',
+      id: 'foo1',
+      max_file_count: 200,
+      soft_limit: 100,
+      hard_limit: 300,
+      vendor_options: {},
+    },
+    {
+      key: 'test2',
+      name: 'test2',
+      id: 'foo2',
+      max_file_count: 500,
+      soft_limit: 200,
+      hard_limit: 250,
+      vendor_options: {},
+    },
+  ]);
 
   const columns: ColumnsType<StorageHostSettingData> = [
     {
@@ -169,9 +169,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
               menu={{
                 items: [
                   {
-                    key: 'control',
-                    label: 'Control',
-                    icon: <ControlFilled />
+                    key: 'edit',
+                    label: t('button.Edit'),
+                    icon: <EditFilled />
                   },
                 ],
               }}>
@@ -187,7 +187,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
             <Descriptions.Item label={t('storageHost.MaxFileCount')}>200</Descriptions.Item>
             <Descriptions.Item label={t('storageHost.SoftLimit') + ' (bytes)'}>100</Descriptions.Item>
             <Descriptions.Item label={t('storageHost.HardLimit') + ' (bytes)'}>300</Descriptions.Item>
-            <Descriptions.Item label={t('storageHost.VendorOptions')}>{}</Descriptions.Item>
           </Descriptions>
         </Card>
         <Card

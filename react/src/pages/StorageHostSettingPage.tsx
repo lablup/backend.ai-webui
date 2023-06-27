@@ -10,8 +10,8 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import Flex from "../components/Flex";
-import StorageHostResourcePanel from "../components/StorageHostPanels/StorageHostResourcePanel";
-import StorageHostSettingsPanel from "../components/StorageHostPanels/StorageHostSettingsPanel";
+import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
+import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
 
 interface StorageHostSettingPageProps {}
 const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {

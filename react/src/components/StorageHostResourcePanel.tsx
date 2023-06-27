@@ -6,10 +6,10 @@ import { StorageHostResourcePanelFragment$key } from "./__generated__/StorageHos
 import { useTranslation } from "react-i18next";
 import { theme, Progress, Spin, Card, Descriptions, Typography, Dropdown } from "antd";
 import { EllipsisOutlined, ControlFilled } from '@ant-design/icons';
-import { useSuspendedBackendaiClient } from "../../hooks";
-import { _humanReadableFileSize } from "../../helper/index";
-import Flex from "../Flex";
-import { useWebComponentInfo } from "../DefaultProviders";
+import { useSuspendedBackendaiClient } from "../hooks";
+import { _humanReadableFileSize } from "../helper/index";
+import Flex from "./Flex";
+import { useWebComponentInfo } from "./DefaultProviders";
 
 const { Meta } = Card;
 
