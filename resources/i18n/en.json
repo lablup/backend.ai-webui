@@ -463,7 +463,9 @@
       "Host": "Host",
       "ClickCustomButton": "If you want to use different settings from the default values for each project or user, click the button below.",
       "AddProject": "Add Project",
-      "AddUser": "Add User"
+      "AddUser": "Add User",
+      "DeleteCustomSettings": "Delete custom settings",
+      "ConfirmDeleteCustomQuota": "Are you sure you want to delete? \nIf you delete, this user or project uses default value."
     }
   },
   "general": {

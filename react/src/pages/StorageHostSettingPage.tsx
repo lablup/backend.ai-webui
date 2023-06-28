@@ -23,7 +23,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
     graphql`
       query StorageHostSettingPageQuery(
-        $id: String
+        $id: String,
       ) {
         storage_volume(
           id: $id

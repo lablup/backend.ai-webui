@@ -11,19 +11,21 @@ import {
   Button,
   Form,
   Empty,
+  message,
+  Popconfirm,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
 import { useForm } from "antd/es/form/Form";
 import { 
   EllipsisOutlined,
-  ControlFilled,
   PlusOutlined,
 } from '@ant-design/icons';
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import Flex from "./Flex";
 import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
+import StorageHostCustomQuotaAddingModal from "./StorageHostCustomQuotaAddingModal";
 import { StorageHostSettingData } from "../hooks/backendai";
 
 interface StorageHostSettingsPanelProps {}
@@ -40,11 +42,32 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
+  const [visibleCustomQuotaAddingModal, { toggle: toggleCustomQuotaAddingModal }] = useToggle(false);
 
   const [search, setSearch] = useState<string>();
   const [searchForm] = useForm<{
     search: string;
   }>();
+
+  interface DeleteCustomSettingButtonProps{
+    type?: "default" | "link" | "text" | "ghost" | "primary" | "dashed" | undefined;
+    buttonStyle?: object;
+  };
+  const DeleteCustomSettingButton: React.FC<DeleteCustomSettingButtonProps> = ({
+    type="default",
+    buttonStyle={},
+  }) => {
+    return (
+    <Popconfirm
+      title={t('storageHost.quotaSettings.DeleteCustomSettings')}
+      description={t('storageHost.quotaSettings.ConfirmDeleteCustomQuota')}
+      placement="bottom"
+    >
+      <Button type={type} danger icon={<DeleteFilled />} style={ buttonStyle }>{t('button.Delete')}</Button>
+    </Popconfirm>
+    );
+  };
+
   // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([]);
   const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
     {
@@ -104,7 +127,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
         storageData.length >= 1 ? (
           <>
             <Button type="text" icon={<EditFilled />} onClick={() => toggleQuotaSettingModal()}>{t('button.Edit')}</Button>
-            <Button type="text" danger icon={<DeleteFilled />}>{t('button.Delete')}</Button>
+            <DeleteCustomSettingButton type="text" />
           </>
         ) : null,
     }
@@ -131,7 +154,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
             {t('storageHost.quotaSettings.ClickCustomButton')}
           </div> 
           <Button
-            icon={<PlusOutlined />}>
+            icon={<PlusOutlined />}
+            onClick={() => toggleCustomQuotaAddingModal()}>
             {currentMode === 'project' ? t('storageHost.quotaSettings.AddProject') : t('storageHost.quotaSettings.AddUser')}
           </Button>
         </>
@@ -171,7 +195,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
                   {
                     key: 'edit',
                     label: t('button.Edit'),
-                    icon: <EditFilled />
+                    icon: <EditFilled />,
+                    onClick: () => toggleQuotaSettingModal(),
                   },
                 ],
               }}>
@@ -207,9 +232,15 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
                 />
               </Form.Item>
             </Form>
-            <Button 
-              icon={<PlusOutlined />}
-            ></Button>
+            <div>
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => toggleCustomQuotaAddingModal()}
+              ></Button>
+              {hasSelected && (
+                <DeleteCustomSettingButton buttonStyle={{ marginLeft: 5 }} />
+              )}
+            </div>
           </Flex>
           <Table 
             rowSelection={rowSelection}
@@ -223,6 +254,14 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = () => 
           destroyOnClose
           onRequestClose={(settings) => {
             toggleQuotaSettingModal();
+          }}
+        />
+        <StorageHostCustomQuotaAddingModal
+          currentMode={currentMode}
+          open={visibleCustomQuotaAddingModal}
+          destroyOnClose
+          onRequestClose={() => {
+            toggleCustomQuotaAddingModal();
           }}
         />
     </Flex>

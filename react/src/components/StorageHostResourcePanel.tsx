@@ -1,12 +1,12 @@
-import { useQuery } from "react-query";
 import { useFragment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { StorageHostResourcePanelFragment$key } from "./__generated__/StorageHostResourcePanelFragment.graphql";
 
 import { useTranslation } from "react-i18next";
-import { theme, Progress, Spin, Card, Descriptions, Typography, Dropdown } from "antd";
+
+import { theme, Progress, Card, Descriptions, Dropdown } from "antd";
 import { EllipsisOutlined, ControlFilled } from '@ant-design/icons';
-import { useSuspendedBackendaiClient } from "../hooks";
+
 import { _humanReadableFileSize } from "../helper/index";
 import Flex from "./Flex";
 import { useWebComponentInfo } from "./DefaultProviders";

@@ -1,27 +1,63 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import graphql from "babel-plugin-relay/macro";
+import { useLazyLoadQuery } from "react-relay";
+import { StorageHostCustomQuotaAddingModalQuery } from "./__generated__/StorageHostCustomQuotaAddingModalQuery.graphql";
+
 import { 
   Modal,
   ModalProps,
   Form,
   FormProps,
-  Select,
-  Input,
-  InputNumber,
 } from "antd";
-import _ from "lodash";
 import { useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
+import ProjectMultiSelector from "./ProjectMultiSelector";
+import UserMultiSelector from "./UserMultiSelector";
+
 
 interface CustomQuotaAddingFormProps extends FormProps {
+  onRequestClose: () => void;
   currentMode: string;
+  limit?: number,
+  currentPage?: number,
+  pageSize?: number,
+  isActive?: boolean,
 }
-const QuotaSettingVarForm: React.FC<CustomQuotaAddingFormProps> = ({
+const CustomQuotaAddingVarForm: React.FC<CustomQuotaAddingFormProps> = ({
+  onRequestClose,
   currentMode,
+  limit = 50,
+  currentPage = 1,
+  pageSize = 50,
+  isActive,
   ...props
 }) => {
-  const { t } = useTranslation();
-  const baiClient = useSuspendedBackendaiClient();
-
+  const { groups, user_list } = useLazyLoadQuery<StorageHostCustomQuotaAddingModalQuery>(
+    graphql`
+      query StorageHostCustomQuotaAddingModalQuery(
+        $limit: Int!
+        $offset: Int!
+        $is_active: Boolean
+      ) {
+        groups {
+          ...ProjectMultiSelectorFragment
+        }
+        user_list (
+          limit: $limit
+          offset: $offset
+          is_active: $is_active,
+        ) {
+          items {
+            ...UserMultiSelectorFragment
+          }
+        }
+      }
+    `,
+    {
+      limit: pageSize,
+      offset: (currentPage - 1) * pageSize,
+      is_active: isActive
+    },
+  );
   return (
     <Form
       labelCol={{ span: 6 }}
@@ -30,19 +66,21 @@ const QuotaSettingVarForm: React.FC<CustomQuotaAddingFormProps> = ({
       {...props}
       validateTrigger={["onChange", "onBlur"]}
     >
-      {currentMode === 'user' && (
-        <>
-        
-        </>
-      )}
+      {/* {currentMode === 'project' ? (
+        <ProjectMultiSelector projectsFrgmt={groups} />
+      ) : (
+        <UserMultiSelector usersFrgmt={user_list} />
+      )} */}
     </Form>
   );
 };
 
 interface Props extends ModalProps {
+  onRequestClose: () => void;
   currentMode: string;
 }
-const StorageHostQuotaCustomAddingModal: React.FC<Props> = ({
+const StorageHostCustomQuotaAddingModal: React.FC<Props> = ({
+  onRequestClose,
   currentMode,
   ...props
 }) => {
@@ -67,10 +105,18 @@ const StorageHostQuotaCustomAddingModal: React.FC<Props> = ({
       onOk={(e) => {
         form.submit();
       }}
+      onCancel={() => {
+        onRequestClose();
+      }}
       title={currentMode === 'project' ? t('storageHost.quotaSettings.AddProject') : t('storageHost.quotaSettings.AddUser')}
     >
+      <CustomQuotaAddingVarForm
+        onRequestClose={onRequestClose}
+        form={form}
+        currentMode={currentMode}
+      />
     </Modal>
   );
 };
 
-export default StorageHostQuotaCustomAddingModal;
+export default StorageHostCustomQuotaAddingModal;
