@@ -668,6 +668,18 @@ input ModifyUserInput {
   totp_activated: Boolean
 }
 
+input FolderQuotaInput {
+  hard_limit_bytes: BigInt
+}
+
+type SetFolderQuota {
+  folder_quota: FolderQuota
+}
+
+type UnsetFolderQuota {
+  folder_quota: FolderQuota
+}
+
 type Mutations {
   modify_agent(id: String!, props: ModifyAgentInput!): ModifyAgent
   create_domain(name: String!, props: DomainInput!): CreateDomain
@@ -711,6 +723,8 @@ type Mutations {
   disassociate_all_scaling_groups_with_domain(domain: String!): DisassociateAllScalingGroupsWithDomain
   disassociate_all_scaling_groups_with_group(user_group: UUID!): DisassociateAllScalingGroupsWithGroup
   modify_compute_session(id: String!, props: ModifySessionInput!): ModifySession
+  set_folder_quota(quota_scope_id: UUID!, storage_host_name: String!, props: FolderQuotaInput!): SetFolderQuota
+  unset_folder_quota(quota_scope_id: UUID!, storage_host_name: String!): UnsetFolderQuota
 }
 
 interface PaginatedList {
@@ -792,6 +806,7 @@ type Queries {
   endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, project: UUID): EndpointList
   routing(routing_id: UUID!): Routing
   routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
+  folder_quota(quota_scope_id: UUID!, storage_host_name: String!): FolderQuota
 }
 
 type RescanImages {
@@ -829,6 +844,19 @@ type Routing implements Item {
 type RoutingList implements PaginatedList {
   items: [Routing]!
   total_count: Int!
+}
+
+type QuotaDetails {
+  usage_bytes: BigInt
+  usage_count: BigInt
+  hard_limit_bytes: BigInt
+}
+
+type FolderQuota {
+  id: UUID!
+  quota_scope_id: UUID!
+  storage_host_name: String!
+  details: QuotaDetails!
 }
 
 type ScalingGroup {

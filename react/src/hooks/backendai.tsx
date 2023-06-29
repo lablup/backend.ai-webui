@@ -1,9 +1,10 @@
 export interface StorageHostSettingData {
-  key: string;
-  name: string;
   id: string;
-  max_file_count: number | null;
-  soft_limit: number | null;
-  hard_limit: number | null;
-  vendor_options: object;
+  quota_scope_id: string;
+  storage_host_name: string;
+  details: {
+    hard_limit_bytes: number;
+    usage_bytes: number;
+    usage_count: number;
+  }
 }

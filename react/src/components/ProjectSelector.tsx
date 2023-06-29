@@ -39,7 +39,7 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
     <Select
       labelInValue
       onChange={(value) => {
-        onChange?.(value);
+        onChange?.(value?.key);
       }}
       allowClear
       showSearch
@@ -48,7 +48,7 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
     >
       {_.map(projects, (project) => {
         return (
-          <Select.Option key={project?.name}>{project?.name}</Select.Option>
+          <Select.Option key={project?.id} value={project?.id}>{project?.name}</Select.Option>
         );
       })}
     </Select>
