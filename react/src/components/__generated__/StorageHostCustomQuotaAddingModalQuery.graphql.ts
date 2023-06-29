@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a173031d6a5920eb522bba7b174da3a1>>
+ * @generated SignedSource<<ac86584c4fea3f1e069aef5ad98f0365>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
 export type StorageHostCustomQuotaAddingModalQuery$variables = {
   is_active?: boolean | null;
   limit: number;
@@ -17,11 +16,11 @@ export type StorageHostCustomQuotaAddingModalQuery$variables = {
 };
 export type StorageHostCustomQuotaAddingModalQuery$data = {
   readonly groups: ReadonlyArray<{
-    readonly " $fragmentSpreads": FragmentRefs<"ProjectMultiSelectorFragment">;
+    readonly id: any | null;
   } | null> | null;
   readonly user_list: {
     readonly items: ReadonlyArray<{
-      readonly " $fragmentSpreads": FragmentRefs<"UserMultiSelectorFragment">;
+      readonly id: string | null;
     } | null>;
   } | null;
 };
@@ -48,28 +47,62 @@ v2 = {
 },
 v3 = [
   {
-    "kind": "Variable",
-    "name": "is_active",
-    "variableName": "is_active"
-  },
-  {
-    "kind": "Variable",
-    "name": "limit",
-    "variableName": "limit"
-  },
-  {
-    "kind": "Variable",
-    "name": "offset",
-    "variableName": "offset"
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "id",
+    "storageKey": null
   }
 ],
-v4 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "id",
-  "storageKey": null
-};
+v4 = [
+  {
+    "alias": null,
+    "args": null,
+    "concreteType": "Group",
+    "kind": "LinkedField",
+    "name": "groups",
+    "plural": true,
+    "selections": (v3/*: any*/),
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": [
+      {
+        "kind": "Variable",
+        "name": "is_active",
+        "variableName": "is_active"
+      },
+      {
+        "kind": "Variable",
+        "name": "limit",
+        "variableName": "limit"
+      },
+      {
+        "kind": "Variable",
+        "name": "offset",
+        "variableName": "offset"
+      }
+    ],
+    "concreteType": "UserList",
+    "kind": "LinkedField",
+    "name": "user_list",
+    "plural": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "concreteType": "User",
+        "kind": "LinkedField",
+        "name": "items",
+        "plural": true,
+        "selections": (v3/*: any*/),
+        "storageKey": null
+      }
+    ],
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -80,51 +113,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "StorageHostCustomQuotaAddingModalQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Group",
-        "kind": "LinkedField",
-        "name": "groups",
-        "plural": true,
-        "selections": [
-          {
-            "args": null,
-            "kind": "FragmentSpread",
-            "name": "ProjectMultiSelectorFragment"
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "UserList",
-        "kind": "LinkedField",
-        "name": "user_list",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "items",
-            "plural": true,
-            "selections": [
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "UserMultiSelectorFragment"
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
+    "selections": (v4/*: any*/),
     "type": "Queries",
     "abstractKey": null
   },
@@ -137,69 +126,19 @@ return {
     ],
     "kind": "Operation",
     "name": "StorageHostCustomQuotaAddingModalQuery",
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "Group",
-        "kind": "LinkedField",
-        "name": "groups",
-        "plural": true,
-        "selections": [
-          (v4/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": (v3/*: any*/),
-        "concreteType": "UserList",
-        "kind": "LinkedField",
-        "name": "user_list",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "concreteType": "User",
-            "kind": "LinkedField",
-            "name": "items",
-            "plural": true,
-            "selections": [
-              (v4/*: any*/),
-              {
-                "alias": null,
-                "args": null,
-                "kind": "ScalarField",
-                "name": "username",
-                "storageKey": null
-              }
-            ],
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ]
+    "selections": (v4/*: any*/)
   },
   "params": {
-    "cacheID": "a005f70a26700f634da2a4d2829c4d95",
+    "cacheID": "f550de0230f691c9f417ab7181fba2b9",
     "id": null,
     "metadata": {},
     "name": "StorageHostCustomQuotaAddingModalQuery",
     "operationKind": "query",
-    "text": "query StorageHostCustomQuotaAddingModalQuery(\n  $limit: Int!\n  $offset: Int!\n  $is_active: Boolean\n) {\n  groups {\n    ...ProjectMultiSelectorFragment\n  }\n  user_list(limit: $limit, offset: $offset, is_active: $is_active) {\n    items {\n      ...UserMultiSelectorFragment\n      id\n    }\n  }\n}\n\nfragment ProjectMultiSelectorFragment on Group {\n  id\n  name\n}\n\nfragment UserMultiSelectorFragment on User {\n  id\n  username\n}\n"
+    "text": "query StorageHostCustomQuotaAddingModalQuery(\n  $limit: Int!\n  $offset: Int!\n  $is_active: Boolean\n) {\n  groups {\n    id\n  }\n  user_list(limit: $limit, offset: $offset, is_active: $is_active) {\n    items {\n      id\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "47aef8ba06080f8490a7b5f72303f615";
+(node as any).hash = "6df1fe729b519b6909a17106aed396b2";
 
 export default node;
