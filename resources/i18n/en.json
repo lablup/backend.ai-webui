@@ -467,7 +467,7 @@
       "AddUser": "Add User",
       "UnsetCustomSettings": "Unset custom settings",
       "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, this user or project uses default value.",
-      "SelectProject": "Select Project",
+      "SelectProject": "Search to Select Project",
       "SelectUser": "Search to Select User"
     }
   },

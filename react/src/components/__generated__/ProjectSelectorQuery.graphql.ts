@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fa1f5ded0bf96122ecee52dce8c8cad2>>
+ * @generated SignedSource<<10da523bcc7d9435d84d18d15b049b36>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,13 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-export type ProjectSelectorQuery$variables = {};
+export type ProjectSelectorQuery$variables = {
+  domain_name?: string | null;
+};
 export type ProjectSelectorQuery$data = {
   readonly projects: ReadonlyArray<{
+    readonly id: any | null;
     readonly is_active: boolean | null;
-    readonly is_public: boolean | null;
     readonly name: string | null;
   } | null> | null;
 };
@@ -25,19 +27,38 @@ export type ProjectSelectorQuery = {
 const node: ConcreteRequest = (function(){
 var v0 = [
   {
+    "defaultValue": null,
+    "kind": "LocalArgument",
+    "name": "domain_name"
+  }
+],
+v1 = [
+  {
     "alias": "projects",
     "args": [
+      {
+        "kind": "Variable",
+        "name": "domain_name",
+        "variableName": "domain_name"
+      },
       {
         "kind": "Literal",
         "name": "is_active",
         "value": true
       }
     ],
-    "concreteType": "ScalingGroup",
+    "concreteType": "Group",
     "kind": "LinkedField",
-    "name": "scaling_groups",
+    "name": "groups",
     "plural": true,
     "selections": [
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
+        "name": "id",
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": null,
@@ -51,46 +72,39 @@ var v0 = [
         "kind": "ScalarField",
         "name": "is_active",
         "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "is_public",
-        "storageKey": null
       }
     ],
-    "storageKey": "scaling_groups(is_active:true)"
+    "storageKey": null
   }
 ];
 return {
   "fragment": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
     "name": "ProjectSelectorQuery",
-    "selections": (v0/*: any*/),
+    "selections": (v1/*: any*/),
     "type": "Queries",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": [],
+    "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
     "name": "ProjectSelectorQuery",
-    "selections": (v0/*: any*/)
+    "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "bac828336acef2aab4bef5655a916bf4",
+    "cacheID": "d7851e79319b5f7e80f5875b0103c807",
     "id": null,
     "metadata": {},
     "name": "ProjectSelectorQuery",
     "operationKind": "query",
-    "text": "query ProjectSelectorQuery {\n  projects: scaling_groups(is_active: true) {\n    name\n    is_active\n    is_public\n  }\n}\n"
+    "text": "query ProjectSelectorQuery(\n  $domain_name: String\n) {\n  projects: groups(domain_name: $domain_name, is_active: true) {\n    id\n    name\n    is_active\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d1a331174f281ef39a77271e1d1fdf0a";
+(node as any).hash = "d5d4dd1a2d05a55184bd44703fc96365";
 
 export default node;
