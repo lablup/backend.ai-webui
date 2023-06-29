@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useFragment, useLazyLoadQuery } from "react-relay";
+import { ProjectSelectorQuery } from "./__generated__/ProjectSelectorQuery.graphql";
 
 import { Select, SelectProps, Spin } from "antd";
-import { ProjectSelectorQuery } from "./__generated__/ProjectSelectorQuery.graphql";
+import { useTranslation } from "react-i18next";
 import _ from "lodash";
+
 
 interface Props extends SelectProps {
   onChange?: (value: string) => void;
 }
 
 const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
+  const { t } = useTranslation();
+
   const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
       query ProjectSelectorQuery {
@@ -36,6 +40,7 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
         onChange?.(value);
       }}
       showSearch
+      placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
       // notFoundContent={fetching ? <Spin size="small" /> : null}
     >

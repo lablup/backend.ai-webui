@@ -5,8 +5,6 @@ import { StorageHostCustomQuotaAddingModalQuery } from "./__generated__/StorageH
 
 import { Modal, ModalProps, Form, FormProps } from "antd";
 import { useTranslation } from "react-i18next";
-import ProjectSelector from "./ProjectSelector";
-import UserMultiSelector from "./UserMultiSelector";
 
 interface CustomQuotaAddingFormProps extends FormProps {
   onRequestClose: () => void;

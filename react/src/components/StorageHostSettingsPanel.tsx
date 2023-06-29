@@ -25,6 +25,7 @@ import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
 import StorageHostCustomQuotaAddingModal from "./StorageHostCustomQuotaAddingModal";
 import { StorageHostSettingData } from "../hooks/backendai";
 import ProjectSelector from "./ProjectSelector";
+import UserSelector from "./UserSelector";
 import { useLazyLoadQuery, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 
@@ -43,7 +44,6 @@ const StorageHostSettingsPanel: React.FC<
     "project" | "user"
   >("project");
 
-  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
@@ -94,9 +94,8 @@ const StorageHostSettingsPanel: React.FC<
 
   // const folderQuota = useLazyLoadQuery(
   //   graphql`
-  //   query StorageHostSettingsPanelQuery($storage_host_name: String!, $quota_scope_id: String!){
-
-  //     removeFolderQuota (storage_host_name, quota_scope_id) {
+  //   query StorageHostSettingsPanelQuery($storage_host_name: String!, $quota_scope_id: ID!){
+  //     unsetFolderQuota (storage_host_name, quota_scope_id) {
   //         folder_quota {
   //         id
   //         quota_scope_id
@@ -106,8 +105,8 @@ const StorageHostSettingsPanel: React.FC<
   //           usage_bytes
   //           usage_count
   //         }
-  //         }
   //       }
+  //     }
   //   }
   // `,
   //   {
@@ -118,7 +117,7 @@ const StorageHostSettingsPanel: React.FC<
   // );
 
   // const [commitSetFolderQuota, isInFlightCommitFolderQuota] = useMutation(graphql`
-  //   mutation StorageHostSettingsPanelSetFolderQuotaMutation {
+  //   mutation StorageHostSettingsPanelSetFolderQuotaMutation($storage_host_name: String!, $quota_scope_id: ID!, props: FolderQuotaInput!) {
   //     setFolderQuota(input: $input) {
   //       folder_quota {
   //         id
@@ -132,37 +131,26 @@ const StorageHostSettingsPanel: React.FC<
   //       }
   //     }
   //   }
-  // `);
+  // `,
+  //   {
+  //     storage_host_name: storageHostId,
+  //     quota_scope_id:
+  //       currentSettingType === "project" ? selectedProjectName : selectedUserId,
+  //     props: {
+  //       hard_limit_bytes: hardLimitBytes,
+  //     }
+  //   }
+  // );
 
   const columns: ColumnsType<StorageHostSettingData> = [
-    {
-      title: t("storageHost.Name"),
-      dataIndex: "name",
-      sorter: (a, b) => a.name.localeCompare(b.name),
-    },
     {
       title: "ID",
       dataIndex: "id",
       sorter: (a, b) => a.id.localeCompare(b.id),
     },
     {
-      title: t("storageHost.MaxFileCount"),
-      dataIndex: "max_file_count",
-      sorter: (a, b) => (a.max_file_count || 0) - (b.max_file_count || 0),
-    },
-    {
-      title: t("storageHost.SoftLimit") + " (bytes)",
-      dataIndex: "soft_limit",
-      sorter: (a, b) => (a.soft_limit || 0) - (b.soft_limit || 0),
-    },
-    {
       title: t("storageHost.HardLimit") + " (bytes)",
       dataIndex: "hard_limit",
-      sorter: (a, b) => (a.hard_limit || 0) - (b.hard_limit || 0),
-    },
-    {
-      title: t("storageHost.VendorOptions"),
-      dataIndex: "vendor_options",
     },
     {
       title: t("general.Control"),
@@ -176,22 +164,11 @@ const StorageHostSettingsPanel: React.FC<
           >
             {t("button.Edit")}
           </Button>
-          <DeleteCustomSettingButton type="text" />
+          <UnsetButton type="text" />
         </>
       ),
     },
   ];
-
-  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log("selectedRowKeys changed: ", newSelectedRowKeys);
-    setSelectedRowKeys(newSelectedRowKeys);
-  };
-
-  const rowSelection = {
-    selectedRowKeys,
-    onChange: onSelectChange,
-  };
-  const hasSelected = selectedRowKeys.length > 0;
 
   const addUserWhenEmpty = (
     <Empty
@@ -199,7 +176,7 @@ const StorageHostSettingsPanel: React.FC<
       description={
         <>
           <div style={{ margin: 10 }}>
-            {t("storageHost.quotaSettings.ClickCustomButton")}
+            {t("storageHost.quotaSettings.ClickSettingButton")}
           </div>
           <Button
             icon={<PlusOutlined />}
@@ -261,12 +238,6 @@ const StorageHostSettingsPanel: React.FC<
           style={{ marginBottom: 20 }}
         >
           <Descriptions>
-            <Descriptions.Item label={t("storageHost.MaxFileCount")}>
-              200
-            </Descriptions.Item>
-            <Descriptions.Item label={t("storageHost.SoftLimit") + " (bytes)"}>
-              100
-            </Descriptions.Item>
             <Descriptions.Item label={t("storageHost.HardLimit") + " (bytes)"}>
               300
             </Descriptions.Item>
@@ -293,21 +264,21 @@ const StorageHostSettingsPanel: React.FC<
                   onChange={setSelectedProjectName}
                 />
               ) : (
-                "UserSelect here"
+                <UserSelector
+                  value={selectedUserId}
+                  style={{ width: 200 }}
+                  onChange={setSelectedUserId}
+                  />
               )}
               <div>
                 <Button
                   icon={<PlusOutlined />}
                   onClick={() => toggleCustomQuotaAddingModal()}
                 ></Button>
-                {hasSelected && (
-                  <DeleteCustomSettingButton buttonStyle={{ marginLeft: 5 }} />
-                )}
               </div>
             </Flex>
 
             <Table
-              rowSelection={rowSelection}
               columns={columns}
               dataSource={[folderQuota]}
               locale={{ emptyText: addUserWhenEmpty }}
@@ -336,7 +307,7 @@ const StorageHostSettingsPanel: React.FC<
   );
 };
 
-interface DeleteCustomSettingButtonProps {
+interface UnsetButtonProps {
   type?:
     | "default"
     | "link"
@@ -347,19 +318,19 @@ interface DeleteCustomSettingButtonProps {
     | undefined;
   buttonStyle?: object;
 }
-const DeleteCustomSettingButton: React.FC<DeleteCustomSettingButtonProps> = ({
+const UnsetButton: React.FC<UnsetButtonProps> = ({
   type = "default",
   buttonStyle = {},
 }) => {
   const { t } = useTranslation();
   return (
     <Popconfirm
-      title={t("storageHost.quotaSettings.DeleteCustomSettings")}
-      description={t("storageHost.quotaSettings.ConfirmDeleteCustomQuota")}
+      title={t("storageHost.quotaSettings.UnsetCustomSettings")}
+      description={t("storageHost.quotaSettings.ConfirmUnsetCustomQuota")}
       placement="bottom"
     >
       <Button type={type} danger icon={<DeleteFilled />} style={buttonStyle}>
-        {t("button.Delete")}
+        {t("button.Unset")}
       </Button>
     </Popconfirm>
   );

@@ -413,7 +413,8 @@
     "Reset": "Reset",
     "EnterManually": "Enter Manually",
     "Activate": "Activate",
-    "OptOut": "Opt Out"
+    "OptOut": "Opt Out",
+    "Unset": "Unset"
   },
   "agent": {
     "Endpoint": "Endpoint",
@@ -461,11 +462,13 @@
     "quotaSettings": {
       "Type": "Type",
       "Host": "Host",
-      "ClickCustomButton": "If you want to use different settings from the default values for each project or user, click the button below.",
+      "ClickSettingButton": "No quota settings. If you want to set quota configs, click the button below.",
       "AddProject": "Add Project",
       "AddUser": "Add User",
-      "DeleteCustomSettings": "Delete custom settings",
-      "ConfirmDeleteCustomQuota": "Are you sure you want to delete? \nIf you delete, this user or project uses default value."
+      "UnsetCustomSettings": "Unset custom settings",
+      "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, this user or project uses default value.",
+      "SelectProject": "Select Project",
+      "SelectUser": "Select User"
     }
   },
   "general": {
