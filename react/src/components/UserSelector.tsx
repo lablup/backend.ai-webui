@@ -1,4 +1,4 @@
-import React from "react";
+import React, { startTransition, useState } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
 import { UserSelectorQuery } from "./__generated__/UserSelectorQuery.graphql";
@@ -22,14 +22,16 @@ const UserSelector: React.FC<Props> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
+  const [search, setSearch] = useState("");
 
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
       query UserSelectorQuery (
         $limit: Int!
         $offset: Int!
+        $filter: String
       ) {
-        user_list(limit: $limit, offset: $offset, is_active: true) {
+        user_list(limit: $limit, offset: $offset, filter: $filter, is_active: true) {
             items {
               id
               username
@@ -41,6 +43,7 @@ const UserSelector: React.FC<Props> = ({
     {
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
+      filter: search.length === 0 ? null : "username ilike \"%" + search + "%\""
     },
     {
       fetchPolicy: "store-and-network",
@@ -50,9 +53,15 @@ const UserSelector: React.FC<Props> = ({
     <Select
       labelInValue
       filterOption={false}
+      onSearch={(value) => {
+        startTransition(() => {
+          setSearch(value);
+        });
+      }}
       onChange={(value) => {
         onChange?.(value);
       }}
+      allowClear
       showSearch
       placeholder={t('storageHost.quotaSettings.SelectUser')}
       {...selectProps}

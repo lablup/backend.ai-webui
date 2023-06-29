@@ -3,7 +3,7 @@ import graphql from "babel-plugin-relay/macro";
 import { useFragment, useLazyLoadQuery } from "react-relay";
 import { ProjectSelectorQuery } from "./__generated__/ProjectSelectorQuery.graphql";
 
-import { Select, SelectProps, Spin } from "antd";
+import { Form, Select, SelectProps, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
 
@@ -39,6 +39,7 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
       onChange={(value) => {
         onChange?.(value);
       }}
+      allowClear
       showSearch
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}

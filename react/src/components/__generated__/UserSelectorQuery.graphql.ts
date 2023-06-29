@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<63313a3e1443ce845dad671cc4cd3221>>
+ * @generated SignedSource<<86d277d8ff48e4143ade0e16c208486f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,6 +10,7 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 export type UserSelectorQuery$variables = {
+  filter?: string | null;
   limit: number;
   offset: number;
 };
@@ -28,22 +29,30 @@ export type UserSelectorQuery = {
 };
 
 const node: ConcreteRequest = (function(){
-var v0 = [
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "limit"
-  },
-  {
-    "defaultValue": null,
-    "kind": "LocalArgument",
-    "name": "offset"
-  }
-],
-v1 = [
+var v0 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "filter"
+},
+v1 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "limit"
+},
+v2 = {
+  "defaultValue": null,
+  "kind": "LocalArgument",
+  "name": "offset"
+},
+v3 = [
   {
     "alias": null,
     "args": [
+      {
+        "kind": "Variable",
+        "name": "filter",
+        "variableName": "filter"
+      },
       {
         "kind": "Literal",
         "name": "is_active",
@@ -103,32 +112,40 @@ v1 = [
 ];
 return {
   "fragment": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v0/*: any*/),
+      (v1/*: any*/),
+      (v2/*: any*/)
+    ],
     "kind": "Fragment",
     "metadata": null,
     "name": "UserSelectorQuery",
-    "selections": (v1/*: any*/),
+    "selections": (v3/*: any*/),
     "type": "Queries",
     "abstractKey": null
   },
   "kind": "Request",
   "operation": {
-    "argumentDefinitions": (v0/*: any*/),
+    "argumentDefinitions": [
+      (v1/*: any*/),
+      (v2/*: any*/),
+      (v0/*: any*/)
+    ],
     "kind": "Operation",
     "name": "UserSelectorQuery",
-    "selections": (v1/*: any*/)
+    "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "3895145a6da4be13bce21f5c9d551421",
+    "cacheID": "4fd160d8828cd140e195ce8f0814ccd6",
     "id": null,
     "metadata": {},
     "name": "UserSelectorQuery",
     "operationKind": "query",
-    "text": "query UserSelectorQuery(\n  $limit: Int!\n  $offset: Int!\n) {\n  user_list(limit: $limit, offset: $offset, is_active: true) {\n    items {\n      id\n      username\n      is_active\n    }\n  }\n}\n"
+    "text": "query UserSelectorQuery(\n  $limit: Int!\n  $offset: Int!\n  $filter: String\n) {\n  user_list(limit: $limit, offset: $offset, filter: $filter, is_active: true) {\n    items {\n      id\n      username\n      is_active\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "b9c2dde6e43fc0de033badbb0f9035ae";
+(node as any).hash = "4c4a2003b9ceec148a44a048d2d4bb74";
 
 export default node;

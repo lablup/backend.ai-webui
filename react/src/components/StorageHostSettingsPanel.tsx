@@ -60,28 +60,6 @@ const StorageHostSettingsPanel: React.FC<
   //   search: string;
   // }>();
 
-  // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([]);
-  // const [storageData, setStorageData] = useState<StorageHostSettingData[]>([
-  //   {
-  //     key: "test1",
-  //     name: "test1",
-  //     id: "foo1",
-  //     max_file_count: 200,
-  //     soft_limit: 100,
-  //     hard_limit: 300,
-  //     vendor_options: {},
-  //   },
-  //   {
-  //     key: "test2",
-  //     name: "test2",
-  //     id: "foo2",
-  //     max_file_count: 500,
-  //     soft_limit: 200,
-  //     hard_limit: 250,
-  //     vendor_options: {},
-  //   },
-  // ]);
-
   const folderQuota = {
     key: "test1",
     name: "test1",
@@ -246,36 +224,19 @@ const StorageHostSettingsPanel: React.FC<
         <Card bordered={false}>
           <Flex direction="column" gap="md" align="stretch">
             <Flex justify="between">
-              {/* <Form form={searchForm} style={{ marginBottom: 10 }}>
-              <Form.Item name="search" noStyle>
-                <Input.Search
-                  placeholder={t("storageHost.Search") || "Search"}
-                  allowClear
-                  onSearch={(value) => {
-                    setSearch(value);
-                  }}
-                />
-              </Form.Item>
-            </Form> */}
               {currentSettingType === "project" ? (
                 <ProjectSelector
                   value={selectedProjectName}
-                  style={{ width: 200 }}
+                  style={{ width: '30vw' }}
                   onChange={setSelectedProjectName}
                 />
               ) : (
                 <UserSelector
                   value={selectedUserId}
-                  style={{ width: 200 }}
+                  style={{ width: '30vw' }}
                   onChange={setSelectedUserId}
                   />
               )}
-              <div>
-                <Button
-                  icon={<PlusOutlined />}
-                  onClick={() => toggleCustomQuotaAddingModal()}
-                ></Button>
-              </div>
             </Flex>
 
             <Table
