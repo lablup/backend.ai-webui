@@ -8,14 +8,14 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 
 interface Props extends SelectProps {
-  onChange?: (value: string) => void;
+  onSelectUser?: (user: any) => void;
   limit?: number;
   currentPage?: number;
   pageSize?: number;
 }
 
 const UserSelector: React.FC<Props> = ({ 
-  onChange,
+  onSelectUser,
   limit = 50,
   currentPage = 1,
   pageSize = 50,
@@ -58,8 +58,8 @@ const UserSelector: React.FC<Props> = ({
           setSearch(value);
         });
       }}
-      onChange={(value) => {
-        onChange?.(value);
+      onChange={(value, option) => {
+        onSelectUser?.(option);
       }}
       allowClear
       showSearch
@@ -68,7 +68,13 @@ const UserSelector: React.FC<Props> = ({
     >
       {_.map(user_list?.items, (user) => {
         return (
-          <Select.Option key={user?.id}>{user?.username}</Select.Option>
+          <Select.Option
+            key={user?.id}
+            userId={user?.id}
+            userName={user?.username}
+          >
+            {user?.username}
+          </Select.Option>
         );
       })}
     </Select>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 // import { StorageHostSettingsPanelUnsetFolderQuotaMutation } from "./__generated__/StorageHostSettingsPanelUnsetFolderQuotaMutation.graphql";
@@ -24,7 +24,6 @@ import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import Flex from "./Flex";
 import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
-import StorageHostCustomQuotaAddingModal from "./StorageHostCustomQuotaAddingModal";
 import { StorageHostSettingData } from "../hooks/backendai";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
@@ -46,64 +45,57 @@ const StorageHostSettingsPanel: React.FC<
   >("project");
 
 
-  const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
-    useToggle(false);
-  const [
-    visibleCustomQuotaAddingModal,
-    { toggle: toggleCustomQuotaAddingModal },
-  ] = useToggle(false);
+  const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
 
   const [editingQuota, setEditingQuota] = useState();
-  const [selectedProjectId, setSelectedProjectId] = useState("");
-  const [selectedUserId, setSelectedUserId] = useState("");
+  const [selectedProjectId, setSelectedProjectId] = useState<string>("");
+  const [selectedProjectName, setSelectedProjectName] = useState<string>("");
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedUserName, setSelectedUserName] = useState<string>("");
 
-  const folder_quota: StorageHostSettingData = {
-    id: 'test1',
-    quota_scope_id: 'test1',
-    storage_host_name: 'localhost:volume1',
-    details: {
-      hard_limit_bytes: 300,
-      usage_bytes: 200,
-      usage_count: 100,
-    },
-  };
+  const { project_resource_policy, user_resource_policy, folder_quota } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
+    graphql`
+      query StorageHostSettingsPanelQuery(
+        $quota_scope_id: String!,
+        $storage_host_name: String!,
+        $project_name: String!,
+        $user_name: String,
+      ) {
+        project_resource_policy (
+          name: $project_name,
+        ) {
+          max_vfolder_size
+        }
 
-  // // const { project_resource_policies, user_resource_policies, folder_quota } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
-  // const { folder_quota } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
-  //   graphql`
-  //     query StorageHostSettingsPanelQuery(
-  //       $quota_scope_id: UUID!,
-  //       $storage_host_name: String!,
-  //     ) {
-  //       # project_resource_policies {
-  //       #   max_vfolder_size
-  //       # }
+        user_resource_policy (
+          name: $user_name,
+        ) {
+          max_vfolder_size
+        }
 
-  //       # user_resource_policies {
-  //       #   max_vfolder_size
-  //       # }
-
-  //       folder_quota (
-  //         quota_scope_id: $quota_scope_id,
-  //         storage_host_name: $storage_host_name,
-  //       ) {
-  //         id
-  //         quota_scope_id
-  //         storage_host_name
-  //         details {
-  //           hard_limit_bytes
-  //           usage_bytes
-  //           usage_count
-  //         }
-  //       }
-  //   }
-  // `,
-  //   {
-  //     storage_host_name: storageHostId || "",
-  //     quota_scope_id:
-  //       currentSettingType === "project" ? selectedProjectId : selectedUserId,
-  //   }
-  // );
+        folder_quota (
+          quota_scope_id: $quota_scope_id,
+          storage_host_name: $storage_host_name,
+        ) {
+          id
+          quota_scope_id
+          storage_host_name
+          details {
+            hard_limit_bytes
+            usage_bytes
+            usage_count
+          }
+        }
+    }
+  `,
+    {
+      storage_host_name: storageHostId || "",
+      quota_scope_id:
+        currentSettingType === "project" ? selectedProjectId : selectedUserId,
+      project_name: selectedProjectName,
+      user_name: selectedUserName,
+    }
+  );
 
   // const [commitUnsetFolderQuota, isInFlightCommitUnsetFolderQuota] = useMutation<StorageHostSettingsPanelUnsetFolderQuotaMutation>(
   //   graphql`
@@ -170,11 +162,9 @@ const StorageHostSettingsPanel: React.FC<
           </div>
           <Button
             icon={<PlusOutlined />}
-            onClick={() => toggleCustomQuotaAddingModal()}
+            onClick={() => toggleQuotaSettingModal()}
           >
-            {currentSettingType === "project"
-              ? t("storageHost.quotaSettings.AddProject")
-              : t("storageHost.quotaSettings.AddUser")}
+            {t("storageHost.quotaSettings.AddQuotaConfigs")}
           </Button>
         </>
       }
@@ -229,11 +219,11 @@ const StorageHostSettingsPanel: React.FC<
         >
           <Descriptions>
             <Descriptions.Item label={t("storageHost.HardLimit") + " (bytes)"}>
-              {/* {currentSettingType === "project" ? (
-                project_resource_policies?.max_vfolder_size
+              {currentSettingType === "project" ? (
+                project_resource_policy?.max_vfolder_size
                 ) : (
-                user_resource_policies?.max_vfolder_size
-                )} */}
+                user_resource_policy?.max_vfolder_size
+                )}
             </Descriptions.Item>
           </Descriptions>
         </Card>
@@ -242,22 +232,25 @@ const StorageHostSettingsPanel: React.FC<
             <Flex justify="between">
               {currentSettingType === "project" ? (
                 <ProjectSelector
-                  value={selectedProjectId}
                   style={{ width: '30vw' }}
-                  onChange={setSelectedProjectId}
+                  onSelectProject={(project: any) => {
+                    setSelectedProjectId(project?.projectId);
+                    setSelectedProjectName(project?.projectName);
+                  }}
                 />
               ) : (
                 <UserSelector
-                  value={selectedUserId}
                   style={{ width: '30vw' }}
-                  onChange={setSelectedUserId}
+                  onSelectUser={(user: any) => {
+                    setSelectedUserId(user?.userId);
+                    setSelectedUserName(user?.userName);
+                  }}
                   />
               )}
             </Flex>
-
             <Table
               columns={columns}
-              dataSource={folder_quota ? [folder_quota] : []}
+              dataSource={storageHostId && (selectedProjectId || selectedUserId) && folder_quota ? [folder_quota] : []}
               locale={{ emptyText: addUserWhenEmpty }}
               pagination={false}
             />
@@ -265,19 +258,13 @@ const StorageHostSettingsPanel: React.FC<
         </Card>
       </Card>
       <StorageHostQuotaSettingModal
-        open={!!editingQuota}
+        open={visibleQuotaSettingModal}
+        destroyOnClose={true}
+        onCancel={toggleQuotaSettingModal}
+        onOk={toggleQuotaSettingModal}
         // folderQuotaFrgmt={}
-        destroyOnClose
         onRequestClose={(settings) => {
           toggleQuotaSettingModal();
-        }}
-      />
-      <StorageHostCustomQuotaAddingModal
-        currentMode={currentSettingType}
-        open={visibleCustomQuotaAddingModal}
-        destroyOnClose
-        onRequestClose={() => {
-          toggleCustomQuotaAddingModal();
         }}
       />
     </Flex>

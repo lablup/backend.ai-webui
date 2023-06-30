@@ -9,10 +9,13 @@ import { useTranslation } from "react-i18next";
 import { useCurrentProjectValue } from "../hooks";
 
 interface Props extends SelectProps {
-  onChange?: (value: string) => void;
+  onSelectProject?: (project: any) => void;
 }
 
-const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
+const ProjectSelector: React.FC<Props> = ({
+  onSelectProject,
+  ...selectProps 
+}) => {
   const { t } = useTranslation();
   const curProject = useCurrentProjectValue();
 
@@ -37,9 +40,8 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
   );
   return (
     <Select
-      labelInValue
-      onChange={(value) => {
-        onChange?.(value?.key);
+      onChange={(value, option) => {
+        onSelectProject?.(option);
       }}
       allowClear
       showSearch
@@ -48,7 +50,13 @@ const ProjectSelector: React.FC<Props> = ({ onChange, ...selectProps }) => {
     >
       {_.map(projects, (project) => {
         return (
-          <Select.Option key={project?.id} value={project?.id}>{project?.name}</Select.Option>
+          <Select.Option
+            key={project?.id}
+            projectId={project?.id}
+            projectName={project?.name}
+          >
+            {project?.name}
+          </Select.Option>
         );
       })}
     </Select>
