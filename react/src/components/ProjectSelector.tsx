@@ -43,8 +43,6 @@ const ProjectSelector: React.FC<Props> = ({
       onChange={(value, option) => {
         onSelectProject?.(option);
       }}
-      allowClear
-      showSearch
       placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
     >

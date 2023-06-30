@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<619391689daaa60de177f751b922c599>>
+ * @generated SignedSource<<06f8b73efb7c8f8e836f3e4d7453091f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,6 +9,7 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
+import { FragmentRefs } from "relay-runtime";
 export type StorageHostSettingsPanelQuery$variables = {
   project_name: string;
   quota_scope_id: string;
@@ -25,9 +26,11 @@ export type StorageHostSettingsPanelQuery$data = {
     readonly id: any;
     readonly quota_scope_id: string;
     readonly storage_host_name: string;
+    readonly " $fragmentSpreads": FragmentRefs<"StorageHostQuotaSettingModalFragment">;
   } | null;
   readonly project_resource_policy: {
     readonly max_vfolder_size: any | null;
+    readonly " $fragmentSpreads": FragmentRefs<"StorageHostProjectResourcePolicySettingModalFragment">;
   } | null;
   readonly user_resource_policy: {
     readonly max_vfolder_size: any | null;
@@ -61,122 +64,101 @@ v3 = {
 },
 v4 = [
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "max_vfolder_size",
-    "storageKey": null
+    "kind": "Variable",
+    "name": "name",
+    "variableName": "project_name"
   }
 ],
-v5 = [
+v5 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "max_vfolder_size",
+  "storageKey": null
+},
+v6 = {
+  "alias": null,
+  "args": [
+    {
+      "kind": "Variable",
+      "name": "name",
+      "variableName": "user_name"
+    }
+  ],
+  "concreteType": "UserResourcePolicy",
+  "kind": "LinkedField",
+  "name": "user_resource_policy",
+  "plural": false,
+  "selections": [
+    (v5/*: any*/)
+  ],
+  "storageKey": null
+},
+v7 = [
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "project_name"
-      }
-    ],
-    "concreteType": "ProjectResourcePolicy",
-    "kind": "LinkedField",
-    "name": "project_resource_policy",
-    "plural": false,
-    "selections": (v4/*: any*/),
-    "storageKey": null
+    "kind": "Variable",
+    "name": "quota_scope_id",
+    "variableName": "quota_scope_id"
   },
   {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "name",
-        "variableName": "user_name"
-      }
-    ],
-    "concreteType": "UserResourcePolicy",
-    "kind": "LinkedField",
-    "name": "user_resource_policy",
-    "plural": false,
-    "selections": (v4/*: any*/),
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": [
-      {
-        "kind": "Variable",
-        "name": "quota_scope_id",
-        "variableName": "quota_scope_id"
-      },
-      {
-        "kind": "Variable",
-        "name": "storage_host_name",
-        "variableName": "storage_host_name"
-      }
-    ],
-    "concreteType": "FolderQuota",
-    "kind": "LinkedField",
-    "name": "folder_quota",
-    "plural": false,
-    "selections": [
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "quota_scope_id",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "kind": "ScalarField",
-        "name": "storage_host_name",
-        "storageKey": null
-      },
-      {
-        "alias": null,
-        "args": null,
-        "concreteType": "QuotaDetails",
-        "kind": "LinkedField",
-        "name": "details",
-        "plural": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "hard_limit_bytes",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "usage_bytes",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "usage_count",
-            "storageKey": null
-          }
-        ],
-        "storageKey": null
-      }
-    ],
-    "storageKey": null
+    "kind": "Variable",
+    "name": "storage_host_name",
+    "variableName": "storage_host_name"
   }
-];
+],
+v8 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "id",
+  "storageKey": null
+},
+v9 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "quota_scope_id",
+  "storageKey": null
+},
+v10 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "storage_host_name",
+  "storageKey": null
+},
+v11 = {
+  "alias": null,
+  "args": null,
+  "concreteType": "QuotaDetails",
+  "kind": "LinkedField",
+  "name": "details",
+  "plural": false,
+  "selections": [
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "hard_limit_bytes",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "usage_bytes",
+      "storageKey": null
+    },
+    {
+      "alias": null,
+      "args": null,
+      "kind": "ScalarField",
+      "name": "usage_count",
+      "storageKey": null
+    }
+  ],
+  "storageKey": null
+};
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -188,7 +170,46 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "StorageHostSettingsPanelQuery",
-    "selections": (v5/*: any*/),
+    "selections": [
+      {
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ProjectResourcePolicy",
+        "kind": "LinkedField",
+        "name": "project_resource_policy",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "StorageHostProjectResourcePolicySettingModalFragment"
+          }
+        ],
+        "storageKey": null
+      },
+      (v6/*: any*/),
+      {
+        "alias": null,
+        "args": (v7/*: any*/),
+        "concreteType": "FolderQuota",
+        "kind": "LinkedField",
+        "name": "folder_quota",
+        "plural": false,
+        "selections": [
+          (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/),
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "StorageHostQuotaSettingModalFragment"
+          }
+        ],
+        "storageKey": null
+      }
+    ],
     "type": "Queries",
     "abstractKey": null
   },
@@ -202,19 +223,63 @@ return {
     ],
     "kind": "Operation",
     "name": "StorageHostSettingsPanelQuery",
-    "selections": (v5/*: any*/)
+    "selections": [
+      {
+        "alias": null,
+        "args": (v4/*: any*/),
+        "concreteType": "ProjectResourcePolicy",
+        "kind": "LinkedField",
+        "name": "project_resource_policy",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          (v8/*: any*/),
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "name",
+            "storageKey": null
+          },
+          {
+            "alias": null,
+            "args": null,
+            "kind": "ScalarField",
+            "name": "created_at",
+            "storageKey": null
+          }
+        ],
+        "storageKey": null
+      },
+      (v6/*: any*/),
+      {
+        "alias": null,
+        "args": (v7/*: any*/),
+        "concreteType": "FolderQuota",
+        "kind": "LinkedField",
+        "name": "folder_quota",
+        "plural": false,
+        "selections": [
+          (v8/*: any*/),
+          (v9/*: any*/),
+          (v10/*: any*/),
+          (v11/*: any*/)
+        ],
+        "storageKey": null
+      }
+    ]
   },
   "params": {
-    "cacheID": "b8cea667caa598452029ddddfc9aa5f9",
+    "cacheID": "23aa3221e55593beca9cf802885ea929",
     "id": null,
     "metadata": {},
     "name": "StorageHostSettingsPanelQuery",
     "operationKind": "query",
-    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_name: String!\n  $user_name: String\n) {\n  project_resource_policy(name: $project_name) {\n    max_vfolder_size\n  }\n  user_resource_policy(name: $user_name) {\n    max_vfolder_size\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n      usage_bytes\n      usage_count\n    }\n  }\n}\n"
+    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_name: String!\n  $user_name: String\n) {\n  project_resource_policy(name: $project_name) {\n    max_vfolder_size\n    ...StorageHostProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_name) {\n    max_vfolder_size\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n      usage_bytes\n      usage_count\n    }\n    ...StorageHostQuotaSettingModalFragment\n  }\n}\n\nfragment StorageHostProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment StorageHostQuotaSettingModalFragment on FolderQuota {\n  id\n  quota_scope_id\n  storage_host_name\n  details {\n    hard_limit_bytes\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "17a7c402d4057ed93d4542dea6a62802";
+(node as any).hash = "3fd7053c697da4e08f3d44b8e952493c";
 
 export default node;

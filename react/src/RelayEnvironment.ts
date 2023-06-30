@@ -30,14 +30,14 @@ const fetchFn: FetchFunction = async (
   };
 
   //@ts-ignore
-  const reqInfo = globalThis.backendaiclient.newSignedRequest(
+  const reqInfo = globalThis.backendaiclient?.newSignedRequest(
     "POST",
     "/admin/gql",
     reqBody
   );
 
   //@ts-ignore
-  const result = await globalThis.backendaiclient._wrapWithPromise(
+  const result = await globalThis.backendaiclient?._wrapWithPromise(
     reqInfo,
     false,
     null,

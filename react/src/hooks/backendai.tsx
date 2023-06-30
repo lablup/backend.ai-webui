@@ -1,10 +1,10 @@
-export interface StorageHostSettingData {
+export interface FolderQuota {
   id: string;
   quota_scope_id: string;
   storage_host_name: string;
   details: {
-    hard_limit_bytes: number;
-    usage_bytes: number;
-    usage_count: number;
+    hard_limit_bytes: number | null;
+    usage_bytes: number | null;
+    usage_count: number | null;
   }
 }

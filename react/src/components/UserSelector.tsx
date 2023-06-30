@@ -61,7 +61,6 @@ const UserSelector: React.FC<Props> = ({
       onChange={(value, option) => {
         onSelectUser?.(option);
       }}
-      allowClear
       showSearch
       placeholder={t('storageHost.quotaSettings.SelectUser')}
       {...selectProps}
