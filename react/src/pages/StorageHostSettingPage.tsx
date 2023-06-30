@@ -26,7 +26,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
         $id: String,
       ) {
         storage_volume(
-          id: $id
+          id: $id,
         ) {
           id
           ...StorageHostResourcePanelFragment
@@ -34,7 +34,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
       }
     `,
     {
-      id: storageHostId || '',
+      id: storageHostId || "",
     }
   );
 

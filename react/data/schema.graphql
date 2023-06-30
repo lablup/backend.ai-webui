@@ -685,8 +685,9 @@ input CreateUserResourcePolicyInput {
 }
 
 type CreateUserResourcePolicy {
-  name: String!
-  props: CreateUserResourcePolicyInput!
+  ok: Boolean
+  msg: String
+  resource_policy: UserResourcePolicy
 }
 
 input ModifyUserResourcePolicyInput {
@@ -694,12 +695,13 @@ input ModifyUserResourcePolicyInput {
 }
 
 type ModifyUserResourcePolicy {
-  name: String!
-  props: ModifyUserResourcePolicyInput!
+  ok: Boolean
+  msg: String
 }
 
 type DeleteUserResourcePolicy {
-  name: String!
+  ok: Boolean
+  msg: String
 }
 
 input CreateProjectResourcePolicyInput {
@@ -707,8 +709,9 @@ input CreateProjectResourcePolicyInput {
 }
 
 type CreateProjectResourcePolicy {
-  name: String!
-  props: CreateProjectResourcePolicyInput!
+  ok: Boolean
+  msg: String
+  resource_policy: ProjectResourcePolicy
 }
 
 input ModifyProjectResourcePolicyInput {
@@ -716,12 +719,13 @@ input ModifyProjectResourcePolicyInput {
 }
 
 type ModifyProjectResourcePolicy {
-  name: String!
-  props: ModifyProjectResourcePolicyInput!
+  ok: Boolean
+  msg: String
 }
 
 type DeleteProjectResourcePolicy {
-  name: String!
+  ok: Boolean
+  msg: String
 }
 
 type Mutations {
