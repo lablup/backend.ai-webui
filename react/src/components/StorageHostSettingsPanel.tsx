@@ -149,7 +149,18 @@ const StorageHostSettingsPanel: React.FC<
     },
   ];
 
-  const addUserWhenEmpty = (
+  const selectProjectOrUserFirst = (
+    <Empty
+      image={Empty.PRESENTED_IMAGE_SIMPLE}
+      description={
+        <div style={{ margin: 10 }}>
+          {t("storageHost.quotaSettings.SelectFirst")}
+        </div>
+      }
+    />
+  );
+
+  const addQuotaConfigsWhenEmpty = (
     <Empty
       image={Empty.PRESENTED_IMAGE_SIMPLE}
       description={
@@ -248,7 +259,7 @@ const StorageHostSettingsPanel: React.FC<
             <Table
               columns={columns}
               dataSource={storageHostId && (selectedProjectId || selectedUserId) && folder_quota ? [folder_quota] : []}
-              locale={{ emptyText: addUserWhenEmpty }}
+              locale={{ emptyText: (selectedProjectId || selectedUserId) ? addQuotaConfigsWhenEmpty : selectProjectOrUserFirst }}
               pagination={false}
             />
           </Flex>

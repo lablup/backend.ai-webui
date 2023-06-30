@@ -463,6 +463,7 @@
     "quotaSettings": {
       "Type": "Type",
       "Host": "Host",
+      "SelectFirst": "Please select a project or user first from the selector at the top left.",
       "ClickSettingButton": "No quota settings. If you want to set quota configs, click the button below.",
       "AddQuotaConfigs": "Add Quota Configs",
       "UnsetCustomSettings": "Unset custom settings",
