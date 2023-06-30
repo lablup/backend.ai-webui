@@ -459,6 +459,7 @@
     "Search": "Search",
     "VendorOptions": "Vendor Options",
     "CannotRead": "Cannot Read",
+    "NoConfigs": "No Configs",
     "quotaSettings": {
       "Type": "Type",
       "Host": "Host",

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, Suspense } from "react";
 import { useParams } from "react-router-dom";
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 // import { StorageHostSettingsPanelUnsetFolderQuotaMutation } from "./__generated__/StorageHostSettingsPanelUnsetFolderQuotaMutation.graphql";
@@ -9,16 +9,12 @@ import {
   Descriptions,
   Table,
   Dropdown,
-  Input,
   Button,
-  Form,
   Empty,
-  message,
   Popconfirm,
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { EditFilled, DeleteFilled } from "@ant-design/icons";
-import { useForm } from "antd/es/form/Form";
 import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
@@ -221,9 +217,9 @@ const StorageHostSettingsPanel: React.FC<
           <Descriptions>
             <Descriptions.Item label={t("storageHost.HardLimit")}>
               {currentSettingType === "project" ? (
-                  project_resource_policy ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : null
+                  project_resource_policy && project_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
                 ) : (
-                  user_resource_policy ? _humanReadableDecimalSize(user_resource_policy?.max_vfolder_size) : null
+                  user_resource_policy && user_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(user_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
                 )}
             </Descriptions.Item>
           </Descriptions>
@@ -258,16 +254,15 @@ const StorageHostSettingsPanel: React.FC<
           </Flex>
         </Card>
       </Card>
-      <StorageHostQuotaSettingModal
-        open={visibleQuotaSettingModal}
-        destroyOnClose={true}
-        onCancel={toggleQuotaSettingModal}
-        onOk={toggleQuotaSettingModal}
-        // folderQuotaFrgmt={}
-        onRequestClose={(settings) => {
-          toggleQuotaSettingModal();
-        }}
-      />
+      <Suspense fallback={<div>loading...</div>}>
+        <StorageHostQuotaSettingModal
+          open={visibleQuotaSettingModal}
+          destroyOnClose={true}
+          onCancel={toggleQuotaSettingModal}
+          onOk={toggleQuotaSettingModal}
+          folderQuotaFrgmt={folder_quota}
+        />
+      </Suspense>
     </Flex>
   );
 };
