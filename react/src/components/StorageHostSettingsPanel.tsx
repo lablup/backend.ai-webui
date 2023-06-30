@@ -25,6 +25,7 @@ import { useToggle } from "ahooks";
 import Flex from "./Flex";
 import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
 import { StorageHostSettingData } from "../hooks/backendai";
+import { _humanReadableDecimalSize } from "../helper/index";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
 import { useLazyLoadQuery, useMutation } from "react-relay";
@@ -218,11 +219,11 @@ const StorageHostSettingsPanel: React.FC<
           style={{ marginBottom: 20 }}
         >
           <Descriptions>
-            <Descriptions.Item label={t("storageHost.HardLimit") + " (bytes)"}>
+            <Descriptions.Item label={t("storageHost.HardLimit")}>
               {currentSettingType === "project" ? (
-                project_resource_policy?.max_vfolder_size
+                  project_resource_policy ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : null
                 ) : (
-                user_resource_policy?.max_vfolder_size
+                  user_resource_policy ? _humanReadableDecimalSize(user_resource_policy?.max_vfolder_size) : null
                 )}
             </Descriptions.Item>
           </Descriptions>

@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 import { theme, Progress, Card, Descriptions, Dropdown } from "antd";
 import { EllipsisOutlined, ControlFilled } from '@ant-design/icons';
 
-import { _humanReadableFileSize } from "../helper/index";
+import { _humanReadableDecimalSize } from "../helper/index";
 import Flex from "./Flex";
 import { useWebComponentInfo } from "./DefaultProviders";
 
@@ -83,8 +83,8 @@ const StorageHostResourcePanel: React.FC<{
                   )
                   } 
                   <Descriptions column={1} style={{ marginLeft: 20 }}>
-                    <Descriptions.Item label={t('storageHost.Total')}>{_humanReadableFileSize(storageUsage.used_bytes)}</Descriptions.Item>
-                    <Descriptions.Item label={t('storageHost.Used')}>{_humanReadableFileSize(storageUsage.capacity_bytes)}</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Total')}>{_humanReadableDecimalSize(storageUsage.used_bytes)}</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Used')}>{_humanReadableDecimalSize(storageUsage.capacity_bytes)}</Descriptions.Item>
                   </Descriptions>
               </Flex>
             </Card>
