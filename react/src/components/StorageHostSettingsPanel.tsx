@@ -260,6 +260,7 @@ const StorageHostSettingsPanel: React.FC<
           destroyOnClose={true}
           onCancel={toggleQuotaSettingModal}
           onOk={toggleQuotaSettingModal}
+          //@ts-ignore
           folderQuotaFrgmt={folder_quota}
         />
       </Suspense>
