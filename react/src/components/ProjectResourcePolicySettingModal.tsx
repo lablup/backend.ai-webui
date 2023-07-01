@@ -18,10 +18,7 @@ import { useTranslation } from "react-i18next";
 interface Props extends ModalProps {
   projectResourcePolicy: string;
   resourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
-  onRequestClose: (
-    type?: "update" | "create" | "delete",
-    max_vfolder_size?: string,
-  ) => void;
+  onRequestClose: () => void;
   children?: React.ReactNode;
 }
 
@@ -89,7 +86,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           },
           onCompleted(response) {
             if (response.modify_project_resource_policy?.ok) {
-              onRequestClose("update");
+              onRequestClose();
             } else {
               message.error(response.modify_project_resource_policy?.msg);
             }
@@ -111,7 +108,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           },
           onCompleted(response) {
             if (response.create_project_resource_policy?.ok) {
-              onRequestClose("create", response.create_project_resource_policy.resource_policy?.max_vfolder_size);
+              onRequestClose();
             } else {
               message.error(response.create_project_resource_policy?.msg);
             }

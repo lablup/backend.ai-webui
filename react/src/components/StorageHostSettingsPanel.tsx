@@ -25,6 +25,7 @@ import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import { _humanReadableDecimalSize } from "../helper/index";
+import { useDateISOState } from "../hooks";
 import Flex from "./Flex";
 import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
 import UserResourcePolicySettingModal from "./UserResourcePolicySettingModal";
@@ -55,6 +56,8 @@ const StorageHostSettingsPanel: React.FC<
   const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] = useState<string>();
   const [selectedUserId, setSelectedUserId] = useState<string>();
   const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] = useState<string>();
+
+  const [internalFetchKey, updateInternalFetchKey] = useDateISOState();
 
   const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
 
@@ -99,6 +102,10 @@ const StorageHostSettingsPanel: React.FC<
       quota_scope_id: quotaScopeId || "",
       project_resource_policy: selectedProjectResourcePolicy || "",
       user_resource_policy: selectedUserResourcePolicy || "",
+    },
+    {
+      fetchKey: internalFetchKey,
+      fetchPolicy: "store-and-network",
     }
   );
 
@@ -306,7 +313,7 @@ const StorageHostSettingsPanel: React.FC<
           style={{ marginBottom: 10 }}
         >
           <Descriptions>
-            {(selectedProjectId || selectedUserId) ? (
+            {(currentSettingType === "project" && selectedProjectId) || (currentSettingType === "user" && selectedUserId) ? (
               <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
                 {currentSettingType === "project" ? (
                     project_resource_policy && project_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
@@ -364,10 +371,8 @@ const StorageHostSettingsPanel: React.FC<
         onOk={toggleProjectResourcePolicySettingModal}
         projectResourcePolicy={selectedProjectResourcePolicy || ""}
         resourcePolicyFrgmt={project_resource_policy}
-        onRequestClose={(type, max_vfolder_size) => {
-          if (type === "create" && max_vfolder_size) {
-            // TODO: refetch
-          }
+        onRequestClose={() => {
+          updateInternalFetchKey();
           toggleProjectResourcePolicySettingModal();
         }}
       />
@@ -378,10 +383,8 @@ const StorageHostSettingsPanel: React.FC<
         onOk={toggleUserResourcePolicySettingModal}
         userResourcePolicy={selectedUserResourcePolicy || ""}
         resourcePolicyFrgmt={user_resource_policy}
-        onRequestClose={(type, max_vfolder_size) => {
-          if (type === "create" && max_vfolder_size) {
-            // TODO: refetch
-          }
+        onRequestClose={() => {
+          updateInternalFetchKey();
           toggleUserResourcePolicySettingModal();
         }}
       />
