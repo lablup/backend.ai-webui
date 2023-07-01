@@ -184,7 +184,7 @@ const FolderQuotaCard: React.FC<Props> = ({
             },
             {
               title: t("storageHost.HardLimit") + " (bytes)",
-              dataIndex: "[\"details\", \"hard_limit_bytes\"]",
+              dataIndex: ["details", "hard_limit_bytes"],
               key: "hard_limit_bytes",
             },
             {
