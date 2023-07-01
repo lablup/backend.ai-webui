@@ -182,12 +182,11 @@ const FolderQuotaCard: React.FC<Props> = ({
               dataIndex: "quota_scope_id",
               key: "quota_scope_id",
             },
-            // {
-            //   title: t("storageHost.HardLimit") + " (bytes)",
-            //   // dataIndex: "[\"details\", \"hard_limit_bytes\"]",
-            //   dataIndex: "details[\"hard_limit_bytes\"]",
-            //   key: "hard_limit_bytes",
-            // },
+            {
+              title: t("storageHost.HardLimit") + " (bytes)",
+              dataIndex: "[\"details\", \"hard_limit_bytes\"]",
+              key: "hard_limit_bytes",
+            },
             {
               title: t("general.Control"),
               key: "control",
