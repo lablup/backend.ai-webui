@@ -145,7 +145,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             id: projectResourcePolicyInfo.id,
             name: projectResourcePolicyInfo.name,
             created_at: projectResourcePolicyInfo.created_at,
-            max_vfolder_size: projectResourcePolicyInfo.max_vfolder_size,
+            max_vfolder_size: (projectResourcePolicyInfo.max_vfolder_size === -1 ? null : projectResourcePolicyInfo.max_vfolder_size),
           } : {
             name: projectResourcePolicy
           }
