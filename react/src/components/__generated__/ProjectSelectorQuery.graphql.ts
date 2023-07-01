@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<10da523bcc7d9435d84d18d15b049b36>>
+ * @generated SignedSource<<7501221e296c4d009f39d135d79c2589>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,6 +17,7 @@ export type ProjectSelectorQuery$data = {
     readonly id: any | null;
     readonly is_active: boolean | null;
     readonly name: string | null;
+    readonly resource_policy: string | null;
   } | null> | null;
 };
 export type ProjectSelectorQuery = {
@@ -63,6 +64,13 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
+        "name": "is_active",
+        "storageKey": null
+      },
+      {
+        "alias": null,
+        "args": null,
+        "kind": "ScalarField",
         "name": "name",
         "storageKey": null
       },
@@ -70,7 +78,7 @@ v1 = [
         "alias": null,
         "args": null,
         "kind": "ScalarField",
-        "name": "is_active",
+        "name": "resource_policy",
         "storageKey": null
       }
     ],
@@ -95,16 +103,16 @@ return {
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "d7851e79319b5f7e80f5875b0103c807",
+    "cacheID": "eecad68ff1a08d753ce22ff2c5136c26",
     "id": null,
     "metadata": {},
     "name": "ProjectSelectorQuery",
     "operationKind": "query",
-    "text": "query ProjectSelectorQuery(\n  $domain_name: String\n) {\n  projects: groups(domain_name: $domain_name, is_active: true) {\n    id\n    name\n    is_active\n  }\n}\n"
+    "text": "query ProjectSelectorQuery(\n  $domain_name: String\n) {\n  projects: groups(domain_name: $domain_name, is_active: true) {\n    id\n    is_active\n    name\n    resource_policy\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "d5d4dd1a2d05a55184bd44703fc96365";
+(node as any).hash = "2845b31197571f750613f64207ded239";
 
 export default node;

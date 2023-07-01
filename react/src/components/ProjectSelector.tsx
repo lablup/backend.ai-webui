@@ -26,8 +26,9 @@ const ProjectSelector: React.FC<Props> = ({
       ) {
         projects: groups(domain_name: $domain_name, is_active: true) {
           id
-          name
           is_active
+          name
+          resource_policy
         }
       }
     `,
@@ -51,7 +52,7 @@ const ProjectSelector: React.FC<Props> = ({
           <Select.Option
             key={project?.id}
             projectId={project?.id}
-            projectName={project?.name}
+            projectResourcePolicy={project?.resource_policy}
           >
             {project?.name}
           </Select.Option>

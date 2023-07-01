@@ -34,8 +34,9 @@ const UserSelector: React.FC<Props> = ({
         user_list(limit: $limit, offset: $offset, filter: $filter, is_active: true) {
             items {
               id
-              username
               is_active
+              username
+              resource_policy
             }
         }
       }
@@ -70,7 +71,7 @@ const UserSelector: React.FC<Props> = ({
           <Select.Option
             key={user?.id}
             userId={user?.id}
-            userName={user?.username}
+            userResourcePolicy={user?.resource_policy}
           >
             {user?.username}
           </Select.Option>

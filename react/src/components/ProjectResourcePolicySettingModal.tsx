@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/ProjectResourcePolicySettingModalFragment.graphql";
@@ -15,7 +15,7 @@ import {
 import { useTranslation } from "react-i18next";
 
 interface Props extends ModalProps {
-  projectName: string;
+  projectResourcePolicy: string;
   resourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
   onRequestClose: (
     type?: "update" | "create" | "delete",
@@ -25,7 +25,7 @@ interface Props extends ModalProps {
 }
 
 const ProjectResourcePolicySettingModal: React.FC<Props> = ({
-  projectName,
+  projectResourcePolicy,
   resourcePolicyFrgmt,
   onRequestClose,
   children,
@@ -35,7 +35,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
 
   const [form] = Form.useForm();
 
-  const projectResourcePolicy = useFragment(
+  const projectResourcePolicyInfo = useFragment(
     graphql`
       fragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {
         id
@@ -78,10 +78,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      if (projectResourcePolicy?.name && projectResourcePolicy?.max_vfolder_size) {
+      if (projectResourcePolicyInfo?.name && projectResourcePolicyInfo?.max_vfolder_size) {
         commitModifyProjectResourcePolicy({
           variables: {
-            name: projectResourcePolicy?.name,
+            name: projectResourcePolicyInfo?.name,
             props: {
               max_vfolder_size: values.max_vfolder_size,
             }
@@ -103,7 +103,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             // TODO: Apply multiple resource policy
             // Create a project resource policy with the same name as the project name
-            name: projectName || "",
+            name: projectResourcePolicy || "",
             props: {
               max_vfolder_size: values.max_vfolder_size,
             }
@@ -141,13 +141,13 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
         initialValues={
-          projectResourcePolicy ? {
-            id: projectResourcePolicy.id,
-            name: projectResourcePolicy.name,
-            created_at: projectResourcePolicy.created_at,
-            max_vfolder_size: projectResourcePolicy.max_vfolder_size,
+          projectResourcePolicyInfo ? {
+            id: projectResourcePolicyInfo.id,
+            name: projectResourcePolicyInfo.name,
+            created_at: projectResourcePolicyInfo.created_at,
+            max_vfolder_size: projectResourcePolicyInfo.max_vfolder_size,
           } : {
-            name: projectName
+            name: projectResourcePolicy
           }
         }
       >

@@ -4,6 +4,7 @@ import { useParams } from "react-router-dom";
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 import { useLazyLoadQuery, useMutation } from "react-relay";
 import { StorageHostSettingsPanelDeleteProjectResourcePolicyMutation } from "./__generated__/StorageHostSettingsPanelDeleteProjectResourcePolicyMutation.graphql";
+import { StorageHostSettingsPanelDeleteUserResourcePolicyMutation } from "./__generated__/StorageHostSettingsPanelDeleteUserResourcePolicyMutation.graphql";
 // import { StorageHostSettingsPanelUnsetFolderQuotaMutation } from "./__generated__/StorageHostSettingsPanelUnsetFolderQuotaMutation.graphql";
 
 import {
@@ -26,6 +27,7 @@ import { useToggle } from "ahooks";
 import { _humanReadableDecimalSize } from "../helper/index";
 import Flex from "./Flex";
 import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
+import UserResourcePolicySettingModal from "./UserResourcePolicySettingModal";
 import QuotaSettingModal from "./QuotaSettingModal";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
@@ -45,13 +47,14 @@ const StorageHostSettingsPanel: React.FC<
   >("project");
 
 
-  const [visibleDefaultQuotaSettingModal, { toggle: toggleDefaultQuotaSettingModal }] = useToggle(false);
+  const [visibleProjectResourcePolicySettingModal, { toggle: toggleProjectResourcePolicySettingModal }] = useToggle(false);
+  const [visibleUserResourcePolicySettingModal, { toggle: toggleUserResourcePolicySettingModal }] = useToggle(false);
   const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
-  const [selectedProjectName, setSelectedProjectName] = useState<string>();
+  const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] = useState<string>();
   const [selectedUserId, setSelectedUserId] = useState<string>();
-  const [selectedUserName, setSelectedUserName] = useState<string>();
+  const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] = useState<string>();
 
   const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
 
@@ -60,20 +63,21 @@ const StorageHostSettingsPanel: React.FC<
       query StorageHostSettingsPanelQuery(
         $quota_scope_id: String!,
         $storage_host_name: String!,
-        $project_name: String!,
-        $user_name: String,
+        $project_resource_policy: String!,
+        $user_resource_policy: String,
       ) {
         project_resource_policy (
-          name: $project_name,
+          name: $project_resource_policy,
         ) {
           max_vfolder_size
           ...ProjectResourcePolicySettingModalFragment
         }
 
         user_resource_policy (
-          name: $user_name,
+          name: $user_resource_policy,
         ) {
           max_vfolder_size
+          ...UserResourcePolicySettingModalFragment
         }
 
         folder_quota (
@@ -95,22 +99,34 @@ const StorageHostSettingsPanel: React.FC<
     {
       storage_host_name: storageHostId || "",
       quota_scope_id: quotaScopeId || "",
-      project_name: selectedProjectName || "",
-      user_name: selectedUserName || "",
+      project_resource_policy: selectedProjectResourcePolicy || "",
+      user_resource_policy: selectedUserResourcePolicy || "",
     }
   );
 
   const [commitDeleteProjectResourcePolicy, isInFlightCommitDeleteProjectResourcePolicy] =
-    useMutation<StorageHostSettingsPanelDeleteProjectResourcePolicyMutation>(graphql`
-      mutation StorageHostSettingsPanelDeleteProjectResourcePolicyMutation(
-        $name: String!,
-      ) {
-        delete_project_resource_policy(name: $name) {
-          ok
-          msg
+      useMutation<StorageHostSettingsPanelDeleteProjectResourcePolicyMutation>(graphql`
+        mutation StorageHostSettingsPanelDeleteProjectResourcePolicyMutation(
+          $name: String!,
+        ) {
+          delete_project_resource_policy(name: $name) {
+            ok
+            msg
+          }
         }
-      }
-    `);
+      `);
+
+  const [commitDeleteUserResourcePolicy, isInFlightCommitDeleteUserResourcePolicy] =
+      useMutation<StorageHostSettingsPanelDeleteUserResourcePolicyMutation>(graphql`
+        mutation StorageHostSettingsPanelDeleteUserResourcePolicyMutation(
+          $name: String!,
+        ) {
+          delete_user_resource_policy(name: $name) {
+            ok
+            msg
+          }
+        }
+      `);
 
   // const [commitUnsetFolderQuota, isInFlightCommitUnsetFolderQuota] = useMutation<StorageHostSettingsPanelUnsetFolderQuotaMutation>(
   //   graphql`
@@ -177,10 +193,10 @@ const StorageHostSettingsPanel: React.FC<
       okText: t('button.Confirm'),
       okType: 'danger',
       onOk() {
-        if (selectedProjectName) {
+        if (currentSettingType === "project" && selectedProjectResourcePolicy) {
           commitDeleteProjectResourcePolicy({
             variables: {
-              name: selectedProjectName,
+              name: selectedProjectResourcePolicy,
             },
             onCompleted(response) {
               if (!response.delete_project_resource_policy?.ok) {
@@ -190,8 +206,25 @@ const StorageHostSettingsPanel: React.FC<
             onError(error) {
               console.log(error);
               message.error(error.message);
-            }
+            },
           });
+        } else if (currentSettingType === "user" && selectedUserResourcePolicy) {
+          commitDeleteUserResourcePolicy({
+            variables: {
+              name: selectedUserResourcePolicy,
+            },
+            onCompleted(response) {
+              if (!response.delete_user_resource_policy?.ok) {
+                message.error(response.delete_user_resource_policy?.msg);
+              }
+            },
+            onError(error) {
+              console.log(error);
+              message.error(error.message);
+            },
+          });
+        } else {
+          message.error(t("storageHost.SelectProjectOrUserFirst"));
         }
       }
     });
@@ -226,7 +259,7 @@ const StorageHostSettingsPanel: React.FC<
               style={{ width: '30vw', marginBottom: 10 }}
               onSelectProject={(project: any) => {
                 setSelectedProjectId(project?.projectId);
-                setSelectedProjectName(project?.projectName);
+                setSelectedProjectResourcePolicy(project?.projectResourcePolicy);
               }}
             />
           ) : (
@@ -234,7 +267,7 @@ const StorageHostSettingsPanel: React.FC<
               style={{ width: '30vw', marginBottom: 10 }}
               onSelectUser={(user: any) => {
                 setSelectedUserId(user?.userId);
-                setSelectedUserName(user?.userName);
+                setSelectedUserResourcePolicy(user?.userResourcePolicy);
               }}
               />
           )}
@@ -249,7 +282,12 @@ const StorageHostSettingsPanel: React.FC<
                     key: "edit",
                     label: t("button.Edit"),
                     icon: <EditFilled />,
-                    onClick: () => toggleDefaultQuotaSettingModal(),
+                    onClick: () => {
+                      currentSettingType === "project" ?
+                        toggleProjectResourcePolicySettingModal()
+                        :
+                        toggleUserResourcePolicySettingModal();
+                    },
                   },
                   {
                     key: "delete",
@@ -322,17 +360,31 @@ const StorageHostSettingsPanel: React.FC<
         </Card>
       </Card>
       <ProjectResourcePolicySettingModal
-        open={visibleDefaultQuotaSettingModal}
+        open={visibleProjectResourcePolicySettingModal}
         destroyOnClose={true}
-        onCancel={toggleDefaultQuotaSettingModal}
-        onOk={toggleDefaultQuotaSettingModal}
-        projectName={selectedProjectName || ""}
+        onCancel={toggleProjectResourcePolicySettingModal}
+        onOk={toggleProjectResourcePolicySettingModal}
+        projectResourcePolicy={selectedProjectResourcePolicy || ""}
         resourcePolicyFrgmt={project_resource_policy}
         onRequestClose={(type, max_vfolder_size) => {
           if (type === "create" && max_vfolder_size) {
             // TODO: refetch
           }
-          toggleDefaultQuotaSettingModal();
+          toggleProjectResourcePolicySettingModal();
+        }}
+      />
+      <UserResourcePolicySettingModal
+        open={visibleUserResourcePolicySettingModal}
+        destroyOnClose={true}
+        onCancel={toggleUserResourcePolicySettingModal}
+        onOk={toggleUserResourcePolicySettingModal}
+        userResourcePolicy={selectedUserResourcePolicy || ""}
+        resourcePolicyFrgmt={user_resource_policy}
+        onRequestClose={(type, max_vfolder_size) => {
+          if (type === "create" && max_vfolder_size) {
+            // TODO: refetch
+          }
+          toggleUserResourcePolicySettingModal();
         }}
       />
       <QuotaSettingModal
@@ -340,6 +392,8 @@ const StorageHostSettingsPanel: React.FC<
         destroyOnClose={true}
         onCancel={toggleQuotaSettingModal}
         onOk={toggleQuotaSettingModal}
+        quotaScopeId={quotaScopeId}
+        storageHostName={storageHostId}
         folderQuotaFrgmt={folder_quota}
       />
     </Flex>

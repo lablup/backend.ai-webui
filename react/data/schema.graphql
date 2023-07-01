@@ -364,6 +364,7 @@ type Group {
   allowed_vfolder_hosts: JSONString
   integration_id: String
   scaling_groups: [String]
+  resource_policy: String
 }
 
 input GroupInput {
@@ -373,6 +374,7 @@ input GroupInput {
   total_resource_slots: JSONString
   allowed_vfolder_hosts: JSONString
   integration_id: String
+  resource_policy: String
 }
 
 type Image {
@@ -558,6 +560,7 @@ input ModifyGroupInput {
   user_uuids: [String]
   allowed_vfolder_hosts: JSONString
   integration_id: String
+  resource_policy: String
 }
 
 type ModifyImage {
@@ -666,6 +669,7 @@ input ModifyUserInput {
   group_ids: [String]
   allowed_client_ip: [String]
   totp_activated: Boolean
+  resource_policy: String
 }
 
 input FolderQuotaInput {
@@ -961,6 +965,7 @@ type User implements Item {
   totp_activated: Boolean
   totp_activated_at: DateTime
   groups: [UserGroup]
+  resource_policy: String
 }
 
 type UserGroup {
@@ -986,6 +991,7 @@ input UserInput {
   group_ids: [String]
   allowed_client_ip: [String]
   totp_activated: Boolean
+  resource_policy: String
 }
 
 type UserList implements PaginatedList {

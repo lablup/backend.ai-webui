@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<2b74c6d309fe7d759b122de167e249b1>>
+ * @generated SignedSource<<631fa42a6d5f756fae5ba02dea232a27>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -11,10 +11,10 @@
 import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
 export type StorageHostSettingsPanelQuery$variables = {
-  project_name: string;
+  project_resource_policy: string;
   quota_scope_id: string;
   storage_host_name: string;
-  user_name?: string | null;
+  user_resource_policy?: string | null;
 };
 export type StorageHostSettingsPanelQuery$data = {
   readonly folder_quota: {
@@ -34,6 +34,7 @@ export type StorageHostSettingsPanelQuery$data = {
   } | null;
   readonly user_resource_policy: {
     readonly max_vfolder_size: any | null;
+    readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicySettingModalFragment">;
   } | null;
 };
 export type StorageHostSettingsPanelQuery = {
@@ -45,7 +46,7 @@ const node: ConcreteRequest = (function(){
 var v0 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "project_name"
+  "name": "project_resource_policy"
 },
 v1 = {
   "defaultValue": null,
@@ -60,13 +61,13 @@ v2 = {
 v3 = {
   "defaultValue": null,
   "kind": "LocalArgument",
-  "name": "user_name"
+  "name": "user_resource_policy"
 },
 v4 = [
   {
     "kind": "Variable",
     "name": "name",
-    "variableName": "project_name"
+    "variableName": "project_resource_policy"
   }
 ],
 v5 = {
@@ -76,24 +77,13 @@ v5 = {
   "name": "max_vfolder_size",
   "storageKey": null
 },
-v6 = {
-  "alias": null,
-  "args": [
-    {
-      "kind": "Variable",
-      "name": "name",
-      "variableName": "user_name"
-    }
-  ],
-  "concreteType": "UserResourcePolicy",
-  "kind": "LinkedField",
-  "name": "user_resource_policy",
-  "plural": false,
-  "selections": [
-    (v5/*: any*/)
-  ],
-  "storageKey": null
-},
+v6 = [
+  {
+    "kind": "Variable",
+    "name": "name",
+    "variableName": "user_resource_policy"
+  }
+],
 v7 = [
   {
     "kind": "Variable",
@@ -158,7 +148,25 @@ v11 = {
     }
   ],
   "storageKey": null
-};
+},
+v12 = [
+  (v5/*: any*/),
+  (v8/*: any*/),
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "name",
+    "storageKey": null
+  },
+  {
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "created_at",
+    "storageKey": null
+  }
+];
 return {
   "fragment": {
     "argumentDefinitions": [
@@ -188,7 +196,23 @@ return {
         ],
         "storageKey": null
       },
-      (v6/*: any*/),
+      {
+        "alias": null,
+        "args": (v6/*: any*/),
+        "concreteType": "UserResourcePolicy",
+        "kind": "LinkedField",
+        "name": "user_resource_policy",
+        "plural": false,
+        "selections": [
+          (v5/*: any*/),
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "UserResourcePolicySettingModalFragment"
+          }
+        ],
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": (v7/*: any*/),
@@ -231,27 +255,19 @@ return {
         "kind": "LinkedField",
         "name": "project_resource_policy",
         "plural": false,
-        "selections": [
-          (v5/*: any*/),
-          (v8/*: any*/),
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "name",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "created_at",
-            "storageKey": null
-          }
-        ],
+        "selections": (v12/*: any*/),
         "storageKey": null
       },
-      (v6/*: any*/),
+      {
+        "alias": null,
+        "args": (v6/*: any*/),
+        "concreteType": "UserResourcePolicy",
+        "kind": "LinkedField",
+        "name": "user_resource_policy",
+        "plural": false,
+        "selections": (v12/*: any*/),
+        "storageKey": null
+      },
       {
         "alias": null,
         "args": (v7/*: any*/),
@@ -270,16 +286,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "be4210bcdd45ffb9eab90aefe94c8438",
+    "cacheID": "69613b052a2bc706169d09d91c64e400",
     "id": null,
     "metadata": {},
     "name": "StorageHostSettingsPanelQuery",
     "operationKind": "query",
-    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_name: String!\n  $user_name: String\n) {\n  project_resource_policy(name: $project_name) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_name) {\n    max_vfolder_size\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n      usage_bytes\n      usage_count\n    }\n    ...QuotaSettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment QuotaSettingModalFragment on FolderQuota {\n  id\n  quota_scope_id\n  storage_host_name\n  details {\n    hard_limit_bytes\n  }\n}\n"
+    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_resource_policy: String!\n  $user_resource_policy: String\n) {\n  project_resource_policy(name: $project_resource_policy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n      usage_bytes\n      usage_count\n    }\n    ...QuotaSettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment QuotaSettingModalFragment on FolderQuota {\n  id\n  quota_scope_id\n  storage_host_name\n  details {\n    hard_limit_bytes\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
   }
 };
 })();
 
-(node as any).hash = "7a63708141743a37a53a4bf3126cd1b3";
+(node as any).hash = "87214c0b7518021766fc2c0916a437d2";
 
 export default node;

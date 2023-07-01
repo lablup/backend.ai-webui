@@ -464,6 +464,7 @@
     "NoConfigs": "No Configs",
     "DeleteResourcePolicy": "Delete Resource Policy",
     "AreYouSureYouWantToDelete": "Are you sure you want to delete?",
+    "SelectProjectOrUserFirst": "Select Project or User first",
     "quotaSettings": {
       "QuotaSettings": "Quota Settings",
       "Type": "Type",
