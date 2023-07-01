@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";

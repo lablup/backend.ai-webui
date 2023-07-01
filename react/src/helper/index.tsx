@@ -59,5 +59,6 @@ export const _humanReadableBinarySize = (bytes = 0, decimalPoint = 2, compact = 
 export type QuotaScopeType = "project" | "user";
 export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {
   if (str === "" || str === undefined) return "";
+  if (str.startsWith(`${type}:`)) return str;
   return `${type}:${str}`;
 }
