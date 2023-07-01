@@ -11,6 +11,7 @@ import {
   Form,
   InputNumber,
   message,
+  Alert,
 } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -134,6 +135,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       title={t("storageHost.ResourcePolicySettings")}
       onOk={_onOk}
     >
+      <Alert
+        message={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
+        type="warning"
+        showIcon
+        style={{ marginTop: 20, marginBottom: 25 }} />
       <Form
         form={form}
         preserve={false}

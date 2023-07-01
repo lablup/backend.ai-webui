@@ -89,8 +89,6 @@ const StorageHostSettingsPanel: React.FC<
           storage_host_name
           details {
             hard_limit_bytes
-            usage_bytes
-            usage_count
           }
           ...QuotaSettingModalFragment
         }

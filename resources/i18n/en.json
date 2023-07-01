@@ -465,6 +465,8 @@
     "DeleteResourcePolicy": "Delete Resource Policy",
     "AreYouSureYouWantToDelete": "Are you sure you want to delete?",
     "SelectProjectOrUserFirst": "Select Project or User first",
+    "BeCarefulToSetProjectResourcePolicy": "Changing a resource policy can affect all projects that use that project resource policy, so use it with care.",
+    "BeCarefulToSetUserResourcePolicy": "Changing a resource policy can affect all users that use that user resource policy, so use it with care.",
     "quotaSettings": {
       "QuotaSettings": "Quota Settings",
       "Type": "Type",
