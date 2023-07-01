@@ -464,6 +464,8 @@
     "NoConfigs": "No Configs",
     "DeleteResourcePolicy": "Delete Resource Policy",
     "AreYouSureYouWantToDelete": "Are you sure you want to delete?",
+    "UnsetResourcePolicy": "Unset Resource Policy",
+    "DoYouWantToUseDefaultValue": "Do you want to use default value?",
     "SelectProjectOrUserFirst": "Select Project or User first",
     "BeCarefulToSetProjectResourcePolicy": "Changing a resource policy can affect all projects that use that project resource policy, so use it with care.",
     "BeCarefulToSetUserResourcePolicy": "Changing a resource policy can affect all users that use that user resource policy, so use it with care.",

@@ -4,6 +4,8 @@ import { useLazyLoadQuery, useMutation } from "react-relay";
 import { ResourcePolicyCardQuery } from "./__generated__/ResourcePolicyCardQuery.graphql";
 import { ResourcePolicyCardDeleteProjectResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteProjectResourcePolicyMutation.graphql";
 import { ResourcePolicyCardDeleteUserResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteUserResourcePolicyMutation.graphql";
+import { ResourcePolicyCardModifyProjectMutation } from "./__generated__/ResourcePolicyCardModifyProjectMutation.graphql";
+import { ResourcePolicyCardModifyUserMutation } from "./__generated__/ResourcePolicyCardModifyUserMutation.graphql";
 
 import {
   Card,
@@ -92,6 +94,32 @@ const ResourcePolicyCard: React.FC<Props> = ({
     }
   );
 
+  const [commitModifyProjectResourcePolicy, isInFlightCommitModifyProjectResourcePolicy] =
+  useMutation<ResourcePolicyCardModifyProjectMutation>(graphql`
+    mutation ResourcePolicyCardModifyProjectMutation(
+      $name: String!,
+      $props: ModifyProjectResourcePolicyInput!
+    ) {
+      modify_project_resource_policy(name: $name, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
+
+  const [commitModifyUserResourcePolicy, isInFlightCommitModifyUserResourcePolicy] =
+  useMutation<ResourcePolicyCardModifyUserMutation>(graphql`
+    mutation ResourcePolicyCardModifyUserMutation(
+      $name: String!,
+      $props: ModifyUserResourcePolicyInput!
+    ) {
+      modify_user_resource_policy(name: $name, props: $props) {
+        ok
+        msg
+      }
+    }
+  `);
+
   const [commitDeleteProjectResourcePolicy, isInFlightCommitDeleteProjectResourcePolicy] =
     useMutation<ResourcePolicyCardDeleteProjectResourcePolicyMutation>(graphql`
       mutation ResourcePolicyCardDeleteProjectResourcePolicyMutation(
@@ -133,6 +161,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               if (!response.delete_project_resource_policy?.ok) {
                 message.error(response.delete_project_resource_policy?.msg);
               } else {
+                updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
               }
             },
@@ -150,6 +179,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               if (!response.delete_user_resource_policy?.ok) {
                 message.error(response.delete_user_resource_policy?.msg);
               } else {
+                updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
               }
             },
@@ -166,7 +196,57 @@ const ResourcePolicyCard: React.FC<Props> = ({
   }
 
   const confirmUnsetResourcePolicy = () => {
-
+    Modal.confirm({
+      title: t('storageHost.UnsetResourcePolicy'),
+      content: t('storageHost.DoYouWantToUseDefaultValue'),
+      icon: <ExclamationCircleOutlined />,
+      okText: t('button.Confirm'),
+      onOk() {
+        if (currentSettingType === "project" && selectedProjectResourcePolicy) {
+          commitModifyProjectResourcePolicy ({
+            variables: {
+              name: selectedProjectResourcePolicy,
+              props: {
+                max_vfolder_size: -1,
+              },
+            },
+            onCompleted(response) {
+              if (!response.modify_project_resource_policy?.ok) {
+                message.error(response.modify_project_resource_policy?.msg);
+              } else {
+                updateInternalFetchKey();
+                message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
+              }
+            },
+            onError(error) {
+              message.error(error.message);
+            }
+          });
+        } else if (currentSettingType === "user" && selectedUserResourcePolicy) {
+          commitModifyUserResourcePolicy({
+            variables: {
+              name: selectedUserResourcePolicy,
+              props: {
+                max_vfolder_size: -1,
+              },
+            },
+            onCompleted(response) {
+              if (!response.modify_user_resource_policy?.ok) {
+                message.error(response.modify_user_resource_policy?.msg);
+              } else {
+                updateInternalFetchKey();
+                message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
+              }
+            },
+            onError(error) {
+              message.error(error.message);
+            }
+          });
+        } else {
+          message.error(t("storageHost.SelectProjectOrUserFirst"));
+        }
+      }
+    });
   };
 
   return (
