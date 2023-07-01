@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fd731c787c947f37e3012497d7719467>>
+ * @generated SignedSource<<2dba6982cf9185a379a2037b18728cc6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,11 +9,11 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Mutation } from 'relay-runtime';
-export type StorageHostSettingsPanelUnsetFolderQuotaMutation$variables = {
+export type FolderQuotaCardUnsetMutation$variables = {
   quota_scope_id: string;
   storage_host_name: string;
 };
-export type StorageHostSettingsPanelUnsetFolderQuotaMutation$data = {
+export type FolderQuotaCardUnsetMutation$data = {
   readonly unset_folder_quota: {
     readonly folder_quota: {
       readonly details: {
@@ -25,9 +25,9 @@ export type StorageHostSettingsPanelUnsetFolderQuotaMutation$data = {
     } | null;
   } | null;
 };
-export type StorageHostSettingsPanelUnsetFolderQuotaMutation = {
-  response: StorageHostSettingsPanelUnsetFolderQuotaMutation$data;
-  variables: StorageHostSettingsPanelUnsetFolderQuotaMutation$variables;
+export type FolderQuotaCardUnsetMutation = {
+  response: FolderQuotaCardUnsetMutation$data;
+  variables: FolderQuotaCardUnsetMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -122,7 +122,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostSettingsPanelUnsetFolderQuotaMutation",
+    "name": "FolderQuotaCardUnsetMutation",
     "selections": (v1/*: any*/),
     "type": "Mutations",
     "abstractKey": null
@@ -131,20 +131,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "StorageHostSettingsPanelUnsetFolderQuotaMutation",
+    "name": "FolderQuotaCardUnsetMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "f696c6f1f6cf5d4326c0f6d4de2e6a55",
+    "cacheID": "9f853cd7ac2499bb658e8348308ac379",
     "id": null,
     "metadata": {},
-    "name": "StorageHostSettingsPanelUnsetFolderQuotaMutation",
+    "name": "FolderQuotaCardUnsetMutation",
     "operationKind": "mutation",
-    "text": "mutation StorageHostSettingsPanelUnsetFolderQuotaMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n) {\n  unset_folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    folder_quota {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
+    "text": "mutation FolderQuotaCardUnsetMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n) {\n  unset_folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    folder_quota {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "c70db27035802a251a31324d8ffecffd";
+(node as any).hash = "1745abca3cf793cabb5c30239afb1521";
 
 export default node;

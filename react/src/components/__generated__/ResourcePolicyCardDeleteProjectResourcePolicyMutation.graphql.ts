@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<0514d83940f7190fd8749f47d6034c40>>
+ * @generated SignedSource<<fec9b28d260942adef5b812d7910e439>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,18 +9,18 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Mutation } from 'relay-runtime';
-export type StorageHostSettingsPanelDeleteProjectResourcePolicyMutation$variables = {
+export type ResourcePolicyCardDeleteProjectResourcePolicyMutation$variables = {
   name: string;
 };
-export type StorageHostSettingsPanelDeleteProjectResourcePolicyMutation$data = {
+export type ResourcePolicyCardDeleteProjectResourcePolicyMutation$data = {
   readonly delete_project_resource_policy: {
     readonly msg: string | null;
     readonly ok: boolean | null;
   } | null;
 };
-export type StorageHostSettingsPanelDeleteProjectResourcePolicyMutation = {
-  response: StorageHostSettingsPanelDeleteProjectResourcePolicyMutation$data;
-  variables: StorageHostSettingsPanelDeleteProjectResourcePolicyMutation$variables;
+export type ResourcePolicyCardDeleteProjectResourcePolicyMutation = {
+  response: ResourcePolicyCardDeleteProjectResourcePolicyMutation$data;
+  variables: ResourcePolicyCardDeleteProjectResourcePolicyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -69,7 +69,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostSettingsPanelDeleteProjectResourcePolicyMutation",
+    "name": "ResourcePolicyCardDeleteProjectResourcePolicyMutation",
     "selections": (v1/*: any*/),
     "type": "Mutations",
     "abstractKey": null
@@ -78,20 +78,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "StorageHostSettingsPanelDeleteProjectResourcePolicyMutation",
+    "name": "ResourcePolicyCardDeleteProjectResourcePolicyMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "58bb519443a80ed39deef7894170ae28",
+    "cacheID": "73d84defbefa3dc36577fd8d899dbc8c",
     "id": null,
     "metadata": {},
-    "name": "StorageHostSettingsPanelDeleteProjectResourcePolicyMutation",
+    "name": "ResourcePolicyCardDeleteProjectResourcePolicyMutation",
     "operationKind": "mutation",
-    "text": "mutation StorageHostSettingsPanelDeleteProjectResourcePolicyMutation(\n  $name: String!\n) {\n  delete_project_resource_policy(name: $name) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ResourcePolicyCardDeleteProjectResourcePolicyMutation(\n  $name: String!\n) {\n  delete_project_resource_policy(name: $name) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "8da224365e6c5abf11536c28a0423248";
+(node as any).hash = "673819985cc85588d4b8c57283f5dfff";
 
 export default node;
