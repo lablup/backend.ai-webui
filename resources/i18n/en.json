@@ -467,6 +467,9 @@
     "SelectProjectOrUserFirst": "Select Project or User first",
     "BeCarefulToSetProjectResourcePolicy": "Changing a resource policy can affect all projects that use that project resource policy, so use it with care.",
     "BeCarefulToSetUserResourcePolicy": "Changing a resource policy can affect all users that use that user resource policy, so use it with care.",
+    "ResourcePolicySuccessfullyCreated": "Resource Policy successfully created",
+    "ResourcePolicySuccessfullyUpdated": "Resource Policy successfully updated",
+    "ResourcePolicySuccessfullyDeleted": "Resource Policy successfully deleted",
     "quotaSettings": {
       "QuotaSettings": "Quota Settings",
       "Type": "Type",
@@ -477,7 +480,8 @@
       "UnsetCustomSettings": "Unset custom settings",
       "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, this user or project uses default value.",
       "SelectProject": "Select Project",
-      "SelectUser": "Search to Select User"
+      "SelectUser": "Search to Select User",
+      "FolderQuotaSuccessfullyUpdated": "Folder quota successfully updated"
     }
   },
   "general": {

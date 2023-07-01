@@ -9,6 +9,7 @@ import {
   ModalProps,
   Form,
   InputNumber,
+  message,
 } from "antd";
 import { useTranslation } from "react-i18next";
 
@@ -17,6 +18,7 @@ interface Props extends ModalProps {
   storageHostName?: string,
   folderQuotaFrgmt: QuotaSettingModalFragment$key | null;
   children?: React.ReactNode;
+  onRequestClose: () => void;
 }
 
 const QuotaSettingModal: React.FC<Props> = ({
@@ -24,6 +26,7 @@ const QuotaSettingModal: React.FC<Props> = ({
   storageHostName,
   folderQuotaFrgmt,
   children,
+  onRequestClose,
   ...props
 }) =>  {
   const { t } = useTranslation();
@@ -50,7 +53,7 @@ const QuotaSettingModal: React.FC<Props> = ({
         $storage_host_name: String!,
         $props: FolderQuotaInput!,
       ) {
-        set_folder_quota(
+        set_folder_quota (
           quota_scope_id: $quota_scope_id,
           storage_host_name: $storage_host_name,
           props: $props,
@@ -69,7 +72,6 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      console.log(folderQuota?.quota_scope_id, folderQuota?.storage_host_name, values);
       commitSetFolderQuota({
         variables: {
           quota_scope_id: folderQuota?.quota_scope_id || quotaScopeId || "",
@@ -79,10 +81,16 @@ const QuotaSettingModal: React.FC<Props> = ({
           },
         },
         onCompleted(response) {
-          console.log( response);
+          if (response.set_folder_quota?.folder_quota?.details?.hard_limit_bytes) {
+            message.success(t("storageHost.quotaSettings.FolderQuotaSuccessfullyUpdated"));
+          } else {
+            message.error(t('dialog.ErrorOccurred'));
+          }
+          onRequestClose();
         },
         onError(error) {
           console.log(error);
+          message.error(error.message);
         }
       })
     });

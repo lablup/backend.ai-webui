@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<631fa42a6d5f756fae5ba02dea232a27>>
+ * @generated SignedSource<<c95a46aa2e6beb08614d989a74028847>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -20,8 +20,6 @@ export type StorageHostSettingsPanelQuery$data = {
   readonly folder_quota: {
     readonly details: {
       readonly hard_limit_bytes: any | null;
-      readonly usage_bytes: any | null;
-      readonly usage_count: any | null;
     };
     readonly id: any;
     readonly quota_scope_id: string;
@@ -130,20 +128,6 @@ v11 = {
       "args": null,
       "kind": "ScalarField",
       "name": "hard_limit_bytes",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "usage_bytes",
-      "storageKey": null
-    },
-    {
-      "alias": null,
-      "args": null,
-      "kind": "ScalarField",
-      "name": "usage_count",
       "storageKey": null
     }
   ],
@@ -286,16 +270,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "69613b052a2bc706169d09d91c64e400",
+    "cacheID": "1586771dbc6e03583f35053f18b2294a",
     "id": null,
     "metadata": {},
     "name": "StorageHostSettingsPanelQuery",
     "operationKind": "query",
-    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_resource_policy: String!\n  $user_resource_policy: String\n) {\n  project_resource_policy(name: $project_resource_policy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n      usage_bytes\n      usage_count\n    }\n    ...QuotaSettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment QuotaSettingModalFragment on FolderQuota {\n  id\n  quota_scope_id\n  storage_host_name\n  details {\n    hard_limit_bytes\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
+    "text": "query StorageHostSettingsPanelQuery(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $project_resource_policy: String!\n  $user_resource_policy: String\n) {\n  project_resource_policy(name: $project_resource_policy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n  folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name) {\n    id\n    quota_scope_id\n    storage_host_name\n    details {\n      hard_limit_bytes\n    }\n    ...QuotaSettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment QuotaSettingModalFragment on FolderQuota {\n  id\n  quota_scope_id\n  storage_host_name\n  details {\n    hard_limit_bytes\n  }\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
   }
 };
 })();
 
-(node as any).hash = "87214c0b7518021766fc2c0916a437d2";
+(node as any).hash = "07d4beba22dca764d2e71d105176ccc0";
 
 export default node;

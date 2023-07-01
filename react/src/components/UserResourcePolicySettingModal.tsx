@@ -86,10 +86,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           },
           onCompleted(response) {
             if (response.modify_user_resource_policy?.ok) {
-              onRequestClose();
+              message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
             } else {
               message.error(response.modify_user_resource_policy?.msg);
             }
+            onRequestClose();
           },
           onError(error) {
             console.log(error);
@@ -108,10 +109,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           },
           onCompleted(response) {
             if (response.create_user_resource_policy?.ok) {
-              onRequestClose();
+              message.success(t("storageHost.ResourcePolicySuccessfullyCreated"));
             } else {
               message.error(response.create_user_resource_policy?.msg);
             }
+            onRequestClose();
           },
           onError(error) {
             console.log(error);

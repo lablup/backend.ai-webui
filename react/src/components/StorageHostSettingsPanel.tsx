@@ -1,11 +1,11 @@
-import React, { useState, Suspense } from "react";
+import React, { useState, useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useParams } from "react-router-dom";
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 import { useLazyLoadQuery, useMutation } from "react-relay";
 import { StorageHostSettingsPanelDeleteProjectResourcePolicyMutation } from "./__generated__/StorageHostSettingsPanelDeleteProjectResourcePolicyMutation.graphql";
 import { StorageHostSettingsPanelDeleteUserResourcePolicyMutation } from "./__generated__/StorageHostSettingsPanelDeleteUserResourcePolicyMutation.graphql";
-// import { StorageHostSettingsPanelUnsetFolderQuotaMutation } from "./__generated__/StorageHostSettingsPanelUnsetFolderQuotaMutation.graphql";
+import { StorageHostSettingsPanelUnsetFolderQuotaMutation } from "./__generated__/StorageHostSettingsPanelUnsetFolderQuotaMutation.graphql";
 
 import {
   Card,
@@ -21,7 +21,7 @@ import {
   message,
 } from "antd";
 import { EditFilled, DeleteFilled, ExclamationCircleOutlined } from "@ant-design/icons";
-import { EllipsisOutlined, PlusOutlined } from "@ant-design/icons";
+import { EllipsisOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import { _humanReadableDecimalSize } from "../helper/index";
@@ -33,10 +33,14 @@ import QuotaSettingModal from "./QuotaSettingModal";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
 
-interface StorageHostSettingsPanelProps {}
+interface StorageHostSettingsPanelProps {
+  extraFetchKey?: string;
+}
 const StorageHostSettingsPanel: React.FC<
   StorageHostSettingsPanelProps
-> = () => {
+> = ({
+  extraFetchKey = "",
+}) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const { storageHostId } = useParams<{
@@ -58,6 +62,7 @@ const StorageHostSettingsPanel: React.FC<
   const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] = useState<string>();
 
   const [internalFetchKey, updateInternalFetchKey] = useDateISOState();
+  const deferredMergedFetchKey = useDeferredValue(internalFetchKey + extraFetchKey);
 
   const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
 
@@ -104,7 +109,7 @@ const StorageHostSettingsPanel: React.FC<
       user_resource_policy: selectedUserResourcePolicy || "",
     },
     {
-      fetchKey: internalFetchKey,
+      // fetchKey: deferredMergedFetchKey,
       fetchPolicy: "store-and-network",
     }
   );
@@ -133,30 +138,28 @@ const StorageHostSettingsPanel: React.FC<
         }
       `);
 
-  // const [commitUnsetFolderQuota, isInFlightCommitUnsetFolderQuota] = useMutation<StorageHostSettingsPanelUnsetFolderQuotaMutation>(
-  //   graphql`
-  //     mutation StorageHostSettingsPanelUnsetFolderQuotaMutation(
-  //       $quota_scope_id: UUID!,
-  //       $storage_host_name: String!
-  //     ) {
-  //       unset_folder_quota (
-  //         quota_scope_id: $quota_scope_id,
-  //         storage_host_name: $storage_host_name,
-  //       ) {
-  //         folder_quota {
-  //           id
-  //           quota_scope_id
-  //           storage_host_name
-  //           details {
-  //             hard_limit_bytes
-  //             usage_bytes
-  //             usage_count
-  //           }
-  //         }
-  //       }
-  //     }
-  //   `,
-  // );
+  const [commitUnsetFolderQuota, isInFlightCommitUnsetFolderQuota] = useMutation<StorageHostSettingsPanelUnsetFolderQuotaMutation>(
+    graphql`
+      mutation StorageHostSettingsPanelUnsetFolderQuotaMutation(
+        $quota_scope_id: String!,
+        $storage_host_name: String!
+      ) {
+        unset_folder_quota (
+          quota_scope_id: $quota_scope_id,
+          storage_host_name: $storage_host_name,
+        ) {
+          folder_quota {
+            id
+            quota_scope_id
+            storage_host_name
+            details {
+              hard_limit_bytes
+            }
+          }
+        }
+      }
+    `,
+  );
 
   const selectProjectOrUserFirst = (
     <Empty
@@ -206,6 +209,8 @@ const StorageHostSettingsPanel: React.FC<
             onCompleted(response) {
               if (!response.delete_project_resource_policy?.ok) {
                 message.error(response.delete_project_resource_policy?.msg);
+              } else {
+                message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
               }
             },
             onError(error) {
@@ -221,6 +226,8 @@ const StorageHostSettingsPanel: React.FC<
             onCompleted(response) {
               if (!response.delete_user_resource_policy?.ok) {
                 message.error(response.delete_user_resource_policy?.msg);
+              } else {
+                message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
               }
             },
             onError(error) {
@@ -234,6 +241,44 @@ const StorageHostSettingsPanel: React.FC<
       }
     });
   }
+
+  interface UnsetButtonProps extends ButtonProps {}
+  const UnsetButton: React.FC<UnsetButtonProps> = ({
+    ...props
+  }) => {
+    const { t } = useTranslation();
+    return (
+      <Popconfirm
+        title={t("storageHost.quotaSettings.UnsetCustomSettings")}
+        description={t("storageHost.quotaSettings.ConfirmUnsetCustomQuota")}
+        placement="bottom"
+        onConfirm={() => {
+          if (quotaScopeId && storageHostId) {
+            commitUnsetFolderQuota({
+              variables: {
+                quota_scope_id: quotaScopeId,
+                storage_host_name: storageHostId,
+              },
+              onCompleted() {
+                message.success(t("storageHost.quotaSettings.FolderQuotaSuccessfullyUpdated"));
+              },
+              onError(error) {
+                message.error(error?.message);
+              },
+            });
+          }
+        }}
+      >
+        <Button 
+        {...props}
+        danger
+        icon={<DeleteFilled />}
+        >
+        {t("button.Unset")}
+      </Button>
+    </Popconfirm>
+  );
+};
 
   return (
     <Flex
@@ -294,13 +339,19 @@ const StorageHostSettingsPanel: React.FC<
                         toggleUserResourcePolicySettingModal();
                     },
                   },
-                  {
-                    key: "delete",
-                    label: t("button.Delete"),
-                    icon: <DeleteFilled />,
-                    danger: true,
-                    onClick: () => confirmDeleteResourcePolicy(),
-                  }
+                  // {
+                  //   key: "delete",
+                  //   label: t("button.Delete"),
+                  //   icon: <DeleteFilled />,
+                  //   danger: true,
+                  //   onClick: () => confirmDeleteResourcePolicy(),
+                  // },
+                  // {
+                  //   key: "unset",
+                  //   label: t("button.Unset"),
+                  //   icon: <UndoOutlined />,
+                  //   danger: true,
+                  // }
                 ],
               }}
             >
@@ -396,42 +447,12 @@ const StorageHostSettingsPanel: React.FC<
         quotaScopeId={quotaScopeId}
         storageHostName={storageHostId}
         folderQuotaFrgmt={folder_quota}
+        onRequestClose={() => {
+          updateInternalFetchKey();
+          toggleQuotaSettingModal();
+        }}
       />
     </Flex>
-  );
-};
-
-interface UnsetButtonProps extends ButtonProps {}
-const UnsetButton: React.FC<UnsetButtonProps> = ({
-  ...props
-}) => {
-  const { t } = useTranslation();
-  return (
-    <Popconfirm
-      title={t("storageHost.quotaSettings.UnsetCustomSettings")}
-      description={t("storageHost.quotaSettings.ConfirmUnsetCustomQuota")}
-      placement="bottom"
-      onConfirm={() => {
-        // commitUnsetFolderQuota({
-          // variables: {
-          //   quota_scope_id:
-          //     currentSettingType === "project" ? selectedProjectId : selectedUserId,
-          //   storage_host_name: storageHostId,
-          // },
-          // onCompleted(response) {
-          //   message.success(response?.msg);
-          //   // TODO: Check quota setting is changed.
-          // },
-          // onError(error) {
-          //   message.error(error?.msg);
-          // },
-      //   });
-      }}
-    >
-      <Button type={props.type} danger icon={<DeleteFilled />} style={props.style}>
-        {t("button.Unset")}
-      </Button>
-    </Popconfirm>
   );
 };
 
