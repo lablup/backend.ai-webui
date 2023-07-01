@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<fb14c85296e90cfb16ab4a72f4008b2d>>
+ * @generated SignedSource<<7ee3849db1e701d63ac5f808e819d5ab>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,23 +10,23 @@
 
 import { Fragment, ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type StorageHostProjectResourcePolicySettingModalFragment$data = {
+export type ProjectResourcePolicySettingModalFragment$data = {
   readonly created_at: any;
   readonly id: any;
   readonly max_vfolder_size: any | null;
   readonly name: string;
-  readonly " $fragmentType": "StorageHostProjectResourcePolicySettingModalFragment";
+  readonly " $fragmentType": "ProjectResourcePolicySettingModalFragment";
 };
-export type StorageHostProjectResourcePolicySettingModalFragment$key = {
-  readonly " $data"?: StorageHostProjectResourcePolicySettingModalFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"StorageHostProjectResourcePolicySettingModalFragment">;
+export type ProjectResourcePolicySettingModalFragment$key = {
+  readonly " $data"?: ProjectResourcePolicySettingModalFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"ProjectResourcePolicySettingModalFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "StorageHostProjectResourcePolicySettingModalFragment",
+  "name": "ProjectResourcePolicySettingModalFragment",
   "selections": [
     {
       "alias": null,
@@ -61,6 +61,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "1d64776f2b53f4dc9dc8d0cfb482ca52";
+(node as any).hash = "a11454523af2ce0351cf9b2bfe041744";
 
 export default node;

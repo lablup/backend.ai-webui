@@ -25,8 +25,8 @@ import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import { _humanReadableDecimalSize } from "../helper/index";
 import Flex from "./Flex";
-import StorageHostProjectDefaultQuotaSettingModal from "./StorageHostProjectResourcePolicySettingModal";
-import StorageHostQuotaSettingModal from "./StorageHostQuotaSettingModal";
+import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
+import QuotaSettingModal from "./QuotaSettingModal";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
 
@@ -67,7 +67,7 @@ const StorageHostSettingsPanel: React.FC<
           name: $project_name,
         ) {
           max_vfolder_size
-          ...StorageHostProjectResourcePolicySettingModalFragment
+          ...ProjectResourcePolicySettingModalFragment
         }
 
         user_resource_policy (
@@ -88,7 +88,7 @@ const StorageHostSettingsPanel: React.FC<
             usage_bytes
             usage_count
           }
-          ...StorageHostQuotaSettingModalFragment
+          ...QuotaSettingModalFragment
         }
     }
   `,
@@ -321,7 +321,7 @@ const StorageHostSettingsPanel: React.FC<
           />
         </Card>
       </Card>
-      <StorageHostProjectDefaultQuotaSettingModal
+      <ProjectResourcePolicySettingModal
         open={visibleDefaultQuotaSettingModal}
         destroyOnClose={true}
         onCancel={toggleDefaultQuotaSettingModal}
@@ -335,7 +335,7 @@ const StorageHostSettingsPanel: React.FC<
           toggleDefaultQuotaSettingModal();
         }}
       />
-      <StorageHostQuotaSettingModal
+      <QuotaSettingModal
         open={visibleQuotaSettingModal}
         destroyOnClose={true}
         onCancel={toggleQuotaSettingModal}

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d23d25292eeb68bbaced0e9177f1e718>>
+ * @generated SignedSource<<90a08136e2f6f03bc56b86c6d6aa367f>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,11 +12,11 @@ import { ConcreteRequest, Mutation } from 'relay-runtime';
 export type CreateProjectResourcePolicyInput = {
   max_vfolder_size: any;
 };
-export type StorageHostProjectResourcePolicySettingModalCreateMutation$variables = {
+export type ProjectResourcePolicySettingModalCreateMutation$variables = {
   name: string;
   props: CreateProjectResourcePolicyInput;
 };
-export type StorageHostProjectResourcePolicySettingModalCreateMutation$data = {
+export type ProjectResourcePolicySettingModalCreateMutation$data = {
   readonly create_project_resource_policy: {
     readonly msg: string | null;
     readonly ok: boolean | null;
@@ -25,9 +25,9 @@ export type StorageHostProjectResourcePolicySettingModalCreateMutation$data = {
     } | null;
   } | null;
 };
-export type StorageHostProjectResourcePolicySettingModalCreateMutation = {
-  response: StorageHostProjectResourcePolicySettingModalCreateMutation$data;
-  variables: StorageHostProjectResourcePolicySettingModalCreateMutation$variables;
+export type ProjectResourcePolicySettingModalCreateMutation = {
+  response: ProjectResourcePolicySettingModalCreateMutation$data;
+  variables: ProjectResourcePolicySettingModalCreateMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -104,7 +104,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostProjectResourcePolicySettingModalCreateMutation",
+    "name": "ProjectResourcePolicySettingModalCreateMutation",
     "selections": (v1/*: any*/),
     "type": "Mutations",
     "abstractKey": null
@@ -113,20 +113,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "StorageHostProjectResourcePolicySettingModalCreateMutation",
+    "name": "ProjectResourcePolicySettingModalCreateMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "02391e2741a05db16f165eafe4b87706",
+    "cacheID": "3a411e9a4782713efe26879d8c4c81dd",
     "id": null,
     "metadata": {},
-    "name": "StorageHostProjectResourcePolicySettingModalCreateMutation",
+    "name": "ProjectResourcePolicySettingModalCreateMutation",
     "operationKind": "mutation",
-    "text": "mutation StorageHostProjectResourcePolicySettingModalCreateMutation(\n  $name: String!\n  $props: CreateProjectResourcePolicyInput!\n) {\n  create_project_resource_policy(name: $name, props: $props) {\n    ok\n    msg\n    resource_policy {\n      max_vfolder_size\n    }\n  }\n}\n"
+    "text": "mutation ProjectResourcePolicySettingModalCreateMutation(\n  $name: String!\n  $props: CreateProjectResourcePolicyInput!\n) {\n  create_project_resource_policy(name: $name, props: $props) {\n    ok\n    msg\n    resource_policy {\n      max_vfolder_size\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "2a9c2da415d456dd1015e0c31e2f1b8b";
+(node as any).hash = "b4aeb3a2a387d9722c44a8bde5e6c7cf";
 
 export default node;

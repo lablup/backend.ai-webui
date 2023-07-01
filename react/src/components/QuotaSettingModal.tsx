@@ -1,8 +1,8 @@
 import React, { useEffect } from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { StorageHostQuotaSettingModalFragment$key } from "./__generated__/StorageHostQuotaSettingModalFragment.graphql";
-import { StorageHostQuotaSettingModalSetMutation } from "./__generated__/StorageHostQuotaSettingModalSetMutation.graphql";
+import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
+import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
 
 import {
   Modal,
@@ -13,11 +13,11 @@ import {
 import { useTranslation } from "react-i18next";
 
 interface Props extends ModalProps {
-  folderQuotaFrgmt: StorageHostQuotaSettingModalFragment$key | null;
+  folderQuotaFrgmt: QuotaSettingModalFragment$key | null;
   children?: React.ReactNode;
 }
 
-const StorageHostQuotaSettingModal: React.FC<Props> = ({
+const QuotaSettingModal: React.FC<Props> = ({
   folderQuotaFrgmt,
   children,
   ...props
@@ -28,7 +28,7 @@ const StorageHostQuotaSettingModal: React.FC<Props> = ({
 
   const folderQuota = useFragment(
     graphql`
-      fragment StorageHostQuotaSettingModalFragment on FolderQuota {
+      fragment QuotaSettingModalFragment on FolderQuota {
         id
         quota_scope_id
         storage_host_name
@@ -40,8 +40,8 @@ const StorageHostQuotaSettingModal: React.FC<Props> = ({
   );
 
   const [commitSetFolderQuota, isInFlightCommitSetFolderQuota] =
-    useMutation<StorageHostQuotaSettingModalSetMutation>(graphql`
-      mutation StorageHostQuotaSettingModalSetMutation(
+    useMutation<QuotaSettingModalSetMutation>(graphql`
+      mutation QuotaSettingModalSetMutation(
         $quota_scope_id: String!,
         $storage_host_name: String!,
         $props: FolderQuotaInput!,
@@ -115,4 +115,4 @@ const StorageHostQuotaSettingModal: React.FC<Props> = ({
   );
 };
 
-export default StorageHostQuotaSettingModal;
+export default QuotaSettingModal;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<8a0f9c97255c7f9e8b8973eb9c32d00e>>
+ * @generated SignedSource<<a0240434683b5a62fd902be6578b6c8a>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,25 +10,25 @@
 
 import { Fragment, ReaderFragment } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type StorageHostQuotaSettingModalFragment$data = {
+export type QuotaSettingModalFragment$data = {
   readonly details: {
     readonly hard_limit_bytes: any | null;
   };
   readonly id: any;
   readonly quota_scope_id: string;
   readonly storage_host_name: string;
-  readonly " $fragmentType": "StorageHostQuotaSettingModalFragment";
+  readonly " $fragmentType": "QuotaSettingModalFragment";
 };
-export type StorageHostQuotaSettingModalFragment$key = {
-  readonly " $data"?: StorageHostQuotaSettingModalFragment$data;
-  readonly " $fragmentSpreads": FragmentRefs<"StorageHostQuotaSettingModalFragment">;
+export type QuotaSettingModalFragment$key = {
+  readonly " $data"?: QuotaSettingModalFragment$data;
+  readonly " $fragmentSpreads": FragmentRefs<"QuotaSettingModalFragment">;
 };
 
 const node: ReaderFragment = {
   "argumentDefinitions": [],
   "kind": "Fragment",
   "metadata": null,
-  "name": "StorageHostQuotaSettingModalFragment",
+  "name": "QuotaSettingModalFragment",
   "selections": [
     {
       "alias": null,
@@ -74,6 +74,6 @@ const node: ReaderFragment = {
   "abstractKey": null
 };
 
-(node as any).hash = "34406fabe4976fef79e1c993a68375d5";
+(node as any).hash = "780422846e9f306afd374b7d0f494dfd";
 
 export default node;

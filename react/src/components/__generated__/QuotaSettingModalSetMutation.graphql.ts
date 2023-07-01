@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<452ef89c6c3e4503d77e80c496bdb008>>
+ * @generated SignedSource<<ee099f8a91614031f60aacd5fb8c9431>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,12 +12,12 @@ import { ConcreteRequest, Mutation } from 'relay-runtime';
 export type FolderQuotaInput = {
   hard_limit_bytes?: any | null;
 };
-export type StorageHostQuotaSettingModalSetMutation$variables = {
+export type QuotaSettingModalSetMutation$variables = {
   props: FolderQuotaInput;
   quota_scope_id: string;
   storage_host_name: string;
 };
-export type StorageHostQuotaSettingModalSetMutation$data = {
+export type QuotaSettingModalSetMutation$data = {
   readonly set_folder_quota: {
     readonly folder_quota: {
       readonly details: {
@@ -29,9 +29,9 @@ export type StorageHostQuotaSettingModalSetMutation$data = {
     } | null;
   } | null;
 };
-export type StorageHostQuotaSettingModalSetMutation = {
-  response: StorageHostQuotaSettingModalSetMutation$data;
-  variables: StorageHostQuotaSettingModalSetMutation$variables;
+export type QuotaSettingModalSetMutation = {
+  response: QuotaSettingModalSetMutation$data;
+  variables: QuotaSettingModalSetMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -138,7 +138,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostQuotaSettingModalSetMutation",
+    "name": "QuotaSettingModalSetMutation",
     "selections": (v3/*: any*/),
     "type": "Mutations",
     "abstractKey": null
@@ -151,20 +151,20 @@ return {
       (v0/*: any*/)
     ],
     "kind": "Operation",
-    "name": "StorageHostQuotaSettingModalSetMutation",
+    "name": "QuotaSettingModalSetMutation",
     "selections": (v3/*: any*/)
   },
   "params": {
-    "cacheID": "ab695e836f61be95b215880e5469d65b",
+    "cacheID": "c715ed572a67a912a5b1929730b34b7a",
     "id": null,
     "metadata": {},
-    "name": "StorageHostQuotaSettingModalSetMutation",
+    "name": "QuotaSettingModalSetMutation",
     "operationKind": "mutation",
-    "text": "mutation StorageHostQuotaSettingModalSetMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $props: FolderQuotaInput!\n) {\n  set_folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name, props: $props) {\n    folder_quota {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
+    "text": "mutation QuotaSettingModalSetMutation(\n  $quota_scope_id: String!\n  $storage_host_name: String!\n  $props: FolderQuotaInput!\n) {\n  set_folder_quota(quota_scope_id: $quota_scope_id, storage_host_name: $storage_host_name, props: $props) {\n    folder_quota {\n      id\n      quota_scope_id\n      storage_host_name\n      details {\n        hard_limit_bytes\n      }\n    }\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "9e12dbd002bd6fae8598bc7012b9d0e1";
+(node as any).hash = "014a4a3cce13c0fe7ec0f5a2154d17a6";
 
 export default node;

@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<ec4287eeb5cfd2b2769b345beee85aaf>>
+ * @generated SignedSource<<f9e5d45347ebf894c60d01bcad657bd1>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -12,19 +12,19 @@ import { ConcreteRequest, Mutation } from 'relay-runtime';
 export type ModifyProjectResourcePolicyInput = {
   max_vfolder_size: any;
 };
-export type StorageHostProjectResourcePolicySettingModalModifyMutation$variables = {
+export type ProjectResourcePolicySettingModalModifyMutation$variables = {
   name: string;
   props: ModifyProjectResourcePolicyInput;
 };
-export type StorageHostProjectResourcePolicySettingModalModifyMutation$data = {
+export type ProjectResourcePolicySettingModalModifyMutation$data = {
   readonly modify_project_resource_policy: {
     readonly msg: string | null;
     readonly ok: boolean | null;
   } | null;
 };
-export type StorageHostProjectResourcePolicySettingModalModifyMutation = {
-  response: StorageHostProjectResourcePolicySettingModalModifyMutation$data;
-  variables: StorageHostProjectResourcePolicySettingModalModifyMutation$variables;
+export type ProjectResourcePolicySettingModalModifyMutation = {
+  response: ProjectResourcePolicySettingModalModifyMutation$data;
+  variables: ProjectResourcePolicySettingModalModifyMutation$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -83,7 +83,7 @@ return {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Fragment",
     "metadata": null,
-    "name": "StorageHostProjectResourcePolicySettingModalModifyMutation",
+    "name": "ProjectResourcePolicySettingModalModifyMutation",
     "selections": (v1/*: any*/),
     "type": "Mutations",
     "abstractKey": null
@@ -92,20 +92,20 @@ return {
   "operation": {
     "argumentDefinitions": (v0/*: any*/),
     "kind": "Operation",
-    "name": "StorageHostProjectResourcePolicySettingModalModifyMutation",
+    "name": "ProjectResourcePolicySettingModalModifyMutation",
     "selections": (v1/*: any*/)
   },
   "params": {
-    "cacheID": "c0917a313e0e660123ae05e7194d2fd8",
+    "cacheID": "aedc4eab77206f7ab189ccd3f2d938b3",
     "id": null,
     "metadata": {},
-    "name": "StorageHostProjectResourcePolicySettingModalModifyMutation",
+    "name": "ProjectResourcePolicySettingModalModifyMutation",
     "operationKind": "mutation",
-    "text": "mutation StorageHostProjectResourcePolicySettingModalModifyMutation(\n  $name: String!\n  $props: ModifyProjectResourcePolicyInput!\n) {\n  modify_project_resource_policy(name: $name, props: $props) {\n    ok\n    msg\n  }\n}\n"
+    "text": "mutation ProjectResourcePolicySettingModalModifyMutation(\n  $name: String!\n  $props: ModifyProjectResourcePolicyInput!\n) {\n  modify_project_resource_policy(name: $name, props: $props) {\n    ok\n    msg\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "98b6e8a892cd55fb170dea71de0bf298";
+(node as any).hash = "3cd62195489eba58dd9693f1fc9df8ff";
 
 export default node;

@@ -1,15 +1,14 @@
 import React, { useEffect } from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import { StorageHostProjectResourcePolicySettingModalFragment$key } from "./__generated__/StorageHostProjectResourcePolicySettingModalFragment.graphql";
-import { StorageHostProjectResourcePolicySettingModalCreateMutation } from "./__generated__/StorageHostProjectResourcePolicySettingModalCreateMutation.graphql";
-import { StorageHostProjectResourcePolicySettingModalModifyMutation } from "./__generated__/StorageHostProjectResourcePolicySettingModalModifyMutation.graphql";
+import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/ProjectResourcePolicySettingModalFragment.graphql";
+import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
+import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
 
 import {
   Modal,
   ModalProps,
   Form,
-  Input,
   InputNumber,
   message,
 } from "antd";
@@ -17,7 +16,7 @@ import { useTranslation } from "react-i18next";
 
 interface Props extends ModalProps {
   projectName: string;
-  resourcePolicyFrgmt: StorageHostProjectResourcePolicySettingModalFragment$key | null;
+  resourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
   onRequestClose: (
     type?: "update" | "create" | "delete",
     max_vfolder_size?: string,
@@ -25,7 +24,7 @@ interface Props extends ModalProps {
   children?: React.ReactNode;
 }
 
-const StorageHostProjectResourcePolicySettingModal: React.FC<Props> = ({
+const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   projectName,
   resourcePolicyFrgmt,
   onRequestClose,
@@ -38,7 +37,7 @@ const StorageHostProjectResourcePolicySettingModal: React.FC<Props> = ({
 
   const projectResourcePolicy = useFragment(
     graphql`
-      fragment StorageHostProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {
+      fragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {
         id
         name
         created_at
@@ -48,8 +47,8 @@ const StorageHostProjectResourcePolicySettingModal: React.FC<Props> = ({
   );
 
   const [commitCreateProjectResourcePolicy, isInFlightCommitCreateProjectResourcePolicy] =
-    useMutation<StorageHostProjectResourcePolicySettingModalCreateMutation>(graphql`
-      mutation StorageHostProjectResourcePolicySettingModalCreateMutation(
+    useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
+      mutation ProjectResourcePolicySettingModalCreateMutation(
         $name: String!,
         $props: CreateProjectResourcePolicyInput!
       ) {
@@ -64,8 +63,8 @@ const StorageHostProjectResourcePolicySettingModal: React.FC<Props> = ({
     `);
   
   const [commitModifyProjectResourcePolicy, isInFlightCommitModifyProjectResourcePolicy] =
-    useMutation<StorageHostProjectResourcePolicySettingModalModifyMutation>(graphql`
-      mutation StorageHostProjectResourcePolicySettingModalModifyMutation(
+    useMutation<ProjectResourcePolicySettingModalModifyMutation>(graphql`
+      mutation ProjectResourcePolicySettingModalModifyMutation(
         $name: String!,
         $props: ModifyProjectResourcePolicyInput!
       ) {
@@ -164,4 +163,4 @@ const StorageHostProjectResourcePolicySettingModal: React.FC<Props> = ({
   );
 };
 
-export default StorageHostProjectResourcePolicySettingModal;
+export default ProjectResourcePolicySettingModal;
