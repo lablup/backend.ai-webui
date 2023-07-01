@@ -85,8 +85,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
     {
       project_resource_policy: selectedProjectResourcePolicy || "",
       user_resource_policy: selectedUserResourcePolicy || "",
-      skipProjectResourcePolicy: selectedProjectResourcePolicy === "",
-      skipUserResourcePolicy: selectedUserResourcePolicy === "",
+      skipProjectResourcePolicy: selectedProjectResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
+      skipUserResourcePolicy: selectedUserResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
     },
     {
       fetchKey: deferredMergedFetchKey,

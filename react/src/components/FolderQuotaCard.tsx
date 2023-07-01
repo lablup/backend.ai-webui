@@ -71,7 +71,7 @@ const FolderQuotaCard: React.FC<Props> = ({
     {
       storage_host_name: storageHostId || "",
       quota_scope_id: quotaScopeIdWithPrefix,
-      skipFolderQuota: storageHostId === "" || quotaScopeId === "",
+      skipFolderQuota: storageHostId === "" || quotaScopeId === "" || storageHostId === undefined || quotaScopeId === undefined,
     },
     {
       fetchKey: deferredMergedFetchKey,
