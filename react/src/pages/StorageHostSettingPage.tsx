@@ -8,14 +8,12 @@ import {
   Typography,
   theme,
 } from "antd";
-import { useTranslation } from "react-i18next";
 import Flex from "../components/Flex";
 import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
 import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
 
 interface StorageHostSettingPageProps {}
 const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
-  const { t } = useTranslation();
   const { token } = theme.useToken();
   const { storageHostId } = useParams<{
     storageHostId: string;  // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />

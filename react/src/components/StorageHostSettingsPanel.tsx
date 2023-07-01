@@ -24,7 +24,7 @@ import { EditFilled, DeleteFilled, ExclamationCircleOutlined } from "@ant-design
 import { EllipsisOutlined, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import { _humanReadableDecimalSize } from "../helper/index";
+import { _humanReadableDecimalSize, QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 import { useDateISOState } from "../hooks";
 import Flex from "./Flex";
 import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
@@ -47,9 +47,7 @@ const StorageHostSettingsPanel: React.FC<
     storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
   }>();
 
-  const [currentSettingType, setCurrentSettingType] = useState<
-    "project" | "user"
-  >("project");
+  const [currentSettingType, setCurrentSettingType] = useState<QuotaScopeType>("project");
 
 
   const [visibleProjectResourcePolicySettingModal, { toggle: toggleProjectResourcePolicySettingModal }] = useToggle(false);
@@ -65,6 +63,7 @@ const StorageHostSettingsPanel: React.FC<
   const deferredMergedFetchKey = useDeferredValue(internalFetchKey + extraFetchKey);
 
   const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
+  const quotaScopeIdWithPrefix = (quotaScopeId === undefined || quotaScopeId === null) ? "" : addQuotaScopeTypePrefix(currentSettingType, quotaScopeId);
 
   const { project_resource_policy, user_resource_policy, folder_quota } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
     graphql`
@@ -73,25 +72,28 @@ const StorageHostSettingsPanel: React.FC<
         $storage_host_name: String!,
         $project_resource_policy: String!,
         $user_resource_policy: String,
+        $skipProjectResourcePolicy: Boolean!,
+        $skipUserResourcePolicy: Boolean!,
+        $skipFolderQuota: Boolean!,
       ) {
         project_resource_policy (
           name: $project_resource_policy,
-        ) {
+        ) @skip(if: $skipProjectResourcePolicy) {
           max_vfolder_size
           ...ProjectResourcePolicySettingModalFragment
         }
 
         user_resource_policy (
           name: $user_resource_policy,
-        ) {
+        ) @skip(if: $skipUserResourcePolicy) {
           max_vfolder_size
           ...UserResourcePolicySettingModalFragment
         }
 
         folder_quota (
-          quota_scope_id: $quota_scope_id,
           storage_host_name: $storage_host_name,
-        ) {
+          quota_scope_id: $quota_scope_id,
+        ) @skip(if: $skipFolderQuota) {
           id
           quota_scope_id
           storage_host_name
@@ -104,12 +106,15 @@ const StorageHostSettingsPanel: React.FC<
   `,
     {
       storage_host_name: storageHostId || "",
-      quota_scope_id: quotaScopeId || "",
+      quota_scope_id: quotaScopeIdWithPrefix,
       project_resource_policy: selectedProjectResourcePolicy || "",
       user_resource_policy: selectedUserResourcePolicy || "",
+      skipProjectResourcePolicy: selectedProjectResourcePolicy === "",
+      skipUserResourcePolicy: selectedUserResourcePolicy === "",
+      skipFolderQuota: storageHostId === "" || quotaScopeId === "",
     },
     {
-      // fetchKey: deferredMergedFetchKey,
+      fetchKey: deferredMergedFetchKey,
       fetchPolicy: "store-and-network",
     }
   );
@@ -387,11 +392,12 @@ const StorageHostSettingsPanel: React.FC<
                 dataIndex: "quota_scope_id",
                 key: "quota_scope_id",
               },
-              {
-                title: t("storageHost.HardLimit") + " (bytes)",
-                dataIndex: "[\"details\", \"hard_limit_bytes\"]",
-                key: "hard_limit_bytes",
-              },
+              // {
+              //   title: t("storageHost.HardLimit") + " (bytes)",
+              //   // dataIndex: "[\"details\", \"hard_limit_bytes\"]",
+              //   dataIndex: "details[\"hard_limit_bytes\"]",
+              //   key: "hard_limit_bytes",
+              // },
               {
                 title: t("general.Control"),
                 key: "control",
@@ -421,7 +427,7 @@ const StorageHostSettingsPanel: React.FC<
         onCancel={toggleProjectResourcePolicySettingModal}
         onOk={toggleProjectResourcePolicySettingModal}
         projectResourcePolicy={selectedProjectResourcePolicy || ""}
-        resourcePolicyFrgmt={project_resource_policy}
+        resourcePolicyFrgmt={project_resource_policy || null}
         onRequestClose={() => {
           updateInternalFetchKey();
           toggleProjectResourcePolicySettingModal();
@@ -433,7 +439,7 @@ const StorageHostSettingsPanel: React.FC<
         onCancel={toggleUserResourcePolicySettingModal}
         onOk={toggleUserResourcePolicySettingModal}
         userResourcePolicy={selectedUserResourcePolicy || ""}
-        resourcePolicyFrgmt={user_resource_policy}
+        resourcePolicyFrgmt={user_resource_policy || null}
         onRequestClose={() => {
           updateInternalFetchKey();
           toggleUserResourcePolicySettingModal();
@@ -446,7 +452,8 @@ const StorageHostSettingsPanel: React.FC<
         onOk={toggleQuotaSettingModal}
         quotaScopeId={quotaScopeId}
         storageHostName={storageHostId}
-        folderQuotaFrgmt={folder_quota}
+        currentSettingType={currentSettingType}
+        folderQuotaFrgmt={folder_quota || null}
         onRequestClose={() => {
           updateInternalFetchKey();
           toggleQuotaSettingModal();

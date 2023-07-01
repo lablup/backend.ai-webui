@@ -12,11 +12,13 @@ import {
   message,
 } from "antd";
 import { useTranslation } from "react-i18next";
+import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
 interface Props extends ModalProps {
   quotaScopeId?: string,
   storageHostName?: string,
-  folderQuotaFrgmt: QuotaSettingModalFragment$key | null;
+  currentSettingType: QuotaScopeType,
+  folderQuotaFrgmt?: QuotaSettingModalFragment$key | null;
   children?: React.ReactNode;
   onRequestClose: () => void;
 }
@@ -24,7 +26,8 @@ interface Props extends ModalProps {
 const QuotaSettingModal: React.FC<Props> = ({
   quotaScopeId,
   storageHostName,
-  folderQuotaFrgmt,
+  currentSettingType,
+  folderQuotaFrgmt = null,
   children,
   onRequestClose,
   ...props
@@ -72,9 +75,10 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
+      const quotaScopeIdWithPrefix = addQuotaScopeTypePrefix(currentSettingType, folderQuota?.quota_scope_id || quotaScopeId || "");
       commitSetFolderQuota({
         variables: {
-          quota_scope_id: folderQuota?.quota_scope_id || quotaScopeId || "",
+          quota_scope_id: quotaScopeIdWithPrefix,
           storage_host_name: folderQuota?.storage_host_name || storageHostName || "",
           props: {
             hard_limit_bytes: values.hard_limit_bytes,
@@ -106,7 +110,6 @@ const QuotaSettingModal: React.FC<Props> = ({
       onOk={_onOk}
       title={t("storageHost.quotaSettings.QuotaSettings")}
     >
-      {folderQuota?.details.hard_limit_bytes} {folderQuota?.details.hard_limit_bytes}
       <Form
         form={form}
         preserve={false}

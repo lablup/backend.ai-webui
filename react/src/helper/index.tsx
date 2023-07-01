@@ -55,3 +55,9 @@ export const _humanReadableBinarySize = (bytes = 0, decimalPoint = 2, compact = 
   }
   return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + unitList[i];
 }
+
+export type QuotaScopeType = "project" | "user";
+export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {
+  if (str === "" || str === undefined) return "";
+  return `${type}:${str}`;
+}
