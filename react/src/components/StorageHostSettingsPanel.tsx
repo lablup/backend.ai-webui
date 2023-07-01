@@ -306,7 +306,7 @@ const StorageHostSettingsPanel: React.FC<
           style={{ marginBottom: 10 }}
         >
           <Descriptions>
-            {selectedProjectId ? (
+            {(selectedProjectId || selectedUserId) ? (
               <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
                 {currentSettingType === "project" ? (
                     project_resource_policy && project_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
