@@ -229,7 +229,7 @@ const QuotaScopeCard: React.FC<Props> = ({
           updateInternalFetchKey();
           toggleQuotaSettingModal();
         }}
-      /> 
+      />
     </>
   )
 }

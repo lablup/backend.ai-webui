@@ -61,23 +61,23 @@ i18n
 const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis.backendaioptions.get("current_language")
+    globalThis?.backendaioptions?.get("current_language")
   );
   const { i18n } = useTranslation();
 
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
-    setTimeout(() => i18n.changeLanguage(lang), 0);
+    setTimeout(() => i18n?.changeLanguage(lang), 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e.detail.lang);
+      _setLang(e?.detail?.lang);
       //@ts-ignore
-      const lang: string = e.detail?.lang || "en";
-      i18n.changeLanguage(lang);
+      const lang: string = e?.detail?.lang || "en";
+      i18n?.changeLanguage(lang);
     };
     window.addEventListener("langChanged", handler);
     return () => window.removeEventListener("langChanged", handler);
@@ -107,6 +107,8 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     };
   }, [value, dispatchEvent]);
   return (
+    <>
+    {RelayEnvironment && (
     <RelayEnvironmentProvider environment={RelayEnvironment}>
       <React.StrictMode>
         <style>
@@ -140,6 +142,8 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
         </QueryClientProvider>
       </React.StrictMode>
     </RelayEnvironmentProvider>
+    )}
+    </>
   );
 };
 

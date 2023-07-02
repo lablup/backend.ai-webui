@@ -19,14 +19,12 @@ interface Props extends ModalProps {
   userResourcePolicy: string;
   resourcePolicyFrgmt: UserResourcePolicySettingModalFragment$key | null;
   onRequestClose: () => void;
-  children?: React.ReactNode;
 }
 
 const UserResourcePolicySettingModal: React.FC<Props> = ({
   userResourcePolicy,
   resourcePolicyFrgmt,
   onRequestClose,
-  children,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -81,20 +79,20 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: userResourcePolicyInfo?.name,
             props: {
-              max_vfolder_size: values.max_vfolder_size,
+              max_vfolder_size: values?.max_vfolder_size,
             }
           },
           onCompleted(response) {
             if (response.modify_user_resource_policy?.ok) {
               message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
             } else {
-              message.error(response.modify_user_resource_policy?.msg);
+              message.error(response?.modify_user_resource_policy?.msg);
             }
             onRequestClose();
           },
           onError(error) {
             console.log(error);
-            message.error(error.message);
+            message.error(error?.message);
           }
         });
       } else {
@@ -104,20 +102,20 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             // Create a user resource policy with the same name as the user name
             name: userResourcePolicy || "",
             props: {
-              max_vfolder_size: values.max_vfolder_size,
+              max_vfolder_size: values?.max_vfolder_size,
             }
           },
           onCompleted(response) {
-            if (response.create_user_resource_policy?.ok) {
+            if (response?.create_user_resource_policy?.ok) {
               message.success(t("storageHost.ResourcePolicySuccessfullyCreated"));
             } else {
-              message.error(response.create_user_resource_policy?.msg);
+              message.error(response?.create_user_resource_policy?.msg);
             }
             onRequestClose();
           },
           onError(error) {
             console.log(error);
-            message.error(error.message);
+            message.error(error?.message);
           }
         });
       }
@@ -147,10 +145,10 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         validateTrigger={["onChange", "onBlur"]}
         initialValues={
           userResourcePolicyInfo ? {
-            id: userResourcePolicyInfo.id,
-            name: userResourcePolicyInfo.name,
-            created_at: userResourcePolicyInfo.created_at,
-            max_vfolder_size: (userResourcePolicyInfo.max_vfolder_size === -1 ? null : userResourcePolicyInfo.max_vfolder_size),
+            id: userResourcePolicyInfo?.id,
+            name: userResourcePolicyInfo?.name,
+            created_at: userResourcePolicyInfo?.created_at,
+            max_vfolder_size: (userResourcePolicyInfo?.max_vfolder_size === -1 ? null : userResourcePolicyInfo?.max_vfolder_size),
           } : {
             name: userResourcePolicy
           }

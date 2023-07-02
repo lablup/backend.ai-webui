@@ -158,8 +158,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
               name: selectedProjectResourcePolicy,
             },
             onCompleted(response) {
-              if (!response.delete_project_resource_policy?.ok) {
-                message.error(response.delete_project_resource_policy?.msg);
+              if (!response?.delete_project_resource_policy?.ok) {
+                message.error(response?.delete_project_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
@@ -176,8 +176,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
               name: selectedUserResourcePolicy,
             },
             onCompleted(response) {
-              if (!response.delete_user_resource_policy?.ok) {
-                message.error(response.delete_user_resource_policy?.msg);
+              if (!response?.delete_user_resource_policy?.ok) {
+                message.error(response?.delete_user_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
@@ -185,7 +185,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
             },
             onError(error) {
               console.log(error);
-              message.error(error.message);
+              message.error(error?.message);
             },
           });
         } else {
@@ -211,15 +211,15 @@ const ResourcePolicyCard: React.FC<Props> = ({
               },
             },
             onCompleted(response) {
-              if (!response.modify_project_resource_policy?.ok) {
-                message.error(response.modify_project_resource_policy?.msg);
+              if (!response?.modify_project_resource_policy?.ok) {
+                message.error(response?.modify_project_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
               }
             },
             onError(error) {
-              message.error(error.message);
+              message.error(error?.message);
             }
           });
         } else if (currentSettingType === "user" && selectedUserResourcePolicy) {
@@ -231,15 +231,15 @@ const ResourcePolicyCard: React.FC<Props> = ({
               },
             },
             onCompleted(response) {
-              if (!response.modify_user_resource_policy?.ok) {
-                message.error(response.modify_user_resource_policy?.msg);
+              if (!response?.modify_user_resource_policy?.ok) {
+                message.error(response?.modify_user_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
                 message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
               }
             },
             onError(error) {
-              message.error(error.message);
+              message.error(error?.message);
             }
           });
         } else {

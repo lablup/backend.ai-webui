@@ -22,7 +22,6 @@ interface Props extends ModalProps {
   selectedProjectResourcePolicy?: string;
   selectedUserResourcePolicy?: string;
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
-  children?: React.ReactNode;
   onRequestClose: () => void;
 }
 
@@ -33,7 +32,6 @@ const QuotaSettingModal: React.FC<Props> = ({
   selectedProjectResourcePolicy,
   selectedUserResourcePolicy,
   quotaScopeFrgmt = null,
-  children,
   onRequestClose,
   ...props
 }) =>  {
@@ -119,11 +117,11 @@ const QuotaSettingModal: React.FC<Props> = ({
           quota_scope_id: quotaScopeIdWithPrefix,
           storage_host_name: QuotaScope?.storage_host_name || storageHostName || "",
           props: {
-            hard_limit_bytes: values.hard_limit_bytes,
+            hard_limit_bytes: values?.hard_limit_bytes,
           },
         },
         onCompleted(response) {
-          if (response.set_quota_scope?.quota_scope?.details?.hard_limit_bytes) {
+          if (response?.set_quota_scope?.quota_scope?.details?.hard_limit_bytes) {
             message.success(t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"));
           } else {
             message.error(t('dialog.ErrorOccurred'));
@@ -132,7 +130,7 @@ const QuotaSettingModal: React.FC<Props> = ({
         },
         onError(error) {
           console.log(error);
-          message.error(error.message);
+          message.error(error?.message);
         }
       })
     });

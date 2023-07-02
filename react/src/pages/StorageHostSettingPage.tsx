@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
 import { StorageHostSettingPageQuery } from "./__generated__/StorageHostSettingPageQuery.graphql";
@@ -38,19 +38,21 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
   );
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
-    >
-      <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
-      <StorageHostResourcePanel 
-        resourceFrgmt={storage_volume || null}
+    <Suspense fallback={<div>loading</div>}>
+      <Flex
+        direction="column"
+        align="stretch"
+        style={{ margin: token.marginSM, gap: token.margin }}
+      >
+        <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
+        <StorageHostResourcePanel 
+          resourceFrgmt={storage_volume || null}
+          />
+        <StorageHostSettingsPanel
+          isQuotaSupported={storage_volume?.capabilities?.includes("quota")??false}
         />
-      <StorageHostSettingsPanel
-        isQuotaSupported={storage_volume?.capabilities?.includes("quota")??false}
-      />
-    </Flex>
+      </Flex>
+    </Suspense>
   );
 };
 

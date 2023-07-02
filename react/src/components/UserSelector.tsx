@@ -44,7 +44,7 @@ const UserSelector: React.FC<Props> = ({
     {
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
-      filter: search.length === 0 ? null : "username ilike \"%" + search + "%\""
+      filter: search?.length === 0 ? null : "username ilike \"%" + search + "%\""
     },
     {
       fetchPolicy: "store-and-network",

@@ -1,12 +1,12 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useBackendaiImageMetaData } from "../hooks";
-import _ from "lodash";
 
 const ImageMetaIcon: React.FC<{
   image: string | null;
   style?: React.CSSProperties;
   border?: boolean;
-}> = ({ image, style = {} }, bordered) => {
+  alt?: string | null;
+}> = ({ image, style = {} }, bordered, alt="") => {
   const [, { getImageIcon }] = useBackendaiImageMetaData();
 
   return (
@@ -18,6 +18,7 @@ const ImageMetaIcon: React.FC<{
           height: "1.5em",
           ...style,
         }}
+        alt={alt}
       />
     </div>
   );

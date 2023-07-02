@@ -19,14 +19,12 @@ interface Props extends ModalProps {
   projectResourcePolicy: string;
   resourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
   onRequestClose: () => void;
-  children?: React.ReactNode;
 }
 
 const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   projectResourcePolicy,
   resourcePolicyFrgmt,
   onRequestClose,
-  children,
   ...props
 }) =>  {
   const { t } = useTranslation();
@@ -85,10 +83,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             }
           },
           onCompleted(response) {
-            if (response.modify_project_resource_policy?.ok) {
+            if (response?.modify_project_resource_policy?.ok) {
               message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
             } else {
-              message.error(response.modify_project_resource_policy?.msg);
+              message.error(response?.modify_project_resource_policy?.msg);
             }
             onRequestClose();
           },
@@ -104,14 +102,14 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             // Create a project resource policy with the same name as the project name
             name: projectResourcePolicy || "",
             props: {
-              max_vfolder_size: values.max_vfolder_size,
+              max_vfolder_size: values?.max_vfolder_size,
             }
           },
           onCompleted(response) {
-            if (response.create_project_resource_policy?.ok) {
+            if (response?.create_project_resource_policy?.ok) {
               message.success(t("storageHost.ResourcePolicySuccessfullyCreated"));
             } else {
-              message.error(response.create_project_resource_policy?.msg);
+              message.error(response?.create_project_resource_policy?.msg);
             }
             onRequestClose();
           },
@@ -147,10 +145,10 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         validateTrigger={["onChange", "onBlur"]}
         initialValues={
           projectResourcePolicyInfo ? {
-            id: projectResourcePolicyInfo.id,
-            name: projectResourcePolicyInfo.name,
-            created_at: projectResourcePolicyInfo.created_at,
-            max_vfolder_size: (projectResourcePolicyInfo.max_vfolder_size === -1 ? null : projectResourcePolicyInfo.max_vfolder_size),
+            id: projectResourcePolicyInfo?.id,
+            name: projectResourcePolicyInfo?.name,
+            created_at: projectResourcePolicyInfo?.created_at,
+            max_vfolder_size: (projectResourcePolicyInfo?.max_vfolder_size === -1 ? null : projectResourcePolicyInfo?.max_vfolder_size),
           } : {
             name: projectResourcePolicy
           }

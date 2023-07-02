@@ -77,14 +77,14 @@ const StorageHostResourcePanel: React.FC<{
               <Flex
                 style={{ margin: token.marginSM, gap: token.margin }}>
                   {storageUsage.percent < 100 ? (
-                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage.percent} strokeColor={usageIndicatorColor(storageUsage.percent)}></Progress>
+                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage?.percent} strokeColor={usageIndicatorColor(storageUsage?.percent)}></Progress>
                   ) : (
-                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage.percent} status="exception"></Progress>
+                    <Progress type="circle" size={120} strokeWidth={15} percent={storageUsage?.percent} status="exception"></Progress>
                   )
                   } 
                   <Descriptions column={1} style={{ marginLeft: 20 }}>
-                    <Descriptions.Item label={t('storageHost.Total')}>{_humanReadableDecimalSize(storageUsage.used_bytes)}</Descriptions.Item>
-                    <Descriptions.Item label={t('storageHost.Used')}>{_humanReadableDecimalSize(storageUsage.capacity_bytes)}</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Total')}>{_humanReadableDecimalSize(storageUsage?.used_bytes)}</Descriptions.Item>
+                    <Descriptions.Item label={t('storageHost.Used')}>{_humanReadableDecimalSize(storageUsage?.capacity_bytes)}</Descriptions.Item>
                   </Descriptions>
               </Flex>
             </Card>
