@@ -27,6 +27,8 @@ interface Props extends CardProps {
   storageHostId?: string;
   selectedProjectId?: string;
   selectedUserId?: string;
+  selectedProjectResourcePolicy?: string;
+  selectedUserResourcePolicy?: string;
   extraFetchKey?: string;
 }
 const FolderQuotaCard: React.FC<Props> = ({
@@ -34,6 +36,8 @@ const FolderQuotaCard: React.FC<Props> = ({
   storageHostId,
   selectedProjectId,
   selectedUserId,
+  selectedProjectResourcePolicy,
+  selectedUserResourcePolicy,
   extraFetchKey,
   ...props
 }) => {
@@ -217,6 +221,8 @@ const FolderQuotaCard: React.FC<Props> = ({
         quotaScopeId={quotaScopeId}
         storageHostName={storageHostId}
         currentSettingType={currentSettingType}
+        selectedProjectResourcePolicy={selectedProjectResourcePolicy}
+        selectedUserResourcePolicy={selectedUserResourcePolicy}
         folderQuotaFrgmt={folder_quota || null}
         onRequestClose={() => {
           updateInternalFetchKey();

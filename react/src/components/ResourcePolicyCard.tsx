@@ -62,20 +62,20 @@ const ResourcePolicyCard: React.FC<Props> = ({
   const { project_resource_policy, user_resource_policy } = useLazyLoadQuery<ResourcePolicyCardQuery>(
     graphql`
       query ResourcePolicyCardQuery(
-        $project_resource_policy: String!,
-        $user_resource_policy: String,
+        $project_resource_policy_name: String!,
+        $user_resource_policy_name: String,
         $skipProjectResourcePolicy: Boolean!,
         $skipUserResourcePolicy: Boolean!,
       ) {
         project_resource_policy (
-          name: $project_resource_policy,
+          name: $project_resource_policy_name,
         ) @skip(if: $skipProjectResourcePolicy) {
           max_vfolder_size
           ...ProjectResourcePolicySettingModalFragment
         }
 
         user_resource_policy (
-          name: $user_resource_policy,
+          name: $user_resource_policy_name,
         ) @skip(if: $skipUserResourcePolicy) {
           max_vfolder_size
           ...UserResourcePolicySettingModalFragment
@@ -83,8 +83,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
     }
   `,
     {
-      project_resource_policy: selectedProjectResourcePolicy || "",
-      user_resource_policy: selectedUserResourcePolicy || "",
+      project_resource_policy_name: selectedProjectResourcePolicy || "",
+      user_resource_policy_name: selectedUserResourcePolicy || "",
       skipProjectResourcePolicy: selectedProjectResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
       skipUserResourcePolicy: selectedUserResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
     },

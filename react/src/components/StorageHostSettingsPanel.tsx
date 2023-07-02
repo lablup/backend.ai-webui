@@ -94,6 +94,8 @@ const StorageHostSettingsPanel: React.FC<
             storageHostId={storageHostId}
             selectedProjectId={selectedProjectId}
             selectedUserId={selectedUserId}
+            selectedProjectResourcePolicy={selectedProjectResourcePolicy}
+            selectedUserResourcePolicy={selectedUserResourcePolicy}
             extraFetchKey={extraFetchKey}
           />
       </>

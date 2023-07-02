@@ -48,7 +48,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
         resourceFrgmt={storage_volume}
         />
       <StorageHostSettingsPanel
-        isQuotaSupported={storage_volume?.capabilities?.includes("quota")}
+        isQuotaSupported={storage_volume?.capabilities?.includes("quota")??false}
       />
     </Flex>
   );

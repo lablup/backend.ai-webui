@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<3a0c0e272b527f91616e8b1f4f75c6eb>>
+ * @generated SignedSource<<a09f9c94f1f426542a2b3b8fdacb5ea6>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -10,13 +10,13 @@
 
 import { ConcreteRequest, Query } from 'relay-runtime';
 import { FragmentRefs } from "relay-runtime";
-export type ResourcePolicyCardQuery$variables = {
+export type QuotaSettingModalQuery$variables = {
   project_resource_policy_name: string;
   skipProjectResourcePolicy: boolean;
   skipUserResourcePolicy: boolean;
   user_resource_policy_name?: string | null;
 };
-export type ResourcePolicyCardQuery$data = {
+export type QuotaSettingModalQuery$data = {
   readonly project_resource_policy?: {
     readonly max_vfolder_size: any | null;
     readonly " $fragmentSpreads": FragmentRefs<"ProjectResourcePolicySettingModalFragment">;
@@ -26,9 +26,9 @@ export type ResourcePolicyCardQuery$data = {
     readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicySettingModalFragment">;
   } | null;
 };
-export type ResourcePolicyCardQuery = {
-  response: ResourcePolicyCardQuery$data;
-  variables: ResourcePolicyCardQuery$variables;
+export type QuotaSettingModalQuery = {
+  response: QuotaSettingModalQuery$data;
+  variables: QuotaSettingModalQuery$variables;
 };
 
 const node: ConcreteRequest = (function(){
@@ -107,7 +107,7 @@ return {
     ],
     "kind": "Fragment",
     "metadata": null,
-    "name": "ResourcePolicyCardQuery",
+    "name": "QuotaSettingModalQuery",
     "selections": [
       {
         "condition": "skipProjectResourcePolicy",
@@ -170,7 +170,7 @@ return {
       (v2/*: any*/)
     ],
     "kind": "Operation",
-    "name": "ResourcePolicyCardQuery",
+    "name": "QuotaSettingModalQuery",
     "selections": [
       {
         "condition": "skipProjectResourcePolicy",
@@ -209,16 +209,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "3f2a85012958a5e007dda05fe2a85f81",
+    "cacheID": "5bc3d03682fa74f890aa199acb1beb21",
     "id": null,
     "metadata": {},
-    "name": "ResourcePolicyCardQuery",
+    "name": "QuotaSettingModalQuery",
     "operationKind": "query",
-    "text": "query ResourcePolicyCardQuery(\n  $project_resource_policy_name: String!\n  $user_resource_policy_name: String\n  $skipProjectResourcePolicy: Boolean!\n  $skipUserResourcePolicy: Boolean!\n) {\n  project_resource_policy(name: $project_resource_policy_name) @skip(if: $skipProjectResourcePolicy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy_name) @skip(if: $skipUserResourcePolicy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
+    "text": "query QuotaSettingModalQuery(\n  $project_resource_policy_name: String!\n  $user_resource_policy_name: String\n  $skipProjectResourcePolicy: Boolean!\n  $skipUserResourcePolicy: Boolean!\n) {\n  project_resource_policy(name: $project_resource_policy_name) @skip(if: $skipProjectResourcePolicy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy_name) @skip(if: $skipUserResourcePolicy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
   }
 };
 })();
 
-(node as any).hash = "30815fce36008c7335994f3a4a110c91";
+(node as any).hash = "3ddf4d65576722ba6d9e4cf7248090ad";
 
 export default node;

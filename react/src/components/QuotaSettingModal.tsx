@@ -1,6 +1,7 @@
 import React from "react";
-import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
+import { useFragment, useMutation, useLazyLoadQuery } from "react-relay";
+import { QuotaSettingModalQuery } from "./__generated__/QuotaSettingModalQuery.graphql";
 import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
 import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
 
@@ -12,12 +13,14 @@ import {
   message,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
+import { QuotaScopeType, addQuotaScopeTypePrefix, _humanReadableDecimalSize } from "../helper/index";
 
 interface Props extends ModalProps {
   quotaScopeId?: string,
   storageHostName?: string,
   currentSettingType: QuotaScopeType,
+  selectedProjectResourcePolicy?: string;
+  selectedUserResourcePolicy?: string;
   folderQuotaFrgmt?: QuotaSettingModalFragment$key | null;
   children?: React.ReactNode;
   onRequestClose: () => void;
@@ -27,6 +30,8 @@ const QuotaSettingModal: React.FC<Props> = ({
   quotaScopeId,
   storageHostName,
   currentSettingType,
+  selectedProjectResourcePolicy,
+  selectedUserResourcePolicy,
   folderQuotaFrgmt = null,
   children,
   onRequestClose,
@@ -35,6 +40,39 @@ const QuotaSettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
+  
+  const { project_resource_policy, user_resource_policy } = useLazyLoadQuery<QuotaSettingModalQuery>(
+    graphql`
+      query QuotaSettingModalQuery(
+        $project_resource_policy_name: String!,
+        $user_resource_policy_name: String,
+        $skipProjectResourcePolicy: Boolean!,
+        $skipUserResourcePolicy: Boolean!,
+      ) {
+        project_resource_policy (
+          name: $project_resource_policy_name,
+        ) @skip(if: $skipProjectResourcePolicy) {
+          max_vfolder_size
+          ...ProjectResourcePolicySettingModalFragment
+        }
+
+        user_resource_policy (
+          name: $user_resource_policy_name,
+        ) @skip(if: $skipUserResourcePolicy) {
+          max_vfolder_size
+          ...UserResourcePolicySettingModalFragment
+        }
+    }
+    `,
+    {
+      project_resource_policy_name: selectedProjectResourcePolicy || "",
+      user_resource_policy_name: selectedUserResourcePolicy || "",
+      skipProjectResourcePolicy: selectedProjectResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
+      skipUserResourcePolicy: selectedUserResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
+    }
+  );
+
+  const resourcePolicyMaxVFolderSize = currentSettingType === "project" ? project_resource_policy?.max_vfolder_size : user_resource_policy?.max_vfolder_size;
 
   const folderQuota = useFragment(
     graphql`
@@ -114,10 +152,26 @@ const QuotaSettingModal: React.FC<Props> = ({
         form={form}
         preserve={false}
         labelCol={{ span: 6 }}
-        wrapperCol={{ span: 16 }}
+        wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
+        style={{ marginBottom: 40, marginTop: 20 }}
       >
-        <Form.Item name="hard_limit_bytes" label={t('storageHost.HardLimit')}>
+        <Form.Item
+          name="hard_limit_bytes"
+          label={t('storageHost.HardLimit')}
+          rules={[
+            {
+              validator: (_, value) => {
+                if (resourcePolicyMaxVFolderSize && resourcePolicyMaxVFolderSize < value) {
+                  return Promise.reject(
+                    `${t("storageHost.quotaSettings.LessThanResourcePolicy")} (${_humanReadableDecimalSize(resourcePolicyMaxVFolderSize)})`
+                    );
+                }
+                return Promise.resolve();
+              },
+            },
+          ]}
+        >
           <InputNumber
             min={0}
             addonAfter="bytes"
