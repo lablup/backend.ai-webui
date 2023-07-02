@@ -127,10 +127,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Number}) sidebarWidth = 250;
   @property({type: Number}) sidepanelWidth = 250;
   @property({type: Object}) supports = Object();
-  @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job', 'session',
+  @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
     'environment', 'agent', 'storage-settings', 'settings', 'maintenance',
-    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
+    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent', 'storage-settings',
     'settings', 'maintenance', 'information'];
   @property({type: Array}) superAdminOnlyPages = ['agent', 'storage-settings', 'settings', 'maintenance', 'information'];
@@ -1054,9 +1054,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'session'}" @click="${() => this._moveTo('/session')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+            <!-- <mwc-list-item graphic="icon" ?selected="${this._page === 'session'}" @click="${() => this._moveTo('/session')}" ?disabled="${this.blockedMenuitem.includes('session')}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
-              <span class="full-menu">${_t('webui.menu.Sessions')} new</span>
+              <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
