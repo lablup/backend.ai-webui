@@ -672,16 +672,16 @@ input ModifyUserInput {
   resource_policy: String
 }
 
-input FolderQuotaInput {
+input QuotaScopeInput {
   hard_limit_bytes: BigInt
 }
 
-type SetFolderQuota {
-  folder_quota: FolderQuota
+type SetQuotaScope {
+  quota_scope: QuotaScope
 }
 
-type UnsetFolderQuota {
-  folder_quota: FolderQuota
+type UnsetQuotaScope {
+  quota_scope: QuotaScope
 }
 
 input CreateUserResourcePolicyInput {
@@ -775,8 +775,8 @@ type Mutations {
   disassociate_all_scaling_groups_with_domain(domain: String!): DisassociateAllScalingGroupsWithDomain
   disassociate_all_scaling_groups_with_group(user_group: UUID!): DisassociateAllScalingGroupsWithGroup
   modify_compute_session(id: String!, props: ModifySessionInput!): ModifySession
-  set_folder_quota(quota_scope_id: String!, storage_host_name: String!, props: FolderQuotaInput!): SetFolderQuota
-  unset_folder_quota(quota_scope_id: String!, storage_host_name: String!): UnsetFolderQuota
+  set_quota_scope(quota_scope_id: String!, storage_host_name: String!, props: QuotaScopeInput!): SetQuotaScope
+  unset_quota_scope(quota_scope_id: String!, storage_host_name: String!): UnsetQuotaScope
   create_user_resource_policy(name: String!, props: CreateUserResourcePolicyInput!): CreateUserResourcePolicy
   modify_user_resource_policy(name: String!, props: ModifyUserResourcePolicyInput!): ModifyUserResourcePolicy
   delete_user_resource_policy(name: String!): DeleteUserResourcePolicy
@@ -864,7 +864,7 @@ type Queries {
   endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, project: UUID): EndpointList
   routing(routing_id: UUID!): Routing
   routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
-  folder_quota(quota_scope_id: String!, storage_host_name: String!): FolderQuota
+  quota_scope(quota_scope_id: String!, storage_host_name: String!): QuotaScope
   user_resource_policy(name: String): UserResourcePolicy
   user_resource_policies: [UserResourcePolicy]
   project_resource_policy(name: String!): ProjectResourcePolicy
@@ -1047,7 +1047,7 @@ type QuotaDetails {
   hard_limit_bytes: BigInt
 }
 
-type FolderQuota {
+type QuotaScope {
   id: UUID!
   quota_scope_id: String!
   storage_host_name: String!

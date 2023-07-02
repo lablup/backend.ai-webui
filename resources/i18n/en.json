@@ -484,7 +484,7 @@
       "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, this user or project uses default value.",
       "SelectProject": "Select Project",
       "SelectUser": "Search and select User",
-      "FolderQuotaSuccessfullyUpdated": "Folder quota successfully updated",
+      "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
       "LessThanResourcePolicy": "Hard limit should be less than resource policy."
     }
   },

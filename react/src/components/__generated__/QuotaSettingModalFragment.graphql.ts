@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a0240434683b5a62fd902be6578b6c8a>>
+ * @generated SignedSource<<07a7ef0c65467384653ab0c129416850>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -70,10 +70,10 @@ const node: ReaderFragment = {
       "storageKey": null
     }
   ],
-  "type": "FolderQuota",
+  "type": "QuotaScope",
   "abstractKey": null
 };
 
-(node as any).hash = "780422846e9f306afd374b7d0f494dfd";
+(node as any).hash = "1c5ad8315a2d78cb376e7436dc6a8627";
 
 export default node;

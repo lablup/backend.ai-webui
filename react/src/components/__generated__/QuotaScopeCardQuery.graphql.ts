@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<87c27094aedb27dafaa6da9f2450db5f>>
+ * @generated SignedSource<<09464ba4ab7ca930300962b8a884f60d>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -175,7 +175,7 @@ return {
     ]
   },
   "params": {
-    "cacheID": "0b3502733cfc8f015522e306fb6b6f13",
+    "cacheID": "8fb815d3e24311a289723ba5d8628b34",
     "id": null,
     "metadata": {},
     "name": "QuotaScopeCardQuery",
@@ -185,6 +185,6 @@ return {
 };
 })();
 
-(node as any).hash = "721302be1a3a25f049b64d65df250202";
+(node as any).hash = "e112a2caaa3af5f44a46dcf070372a48";
 
 export default node;

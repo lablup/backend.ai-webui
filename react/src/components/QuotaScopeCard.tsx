@@ -1,8 +1,8 @@
 import React, { useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery, useMutation } from "react-relay";
-import { FolderQuotaCardQuery } from "./__generated__/FolderQuotaCardQuery.graphql";
-import { FolderQuotaCardUnsetMutation } from "./__generated__/FolderQuotaCardUnsetMutation.graphql";
+import { QuotaScopeCardQuery } from "./__generated__/QuotaScopeCardQuery.graphql";
+import { QuotaScopeCardUnsetMutation } from "./__generated__/QuotaScopeCardUnsetMutation.graphql";
 
 import {
   Card,
@@ -31,7 +31,7 @@ interface Props extends CardProps {
   selectedUserResourcePolicy?: string;
   extraFetchKey?: string;
 }
-const FolderQuotaCard: React.FC<Props> = ({
+const QuotaScopeCard: React.FC<Props> = ({
   currentSettingType="project",
   storageHostId,
   selectedProjectId,
@@ -51,17 +51,17 @@ const FolderQuotaCard: React.FC<Props> = ({
   const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
   const quotaScopeIdWithPrefix = (quotaScopeId === undefined || quotaScopeId === null) ? "" : addQuotaScopeTypePrefix(currentSettingType, quotaScopeId);
 
-  const { folder_quota } = useLazyLoadQuery<FolderQuotaCardQuery>(
+  const { quota_scope } = useLazyLoadQuery<QuotaScopeCardQuery>(
     graphql`
-      query FolderQuotaCardQuery(
+      query QuotaScopeCardQuery(
         $quota_scope_id: String!,
         $storage_host_name: String!,
-        $skipFolderQuota: Boolean!,
+        $skipQuotaScope: Boolean!,
       ) {
-        folder_quota (
+        quota_scope (
           storage_host_name: $storage_host_name,
           quota_scope_id: $quota_scope_id,
-        ) @skip(if: $skipFolderQuota) {
+        ) @skip(if: $skipQuotaScope) {
           id
           quota_scope_id
           storage_host_name
@@ -75,7 +75,7 @@ const FolderQuotaCard: React.FC<Props> = ({
     {
       storage_host_name: storageHostId || "",
       quota_scope_id: quotaScopeIdWithPrefix,
-      skipFolderQuota: storageHostId === "" || quotaScopeId === "" || storageHostId === undefined || quotaScopeId === undefined,
+      skipQuotaScope: storageHostId === "" || quotaScopeId === "" || storageHostId === undefined || quotaScopeId === undefined,
     },
     {
       fetchKey: deferredMergedFetchKey,
@@ -83,17 +83,17 @@ const FolderQuotaCard: React.FC<Props> = ({
     }
   );
 
-  const [commitUnsetFolderQuota, isInFlightCommitUnsetFolderQuota] = useMutation<FolderQuotaCardUnsetMutation>(
+  const [commitUnsetQuotaScope, isInFlightcommitUnsetQuotaScope] = useMutation<QuotaScopeCardUnsetMutation>(
     graphql`
-      mutation FolderQuotaCardUnsetMutation(
+      mutation QuotaScopeCardUnsetMutation(
         $quota_scope_id: String!,
         $storage_host_name: String!
       ) {
-        unset_folder_quota (
+        unset_quota_scope (
           quota_scope_id: $quota_scope_id,
           storage_host_name: $storage_host_name,
         ) {
-          folder_quota {
+          quota_scope {
             id
             quota_scope_id
             storage_host_name
@@ -150,13 +150,13 @@ const FolderQuotaCard: React.FC<Props> = ({
         placement="bottom"
         onConfirm={() => {
           if (quotaScopeId && storageHostId) {
-            commitUnsetFolderQuota({
+            commitUnsetQuotaScope({
               variables: {
                 quota_scope_id: addQuotaScopeTypePrefix(currentSettingType, quotaScopeId),
                 storage_host_name: storageHostId,
               },
               onCompleted() {
-                message.success(t("storageHost.quotaSettings.FolderQuotaSuccessfullyUpdated"));
+                message.success(t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"));
                 updateInternalFetchKey();
               },
               onError(error) {
@@ -209,7 +209,7 @@ const FolderQuotaCard: React.FC<Props> = ({
               ),
             },
           ]}
-          dataSource={storageHostId && (selectedProjectId || selectedUserId) && folder_quota ? [folder_quota] : []}
+          dataSource={storageHostId && (selectedProjectId || selectedUserId) && quota_scope ? [quota_scope] : []}
           locale={{ emptyText: (selectedProjectId || selectedUserId) ? addQuotaConfigsWhenEmpty : selectProjectOrUserFirst }}
           pagination={false}
         />
@@ -224,7 +224,7 @@ const FolderQuotaCard: React.FC<Props> = ({
         currentSettingType={currentSettingType}
         selectedProjectResourcePolicy={selectedProjectResourcePolicy}
         selectedUserResourcePolicy={selectedUserResourcePolicy}
-        folderQuotaFrgmt={folder_quota || null}
+        quotaScopeFrgmt={quota_scope || null}
         onRequestClose={() => {
           updateInternalFetchKey();
           toggleQuotaSettingModal();
@@ -234,4 +234,4 @@ const FolderQuotaCard: React.FC<Props> = ({
   )
 }
 
-export default FolderQuotaCard;
+export default QuotaScopeCard;

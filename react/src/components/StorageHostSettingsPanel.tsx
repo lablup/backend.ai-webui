@@ -9,7 +9,7 @@ import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
 import ResourcePolicyCard from "./ResourcePolicyCard";
-import FolderQuotaCard from "./FolderQuotaCard";
+import QuotaScopeCard from "./QuotaScopeCard";
 
 interface StorageHostSettingsPanelProps {
   isQuotaSupported?: boolean;
@@ -89,7 +89,7 @@ const StorageHostSettingsPanel: React.FC<
             selectedUserResourcePolicy={selectedUserResourcePolicy}
             extraFetchKey={extraFetchKey}
           />
-          <FolderQuotaCard
+          <QuotaScopeCard
             currentSettingType={currentSettingType}
             storageHostId={storageHostId}
             selectedProjectId={selectedProjectId}

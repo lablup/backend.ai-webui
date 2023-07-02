@@ -477,7 +477,7 @@
       "ConfirmUnsetCustomQuota": "정말로 설정을 초기화 하시겠습니까? \n이 사용자 혹은 프로젝트는 기본값을 사용하게 됩니다.",
       "SelectProject": "프로젝트 선택",
       "SelectUser": "사용자 검색 및 선택",
-      "FolderQuotaSuccessfullyUpdated": "폴더 쿼타가 성공적으로 수정되었습니다.",
+      "QuotaScopeSuccessfullyUpdated": "할당 범위가 성공적으로 수정되었습니다.",
       "LessThanResourcePolicy": "Hard limit은 자원 정책보다 작아야 합니다."
     }
   },

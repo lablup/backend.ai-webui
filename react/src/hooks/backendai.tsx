@@ -1,4 +1,4 @@
-export interface FolderQuota {
+export interface QuotaScope {
   id: string;
   quota_scope_id: string;
   storage_host_name: string;

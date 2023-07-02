@@ -21,7 +21,7 @@ interface Props extends ModalProps {
   currentSettingType: QuotaScopeType,
   selectedProjectResourcePolicy?: string;
   selectedUserResourcePolicy?: string;
-  folderQuotaFrgmt?: QuotaSettingModalFragment$key | null;
+  quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
   children?: React.ReactNode;
   onRequestClose: () => void;
 }
@@ -32,7 +32,7 @@ const QuotaSettingModal: React.FC<Props> = ({
   currentSettingType,
   selectedProjectResourcePolicy,
   selectedUserResourcePolicy,
-  folderQuotaFrgmt = null,
+  quotaScopeFrgmt = null,
   children,
   onRequestClose,
   ...props
@@ -74,9 +74,9 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const resourcePolicyMaxVFolderSize = currentSettingType === "project" ? project_resource_policy?.max_vfolder_size : user_resource_policy?.max_vfolder_size;
 
-  const folderQuota = useFragment(
+  const QuotaScope = useFragment(
     graphql`
-      fragment QuotaSettingModalFragment on FolderQuota {
+      fragment QuotaSettingModalFragment on QuotaScope {
         id
         quota_scope_id
         storage_host_name
@@ -84,22 +84,22 @@ const QuotaSettingModal: React.FC<Props> = ({
           hard_limit_bytes
         }
       }
-    `, folderQuotaFrgmt
+    `, quotaScopeFrgmt
   );
 
-  const [commitSetFolderQuota, isInFlightCommitSetFolderQuota] =
+  const [commitSetQuotaScope, isInFlightcommitSetQuotaScope] =
     useMutation<QuotaSettingModalSetMutation>(graphql`
       mutation QuotaSettingModalSetMutation(
         $quota_scope_id: String!,
         $storage_host_name: String!,
-        $props: FolderQuotaInput!,
+        $props: QuotaScopeInput!,
       ) {
-        set_folder_quota (
+        set_quota_scope (
           quota_scope_id: $quota_scope_id,
           storage_host_name: $storage_host_name,
           props: $props,
         ) {
-          folder_quota {
+          quota_scope {
             id
             quota_scope_id
             storage_host_name
@@ -113,18 +113,18 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      const quotaScopeIdWithPrefix = addQuotaScopeTypePrefix(currentSettingType, folderQuota?.quota_scope_id || quotaScopeId || "");
-      commitSetFolderQuota({
+      const quotaScopeIdWithPrefix = addQuotaScopeTypePrefix(currentSettingType, QuotaScope?.quota_scope_id || quotaScopeId || "");
+      commitSetQuotaScope({
         variables: {
           quota_scope_id: quotaScopeIdWithPrefix,
-          storage_host_name: folderQuota?.storage_host_name || storageHostName || "",
+          storage_host_name: QuotaScope?.storage_host_name || storageHostName || "",
           props: {
             hard_limit_bytes: values.hard_limit_bytes,
           },
         },
         onCompleted(response) {
-          if (response.set_folder_quota?.folder_quota?.details?.hard_limit_bytes) {
-            message.success(t("storageHost.quotaSettings.FolderQuotaSuccessfullyUpdated"));
+          if (response.set_quota_scope?.quota_scope?.details?.hard_limit_bytes) {
+            message.success(t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"));
           } else {
             message.error(t('dialog.ErrorOccurred'));
           }
@@ -176,7 +176,7 @@ const QuotaSettingModal: React.FC<Props> = ({
             min={0}
             addonAfter="bytes"
             style={{ width: '70%' }}
-            defaultValue={folderQuota?.details?.hard_limit_bytes}
+            defaultValue={QuotaScope?.details?.hard_limit_bytes}
             />
         </Form.Item>
       </Form>
