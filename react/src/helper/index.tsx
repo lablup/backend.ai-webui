@@ -56,6 +56,16 @@ export const _humanReadableBinarySize = (bytes = 0, decimalPoint = 2, compact = 
   return parseFloat((bytes / Math.pow(k, i)).toFixed(decimalPoint)) + ' ' + unitList[i];
 }
 
+export const GBToBytes = (value = 0) => {
+  const gigabyte = Math.pow(10, 9);
+  return Math.round(gigabyte * value);
+}
+
+export const bytesToGB = (bytes: number, decimalPoint = 2) => {
+  if (!bytes) return bytes;
+  return (bytes / 10 ** 9).toFixed(decimalPoint);
+}
+
 export type QuotaScopeType = "project" | "user";
 export const addQuotaScopeTypePrefix = (type: QuotaScopeType, str: string) => {
   if (str === "" || str === undefined) return "";

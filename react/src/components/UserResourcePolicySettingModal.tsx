@@ -14,6 +14,7 @@ import {
   Alert,
 } from "antd";
 import { useTranslation } from "react-i18next";
+import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
   userResourcePolicy: string;
@@ -79,7 +80,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: userResourcePolicyInfo?.name,
             props: {
-              max_vfolder_size: values?.max_vfolder_size,
+              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
             }
           },
           onCompleted(response) {
@@ -102,7 +103,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             // Create a user resource policy with the same name as the user name
             name: userResourcePolicy || "",
             props: {
-              max_vfolder_size: values?.max_vfolder_size,
+              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
             }
           },
           onCompleted(response) {
@@ -148,7 +149,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
             id: userResourcePolicyInfo?.id,
             name: userResourcePolicyInfo?.name,
             created_at: userResourcePolicyInfo?.created_at,
-            max_vfolder_size: (userResourcePolicyInfo?.max_vfolder_size === -1 ? null : userResourcePolicyInfo?.max_vfolder_size),
+            max_vfolder_size: (userResourcePolicyInfo?.max_vfolder_size === -1 ? null : bytesToGB(userResourcePolicyInfo?.max_vfolder_size)),
           } : {
             name: userResourcePolicy
           }
@@ -158,7 +159,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           name="max_vfolder_size" label={t('storageHost.MaxFolderSize')}>
           <InputNumber
             min={0}
-            addonAfter="bytes"
+            addonAfter="GB"
           />
         </Form.Item>
       </Form>

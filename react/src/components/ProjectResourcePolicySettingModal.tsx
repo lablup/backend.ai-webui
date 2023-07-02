@@ -14,6 +14,7 @@ import {
   Alert,
 } from "antd";
 import { useTranslation } from "react-i18next";
+import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
   projectResourcePolicy: string;
@@ -71,7 +72,6 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       }
     `);
 
-  
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
       if (projectResourcePolicyInfo?.name && projectResourcePolicyInfo?.max_vfolder_size) {
@@ -79,7 +79,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           variables: {
             name: projectResourcePolicyInfo?.name,
             props: {
-              max_vfolder_size: values.max_vfolder_size,
+              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
             }
           },
           onCompleted(response) {
@@ -102,7 +102,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             // Create a project resource policy with the same name as the project name
             name: projectResourcePolicy || "",
             props: {
-              max_vfolder_size: values?.max_vfolder_size,
+              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
             }
           },
           onCompleted(response) {
@@ -148,7 +148,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             id: projectResourcePolicyInfo?.id,
             name: projectResourcePolicyInfo?.name,
             created_at: projectResourcePolicyInfo?.created_at,
-            max_vfolder_size: (projectResourcePolicyInfo?.max_vfolder_size === -1 ? null : projectResourcePolicyInfo?.max_vfolder_size),
+            max_vfolder_size: (projectResourcePolicyInfo?.max_vfolder_size === -1 ? null : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size)),
           } : {
             name: projectResourcePolicy
           }
@@ -158,7 +158,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           name="max_vfolder_size" label={t('storageHost.MaxFolderSize')}>
           <InputNumber
             min={0}
-            addonAfter="bytes"
+            addonAfter="GB"
           />
         </Form.Item>
       </Form>

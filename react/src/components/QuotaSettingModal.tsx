@@ -14,6 +14,7 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix, _humanReadableDecimalSize } from "../helper/index";
+import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
   quotaScopeId?: string,
@@ -117,7 +118,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           quota_scope_id: quotaScopeIdWithPrefix,
           storage_host_name: QuotaScope?.storage_host_name || storageHostName || "",
           props: {
-            hard_limit_bytes: values?.hard_limit_bytes,
+            hard_limit_bytes: GBToBytes(values?.hard_limit_bytes),
           },
         },
         onCompleted(response) {
@@ -160,7 +161,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           rules={[
             {
               validator: (_, value) => {
-                if (resourcePolicyMaxVFolderSize && resourcePolicyMaxVFolderSize < value) {
+                if (resourcePolicyMaxVFolderSize && bytesToGB(resourcePolicyMaxVFolderSize) < value) {
                   return Promise.reject(
                     `${t("storageHost.quotaSettings.LessThanResourcePolicy")} (${_humanReadableDecimalSize(resourcePolicyMaxVFolderSize)})`
                     );
@@ -172,9 +173,9 @@ const QuotaSettingModal: React.FC<Props> = ({
         >
           <InputNumber
             min={0}
-            addonAfter="bytes"
+            addonAfter="GB"
             style={{ width: '70%' }}
-            defaultValue={QuotaScope?.details?.hard_limit_bytes}
+            defaultValue={bytesToGB(QuotaScope?.details?.hard_limit_bytes)}
             />
         </Form.Item>
       </Form>

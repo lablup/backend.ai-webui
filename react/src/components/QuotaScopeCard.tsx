@@ -18,7 +18,7 @@ import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
 
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
+import { QuotaScopeType, addQuotaScopeTypePrefix, bytesToGB } from "../helper/index";
 import { useDateISOState } from "../hooks";
 import QuotaSettingModal from "./QuotaSettingModal";
 
@@ -188,9 +188,12 @@ const QuotaScopeCard: React.FC<Props> = ({
               key: "quota_scope_id",
             },
             {
-              title: t("storageHost.HardLimit") + " (bytes)",
+              title: t("storageHost.HardLimit") + " (GB)",
               dataIndex: ["details", "hard_limit_bytes"],
               key: "hard_limit_bytes",
+              render: (value) => (
+                <>{bytesToGB(value)}</>
+              ),
             },
             {
               title: t("general.Control"),

@@ -27,7 +27,7 @@ const StorageHostSettingsPanel: React.FC<
     storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
   }>();
 
-  const [currentSettingType, setCurrentSettingType] = useState<QuotaScopeType>("project");
+  const [currentSettingType, setCurrentSettingType] = useState<QuotaScopeType>("user");
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
   const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] = useState<string>();
@@ -46,12 +46,12 @@ const StorageHostSettingsPanel: React.FC<
         title={t("storageHost.QuotaSettings")}
         tabList={[
           {
-            key: "project",
-            tab: t("storageHost.ForProject"),
-          },
-          {
             key: "user",
             tab: t("storageHost.ForUser"),
+          },
+          {
+            key: "project",
+            tab: t("storageHost.ForProject"),
           },
         ]}
         activeTabKey={currentSettingType}
