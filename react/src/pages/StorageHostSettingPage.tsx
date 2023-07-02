@@ -26,7 +26,8 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
         storage_volume(
           id: $id,
         ) {
-          id
+          id,
+          capabilities
           ...StorageHostResourcePanelFragment
         }
       }
@@ -45,8 +46,10 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
       <Typography.Title level={2}>{storageHostId}</Typography.Title>
       <StorageHostResourcePanel 
         resourceFrgmt={storage_volume}
+        />
+      <StorageHostSettingsPanel
+        isQuotaSupported={storage_volume?.capabilities?.includes("quota")}
       />
-      <StorageHostSettingsPanel/>
     </Flex>
   );
 };

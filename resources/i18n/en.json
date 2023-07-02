@@ -448,7 +448,7 @@
     "Total": "Total",
     "Used": "Used",
     "Detail": "Detail",
-    "Settings": "Settings",
+    "QuotaSettings": "Quota Settings",
     "ForProject": "For Project",
     "ForUser": "For User",
     "ResourcePolicy": "Resource Policy",
@@ -472,6 +472,7 @@
     "ResourcePolicySuccessfullyCreated": "Resource Policy successfully created",
     "ResourcePolicySuccessfullyUpdated": "Resource Policy successfully updated",
     "ResourcePolicySuccessfullyDeleted": "Resource Policy successfully deleted",
+    "QuotaDoesNotSupported": "This storage host does not support quota.",
     "quotaSettings": {
       "QuotaSettings": "Quota Settings",
       "Type": "Type",

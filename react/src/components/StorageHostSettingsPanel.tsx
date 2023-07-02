@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType } from "../helper/index";
 
-import { Card, theme } from "antd";
+import { Card, Empty, theme } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
@@ -12,11 +12,13 @@ import ResourcePolicyCard from "./ResourcePolicyCard";
 import FolderQuotaCard from "./FolderQuotaCard";
 
 interface StorageHostSettingsPanelProps {
+  isQuotaSupported?: boolean;
   extraFetchKey?: string;
 }
 const StorageHostSettingsPanel: React.FC<
   StorageHostSettingsPanelProps
 > = ({
+  isQuotaSupported = false,
   extraFetchKey = "",
 }) => {
   const { t } = useTranslation();
@@ -41,7 +43,7 @@ const StorageHostSettingsPanel: React.FC<
       style={{ margin: token.marginSM, gap: token.margin }}
     >
       <Card
-        title={t("storageHost.Settings")}
+        title={t("storageHost.QuotaSettings")}
         tabList={[
           {
             key: "project",
@@ -57,42 +59,51 @@ const StorageHostSettingsPanel: React.FC<
         //@ts-ignore
         onTabChange={setCurrentSettingType}
       >
-        <Flex justify="between">
-          {currentSettingType === "project" ? (
-            <ProjectSelector
-              style={{ width: '30vw', marginBottom: 10 }}
-              onSelectProject={(project: any) => {
-                setSelectedProjectId(project?.projectId);
-                setSelectedProjectResourcePolicy(project?.projectResourcePolicy);
-              }}
-            />
-          ) : (
-            <UserSelector
-              style={{ width: '30vw', marginBottom: 10 }}
-              onSelectUser={(user: any) => {
-                setSelectedUserId(user?.userId);
-                setSelectedUserResourcePolicy(user?.userResourcePolicy);
-              }}
+      {isQuotaSupported ? (
+        <>
+          <Flex justify="between">
+            {currentSettingType === "project" ? (
+              <ProjectSelector
+                style={{ width: '30vw', marginBottom: 10 }}
+                onSelectProject={(project: any) => {
+                  setSelectedProjectId(project?.projectId);
+                  setSelectedProjectResourcePolicy(project?.projectResourcePolicy);
+                }}
               />
-          )}
-        </Flex>
-        <ResourcePolicyCard
-          quotaScopeId={quotaScopeId}
-          currentSettingType={currentSettingType}
-          selectedProjectId={selectedProjectId}
-          selectedUserId={selectedUserId}
-          selectedProjectResourcePolicy={selectedProjectResourcePolicy}
-          selectedUserResourcePolicy={selectedUserResourcePolicy}
-          extraFetchKey={extraFetchKey}
-        />
-        <FolderQuotaCard
-          currentSettingType={currentSettingType}
-          storageHostId={storageHostId}
-          selectedProjectId={selectedProjectId}
-          selectedUserId={selectedUserId}
-          extraFetchKey={extraFetchKey}
-        />
-      </Card>
+            ) : (
+              <UserSelector
+                style={{ width: '30vw', marginBottom: 10 }}
+                onSelectUser={(user: any) => {
+                  setSelectedUserId(user?.userId);
+                  setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                }}
+                />
+            )}
+          </Flex>
+          <ResourcePolicyCard
+            quotaScopeId={quotaScopeId}
+            currentSettingType={currentSettingType}
+            selectedProjectId={selectedProjectId}
+            selectedUserId={selectedUserId}
+            selectedProjectResourcePolicy={selectedProjectResourcePolicy}
+            selectedUserResourcePolicy={selectedUserResourcePolicy}
+            extraFetchKey={extraFetchKey}
+          />
+          <FolderQuotaCard
+            currentSettingType={currentSettingType}
+            storageHostId={storageHostId}
+            selectedProjectId={selectedProjectId}
+            selectedUserId={selectedUserId}
+            extraFetchKey={extraFetchKey}
+          />
+      </>
+    ) : (
+      <Empty
+        image={Empty.PRESENTED_IMAGE_SIMPLE}
+        description={t("storageHost.QuotaDoesNotSupported")}
+      />
+    )}
+    </Card>
     </Flex>
   );
 };

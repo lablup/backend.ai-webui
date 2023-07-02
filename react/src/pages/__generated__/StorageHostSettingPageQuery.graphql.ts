@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<155d3ac7929f5119826fc1eac8173be6>>
+ * @generated SignedSource<<d2fa20fce69defac9796c90d7ce62058>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -15,6 +15,7 @@ export type StorageHostSettingPageQuery$variables = {
 };
 export type StorageHostSettingPageQuery$data = {
   readonly storage_volume: {
+    readonly capabilities: ReadonlyArray<string | null> | null;
     readonly id: string | null;
     readonly " $fragmentSpreads": FragmentRefs<"StorageHostResourcePanelFragment">;
   } | null;
@@ -45,6 +46,13 @@ v2 = {
   "kind": "ScalarField",
   "name": "id",
   "storageKey": null
+},
+v3 = {
+  "alias": null,
+  "args": null,
+  "kind": "ScalarField",
+  "name": "capabilities",
+  "storageKey": null
 };
 return {
   "fragment": {
@@ -62,6 +70,7 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "args": null,
             "kind": "FragmentSpread",
@@ -89,18 +98,12 @@ return {
         "plural": false,
         "selections": [
           (v2/*: any*/),
+          (v3/*: any*/),
           {
             "alias": null,
             "args": null,
             "kind": "ScalarField",
             "name": "backend",
-            "storageKey": null
-          },
-          {
-            "alias": null,
-            "args": null,
-            "kind": "ScalarField",
-            "name": "capabilities",
             "storageKey": null
           },
           {
@@ -123,16 +126,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "be7b37c1541590f88d287d1f8e947f3f",
+    "cacheID": "57a8510353bb21437ab2001f75d5081a",
     "id": null,
     "metadata": {},
     "name": "StorageHostSettingPageQuery",
     "operationKind": "query",
-    "text": "query StorageHostSettingPageQuery(\n  $id: String\n) {\n  storage_volume(id: $id) {\n    id\n    ...StorageHostResourcePanelFragment\n  }\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n"
+    "text": "query StorageHostSettingPageQuery(\n  $id: String\n) {\n  storage_volume(id: $id) {\n    id\n    capabilities\n    ...StorageHostResourcePanelFragment\n  }\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n"
   }
 };
 })();
 
-(node as any).hash = "f8f213d36c54f786f173c89667160991";
+(node as any).hash = "58ba33fc91a29a2372b9aca7399ef0cc";
 
 export default node;
