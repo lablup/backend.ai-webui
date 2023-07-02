@@ -34,7 +34,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
     `,
     {
       id: storageHostId || "",
-    }
+    },
   );
 
   return (
@@ -43,7 +43,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-      <Typography.Title level={2}>{storageHostId}</Typography.Title>
+      <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
       <StorageHostResourcePanel 
         resourceFrgmt={storage_volume || null}
         />
