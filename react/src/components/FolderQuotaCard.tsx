@@ -157,6 +157,7 @@ const FolderQuotaCard: React.FC<Props> = ({
               },
               onCompleted() {
                 message.success(t("storageHost.quotaSettings.FolderQuotaSuccessfullyUpdated"));
+                updateInternalFetchKey();
               },
               onError(error) {
                 message.error(error?.message);
