@@ -76,7 +76,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      if (userResourcePolicyInfo?.name && userResourcePolicyInfo?.max_vfolder_size) {
+      if (userResourcePolicyInfo?.name) {
         commitModifyUserResourcePolicy({
           variables: {
             name: userResourcePolicyInfo?.name,
