@@ -31,7 +31,7 @@
   },
   "scripts": {
     "start": "craco start",
-    "build": "craco build",
+    "build": "npm run relay && craco build",
     "build:copy": "npm run build && cp -r ./build/* ../build/rollup/",
     "test": "craco test",
     "eject": "react-scripts eject",
