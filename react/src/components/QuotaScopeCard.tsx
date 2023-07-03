@@ -108,6 +108,7 @@ const QuotaScopeCard: React.FC<Props> = ({
               title: "ID",
               dataIndex: "quota_scope_id",
               key: "quota_scope_id",
+              render: (value) => <code>{value}</code>,
             },
             {
               title: t("storageHost.HardLimit") + " (GB)",

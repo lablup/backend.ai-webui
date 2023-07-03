@@ -62,6 +62,7 @@ export const GBToBytes = (value = 0) => {
 }
 
 export const bytesToGB = (bytes: number, decimalPoint = 2) => {
+  if (bytes === null || bytes === undefined) return "Unlimited";
   if (!bytes) return bytes;
   return (bytes / 10 ** 9).toFixed(decimalPoint);
 }
