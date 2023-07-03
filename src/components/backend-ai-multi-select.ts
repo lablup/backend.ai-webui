@@ -4,7 +4,8 @@
  */
 
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import {customElement, property, query, state} from 'lit/decorators.js';
+import {get as _text} from 'lit-translate';
 
 import {
   IronFlex,
@@ -47,12 +48,15 @@ export default class BackendAIMultiSelect extends LitElement {
   @query('#menu', true) private menu;
   @query('#dropdown-icon', true) private dropdownIcon;
   @property({type: Array}) selectedItemList;
-  @property({type: String, attribute: 'label'}) label = '';
   @property({type: Array}) items;
+  @property({type: String, attribute: 'label'}) label = '';
+  @property({type: String, attribute: 'validation-message'}) validationMessage = '';
   // TODO: Clear button to remove all selected
   // TODO: AutoComplete(filtering)
   @property({type: Boolean, attribute: 'enable-clear-button'}) enableClearButton = false;
   @property({type: Boolean, attribute: 'open-up'}) openUp = false;
+  @property({type: Boolean, attribute: 'required'}) required = false;
+  @state() private _valid = true;
 
   constructor() {
     super();
@@ -116,6 +120,10 @@ export default class BackendAIMultiSelect extends LitElement {
           background-color: var(--select-background-color, #efefef);
         }
 
+        div.invalid {
+          border: 1px solid var(--select-error-color, #b00020);
+        }
+
         .selected-area {
           background-color: var(--select-background-color, #efefef);
           border-radius: var(--selected-area-border-radius, 5px);
@@ -127,6 +135,13 @@ export default class BackendAIMultiSelect extends LitElement {
 
         .expand {
           transform:rotateX(180deg) !important;
+        }
+
+        .validation-msg {
+          font-size: var(--selected-validation-msg-font-size, 12px);
+          padding-right: var(--selected-validation-msg-padding, 16px);
+          padding-left: var(--selected-validation-msg-padding, 16px);
+          color: var(--select-error-color, #b00020);
         }
       `
     ];
@@ -189,6 +204,7 @@ export default class BackendAIMultiSelect extends LitElement {
     const selectedItemIndices = [...e.detail.index];
     const selectedItems = this.comboBox.items.filter((item, index, array) => selectedItemIndices.includes(index)).map((item) => item.value);
     this.selectedItemList = selectedItems;
+    this._checkValidity();
   }
 
   /**
@@ -218,9 +234,15 @@ export default class BackendAIMultiSelect extends LitElement {
     this.selectedItemList = [];
   }
 
+  _checkValidity() {
+    this._valid = !this.required || this.selectedItemList.length > 0;
+  }
+
   firstUpdated() {
     this.openUp = (this.getAttribute('open-up') !== null);
     this.label = this.getAttribute('label') ?? '';
+    this.validationMessage = this.getAttribute('validation-message') ?? '';
+    this._checkValidity();
   }
 
   connectedCallback(): void {
@@ -236,7 +258,7 @@ export default class BackendAIMultiSelect extends LitElement {
     return html`
     <span class="title">${this.label}</span>
     <div class="layout ${this.openUp ? `vertical-reverse` : `vertical`}">
-      <div class="horizontal layout justified start selected-area center">
+      <div class="horizontal layout justified start selected-area center ${this.required && this.selectedItemList.length === 0 ? 'invalid' : ''}">
         <div class="horizontal layout start-justified wrap">
           ${this.selectedItemList.map((item) => html`
             <mwc-button unelevated trailingIcon label=${item} icon="close"
@@ -255,6 +277,7 @@ export default class BackendAIMultiSelect extends LitElement {
         </mwc-list>
       </div>
     </div>
+    <span class="validation-msg" style="display:${this._valid ? 'none' : 'block'}">${this.validationMessage}</span>
     `;
   }
 }
