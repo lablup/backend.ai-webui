@@ -1,0 +1,1 @@
+directive @skipOnClient(if: Boolean) on FIELD
