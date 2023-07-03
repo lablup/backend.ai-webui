@@ -78,6 +78,8 @@ export default class BackendAIResourcePanel extends BackendAIPage {
   @property({type: Number}) ipu_used = 0;
   @property({type: Number}) atom_total = 0;
   @property({type: Number}) atom_used = 0;
+  @property({type: Number}) warboy_total = 0;
+  @property({type: Number}) warboy_used = 0;
   @property({type: Object}) notification = Object();
   @property({type: Object}) resourcePolicy;
   @property({type: String}) announcement = '';
@@ -326,6 +328,9 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.resources.atom = {};
     this.resources.atom.total = 0;
     this.resources.atom.used = 0;
+    this.resources.warboy = {};
+    this.resources.warboy.total = 0;
+    this.resources.warboy.used = 0;
     this.resources.agents = {};
     this.resources.agents.total = 0;
     this.resources.agents.using = 0;
@@ -373,6 +378,11 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     } else {
       this.atom_total = this.resources['atom.device'].total;
     }
+    if (isNaN(this.resources['warboy.device'].total)) {
+      this.warboy_total = 0;
+    } else {
+      this.warboy_total = this.resources['warboy.device'].total;
+    }
     this.cpu_used = this.resources.cpu.used;
     this.cuda_gpu_used = this.resources['cuda.device'].used;
     this.cuda_fgpu_used = this.resources['cuda.shares'].used;
@@ -380,6 +390,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
     this.tpu_used = this.resources['tpu.device'].used;
     this.ipu_used = this.resources['ipu.device'].used;
     this.atom_used = this.resources['atom.device'].used;
+    this.warboy_used = this.resources['warboy.device'].used;
 
     this.cpu_percent = parseFloat(this.resources.cpu.percent).toFixed(2);
     this.cpu_total_percent = this.cpu_used !== 0 ? ((this.cpu_used / this.cpu_total) * 100).toFixed(2) : '0';
@@ -513,7 +524,7 @@ export default class BackendAIResourcePanel extends BackendAIPage {
                 <span class="percentage end-bar">${(parseInt(this.mem_used)!== 0 ? (parseInt(this.mem_used) / parseInt(this.mem_total) * 100).toFixed(0) : '0' ) + '%'}</span>
               </div>
             </div>
-            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total || this.ipu_total || this.atom_total? html`
+            ${this.cuda_gpu_total || this.cuda_fgpu_total || this.rocm_gpu_total || this.tpu_total || this.ipu_total || this.atom_total || this.warboy_total ? html`
             <div class="resource-line"></div>
             <div class="layout horizontal center flex resource">
               <div class="layout vertical center center-justified resource-name">
@@ -609,6 +620,21 @@ export default class BackendAIResourcePanel extends BackendAIPage {
               </div>
               <div class="layout vertical center center-justified">
                 <span class="percentage start-bar">${this.atom_used.toFixed(1) + '%'}</span>
+                <span class="percentage end-bar"></span>
+              </div>`: html``}
+              ${this.warboy_total ? html`
+              <div class="layout vertical start-justified wrap">
+                <lablup-progress-bar id="warboy-usage-bar" class="start"
+                  progress="${this.warboy_used / 100.0}"
+                  description="${this.warboy_used} / ${this.warboy_total} Warboys ${_t('summary.reserved')}."
+                ></lablup-progress-bar>
+                <lablup-progress-bar id="warboy-usage-bar-2" class="end"
+                  progress="0"
+                  description="${_t('summary.WarboyEnabled')}."
+                ></lablup-progress-bar>
+              </div>
+              <div class="layout vertical center center-justified">
+                <span class="percentage start-bar">${this.warboy_used.toFixed(1) + '%'}</span>
                 <span class="percentage end-bar"></span>
               </div>`: html``}
 

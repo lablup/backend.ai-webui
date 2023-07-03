@@ -117,7 +117,8 @@
     "connectingToCluster": "Backend.AI 클러스터에 연결중...",
     "DownloadWebUIApp": "Backend.AI Web UI 앱 다운로드",
     "IPUEnabled": "IPU NPU 사용중",
-    "ATOMEnabled": "ATOM NPU 사용중"
+    "ATOMEnabled": "ATOM NPU 사용중",
+    "WarboyEnabled": "Warboy NPU 사용중"
   },
   "session": {
     "launcher": {
@@ -1068,7 +1069,7 @@
     "DescAllowAgentSideRegistration": "매니저에 에이전트 자신을 등록하도록 허용합니다.<br/>Backend.AI 클러스터가 보안환경에서 동작 및 관리되고 있을 때만 사용하세요.",
     "Plugins": "플러그인",
     "CUDAGPUsupport": "CUDA GPU 지원",
-    "DescCUDAGPUsupport": "NVidia CUDA GPU 지원을 추가합니다. <br/>Backend.AI CUDA 플러그인이 필요합니다.",
+    "DescCUDAGPUsupport": "NVIDIA CUDA GPU 지원을 추가합니다. <br/>Backend.AI CUDA 플러그인이 필요합니다.",
     "CUDAGPUdisabledByFGPUsupport": "시스템이 Fractional GPU 플러그인을 사용하고 있어 비활성화되었습니다.",
     "ROCMGPUsupport": "ROCm GPU 지원",
     "DescROCMGPUsupport": "AMD ROCm GPU 지원을 추가합니다. <br/>Backend.AI ROCm 플러그인이 필요합니다.",
@@ -1115,9 +1116,12 @@
     "IPUsupport": "IPU 지원",
     "DescIPUsupport": "GraphCore IPU 가속기를 사용합니다.",
     "ATOMsupport": "ATOM 지원",
-    "DescATOMsupport": "Rebellions ATOM 가속기를을 사용합니다.",
+    "DescATOMsupport": "Rebellions ATOM 가속기를 사용합니다.",
     "RequireIPUPlugin": "Backend.AI IPU 플러그인이 필요합니다.",
-    "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다."
+    "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
+    "Warboysupport": "Warboy 지원",
+    "DescWarboysupport": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
