@@ -5,7 +5,7 @@ import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/P
 import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
 import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
 
-import { Modal, ModalProps, Form, InputNumber, message, Alert } from "antd";
+import { Modal, ModalProps, Form, Input, message, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
 
@@ -167,8 +167,14 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         <Form.Item
           name="max_vfolder_size"
           label={t("storageHost.MaxFolderSize")}
+          rules={[
+            {
+              pattern: /^\d+(\.\d+)?$/,
+              message: t("storageHost.quotaSettings.AllowNumberAndDot") || "Allows numbers and .(dot) only",
+            },
+          ]}
         >
-          <InputNumber min={0} addonAfter="GB" />
+          <Input addonAfter="GB" />
         </Form.Item>
       </Form>
     </Modal>
