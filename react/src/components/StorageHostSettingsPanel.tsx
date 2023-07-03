@@ -64,12 +64,10 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState("default");
 
-  console.log(fetchKey);
   const { project_resource_policy, user_resource_policy, quota_scope } =
     useLazyLoadQuery<StorageHostSettingsPanelQuery>(
       graphql`
         query StorageHostSettingsPanelQuery(
-          # $storageVolumeId: ID!
           $project_resource_policy_name: String!
           $skipProjectResourcePolicy: Boolean!
           $user_resource_policy_name: String
@@ -202,8 +200,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   toggleQuotaSettingModal();
                 }}
                 showAddButtonWhenEmpty={
-                  (currentSettingType == "project" && !!selectedProjectId) ||
-                  (currentSettingType == "user" && !!selectedUserId)
+                  (currentSettingType === "project" && !!selectedProjectId) ||
+                  (currentSettingType === "user" && !!selectedUserId)
                 }
               />
             </Spin>

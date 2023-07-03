@@ -32,9 +32,6 @@ const QuotaScopeCard: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
-    useToggle(false);
-
   const quota_scope = useFragment(
     graphql`
       fragment QuotaScopeCardFragment on QuotaScope {
@@ -93,7 +90,7 @@ const QuotaScopeCard: React.FC<Props> = ({
           </div>
           <Button
             icon={<PlusOutlined />}
-            onClick={() => toggleQuotaSettingModal()}
+            onClick={() => onClickEdit && onClickEdit()}
           >
             {t("storageHost.quotaSettings.AddQuotaConfigs")}
           </Button>
