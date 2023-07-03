@@ -122,25 +122,6 @@ const QuotaSettingModal: React.FC<Props> = ({
                 t("storageHost.quotaSettings.AllowNumberAndDot") ||
                 "Allows numbers and .(dot) only",
             },
-            {
-              validator: (_, value) => {
-                if (
-                  !isNaN(Number(value)) &&
-                  resourcePolicyMaxVFolderSize &&
-                  Number(bytesToGB(resourcePolicyMaxVFolderSize)) <
-                    Number(value)
-                ) {
-                  return Promise.reject(
-                    `${t(
-                      "storageHost.quotaSettings.LessThanResourcePolicy"
-                    )} (${_humanReadableDecimalSize(
-                      resourcePolicyMaxVFolderSize
-                    )})`
-                  );
-                }
-                return Promise.resolve();
-              },
-            },
           ]}
         >
           <Input addonAfter="GB" style={{ width: "70%" }} />
