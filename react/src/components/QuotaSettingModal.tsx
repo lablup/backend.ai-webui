@@ -50,13 +50,11 @@ const QuotaSettingModal: React.FC<Props> = ({
           project_resource_policy(name: $project_resource_policy_name)
             @skip(if: $skipProjectResourcePolicy) {
             max_vfolder_size
-            ...ProjectResourcePolicySettingModalFragment
           }
 
           user_resource_policy(name: $user_resource_policy_name)
             @skip(if: $skipUserResourcePolicy) {
             max_vfolder_size
-            ...UserResourcePolicySettingModalFragment
           }
         }
       `,
@@ -68,7 +66,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           selectedProjectResourcePolicy === undefined,
         skipUserResourcePolicy:
           selectedUserResourcePolicy === "" ||
-          selectedProjectResourcePolicy === undefined,
+          selectedUserResourcePolicy === undefined,
       }
     );
 

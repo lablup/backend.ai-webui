@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<a09f9c94f1f426542a2b3b8fdacb5ea6>>
+ * @generated SignedSource<<4f6a876bb5a00827d8169adf77a9539b>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -9,7 +9,6 @@
 // @ts-nocheck
 
 import { ConcreteRequest, Query } from 'relay-runtime';
-import { FragmentRefs } from "relay-runtime";
 export type QuotaSettingModalQuery$variables = {
   project_resource_policy_name: string;
   skipProjectResourcePolicy: boolean;
@@ -19,11 +18,9 @@ export type QuotaSettingModalQuery$variables = {
 export type QuotaSettingModalQuery$data = {
   readonly project_resource_policy?: {
     readonly max_vfolder_size: any | null;
-    readonly " $fragmentSpreads": FragmentRefs<"ProjectResourcePolicySettingModalFragment">;
   } | null;
   readonly user_resource_policy?: {
     readonly max_vfolder_size: any | null;
-    readonly " $fragmentSpreads": FragmentRefs<"UserResourcePolicySettingModalFragment">;
   } | null;
 };
 export type QuotaSettingModalQuery = {
@@ -54,47 +51,59 @@ v3 = {
 },
 v4 = [
   {
-    "kind": "Variable",
-    "name": "name",
-    "variableName": "project_resource_policy_name"
+    "alias": null,
+    "args": null,
+    "kind": "ScalarField",
+    "name": "max_vfolder_size",
+    "storageKey": null
   }
 ],
-v5 = {
-  "alias": null,
-  "args": null,
-  "kind": "ScalarField",
-  "name": "max_vfolder_size",
-  "storageKey": null
-},
-v6 = [
+v5 = [
   {
-    "kind": "Variable",
-    "name": "name",
-    "variableName": "user_resource_policy_name"
-  }
-],
-v7 = [
-  (v5/*: any*/),
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "id",
-    "storageKey": null
+    "condition": "skipProjectResourcePolicy",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "project_resource_policy_name"
+          }
+        ],
+        "concreteType": "ProjectResourcePolicy",
+        "kind": "LinkedField",
+        "name": "project_resource_policy",
+        "plural": false,
+        "selections": (v4/*: any*/),
+        "storageKey": null
+      }
+    ]
   },
   {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "name",
-    "storageKey": null
-  },
-  {
-    "alias": null,
-    "args": null,
-    "kind": "ScalarField",
-    "name": "created_at",
-    "storageKey": null
+    "condition": "skipUserResourcePolicy",
+    "kind": "Condition",
+    "passingValue": false,
+    "selections": [
+      {
+        "alias": null,
+        "args": [
+          {
+            "kind": "Variable",
+            "name": "name",
+            "variableName": "user_resource_policy_name"
+          }
+        ],
+        "concreteType": "UserResourcePolicy",
+        "kind": "LinkedField",
+        "name": "user_resource_policy",
+        "plural": false,
+        "selections": (v4/*: any*/),
+        "storageKey": null
+      }
+    ]
   }
 ];
 return {
@@ -108,56 +117,7 @@ return {
     "kind": "Fragment",
     "metadata": null,
     "name": "QuotaSettingModalQuery",
-    "selections": [
-      {
-        "condition": "skipProjectResourcePolicy",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "ProjectResourcePolicy",
-            "kind": "LinkedField",
-            "name": "project_resource_policy",
-            "plural": false,
-            "selections": [
-              (v5/*: any*/),
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "ProjectResourcePolicySettingModalFragment"
-              }
-            ],
-            "storageKey": null
-          }
-        ]
-      },
-      {
-        "condition": "skipUserResourcePolicy",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v6/*: any*/),
-            "concreteType": "UserResourcePolicy",
-            "kind": "LinkedField",
-            "name": "user_resource_policy",
-            "plural": false,
-            "selections": [
-              (v5/*: any*/),
-              {
-                "args": null,
-                "kind": "FragmentSpread",
-                "name": "UserResourcePolicySettingModalFragment"
-              }
-            ],
-            "storageKey": null
-          }
-        ]
-      }
-    ],
+    "selections": (v5/*: any*/),
     "type": "Queries",
     "abstractKey": null
   },
@@ -171,54 +131,19 @@ return {
     ],
     "kind": "Operation",
     "name": "QuotaSettingModalQuery",
-    "selections": [
-      {
-        "condition": "skipProjectResourcePolicy",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v4/*: any*/),
-            "concreteType": "ProjectResourcePolicy",
-            "kind": "LinkedField",
-            "name": "project_resource_policy",
-            "plural": false,
-            "selections": (v7/*: any*/),
-            "storageKey": null
-          }
-        ]
-      },
-      {
-        "condition": "skipUserResourcePolicy",
-        "kind": "Condition",
-        "passingValue": false,
-        "selections": [
-          {
-            "alias": null,
-            "args": (v6/*: any*/),
-            "concreteType": "UserResourcePolicy",
-            "kind": "LinkedField",
-            "name": "user_resource_policy",
-            "plural": false,
-            "selections": (v7/*: any*/),
-            "storageKey": null
-          }
-        ]
-      }
-    ]
+    "selections": (v5/*: any*/)
   },
   "params": {
-    "cacheID": "5bc3d03682fa74f890aa199acb1beb21",
+    "cacheID": "cb7c93a9af424f65815db0d5dce36e5a",
     "id": null,
     "metadata": {},
     "name": "QuotaSettingModalQuery",
     "operationKind": "query",
-    "text": "query QuotaSettingModalQuery(\n  $project_resource_policy_name: String!\n  $user_resource_policy_name: String\n  $skipProjectResourcePolicy: Boolean!\n  $skipUserResourcePolicy: Boolean!\n) {\n  project_resource_policy(name: $project_resource_policy_name) @skip(if: $skipProjectResourcePolicy) {\n    max_vfolder_size\n    ...ProjectResourcePolicySettingModalFragment\n  }\n  user_resource_policy(name: $user_resource_policy_name) @skip(if: $skipUserResourcePolicy) {\n    max_vfolder_size\n    ...UserResourcePolicySettingModalFragment\n  }\n}\n\nfragment ProjectResourcePolicySettingModalFragment on ProjectResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n\nfragment UserResourcePolicySettingModalFragment on UserResourcePolicy {\n  id\n  name\n  created_at\n  max_vfolder_size\n}\n"
+    "text": "query QuotaSettingModalQuery(\n  $project_resource_policy_name: String!\n  $user_resource_policy_name: String\n  $skipProjectResourcePolicy: Boolean!\n  $skipUserResourcePolicy: Boolean!\n) {\n  project_resource_policy(name: $project_resource_policy_name) @skip(if: $skipProjectResourcePolicy) {\n    max_vfolder_size\n  }\n  user_resource_policy(name: $user_resource_policy_name) @skip(if: $skipUserResourcePolicy) {\n    max_vfolder_size\n  }\n}\n"
   }
 };
 })();
 
-(node as any).hash = "3ddf4d65576722ba6d9e4cf7248090ad";
+(node as any).hash = "bf0177bbf89ed99818c5d2b4823cd47b";
 
 export default node;
