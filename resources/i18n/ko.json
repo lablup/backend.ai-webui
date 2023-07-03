@@ -117,7 +117,8 @@
     "connectingToCluster": "Backend.AI 클러스터에 연결중...",
     "DownloadWebUIApp": "Backend.AI Web UI 앱 다운로드",
     "IPUEnabled": "IPU NPU 사용중",
-    "ATOMEnabled": "ATOM NPU 사용중"
+    "ATOMEnabled": "ATOM NPU 사용중",
+    "WarboyEnabled": "Warboy NPU 사용중"
   },
   "session": {
     "launcher": {
@@ -1115,9 +1116,12 @@
     "IPUsupport": "IPU 지원",
     "DescIPUsupport": "GraphCore IPU 가속기를 사용합니다.",
     "ATOMsupport": "ATOM 지원",
-    "DescATOMsupport": "Rebellions ATOM 가속기를을 사용합니다.",
+    "DescATOMsupport": "Rebellions ATOM 가속기를 사용합니다.",
     "RequireIPUPlugin": "Backend.AI IPU 플러그인이 필요합니다.",
-    "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다."
+    "RequireATOMPlugin": "Backend.AI ATOM 플러그인이 필요합니다.",
+    "Warboysupport": "Warboy 지원",
+    "DescWarboysupport": "Backend.AI Warboy 플러그인이 필요합니다.",
+    "RequireWarboyPlugin": "Backend.AI Warboy 플러그인이 필요합니다."
   },
   "notification": {
     "SuccessfullyUpdated": "성공적으로 수정되었습니다.",
