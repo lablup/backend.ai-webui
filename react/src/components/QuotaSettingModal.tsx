@@ -5,7 +5,7 @@ import { QuotaSettingModalQuery } from "./__generated__/QuotaSettingModalQuery.g
 import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
 import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
 
-import { Modal, ModalProps, Form, InputNumber, message } from "antd";
+import { Modal, ModalProps, Form, Input, message } from "antd";
 import { useTranslation } from "react-i18next";
 import {
   QuotaScopeType,
@@ -130,7 +130,7 @@ const QuotaSettingModal: React.FC<Props> = ({
         },
         onCompleted(response) {
           if (
-            response?.set_quota_scope?.quota_scope?.details?.hard_limit_bytes
+            response?.set_quota_scope?.quota_scope?.id
           ) {
             message.success(
               t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated")
@@ -169,12 +169,18 @@ const QuotaSettingModal: React.FC<Props> = ({
         <Form.Item
           name="hard_limit_bytes"
           label={t("storageHost.HardLimit")}
+          initialValue={bytesToGB(QuotaScope?.details?.hard_limit_bytes)}
           rules={[
+            {
+              pattern: /^\d+(\.\d+)?$/,
+              message: t("storageHost.quotaSettings.AllowNumberAndDot") || "Allows numbers and .(dot) only",
+            },
             {
               validator: (_, value) => {
                 if (
+                  !isNaN(Number(value)) &&
                   resourcePolicyMaxVFolderSize &&
-                  bytesToGB(resourcePolicyMaxVFolderSize) < value
+                  Number(bytesToGB(resourcePolicyMaxVFolderSize)) < Number(value)
                 ) {
                   return Promise.reject(
                     `${t(
@@ -189,11 +195,9 @@ const QuotaSettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <InputNumber
-            min={0}
+          <Input
             addonAfter="GB"
             style={{ width: "70%" }}
-            defaultValue={bytesToGB(QuotaScope?.details?.hard_limit_bytes)}
           />
         </Form.Item>
       </Form>

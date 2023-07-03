@@ -485,7 +485,8 @@
       "SelectProject": "Select Project",
       "SelectUser": "Search and select User",
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
-      "LessThanResourcePolicy": "Hard limit should be less than resource policy."
+      "LessThanResourcePolicy": "Hard limit should be less than resource policy.",
+      "AllowNumberAndDot": "Allows positive numbers and .(dot) only"
     }
   },
   "general": {

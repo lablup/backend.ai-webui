@@ -478,7 +478,8 @@
       "SelectProject": "프로젝트 선택",
       "SelectUser": "사용자 검색 및 선택",
       "QuotaScopeSuccessfullyUpdated": "할당 범위가 성공적으로 수정되었습니다.",
-      "LessThanResourcePolicy": "Hard limit은 자원 정책보다 작아야 합니다."
+      "LessThanResourcePolicy": "Hard limit은 자원 정책보다 작아야 합니다.",
+      "AllowNumberAndDot": "숫자와 .(점)만 입력할 수 있습니다."
     }
   },
   "general": {
