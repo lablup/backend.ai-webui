@@ -1,5 +1,5 @@
 /**
- * @generated SignedSource<<d2fa20fce69defac9796c90d7ce62058>>
+ * @generated SignedSource<<283a752f4675b1e3d4fe6f0da7198984>>
  * @lightSyntaxTransform
  * @nogrep
  */
@@ -17,7 +17,7 @@ export type StorageHostSettingPageQuery$data = {
   readonly storage_volume: {
     readonly capabilities: ReadonlyArray<string | null> | null;
     readonly id: string | null;
-    readonly " $fragmentSpreads": FragmentRefs<"StorageHostResourcePanelFragment">;
+    readonly " $fragmentSpreads": FragmentRefs<"StorageHostResourcePanelFragment" | "StorageHostSettingsPanel_storageVolumeFrgmt">;
   } | null;
 };
 export type StorageHostSettingPageQuery = {
@@ -75,6 +75,11 @@ return {
             "args": null,
             "kind": "FragmentSpread",
             "name": "StorageHostResourcePanelFragment"
+          },
+          {
+            "args": null,
+            "kind": "FragmentSpread",
+            "name": "StorageHostSettingsPanel_storageVolumeFrgmt"
           }
         ],
         "storageKey": null
@@ -126,16 +131,16 @@ return {
     ]
   },
   "params": {
-    "cacheID": "57a8510353bb21437ab2001f75d5081a",
+    "cacheID": "821175f86743d9d81be2a55aca371919",
     "id": null,
     "metadata": {},
     "name": "StorageHostSettingPageQuery",
     "operationKind": "query",
-    "text": "query StorageHostSettingPageQuery(\n  $id: String\n) {\n  storage_volume(id: $id) {\n    id\n    capabilities\n    ...StorageHostResourcePanelFragment\n  }\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n"
+    "text": "query StorageHostSettingPageQuery(\n  $id: String\n) {\n  storage_volume(id: $id) {\n    id\n    capabilities\n    ...StorageHostResourcePanelFragment\n    ...StorageHostSettingsPanel_storageVolumeFrgmt\n  }\n}\n\nfragment StorageHostResourcePanelFragment on StorageVolume {\n  id\n  backend\n  capabilities\n  path\n  usage\n}\n\nfragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {\n  id\n  capabilities\n}\n"
   }
 };
 })();
 
-(node as any).hash = "58ba33fc91a29a2372b9aca7399ef0cc";
+(node as any).hash = "f6e77057e83b0449ef99e8918e794b24";
 
 export default node;

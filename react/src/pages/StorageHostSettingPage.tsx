@@ -24,6 +24,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
           id
           capabilities
           ...StorageHostResourcePanelFragment
+          ...StorageHostSettingsPanel_storageVolumeFrgmt
         }
       }
     `,
@@ -33,21 +34,17 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
   );
 
   return (
-    <Suspense fallback={<div>loading</div>}>
-      <Flex
-        direction="column"
-        align="stretch"
-        style={{ margin: token.marginSM, gap: token.margin }}
-      >
-        <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
-        <StorageHostResourcePanel resourceFrgmt={storage_volume || null} />
-        <StorageHostSettingsPanel
-          isQuotaSupported={
-            storage_volume?.capabilities?.includes("quota") ?? false
-          }
-        />
-      </Flex>
-    </Suspense>
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{ margin: token.marginSM, gap: token.margin }}
+    >
+      <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
+      <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
+      <Suspense fallback={<div>loading...</div>}>
+        <StorageHostSettingsPanel storageVolumeFrgmt={storage_volume || null} />
+      </Suspense>
+    </Flex>
   );
 };
 

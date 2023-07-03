@@ -1,30 +1,49 @@
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
 import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { QuotaScopeType } from "../helper/index";
+import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
-import { Card, Empty, theme } from "antd";
+import { Card, Empty, Spin, theme } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
 import UserSelector from "./UserSelector";
 import ResourcePolicyCard from "./ResourcePolicyCard";
 import QuotaScopeCard from "./QuotaScopeCard";
+import { useFragment, useLazyLoadQuery } from "react-relay";
+
+import graphql from "babel-plugin-relay/macro";
+import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from "./__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql";
+import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
+import QuotaSettingModal from "./QuotaSettingModal";
+import { useToggle } from "ahooks";
+import { useUpdatableState } from "../hooks";
 
 interface StorageHostSettingsPanelProps {
-  isQuotaSupported?: boolean;
   extraFetchKey?: string;
+  storageVolumeFrgmt: StorageHostSettingsPanel_storageVolumeFrgmt$key | null;
 }
 const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
-  isQuotaSupported = false,
+  // isQuotaSupported = false,
   extraFetchKey = "",
+  storageVolumeFrgmt,
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-  const { storageHostId } = useParams<{
-    storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
-  }>();
+  const storageVolume = useFragment(
+    graphql`
+      fragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {
+        id
+        capabilities
+      }
+    `,
+    storageVolumeFrgmt
+  );
 
+  const isQuotaSupported =
+    storageVolume?.capabilities?.includes("quota") ?? false;
+
+  const [isPending, startTransition] = useTransition();
   const [currentSettingType, setCurrentSettingType] =
     useState<QuotaScopeType>("user");
 
@@ -35,8 +54,74 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] =
     useState<string>();
 
-  const quotaScopeId =
-    currentSettingType === "project" ? selectedProjectId : selectedUserId;
+  const quotaScopeId = addQuotaScopeTypePrefix(
+    currentSettingType,
+    (currentSettingType === "project" ? selectedProjectId : selectedUserId) ||
+      ""
+  );
+
+  const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
+    useToggle(false);
+  const [fetchKey, updateFetchKey] = useUpdatableState("default");
+
+  console.log(fetchKey);
+  const { project_resource_policy, user_resource_policy, quota_scope } =
+    useLazyLoadQuery<StorageHostSettingsPanelQuery>(
+      graphql`
+        query StorageHostSettingsPanelQuery(
+          # $storageVolumeId: ID!
+          $project_resource_policy_name: String!
+          $skipProjectResourcePolicy: Boolean!
+          $user_resource_policy_name: String
+          $skipUserResourcePolicy: Boolean!
+          $quota_scope_id: String!
+          $storage_host_name: String!
+          $skipQuotaScope: Boolean!
+        ) {
+          project_resource_policy(name: $project_resource_policy_name)
+            @skip(if: $skipProjectResourcePolicy) {
+            max_vfolder_size
+            ...ResourcePolicyCard_project_resource_policy
+          }
+
+          user_resource_policy(name: $user_resource_policy_name)
+            @skip(if: $skipUserResourcePolicy) {
+            max_vfolder_size
+            ...ResourcePolicyCard_user_resource_policy
+          }
+
+          quota_scope(
+            storage_host_name: $storage_host_name
+            quota_scope_id: $quota_scope_id
+          ) @skip(if: $skipQuotaScope) {
+            ...QuotaSettingModalFragment
+            ...QuotaScopeCardFragment
+          }
+        }
+      `,
+      {
+        // project policy
+        project_resource_policy_name: selectedProjectResourcePolicy || "",
+        skipProjectResourcePolicy:
+          selectedProjectResourcePolicy === "" ||
+          selectedProjectResourcePolicy === undefined,
+
+        // user policy
+        user_resource_policy_name: selectedUserResourcePolicy || "",
+        skipUserResourcePolicy:
+          selectedUserResourcePolicy === "" ||
+          selectedUserResourcePolicy === undefined,
+
+        // quota scope
+        quota_scope_id: quotaScopeId,
+        skipQuotaScope: quotaScopeId === undefined || quotaScopeId === "",
+        storage_host_name: storageVolume?.id || "",
+      },
+      {
+        fetchPolicy: "network-only",
+        fetchKey: fetchKey,
+      }
+    );
 
   return (
     <Flex
@@ -59,7 +144,11 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         activeTabKey={currentSettingType}
         // eslint-disable-next-line
         //@ts-ignore
-        onTabChange={setCurrentSettingType}
+        onTabChange={(v) => {
+          startTransition(() => {
+            setCurrentSettingType(v as QuotaScopeType);
+          });
+        }}
       >
         {isQuotaSupported ? (
           <>
@@ -67,40 +156,65 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
               {currentSettingType === "project" ? (
                 <ProjectSelector
                   style={{ width: "30vw", marginBottom: 10 }}
+                  value={selectedProjectId}
                   onSelectProject={(project: any) => {
-                    setSelectedProjectId(project?.projectId);
-                    setSelectedProjectResourcePolicy(
-                      project?.projectResourcePolicy
-                    );
+                    startTransition(() => {
+                      setSelectedProjectId(project?.projectId);
+                      setSelectedProjectResourcePolicy(
+                        project?.projectResourcePolicy
+                      );
+                    });
                   }}
                 />
               ) : (
                 <UserSelector
                   style={{ width: "30vw", marginBottom: 10 }}
+                  value={selectedUserId}
                   onSelectUser={(user: any) => {
-                    setSelectedUserId(user?.userId);
-                    setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                    startTransition(() => {
+                      setSelectedUserId(user?.userId);
+                      setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                    });
                   }}
                 />
               )}
             </Flex>
-            <ResourcePolicyCard
-              quotaScopeId={quotaScopeId}
-              currentSettingType={currentSettingType}
-              selectedProjectId={selectedProjectId}
-              selectedUserId={selectedUserId}
-              selectedProjectResourcePolicy={selectedProjectResourcePolicy}
-              selectedUserResourcePolicy={selectedUserResourcePolicy}
-              extraFetchKey={extraFetchKey}
-            />
-            <QuotaScopeCard
-              currentSettingType={currentSettingType}
-              storageHostId={storageHostId}
-              selectedProjectId={selectedProjectId}
-              selectedUserId={selectedUserId}
-              selectedProjectResourcePolicy={selectedProjectResourcePolicy}
-              selectedUserResourcePolicy={selectedUserResourcePolicy}
-              extraFetchKey={extraFetchKey}
+            <Spin spinning={isPending}>
+              <ResourcePolicyCard
+                projectResourcePolicyFrgmt={
+                  currentSettingType === "project"
+                    ? project_resource_policy || null
+                    : null
+                }
+                userResourcePolicyFrgmt={
+                  currentSettingType === "user"
+                    ? user_resource_policy || null
+                    : null
+                }
+                onChangePolicy={() => {
+                  startTransition(() => {});
+                  updateFetchKey();
+                }}
+              />
+              <QuotaScopeCard
+                quotaScopeFrgmt={quota_scope || null}
+                onClickEdit={() => {
+                  toggleQuotaSettingModal();
+                }}
+                showAddButtonWhenEmpty={!!(selectedProjectId || selectedUserId)}
+              />
+            </Spin>
+            <QuotaSettingModal
+              open={isOpenQuotaSettingModal}
+              quotaScopeFrgmt={quota_scope || null}
+              resourcePolicyMaxVFolderSize={
+                currentSettingType === "project"
+                  ? project_resource_policy?.max_vfolder_size
+                  : user_resource_policy?.max_vfolder_size
+              }
+              onRequestClose={() => {
+                toggleQuotaSettingModal();
+              }}
             />
           </>
         ) : (

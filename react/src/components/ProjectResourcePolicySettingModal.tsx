@@ -10,14 +10,12 @@ import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
-  projectResourcePolicy: string;
-  resourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
+  projectResourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
   onRequestClose: () => void;
 }
 
 const ProjectResourcePolicySettingModal: React.FC<Props> = ({
-  projectResourcePolicy,
-  resourcePolicyFrgmt,
+  projectResourcePolicyFrgmt: resourcePolicyFrgmt,
   onRequestClose,
   ...props
 }) => {
@@ -99,30 +97,30 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           },
         });
       } else {
-        commitCreateProjectResourcePolicy({
-          variables: {
-            // TODO: Apply multiple resource policy
-            // Create a project resource policy with the same name as the project name
-            name: projectResourcePolicy || "",
-            props: {
-              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
-            },
-          },
-          onCompleted(response) {
-            if (response?.create_project_resource_policy?.ok) {
-              message.success(
-                t("storageHost.ResourcePolicySuccessfullyCreated")
-              );
-            } else {
-              message.error(response?.create_project_resource_policy?.msg);
-            }
-            onRequestClose();
-          },
-          onError(error) {
-            console.log(error);
-            message.error(error.message);
-          },
-        });
+        //   commitCreateProjectResourcePolicy({
+        //     variables: {
+        //       // TODO: Apply multiple resource policy
+        //       // Create a project resource policy with the same name as the project name
+        //       name: projectResourcePolicy || "",
+        //       props: {
+        //         max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+        //       },
+        //     },
+        //     onCompleted(response) {
+        //       if (response?.create_project_resource_policy?.ok) {
+        //         message.success(
+        //           t("storageHost.ResourcePolicySuccessfullyCreated")
+        //         );
+        //       } else {
+        //         message.error(response?.create_project_resource_policy?.msg);
+        //       }
+        //       onRequestClose();
+        //     },
+        //     onError(error) {
+        //       console.log(error);
+        //       message.error(error.message);
+        //     },
+        //   });
       }
     });
   };
@@ -150,19 +148,20 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
         initialValues={
-          projectResourcePolicyInfo
-            ? {
-                id: projectResourcePolicyInfo?.id,
-                name: projectResourcePolicyInfo?.name,
-                created_at: projectResourcePolicyInfo?.created_at,
-                max_vfolder_size:
-                  projectResourcePolicyInfo?.max_vfolder_size === -1
-                    ? null
-                    : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
-              }
-            : {
-                name: projectResourcePolicy,
-              }
+          // projectResourcePolicyInfo
+          // ?
+          {
+            id: projectResourcePolicyInfo?.id,
+            name: projectResourcePolicyInfo?.name,
+            created_at: projectResourcePolicyInfo?.created_at,
+            max_vfolder_size:
+              projectResourcePolicyInfo?.max_vfolder_size === -1
+                ? null
+                : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
+          }
+          // : {
+          //     name: projectResourcePolicy,
+          //   }
         }
       >
         <Form.Item

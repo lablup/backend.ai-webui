@@ -22,8 +22,8 @@ const usageIndicatorColor = (percentage: number) => {
 };
 
 const StorageHostResourcePanel: React.FC<{
-  resourceFrgmt: StorageHostResourcePanelFragment$key | null;
-}> = ({ resourceFrgmt }) => {
+  storageVolumeFrgmt: StorageHostResourcePanelFragment$key | null;
+}> = ({ storageVolumeFrgmt: resourceFrgmt }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
 

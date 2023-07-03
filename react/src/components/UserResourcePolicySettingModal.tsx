@@ -10,14 +10,13 @@ import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
-  userResourcePolicy: string;
-  resourcePolicyFrgmt: UserResourcePolicySettingModalFragment$key | null;
+  // userResourcePolicy: string;
+  userResourcePolicyFrgmt: UserResourcePolicySettingModalFragment$key | null;
   onRequestClose: () => void;
 }
 
 const UserResourcePolicySettingModal: React.FC<Props> = ({
-  userResourcePolicy,
-  resourcePolicyFrgmt,
+  userResourcePolicyFrgmt: resourcePolicyFrgmt,
   onRequestClose,
   ...props
 }) => {
@@ -96,30 +95,30 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           },
         });
       } else {
-        commitCreateUserResourcePolicy({
-          variables: {
-            // TODO: Apply multiple resource policy
-            // Create a user resource policy with the same name as the user name
-            name: userResourcePolicy || "",
-            props: {
-              max_vfolder_size: GBToBytes(values?.max_vfolder_size),
-            },
-          },
-          onCompleted(response) {
-            if (response?.create_user_resource_policy?.ok) {
-              message.success(
-                t("storageHost.ResourcePolicySuccessfullyCreated")
-              );
-            } else {
-              message.error(response?.create_user_resource_policy?.msg);
-            }
-            onRequestClose();
-          },
-          onError(error) {
-            console.log(error);
-            message.error(error?.message);
-          },
-        });
+        // commitCreateUserResourcePolicy({
+        //   variables: {
+        //     // TODO: Apply multiple resource policy
+        //     // Create a user resource policy with the same name as the user name
+        //     name: userResourcePolicy || "",
+        //     props: {
+        //       max_vfolder_size: GBToBytes(values?.max_vfolder_size),
+        //     },
+        //   },
+        //   onCompleted(response) {
+        //     if (response?.create_user_resource_policy?.ok) {
+        //       message.success(
+        //         t("storageHost.ResourcePolicySuccessfullyCreated")
+        //       );
+        //     } else {
+        //       message.error(response?.create_user_resource_policy?.msg);
+        //     }
+        //     onRequestClose();
+        //   },
+        //   onError(error) {
+        //     console.log(error);
+        //     message.error(error?.message);
+        //   },
+        // });
       }
     });
   };
@@ -146,21 +145,15 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
-        initialValues={
-          userResourcePolicyInfo
-            ? {
-                id: userResourcePolicyInfo?.id,
-                name: userResourcePolicyInfo?.name,
-                created_at: userResourcePolicyInfo?.created_at,
-                max_vfolder_size:
-                  userResourcePolicyInfo?.max_vfolder_size === -1
-                    ? null
-                    : bytesToGB(userResourcePolicyInfo?.max_vfolder_size),
-              }
-            : {
-                name: userResourcePolicy,
-              }
-        }
+        initialValues={{
+          id: userResourcePolicyInfo?.id,
+          name: userResourcePolicyInfo?.name,
+          created_at: userResourcePolicyInfo?.created_at,
+          max_vfolder_size:
+            userResourcePolicyInfo?.max_vfolder_size === -1
+              ? null
+              : bytesToGB(userResourcePolicyInfo?.max_vfolder_size),
+        }}
       >
         <Form.Item
           name="max_vfolder_size"

@@ -1,36 +1,23 @@
 import React from "react";
 import graphql from "babel-plugin-relay/macro";
-import { useFragment, useMutation, useLazyLoadQuery } from "react-relay";
-import { QuotaSettingModalQuery } from "./__generated__/QuotaSettingModalQuery.graphql";
+import { useFragment, useMutation } from "react-relay";
 import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
 import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
 
 import { Modal, ModalProps, Form, InputNumber, message } from "antd";
 import { useTranslation } from "react-i18next";
-import {
-  QuotaScopeType,
-  addQuotaScopeTypePrefix,
-  _humanReadableDecimalSize,
-} from "../helper/index";
+import { _humanReadableDecimalSize } from "../helper/index";
 import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {
-  quotaScopeId?: string;
-  storageHostName?: string;
-  currentSettingType: QuotaScopeType;
-  selectedProjectResourcePolicy?: string;
-  selectedUserResourcePolicy?: string;
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
   onRequestClose: () => void;
+  resourcePolicyMaxVFolderSize?: number;
 }
 
 const QuotaSettingModal: React.FC<Props> = ({
-  quotaScopeId,
-  storageHostName,
-  currentSettingType,
-  selectedProjectResourcePolicy,
-  selectedUserResourcePolicy,
   quotaScopeFrgmt = null,
+  resourcePolicyMaxVFolderSize,
   onRequestClose,
   ...props
 }) => {
@@ -38,46 +25,7 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const [form] = Form.useForm();
 
-  const { project_resource_policy, user_resource_policy } =
-    useLazyLoadQuery<QuotaSettingModalQuery>(
-      graphql`
-        query QuotaSettingModalQuery(
-          $project_resource_policy_name: String!
-          $user_resource_policy_name: String
-          $skipProjectResourcePolicy: Boolean!
-          $skipUserResourcePolicy: Boolean!
-        ) {
-          project_resource_policy(name: $project_resource_policy_name)
-            @skip(if: $skipProjectResourcePolicy) {
-            max_vfolder_size
-            ...ProjectResourcePolicySettingModalFragment
-          }
-
-          user_resource_policy(name: $user_resource_policy_name)
-            @skip(if: $skipUserResourcePolicy) {
-            max_vfolder_size
-            ...UserResourcePolicySettingModalFragment
-          }
-        }
-      `,
-      {
-        project_resource_policy_name: selectedProjectResourcePolicy || "",
-        user_resource_policy_name: selectedUserResourcePolicy || "",
-        skipProjectResourcePolicy:
-          selectedProjectResourcePolicy === "" ||
-          selectedProjectResourcePolicy === undefined,
-        skipUserResourcePolicy:
-          selectedUserResourcePolicy === "" ||
-          selectedProjectResourcePolicy === undefined,
-      }
-    );
-
-  const resourcePolicyMaxVFolderSize =
-    currentSettingType === "project"
-      ? project_resource_policy?.max_vfolder_size
-      : user_resource_policy?.max_vfolder_size;
-
-  const QuotaScope = useFragment(
+  const quotaScope = useFragment(
     graphql`
       fragment QuotaSettingModalFragment on QuotaScope {
         id
@@ -91,7 +39,7 @@ const QuotaSettingModal: React.FC<Props> = ({
     quotaScopeFrgmt
   );
 
-  const [commitSetQuotaScope, isInFlightcommitSetQuotaScope] =
+  const [commitSetQuotaScope, isInFlightCommitSetQuotaScope] =
     useMutation<QuotaSettingModalSetMutation>(graphql`
       mutation QuotaSettingModalSetMutation(
         $quota_scope_id: String!
@@ -117,15 +65,10 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      const quotaScopeIdWithPrefix = addQuotaScopeTypePrefix(
-        currentSettingType,
-        QuotaScope?.quota_scope_id || quotaScopeId || ""
-      );
       commitSetQuotaScope({
         variables: {
-          quota_scope_id: quotaScopeIdWithPrefix,
-          storage_host_name:
-            QuotaScope?.storage_host_name || storageHostName || "",
+          quota_scope_id: quotaScope?.quota_scope_id || "",
+          storage_host_name: quotaScope?.storage_host_name || "",
           props: {
             hard_limit_bytes: GBToBytes(values?.hard_limit_bytes),
           },
@@ -158,6 +101,8 @@ const QuotaSettingModal: React.FC<Props> = ({
       }}
       destroyOnClose
       onOk={_onOk}
+      confirmLoading={isInFlightCommitSetQuotaScope}
+      onCancel={onRequestClose}
       title={t("storageHost.quotaSettings.QuotaSettings")}
     >
       <Form
@@ -195,7 +140,7 @@ const QuotaSettingModal: React.FC<Props> = ({
             min={0}
             addonAfter="GB"
             style={{ width: "70%" }}
-            defaultValue={bytesToGB(QuotaScope?.details?.hard_limit_bytes)}
+            defaultValue={bytesToGB(quotaScope?.details?.hard_limit_bytes)}
           />
         </Form.Item>
       </Form>

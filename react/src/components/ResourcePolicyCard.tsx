@@ -1,7 +1,6 @@
 import React, { useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery, useMutation } from "react-relay";
-import { ResourcePolicyCardQuery } from "./__generated__/ResourcePolicyCardQuery.graphql";
+import { useFragment, useLazyLoadQuery, useMutation } from "react-relay";
 import { ResourcePolicyCardDeleteProjectResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteProjectResourcePolicyMutation.graphql";
 import { ResourcePolicyCardDeleteUserResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteUserResourcePolicyMutation.graphql";
 import { ResourcePolicyCardModifyProjectMutation } from "./__generated__/ResourcePolicyCardModifyProjectMutation.graphql";
@@ -31,24 +30,18 @@ import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import { useDateISOState, useUpdatableState } from "../hooks";
 import { QuotaScopeType } from "../helper/index";
+import { ResourcePolicyCard_project_resource_policy$key } from "./__generated__/ResourcePolicyCard_project_resource_policy.graphql";
+import { ResourcePolicyCard_user_resource_policy$key } from "./__generated__/ResourcePolicyCard_user_resource_policy.graphql";
 
 interface Props extends CardProps {
-  quotaScopeId?: string;
-  currentSettingType?: QuotaScopeType;
-  selectedProjectId?: string;
-  selectedUserId?: string;
-  selectedProjectResourcePolicy?: string;
-  selectedUserResourcePolicy?: string;
-  extraFetchKey?: string;
+  projectResourcePolicyFrgmt: ResourcePolicyCard_project_resource_policy$key | null;
+  userResourcePolicyFrgmt: ResourcePolicyCard_user_resource_policy$key | null;
+  onChangePolicy: () => void;
 }
 const ResourcePolicyCard: React.FC<Props> = ({
-  quotaScopeId,
-  currentSettingType,
-  selectedProjectId,
-  selectedUserId,
-  selectedProjectResourcePolicy,
-  selectedUserResourcePolicy,
-  extraFetchKey = "",
+  projectResourcePolicyFrgmt,
+  userResourcePolicyFrgmt,
+  onChangePolicy,
   ...props
 }) => {
   const { t } = useTranslation();
@@ -62,45 +55,30 @@ const ResourcePolicyCard: React.FC<Props> = ({
     { toggle: toggleUserResourcePolicySettingModal },
   ] = useToggle(false);
 
-  const [internalFetchKey, updateInternalFetchKey] = useUpdatableState();
+  // const [fetchKey, onChangePolicy] = useUpdatableState();
 
-  const { project_resource_policy, user_resource_policy } =
-    useLazyLoadQuery<ResourcePolicyCardQuery>(
-      graphql`
-        query ResourcePolicyCardQuery(
-          $project_resource_policy_name: String!
-          $user_resource_policy_name: String
-          $skipProjectResourcePolicy: Boolean!
-          $skipUserResourcePolicy: Boolean!
-        ) {
-          project_resource_policy(name: $project_resource_policy_name)
-            @skip(if: $skipProjectResourcePolicy) {
-            max_vfolder_size
-            ...ProjectResourcePolicySettingModalFragment
-          }
-
-          user_resource_policy(name: $user_resource_policy_name)
-            @skip(if: $skipUserResourcePolicy) {
-            max_vfolder_size
-            ...UserResourcePolicySettingModalFragment
-          }
-        }
-      `,
-      {
-        project_resource_policy_name: selectedProjectResourcePolicy || "",
-        user_resource_policy_name: selectedUserResourcePolicy || "",
-        skipProjectResourcePolicy:
-          selectedProjectResourcePolicy === "" ||
-          selectedProjectResourcePolicy === undefined,
-        skipUserResourcePolicy:
-          selectedUserResourcePolicy === "" ||
-          selectedUserResourcePolicy === undefined,
-      },
-      {
-        fetchKey: `${selectedProjectResourcePolicy}_${selectedUserResourcePolicy}_${internalFetchKey}`,
-        fetchPolicy: "store-and-network",
+  const project_resource_policy = useFragment(
+    graphql`
+      fragment ResourcePolicyCard_project_resource_policy on ProjectResourcePolicy {
+        id
+        name
+        max_vfolder_size
+        ...ProjectResourcePolicySettingModalFragment
       }
-    );
+    `,
+    projectResourcePolicyFrgmt
+  );
+  const user_resource_policy = useFragment(
+    graphql`
+      fragment ResourcePolicyCard_user_resource_policy on UserResourcePolicy {
+        id
+        name
+        max_vfolder_size
+        ...UserResourcePolicySettingModalFragment
+      }
+    `,
+    userResourcePolicyFrgmt
+  );
 
   const [
     commitModifyProjectResourcePolicy,
@@ -169,16 +147,16 @@ const ResourcePolicyCard: React.FC<Props> = ({
       okText: t("button.Confirm"),
       okType: "danger",
       onOk() {
-        if (currentSettingType === "project" && selectedProjectResourcePolicy) {
+        if (project_resource_policy) {
           commitDeleteProjectResourcePolicy({
             variables: {
-              name: selectedProjectResourcePolicy,
+              name: project_resource_policy.name,
             },
             onCompleted(response) {
               if (!response?.delete_project_resource_policy?.ok) {
                 message.error(response?.delete_project_resource_policy?.msg);
               } else {
-                updateInternalFetchKey();
+                onChangePolicy();
                 message.success(
                   t("storageHost.ResourcePolicySuccessfullyDeleted")
                 );
@@ -189,19 +167,16 @@ const ResourcePolicyCard: React.FC<Props> = ({
               message.error(error.message);
             },
           });
-        } else if (
-          currentSettingType === "user" &&
-          selectedUserResourcePolicy
-        ) {
+        } else if (user_resource_policy) {
           commitDeleteUserResourcePolicy({
             variables: {
-              name: selectedUserResourcePolicy,
+              name: user_resource_policy.name,
             },
             onCompleted(response) {
               if (!response?.delete_user_resource_policy?.ok) {
                 message.error(response?.delete_user_resource_policy?.msg);
               } else {
-                updateInternalFetchKey();
+                onChangePolicy();
                 message.success(
                   t("storageHost.ResourcePolicySuccessfullyDeleted")
                 );
@@ -226,10 +201,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
       icon: <ExclamationCircleOutlined />,
       okText: t("button.Confirm"),
       onOk() {
-        if (currentSettingType === "project" && selectedProjectResourcePolicy) {
+        if (project_resource_policy) {
           commitModifyProjectResourcePolicy({
             variables: {
-              name: selectedProjectResourcePolicy,
+              name: project_resource_policy.name,
               props: {
                 max_vfolder_size: -1,
               },
@@ -238,7 +213,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               if (!response?.modify_project_resource_policy?.ok) {
                 message.error(response?.modify_project_resource_policy?.msg);
               } else {
-                updateInternalFetchKey();
+                onChangePolicy();
                 message.success(
                   t("storageHost.ResourcePolicySuccessfullyUpdated")
                 );
@@ -248,13 +223,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
               message.error(error?.message);
             },
           });
-        } else if (
-          currentSettingType === "user" &&
-          selectedUserResourcePolicy
-        ) {
+        } else if (user_resource_policy) {
           commitModifyUserResourcePolicy({
             variables: {
-              name: selectedUserResourcePolicy,
+              name: user_resource_policy.name,
               props: {
                 max_vfolder_size: -1,
               },
@@ -263,7 +235,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               if (!response?.modify_user_resource_policy?.ok) {
                 message.error(response?.modify_user_resource_policy?.msg);
               } else {
-                updateInternalFetchKey();
+                onChangePolicy();
                 message.success(
                   t("storageHost.ResourcePolicySuccessfullyUpdated")
                 );
@@ -284,7 +256,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
     <>
       <Card
         extra={
-          quotaScopeId && (
+          project_resource_policy || user_resource_policy ? (
             <Dropdown
               placement="bottomRight"
               menu={{
@@ -294,7 +266,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
                     label: t("button.Edit"),
                     icon: <EditFilled />,
                     onClick: () => {
-                      currentSettingType === "project"
+                      project_resource_policy
                         ? toggleProjectResourcePolicySettingModal()
                         : toggleUserResourcePolicySettingModal();
                     },
@@ -318,7 +290,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
             >
               <EllipsisOutlined />
             </Dropdown>
-          )
+          ) : null
         }
         title={t("storageHost.ResourcePolicy")}
         bordered={false}
@@ -326,10 +298,9 @@ const ResourcePolicyCard: React.FC<Props> = ({
         style={{ marginBottom: 10 }}
       >
         <Descriptions>
-          {(currentSettingType === "project" && selectedProjectId) ||
-          (currentSettingType === "user" && selectedUserId) ? (
+          {project_resource_policy || user_resource_policy ? (
             <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
-              {currentSettingType === "project"
+              {project_resource_policy
                 ? project_resource_policy &&
                   project_resource_policy?.max_vfolder_size !== -1
                   ? _humanReadableDecimalSize(
@@ -361,22 +332,21 @@ const ResourcePolicyCard: React.FC<Props> = ({
         destroyOnClose={true}
         onCancel={toggleProjectResourcePolicySettingModal}
         onOk={toggleProjectResourcePolicySettingModal}
-        projectResourcePolicy={selectedProjectResourcePolicy || ""}
-        resourcePolicyFrgmt={project_resource_policy || null}
         onRequestClose={() => {
-          updateInternalFetchKey();
+          onChangePolicy();
           toggleProjectResourcePolicySettingModal();
         }}
+        // projectResourcePolicy={selectedProjectResourcePolicy || ""}
+        projectResourcePolicyFrgmt={project_resource_policy || null}
       />
       <UserResourcePolicySettingModal
         open={visibleUserResourcePolicySettingModal}
         destroyOnClose={true}
         onCancel={toggleUserResourcePolicySettingModal}
         onOk={toggleUserResourcePolicySettingModal}
-        userResourcePolicy={selectedUserResourcePolicy || ""}
-        resourcePolicyFrgmt={user_resource_policy || null}
+        userResourcePolicyFrgmt={user_resource_policy || null}
         onRequestClose={() => {
-          updateInternalFetchKey();
+          onChangePolicy();
           toggleUserResourcePolicySettingModal();
         }}
       />
