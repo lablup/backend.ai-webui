@@ -25,3 +25,5 @@ yarn-error.log*
 !/public
 
 merged_schema.graphql
+
+src/components/**/__generated__/*
