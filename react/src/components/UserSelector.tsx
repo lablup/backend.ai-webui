@@ -14,7 +14,7 @@ interface Props extends SelectProps {
   pageSize?: number;
 }
 
-const UserSelector: React.FC<Props> = ({ 
+const UserSelector: React.FC<Props> = ({
   onSelectUser,
   limit = 50,
   currentPage = 1,
@@ -26,25 +26,26 @@ const UserSelector: React.FC<Props> = ({
 
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
-      query UserSelectorQuery (
-        $limit: Int!
-        $offset: Int!
-        $filter: String
-      ) {
-        user_list(limit: $limit, offset: $offset, filter: $filter, is_active: true) {
-            items {
-              id
-              is_active
-              username
-              resource_policy
-            }
+      query UserSelectorQuery($limit: Int!, $offset: Int!, $filter: String) {
+        user_list(
+          limit: $limit
+          offset: $offset
+          filter: $filter
+          is_active: true
+        ) {
+          items {
+            id
+            is_active
+            username
+            resource_policy
+          }
         }
       }
     `,
     {
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
-      filter: search?.length === 0 ? null : "username ilike \"%" + search + "%\""
+      filter: search?.length === 0 ? null : 'username ilike "%' + search + '%"',
     },
     {
       fetchPolicy: "store-and-network",
@@ -63,7 +64,7 @@ const UserSelector: React.FC<Props> = ({
         onSelectUser?.(option);
       }}
       showSearch
-      placeholder={t('storageHost.quotaSettings.SelectUser')}
+      placeholder={t("storageHost.quotaSettings.SelectUser")}
       {...selectProps}
     >
       {_.map(user_list?.items, (user) => {

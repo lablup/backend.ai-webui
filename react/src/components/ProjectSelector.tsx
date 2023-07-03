@@ -14,16 +14,14 @@ interface Props extends SelectProps {
 
 const ProjectSelector: React.FC<Props> = ({
   onSelectProject,
-  ...selectProps 
+  ...selectProps
 }) => {
   const { t } = useTranslation();
   const curProject = useCurrentProjectValue();
 
   const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
-      query ProjectSelectorQuery (
-        $domain_name: String
-      ) {
+      query ProjectSelectorQuery($domain_name: String) {
         projects: groups(domain_name: $domain_name, is_active: true) {
           id
           is_active
@@ -33,7 +31,7 @@ const ProjectSelector: React.FC<Props> = ({
       }
     `,
     {
-      domain_name: curProject?.name
+      domain_name: curProject?.name,
     },
     {
       fetchPolicy: "store-and-network",
@@ -44,7 +42,7 @@ const ProjectSelector: React.FC<Props> = ({
       onChange={(value, option) => {
         onSelectProject?.(option);
       }}
-      placeholder={t('storageHost.quotaSettings.SelectProject')}
+      placeholder={t("storageHost.quotaSettings.SelectProject")}
       {...selectProps}
     >
       {_.map(projects, (project) => {

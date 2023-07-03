@@ -15,9 +15,7 @@ interface StorageHostSettingsPanelProps {
   isQuotaSupported?: boolean;
   extraFetchKey?: string;
 }
-const StorageHostSettingsPanel: React.FC<
-  StorageHostSettingsPanelProps
-> = ({
+const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   isQuotaSupported = false,
   extraFetchKey = "",
 }) => {
@@ -27,14 +25,18 @@ const StorageHostSettingsPanel: React.FC<
     storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
   }>();
 
-  const [currentSettingType, setCurrentSettingType] = useState<QuotaScopeType>("user");
+  const [currentSettingType, setCurrentSettingType] =
+    useState<QuotaScopeType>("user");
 
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
-  const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] = useState<string>();
+  const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] =
+    useState<string>();
   const [selectedUserId, setSelectedUserId] = useState<string>();
-  const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] = useState<string>();
+  const [selectedUserResourcePolicy, setSelectedUserResourcePolicy] =
+    useState<string>();
 
-  const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
+  const quotaScopeId =
+    currentSettingType === "project" ? selectedProjectId : selectedUserId;
 
   return (
     <Flex
@@ -59,53 +61,55 @@ const StorageHostSettingsPanel: React.FC<
         //@ts-ignore
         onTabChange={setCurrentSettingType}
       >
-      {isQuotaSupported ? (
-        <>
-          <Flex justify="between">
-            {currentSettingType === "project" ? (
-              <ProjectSelector
-                style={{ width: '30vw', marginBottom: 10 }}
-                onSelectProject={(project: any) => {
-                  setSelectedProjectId(project?.projectId);
-                  setSelectedProjectResourcePolicy(project?.projectResourcePolicy);
-                }}
-              />
-            ) : (
-              <UserSelector
-                style={{ width: '30vw', marginBottom: 10 }}
-                onSelectUser={(user: any) => {
-                  setSelectedUserId(user?.userId);
-                  setSelectedUserResourcePolicy(user?.userResourcePolicy);
-                }}
+        {isQuotaSupported ? (
+          <>
+            <Flex justify="between">
+              {currentSettingType === "project" ? (
+                <ProjectSelector
+                  style={{ width: "30vw", marginBottom: 10 }}
+                  onSelectProject={(project: any) => {
+                    setSelectedProjectId(project?.projectId);
+                    setSelectedProjectResourcePolicy(
+                      project?.projectResourcePolicy
+                    );
+                  }}
                 />
-            )}
-          </Flex>
-          <ResourcePolicyCard
-            quotaScopeId={quotaScopeId}
-            currentSettingType={currentSettingType}
-            selectedProjectId={selectedProjectId}
-            selectedUserId={selectedUserId}
-            selectedProjectResourcePolicy={selectedProjectResourcePolicy}
-            selectedUserResourcePolicy={selectedUserResourcePolicy}
-            extraFetchKey={extraFetchKey}
+              ) : (
+                <UserSelector
+                  style={{ width: "30vw", marginBottom: 10 }}
+                  onSelectUser={(user: any) => {
+                    setSelectedUserId(user?.userId);
+                    setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                  }}
+                />
+              )}
+            </Flex>
+            <ResourcePolicyCard
+              quotaScopeId={quotaScopeId}
+              currentSettingType={currentSettingType}
+              selectedProjectId={selectedProjectId}
+              selectedUserId={selectedUserId}
+              selectedProjectResourcePolicy={selectedProjectResourcePolicy}
+              selectedUserResourcePolicy={selectedUserResourcePolicy}
+              extraFetchKey={extraFetchKey}
+            />
+            <QuotaScopeCard
+              currentSettingType={currentSettingType}
+              storageHostId={storageHostId}
+              selectedProjectId={selectedProjectId}
+              selectedUserId={selectedUserId}
+              selectedProjectResourcePolicy={selectedProjectResourcePolicy}
+              selectedUserResourcePolicy={selectedUserResourcePolicy}
+              extraFetchKey={extraFetchKey}
+            />
+          </>
+        ) : (
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={t("storageHost.QuotaDoesNotSupported")}
           />
-          <QuotaScopeCard
-            currentSettingType={currentSettingType}
-            storageHostId={storageHostId}
-            selectedProjectId={selectedProjectId}
-            selectedUserId={selectedUserId}
-            selectedProjectResourcePolicy={selectedProjectResourcePolicy}
-            selectedUserResourcePolicy={selectedUserResourcePolicy}
-            extraFetchKey={extraFetchKey}
-          />
-      </>
-    ) : (
-      <Empty
-        image={Empty.PRESENTED_IMAGE_SIMPLE}
-        description={t("storageHost.QuotaDoesNotSupported")}
-      />
-    )}
-    </Card>
+        )}
+      </Card>
     </Flex>
   );
 };

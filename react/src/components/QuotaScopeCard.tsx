@@ -18,7 +18,11 @@ import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
 
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import { QuotaScopeType, addQuotaScopeTypePrefix, bytesToGB } from "../helper/index";
+import {
+  QuotaScopeType,
+  addQuotaScopeTypePrefix,
+  bytesToGB,
+} from "../helper/index";
 import { useDateISOState } from "../hooks";
 import QuotaSettingModal from "./QuotaSettingModal";
 
@@ -32,7 +36,7 @@ interface Props extends CardProps {
   extraFetchKey?: string;
 }
 const QuotaScopeCard: React.FC<Props> = ({
-  currentSettingType="project",
+  currentSettingType = "project",
   storageHostId,
   selectedProjectId,
   selectedUserId,
@@ -44,23 +48,30 @@ const QuotaScopeCard: React.FC<Props> = ({
   const { t } = useTranslation();
 
   const [internalFetchKey, updateInternalFetchKey] = useDateISOState();
-  const deferredMergedFetchKey = useDeferredValue(internalFetchKey + extraFetchKey);
+  const deferredMergedFetchKey = useDeferredValue(
+    internalFetchKey + extraFetchKey
+  );
 
-  const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] = useToggle(false);
+  const [visibleQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
+    useToggle(false);
 
-  const quotaScopeId = (currentSettingType === "project" ? selectedProjectId : selectedUserId);
-  const quotaScopeIdWithPrefix = (quotaScopeId === undefined || quotaScopeId === null) ? "" : addQuotaScopeTypePrefix(currentSettingType, quotaScopeId);
+  const quotaScopeId =
+    currentSettingType === "project" ? selectedProjectId : selectedUserId;
+  const quotaScopeIdWithPrefix =
+    quotaScopeId === undefined || quotaScopeId === null
+      ? ""
+      : addQuotaScopeTypePrefix(currentSettingType, quotaScopeId);
 
   const { quota_scope } = useLazyLoadQuery<QuotaScopeCardQuery>(
     graphql`
       query QuotaScopeCardQuery(
-        $quota_scope_id: String!,
-        $storage_host_name: String!,
-        $skipQuotaScope: Boolean!,
+        $quota_scope_id: String!
+        $storage_host_name: String!
+        $skipQuotaScope: Boolean!
       ) {
-        quota_scope (
-          storage_host_name: $storage_host_name,
-          quota_scope_id: $quota_scope_id,
+        quota_scope(
+          storage_host_name: $storage_host_name
+          quota_scope_id: $quota_scope_id
         ) @skip(if: $skipQuotaScope) {
           id
           quota_scope_id
@@ -70,12 +81,16 @@ const QuotaScopeCard: React.FC<Props> = ({
           }
           ...QuotaSettingModalFragment
         }
-    }
-  `,
+      }
+    `,
     {
       storage_host_name: storageHostId || "",
       quota_scope_id: quotaScopeIdWithPrefix,
-      skipQuotaScope: storageHostId === "" || quotaScopeId === "" || storageHostId === undefined || quotaScopeId === undefined,
+      skipQuotaScope:
+        storageHostId === "" ||
+        quotaScopeId === "" ||
+        storageHostId === undefined ||
+        quotaScopeId === undefined,
     },
     {
       fetchKey: deferredMergedFetchKey,
@@ -83,44 +98,41 @@ const QuotaScopeCard: React.FC<Props> = ({
     }
   );
 
-  const [commitUnsetQuotaScope, isInFlightcommitUnsetQuotaScope] = useMutation<QuotaScopeCardUnsetMutation>(
-    graphql`
-      mutation QuotaScopeCardUnsetMutation(
-        $quota_scope_id: String!,
-        $storage_host_name: String!
-      ) {
-        unset_quota_scope (
-          quota_scope_id: $quota_scope_id,
-          storage_host_name: $storage_host_name,
+  const [commitUnsetQuotaScope, isInFlightcommitUnsetQuotaScope] =
+    useMutation<QuotaScopeCardUnsetMutation>(
+      graphql`
+        mutation QuotaScopeCardUnsetMutation(
+          $quota_scope_id: String!
+          $storage_host_name: String!
         ) {
-          quota_scope {
-            id
-            quota_scope_id
-            storage_host_name
-            details {
-              hard_limit_bytes
+          unset_quota_scope(
+            quota_scope_id: $quota_scope_id
+            storage_host_name: $storage_host_name
+          ) {
+            quota_scope {
+              id
+              quota_scope_id
+              storage_host_name
+              details {
+                hard_limit_bytes
+              }
             }
           }
         }
-      }
-    `,
-  );
+      `
+    );
 
   const selectProjectOrUserFirst = (
     <Empty
-      style={{ width: '100%' }}
+      style={{ width: "100%" }}
       image={Empty.PRESENTED_IMAGE_SIMPLE}
-      description={
-        <div>
-          {t("storageHost.quotaSettings.SelectFirst")}
-        </div>
-      }
+      description={<div>{t("storageHost.quotaSettings.SelectFirst")}</div>}
     />
   );
 
   const addQuotaConfigsWhenEmpty = (
     <Empty
-      style={{ width: '100%' }}
+      style={{ width: "100%" }}
       image={Empty.PRESENTED_IMAGE_SIMPLE}
       description={
         <>
@@ -139,9 +151,7 @@ const QuotaScopeCard: React.FC<Props> = ({
   );
 
   interface UnsetButtonProps extends ButtonProps {}
-  const UnsetButton: React.FC<UnsetButtonProps> = ({
-    ...props
-  }) => {
+  const UnsetButton: React.FC<UnsetButtonProps> = ({ ...props }) => {
     const { t } = useTranslation();
     return (
       <Popconfirm
@@ -152,11 +162,16 @@ const QuotaScopeCard: React.FC<Props> = ({
           if (quotaScopeId && storageHostId) {
             commitUnsetQuotaScope({
               variables: {
-                quota_scope_id: addQuotaScopeTypePrefix(currentSettingType, quotaScopeId),
+                quota_scope_id: addQuotaScopeTypePrefix(
+                  currentSettingType,
+                  quotaScopeId
+                ),
                 storage_host_name: storageHostId,
               },
               onCompleted() {
-                message.success(t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"));
+                message.success(
+                  t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated")
+                );
                 updateInternalFetchKey();
               },
               onError(error) {
@@ -166,21 +181,17 @@ const QuotaScopeCard: React.FC<Props> = ({
           }
         }}
       >
-        <Button 
-        {...props}
-        danger
-        icon={<DeleteFilled />}
-        >
-        {t("button.Unset")}
-      </Button>
-    </Popconfirm>
-  );
-};
+        <Button {...props} danger icon={<DeleteFilled />}>
+          {t("button.Unset")}
+        </Button>
+      </Popconfirm>
+    );
+  };
 
   return (
     <>
-     <Card bordered={false}>
-      <Table
+      <Card bordered={false}>
+        <Table
           columns={[
             {
               title: "ID",
@@ -191,9 +202,7 @@ const QuotaScopeCard: React.FC<Props> = ({
               title: t("storageHost.HardLimit") + " (GB)",
               dataIndex: ["details", "hard_limit_bytes"],
               key: "hard_limit_bytes",
-              render: (value) => (
-                <>{bytesToGB(value)}</>
-              ),
+              render: (value) => <>{bytesToGB(value)}</>,
             },
             {
               title: t("general.Control"),
@@ -212,8 +221,19 @@ const QuotaScopeCard: React.FC<Props> = ({
               ),
             },
           ]}
-          dataSource={storageHostId && (selectedProjectId || selectedUserId) && quota_scope ? [quota_scope] : []}
-          locale={{ emptyText: (selectedProjectId || selectedUserId) ? addQuotaConfigsWhenEmpty : selectProjectOrUserFirst }}
+          dataSource={
+            storageHostId &&
+            (selectedProjectId || selectedUserId) &&
+            quota_scope
+              ? [quota_scope]
+              : []
+          }
+          locale={{
+            emptyText:
+              selectedProjectId || selectedUserId
+                ? addQuotaConfigsWhenEmpty
+                : selectProjectOrUserFirst,
+          }}
           pagination={false}
         />
       </Card>
@@ -234,7 +254,7 @@ const QuotaScopeCard: React.FC<Props> = ({
         }}
       />
     </>
-  )
-}
+  );
+};
 
 export default QuotaScopeCard;

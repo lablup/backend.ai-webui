@@ -20,7 +20,7 @@ import {
   EditFilled,
   EllipsisOutlined,
   UndoOutlined,
-  ExclamationCircleOutlined
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
 import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
@@ -53,51 +53,64 @@ const ResourcePolicyCard: React.FC<Props> = ({
 }) => {
   const { t } = useTranslation();
 
-  const [visibleProjectResourcePolicySettingModal, { toggle: toggleProjectResourcePolicySettingModal }] = useToggle(false);
-  const [visibleUserResourcePolicySettingModal, { toggle: toggleUserResourcePolicySettingModal }] = useToggle(false);
+  const [
+    visibleProjectResourcePolicySettingModal,
+    { toggle: toggleProjectResourcePolicySettingModal },
+  ] = useToggle(false);
+  const [
+    visibleUserResourcePolicySettingModal,
+    { toggle: toggleUserResourcePolicySettingModal },
+  ] = useToggle(false);
 
   const [internalFetchKey, updateInternalFetchKey] = useDateISOState();
-  const deferredMergedFetchKey = useDeferredValue(internalFetchKey + extraFetchKey);
-
-  const { project_resource_policy, user_resource_policy } = useLazyLoadQuery<ResourcePolicyCardQuery>(
-    graphql`
-      query ResourcePolicyCardQuery(
-        $project_resource_policy_name: String!,
-        $user_resource_policy_name: String,
-        $skipProjectResourcePolicy: Boolean!,
-        $skipUserResourcePolicy: Boolean!,
-      ) {
-        project_resource_policy (
-          name: $project_resource_policy_name,
-        ) @skip(if: $skipProjectResourcePolicy) {
-          max_vfolder_size
-          ...ProjectResourcePolicySettingModalFragment
-        }
-
-        user_resource_policy (
-          name: $user_resource_policy_name,
-        ) @skip(if: $skipUserResourcePolicy) {
-          max_vfolder_size
-          ...UserResourcePolicySettingModalFragment
-        }
-    }
-  `,
-    {
-      project_resource_policy_name: selectedProjectResourcePolicy || "",
-      user_resource_policy_name: selectedUserResourcePolicy || "",
-      skipProjectResourcePolicy: selectedProjectResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
-      skipUserResourcePolicy: selectedUserResourcePolicy === "" || selectedProjectResourcePolicy === undefined,
-    },
-    {
-      fetchKey: deferredMergedFetchKey,
-      fetchPolicy: "store-and-network",
-    }
+  const deferredMergedFetchKey = useDeferredValue(
+    internalFetchKey + extraFetchKey
   );
 
-  const [commitModifyProjectResourcePolicy, isInFlightCommitModifyProjectResourcePolicy] =
-  useMutation<ResourcePolicyCardModifyProjectMutation>(graphql`
+  const { project_resource_policy, user_resource_policy } =
+    useLazyLoadQuery<ResourcePolicyCardQuery>(
+      graphql`
+        query ResourcePolicyCardQuery(
+          $project_resource_policy_name: String!
+          $user_resource_policy_name: String
+          $skipProjectResourcePolicy: Boolean!
+          $skipUserResourcePolicy: Boolean!
+        ) {
+          project_resource_policy(name: $project_resource_policy_name)
+            @skip(if: $skipProjectResourcePolicy) {
+            max_vfolder_size
+            ...ProjectResourcePolicySettingModalFragment
+          }
+
+          user_resource_policy(name: $user_resource_policy_name)
+            @skip(if: $skipUserResourcePolicy) {
+            max_vfolder_size
+            ...UserResourcePolicySettingModalFragment
+          }
+        }
+      `,
+      {
+        project_resource_policy_name: selectedProjectResourcePolicy || "",
+        user_resource_policy_name: selectedUserResourcePolicy || "",
+        skipProjectResourcePolicy:
+          selectedProjectResourcePolicy === "" ||
+          selectedProjectResourcePolicy === undefined,
+        skipUserResourcePolicy:
+          selectedUserResourcePolicy === "" ||
+          selectedProjectResourcePolicy === undefined,
+      },
+      {
+        fetchKey: deferredMergedFetchKey,
+        fetchPolicy: "store-and-network",
+      }
+    );
+
+  const [
+    commitModifyProjectResourcePolicy,
+    isInFlightCommitModifyProjectResourcePolicy,
+  ] = useMutation<ResourcePolicyCardModifyProjectMutation>(graphql`
     mutation ResourcePolicyCardModifyProjectMutation(
-      $name: String!,
+      $name: String!
       $props: ModifyProjectResourcePolicyInput!
     ) {
       modify_project_resource_policy(name: $name, props: $props) {
@@ -107,10 +120,12 @@ const ResourcePolicyCard: React.FC<Props> = ({
     }
   `);
 
-  const [commitModifyUserResourcePolicy, isInFlightCommitModifyUserResourcePolicy] =
-  useMutation<ResourcePolicyCardModifyUserMutation>(graphql`
+  const [
+    commitModifyUserResourcePolicy,
+    isInFlightCommitModifyUserResourcePolicy,
+  ] = useMutation<ResourcePolicyCardModifyUserMutation>(graphql`
     mutation ResourcePolicyCardModifyUserMutation(
-      $name: String!,
+      $name: String!
       $props: ModifyUserResourcePolicyInput!
     ) {
       modify_user_resource_policy(name: $name, props: $props) {
@@ -120,10 +135,13 @@ const ResourcePolicyCard: React.FC<Props> = ({
     }
   `);
 
-  const [commitDeleteProjectResourcePolicy, isInFlightCommitDeleteProjectResourcePolicy] =
+  const [
+    commitDeleteProjectResourcePolicy,
+    isInFlightCommitDeleteProjectResourcePolicy,
+  ] =
     useMutation<ResourcePolicyCardDeleteProjectResourcePolicyMutation>(graphql`
       mutation ResourcePolicyCardDeleteProjectResourcePolicyMutation(
-        $name: String!,
+        $name: String!
       ) {
         delete_project_resource_policy(name: $name) {
           ok
@@ -132,25 +150,27 @@ const ResourcePolicyCard: React.FC<Props> = ({
       }
     `);
 
-  const [commitDeleteUserResourcePolicy, isInFlightCommitDeleteUserResourcePolicy] =
-    useMutation<ResourcePolicyCardDeleteUserResourcePolicyMutation>(graphql`
-      mutation ResourcePolicyCardDeleteUserResourcePolicyMutation(
-        $name: String!,
-      ) {
-        delete_user_resource_policy(name: $name) {
-          ok
-          msg
-        }
+  const [
+    commitDeleteUserResourcePolicy,
+    isInFlightCommitDeleteUserResourcePolicy,
+  ] = useMutation<ResourcePolicyCardDeleteUserResourcePolicyMutation>(graphql`
+    mutation ResourcePolicyCardDeleteUserResourcePolicyMutation(
+      $name: String!
+    ) {
+      delete_user_resource_policy(name: $name) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const confirmDeleteResourcePolicy = () => {
     Modal.confirm({
-      title: t('storageHost.DeleteResourcePolicy'),
-      content: t('storageHost.AreYouSureYouWantToDelete'),
+      title: t("storageHost.DeleteResourcePolicy"),
+      content: t("storageHost.AreYouSureYouWantToDelete"),
       icon: <ExclamationCircleOutlined />,
-      okText: t('button.Confirm'),
-      okType: 'danger',
+      okText: t("button.Confirm"),
+      okType: "danger",
       onOk() {
         if (currentSettingType === "project" && selectedProjectResourcePolicy) {
           commitDeleteProjectResourcePolicy({
@@ -162,7 +182,9 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 message.error(response?.delete_project_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
-                message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
+                message.success(
+                  t("storageHost.ResourcePolicySuccessfullyDeleted")
+                );
               }
             },
             onError(error) {
@@ -170,7 +192,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
               message.error(error.message);
             },
           });
-        } else if (currentSettingType === "user" && selectedUserResourcePolicy) {
+        } else if (
+          currentSettingType === "user" &&
+          selectedUserResourcePolicy
+        ) {
           commitDeleteUserResourcePolicy({
             variables: {
               name: selectedUserResourcePolicy,
@@ -180,7 +205,9 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 message.error(response?.delete_user_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
-                message.success(t("storageHost.ResourcePolicySuccessfullyDeleted"));
+                message.success(
+                  t("storageHost.ResourcePolicySuccessfullyDeleted")
+                );
               }
             },
             onError(error) {
@@ -191,19 +218,19 @@ const ResourcePolicyCard: React.FC<Props> = ({
         } else {
           message.error(t("storageHost.SelectProjectOrUserFirst"));
         }
-      }
+      },
     });
-  }
+  };
 
   const confirmUnsetResourcePolicy = () => {
     Modal.confirm({
-      title: t('storageHost.UnsetResourcePolicy'),
-      content: t('storageHost.DoYouWantToUseDefaultValue'),
+      title: t("storageHost.UnsetResourcePolicy"),
+      content: t("storageHost.DoYouWantToUseDefaultValue"),
       icon: <ExclamationCircleOutlined />,
-      okText: t('button.Confirm'),
+      okText: t("button.Confirm"),
       onOk() {
         if (currentSettingType === "project" && selectedProjectResourcePolicy) {
-          commitModifyProjectResourcePolicy ({
+          commitModifyProjectResourcePolicy({
             variables: {
               name: selectedProjectResourcePolicy,
               props: {
@@ -215,14 +242,19 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 message.error(response?.modify_project_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
-                message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
+                message.success(
+                  t("storageHost.ResourcePolicySuccessfullyUpdated")
+                );
               }
             },
             onError(error) {
               message.error(error?.message);
-            }
+            },
           });
-        } else if (currentSettingType === "user" && selectedUserResourcePolicy) {
+        } else if (
+          currentSettingType === "user" &&
+          selectedUserResourcePolicy
+        ) {
           commitModifyUserResourcePolicy({
             variables: {
               name: selectedUserResourcePolicy,
@@ -235,58 +267,61 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 message.error(response?.modify_user_resource_policy?.msg);
               } else {
                 updateInternalFetchKey();
-                message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
+                message.success(
+                  t("storageHost.ResourcePolicySuccessfullyUpdated")
+                );
               }
             },
             onError(error) {
               message.error(error?.message);
-            }
+            },
           });
         } else {
           message.error(t("storageHost.SelectProjectOrUserFirst"));
         }
-      }
+      },
     });
   };
 
   return (
     <>
       <Card
-        extra={ quotaScopeId &&
-          <Dropdown
-            placement="bottomRight"
-            menu={{
-              items: [
-                {
-                  key: "edit",
-                  label: t("button.Edit"),
-                  icon: <EditFilled />,
-                  onClick: () => {
-                    currentSettingType === "project" ?
-                      toggleProjectResourcePolicySettingModal()
-                      :
-                      toggleUserResourcePolicySettingModal();
+        extra={
+          quotaScopeId && (
+            <Dropdown
+              placement="bottomRight"
+              menu={{
+                items: [
+                  {
+                    key: "edit",
+                    label: t("button.Edit"),
+                    icon: <EditFilled />,
+                    onClick: () => {
+                      currentSettingType === "project"
+                        ? toggleProjectResourcePolicySettingModal()
+                        : toggleUserResourcePolicySettingModal();
+                    },
                   },
-                },
-                // {
-                //   key: "delete",
-                //   label: t("button.Delete"),
-                //   icon: <DeleteFilled />,
-                //   danger: true,
-                //   onClick: () => confirmDeleteResourcePolicy(),
-                // },
-                {
-                  key: "unset",
-                  label: t("button.Unset"),
-                  icon: <UndoOutlined />,
-                  danger: true,
-                  onClick: () => confirmUnsetResourcePolicy(),
-                }
-              ],
-            }}
-          >
-            <EllipsisOutlined />
-          </Dropdown>
+                  // {
+                  //   key: "delete",
+                  //   label: t("button.Delete"),
+                  //   icon: <DeleteFilled />,
+                  //   danger: true,
+                  //   onClick: () => confirmDeleteResourcePolicy(),
+                  // },
+                  {
+                    key: "unset",
+                    label: t("button.Unset"),
+                    icon: <UndoOutlined />,
+                    danger: true,
+                    onClick: () => confirmUnsetResourcePolicy(),
+                  },
+                ],
+              }}
+            >
+              <EllipsisOutlined />
+            </Dropdown>
+          )
         }
         title={t("storageHost.ResourcePolicy")}
         bordered={false}
@@ -294,23 +329,30 @@ const ResourcePolicyCard: React.FC<Props> = ({
         style={{ marginBottom: 10 }}
       >
         <Descriptions>
-          {(currentSettingType === "project" && selectedProjectId) || (currentSettingType === "user" && selectedUserId) ? (
+          {(currentSettingType === "project" && selectedProjectId) ||
+          (currentSettingType === "user" && selectedUserId) ? (
             <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
-              {currentSettingType === "project" ? (
-                  project_resource_policy && project_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(project_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
-                ) : (
-                  user_resource_policy && user_resource_policy?.max_vfolder_size !== -1 ? _humanReadableDecimalSize(user_resource_policy?.max_vfolder_size) : t('storageHost.NoConfigs')
-              )}
+              {currentSettingType === "project"
+                ? project_resource_policy &&
+                  project_resource_policy?.max_vfolder_size !== -1
+                  ? _humanReadableDecimalSize(
+                      project_resource_policy?.max_vfolder_size
+                    )
+                  : t("storageHost.NoConfigs")
+                : user_resource_policy &&
+                  user_resource_policy?.max_vfolder_size !== -1
+                ? _humanReadableDecimalSize(
+                    user_resource_policy?.max_vfolder_size
+                  )
+                : t("storageHost.NoConfigs")}
             </Descriptions.Item>
           ) : (
             <Descriptions.Item>
               <Empty
-                style={{ width: '100%' }}
+                style={{ width: "100%" }}
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
                 description={
-                  <div>
-                    {t("storageHost.quotaSettings.SelectFirst")}
-                  </div>
+                  <div>{t("storageHost.quotaSettings.SelectFirst")}</div>
                 }
               />
             </Descriptions.Item>
@@ -342,7 +384,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
         }}
       />
     </>
-    );
+  );
 };
 
 export default ResourcePolicyCard;

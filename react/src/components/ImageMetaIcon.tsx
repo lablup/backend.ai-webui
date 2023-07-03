@@ -6,7 +6,7 @@ const ImageMetaIcon: React.FC<{
   style?: React.CSSProperties;
   border?: boolean;
   alt?: string | null;
-}> = ({ image, style = {} }, bordered, alt="") => {
+}> = ({ image, style = {} }, bordered, alt = "") => {
   const [, { getImageIcon }] = useBackendaiImageMetaData();
 
   return (

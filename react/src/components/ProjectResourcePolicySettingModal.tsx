@@ -5,14 +5,7 @@ import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/P
 import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
 import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
 
-import {
-  Modal,
-  ModalProps,
-  Form,
-  InputNumber,
-  message,
-  Alert,
-} from "antd";
+import { Modal, ModalProps, Form, InputNumber, message, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
 
@@ -27,7 +20,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   resourcePolicyFrgmt,
   onRequestClose,
   ...props
-}) =>  {
+}) => {
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
@@ -40,51 +33,61 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         created_at
         max_vfolder_size
       }
-    `, resourcePolicyFrgmt
+    `,
+    resourcePolicyFrgmt
   );
 
-  const [commitCreateProjectResourcePolicy, isInFlightCommitCreateProjectResourcePolicy] =
-    useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
-      mutation ProjectResourcePolicySettingModalCreateMutation(
-        $name: String!,
-        $props: CreateProjectResourcePolicyInput!
-      ) {
-        create_project_resource_policy(name: $name, props: $props) {
-          ok
-          msg
-          resource_policy {
-            max_vfolder_size
-          }
+  const [
+    commitCreateProjectResourcePolicy,
+    isInFlightCommitCreateProjectResourcePolicy,
+  ] = useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
+    mutation ProjectResourcePolicySettingModalCreateMutation(
+      $name: String!
+      $props: CreateProjectResourcePolicyInput!
+    ) {
+      create_project_resource_policy(name: $name, props: $props) {
+        ok
+        msg
+        resource_policy {
+          max_vfolder_size
         }
       }
-    `);
-  
-  const [commitModifyProjectResourcePolicy, isInFlightCommitModifyProjectResourcePolicy] =
-    useMutation<ProjectResourcePolicySettingModalModifyMutation>(graphql`
-      mutation ProjectResourcePolicySettingModalModifyMutation(
-        $name: String!,
-        $props: ModifyProjectResourcePolicyInput!
-      ) {
-        modify_project_resource_policy(name: $name, props: $props) {
-          ok
-          msg
-        }
+    }
+  `);
+
+  const [
+    commitModifyProjectResourcePolicy,
+    isInFlightCommitModifyProjectResourcePolicy,
+  ] = useMutation<ProjectResourcePolicySettingModalModifyMutation>(graphql`
+    mutation ProjectResourcePolicySettingModalModifyMutation(
+      $name: String!
+      $props: ModifyProjectResourcePolicyInput!
+    ) {
+      modify_project_resource_policy(name: $name, props: $props) {
+        ok
+        msg
       }
-    `);
+    }
+  `);
 
   const _onOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      if (projectResourcePolicyInfo?.name && projectResourcePolicyInfo?.max_vfolder_size) {
+      if (
+        projectResourcePolicyInfo?.name &&
+        projectResourcePolicyInfo?.max_vfolder_size
+      ) {
         commitModifyProjectResourcePolicy({
           variables: {
             name: projectResourcePolicyInfo?.name,
             props: {
               max_vfolder_size: GBToBytes(values?.max_vfolder_size),
-            }
+            },
           },
           onCompleted(response) {
             if (response?.modify_project_resource_policy?.ok) {
-              message.success(t("storageHost.ResourcePolicySuccessfullyUpdated"));
+              message.success(
+                t("storageHost.ResourcePolicySuccessfullyUpdated")
+              );
             } else {
               message.error(response?.modify_project_resource_policy?.msg);
             }
@@ -93,7 +96,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           onError(error) {
             console.log(error);
             message.error(error.message);
-          }
+          },
         });
       } else {
         commitCreateProjectResourcePolicy({
@@ -103,11 +106,13 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             name: projectResourcePolicy || "",
             props: {
               max_vfolder_size: GBToBytes(values?.max_vfolder_size),
-            }
+            },
           },
           onCompleted(response) {
             if (response?.create_project_resource_policy?.ok) {
-              message.success(t("storageHost.ResourcePolicySuccessfullyCreated"));
+              message.success(
+                t("storageHost.ResourcePolicySuccessfullyCreated")
+              );
             } else {
               message.error(response?.create_project_resource_policy?.msg);
             }
@@ -116,7 +121,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           onError(error) {
             console.log(error);
             message.error(error.message);
-          }
+          },
         });
       }
     });
@@ -133,10 +138,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       onOk={_onOk}
     >
       <Alert
-        message={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
+        message={t("storageHost.BeCarefulToSetProjectResourcePolicy")}
         type="warning"
         showIcon
-        style={{ marginTop: 20, marginBottom: 25 }} />
+        style={{ marginTop: 20, marginBottom: 25 }}
+      />
       <Form
         form={form}
         preserve={false}
@@ -144,22 +150,26 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
         initialValues={
-          projectResourcePolicyInfo ? {
-            id: projectResourcePolicyInfo?.id,
-            name: projectResourcePolicyInfo?.name,
-            created_at: projectResourcePolicyInfo?.created_at,
-            max_vfolder_size: (projectResourcePolicyInfo?.max_vfolder_size === -1 ? null : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size)),
-          } : {
-            name: projectResourcePolicy
-          }
+          projectResourcePolicyInfo
+            ? {
+                id: projectResourcePolicyInfo?.id,
+                name: projectResourcePolicyInfo?.name,
+                created_at: projectResourcePolicyInfo?.created_at,
+                max_vfolder_size:
+                  projectResourcePolicyInfo?.max_vfolder_size === -1
+                    ? null
+                    : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
+              }
+            : {
+                name: projectResourcePolicy,
+              }
         }
       >
         <Form.Item
-          name="max_vfolder_size" label={t('storageHost.MaxFolderSize')}>
-          <InputNumber
-            min={0}
-            addonAfter="GB"
-          />
+          name="max_vfolder_size"
+          label={t("storageHost.MaxFolderSize")}
+        >
+          <InputNumber min={0} addonAfter="GB" />
         </Form.Item>
       </Form>
     </Modal>

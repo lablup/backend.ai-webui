@@ -108,41 +108,41 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   }, [value, dispatchEvent]);
   return (
     <>
-    {RelayEnvironment && (
-    <RelayEnvironmentProvider environment={RelayEnvironment}>
-      <React.StrictMode>
-        <style>
-          {styles}
-          {rawFixAntCss}
-        </style>
-        <QueryClientProvider client={queryClient}>
-          <ShadowRootContext.Provider value={shadowRoot}>
-            <WebComponentContext.Provider value={componentValues}>
-              <ConfigProvider
-                // @ts-ignore
-                getPopupContainer={(triggerNode) => {
-                  if (triggerNode?.parentNode) {
-                    return triggerNode.parentNode;
-                  }
-                  return shadowRoot;
-                }}
-                //TODO: apply other supported locales
-                locale={"ko" === lang ? ko_KR : en_US}
-                theme={themeConfig}
-              >
-                <StyleProvider container={shadowRoot} cache={cache}>
-                  <Suspense fallback="">
-                    <BrowserRouter>{children}</BrowserRouter>
-                  </Suspense>
-                  {/* {children} */}
-                </StyleProvider>
-              </ConfigProvider>
-            </WebComponentContext.Provider>
-          </ShadowRootContext.Provider>
-        </QueryClientProvider>
-      </React.StrictMode>
-    </RelayEnvironmentProvider>
-    )}
+      {RelayEnvironment && (
+        <RelayEnvironmentProvider environment={RelayEnvironment}>
+          <React.StrictMode>
+            <style>
+              {styles}
+              {rawFixAntCss}
+            </style>
+            <QueryClientProvider client={queryClient}>
+              <ShadowRootContext.Provider value={shadowRoot}>
+                <WebComponentContext.Provider value={componentValues}>
+                  <ConfigProvider
+                    // @ts-ignore
+                    getPopupContainer={(triggerNode) => {
+                      if (triggerNode?.parentNode) {
+                        return triggerNode.parentNode;
+                      }
+                      return shadowRoot;
+                    }}
+                    //TODO: apply other supported locales
+                    locale={"ko" === lang ? ko_KR : en_US}
+                    theme={themeConfig}
+                  >
+                    <StyleProvider container={shadowRoot} cache={cache}>
+                      <Suspense fallback="">
+                        <BrowserRouter>{children}</BrowserRouter>
+                      </Suspense>
+                      {/* {children} */}
+                    </StyleProvider>
+                  </ConfigProvider>
+                </WebComponentContext.Provider>
+              </ShadowRootContext.Provider>
+            </QueryClientProvider>
+          </React.StrictMode>
+        </RelayEnvironmentProvider>
+      )}
     </>
   );
 };
