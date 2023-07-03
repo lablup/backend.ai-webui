@@ -8,6 +8,7 @@ import { Typography, theme } from "antd";
 import Flex from "../components/Flex";
 import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
 import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
+import { useSuspendedBackendaiClient } from "../hooks";
 
 interface StorageHostSettingPageProps {}
 const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
@@ -15,6 +16,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
   const { storageHostId } = useParams<{
     storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
   }>();
+  useSuspendedBackendaiClient();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
     graphql`
       query StorageHostSettingPageQuery($id: String) {
