@@ -29,7 +29,7 @@ import UserResourcePolicySettingModal from "./UserResourcePolicySettingModal";
 import { _humanReadableDecimalSize } from "../helper/index";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import { useDateISOState } from "../hooks";
+import { useDateISOState, useUpdatableState } from "../hooks";
 import { QuotaScopeType } from "../helper/index";
 
 interface Props extends CardProps {
@@ -62,10 +62,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
     { toggle: toggleUserResourcePolicySettingModal },
   ] = useToggle(false);
 
-  const [internalFetchKey, updateInternalFetchKey] = useDateISOState();
-  const deferredMergedFetchKey = useDeferredValue(
-    internalFetchKey + extraFetchKey
-  );
+  const [internalFetchKey, updateInternalFetchKey] = useUpdatableState();
 
   const { project_resource_policy, user_resource_policy } =
     useLazyLoadQuery<ResourcePolicyCardQuery>(
@@ -97,10 +94,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
           selectedProjectResourcePolicy === undefined,
         skipUserResourcePolicy:
           selectedUserResourcePolicy === "" ||
-          selectedProjectResourcePolicy === undefined,
+          selectedUserResourcePolicy === undefined,
       },
       {
-        fetchKey: deferredMergedFetchKey,
+        fetchKey: `${selectedProjectResourcePolicy}_${selectedUserResourcePolicy}_${internalFetchKey}`,
         fetchPolicy: "store-and-network",
       }
     );
