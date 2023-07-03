@@ -26,4 +26,4 @@ yarn-error.log*
 
 merged_schema.graphql
 
-src/components/**/__generated__/*
+**/__generated__/*.graphql.ts
