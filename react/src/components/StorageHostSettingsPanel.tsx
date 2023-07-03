@@ -201,7 +201,10 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                 onClickEdit={() => {
                   toggleQuotaSettingModal();
                 }}
-                showAddButtonWhenEmpty={!!(selectedProjectId || selectedUserId)}
+                showAddButtonWhenEmpty={
+                  (currentSettingType == "project" && !!selectedProjectId) ||
+                  (currentSettingType == "user" && !!selectedUserId)
+                }
               />
             </Spin>
             <QuotaSettingModal
