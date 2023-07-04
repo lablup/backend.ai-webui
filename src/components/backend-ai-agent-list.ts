@@ -362,6 +362,16 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].used_atom_slots_ratio = agents[objectKey].used_atom_slots / agents[objectKey].atom_slots;
               agents[objectKey].total_atom_percent = (agents[objectKey].used_atom_slots_ratio * 100).toFixed(2);
             }
+            if ('warboy.device' in available_slots) {
+              agents[objectKey].warboy_slots = parseInt(available_slots['warboy.device']);
+              if ('warboy.device' in occupied_slots) {
+                agents[objectKey].used_warboy_slots = parseInt(occupied_slots['warboy.device']);
+              } else {
+                agents[objectKey].used_warboy_slots = 0;
+              }
+              agents[objectKey].used_warboy_slots_ratio = agents[objectKey].used_warboy_slots / agents[objectKey].warboy_slots;
+              agents[objectKey].total_warboy_percent = (agents[objectKey].used_warboy_slots_ratio * 100).toFixed(2);
+            }
 
             if ('cuda' in compute_plugins) {
               const cuda_plugin = compute_plugins['cuda'];
@@ -847,6 +857,18 @@ export default class BackendAIAgentList extends BackendAIPage {
               <span class="flex"></span>
               <lablup-progress-bar id="atom-bar" progress="${rowData.item.used_atom_slots_ratio}"
                                    description="${rowData.item.used_atom_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
+          ${rowData.item.warboy_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/furiosa.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_warboy_slots}/${rowData.item.warboy_slots}</span>
+                <span class="indicator">Warboy</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="warboy-bar" progress="${rowData.item.used_warboy_slots_ratio}"
+                                   description="${rowData.item.used_warboy_slots}"></lablup-progress-bar>
             </div>
           ` : html``}
         </div>`, root

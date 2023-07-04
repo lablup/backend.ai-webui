@@ -66,6 +66,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _tpu_disabled = false;
   @property({type: Boolean}) _ipu_disabled = false;
   @property({type: Boolean}) _atom_disabled = false;
+  @property({type: Boolean}) _warboy_disabled = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Array}) installImageNameList;
@@ -85,7 +86,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     'rocm-gpu': ['0', '1', '2', '3', '4', '5', '6', '7'],
     'tpu': ['0', '1', '2', '3', '4'],
     'ipu': ['0', '1', '2', '3', '4'],
-    'atom': ['0', '1', '2', '3', '4']};
+    'atom': ['0', '1', '2', '3', '4'],
+    'warboy': ['0', '1', '2', '3', '4']};
   @property({type: Number}) cpuValue = 0;
   @property({type: String}) listCondition: StatusCondition = 'loading';
   @property({type: Object}) _boundRequirementsRenderer = this.requirementsRenderer.bind(this);
@@ -103,6 +105,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @query('#modify-image-tpu') modifyImageTpu!: Button;
   @query('#modify-image-ipu') modifyImageIpu!: Button;
   @query('#modify-image-atom') modifyImageAtom!: Button;
+  @query('#modify-image-warboy') modifyImageWarboy!: Button;
   @query('#delete-app-info-dialog') deleteAppInfoDialog!: BackendAIDialog;
   @query('#delete-image-dialog') deleteImageDialog!: BackendAIDialog;
   @query('#install-image-dialog') installImageDialog!: BackendAIDialog;
@@ -504,6 +507,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
             if (resource.key == 'atom.device') {
               resource.key = 'atom_device';
             }
+            if (resource.key == 'warboy.device') {
+              resource.key = 'warboy_device';
+            }
             if (resource.min !== null && resource.min !== undefined) {
               image[resource.key + '_limit_min'] = this._addUnit(resource.min);
             }
@@ -659,6 +665,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const tpu = this.modifyImageTpu.label;
     const ipu = this.modifyImageIpu.label;
     const atom = this.modifyImageAtom.label;
+    const warboy = this.modifyImageWarboy.label;
 
     const {resource_limits} = this.images[this.selectedIndex];
 
@@ -676,6 +683,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     if (!this._tpu_disabled && tpu !== resource_limits[4].min) input['tpu.device'] = {'min': tpu};
     if (!this._ipu_disabled && ipu !== resource_limits[5].min) input['ipu.device'] = {'min': ipu};
     if (!this._atom_disabled && atom !== resource_limits[6].min) input['atom.device'] = {'min': atom};
+    if (!this._warboy_disabled && warboy !== resource_limits[6].min) input['warboy.device'] = {'min': warboy};
 
     const image = this.images[this.selectedIndex];
 
@@ -861,6 +869,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this._tpu_disabled = resource_limits.filter((e) => e.key === 'tpu_device').length === 0;
     this._ipu_disabled = resource_limits.filter((e) => e.key === 'ipu_device').length === 0;
     this._atom_disabled = resource_limits.filter((e) => e.key === 'atom_device').length === 0;
+    this._warboy_disabled = resource_limits.filter((e) => e.key === 'warboy_device').length === 0;
     const resources = resource_limits.reduce((result, item) => {
       const {key, ...rest} = item;
       const value = rest;
@@ -921,6 +930,15 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     } else {
       this.modifyImageAtom.label = _t('environment.Disabled') as string;
       (this.shadowRoot?.querySelector('mwc-slider#atom') as Slider).value = 0;
+    }
+    if (!this._warboy_disabled) {
+      this.modifyImageWarboy.label = resources['warboy_device'].min;
+      (this.shadowRoot?.querySelector('mwc-slider#warboy') as Slider).value = this._range['warboy'].indexOf(this._range['warboy'].filter((value) => {
+        return value === resources['warboy_device'].min;
+      })[0]);
+    } else {
+      this.modifyImageWarboy.label = _t('environment.Disabled') as string;
+      (this.shadowRoot?.querySelector('mwc-slider#warboy') as Slider).value = 0;
     }
 
     this.modifyImageMemory.label = this._addUnit(resources['mem'].min);
@@ -1126,6 +1144,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    <span>${rowData.item.atom_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.atom_device_limit_max)}</span>
                    <span class="indicator">ATOM</span>
+                 </div>
+               </div>
+               ` : html``}
+              ${rowData.item.warboy_device_limit_min ? html`
+              <div class="layout horizontal center flex">
+                 <div class="layout horizontal configuration">
+                   <wl-icon class="fg green">apps</wl-icon>
+                   <span>${rowData.item.warboy_device_limit_min}</span> ~
+                   <span>${this._markIfUnlimited(rowData.item.warboy_device_limit_max)}</span>
+                   <span class="indicator">Warboy</span>
                  </div>
                </div>
                ` : html``}
@@ -1389,6 +1417,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                    max="5"
                    @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
                <mwc-button class="range-value" id="modify-image-atom" disabled></mwc-button>
+             </div>
+             <div class="horizontal layout flex center">
+               <span class="resource-limit-title">Warboy</span>
+               <mwc-slider
+                   ?disabled="${this._warboy_disabled}"
+                   id="warboy"
+                   markers
+                   step="1"
+                   max="5"
+                   @change="${(e)=> this._changeSliderValue(e.target)}"></mwc-slider>
+               <mwc-button class="range-value" id="modify-image-warboy" disabled></mwc-button>
              </div>
            </div>
          </div>

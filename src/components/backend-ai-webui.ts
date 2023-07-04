@@ -763,12 +763,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
       // remove data in sessionStorage
       sessionStorage.clear();
-    }
-    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
-      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-        await globalThis.backendaiclient.logout();
+      if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
+        if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+          await globalThis.backendaiclient.logout();
+        }
+        globalThis.backendaiclient = null;
       }
-      globalThis.backendaiclient = null;
     }
   }
 
