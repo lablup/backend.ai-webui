@@ -129,6 +129,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) otpRequired = false;
   @property({type: String}) otp;
   @property({type: Boolean}) needToResetPassword = false;
+  @property({type: Boolean}) directoryBasedUsage = false;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -771,6 +772,14 @@ export default class BackendAILogin extends BackendAIPage {
          value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
        } as ConfigValueObject) as ConnectionMode;
     }
+
+    // Enable directory based usage flag
+    this.directoryBasedUsage = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.directoryBasedUsage),
+      } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -882,6 +891,11 @@ export default class BackendAILogin extends BackendAIPage {
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenParam = urlParams.get("token");
+      if (this.signup_support && this.api_endpoint !== '' && tokenParam !== undefined && tokenParam !== null) {
+        this._showSignupDialog(tokenParam);
+      }
     }
     if (this.blockPanel.open === true) {
       this.blockPanel.hide();
@@ -1053,7 +1067,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
-  private _showSignupDialog() {
+  private _showSignupDialog(token?: string) {
     this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '') || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
@@ -1063,7 +1077,7 @@ export default class BackendAILogin extends BackendAIPage {
     const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup;
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
-    signupDialog.open();
+    signupDialog.open(token);
   }
 
   private _showChangePasswordEmailDialog() {
@@ -1255,7 +1269,7 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
-            }  else if (response.fail_reason.indexOf('Password expired on ') === 0) {
+            } else if (response.fail_reason.indexOf('Password expired on ') === 0) {
               this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
@@ -1486,6 +1500,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
+      globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1744,7 +1759,7 @@ export default class BackendAILogin extends BackendAIPage {
             @cancel="${(e)=> this.needToResetPassword = false}" 
             @ok="${(e)=> {
               this.needToResetPassword = false;
-              this.passwordInput.value = "";
+              this.passwordInput.value = '';
               
               this.notification.text = _text('login.PasswordChanged');
               this.notification.show();

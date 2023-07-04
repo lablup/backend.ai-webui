@@ -25,7 +25,7 @@ const Flex: React.FC<FlexProps> = ({
   const { token } = theme.useToken();
 
   const transferConst = [justify, align];
-  const transferConstStyle = transferConst.map((el) => {
+  const transferConstStyle = transferConst?.map((el) => {
     let tempTxt;
     switch (el) {
       case "start":

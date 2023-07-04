@@ -2,7 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
+import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
@@ -113,7 +113,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         #ssh-dialog {
-          --component-width: 330px;
+          --component-width: 375px;
         }
 
         .app-icon {
@@ -162,6 +162,28 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: 450px;
           padding: 0 30px;
           margin: 0 10px;
+        }
+
+        #collapsible-btn {
+          background: none;
+          border: none;
+          padding: 10px 0px;
+          cursor: pointer;
+          font-size: 0.9rem;
+          font-family: Ubuntu;
+          color: #0000EE;
+          font-weight: 500;
+        }
+
+        #collapsible-btn:hover {
+          color: var(--general-button-background-color);
+        }
+
+        #expandable-desc {
+          // default height for 3line ellpsis
+          height: auto;
+          max-height: 83px;
+          overflow-y: hidden;
         }
 
         .slide {
@@ -1199,6 +1221,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     }
   }
 
+  _toggleCollapsibleArea(e) {
+    const btn = e.target;
+    const isFolded = (btn.textContent.replace(/\s/g, '') == _text('session.Readmore').replace(/\s/g, ''));
+    const collapsibleArea = (this.shadowRoot?.querySelector('#expandable-desc')) as HTMLElement;
+    // FIXME: temporally set maxHeight with hardcoded value
+    collapsibleArea.style.maxHeight = isFolded ? '100%': '83px';
+    btn.textContent = isFolded ? _text('session.Readless') : _text('session.Readmore');
+  }
+
   /**
    * Copy Remote VS Code password to clipboard
    *
@@ -1309,8 +1340,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       <backend-ai-dialog id="ssh-dialog" fixed backdrop>
         <span slot="title">SSH / SFTP connection</span>
         <div slot="content">
-          <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
           <section class="vertical layout wrap start start-justified">
+            <div id="expandable-desc">
+              <div style="padding:15px 0;">${_t('session.SFTPDescription')}</div>
+              <div style="background-color:var(--paper-blue-200);">
+                <div style="background-color:var(--paper-blue-400);padding:5px 15px">
+                  <span style="font-weight:700;">${_t('session.ConnectionNotice')}</span>
+                </div>
+              <div style="padding:15px;">${_tr('session.SFTPExtraNotification')}</div>
+              </div>
+            </div>
+            <button id="collapsible-btn" @click="${(e) => this._toggleCollapsibleArea(e)}">
+              ${_t('session.Readmore')}
+            </button>
             <h4>${_t('session.ConnectionInformation')}</h4>
             <div><span>User:</span> work</div>
             <div><span>SSH URL:</span> <a href="ssh://${this.sshHost}:${this.sshPort}">ssh://${this.sshHost}</a>
@@ -1320,7 +1362,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
             <div class="monospace" style="background-color:#242424;padding:15px;">
-              <span style="color:#ffffff;">sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}</span>
+              <span style="color:#ffffff;">
+                sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}<br/>
+                scp -i ./id_container -P ${this.sshPort} -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
+                rsync -av -e "ssh -i ./id_container" /path/to/source/ work@${this.sshHost}:~/<vfolder-name>/<br/>
             </div>
           </section>
         </div>

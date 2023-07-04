@@ -15,11 +15,11 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**
-Backend.AI Maintenance View
+Backend.AI Information View
 
 Example:
 
-<backend-ai-information-view class="page" name="maintenance" ?active="${0}">
+<backend-ai-information-view class="page" name="information" ?active="${0}">
 ... content ...
 </backend-ai-information-view>
 
