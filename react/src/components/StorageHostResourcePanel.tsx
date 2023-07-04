@@ -53,11 +53,7 @@ const StorageHostResourcePanel: React.FC<{
   };
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
-    >
+    <Flex direction="column" align="stretch">
       <Card
         title={t("storageHost.Resource")}
         extra={

@@ -23,8 +23,6 @@ interface StorageHostSettingsPanelProps {
   storageVolumeFrgmt: StorageHostSettingsPanel_storageVolumeFrgmt$key | null;
 }
 const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
-  // isQuotaSupported = false,
-  extraFetchKey = "",
   storageVolumeFrgmt,
 }) => {
   const { t } = useTranslation();
@@ -121,11 +119,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     );
 
   return (
-    <Flex
-      direction="column"
-      align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
-    >
+    <Flex direction="column" align="stretch">
       <Card
         title={t("storageHost.QuotaSettings")}
         tabList={[

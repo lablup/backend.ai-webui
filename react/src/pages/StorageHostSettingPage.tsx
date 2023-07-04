@@ -39,7 +39,9 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-      <Typography.Title level={2}>{storageHostId || ""}</Typography.Title>
+      <Typography.Title level={3} style={{ margin: 0 }}>
+        {storageHostId || ""}
+      </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
       <Suspense fallback={<div>loading...</div>}>
         <StorageHostSettingsPanel storageVolumeFrgmt={storage_volume || null} />
