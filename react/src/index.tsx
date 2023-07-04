@@ -1,7 +1,6 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import React from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
-import { Routes, Route } from "react-router-dom";
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
@@ -39,15 +38,14 @@ customElements.define(
 
 customElements.define(
   "backend-ai-react-storage-host-settings",
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <Routes>
-        <Route path="storage-settings" element={<StorageHostSettingPage />} />
-        <Route
-          path="storage-settings/:storageHostId"
-          element={<StorageHostSettingPage />}
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <StorageHostSettingPage
+          key={props.value}
+          storageHostId={props.value || ""}
         />
-      </Routes>
-    </DefaultProviders>
-  ))
+      </DefaultProviders>
+    );
+  })
 );

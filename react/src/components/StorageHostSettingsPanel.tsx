@@ -1,5 +1,4 @@
 import React, { useState, useTransition } from "react";
-import { useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 

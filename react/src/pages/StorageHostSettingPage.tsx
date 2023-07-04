@@ -2,7 +2,6 @@ import React, { Suspense } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
 import { StorageHostSettingPageQuery } from "./__generated__/StorageHostSettingPageQuery.graphql";
-import { useParams } from "react-router-dom";
 
 import { Typography, theme } from "antd";
 import Flex from "../components/Flex";
@@ -10,12 +9,13 @@ import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
 import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
 import { useSuspendedBackendaiClient } from "../hooks";
 
-interface StorageHostSettingPageProps {}
-const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = () => {
+interface StorageHostSettingPageProps {
+  storageHostId: string;
+}
+const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
+  storageHostId,
+}) => {
   const { token } = theme.useToken();
-  const { storageHostId } = useParams<{
-    storageHostId: string; // for `:storageHostId` on <Router path="/storage-settings:storageHostId" element={<StorageHostSettings />} />
-  }>();
   useSuspendedBackendaiClient();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
     graphql`

@@ -50,8 +50,9 @@ export default class BackendAIStorageHostSettingsView extends BackendAIPage {
 
   render() {
     // language=HTML
+    
     return html`
-      <backend-ai-react-storage-host-settings @moveTo="${(e: CustomEvent) => {
+      <backend-ai-react-storage-host-settings value="${window.location.pathname.split('/')[2]}"  @moveTo="${(e: CustomEvent) => {
     const path = e.detail.path;
     globalThis.history.pushState({}, '', path);
     store.dispatch(navigate(decodeURIComponent(path), {}));
