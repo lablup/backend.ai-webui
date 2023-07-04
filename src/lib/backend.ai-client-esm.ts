@@ -601,6 +601,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03.3')) {
       this._features['sftp-scaling-group'] = true;
     }
+    if(this.isManagerVersionCompatibleWith('23.03.7')) {
+      this._features['quota-scope'] = true;
+    }
   }
 
   /**

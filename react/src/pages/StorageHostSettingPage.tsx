@@ -18,7 +18,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
   storageHostId,
 }) => {
   const { token } = theme.useToken();
-  useSuspendedBackendaiClient();
+  const baiClient = useSuspendedBackendaiClient();
   const { moveTo } = useWebComponentInfo();
   const { t } = useTranslation();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
@@ -37,7 +37,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
     }
   );
 
-  const isQuotaSupported =
+  const isQuotaSupportedStorage =
     storage_volume?.capabilities?.includes("quota") ?? false;
 
   return (
@@ -65,19 +65,23 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
         {storageHostId || ""}
       </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
-      {isQuotaSupported ? (
-        <Suspense fallback={<div>loading...</div>}>
-          <StorageHostSettingsPanel
-            storageVolumeFrgmt={storage_volume || null}
-          />
-        </Suspense>
-      ) : (
-        <Card title={t("storageHost.QuotaSettings")}>
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t("storageHost.QuotaDoesNotSupported")}
-          />
-        </Card>
+      {baiClient.supports("quota-scope") && (
+        <>
+          {isQuotaSupportedStorage ? (
+            <Suspense fallback={<div>loading...</div>}>
+              <StorageHostSettingsPanel
+                storageVolumeFrgmt={storage_volume || null}
+              />
+            </Suspense>
+          ) : (
+            <Card title={t("storageHost.QuotaSettings")}>
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("storageHost.QuotaDoesNotSupported")}
+              />
+            </Card>
+          )}
+        </>
       )}
     </Flex>
   );
