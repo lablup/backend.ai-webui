@@ -189,8 +189,9 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                     : null
                 }
                 onChangePolicy={() => {
-                  startTransition(() => {});
-                  updateFetchKey();
+                  startTransition(() => {
+                    updateFetchKey();
+                  });
                 }}
               />
               <QuotaScopeCard

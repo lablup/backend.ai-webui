@@ -22,7 +22,7 @@ const UserSelector: React.FC<Props> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
 
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
@@ -53,7 +53,6 @@ const UserSelector: React.FC<Props> = ({
   );
   return (
     <Select
-      labelInValue
       filterOption={false}
       onSearch={(value) => {
         startTransition(() => {

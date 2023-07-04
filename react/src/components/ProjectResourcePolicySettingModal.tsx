@@ -147,22 +147,15 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
         validateTrigger={["onChange", "onBlur"]}
-        initialValues={
-          // projectResourcePolicyInfo
-          // ?
-          {
-            id: projectResourcePolicyInfo?.id,
-            name: projectResourcePolicyInfo?.name,
-            created_at: projectResourcePolicyInfo?.created_at,
-            max_vfolder_size:
-              projectResourcePolicyInfo?.max_vfolder_size === -1
-                ? null
-                : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
-          }
-          // : {
-          //     name: projectResourcePolicy,
-          //   }
-        }
+        initialValues={{
+          id: projectResourcePolicyInfo?.id,
+          name: projectResourcePolicyInfo?.name,
+          created_at: projectResourcePolicyInfo?.created_at,
+          max_vfolder_size:
+            projectResourcePolicyInfo?.max_vfolder_size === -1
+              ? null
+              : bytesToGB(projectResourcePolicyInfo?.max_vfolder_size),
+        }}
       >
         <Form.Item
           name="max_vfolder_size"
@@ -170,7 +163,9 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
-              message: t("storageHost.quotaSettings.AllowNumberAndDot") || "Allows numbers and .(dot) only",
+              message:
+                t("storageHost.quotaSettings.AllowNumberAndDot") ||
+                "Allows numbers and .(dot) only",
             },
           ]}
         >

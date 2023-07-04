@@ -51,8 +51,6 @@ const ResourcePolicyCard: React.FC<Props> = ({
     { toggle: toggleUserResourcePolicySettingModal },
   ] = useToggle(false);
 
-  // const [fetchKey, onChangePolicy] = useUpdatableState();
-
   const project_resource_policy = useFragment(
     graphql`
       fragment ResourcePolicyCard_project_resource_policy on ProjectResourcePolicy {
@@ -248,7 +246,6 @@ const ResourcePolicyCard: React.FC<Props> = ({
           onChangePolicy();
           toggleProjectResourcePolicySettingModal();
         }}
-        // projectResourcePolicy={selectedProjectResourcePolicy || ""}
         projectResourcePolicyFrgmt={project_resource_policy || null}
       />
       <UserResourcePolicySettingModal
