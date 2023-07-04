@@ -2385,7 +2385,7 @@ class StorageProxy {
    * Detail of specific storage proxy / volume.
    *
    * @param {string} host - Virtual folder host.
-   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'fsprefix', 'capabilities'.
    */
   async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) : Promise<any> {
     let q = `query($vfolder_host: String!) {` +

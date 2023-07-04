@@ -13,22 +13,24 @@ import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-
+import './backend-ai-session-launcher';
+import './backend-ai-session-view';
+import '@material/mwc-circular-progress';
 /**
-Backend.AI Information View
+Backend.AI Maintenance View
 
 Example:
 
-<backend-ai-information-view class="page" name="information" ?active="${0}">
+<backend-ai-session-view2 class="page" name="maintenance" ?active="${0}">
 ... content ...
-</backend-ai-information-view>
+</backend-ai-session-view2>
 
 @group Backend.AI Web UI
-@element backend-ai-information-view
+@element backend-ai-session-view-next
 */
 
-@customElement('backend-ai-information-view')
-export default class BackendAIInformationView extends BackendAIPage {
+@customElement('backend-ai-session-view-next')
+export default class BackendAISessionView2 extends BackendAIPage {
   static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
@@ -49,13 +51,13 @@ export default class BackendAIInformationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-information></backend-ai-react-information>
+      <backend-ai-react-session-list></backend-ai-react-session-list>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-information-view': BackendAIInformationView;
+    'backend-ai-session-view-next': BackendAISessionView2;
   }
 }

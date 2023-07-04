@@ -22,9 +22,12 @@ import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import {store} from '../store';
+import {navigate} from '../backend-ai-app';
 import './backend-ai-list-status';
 import './backend-ai-dialog';
 import './lablup-progress-bar';
+import './backend-ai-storage-host-settings-view';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -40,7 +43,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  ... content ...
  </backend-ai-storage-proxy-list>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-storage-proxy-list
  */
 
@@ -216,34 +219,13 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Convert start date to human readable date.
    *
-   * @param {Date} start date
-   * @return {string} Human-readable date
+   * @param {string} url - page to redirect from the current page.
    */
-  _humanReadableDate(start) {
-    const d = new Date(start);
-    return d.toLocaleString();
-  }
-
-  /**
-   * Increase index by 1.
-   *
-   * @param {number} index
-   * @return {number} index + 1
-   */
-  _indexFrom1(index: number) {
-    return index + 1;
-  }
-
-  /**
-   * Return the heartbeat status.
-   *
-   * @param {string} state
-   * @return {string} state. Note: currently returns same value
-   */
-  _heartbeatStatus(state: string) {
-    return state;
+  _moveTo(url = '') {
+    const page = url !== '' ? url : 'summary';
+    globalThis.history.pushState({}, '', page);
+    store.dispatch(navigate(decodeURIComponent(page), {}));
   }
 
   /**
@@ -336,17 +318,6 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
   }
 
   /**
-   * Return elapsed time
-   *
-   * @param {any} start - start time
-   * @param {any} end - end time
-   * @return {string} interval time between start and end
-   */
-  _elapsed2(start, end) {
-    return globalThis.backendaiclient.utils.elapsedTime(start, end);
-  }
-
-  /**
    * Render a resource.
    *
    * @param {DOMelement} root
@@ -433,9 +404,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+          <mwc-icon-button class="fg green controls-running" icon="assignment"
                           ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="settings"
+                          @click="${() => this._moveTo(`/storage-settings/${rowData.item.id}`)}"></mwc-icon-button>
         </div>`, root
     );
   }

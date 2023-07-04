@@ -13,22 +13,24 @@ import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import {store} from '../store';
+import {navigate} from '../backend-ai-app';
 
 /**
-Backend.AI Information View
+Backend.AI Storage Host Settings View
 
 Example:
 
-<backend-ai-information-view class="page" name="information" ?active="${0}">
+<backend-ai-storage-host-settings-view class="page" name="storage-host-settings" ?active="${0}">
 ... content ...
-</backend-ai-information-view>
+</backend-ai-storage-host-settings-view>
 
 @group Backend.AI Web UI
-@element backend-ai-information-view
+@element backend-ai-storage-host-settings-view
 */
 
-@customElement('backend-ai-information-view')
-export default class BackendAIInformationView extends BackendAIPage {
+@customElement('backend-ai-storage-host-settings-view')
+export default class BackendAIStorageHostSettingsView extends BackendAIPage {
   static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
@@ -48,14 +50,19 @@ export default class BackendAIInformationView extends BackendAIPage {
 
   render() {
     // language=HTML
+    
     return html`
-      <backend-ai-react-information></backend-ai-react-information>
+      <backend-ai-react-storage-host-settings value="${window.location.pathname.split('/')[2]}"  @moveTo="${(e: CustomEvent) => {
+    const path = e.detail.path;
+    globalThis.history.pushState({}, '', path);
+    store.dispatch(navigate(decodeURIComponent(path), {}));
+  }}"></backend-ai-react-storage-host-settings>
     `;
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-information-view': BackendAIInformationView;
+    'backend-ai-storage-host-settings-view': BackendAIStorageHostSettingsView;
   }
 }
