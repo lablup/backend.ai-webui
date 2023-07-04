@@ -256,12 +256,7 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
     render(
       // language=HTML
       html`
-        <button
-          style="border:none;background:none;"
-          class="fg blue"
-          @click="${() => this._moveTo(`/storage-settings/${rowData.item.id}`)}">
-        ${rowData.item.id}
-        </button>
+        <div>${rowData.item.id}</div>
         <div class="indicator monospace">${rowData.item.path}</div>
       `, root
     );
@@ -409,9 +404,11 @@ export default class BackendAIStorageProxyList extends BackendAIPage {
       // language=HTML
       html`
         <div id="controls" class="layout horizontal flex center" agent-id="${rowData.item.id}">
-          <mwc-icon-button class="fg blue controls-running" icon="assignment"
+          <mwc-icon-button class="fg green controls-running" icon="assignment"
                           ?disabled="${perfMetricDisabled}"
                           @click="${(e) => this.showStorageProxyDetailDialog(rowData.item.id)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue controls-running" icon="settings"
+                          @click="${() => this._moveTo(`/storage-settings/${rowData.item.id}`)}"></mwc-icon-button>
         </div>`, root
     );
   }

@@ -4,8 +4,7 @@ import { StorageHostResourcePanelFragment$key } from "./__generated__/StorageHos
 
 import { useTranslation } from "react-i18next";
 
-import { theme, Progress, Card, Descriptions, Dropdown } from "antd";
-import { EllipsisOutlined, ControlFilled } from "@ant-design/icons";
+import { theme, Progress, Card, Descriptions } from "antd";
 
 import { _humanReadableDecimalSize } from "../helper/index";
 import Flex from "./Flex";
@@ -54,26 +53,7 @@ const StorageHostResourcePanel: React.FC<{
 
   return (
     <Flex direction="column" align="stretch">
-      <Card
-        title={t("storageHost.Resource")}
-        extra={
-          <Dropdown
-            placement="bottomRight"
-            menu={{
-              items: [
-                {
-                  key: "control",
-                  label: t("storageHost.Control"),
-                  icon: <ControlFilled />,
-                  onClick: () => moveTo("/agent"),
-                },
-              ],
-            }}
-          >
-            <EllipsisOutlined />
-          </Dropdown>
-        }
-      >
+      <Card title={t("storageHost.Resource")}>
         <Flex>
           <Card bordered={false}>
             <Meta title={t("storageHost.Usage")}></Meta>
