@@ -2,7 +2,7 @@ import React, { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
-import { Card, Empty, Spin, theme } from "antd";
+import { Card, Spin } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
@@ -26,7 +26,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const storageVolume = useFragment(
     graphql`
       fragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {
@@ -36,9 +35,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     `,
     storageVolumeFrgmt
   );
-
-  const isQuotaSupported =
-    storageVolume?.capabilities?.includes("quota") ?? false;
 
   const [isPending, startTransition] = useTransition();
   const [currentSettingType, setCurrentSettingType] =
@@ -141,83 +137,74 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           });
         }}
       >
-        {isQuotaSupported ? (
-          <>
-            <Flex justify="between">
-              {currentSettingType === "project" ? (
-                <ProjectSelector
-                  style={{ width: "30vw", marginBottom: 10 }}
-                  value={selectedProjectId}
-                  onSelectProject={(project: any) => {
-                    startTransition(() => {
-                      setSelectedProjectId(project?.projectId);
-                      setSelectedProjectResourcePolicy(
-                        project?.projectResourcePolicy
-                      );
-                    });
-                  }}
-                />
-              ) : (
-                <UserSelector
-                  style={{ width: "30vw", marginBottom: 10 }}
-                  value={selectedUserId}
-                  onSelectUser={(user: any) => {
-                    startTransition(() => {
-                      setSelectedUserId(user?.userId);
-                      setSelectedUserResourcePolicy(user?.userResourcePolicy);
-                    });
-                  }}
-                />
-              )}
-            </Flex>
-            <Spin spinning={isPending}>
-              <ResourcePolicyCard
-                projectResourcePolicyFrgmt={
-                  currentSettingType === "project"
-                    ? project_resource_policy || null
-                    : null
-                }
-                userResourcePolicyFrgmt={
-                  currentSettingType === "user"
-                    ? user_resource_policy || null
-                    : null
-                }
-                onChangePolicy={() => {
-                  startTransition(() => {
-                    updateFetchKey();
-                  });
-                }}
-              />
-              <QuotaScopeCard
-                quotaScopeFrgmt={quota_scope || null}
-                onClickEdit={() => {
-                  toggleQuotaSettingModal();
-                }}
-                showAddButtonWhenEmpty={
-                  (currentSettingType === "project" && !!selectedProjectId) ||
-                  (currentSettingType === "user" && !!selectedUserId)
-                }
-              />
-            </Spin>
-            <QuotaSettingModal
-              open={isOpenQuotaSettingModal}
-              quotaScopeFrgmt={quota_scope || null}
-              resourcePolicyMaxVFolderSize={
-                currentSettingType === "project"
-                  ? project_resource_policy?.max_vfolder_size
-                  : user_resource_policy?.max_vfolder_size
-              }
-              onRequestClose={() => {
-                toggleQuotaSettingModal();
+        <Flex justify="between">
+          {currentSettingType === "project" ? (
+            <ProjectSelector
+              style={{ width: "30vw", marginBottom: 10 }}
+              value={selectedProjectId}
+              onSelectProject={(project: any) => {
+                startTransition(() => {
+                  setSelectedProjectId(project?.projectId);
+                  setSelectedProjectResourcePolicy(
+                    project?.projectResourcePolicy
+                  );
+                });
               }}
             />
-          </>
-        ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t("storageHost.QuotaDoesNotSupported")}
+          ) : (
+            <UserSelector
+              style={{ width: "30vw", marginBottom: 10 }}
+              value={selectedUserId}
+              onSelectUser={(user: any) => {
+                startTransition(() => {
+                  setSelectedUserId(user?.userId);
+                  setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                });
+              }}
+            />
+          )}
+        </Flex>
+        <Spin spinning={isPending}>
+          <ResourcePolicyCard
+            projectResourcePolicyFrgmt={
+              currentSettingType === "project"
+                ? project_resource_policy || null
+                : null
+            }
+            userResourcePolicyFrgmt={
+              currentSettingType === "user"
+                ? user_resource_policy || null
+                : null
+            }
+            onChangePolicy={() => {
+              startTransition(() => {
+                updateFetchKey();
+              });
+            }}
           />
-        )}
+          <QuotaScopeCard
+            quotaScopeFrgmt={quota_scope || null}
+            onClickEdit={() => {
+              toggleQuotaSettingModal();
+            }}
+            showAddButtonWhenEmpty={
+              (currentSettingType === "project" && !!selectedProjectId) ||
+              (currentSettingType === "user" && !!selectedUserId)
+            }
+          />
+        </Spin>
+        <QuotaSettingModal
+          open={isOpenQuotaSettingModal}
+          quotaScopeFrgmt={quota_scope || null}
+          resourcePolicyMaxVFolderSize={
+            currentSettingType === "project"
+              ? project_resource_policy?.max_vfolder_size
+              : user_resource_policy?.max_vfolder_size
+          }
+          onRequestClose={() => {
+            toggleQuotaSettingModal();
+          }}
+        />
       </Card>
     </Flex>
   );

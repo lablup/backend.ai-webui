@@ -3,12 +3,13 @@ import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
 import { StorageHostSettingPageQuery } from "./__generated__/StorageHostSettingPageQuery.graphql";
 
-import { Breadcrumb, Typography, theme } from "antd";
+import { Breadcrumb, Card, Empty, Typography, theme } from "antd";
 import Flex from "../components/Flex";
 import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
 import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useWebComponentInfo } from "../components/DefaultProviders";
+import { useTranslation } from "react-i18next";
 
 interface StorageHostSettingPageProps {
   storageHostId: string;
@@ -19,6 +20,7 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
   const { token } = theme.useToken();
   useSuspendedBackendaiClient();
   const { moveTo } = useWebComponentInfo();
+  const { t } = useTranslation();
   const { storage_volume } = useLazyLoadQuery<StorageHostSettingPageQuery>(
     graphql`
       query StorageHostSettingPageQuery($id: String) {
@@ -34,6 +36,9 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
       id: storageHostId || "",
     }
   );
+
+  const isQuotaSupported =
+    storage_volume?.capabilities?.includes("quota") ?? false;
 
   return (
     <Flex
@@ -60,9 +65,20 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
         {storageHostId || ""}
       </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
-      <Suspense fallback={<div>loading...</div>}>
-        <StorageHostSettingsPanel storageVolumeFrgmt={storage_volume || null} />
-      </Suspense>
+      {isQuotaSupported ? (
+        <Suspense fallback={<div>loading...</div>}>
+          <StorageHostSettingsPanel
+            storageVolumeFrgmt={storage_volume || null}
+          />
+        </Suspense>
+      ) : (
+        <Card title={t("storageHost.QuotaSettings")}>
+          <Empty
+            image={Empty.PRESENTED_IMAGE_SIMPLE}
+            description={t("storageHost.QuotaDoesNotSupported")}
+          />
+        </Card>
+      )}
     </Flex>
   );
 };
