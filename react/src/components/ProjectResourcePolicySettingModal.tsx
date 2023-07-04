@@ -169,7 +169,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <Input addonAfter="GB" />
+          <Input addonAfter="GB" type="number" step={0.25} />
         </Form.Item>
       </Form>
     </Modal>

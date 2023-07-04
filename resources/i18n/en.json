@@ -481,7 +481,7 @@
       "ClickSettingButton": "No quota settings. If you want to set quota configs, click the button below.",
       "AddQuotaConfigs": "Add Quota Configs",
       "UnsetCustomSettings": "Unset custom settings",
-      "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, the quota of this user or project will follow resource policy.",
+      "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, the quota of this user or project will use default value.",
       "SelectProject": "Select Project",
       "SelectUser": "Search and select User",
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",

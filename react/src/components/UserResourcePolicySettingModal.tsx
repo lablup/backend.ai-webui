@@ -161,11 +161,13 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
-              message: t("storageHost.quotaSettings.AllowNumberAndDot") || "Allows numbers and .(dot) only",
+              message:
+                t("storageHost.quotaSettings.AllowNumberAndDot") ||
+                "Allows numbers and .(dot) only",
             },
           ]}
         >
-          <Input addonAfter="GB" />
+          <Input addonAfter="GB" type="number" step={0.25} />
         </Form.Item>
       </Form>
     </Modal>

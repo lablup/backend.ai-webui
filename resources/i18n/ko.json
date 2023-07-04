@@ -474,7 +474,7 @@
       "ClickSettingButton": "가용량 설정값이 없습니다. 가용량을 설정하고 싶다면 아래 버튼을 클릭하세요.",
       "AddQuotaConfigs": "가용량 설정 추가",
       "UnsetCustomSettings": "사용자 설정 초기화",
-      "ConfirmUnsetCustomQuota": "정말로 설정을 초기화 하시겠습니까? \n이 사용자 혹은 프로젝트의 가용량은 자원 정책을 따르게 됩니다.",
+      "ConfirmUnsetCustomQuota": "정말로 설정을 초기화 하시겠습니까? \n이 사용자 혹은 프로젝트의 가용량은 기본값으로 설정됩니다.",
       "SelectProject": "프로젝트 선택",
       "SelectUser": "사용자 검색 및 선택",
       "QuotaScopeSuccessfullyUpdated": "할당 범위가 성공적으로 수정되었습니다.",

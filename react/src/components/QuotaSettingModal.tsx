@@ -123,7 +123,12 @@ const QuotaSettingModal: React.FC<Props> = ({
             },
           ]}
         >
-          <Input addonAfter="GB" style={{ width: "70%" }} />
+          <Input
+            addonAfter="GB"
+            type="number"
+            step={0.25}
+            style={{ width: "70%" }}
+          />
         </Form.Item>
       </Form>
     </Modal>
