@@ -313,7 +313,7 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].total_cuda_gpu_percent = (agents[objectKey].used_cuda_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda.shares' in available_slots) {
-              agents[objectKey].cuda_fgpu_slots = parseFloat(available_slots['cuda.shares']).toFixed(2);
+              agents[objectKey].cuda_fgpu_slots = parseFloat(available_slots['cuda.shares'])?.toFixed(2);
               if ('cuda.shares' in occupied_slots) {
                 agents[objectKey].used_cuda_fgpu_slots = parseFloat(occupied_slots['cuda.shares'])?.toFixed(2);
               } else {
