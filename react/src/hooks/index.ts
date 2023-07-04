@@ -176,15 +176,15 @@ export const useBackendaiImageMetaData = () => {
         );
       },
       getImageTags: (imageName: string) => {
-        const { key, tags } = getImageMeta(imageName);
+        // const { key, tags } = getImageMeta(imageName);
       },
       getBaseVersion: (imageName: string) => {
-        const { key, tags } = getImageMeta(imageName);
+        const { tags } = getImageMeta(imageName);
 
         return tags[0];
       },
       getBaseImage: (imageName: string) => {
-        const { key, tags } = getImageMeta(imageName);
+        const { tags } = getImageMeta(imageName);
         return tags[1];
       },
     },

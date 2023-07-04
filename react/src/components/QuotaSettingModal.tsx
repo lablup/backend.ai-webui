@@ -6,7 +6,6 @@ import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalS
 
 import { Modal, ModalProps, Form, Input, message } from "antd";
 import { useTranslation } from "react-i18next";
-import { _humanReadableDecimalSize } from "../helper/index";
 import { GBToBytes, bytesToGB } from "../helper";
 
 interface Props extends ModalProps {

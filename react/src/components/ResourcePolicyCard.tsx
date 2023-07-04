@@ -1,8 +1,6 @@
-import React, { useDeferredValue } from "react";
+import React from "react";
 import graphql from "babel-plugin-relay/macro";
-import { useFragment, useLazyLoadQuery, useMutation } from "react-relay";
-import { ResourcePolicyCardDeleteProjectResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteProjectResourcePolicyMutation.graphql";
-import { ResourcePolicyCardDeleteUserResourcePolicyMutation } from "./__generated__/ResourcePolicyCardDeleteUserResourcePolicyMutation.graphql";
+import { useFragment, useMutation } from "react-relay";
 import { ResourcePolicyCardModifyProjectMutation } from "./__generated__/ResourcePolicyCardModifyProjectMutation.graphql";
 import { ResourcePolicyCardModifyUserMutation } from "./__generated__/ResourcePolicyCardModifyUserMutation.graphql";
 
@@ -28,8 +26,6 @@ import UserResourcePolicySettingModal from "./UserResourcePolicySettingModal";
 import { _humanReadableDecimalSize } from "../helper/index";
 import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
-import { useDateISOState, useUpdatableState } from "../hooks";
-import { QuotaScopeType } from "../helper/index";
 import { ResourcePolicyCard_project_resource_policy$key } from "./__generated__/ResourcePolicyCard_project_resource_policy.graphql";
 import { ResourcePolicyCard_user_resource_policy$key } from "./__generated__/ResourcePolicyCard_user_resource_policy.graphql";
 
@@ -82,7 +78,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
 
   const [
     commitModifyProjectResourcePolicy,
-    isInFlightCommitModifyProjectResourcePolicy,
+    // isInFlightCommitModifyProjectResourcePolicy,
   ] = useMutation<ResourcePolicyCardModifyProjectMutation>(graphql`
     mutation ResourcePolicyCardModifyProjectMutation(
       $name: String!
@@ -97,7 +93,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
 
   const [
     commitModifyUserResourcePolicy,
-    isInFlightCommitModifyUserResourcePolicy,
+    // isInFlightCommitModifyUserResourcePolicy,
   ] = useMutation<ResourcePolicyCardModifyUserMutation>(graphql`
     mutation ResourcePolicyCardModifyUserMutation(
       $name: String!
@@ -109,90 +105,6 @@ const ResourcePolicyCard: React.FC<Props> = ({
       }
     }
   `);
-
-  const [
-    commitDeleteProjectResourcePolicy,
-    isInFlightCommitDeleteProjectResourcePolicy,
-  ] =
-    useMutation<ResourcePolicyCardDeleteProjectResourcePolicyMutation>(graphql`
-      mutation ResourcePolicyCardDeleteProjectResourcePolicyMutation(
-        $name: String!
-      ) {
-        delete_project_resource_policy(name: $name) {
-          ok
-          msg
-        }
-      }
-    `);
-
-  const [
-    commitDeleteUserResourcePolicy,
-    isInFlightCommitDeleteUserResourcePolicy,
-  ] = useMutation<ResourcePolicyCardDeleteUserResourcePolicyMutation>(graphql`
-    mutation ResourcePolicyCardDeleteUserResourcePolicyMutation(
-      $name: String!
-    ) {
-      delete_user_resource_policy(name: $name) {
-        ok
-        msg
-      }
-    }
-  `);
-
-  const confirmDeleteResourcePolicy = () => {
-    Modal.confirm({
-      title: t("storageHost.DeleteResourcePolicy"),
-      content: t("storageHost.AreYouSureYouWantToDelete"),
-      icon: <ExclamationCircleOutlined />,
-      okText: t("button.Confirm"),
-      okType: "danger",
-      onOk() {
-        if (project_resource_policy) {
-          commitDeleteProjectResourcePolicy({
-            variables: {
-              name: project_resource_policy.name,
-            },
-            onCompleted(response) {
-              if (!response?.delete_project_resource_policy?.ok) {
-                message.error(response?.delete_project_resource_policy?.msg);
-              } else {
-                onChangePolicy();
-                message.success(
-                  t("storageHost.ResourcePolicySuccessfullyDeleted")
-                );
-              }
-            },
-            onError(error) {
-              console.log(error);
-              message.error(error.message);
-            },
-          });
-        } else if (user_resource_policy) {
-          commitDeleteUserResourcePolicy({
-            variables: {
-              name: user_resource_policy.name,
-            },
-            onCompleted(response) {
-              if (!response?.delete_user_resource_policy?.ok) {
-                message.error(response?.delete_user_resource_policy?.msg);
-              } else {
-                onChangePolicy();
-                message.success(
-                  t("storageHost.ResourcePolicySuccessfullyDeleted")
-                );
-              }
-            },
-            onError(error) {
-              console.log(error);
-              message.error(error?.message);
-            },
-          });
-        } else {
-          message.error(t("storageHost.SelectProjectOrUserFirst"));
-        }
-      },
-    });
-  };
 
   const confirmUnsetResourcePolicy = () => {
     Modal.confirm({

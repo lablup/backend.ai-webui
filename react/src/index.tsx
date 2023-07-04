@@ -10,11 +10,12 @@ const DefaultProviders = React.lazy(
   () => import("./components/DefaultProviders")
 );
 const Information = React.lazy(() => import("./components/Information"));
-const SessionList = React.lazy(() => import("./pages/SessionListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
-const StorageHostSettingPage = React.lazy(() => import("./pages/StorageHostSettingPage"));
+const StorageHostSettingPage = React.lazy(
+  () => import("./pages/StorageHostSettingPage")
+);
 
 customElements.define(
   "backend-ai-react-information",
@@ -22,17 +23,6 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <Information />
-      </DefaultProviders>
-    );
-  })
-);
-
-customElements.define(
-  "backend-ai-react-session-list",
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <SessionList>{props.children}</SessionList>
       </DefaultProviders>
     );
   })
@@ -53,7 +43,10 @@ customElements.define(
     <DefaultProviders {...props}>
       <Routes>
         <Route path="storage-settings" element={<StorageHostSettingPage />} />
-        <Route path="storage-settings/:storageHostId" element={<StorageHostSettingPage />} />
+        <Route
+          path="storage-settings/:storageHostId"
+          element={<StorageHostSettingPage />}
+        />
       </Routes>
     </DefaultProviders>
   ))

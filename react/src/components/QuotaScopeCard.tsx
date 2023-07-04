@@ -15,7 +15,6 @@ import {
 import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
 
 import { useTranslation } from "react-i18next";
-import { useToggle } from "ahooks";
 import { bytesToGB } from "../helper/index";
 import { QuotaScopeCardFragment$key } from "./__generated__/QuotaScopeCardFragment.graphql";
 
@@ -47,7 +46,7 @@ const QuotaScopeCard: React.FC<Props> = ({
     quotaScopeFrgmt
   );
 
-  const [commitUnsetQuotaScope, isInFlightcommitUnsetQuotaScope] =
+  const [commitUnsetQuotaScope, isInFlightCommitUnsetQuotaScope] =
     useMutation<QuotaScopeCardUnsetMutation>(
       graphql`
         mutation QuotaScopeCardUnsetMutation(
@@ -155,7 +154,11 @@ const QuotaScopeCard: React.FC<Props> = ({
                       }
                     }}
                   >
-                    <Button danger icon={<DeleteFilled />}>
+                    <Button
+                      loading={isInFlightCommitUnsetQuotaScope}
+                      danger
+                      icon={<DeleteFilled />}
+                    >
                       {t("button.Unset")}
                     </Button>
                   </Popconfirm>

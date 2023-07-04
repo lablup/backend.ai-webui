@@ -42,11 +42,6 @@ const SessionList: React.FC<SessionListProps> = ({
     status = status.filter((e) => e !== "SCHEDULED");
   }
 
-  // TODO: ????
-  // if (baiClient.supports('detailed-session-states')) {
-  //   status = status.join(',');
-  // }
-
   const { compute_session_list } = useLazyLoadQuery<SessionListQuery>(
     graphql`
       query SessionListQuery(
@@ -80,21 +75,8 @@ const SessionList: React.FC<SessionListProps> = ({
             occupied_slots
             access_key
             starts_at
-            # type @skip(if: $skipClusterSize)
 
             cluster_size @skipOnClient(if: $skipClusterSize)
-            # id
-            # # hello
-            # name @skipOnClient(if: $skipCodejong)
-            # group_name @skip(if: $skipCodejong)
-            # domain_name @required(action: LOG)
-            # codejong
-            # @graphql-ignore
-            # hello @skip(if: true)
-
-            # @ts-ignore
-
-            # id session_id name image architecture created_at terminated_at status status_info service_ports mounts occupied_slots access_key starts_at type cluster_size cluster_mode status_data idle_checks inference_metrics scaling_group user_email containers {container_id agent occupied_slots live_stat last_stat} containers {agent}
             ...SessionInfoCellFragment
           }
         }
@@ -118,8 +100,6 @@ const SessionList: React.FC<SessionListProps> = ({
 
   return (
     <>
-      {/* {fetchKey}, {deferredFetchKey} */}
-      {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
       <Table
         scroll={{ x: true }}
         columns={[
