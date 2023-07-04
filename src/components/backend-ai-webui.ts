@@ -1116,7 +1116,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ${this.is_superadmin ?
     html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent' || this._page ==='storage-settings'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>
