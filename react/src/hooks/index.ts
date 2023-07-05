@@ -28,6 +28,11 @@ export const useDateISOState = (initialValue?: string) => {
 
 export const useUpdatableState = useDateISOState;
 
+export const useCurrentDomainValue = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  return baiClient._config.domainName;
+};
+
 export const useCurrentProjectValue = () => {
   const baiClient = useSuspendedBackendaiClient();
   const [project, _setProject] = useState<{

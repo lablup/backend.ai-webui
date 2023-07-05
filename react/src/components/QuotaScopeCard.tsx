@@ -39,6 +39,7 @@ const QuotaScopeCard: React.FC<Props> = ({
         storage_host_name
         details {
           hard_limit_bytes
+          usage_bytes
         }
         ...QuotaSettingModalFragment
       }
@@ -113,6 +114,12 @@ const QuotaScopeCard: React.FC<Props> = ({
               title: t("storageHost.HardLimit") + " (GB)",
               dataIndex: ["details", "hard_limit_bytes"],
               key: "hard_limit_bytes",
+              render: (value) => <>{bytesToGB(value)}</>,
+            },
+            {
+              title: t("storageHost.Usage") + " (GB)",
+              dataIndex: ["details", "usage_bytes"],
+              key: "usage_bytes",
               render: (value) => <>{bytesToGB(value)}</>,
             },
             {

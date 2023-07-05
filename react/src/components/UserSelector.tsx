@@ -9,21 +9,11 @@ import _ from "lodash";
 
 interface Props extends SelectProps {
   onSelectUser?: (user: any) => void;
-  limit?: number;
-  currentPage?: number;
-  pageSize?: number;
 }
 
-const UserSelector: React.FC<Props> = ({
-  onSelectUser,
-  limit = 50,
-  currentPage = 1,
-  pageSize = 50,
-  ...selectProps
-}) => {
+const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string>("");
-
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
       query UserSelectorQuery($limit: Int!, $offset: Int!, $filter: String) {
@@ -36,16 +26,16 @@ const UserSelector: React.FC<Props> = ({
           items {
             id
             is_active
-            username
+            email
             resource_policy
           }
         }
       }
     `,
     {
-      limit: pageSize,
-      offset: (currentPage - 1) * pageSize,
-      filter: search?.length === 0 ? null : 'username ilike "%' + search + '%"',
+      limit: 50,
+      offset: 0,
+      filter: search?.length === 0 ? null : 'email ilike "%' + search + '%"',
     },
     {
       fetchPolicy: "store-and-network",
@@ -73,7 +63,7 @@ const UserSelector: React.FC<Props> = ({
             userId={user?.id}
             userResourcePolicy={user?.resource_policy}
           >
-            {user?.username}
+            {user?.email}
           </Select.Option>
         );
       })}
