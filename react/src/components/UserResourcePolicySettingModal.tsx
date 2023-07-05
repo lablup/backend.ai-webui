@@ -2,7 +2,7 @@ import React from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { UserResourcePolicySettingModalFragment$key } from "./__generated__/UserResourcePolicySettingModalFragment.graphql";
-import { UserResourcePolicySettingModalCreateMutation } from "./__generated__/UserResourcePolicySettingModalCreateMutation.graphql";
+// import { UserResourcePolicySettingModalCreateMutation } from "./__generated__/UserResourcePolicySettingModalCreateMutation.graphql";
 import { UserResourcePolicySettingModalModifyMutation } from "./__generated__/UserResourcePolicySettingModalModifyMutation.graphql";
 
 import { Modal, ModalProps, Form, Input, message, Alert } from "antd";
@@ -36,27 +36,27 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
     resourcePolicyFrgmt
   );
 
-  const [
-    commitCreateUserResourcePolicy,
-    isInFlightCommitCreateUserResourcePolicy,
-  ] = useMutation<UserResourcePolicySettingModalCreateMutation>(graphql`
-    mutation UserResourcePolicySettingModalCreateMutation(
-      $name: String!
-      $props: CreateUserResourcePolicyInput!
-    ) {
-      create_user_resource_policy(name: $name, props: $props) {
-        ok
-        msg
-        resource_policy {
-          max_vfolder_size
-        }
-      }
-    }
-  `);
+  // const [
+  //   commitCreateUserResourcePolicy,
+  //   isInFlightCommitCreateUserResourcePolicy,
+  // ] = useMutation<UserResourcePolicySettingModalCreateMutation>(graphql`
+  //   mutation UserResourcePolicySettingModalCreateMutation(
+  //     $name: String!
+  //     $props: CreateUserResourcePolicyInput!
+  //   ) {
+  //     create_user_resource_policy(name: $name, props: $props) {
+  //       ok
+  //       msg
+  //       resource_policy {
+  //         max_vfolder_size
+  //       }
+  //     }
+  //   }
+  // `);
 
   const [
     commitModifyUserResourcePolicy,
-    isInFlightCommitModifyUserResourcePolicy,
+    // isInFlightCommitModifyUserResourcePolicy,
   ] = useMutation<UserResourcePolicySettingModalModifyMutation>(graphql`
     mutation UserResourcePolicySettingModalModifyMutation(
       $name: String!

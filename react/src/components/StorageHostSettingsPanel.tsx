@@ -2,7 +2,7 @@ import React, { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
-import { Card, Empty, Spin, theme } from "antd";
+import { Card, Empty, Spin } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
@@ -26,7 +26,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   storageVolumeFrgmt,
 }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
   const storageVolume = useFragment(
     graphql`
       fragment StorageHostSettingsPanel_storageVolumeFrgmt on StorageVolume {

@@ -2,7 +2,7 @@ import React from "react";
 import { useFragment, useMutation } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/ProjectResourcePolicySettingModalFragment.graphql";
-import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
+// import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
 import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
 
 import { Modal, ModalProps, Form, Input, message, Alert } from "antd";
@@ -35,27 +35,27 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
     resourcePolicyFrgmt
   );
 
-  const [
-    commitCreateProjectResourcePolicy,
-    isInFlightCommitCreateProjectResourcePolicy,
-  ] = useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
-    mutation ProjectResourcePolicySettingModalCreateMutation(
-      $name: String!
-      $props: CreateProjectResourcePolicyInput!
-    ) {
-      create_project_resource_policy(name: $name, props: $props) {
-        ok
-        msg
-        resource_policy {
-          max_vfolder_size
-        }
-      }
-    }
-  `);
+  // const [
+  //   commitCreateProjectResourcePolicy,
+  //   isInFlightCommitCreateProjectResourcePolicy,
+  // ] = useMutation<ProjectResourcePolicySettingModalCreateMutation>(graphql`
+  //   mutation ProjectResourcePolicySettingModalCreateMutation(
+  //     $name: String!
+  //     $props: CreateProjectResourcePolicyInput!
+  //   ) {
+  //     create_project_resource_policy(name: $name, props: $props) {
+  //       ok
+  //       msg
+  //       resource_policy {
+  //         max_vfolder_size
+  //       }
+  //     }
+  //   }
+  // `);
 
   const [
     commitModifyProjectResourcePolicy,
-    isInFlightCommitModifyProjectResourcePolicy,
+    // isInFlightCommitModifyProjectResourcePolicy,
   ] = useMutation<ProjectResourcePolicySettingModalModifyMutation>(graphql`
     mutation ProjectResourcePolicySettingModalModifyMutation(
       $name: String!
