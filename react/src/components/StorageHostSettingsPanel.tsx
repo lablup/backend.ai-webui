@@ -6,6 +6,7 @@ import { Card, Spin } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
+import DomainSelector from "./DomainSelector";
 import UserSelector from "./UserSelector";
 import ResourcePolicyCard from "./ResourcePolicyCard";
 import QuotaScopeCard from "./QuotaScopeCard";
@@ -16,7 +17,7 @@ import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from "./__generated__
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 import QuotaSettingModal from "./QuotaSettingModal";
 import { useToggle } from "ahooks";
-import { useUpdatableState } from "../hooks";
+import { useCurrentDomainValue, useUpdatableState } from "../hooks";
 
 interface StorageHostSettingsPanelProps {
   extraFetchKey?: string;
@@ -40,6 +41,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   const [currentSettingType, setCurrentSettingType] =
     useState<QuotaScopeType>("user");
 
+  const [selectedDomainName, setSelectedDomainName] = useState<string>();
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
   const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] =
     useState<string>();
@@ -56,6 +58,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState("default");
+
+  const currentDomain = useCurrentDomainValue();
 
   const { project_resource_policy, user_resource_policy, quota_scope } =
     useLazyLoadQuery<StorageHostSettingsPanelQuery>(
@@ -139,18 +143,30 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
       >
         <Flex justify="between">
           {currentSettingType === "project" ? (
-            <ProjectSelector
-              style={{ width: "30vw", marginBottom: 10 }}
-              value={selectedProjectId}
-              onSelectProject={(project: any) => {
-                startTransition(() => {
-                  setSelectedProjectId(project?.projectId);
-                  setSelectedProjectResourcePolicy(
-                    project?.projectResourcePolicy
-                  );
-                });
-              }}
-            />
+            <Flex style={{ marginBottom: 10 }}>
+              <DomainSelector
+                style={{ width: "20vw", marginRight: 10 }}
+                value={selectedDomainName}
+                onSelectDomain={(domain: any) => {
+                  startTransition(() => {
+                    setSelectedDomainName(domain?.domainName);
+                  });
+                }}
+              />
+              <ProjectSelector
+                style={{ width: "20vw" }}
+                value={selectedProjectId}
+                domain={selectedDomainName || currentDomain}
+                onSelectProject={(project: any) => {
+                  startTransition(() => {
+                    setSelectedProjectId(project?.projectId);
+                    setSelectedProjectResourcePolicy(
+                      project?.projectResourcePolicy
+                    );
+                  });
+                }}
+              />
+            </Flex>
           ) : (
             <UserSelector
               style={{ width: "30vw", marginBottom: 10 }}

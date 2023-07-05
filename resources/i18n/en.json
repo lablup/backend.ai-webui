@@ -483,6 +483,7 @@
       "AddQuotaConfigs": "Add Quota Configs",
       "UnsetCustomSettings": "Unset custom settings",
       "ConfirmUnsetCustomQuota": "Are you sure you want to unset? \nIf you unset, the quota of this user or project will use default value.",
+      "SelectDomain": "Select Domain",
       "SelectProject": "Select Project",
       "SelectUser": "Search and select User",
       "QuotaScopeSuccessfullyUpdated": "Quota Scope successfully updated",
