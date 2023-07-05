@@ -2,7 +2,7 @@ import React, { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
-import { Card, Spin } from "antd";
+import { Card, Form, Spin } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
@@ -144,42 +144,53 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
         <Flex justify="between">
           {currentSettingType === "project" ? (
             <Flex style={{ marginBottom: 10 }}>
-              <DomainSelector
-                style={{ width: "20vw", marginRight: 10 }}
-                value={selectedDomainName}
-                onSelectDomain={(domain: any) => {
-                  startTransition(() => {
-                    setSelectedDomainName(domain?.domainName);
-                    setSelectedProjectId(undefined);
-                    setSelectedProjectResourcePolicy(undefined);
-                  });
-                }}
-              />
-              <ProjectSelector
-                style={{ width: "20vw" }}
-                value={selectedProjectId}
-                domain={selectedDomainName || currentDomain}
-                onSelectProject={(project: any) => {
-                  startTransition(() => {
-                    setSelectedProjectId(project?.projectId);
-                    setSelectedProjectResourcePolicy(
-                      project?.projectResourcePolicy
-                    );
-                  });
-                }}
-              />
+              <Form layout="inline">
+                <Form.Item label={t("resourceGroup.Domain")}>
+                  <DomainSelector
+                    style={{ width: "20vw", marginRight: 10 }}
+                    value={selectedDomainName}
+                    onSelectDomain={(domain: any) => {
+                      startTransition(() => {
+                        setSelectedDomainName(domain?.domainName);
+                        setSelectedProjectId(undefined);
+                        setSelectedProjectResourcePolicy(undefined);
+                      });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item label={t("webui.menu.Project")}>
+                  <ProjectSelector
+                    style={{ width: "20vw" }}
+                    value={selectedProjectId}
+                    disabled={!selectedDomainName}
+                    domain={selectedDomainName || ""}
+                    onSelectProject={(project: any) => {
+                      startTransition(() => {
+                        setSelectedProjectId(project?.projectId);
+                        setSelectedProjectResourcePolicy(
+                          project?.projectResourcePolicy
+                        );
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Form>
             </Flex>
           ) : (
-            <UserSelector
-              style={{ width: "30vw", marginBottom: 10 }}
-              value={selectedUserId}
-              onSelectUser={(user: any) => {
-                startTransition(() => {
-                  setSelectedUserId(user?.userId);
-                  setSelectedUserResourcePolicy(user?.userResourcePolicy);
-                });
-              }}
-            />
+            <Form layout="inline">
+              <Form.Item label={t("data.User")}>
+                <UserSelector
+                  style={{ width: "30vw", marginBottom: 10 }}
+                  value={selectedUserId}
+                  onSelectUser={(user: any) => {
+                    startTransition(() => {
+                      setSelectedUserId(user?.userId);
+                      setSelectedUserResourcePolicy(user?.userResourcePolicy);
+                    });
+                  }}
+                />
+              </Form.Item>
+            </Form>
           )}
         </Flex>
         <Spin spinning={isPending}>
