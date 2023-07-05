@@ -4,12 +4,10 @@ import { StorageHostResourcePanelFragment$key } from "./__generated__/StorageHos
 
 import { useTranslation } from "react-i18next";
 
-import { theme, Progress, Card, Descriptions } from "antd";
+import { Progress, Descriptions, Typography, Tag } from "antd";
 
 import { _humanReadableDecimalSize } from "../helper/index";
-import Flex from "./Flex";
-
-const { Meta } = Card;
+import _ from "lodash";
 
 const usageIndicatorColor = (percentage: number) => {
   return percentage < 70
@@ -23,7 +21,6 @@ const StorageHostResourcePanel: React.FC<{
   storageVolumeFrgmt: StorageHostResourcePanelFragment$key | null;
 }> = ({ storageVolumeFrgmt: resourceFrgmt }) => {
   const { t } = useTranslation();
-  const { token } = theme.useToken();
 
   const resource = useFragment(
     graphql`
@@ -49,56 +46,43 @@ const StorageHostResourcePanel: React.FC<{
   };
 
   return (
-    <Flex direction="column" align="stretch">
-      <Card title={t("storageHost.Resource")}>
-        <Flex>
-          <Card bordered={false}>
-            <Meta title={t("storageHost.Usage")}></Meta>
-            <Flex style={{ margin: token.marginSM, gap: token.margin }}>
-              {storageUsage?.percent < 100 ? (
-                <Progress
-                  type="circle"
-                  size={120}
-                  strokeWidth={15}
-                  percent={storageUsage?.percent}
-                  strokeColor={usageIndicatorColor(storageUsage?.percent)}
-                ></Progress>
-              ) : (
-                <Progress
-                  type="circle"
-                  size={120}
-                  strokeWidth={15}
-                  percent={storageUsage?.percent}
-                  status="exception"
-                ></Progress>
-              )}
-              <Descriptions column={1} style={{ marginLeft: 20 }}>
-                <Descriptions.Item label={t("storageHost.Total")}>
-                  {_humanReadableDecimalSize(storageUsage?.capacity_bytes)}
-                </Descriptions.Item>
-                <Descriptions.Item label={t("storageHost.Used")}>
-                  {_humanReadableDecimalSize(storageUsage?.used_bytes)}
-                </Descriptions.Item>
-              </Descriptions>
-            </Flex>
-          </Card>
-          <Card bordered={false}>
-            <Meta title={t("storageHost.Detail")}></Meta>
-            <Descriptions column={1} style={{ marginTop: 20 }}>
-              <Descriptions.Item label={t("agent.Endpoint")}>
-                {resource?.path}
-              </Descriptions.Item>
-              <Descriptions.Item label={t("agent.BackendType")}>
-                {resource?.backend}
-              </Descriptions.Item>
-              <Descriptions.Item label={t("agent.Capabilities")}>
-                {resource?.capabilities?.join(",")}
-              </Descriptions.Item>
-            </Descriptions>
-          </Card>
-        </Flex>
-      </Card>
-    </Flex>
+    <Descriptions size="small" bordered column={3}>
+      <Descriptions.Item label={t("storageHost.Usage")} span={3}>
+        {storageUsage?.percent < 100 ? (
+          <Progress
+            size={[200, 15]}
+            percent={storageUsage?.percent}
+            strokeColor={usageIndicatorColor(storageUsage?.percent)}
+          ></Progress>
+        ) : (
+          <Progress
+            size={[200, 15]}
+            percent={storageUsage?.percent}
+            status="exception"
+          ></Progress>
+        )}
+        <Typography.Text type="secondary">
+          {t("storageHost.Used")}:{" "}
+        </Typography.Text>
+        {_humanReadableDecimalSize(storageUsage?.used_bytes)}
+        <Typography.Text type="secondary">{" / "}</Typography.Text>
+        <Typography.Text type="secondary">
+          {t("storageHost.Total")}:{" "}
+        </Typography.Text>
+        {_humanReadableDecimalSize(storageUsage?.capacity_bytes)}
+      </Descriptions.Item>
+      <Descriptions.Item label={t("agent.Endpoint")}>
+        {resource?.path}
+      </Descriptions.Item>
+      <Descriptions.Item label={t("agent.BackendType")}>
+        {resource?.backend}
+      </Descriptions.Item>
+      <Descriptions.Item label={t("agent.Capabilities")}>
+        {_.map(resource?.capabilities, (cap) => (
+          <Tag key={cap}>{cap}</Tag>
+        ))}
+      </Descriptions.Item>
+    </Descriptions>
   );
 };
 

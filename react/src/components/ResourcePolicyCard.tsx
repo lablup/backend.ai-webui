@@ -9,7 +9,6 @@ import {
   Card,
   CardProps,
   Descriptions,
-  Empty,
   Modal,
   message,
   theme,
@@ -169,9 +168,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
       <Card
         extra={
           project_resource_policy || user_resource_policy ? (
-            <Flex gap={token.marginSM}>
+            <Flex gap={token.marginXS}>
               <Button
                 icon={<EditFilled />}
+                type="text"
                 onClick={() => {
                   project_resource_policy
                     ? toggleProjectResourcePolicySettingModal()
@@ -181,6 +181,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 {t("button.Edit")}
               </Button>
               <Button
+                type="text"
                 icon={<CloseOutlined />}
                 danger
                 onClick={() => confirmUnsetResourcePolicy()}
@@ -191,12 +192,12 @@ const ResourcePolicyCard: React.FC<Props> = ({
           ) : null
         }
         title={t("storageHost.ResourcePolicy")}
-        bordered={false}
+        // bordered={false}
         headStyle={{ borderBottom: "none" }}
         style={{ marginBottom: 10 }}
       >
-        <Descriptions>
-          {project_resource_policy || user_resource_policy ? (
+        {project_resource_policy || user_resource_policy ? (
+          <Descriptions size="small">
             <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
               {project_resource_policy
                 ? project_resource_policy &&
@@ -212,18 +213,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
                   )
                 : "-"}
             </Descriptions.Item>
-          ) : (
-            <Descriptions.Item>
-              <Empty
-                style={{ width: "100%" }}
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={
-                  <div>{t("storageHost.quotaSettings.SelectFirst")}</div>
-                }
-              />
-            </Descriptions.Item>
-          )}
-        </Descriptions>
+          </Descriptions>
+        ) : null}
       </Card>
       <ProjectResourcePolicySettingModal
         open={visibleProjectResourcePolicySettingModal}
