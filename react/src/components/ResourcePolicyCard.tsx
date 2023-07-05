@@ -216,13 +216,13 @@ const ResourcePolicyCard: React.FC<Props> = ({
                   ? _humanReadableDecimalSize(
                       project_resource_policy?.max_vfolder_size
                     )
-                  : t("resourcePolicy.Unlimited")
+                  : "-"
                 : user_resource_policy &&
                   user_resource_policy?.max_vfolder_size !== -1
                 ? _humanReadableDecimalSize(
                     user_resource_policy?.max_vfolder_size
                   )
-                : t("resourcePolicy.Unlimited")}
+                : "-"}
             </Descriptions.Item>
           ) : (
             <Descriptions.Item>

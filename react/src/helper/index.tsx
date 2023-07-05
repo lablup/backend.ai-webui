@@ -74,7 +74,7 @@ export const GBToBytes = (value = 0) => {
 export const bytesToGB = (
   bytes: number,
   decimalPoint = 2,
-  nullStr: string = ""
+  nullStr: string = "-"
 ) => {
   if (bytes === null || bytes === undefined) return nullStr;
   if (!bytes) return bytes;
