@@ -11,12 +11,14 @@ import {
   Popconfirm,
   message,
   Empty,
+  theme,
 } from "antd";
-import { EditFilled, DeleteFilled, PlusOutlined } from "@ant-design/icons";
+import { EditFilled, PlusOutlined, UndoOutlined } from "@ant-design/icons";
 
 import { useTranslation } from "react-i18next";
 import { bytesToGB } from "../helper/index";
 import { QuotaScopeCardFragment$key } from "./__generated__/QuotaScopeCardFragment.graphql";
+import Flex from "./Flex";
 
 interface Props extends CardProps {
   quotaScopeFrgmt: QuotaScopeCardFragment$key | null;
@@ -30,7 +32,7 @@ const QuotaScopeCard: React.FC<Props> = ({
   ...props
 }) => {
   const { t } = useTranslation();
-
+  const { token } = theme.useToken();
   const quota_scope = useFragment(
     graphql`
       fragment QuotaScopeCardFragment on QuotaScope {
@@ -103,9 +105,10 @@ const QuotaScopeCard: React.FC<Props> = ({
     <>
       <Card bordered={false}>
         <Table
+          bordered
           columns={[
             {
-              title: "ID",
+              title: t("storageHost.quotaSettings.QuotaScopeId"),
               dataIndex: "quota_scope_id",
               key: "quota_scope_id",
               render: (value) => <code>{value}</code>,
@@ -126,9 +129,8 @@ const QuotaScopeCard: React.FC<Props> = ({
               title: t("general.Control"),
               key: "control",
               render: () => (
-                <>
+                <Flex gap={token.marginSM}>
                   <Button
-                    type="text"
                     icon={<EditFilled />}
                     onClick={() => onClickEdit && onClickEdit()}
                   >
@@ -164,12 +166,12 @@ const QuotaScopeCard: React.FC<Props> = ({
                     <Button
                       loading={isInFlightCommitUnsetQuotaScope}
                       danger
-                      icon={<DeleteFilled />}
+                      icon={<UndoOutlined />}
                     >
                       {t("button.Unset")}
                     </Button>
                   </Popconfirm>
-                </>
+                </Flex>
               ),
             },
           ]}
