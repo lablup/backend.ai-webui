@@ -596,6 +596,10 @@ class Client {
     if (this.isManagerVersionCompatibleWith('23.03')) {
       this._features['inference-workload'] = true;
       this._features['local-vscode-remote-connection'] = true;
+      this._features['display-allocated-shmem'] = true;
+    }
+    if (this.isManagerVersionCompatibleWith('23.03.3')) {
+      this._features['sftp-scaling-group'] = true;
     }
   }
 
@@ -892,6 +896,9 @@ class Client {
       if (resources['atom.device']) {
         config['atom.device'] = parseInt(resources['atom.device']);
       }
+      if (resources['warboy.device']) {
+        config['warboy.device'] = parseInt(resources['warboy.device']);
+      }
       if (resources['cluster_size']) {
         params['cluster_size'] = resources['cluster_size'];
       }
@@ -1069,6 +1076,17 @@ class Client {
     if (ownerKey != null) {
       queryString = `${queryString}?owner_access_key=${ownerKey}`;
     }
+    let rqst = this.newSignedRequest('GET', queryString, null, null);
+    return this._wrapWithPromise(rqst);
+  }
+
+  /**
+   * Get the IP or URL that use to access publicly
+   * 
+   * @param {string} sessionId - the sessionId given when created
+   */
+  async get_direct_access_info(sessionId) : Promise<any> {
+    let queryString = `${this.kernelPrefix}/${sessionId}/direct-access-info`;
     let rqst = this.newSignedRequest('GET', queryString, null, null);
     return this._wrapWithPromise(rqst);
   }
@@ -1459,10 +1477,19 @@ class Client {
     let i = 0;
     while (i < strBytes.length) {
       const byte1 = strBytes[i++];
-      const byte2 = i < strBytes.length ? strBytes[i++] : 0;
-      const byte3 = i < strBytes.length ? strBytes[i++] : 0;
-      const triplet = (byte1 << 16) + (byte2 << 8) + byte3;
-      strBase64 += charset.charAt((triplet >> 18) & 0x3F) + charset.charAt((triplet >> 12) & 0x3F) + charset.charAt((triplet >> 6) & 0x3F) + charset.charAt(triplet & 0x3F);
+      const byte2 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const byte3 = (i < strBytes.length) ? strBytes[i++] : -1;
+      const triplet = (
+        (byte1 << 16) +
+        ((byte2 != -1 ? byte2 : 0) << 8) +
+        (byte3 != -1 ? byte3 : 0)
+      );
+      strBase64 += (
+        charset.charAt((triplet >> 18) & 0x3F) +
+        charset.charAt((triplet >> 12) & 0x3F) +
+        charset.charAt(byte2 != -1 ? (triplet >> 6) & 0x3F : 64) +
+        charset.charAt(byte3 != -1 ? triplet & 0x3F : 64)
+      );
     }
     return strBase64;
   }
@@ -2358,7 +2385,7 @@ class StorageProxy {
    * Detail of specific storage proxy / volume.
    *
    * @param {string} host - Virtual folder host.
-   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'capabilities'.
+   * @param {array} fields - Fields to query. Queryable fields are:  'id', 'backend', 'fsprefix', 'capabilities'.
    */
   async detail(host: string = '', fields = ['id', 'backend', 'path', 'fsprefix', 'capabilities']) : Promise<any> {
     let q = `query($vfolder_host: String!) {` +
@@ -3178,6 +3205,9 @@ class Resources {
     this.resources['atom.device'] = {};
     this.resources['atom.device'].total = 0;
     this.resources['atom.device'].used = 0;
+    this.resources['warboy.device'] = {};
+    this.resources['warboy.device'].total = 0;
+    this.resources['warboy.device'].used = 0;
 
     this.resources.agents = {};
     this.resources.agents.total = 0;
@@ -3258,6 +3288,12 @@ class Resources {
           if ('atom.device' in occupied_slots) {
             this.resources['atom.device'].used = parseInt(this.resources['atom.device'].used) + Math.floor(Number(occupied_slots['atom.device']));
           }
+          if ('warboy.device' in available_slots) {
+            this.resources['warboy.device'].total = parseInt(this.resources['warboy.device'].total) + Math.floor(Number(available_slots['warboy.device']));
+          }
+          if ('warboy.device' in occupied_slots) {
+            this.resources['warboy.device'].used = parseInt(this.resources['warboy.device'].used) + Math.floor(Number(occupied_slots['warboy.device']));
+          }
 
           if (isNaN(this.resources.cpu.used)) {
             this.resources.cpu.used = 0;
@@ -3294,7 +3330,9 @@ class Resources {
    */
   async user_stats() : Promise<any> {
     const rqst = this.client.newSignedRequest('GET', '/resource/stats/user/month', null);
-    return this.client._wrapWithPromise(rqst);
+    // return this.client._wrapWithPromise(rqst);
+    // FIXME: temporally use hardcoded timeout value (10sec) for preventing timeout error on fetching data
+    return this.client._wrapWithPromise(rqst, false, null, 10 * 1000);
   }
 }
 

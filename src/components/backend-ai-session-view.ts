@@ -60,6 +60,7 @@ export default class BackendAISessionView extends BackendAIPage {
   @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
+  @property({type: Boolean}) enableSFTPSession = false;
   @property({type: String}) filterAccessKey = '';
   @property({type: String}) _connectionMode = 'API';
   @property({type: Object}) _defaultFileName = '';
@@ -211,6 +212,7 @@ export default class BackendAISessionView extends BackendAIPage {
 
     const _init = () => {
       this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+      this.enableSFTPSession = globalThis.backendaiclient.supports('sftp-scaling-group');
       this.resourceMonitor.setAttribute('active', 'true');
       this.runningJobs.setAttribute('active', 'true');
       this._status = 'active';
@@ -420,6 +422,9 @@ export default class BackendAISessionView extends BackendAIPage {
             if (occupiedSlots['atom.device']) {
               exportListItem.atom_device = occupiedSlots['atom.device'];
             }
+            if (occupiedSlots['warboy.device']) {
+              exportListItem.warboy_device = occupiedSlots['warboy.device'];
+            }
           }
           const liveStat = container.live_stat ? JSON.parse(container.live_stat) : null;
           if (liveStat) {
@@ -494,6 +499,9 @@ export default class BackendAISessionView extends BackendAIPage {
                   ${this.enableInferenceWorkload ? html`
                   <mwc-tab title="inference" label="${_t('session.Inference')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   `:html``}
+                  ${this.enableSFTPSession ? html`
+                  <mwc-tab title="system" label="${_t('session.System')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                  `:html``}
                   <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                 </mwc-tab-bar>
@@ -529,6 +537,10 @@ export default class BackendAISessionView extends BackendAIPage {
           ${this.enableInferenceWorkload ? html`
           <div id="inference-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="inference-jobs" condition="inference"></backend-ai-session-list>
+          </div>`:html``}
+          ${this.enableSFTPSession ? html`
+          <div id="system-lists" class="tab-content" style="display:none;">
+            <backend-ai-session-list id="system-jobs" condition="system"></backend-ai-session-list>
           </div>`:html``}
           <div id="finished-lists" class="tab-content" style="display:none;">
             <backend-ai-session-list id="finished-jobs" condition="finished"></backend-ai-session-list>

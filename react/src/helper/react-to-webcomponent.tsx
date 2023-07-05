@@ -4,12 +4,12 @@ import ReactDOM from "react-dom/client";
 export interface ReactWebComponentProps {
   value?: string;
   styles?: string;
-  dispatchEvent?: (name: string, detail: any) => void;
+  dispatchEvent: (name: string, detail: any) => void;
   shadowRoot: ShadowRoot;
   children?: React.ReactNode;
 }
 
-export default function (
+export default function reactToWebComponent(
   ReactComponent:
     | React.FC<ReactWebComponentProps>
     | React.ComponentClass<ReactWebComponentProps>
@@ -55,9 +55,9 @@ export default function (
     }
 
     connectedCallback() {
-      const title = this.getAttribute("value") || "";
+      const value = this.getAttribute("value") || "";
       const styles = this.getAttribute("styles") || "";
-      this.reactRoot.render(this.createReactElement(title, styles));
+      this.reactRoot.render(this.createReactElement(value, styles));
     }
 
     disconnectedCallback() {
@@ -70,7 +70,7 @@ export default function (
         this.reactRoot.render(
           this.createReactElement(newValue, this.getAttribute("styles") || "")
         );
-      } else if (name == "styles") {
+      } else if (name === "styles") {
         this.reactRoot.render(
           this.createReactElement(this.getAttribute("value") || "", newValue)
         );

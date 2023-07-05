@@ -1,5 +1,38 @@
 # Changelog
 
+## v22.09.20 (25/05/2023)
+## What's Changed
+* hotfix: remove inline styling applied in force terminate button by @lizable in https://github.com/lablup/backend.ai-webui/pull/1680
+* Support local vscode using remote ssh mode to session container by @studioego in https://github.com/lablup/backend.ai-webui/pull/1487
+* fix: import `wl-textfield` to display env list to apply in session launcher by @lizable in https://github.com/lablup/backend.ai-webui/pull/1684
+* fix: show correct msg when vfolder sharing fails by @lizable in https://github.com/lablup/backend.ai-webui/pull/1673
+* fix: unable to launch VSCode in web version by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1685
+* add: type annotations for ESM SDK by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1480
+* refactor: remove innerHTML-based content rendering on session list status dialog by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1675
+* ci: Add size label automation actions job by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/1688
+* feat: add endpoint validation by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1689
+* feat: add sorting button to project selector by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1687
+* feat: show agent id to session list if `hideAgent` is false by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1691
+* add: event-driven metadata reload by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1693
+* fix: regression of manually setting HPC optimization value in session launcher by @lizable in https://github.com/lablup/backend.ai-webui/pull/1697
+* Revert "fix: regression of manually setting HPC optimization value in session launcher" by @lizable in https://github.com/lablup/backend.ai-webui/pull/1698
+* fix: regression of session creation on disabled openmp optimization by @lizable in https://github.com/lablup/backend.ai-webui/pull/1699
+* feature: rename usage tab and add info dialog in statistics page by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1692
+* feature: folder upload  by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1690
+* fix: utilization values in idle checker pop-up are not updated after the initial rendering by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1705
+* feat: show idle check information based on only applied configurations#361 by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1703
+* feat: support i18n ally extension for VS Code by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1704
+* hotfix: Disable the app icon if the user is not the owner of the session. by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1711
+* Hotfix/manual image input is not displayed on desktop app by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1709
+* feat: configuration to use react component in web component by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1646
+* feat: display allocated shared memory in session config column by @lizable in https://github.com/lablup/backend.ai-webui/pull/1710
+* feat: set `allowed_session_types` default value and make required. by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1701
+* feat: connect ssh / sftp in filebrowser dialog by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1694
+* feat: Support max_password_age by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1716
+* feat: new `SYSTEM` tab for session list by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1720
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.19...v22.09.20
+
 ## v22.09.19 (03/04/2023)
 ## What's Changed
 * feat: add support for setting `inference` as allowed session type by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1668

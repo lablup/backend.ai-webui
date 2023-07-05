@@ -1,5 +1,5 @@
 import { theme } from "antd";
-import React, { CSSProperties, PropsWithChildren } from "react";
+import React, { PropsWithChildren } from "react";
 
 interface FlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "dir">,
@@ -25,7 +25,7 @@ const Flex: React.FC<FlexProps> = ({
   const { token } = theme.useToken();
 
   const transferConst = [justify, align];
-  const transferConstStyle = transferConst.map((el) => {
+  const transferConstStyle = transferConst?.map((el) => {
     let tempTxt;
     switch (el) {
       case "start":
@@ -47,7 +47,7 @@ const Flex: React.FC<FlexProps> = ({
 
     return tempTxt;
   });
-  const flexStyle: CSSProperties = {
+  const flexStyle: React.CSSProperties = {
     display: "flex",
     flexDirection: direction,
     flexWrap: wrap,

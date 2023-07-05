@@ -24,6 +24,10 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
+//@ts-ignore for react-based component
+globalThis.BackendAIClient = ai.backend.Client;
+//@ts-ignore for react-based component
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 import {
   IronFlex,
@@ -84,6 +88,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) blockMessage = '';
   @property({type: String}) appDownloadUrl;
   @property({type: String}) connection_mode = 'SESSION' as ConnectionMode;
+  @property({type: String}) systemSSHImage = '';
   @property({type: Number}) login_attempt_limit = 500;
   @property({type: Number}) login_block_time = 180;
   @property({type: String}) user;
@@ -123,6 +128,8 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: Boolean}) otpRequired = false;
   @property({type: String}) otp;
+  @property({type: Boolean}) needToResetPassword = false;
+  @property({type: Boolean}) directoryBasedUsage = false;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -712,6 +719,14 @@ export default class BackendAILogin extends BackendAIPage {
         value: (generalConfig?.appDownloadUrl),
       } as ConfigValueObject) as string;
 
+    // System role ssh image
+    this.systemSSHImage = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'string',
+        defaultValue: '',
+        value: (generalConfig?.systemSSHImage),
+      } as ConfigValueObject) as string;
+
     // Enable hide agent flag
     this.hideAgents = this._getConfigValueByExists(generalConfig,
       {
@@ -757,6 +772,14 @@ export default class BackendAILogin extends BackendAIPage {
          value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
        } as ConfigValueObject) as ConnectionMode;
     }
+
+    // Enable directory based usage flag
+    this.directoryBasedUsage = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.directoryBasedUsage),
+      } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -868,6 +891,11 @@ export default class BackendAILogin extends BackendAIPage {
   open() {
     if (this.loginPanel.open !== true) {
       this.loginPanel.show();
+      const urlParams = new URLSearchParams(window.location.search);
+      const tokenParam = urlParams.get("token");
+      if (this.signup_support && this.api_endpoint !== '' && tokenParam !== undefined && tokenParam !== null) {
+        this._showSignupDialog(tokenParam);
+      }
     }
     if (this.blockPanel.open === true) {
       this.blockPanel.hide();
@@ -1039,7 +1067,7 @@ export default class BackendAILogin extends BackendAIPage {
   /**
    * Show signup dialog. And notify message if API Endpoint is empty.
    * */
-  private _showSignupDialog() {
+  private _showSignupDialog(token?: string) {
     this.api_endpoint = this.apiEndpointInput.value.replace(/\/+$/, '') || this.api_endpoint.trim();
     if (this.api_endpoint === '') {
       this.notification.text = _text('error.APIEndpointIsEmpty');
@@ -1049,7 +1077,7 @@ export default class BackendAILogin extends BackendAIPage {
     const signupDialog = this.shadowRoot?.querySelector('#signup-dialog') as BackendAISignup;
     signupDialog.endpoint = this.api_endpoint;
     signupDialog.allowSignupWithoutConfirmation = this.allowSignupWithoutConfirmation;
-    signupDialog.open();
+    signupDialog.open(token);
   }
 
   private _showChangePasswordEmailDialog() {
@@ -1241,6 +1269,8 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
+            } else if (response.fail_reason.indexOf('Password expired on ') === 0) {
+              this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
               this.notification.show();
@@ -1466,9 +1496,11 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.singleSignOnVendors = this.singleSignOnVendors;
       globalThis.backendaiclient._config.enableContainerCommit = this._enableContainerCommit;
       globalThis.backendaiclient._config.appDownloadUrl = this.appDownloadUrl;
+      globalThis.backendaiclient._config.systemSSHImage = this.systemSSHImage;
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
+      globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1717,6 +1749,23 @@ export default class BackendAILogin extends BackendAIPage {
               </fieldset>
             </form>
           </div>
+          <backend-ai-react-reset-password-required-modal 
+            value="${JSON.stringify({
+              open: this.needToResetPassword,
+              username: this.user_id,
+              currentPassword: this.password,
+              api_endpoint: this.api_endpoint,
+            })}" 
+            @cancel="${(e)=> this.needToResetPassword = false}" 
+            @ok="${(e)=> {
+              this.needToResetPassword = false;
+              this.passwordInput.value = '';
+              
+              this.notification.text = _text('login.PasswordChanged');
+              this.notification.show();
+            }}"
+          >
+          </backend-ai-react-reset-password-required-modal>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="signout-panel" fixed backdrop blockscrolling persistent disablefocustrap>
