@@ -8,7 +8,6 @@ import { theme, Progress, Card, Descriptions } from "antd";
 
 import { _humanReadableDecimalSize } from "../helper/index";
 import Flex from "./Flex";
-import { useWebComponentInfo } from "./DefaultProviders";
 
 const { Meta } = Card;
 
@@ -25,8 +24,6 @@ const StorageHostResourcePanel: React.FC<{
 }> = ({ storageVolumeFrgmt: resourceFrgmt }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
-
-  const { moveTo } = useWebComponentInfo();
 
   const resource = useFragment(
     graphql`
