@@ -150,6 +150,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                 onSelectDomain={(domain: any) => {
                   startTransition(() => {
                     setSelectedDomainName(domain?.domainName);
+                    setSelectedProjectId(undefined);
+                    setSelectedProjectResourcePolicy(undefined);
                   });
                 }}
               />
