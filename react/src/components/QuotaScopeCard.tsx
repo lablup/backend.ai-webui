@@ -13,7 +13,7 @@ import {
   Empty,
   theme,
 } from "antd";
-import { EditFilled, PlusOutlined, UndoOutlined } from "@ant-design/icons";
+import { EditFilled, PlusOutlined, CloseOutlined } from "@ant-design/icons";
 
 import { useTranslation } from "react-i18next";
 import { bytesToGB } from "../helper/index";
@@ -166,7 +166,7 @@ const QuotaScopeCard: React.FC<Props> = ({
                     <Button
                       loading={isInFlightCommitUnsetQuotaScope}
                       danger
-                      icon={<UndoOutlined />}
+                      icon={<CloseOutlined />}
                     >
                       {t("button.Unset")}
                     </Button>
