@@ -475,6 +475,7 @@
     "ResourcePolicySuccessfullyDeleted": "Resource Policy successfully deleted",
     "QuotaDoesNotSupported": "This storage host does not support quota.",
     "quotaSettings": {
+      "QuotaScopeId": "Quota Scope ID",
       "QuotaSettings": "Quota Settings",
       "Type": "Type",
       "Host": "Host",

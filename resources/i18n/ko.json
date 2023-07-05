@@ -468,6 +468,7 @@
     "ResourcePolicySuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "QuotaDoesNotSupported": "이 스토리지 호스트는 가용량 설정을 지원하지 않습니다.",
     "quotaSettings": {
+      "QuotaScopeId": "가용량 범위 ID",
       "QuotaSettings": "가용량 설정",
       "Type": "유형",
       "Host": "호스트",
