@@ -17,6 +17,15 @@ export const BackendAIWebUIStyles = [
       background-attachment: fixed;
       background-position: top left;
       -webkit-user-select: none !important;
+    }
+
+    .loading-background-drag-area {
+      position: absolute;
+      background-color: transparent;
+      top:0;
+      left:0;
+      width:100%;
+      height: 80px;
       -webkit-app-region: drag !important;
     }
 
