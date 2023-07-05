@@ -4,7 +4,6 @@ import { useFragment, useMutation } from "react-relay";
 import { QuotaScopeCardUnsetMutation } from "./__generated__/QuotaScopeCardUnsetMutation.graphql";
 
 import {
-  Card,
   CardProps,
   Table,
   Button,
@@ -102,89 +101,85 @@ const QuotaScopeCard: React.FC<Props> = ({
   );
 
   return (
-    <>
-      <Card bordered={false}>
-        <Table
-          bordered
-          columns={[
-            {
-              title: t("storageHost.quotaSettings.QuotaScopeId"),
-              dataIndex: "quota_scope_id",
-              key: "quota_scope_id",
-              render: (value) => <code>{value}</code>,
-            },
-            {
-              title: t("storageHost.HardLimit") + " (GB)",
-              dataIndex: ["details", "hard_limit_bytes"],
-              key: "hard_limit_bytes",
-              render: (value) => <>{bytesToGB(value)}</>,
-            },
-            {
-              title: t("storageHost.Usage") + " (GB)",
-              dataIndex: ["details", "usage_bytes"],
-              key: "usage_bytes",
-              render: (value) => <>{bytesToGB(value)}</>,
-            },
-            {
-              title: t("general.Control"),
-              key: "control",
-              render: () => (
-                <Flex gap={token.marginSM}>
-                  <Button
-                    icon={<EditFilled />}
-                    onClick={() => onClickEdit && onClickEdit()}
-                  >
-                    {t("button.Edit")}
-                  </Button>
-                  <Popconfirm
-                    title={t("storageHost.quotaSettings.UnsetCustomSettings")}
-                    description={t(
-                      "storageHost.quotaSettings.ConfirmUnsetCustomQuota"
-                    )}
-                    placement="bottom"
-                    onConfirm={() => {
-                      if (quota_scope) {
-                        commitUnsetQuotaScope({
-                          variables: {
-                            quota_scope_id: quota_scope.quota_scope_id,
-                            storage_host_name: quota_scope.storage_host_name,
-                          },
-                          onCompleted() {
-                            message.success(
-                              t(
-                                "storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"
-                              )
-                            );
-                          },
-                          onError(error) {
-                            message.error(error?.message);
-                          },
-                        });
-                      }
-                    }}
-                  >
-                    <Button
-                      loading={isInFlightCommitUnsetQuotaScope}
-                      danger
-                      icon={<CloseOutlined />}
-                    >
-                      {t("button.Unset")}
-                    </Button>
-                  </Popconfirm>
-                </Flex>
-              ),
-            },
-          ]}
-          dataSource={quota_scope ? [quota_scope] : []}
-          locale={{
-            emptyText: showAddButtonWhenEmpty
-              ? addQuotaConfigsWhenEmpty
-              : selectProjectOrUserFirst,
-          }}
-          pagination={false}
-        />
-      </Card>
-    </>
+    <Table
+      bordered
+      columns={[
+        {
+          title: t("storageHost.quotaSettings.QuotaScopeId"),
+          dataIndex: "quota_scope_id",
+          key: "quota_scope_id",
+          render: (value) => <code>{value}</code>,
+        },
+        {
+          title: t("storageHost.HardLimit") + " (GB)",
+          dataIndex: ["details", "hard_limit_bytes"],
+          key: "hard_limit_bytes",
+          render: (value) => <>{bytesToGB(value)}</>,
+        },
+        {
+          title: t("storageHost.Usage") + " (GB)",
+          dataIndex: ["details", "usage_bytes"],
+          key: "usage_bytes",
+          render: (value) => <>{bytesToGB(value)}</>,
+        },
+        {
+          title: t("general.Control"),
+          key: "control",
+          render: () => (
+            <Flex gap={token.marginSM}>
+              <Button
+                icon={<EditFilled />}
+                onClick={() => onClickEdit && onClickEdit()}
+              >
+                {t("button.Edit")}
+              </Button>
+              <Popconfirm
+                title={t("storageHost.quotaSettings.UnsetCustomSettings")}
+                description={t(
+                  "storageHost.quotaSettings.ConfirmUnsetCustomQuota"
+                )}
+                placement="bottom"
+                onConfirm={() => {
+                  if (quota_scope) {
+                    commitUnsetQuotaScope({
+                      variables: {
+                        quota_scope_id: quota_scope.quota_scope_id,
+                        storage_host_name: quota_scope.storage_host_name,
+                      },
+                      onCompleted() {
+                        message.success(
+                          t(
+                            "storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated"
+                          )
+                        );
+                      },
+                      onError(error) {
+                        message.error(error?.message);
+                      },
+                    });
+                  }
+                }}
+              >
+                <Button
+                  loading={isInFlightCommitUnsetQuotaScope}
+                  danger
+                  icon={<CloseOutlined />}
+                >
+                  {t("button.Unset")}
+                </Button>
+              </Popconfirm>
+            </Flex>
+          ),
+        },
+      ]}
+      dataSource={quota_scope ? [quota_scope] : []}
+      locale={{
+        emptyText: showAddButtonWhenEmpty
+          ? addQuotaConfigsWhenEmpty
+          : selectProjectOrUserFirst,
+      }}
+      pagination={false}
+    />
   );
 };
 
