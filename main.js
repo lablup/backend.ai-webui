@@ -19,6 +19,7 @@ const url = require('url');
 const path = require('path');
 const toml = require('markty-toml');
 const nfs = require('fs');
+const { object } = require('underscore');
 const npjoin = require('path').join;
 const BASE_DIR = __dirname;
 let ProxyManager; let versions; let es6Path; let electronPath; let mainIndex;
@@ -35,6 +36,7 @@ if (process.env.serveMode == 'dev') {
   electronPath = npjoin(__dirname);
   mainIndex = 'app/index.html';
 }
+
 const windowWidth = 1280;
 const windowHeight = 970;
 
@@ -410,45 +412,51 @@ function createWindow() {
     devtools = null;
   });
 
-  mainWindow.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures, mainWindow);
+  mainWindow.webContents.setWindowOpenHandler((details) => {
+    return newPopupWindow(details);
   });
+
 }
 
-function newPopupWindow(event, url, frameName, disposition, options, additionalFeatures) {
-  event.preventDefault();
-  Object.assign(options, {
+function newPopupWindow(details) {  
+  // let disposition = details.disposition;
+  let options = {
     frame: true,
     show: false,
     backgroundColor: '#EFEFEF',
     // parent: win,
-    titleBarStyle: '',
+    titleBarStyle: 'default',
     width: windowWidth,
     height: windowHeight,
-    closable: true
-  });
+    closable: true,
+    webPreferences: {}
+  };
   Object.assign(options.webPreferences, {
-    preload: '',
-    isBrowserView: false,
     javascript: true
   });
-  if (frameName === 'modal') {
+  if (details.frameName === 'modal') {
     options.modal = true;
   }
-  event.newGuest = new BrowserWindow(options);
-  event.newGuest.once('ready-to-show', () => {
-    event.newGuest.show();
+  newGuest = new BrowserWindow(options);
+  newGuest.once('ready-to-show', () => {
+    newGuest.show();
   });
-  event.newGuest.loadURL(url);
-  event.newGuest.webContents.on('new-window', (event, url, frameName, disposition, options, additionalFeatures) => {
-    newPopupWindow(event, url, frameName, disposition, options, additionalFeatures);
+  newGuest.loadURL(details.url);
+  if (debugMode === true) {
+    devtools = new BrowserWindow();
+    newGuest.webContents.setDevToolsWebContents(devtools.webContents);
+    newGuest.webContents.openDevTools({mode: 'detach'});
+  }
+  newGuest.webContents.setWindowOpenHandler((details) => {
+    return newPopupWindow(details);
   });
-  event.newGuest.on('close', (e) => {
+  newGuest.on('close', (e) => {
     const c = BrowserWindow.getFocusedWindow();
     if (c !== null) {
       c.destroy();
     }
   });
+  return { action: 'deny'};
 }
 
 function setSameSitePolicy(){

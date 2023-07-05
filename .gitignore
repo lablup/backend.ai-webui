@@ -98,6 +98,7 @@ src/lib/webcomponents-loader.js
 **/*.html-E
 **/*.js-E
 **/*.ts-E
+**/*.json-E
 # Documentation
 
 docs/
@@ -125,5 +126,5 @@ src/plugins
 src/plugins/*
 
 
-# 
+#
 !.vscode/i18n-ally-*
