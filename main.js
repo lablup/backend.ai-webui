@@ -341,6 +341,7 @@ function createWindow() {
   // and load the index.html of the app.
   if (process.env.liveDebugMode === true) {
     // Load HTML into new Window (dynamic serving for develop)
+    console.log("Running on live debug mode...");
     mainWindow.loadURL(url.format({
       pathname: '127.0.0.1:9081',
       protocol: 'http',
@@ -349,6 +350,7 @@ function createWindow() {
   } else {
     // Load HTML into new Window (file-based serving)
     nfs.readFile(path.join(es6Path, 'config.toml'), 'utf-8', (err, data) => {
+      console.log("Running on build-resource debug mode...");
       if (err) {
         console.log('No configuration file found.');
         return;
@@ -418,7 +420,7 @@ function createWindow() {
 
 }
 
-function newPopupWindow(details) {  
+function newPopupWindow(details) {
   // let disposition = details.disposition;
   let options = {
     frame: true,
