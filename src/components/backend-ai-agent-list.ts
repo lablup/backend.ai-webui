@@ -313,9 +313,9 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].total_cuda_gpu_percent = (agents[objectKey].used_cuda_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda.shares' in available_slots) {
-              agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
+              agents[objectKey].cuda_fgpu_slots = parseFloat(available_slots['cuda.shares'])?.toFixed(2);
               if ('cuda.shares' in occupied_slots) {
-                agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+                agents[objectKey].used_cuda_fgpu_slots = parseFloat(occupied_slots['cuda.shares'])?.toFixed(2);
               } else {
                 agents[objectKey].used_cuda_fgpu_slots = 0;
               }
@@ -1311,7 +1311,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           </vaadin-grid-sort-column>
           <vaadin-grid-sort-column resizable path="first_contact" auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
+          <vaadin-grid-column resizable width="200px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable width="185px" header="${_t('agent.Utilization')}"
