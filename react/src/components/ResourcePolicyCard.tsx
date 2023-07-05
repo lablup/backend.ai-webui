@@ -16,7 +16,7 @@ import {
 } from "antd";
 import {
   EditFilled,
-  UndoOutlined,
+  CloseOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
@@ -181,7 +181,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 {t("button.Edit")}
               </Button>
               <Button
-                icon={<UndoOutlined />}
+                icon={<CloseOutlined />}
                 danger
                 onClick={() => confirmUnsetResourcePolicy()}
               >

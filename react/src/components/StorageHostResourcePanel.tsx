@@ -55,7 +55,7 @@ const StorageHostResourcePanel: React.FC<{
           <Card bordered={false}>
             <Meta title={t("storageHost.Usage")}></Meta>
             <Flex style={{ margin: token.marginSM, gap: token.margin }}>
-              {storageUsage.percent < 100 ? (
+              {storageUsage?.percent < 100 ? (
                 <Progress
                   type="circle"
                   size={120}
@@ -74,10 +74,10 @@ const StorageHostResourcePanel: React.FC<{
               )}
               <Descriptions column={1} style={{ marginLeft: 20 }}>
                 <Descriptions.Item label={t("storageHost.Total")}>
-                  {_humanReadableDecimalSize(storageUsage?.used_bytes)}
+                  {_humanReadableDecimalSize(storageUsage?.capacity_bytes)}
                 </Descriptions.Item>
                 <Descriptions.Item label={t("storageHost.Used")}>
-                  {_humanReadableDecimalSize(storageUsage?.capacity_bytes)}
+                  {_humanReadableDecimalSize(storageUsage?.used_bytes)}
                 </Descriptions.Item>
               </Descriptions>
             </Flex>
