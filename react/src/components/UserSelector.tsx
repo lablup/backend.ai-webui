@@ -36,7 +36,7 @@ const UserSelector: React.FC<Props> = ({
           items {
             id
             is_active
-            username
+            email
             resource_policy
           }
         }
@@ -45,7 +45,7 @@ const UserSelector: React.FC<Props> = ({
     {
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
-      filter: search?.length === 0 ? null : 'username ilike "%' + search + '%"',
+      filter: search?.length === 0 ? null : 'email ilike "%' + search + '%"',
     },
     {
       fetchPolicy: "store-and-network",
@@ -73,7 +73,7 @@ const UserSelector: React.FC<Props> = ({
             userId={user?.id}
             userResourcePolicy={user?.resource_policy}
           >
-            {user?.username}
+            {user?.email}
           </Select.Option>
         );
       })}
