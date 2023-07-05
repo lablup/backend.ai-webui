@@ -38,10 +38,12 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   );
 
   const [isPending, startTransition] = useTransition();
+  const currentDomain = useCurrentDomainValue();
   const [currentSettingType, setCurrentSettingType] =
     useState<QuotaScopeType>("user");
 
-  const [selectedDomainName, setSelectedDomainName] = useState<string>();
+  const [selectedDomainName, setSelectedDomainName] =
+    useState<string>(currentDomain);
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
   const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] =
     useState<string>();
@@ -58,8 +60,6 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
   const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
   const [fetchKey, updateFetchKey] = useUpdatableState("default");
-
-  const currentDomain = useCurrentDomainValue();
 
   const { project_resource_policy, user_resource_policy, quota_scope } =
     useLazyLoadQuery<StorageHostSettingsPanelQuery>(
