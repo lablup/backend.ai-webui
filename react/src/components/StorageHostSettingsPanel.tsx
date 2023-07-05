@@ -2,10 +2,11 @@ import React, { useState, useTransition } from "react";
 import { useTranslation } from "react-i18next";
 import { QuotaScopeType, addQuotaScopeTypePrefix } from "../helper/index";
 
-import { Card, Empty, Spin } from "antd";
+import { Card, Form, Spin } from "antd";
 
 import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
+import DomainSelector from "./DomainSelector";
 import UserSelector from "./UserSelector";
 import ResourcePolicyCard from "./ResourcePolicyCard";
 import QuotaScopeCard from "./QuotaScopeCard";
@@ -16,7 +17,7 @@ import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from "./__generated__
 import { StorageHostSettingsPanelQuery } from "./__generated__/StorageHostSettingsPanelQuery.graphql";
 import QuotaSettingModal from "./QuotaSettingModal";
 import { useToggle } from "ahooks";
-import { useUpdatableState } from "../hooks";
+import { useCurrentDomainValue, useUpdatableState } from "../hooks";
 
 interface StorageHostSettingsPanelProps {
   extraFetchKey?: string;
@@ -36,13 +37,13 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
     storageVolumeFrgmt
   );
 
-  const isQuotaSupported =
-    storageVolume?.capabilities?.includes("quota") ?? false;
-
   const [isPending, startTransition] = useTransition();
+  const currentDomain = useCurrentDomainValue();
   const [currentSettingType, setCurrentSettingType] =
     useState<QuotaScopeType>("user");
 
+  const [selectedDomainName, setSelectedDomainName] =
+    useState<string>(currentDomain);
   const [selectedProjectId, setSelectedProjectId] = useState<string>();
   const [selectedProjectResourcePolicy, setSelectedProjectResourcePolicy] =
     useState<string>();
@@ -140,23 +141,44 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
           });
         }}
       >
-        {isQuotaSupported ? (
-          <>
-            <Flex justify="between">
-              {currentSettingType === "project" ? (
-                <ProjectSelector
-                  style={{ width: "30vw", marginBottom: 10 }}
-                  value={selectedProjectId}
-                  onSelectProject={(project: any) => {
-                    startTransition(() => {
-                      setSelectedProjectId(project?.projectId);
-                      setSelectedProjectResourcePolicy(
-                        project?.projectResourcePolicy
-                      );
-                    });
-                  }}
-                />
-              ) : (
+        <Flex justify="between">
+          {currentSettingType === "project" ? (
+            <Flex style={{ marginBottom: 10 }}>
+              <Form layout="inline">
+                <Form.Item label={t("resourceGroup.Domain")}>
+                  <DomainSelector
+                    style={{ width: "20vw", marginRight: 10 }}
+                    value={selectedDomainName}
+                    onSelectDomain={(domain: any) => {
+                      startTransition(() => {
+                        setSelectedDomainName(domain?.domainName);
+                        setSelectedProjectId(undefined);
+                        setSelectedProjectResourcePolicy(undefined);
+                      });
+                    }}
+                  />
+                </Form.Item>
+                <Form.Item label={t("webui.menu.Project")}>
+                  <ProjectSelector
+                    style={{ width: "20vw" }}
+                    value={selectedProjectId}
+                    disabled={!selectedDomainName}
+                    domain={selectedDomainName || ""}
+                    onSelectProject={(project: any) => {
+                      startTransition(() => {
+                        setSelectedProjectId(project?.projectId);
+                        setSelectedProjectResourcePolicy(
+                          project?.projectResourcePolicy
+                        );
+                      });
+                    }}
+                  />
+                </Form.Item>
+              </Form>
+            </Flex>
+          ) : (
+            <Form layout="inline">
+              <Form.Item label={t("data.User")}>
                 <UserSelector
                   style={{ width: "30vw", marginBottom: 10 }}
                   value={selectedUserId}
@@ -167,56 +189,51 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                     });
                   }}
                 />
-              )}
-            </Flex>
-            <Spin spinning={isPending}>
-              <ResourcePolicyCard
-                projectResourcePolicyFrgmt={
-                  currentSettingType === "project"
-                    ? project_resource_policy || null
-                    : null
-                }
-                userResourcePolicyFrgmt={
-                  currentSettingType === "user"
-                    ? user_resource_policy || null
-                    : null
-                }
-                onChangePolicy={() => {
-                  startTransition(() => {
-                    updateFetchKey();
-                  });
-                }}
-              />
-              <QuotaScopeCard
-                quotaScopeFrgmt={quota_scope || null}
-                onClickEdit={() => {
-                  toggleQuotaSettingModal();
-                }}
-                showAddButtonWhenEmpty={
-                  (currentSettingType === "project" && !!selectedProjectId) ||
-                  (currentSettingType === "user" && !!selectedUserId)
-                }
-              />
-            </Spin>
-            <QuotaSettingModal
-              open={isOpenQuotaSettingModal}
-              quotaScopeFrgmt={quota_scope || null}
-              resourcePolicyMaxVFolderSize={
-                currentSettingType === "project"
-                  ? project_resource_policy?.max_vfolder_size
-                  : user_resource_policy?.max_vfolder_size
-              }
-              onRequestClose={() => {
-                toggleQuotaSettingModal();
-              }}
-            />
-          </>
-        ) : (
-          <Empty
-            image={Empty.PRESENTED_IMAGE_SIMPLE}
-            description={t("storageHost.QuotaDoesNotSupported")}
+              </Form.Item>
+            </Form>
+          )}
+        </Flex>
+        <Spin spinning={isPending}>
+          <ResourcePolicyCard
+            projectResourcePolicyFrgmt={
+              currentSettingType === "project"
+                ? project_resource_policy || null
+                : null
+            }
+            userResourcePolicyFrgmt={
+              currentSettingType === "user"
+                ? user_resource_policy || null
+                : null
+            }
+            onChangePolicy={() => {
+              startTransition(() => {
+                updateFetchKey();
+              });
+            }}
           />
-        )}
+          <QuotaScopeCard
+            quotaScopeFrgmt={quota_scope || null}
+            onClickEdit={() => {
+              toggleQuotaSettingModal();
+            }}
+            showAddButtonWhenEmpty={
+              (currentSettingType === "project" && !!selectedProjectId) ||
+              (currentSettingType === "user" && !!selectedUserId)
+            }
+          />
+        </Spin>
+        <QuotaSettingModal
+          open={isOpenQuotaSettingModal}
+          quotaScopeFrgmt={quota_scope || null}
+          resourcePolicyMaxVFolderSize={
+            currentSettingType === "project"
+              ? project_resource_policy?.max_vfolder_size
+              : user_resource_policy?.max_vfolder_size
+          }
+          onRequestClose={() => {
+            toggleQuotaSettingModal();
+          }}
+        />
       </Card>
     </Flex>
   );

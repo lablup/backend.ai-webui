@@ -5,18 +5,17 @@ import { ResourcePolicyCardModifyProjectMutation } from "./__generated__/Resourc
 import { ResourcePolicyCardModifyUserMutation } from "./__generated__/ResourcePolicyCardModifyUserMutation.graphql";
 
 import {
+  Button,
   Card,
   CardProps,
   Descriptions,
-  Dropdown,
-  Empty,
   Modal,
   message,
+  theme,
 } from "antd";
 import {
   EditFilled,
-  EllipsisOutlined,
-  UndoOutlined,
+  CloseOutlined,
   ExclamationCircleOutlined,
 } from "@ant-design/icons";
 
@@ -28,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { useToggle } from "ahooks";
 import { ResourcePolicyCard_project_resource_policy$key } from "./__generated__/ResourcePolicyCard_project_resource_policy.graphql";
 import { ResourcePolicyCard_user_resource_policy$key } from "./__generated__/ResourcePolicyCard_user_resource_policy.graphql";
+import Flex from "./Flex";
 
 interface Props extends CardProps {
   projectResourcePolicyFrgmt: ResourcePolicyCard_project_resource_policy$key | null;
@@ -41,6 +41,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
   ...props
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const [
     visibleProjectResourcePolicySettingModal,
@@ -167,48 +168,36 @@ const ResourcePolicyCard: React.FC<Props> = ({
       <Card
         extra={
           project_resource_policy || user_resource_policy ? (
-            <Dropdown
-              placement="bottomRight"
-              menu={{
-                items: [
-                  {
-                    key: "edit",
-                    label: t("button.Edit"),
-                    icon: <EditFilled />,
-                    onClick: () => {
-                      project_resource_policy
-                        ? toggleProjectResourcePolicySettingModal()
-                        : toggleUserResourcePolicySettingModal();
-                    },
-                  },
-                  // {
-                  //   key: "delete",
-                  //   label: t("button.Delete"),
-                  //   icon: <DeleteFilled />,
-                  //   danger: true,
-                  //   onClick: () => confirmDeleteResourcePolicy(),
-                  // },
-                  {
-                    key: "unset",
-                    label: t("button.Unset"),
-                    icon: <UndoOutlined />,
-                    danger: true,
-                    onClick: () => confirmUnsetResourcePolicy(),
-                  },
-                ],
-              }}
-            >
-              <EllipsisOutlined />
-            </Dropdown>
+            <Flex gap={token.marginXS}>
+              <Button
+                icon={<EditFilled />}
+                type="text"
+                onClick={() => {
+                  project_resource_policy
+                    ? toggleProjectResourcePolicySettingModal()
+                    : toggleUserResourcePolicySettingModal();
+                }}
+              >
+                {t("button.Edit")}
+              </Button>
+              <Button
+                type="text"
+                icon={<CloseOutlined />}
+                danger
+                onClick={() => confirmUnsetResourcePolicy()}
+              >
+                {t("button.Unset")}
+              </Button>
+            </Flex>
           ) : null
         }
         title={t("storageHost.ResourcePolicy")}
-        bordered={false}
+        // bordered={false}
         headStyle={{ borderBottom: "none" }}
         style={{ marginBottom: 10 }}
       >
-        <Descriptions>
-          {project_resource_policy || user_resource_policy ? (
+        {project_resource_policy || user_resource_policy ? (
+          <Descriptions size="small">
             <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
               {project_resource_policy
                 ? project_resource_policy &&
@@ -216,26 +205,16 @@ const ResourcePolicyCard: React.FC<Props> = ({
                   ? _humanReadableDecimalSize(
                       project_resource_policy?.max_vfolder_size
                     )
-                  : t("resourcePolicy.Unlimited")
+                  : "-"
                 : user_resource_policy &&
                   user_resource_policy?.max_vfolder_size !== -1
                 ? _humanReadableDecimalSize(
                     user_resource_policy?.max_vfolder_size
                   )
-                : t("resourcePolicy.Unlimited")}
+                : "-"}
             </Descriptions.Item>
-          ) : (
-            <Descriptions.Item>
-              <Empty
-                style={{ width: "100%" }}
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={
-                  <div>{t("storageHost.quotaSettings.SelectFirst")}</div>
-                }
-              />
-            </Descriptions.Item>
-          )}
-        </Descriptions>
+          </Descriptions>
+        ) : null}
       </Card>
       <ProjectResourcePolicySettingModal
         open={visibleProjectResourcePolicySettingModal}

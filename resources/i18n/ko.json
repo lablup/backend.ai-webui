@@ -468,6 +468,7 @@
     "ResourcePolicySuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
     "QuotaDoesNotSupported": "이 스토리지 호스트는 가용량 설정을 지원하지 않습니다.",
     "quotaSettings": {
+      "QuotaScopeId": "가용량 범위 ID",
       "QuotaSettings": "가용량 설정",
       "Type": "유형",
       "Host": "호스트",
@@ -476,6 +477,7 @@
       "AddQuotaConfigs": "가용량 설정 추가",
       "UnsetCustomSettings": "사용자 설정 초기화",
       "ConfirmUnsetCustomQuota": "정말로 설정을 초기화 하시겠습니까? \n이 사용자 혹은 프로젝트의 가용량은 기본값으로 설정됩니다.",
+      "SelectDomain": "도메인 선택",
       "SelectProject": "프로젝트 선택",
       "SelectUser": "사용자 검색 및 선택",
       "QuotaScopeSuccessfullyUpdated": "할당 범위가 성공적으로 수정되었습니다.",
