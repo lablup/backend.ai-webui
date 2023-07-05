@@ -6,7 +6,7 @@ import { ProjectSelectorQuery } from "./__generated__/ProjectSelectorQuery.graph
 import _ from "lodash";
 import { Select, SelectProps } from "antd";
 import { useTranslation } from "react-i18next";
-import { useCurrentProjectValue } from "../hooks";
+import { useCurrentDomainValue } from "../hooks";
 
 interface Props extends SelectProps {
   onSelectProject?: (project: any) => void;
@@ -17,7 +17,7 @@ const ProjectSelector: React.FC<Props> = ({
   ...selectProps
 }) => {
   const { t } = useTranslation();
-  const curProject = useCurrentProjectValue();
+  const curDomain = useCurrentDomainValue();
 
   const { projects } = useLazyLoadQuery<ProjectSelectorQuery>(
     graphql`
@@ -31,7 +31,7 @@ const ProjectSelector: React.FC<Props> = ({
       }
     `,
     {
-      domain_name: curProject?.name,
+      domain_name: curDomain,
     },
     {
       fetchPolicy: "store-and-network",
