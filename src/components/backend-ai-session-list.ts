@@ -479,7 +479,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return ['batch', 'interactive', 'inference', 'system', 'running'].includes(this.condition);
+    return ['batch', 'interactive', 'inference', 'system', 'running', 'others'].includes(this.condition);
   }
 
   get _isIntegratedCondition() {
@@ -616,14 +616,11 @@ export default class BackendAISessionList extends BackendAIPage {
     case 'system':
     case 'batch':
     case 'inference':
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
+    case 'others':
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'ERROR'];
       break;
     case 'finished':
       status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
-      break;
-    case 'others':
-      status = ['TERMINATING', 'ERROR']; // "ERROR", "CANCELLED"..
-      // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
       break;
     default:
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
