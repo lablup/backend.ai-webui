@@ -63,7 +63,7 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
           value: user?.email,
           label: user?.email,
         };
-      })}
+      }).sort((a, b) => (a.value && b.value && a.value > b.value ? 1 : -1))}
       {...selectProps}
     />
   );
