@@ -1,4 +1,6 @@
 module.exports = {
+  open: false,
+  watch: true,
   plugins: [
     {
       // This plugin is for injecting the react bundle to the index.html. (only for development)

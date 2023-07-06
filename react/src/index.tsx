@@ -12,14 +12,19 @@ const Information = React.lazy(() => import("./components/Information"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
+const StorageHostSettingPage = React.lazy(
+  () => import("./pages/StorageHostSettingPage")
+);
 
 customElements.define(
   "backend-ai-react-information",
-  reactToWebComponent((props) => (
-    <DefaultProviders {...props}>
-      <Information />
-    </DefaultProviders>
-  ))
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Information />
+      </DefaultProviders>
+    );
+  })
 );
 
 customElements.define(
@@ -29,4 +34,18 @@ customElements.define(
       <ResetPasswordRequired />
     </DefaultProviders>
   ))
+);
+
+customElements.define(
+  "backend-ai-react-storage-host-settings",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <StorageHostSettingPage
+          key={props.value}
+          storageHostId={props.value || ""}
+        />
+      </DefaultProviders>
+    );
+  })
 );

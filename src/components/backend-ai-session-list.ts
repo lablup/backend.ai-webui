@@ -479,7 +479,7 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   get _isRunning() {
-    return ['batch', 'interactive', 'inference', 'system', 'running'].includes(this.condition);
+    return ['batch', 'interactive', 'inference', 'system', 'running', 'others'].includes(this.condition);
   }
 
   get _isIntegratedCondition() {
@@ -616,14 +616,11 @@ export default class BackendAISessionList extends BackendAIPage {
     case 'system':
     case 'batch':
     case 'inference':
-      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
+    case 'others':
+      status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING', 'ERROR'];
       break;
     case 'finished':
       status = ['TERMINATED', 'CANCELLED']; // TERMINATED, CANCELLED
-      break;
-    case 'others':
-      status = ['TERMINATING', 'ERROR']; // "ERROR", "CANCELLED"..
-      // Refer https://github.com/lablup/backend.ai-manager/blob/master/src/ai/backend/manager/models/kernel.py#L30-L67
       break;
     default:
       status = ['RUNNING', 'RESTARTING', 'TERMINATING', 'PENDING', 'SCHEDULED', 'PREPARING', 'PULLING'];
@@ -830,6 +827,9 @@ export default class BackendAISessionList extends BackendAIPage {
           }
           if ('atom.device' in occupiedSlots) {
             sessions[objectKey].atom_slot = parseInt(occupiedSlots['atom.device']);
+          }
+          if ('warboy.device' in occupiedSlots) {
+            sessions[objectKey].warboy_slot = parseInt(occupiedSlots['warboy.device']);
           }
           if ('cuda.shares' in occupiedSlots) {
             // sessions[objectKey].fgpu_slot = parseFloat(occupied_slots['cuda.shares']);
@@ -2331,12 +2331,18 @@ export default class BackendAISessionList extends BackendAIPage {
                 <span>${rowData.item.atom_slot}</span>
                 <span class="indicator">ATOM</span>
                 ` : html``}
+              ${rowData.item.warboy_slot ? html`
+                <img class="indicator-icon fg green" src="/resources/icons/furiosa.svg" />
+                <span>${rowData.item.warboy_slot}</span>
+                <span class="indicator">Warboy</span>
+                ` : html``}
               ${!rowData.item.cuda_gpu_slot &&
         !rowData.item.cuda_fgpu_slot &&
         !rowData.item.rocm_gpu_slot &&
         !rowData.item.tpu_slot &&
         !rowData.item.ipu_slot &&
-        !rowData.item.atom_slot ? html`
+        !rowData.item.atom_slot &&
+        !rowData.item.warboy_slot ? html`
                 <wl-icon class="fg green indicator">view_module</wl-icon>
                 <span>-</span>
                 <span class="indicator">GPU</span>

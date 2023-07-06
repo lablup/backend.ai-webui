@@ -129,6 +129,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: Boolean}) otpRequired = false;
   @property({type: String}) otp;
   @property({type: Boolean}) needToResetPassword = false;
+  @property({type: Boolean}) directoryBasedUsage = false;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -771,6 +772,14 @@ export default class BackendAILogin extends BackendAIPage {
          value: (generalConfig?.connectionMode ?? 'SESSION').toUpperCase() as ConnectionMode,
        } as ConfigValueObject) as ConnectionMode;
     }
+
+    // Enable directory based usage flag
+    this.directoryBasedUsage = this._getConfigValueByExists(generalConfig,
+      {
+        valueType: 'boolean',
+        defaultValue: false,
+        value: (generalConfig?.directoryBasedUsage),
+      } as ConfigValueObject) as boolean;
   }
 
   /**
@@ -1260,7 +1269,7 @@ export default class BackendAILogin extends BackendAIPage {
 
               this._disableUserInput();
               this.waitingAnimation.style.display = 'none';
-            }  else if (response.fail_reason.indexOf('Password expired on ') === 0) {
+            } else if (response.fail_reason.indexOf('Password expired on ') === 0) {
               this.needToResetPassword = true;
             } else if (this.user_id !== '' && this.password !== '') {
               this.notification.text = PainKiller.relieve(response.fail_reason);
@@ -1491,6 +1500,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.hideAgents = this.hideAgents;
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
+      globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
@@ -1749,7 +1759,7 @@ export default class BackendAILogin extends BackendAIPage {
             @cancel="${(e)=> this.needToResetPassword = false}" 
             @ok="${(e)=> {
               this.needToResetPassword = false;
-              this.passwordInput.value = "";
+              this.passwordInput.value = '';
               
               this.notification.text = _text('login.PasswordChanged');
               this.notification.show();

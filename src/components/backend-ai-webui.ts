@@ -129,11 +129,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
-    'environment', 'agent', 'settings', 'maintenance',
-    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job',
-  @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent',
+    'environment', 'agent', 'storage-settings', 'settings', 'maintenance',
+    'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
+  @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent', 'storage-settings',
     'settings', 'maintenance', 'information'];
-  @property({type: Array}) superAdminOnlyPages = ['agent', 'settings', 'maintenance', 'information'];
+  @property({type: Array}) superAdminOnlyPages = ['agent', 'storage-settings', 'settings', 'maintenance', 'information'];
   @property({type: Array}) optionalPages;
   @property({type: Number}) timeoutSec = 5;
   private _useExperiment = false;
@@ -763,12 +763,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       }
       // remove data in sessionStorage
       sessionStorage.clear();
-    }
-    if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
-      if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
-        await globalThis.backendaiclient.logout();
+      if (typeof globalThis.backendaiclient != 'undefined' && globalThis.backendaiclient !== null) {
+        if (globalThis.backendaiclient._config.connectionMode === 'SESSION') {
+          await globalThis.backendaiclient.logout();
+        }
+        globalThis.backendaiclient = null;
       }
-      globalThis.backendaiclient = null;
     }
   }
 
@@ -1023,7 +1023,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <link rel="stylesheet" href="resources/custom.css">
-      <div id="loading-curtain" class="loading-background"></div>
+      <div id="loading-curtain" class="loading-background">
+        <div id="loading-drag-area" class="loading-background-drag-area"></div>
+      </div>
       <mwc-drawer id="app-body" class="${this.mini_ui ? 'mini-ui' : ''}" style="visibility:hidden;">
         <div class="drawer-menu" style="height:100vh;">
           <div id="portrait-bar" class="draggable">
@@ -1053,6 +1055,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             <mwc-list-item graphic="icon" ?selected="${this._page === 'job'}" @click="${() => this._moveTo('/job')}" ?disabled="${this.blockedMenuitem.includes('job')}">
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')}</span>
+            </mwc-list-item>
+            <!-- <mwc-list-item graphic="icon" ?selected="${this._page === 'session'}" @click="${() => this._moveTo('/session')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+              <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
@@ -1112,7 +1118,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                 `) : html``}
             ${this.is_superadmin ?
     html`
-                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
+                <mwc-list-item graphic="icon" ?selected="${this._page === 'agent' || this._page ==='storage-settings'}" @click="${() => this._moveTo('/agent')}" ?disabled="${!this.is_superadmin}">
                   <i class="fas fa-server" slot="graphic" id="resources-menu-icon"></i>
                   <span class="full-menu">${_t('webui.menu.Resources')}</span>
                 </mwc-list-item>
@@ -1151,7 +1157,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha1.230525</small>
+                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha1.230705</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1175,7 +1181,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha1.230525</small>
+              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha1.230705</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1190,12 +1196,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <mwc-top-app-bar-fixed id="main-toolbar" class="draggable">
+              <mwc-top-app-bar-fixed id="main-toolbar">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>
                 </div>
                 <div slot="navigationIcon" class="vertical-line" style="height:20px;margin:0;"></div>
-                <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;">
+                <div class="horizontal center layout" slot="title" id="welcome-message" style="font-size:12px;margin-left:10px;" class="draggable">
                   <p>${_t('webui.menu.WelcomeMessage')}</p>
                   <p class="user-name">${this._getUsername()}</p>
                   <p>${_t('webui.menu.WelcomeMessage_2')}</p>
@@ -1222,11 +1228,13 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-summary-view class="page" name="summary" ?active="${this._page === 'summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-summary-view>
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
+                    <backend-ai-session-view-next class="page" name="session" ?active="${this._page === 'session'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
                     <backend-ai-agent-view class="page" name="agent" ?active="${this._page === 'agent'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-view>
                     <backend-ai-agent-summary-view class="page" name="agent-summary" ?active="${this._page === 'agent-summary'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-agent-summary-view>
+                    <backend-ai-storage-host-settings-view class="page" name="storage-settings" ?active="${this._page === 'storage-settings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-storage-host-settings-view>
                     <backend-ai-data-view class="page" name="data" ?active="${this._page === 'data'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-data-view>
                     <!--<pipeline-view class="page" name="pipeline" ?active="${this._page === 'pipeline'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-view>-->
                     <!--<pipeline-job-view class="page" name="pipeline-job" ?active="${this._page === 'pipeline-job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></pipeline-job-view>-->

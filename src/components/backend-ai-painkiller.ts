@@ -13,7 +13,7 @@ declare global {
     backendaiclient: any;
     backendaiwsproxy: any;
     isElectron: boolean;
-    __local_proxy: string;
+    __local_proxy: any;
   }
 }
 
