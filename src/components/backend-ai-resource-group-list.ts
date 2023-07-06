@@ -764,7 +764,14 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             autoValidate
             @change="${() => this._validateResourceGroupName()}"
           ></mwc-textfield>
-          ` : html``}
+          ` : html`
+          <mwc-textfield
+            type="text"
+            disabled
+            label="${_t('resourceGroup.ResourceGroupName')}"
+            value="${this.resourceGroupInfo?.name}"
+          ></mwc-textfield>
+          `}
           <mwc-textarea
             name="description"
             id="resource-group-description"
