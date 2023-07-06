@@ -503,7 +503,6 @@ export default class BackendAISessionView extends BackendAIPage {
                   <mwc-tab title="system" label="${_t('session.System')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                   `:html``}
                   <mwc-tab title="finished" label="${_t('session.Finished')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
-                  <mwc-tab title="others" label="${_t('session.Others')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                 </mwc-tab-bar>
               </div>
             </div>
