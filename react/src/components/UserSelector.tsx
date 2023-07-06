@@ -33,7 +33,7 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
       }
     `,
     {
-      limit: 50,
+      limit: 150,
       offset: 0,
       filter: search?.length === 0 ? null : 'email ilike "%' + search + '%"',
     },
