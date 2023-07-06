@@ -1,4 +1,4 @@
-import React, { startTransition, useState } from "react";
+import React, { useDeferredValue, useState } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
 import { UserSelectorQuery } from "./__generated__/UserSelectorQuery.graphql";
@@ -14,6 +14,7 @@ interface Props extends SelectProps {
 const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   const { t } = useTranslation();
   const [search, setSearch] = useState<string>("");
+  const deferredSearch = useDeferredValue(search);
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
       query UserSelectorQuery($limit: Int!, $offset: Int!, $filter: String) {
@@ -35,7 +36,10 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
     {
       limit: 150,
       offset: 0,
-      filter: search?.length === 0 ? null : 'email ilike "%' + search + '%"',
+      filter:
+        deferredSearch?.length === 0
+          ? null
+          : 'email ilike "%' + deferredSearch + '%"',
     },
     {
       fetchPolicy: "store-and-network",
@@ -44,10 +48,9 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   return (
     <Select
       filterOption={false}
+      searchValue={search}
       onSearch={(value) => {
-        startTransition(() => {
-          setSearch(value);
-        });
+        setSearch(value);
       }}
       onChange={(value) => {
         onSelectUser(

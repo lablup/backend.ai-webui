@@ -148,8 +148,8 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
                   style={{ width: "30vw", marginBottom: 10 }}
                   value={selectedUserEmail}
                   onSelectUser={(user) => {
+                    setSelectedUserEmail(user?.email);
                     startTransition(() => {
-                      setSelectedUserEmail(user?.email);
                       setSelectedUserId(user?.id);
                     });
                   }}
