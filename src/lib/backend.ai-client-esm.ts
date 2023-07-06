@@ -590,6 +590,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('22.09.19')) {
       this._features['idle-checks'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09.22')) {
+      this._features['is-public'] = true;
+    }
     if (this.isAPIVersionCompatibleWith('v6.20230315')) {
       this._features['inference-workload'] = true;
     }
@@ -597,9 +600,6 @@ class Client {
       this._features['inference-workload'] = true;
       this._features['local-vscode-remote-connection'] = true;
       this._features['display-allocated-shmem'] = true;
-    }
-    if (this.isManagerVersionCompatibleWith('23.03.1')) {
-      this._features['is-public'] = true;
     }
     if (this.isManagerVersionCompatibleWith('23.03.3')) {
       this._features['sftp-scaling-group'] = true;
@@ -3777,7 +3777,7 @@ class ScalingGroup {
       if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
         fields.push('wsproxy_addr');
       }
-      if (this.client.isManagerVersionCompatibleWith('23.03.1')) {
+      if (this.client.isManagerVersionCompatibleWith('22.09.22')) {
         fields.push('is_public');
       }
       const q = `query {` +
