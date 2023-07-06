@@ -3883,7 +3883,7 @@ class ScalingGroup {
         return Promise.resolve({modify_scaling_group: {ok: true}});
       }
     }
-    if (!this.client.isManagerVersionCompatibleWith('23.03.1')) {
+    if (!this.client.isManagerVersionCompatibleWith('22.09.22')) {
       delete input.is_public;
     }
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
