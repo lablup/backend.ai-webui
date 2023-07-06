@@ -753,7 +753,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               </mwc-list-item>
             `)}
           </mwc-select>
-          ` : html``}
           <mwc-textfield
             type="text"
             id="resource-group-name"
@@ -763,10 +762,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             validationMessage="${_t('data.explorer.ValueRequired')}"
             required
             autoValidate
-            @change="${() => Object.keys(this.resourceGroupInfo).length === 0 && this._validateResourceGroupName()}"
-            ?disabled="${Object.keys(this.resourceGroupInfo).length > 0}"
-            value="${this.resourceGroupInfo?.name || ''}"
+            @change="${() => this._validateResourceGroupName()}"
           ></mwc-textfield>
+          ` : html``}
           <mwc-textarea
             name="description"
             id="resource-group-description"
