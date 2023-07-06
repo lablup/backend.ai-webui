@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 import _ from "lodash";
 
 interface Props extends SelectProps {
-  onSelectUser?: (user: any) => void;
+  onSelectUser: (user: any) => void;
 }
 
 const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
@@ -49,25 +49,23 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
           setSearch(value);
         });
       }}
-      onChange={(value, option) => {
-        onSelectUser?.(option);
+      onChange={(value) => {
+        onSelectUser(
+          _.find(user_list?.items, (user) => {
+            return user?.email === value;
+          })
+        );
       }}
       showSearch
       placeholder={t("storageHost.quotaSettings.SelectUser")}
-      {...selectProps}
-    >
-      {_.map(user_list?.items, (user) => {
-        return (
-          <Select.Option
-            key={user?.id}
-            userId={user?.id}
-            userResourcePolicy={user?.resource_policy}
-          >
-            {user?.email}
-          </Select.Option>
-        );
+      options={_.map(user_list?.items, (user) => {
+        return {
+          value: user?.email,
+          label: user?.email,
+        };
       })}
-    </Select>
+      {...selectProps}
+    />
   );
 };
 
