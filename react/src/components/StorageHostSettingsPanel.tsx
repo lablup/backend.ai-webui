@@ -8,7 +8,6 @@ import Flex from "./Flex";
 import ProjectSelector from "./ProjectSelector";
 import DomainSelector from "./DomainSelector";
 import UserSelector from "./UserSelector";
-import ResourcePolicyCard from "./ResourcePolicyCard";
 import QuotaScopeCard from "./QuotaScopeCard";
 import { useFragment, useLazyLoadQuery } from "react-relay";
 
@@ -58,7 +57,7 @@ const StorageHostSettingsPanel: React.FC<StorageHostSettingsPanelProps> = ({
 
   const [isOpenQuotaSettingModal, { toggle: toggleQuotaSettingModal }] =
     useToggle(false);
-  const [fetchKey, updateFetchKey] = useUpdatableState("default");
+  const [fetchKey] = useUpdatableState("default");
 
   const { quota_scope } = useLazyLoadQuery<StorageHostSettingsPanelQuery>(
     graphql`
