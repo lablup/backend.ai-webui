@@ -49,6 +49,7 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
     <Select
       filterOption={false}
       searchValue={search}
+      loading={deferredSearch !== search}
       onSearch={(value) => {
         setSearch(value);
       }}
