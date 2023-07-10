@@ -637,7 +637,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
           <div class="vertical layout" id="modify-quota-controls"
-               style="display:${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
+               style="display:${this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
             <div class="horizontal layout center justified">
                 <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
@@ -780,7 +780,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </span>
               </mwc-list-item>
             ` : html``}
-            ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
+            ${this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
@@ -1870,7 +1870,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.updateFolderCloneableSwitch.selected = this.folderInfo.cloneable;
       }
       // get quota if host storage support per folder quota
-      if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+      if (this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
         this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
@@ -1910,7 +1910,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
       modifyFolderJobQueue.push(updateFolderConfig);
     }
-    if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+    if (this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
       const quota = this.modifyFolderQuotaInput.value ? BigInt(Number(this.modifyFolderQuotaInput.value) * this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]).toString() : '0';
       if ((this.quota.value != Number(this.modifyFolderQuotaInput.value)) || (this.quota.unit != this.modifyFolderQuotaUnitSelect.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
