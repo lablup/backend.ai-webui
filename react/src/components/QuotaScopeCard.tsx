@@ -103,6 +103,7 @@ const QuotaScopeCard: React.FC<Props> = ({
   return (
     <Table
       bordered
+      rowKey="id"
       columns={[
         {
           title: t("storageHost.quotaSettings.QuotaScopeId"),
