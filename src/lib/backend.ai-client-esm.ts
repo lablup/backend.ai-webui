@@ -839,9 +839,9 @@ class Client {
   async get_resource_slots() : Promise<any> {
     let rqst;
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
-      rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
+      rqst = this.newSignedRequest('GET', '/config/resource-slots', null, '');
     } else {
-      rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+      rqst = this.newSignedRequest('GET', '/etcd/resource-slots', null, '');
     }
     return this._wrapWithPromise(rqst);
   }
