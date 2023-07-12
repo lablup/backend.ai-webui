@@ -47,6 +47,7 @@ interface Options {
   tpu: boolean;
   ipu: boolean;
   atom: boolean;
+  warboy: boolean;
   schedulerType: string;
   scheduler: {
     num_retries_to_skip: string;
@@ -104,6 +105,7 @@ export default class BackendAiSettingsView extends BackendAIPage {
       tpu: false,
       ipu: false,
       atom: false,
+      warboy: false,
       schedulerType: 'fifo',
       scheduler: {
         num_retries_to_skip: '0',
@@ -465,6 +467,16 @@ export default class BackendAiSettingsView extends BackendAIPage {
                       <mwc-switch id="atom-support-switch" ?selected="${this.options['atom']}" disabled></mwc-switch>
                     </div>
                   </div>
+                  <div class="horizontal layout setting-item">
+                    <div class="vertical center-justified layout setting-desc-shrink">
+                      <div class="title">${_t('settings.Warboysupport')}</div>
+                      <div class="description-shrink">${_tr('settings.DescWarboysupport')} <br/>${_t('settings.RequireWarboyPlugin')}
+                      </div>
+                    </div>
+                    <div class="vertical center-justified layout setting-button">
+                      <mwc-switch id="warboy-support-switch" ?selected="${this.options['warboy']}" disabled></mwc-switch>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -688,8 +700,8 @@ export default class BackendAiSettingsView extends BackendAIPage {
       if ('ipu.device' in response) {
         this.options['ipu'] = true;
       }
-      if ('atom.device' in response) {
-        this.options['atom'] = true;
+      if ('warboy.device' in response) {
+        this.options['warboy'] = true;
       }
       // this.update(this.options);
       this.requestUpdate();

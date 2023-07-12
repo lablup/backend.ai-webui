@@ -1,4 +1,5 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { Suspense, useEffect, useMemo, useState } from "react";
+import { RelayEnvironmentProvider } from "react-relay";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -9,14 +10,17 @@ import Backend from "i18next-http-backend";
 
 import en_US from "antd/locale/en_US";
 import ko_KR from "antd/locale/ko_KR";
+import { RelayEnvironment } from "../RelayEnvironment";
 import { useCustomThemeConfig } from "../helper/customThemeConfig";
 
 // @ts-ignore
 import rawFixAntCss from "../fix_antd.css?raw";
+import { BrowserRouter } from "react-router-dom";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
   dispatchEvent: ReactWebComponentProps["dispatchEvent"];
+  moveTo: (path: string) => void;
 }
 
 const WebComponentContext = React.createContext<WebComponentContextType>(null!);
@@ -57,23 +61,23 @@ i18n
 const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis.backendaioptions.get("current_language")
+    globalThis?.backendaioptions?.get("current_language")
   );
   const { i18n } = useTranslation();
 
   useEffect(() => {
     // TODO: remove this hack to initialize i18next
-    setTimeout(() => i18n.changeLanguage(lang), 0);
+    setTimeout(() => i18n?.changeLanguage(lang), 0);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     const handler = (e: Event) => {
       //@ts-ignore
-      _setLang(e.detail.lang);
+      _setLang(e?.detail?.lang);
       //@ts-ignore
-      const lang: string = e.detail?.lang || "en";
-      i18n.changeLanguage(lang);
+      const lang: string = e?.detail?.lang || "en";
+      i18n?.changeLanguage(lang);
     };
     window.addEventListener("langChanged", handler);
     return () => window.removeEventListener("langChanged", handler);
@@ -97,37 +101,49 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
     return {
       value,
       dispatchEvent,
+      moveTo: (path: string) => {
+        dispatchEvent("moveTo", { path });
+      },
     };
   }, [value, dispatchEvent]);
   return (
-    <React.StrictMode>
-      <style>
-        {styles}
-        {rawFixAntCss}
-      </style>
-      <QueryClientProvider client={queryClient}>
-        <ShadowRootContext.Provider value={shadowRoot}>
-          <WebComponentContext.Provider value={componentValues}>
-            <ConfigProvider
-              // @ts-ignore
-              getPopupContainer={(triggerNode) => {
-                if (triggerNode?.parentNode) {
-                  return triggerNode.parentNode;
-                }
-                return shadowRoot;
-              }}
-              //TODO: apply other supported locales
-              locale={"ko" === lang ? ko_KR : en_US}
-              theme={themeConfig}
-            >
-              <StyleProvider container={shadowRoot} cache={cache}>
-                {children}
-              </StyleProvider>
-            </ConfigProvider>
-          </WebComponentContext.Provider>
-        </ShadowRootContext.Provider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <>
+      {RelayEnvironment && (
+        <RelayEnvironmentProvider environment={RelayEnvironment}>
+          <React.StrictMode>
+            <style>
+              {styles}
+              {rawFixAntCss}
+            </style>
+            <QueryClientProvider client={queryClient}>
+              <ShadowRootContext.Provider value={shadowRoot}>
+                <WebComponentContext.Provider value={componentValues}>
+                  <ConfigProvider
+                    // @ts-ignore
+                    getPopupContainer={(triggerNode) => {
+                      if (triggerNode?.parentNode) {
+                        return triggerNode.parentNode;
+                      }
+                      return shadowRoot;
+                    }}
+                    //TODO: apply other supported locales
+                    locale={"ko" === lang ? ko_KR : en_US}
+                    theme={themeConfig}
+                  >
+                    <StyleProvider container={shadowRoot} cache={cache}>
+                      <Suspense fallback="">
+                        <BrowserRouter>{children}</BrowserRouter>
+                      </Suspense>
+                      {/* {children} */}
+                    </StyleProvider>
+                  </ConfigProvider>
+                </WebComponentContext.Provider>
+              </ShadowRootContext.Provider>
+            </QueryClientProvider>
+          </React.StrictMode>
+        </RelayEnvironmentProvider>
+      )}
+    </>
   );
 };
 

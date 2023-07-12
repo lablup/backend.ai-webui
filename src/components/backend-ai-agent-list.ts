@@ -313,9 +313,9 @@ export default class BackendAIAgentList extends BackendAIPage {
               agents[objectKey].total_cuda_gpu_percent = (agents[objectKey].used_cuda_gpu_slots_ratio * 100).toFixed(2);
             }
             if ('cuda.shares' in available_slots) {
-              agents[objectKey].cuda_fgpu_slots = parseInt(available_slots['cuda.shares']);
+              agents[objectKey].cuda_fgpu_slots = parseFloat(available_slots['cuda.shares'])?.toFixed(2);
               if ('cuda.shares' in occupied_slots) {
-                agents[objectKey].used_cuda_fgpu_slots = parseInt(occupied_slots['cuda.shares']);
+                agents[objectKey].used_cuda_fgpu_slots = parseFloat(occupied_slots['cuda.shares'])?.toFixed(2);
               } else {
                 agents[objectKey].used_cuda_fgpu_slots = 0;
               }
@@ -361,6 +361,16 @@ export default class BackendAIAgentList extends BackendAIPage {
               }
               agents[objectKey].used_atom_slots_ratio = agents[objectKey].used_atom_slots / agents[objectKey].atom_slots;
               agents[objectKey].total_atom_percent = (agents[objectKey].used_atom_slots_ratio * 100).toFixed(2);
+            }
+            if ('warboy.device' in available_slots) {
+              agents[objectKey].warboy_slots = parseInt(available_slots['warboy.device']);
+              if ('warboy.device' in occupied_slots) {
+                agents[objectKey].used_warboy_slots = parseInt(occupied_slots['warboy.device']);
+              } else {
+                agents[objectKey].used_warboy_slots = 0;
+              }
+              agents[objectKey].used_warboy_slots_ratio = agents[objectKey].used_warboy_slots / agents[objectKey].warboy_slots;
+              agents[objectKey].total_warboy_percent = (agents[objectKey].used_warboy_slots_ratio * 100).toFixed(2);
             }
 
             if ('cuda' in compute_plugins) {
@@ -849,6 +859,18 @@ export default class BackendAIAgentList extends BackendAIPage {
                                    description="${rowData.item.used_atom_slots}"></lablup-progress-bar>
             </div>
           ` : html``}
+          ${rowData.item.warboy_slots ? html`
+            <div class="layout horizontal center-justified flex progress-bar-section">
+              <div class="layout horizontal start resource-indicator">
+              <img class="indicator-icon fg green" src="/resources/icons/furiosa.svg"/>
+                <span class="monospace" style="padding-left:5px;">${rowData.item.used_warboy_slots}/${rowData.item.warboy_slots}</span>
+                <span class="indicator">Warboy</span>
+              </div>
+              <span class="flex"></span>
+              <lablup-progress-bar id="warboy-bar" progress="${rowData.item.used_warboy_slots_ratio}"
+                                   description="${rowData.item.used_warboy_slots}"></lablup-progress-bar>
+            </div>
+          ` : html``}
         </div>`, root
     );
   }
@@ -1289,7 +1311,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           </vaadin-grid-sort-column>
           <vaadin-grid-sort-column resizable path="first_contact" auto-width flex-grow="0" header="${_t('agent.Starts')}" .renderer="${this._boundContactDateRenderer}">
           </vaadin-grid-sort-column>
-          <vaadin-grid-column resizable width="160px" header="${_t('agent.Allocation')}"
+          <vaadin-grid-column resizable width="200px" header="${_t('agent.Allocation')}"
                               .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable width="185px" header="${_t('agent.Utilization')}"

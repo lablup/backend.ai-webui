@@ -163,12 +163,13 @@ export default class BackendAiStorageList extends BackendAIPage {
     value: 0,
     unit: 'MB'
   };
+  @property({type: Boolean}) directoryBasedUsage = false;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-status') private _listStatus!: BackendAIListStatus;
   @query('#modify-folder-quota') modifyFolderQuotaInput!: TextField;
   @query('#modify-folder-quota-unit') modifyFolderQuotaUnitSelect!: Select;
-  @query('#fileList-grid') fileListGrid!: VaadinGrid;
-  @query('#folderList-grid') folderListGrid!: VaadinGrid;
+  @query('#file-list-grid') fileListGrid!: VaadinGrid;
+  @query('#folder-list-grid') folderListGrid!: VaadinGrid;
   @query('#mkdir-name') mkdirNameInput!: TextField;
   @query('#delete-folder-name') deleteFolderNameInput!: TextField;
   @query('#new-folder-name') newFolderNameInput!: TextField;
@@ -607,7 +608,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         id="session-launcher" ?active="${this.active === true}"
         .newSessionDialogTitle="${_t('session.launcher.StartModelServing')}"></backend-ai-session-launcher>
       <div class="list-wrapper">
-        <vaadin-grid class="folderlist" id="folderList-grid" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
+        <vaadin-grid class="folderlist" id="folder-list-grid" theme="row-stripes column-borders wrap-cell-content compact" column-reordering-allowed aria-label="Folder list" .items="${this.folders}">
           <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" text-align="center" .renderer="${this._boundIndexRenderer}">
           </vaadin-grid-column>
           <lablup-grid-sort-filter-column path="name" width="80px" resizable .renderer="${this._boundFolderListRenderer}"
@@ -618,7 +619,9 @@ export default class BackendAiStorageList extends BackendAIPage {
               header="${_t('data.folders.Location')}"></lablup-grid-sort-filter-column>
           <lablup-grid-sort-filter-column path="status" width="80px" flex-grow="0" resizable .renderer="${this._boundStatusRenderer}"
               header="${_t('data.folders.Status')}"></lablup-grid-sort-filter-column>
-          <vaadin-grid-sort-column path="max_size" width="95px" flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-sort-column>
+          ${this.directoryBasedUsage ? html`
+            <vaadin-grid-sort-column id="folder-quota-column" path="max_size" width="95px" flex-grow="0" resizable header="${_t('data.folders.FolderQuota')}" .renderer="${this._boundQuotaRenderer}"></vaadin-grid-sort-column>
+          ` : html``}
           <lablup-grid-sort-filter-column path="ownership_type" width="70px" flex-grow="0" resizable header="${_t('data.folders.Type')}" .renderer="${this._boundTypeRenderer}"></lablup-grid-sort-filter-column>
           <vaadin-grid-column width="95px" flex-grow="0" resizable header="${_t('data.folders.Permission')}" .renderer="${this._boundPermissionViewRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width flex-grow="0" resizable header="${_t('data.folders.Owner')}" .renderer="${this._boundOwnerRenderer}"></vaadin-grid-column>
@@ -634,7 +637,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         <span slot="title">${_t('data.folders.FolderOptionUpdate')}</span>
         <div slot="content" class="vertical layout flex">
           <div class="vertical layout" id="modify-quota-controls"
-               style="display:${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
+               style="display:${this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host) ? 'flex' : 'none'}">
             <div class="horizontal layout center justified">
                 <mwc-textfield id="modify-folder-quota" label="${_t('data.folders.FolderQuota')}" value="${this.maxSize.value}"
                     type="number" min="0" step="0.1" @change="${() => this._updateQuotaInputHumanReadableValue()}"></mwc-textfield>
@@ -723,12 +726,14 @@ export default class BackendAiStorageList extends BackendAIPage {
                 <div class="big indicator">${this.folderInfo.host}</div>
                 <span>${_t('data.folders.Location')}</span>
               </div>
-            <div class="vertical layout center info-indicator">
-              <div class="big indicator">
-                ${this.folderInfo.numFiles < 0 ? 'many' : this.folderInfo.numFiles}
+            ${this.directoryBasedUsage ? html`
+              <div class="vertical layout center info-indicator">
+                <div class="big indicator">
+                  ${this.folderInfo.numFiles < 0 ? 'many' : this.folderInfo.numFiles}
+                </div>
+                <span>${_t('data.folders.NumberOfFiles')}</span>
               </div>
-              <span>${_t('data.folders.NumberOfFiles')}</span>
-            </div>
+            ` : html``}
           </div>
           <mwc-list>
             <mwc-list-item twoline>
@@ -775,7 +780,7 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </span>
               </mwc-list-item>
             ` : html``}
-            ${this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
+            ${this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host) ? html`
               <mwc-list-item twoline>
                 <span><strong>${_t('data.folders.FolderUsage')}</strong></span>
                 <span class="monospace" slot="secondary">
@@ -906,7 +911,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             <vaadin-grid-column .renderer="${this._boundUploadProgressRenderer}"></vaadin-grid-column>
           </vaadin-grid> -->
           ` : html``}
-          <vaadin-grid id="fileList-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
+          <vaadin-grid id="file-list-grid" class="explorer" theme="row-stripes compact" aria-label="Explorer" .items="${this.explorerFiles}">
             <vaadin-grid-selection-column auto-select></vaadin-grid-selection-column>
             <vaadin-grid-column width="40px" flex-grow="0" resizable header="#" .renderer="${this._boundIndexRenderer}">
             </vaadin-grid-column>
@@ -1742,6 +1747,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.authenticated = true;
         this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
         this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+        this.directoryBasedUsage = globalThis.backendaiclient._config.directoryBasedUsage;
         this._getAllowedVFolderHostsByCurrentUserInfo();
         this._checkImageSupported();
         this._getVolumeInformation();
@@ -1755,6 +1761,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       this.authenticated = true;
       this._APIMajorVersion = globalThis.backendaiclient.APIMajorVersion;
       this._maxFileUploadSize = globalThis.backendaiclient._config.maxFileUploadSize;
+      this.directoryBasedUsage = globalThis.backendaiclient._config.directoryBasedUsage;
       this._getAllowedVFolderHostsByCurrentUserInfo();
       this._checkImageSupported();
       this._getVolumeInformation();
@@ -1863,7 +1870,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         this.updateFolderCloneableSwitch.selected = this.folderInfo.cloneable;
       }
       // get quota if host storage support per folder quota
-      if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+      if (this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
         [this.quota.value, this.quota.unit] = globalThis.backendaiutils._humanReadableFileSize(this.folderInfo.max_size * this.quotaUnit.MiB).split(' ');
         this.modifyFolderQuotaInput.value = this.quota.value.toString();
         this.modifyFolderQuotaUnitSelect.value = this.quota.unit == 'Bytes' ? 'MB' : this.quota.unit;
@@ -1903,7 +1910,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
       modifyFolderJobQueue.push(updateFolderConfig);
     }
-    if (this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
+    if (this.directoryBasedUsage && this._checkFolderSupportSizeQuota(this.folderInfo.host)) {
       const quota = this.modifyFolderQuotaInput.value ? BigInt(Number(this.modifyFolderQuotaInput.value) * this.quotaUnit[this.modifyFolderQuotaUnitSelect.value]).toString() : '0';
       if ((this.quota.value != Number(this.modifyFolderQuotaInput.value)) || (this.quota.unit != this.modifyFolderQuotaUnitSelect.value)) {
         const updateFolderQuota = globalThis.backendaiclient.vfolder.set_quota(this.folderInfo.host, this.folderInfo.id, quota.toString());
