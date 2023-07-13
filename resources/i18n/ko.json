@@ -628,6 +628,7 @@
     "StorageStatus": "저장소 상태",
     "Created": "생성됨",
     "Shared": "공유 받음",
+    "Invited": "초대 받음",
     "Capacity": "생성가능 갯수",
     "folders": {
       "Location": "위치",
@@ -756,7 +757,8 @@
     "NumberOfFolders": "폴더 개수",
     "SelectStorageHost": "호스트를 선택하세요",
     "Used": "사용됨",
-    "Limit": "제한"
+    "Limit": "제한",
+    "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다."
   },
   "dialog": {
     "warning": {

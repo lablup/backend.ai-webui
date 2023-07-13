@@ -18,7 +18,10 @@ import {
   Divider,
   Skeleton,
   theme,
+  Tooltip,
+  Button,
 } from "antd";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import Flex from "./Flex";
 import {
   useCurrentDomainValue,
@@ -83,6 +86,9 @@ const StorageStatusPanel: React.FC<{}> = () => {
     (item: any) => item.is_owner && item.ownership_type === "user"
   ).length;
   const sharedCount = vfolders?.length - createdCount;
+  const invitedCount = vfolders?.filter(
+    (item: any) => !item.is_owner && item.ownership_type === "user"
+  ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
   const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
@@ -186,14 +192,31 @@ const StorageStatusPanel: React.FC<{}> = () => {
               {maxVfolderCount}
             </Flex>
             <Divider style={{ margin: "12px auto" }} />
-            <Flex direction="row" gap={token.marginXXS} wrap="wrap">
-              <Typography.Text type="secondary">
-                {t("data.Shared")}:
-              </Typography.Text>
-              {sharedCount}
+            <Flex direction="row" wrap="wrap" justify="between">
+              <Flex gap={token.marginXXS}>
+                <Typography.Text type="secondary">
+                  {t("data.Shared")}:
+                </Typography.Text>
+                {sharedCount}
+              </Flex>
+              <Flex gap={token.marginXXS} style={{ marginRight: 30 }}>
+                <Typography.Text type="secondary">
+                  {t("data.Invited")}:
+                </Typography.Text>
+                {invitedCount}
+              </Flex>
             </Flex>
           </Descriptions.Item>
-          <Descriptions.Item label={t("data.QuotaPerStorageVolume")}>
+          <Descriptions.Item
+            label={
+              <div>
+                {t("data.QuotaPerStorageVolume")}
+                <Tooltip title={t("data.HostDetails")}>
+                  <Button type="link" icon={<InfoCircleOutlined />} />
+                </Tooltip>
+              </div>
+            }
+          >
             <Flex wrap="wrap" justify="between" direction="row">
               <Typography.Text type="secondary">
                 {t("data.Host")}

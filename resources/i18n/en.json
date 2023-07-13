@@ -635,6 +635,7 @@
     "StorageStatus": "Storage Status",
     "Created": "Created",
     "Shared": "Shared",
+    "Invited": "Invited",
     "Capacity": "capacity",
     "folders": {
       "Location": "Location",
@@ -763,7 +764,8 @@
     "NumberOfFolders": "Number of folders",
     "SelectStorageHost": "Select storage host",
     "Used": "Used",
-    "Limit": "Limit"
+    "Limit": "Limit",
+    "HostDetails": "Displays quota information for the selected storage host."
   },
   "dialog": {
     "warning": {
