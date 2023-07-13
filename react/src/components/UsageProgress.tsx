@@ -3,7 +3,7 @@ import graphql from "babel-plugin-relay/macro";
 import { useFragment } from "react-relay";
 import { UsageProgressFragment_usageFrgmt$key } from "./__generated__/UsageProgressFragment_usageFrgmt.graphql";
 
-import { Progress, Typography } from "antd";
+import { Progress, Typography, theme } from "antd";
 import { useTranslation } from "react-i18next";
 import { bytesToGB, usageIndicatorColor } from "../helper";
 import Flex from "./Flex";
@@ -12,6 +12,7 @@ const UsageProgress: React.FC<{
   usageProgressFrgmt: UsageProgressFragment_usageFrgmt$key | null;
 }> = ({ usageProgressFrgmt: usageFrgmt }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
 
   const usage = useFragment(
     graphql`
@@ -37,8 +38,9 @@ const UsageProgress: React.FC<{
         size={[180, 15]}
         percent={percent}
         strokeColor={usageIndicatorColor(percent)}
+        status={percent >= 100 ? "exception" : "normal"}
       />
-      <Flex direction="row" gap="xxs" style={{ fontSize: 12 }}>
+      <Flex direction="row" gap={token.marginXXS} style={{ fontSize: 12 }}>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
           {t("data.Used")}:
         </Typography.Text>
@@ -47,7 +49,7 @@ const UsageProgress: React.FC<{
           {" / "}
         </Typography.Text>
         <Typography.Text type="secondary" style={{ fontSize: 12 }}>
-          {t("data.Total")}:
+          {t("data.Limit")}:
         </Typography.Text>
         {bytesToGB(usage?.details?.hard_limit_bytes)} GB
         {/* <Typography.Text type="secondary">({percent} %)</Typography.Text> */}

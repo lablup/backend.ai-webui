@@ -473,7 +473,7 @@
     "ResourcePolicySuccessfullyCreated": "Resource Policy successfully created",
     "ResourcePolicySuccessfullyUpdated": "Resource Policy successfully updated",
     "ResourcePolicySuccessfullyDeleted": "Resource Policy successfully deleted",
-    "QuotaDoesNotSupported": "This storage host does not support quota.",
+    "QuotaDoesNotSupported": "This storage backend does not support quota.",
     "quotaSettings": {
       "QuotaScopeId": "Quota Scope ID",
       "QuotaSettings": "Quota Settings",
@@ -634,7 +634,7 @@
     "Permission": "Permission",
     "StorageStatus": "Storage Status",
     "Created": "Created",
-    "Invited": "Invited",
+    "Shared": "Shared",
     "Capacity": "capacity",
     "folders": {
       "Location": "Location",
@@ -763,7 +763,7 @@
     "NumberOfFolders": "Number of folders",
     "SelectStorageHost": "Select storage host",
     "Used": "Used",
-    "Total": "Total"
+    "Limit": "Limit"
   },
   "dialog": {
     "warning": {

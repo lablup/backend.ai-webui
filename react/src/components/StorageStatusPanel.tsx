@@ -17,6 +17,7 @@ import {
   Empty,
   Divider,
   Skeleton,
+  theme,
 } from "antd";
 import Flex from "./Flex";
 import {
@@ -30,6 +31,7 @@ import _ from "lodash";
 
 const StorageStatusPanel: React.FC<{}> = () => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
@@ -60,9 +62,6 @@ const StorageStatusPanel: React.FC<{}> = () => {
     }
   );
   const hosts = vhostInfo?.allowed;
-  const isHostSupportQuota = _.map(vhostInfo?.volume_info, (info) => {
-    return info.capabilities?.includes("quota") ?? false;
-  }).includes(true);
   const isCurrentHostSupportQuota =
     (vhostInfo?.volume_info &&
       vhostInfo.volume_info[selectedStorageHost]?.capabilities?.includes(
@@ -80,7 +79,9 @@ const StorageStatusPanel: React.FC<{}> = () => {
       suspense: false,
     }
   );
-  const createdCount = vfolders?.filter((item: any) => item.is_owner).length;
+  const createdCount = vfolders?.filter(
+    (item: any) => item.is_owner && item.ownership_type === "user"
+  ).length;
   const invitedCount = vfolders?.length - createdCount;
 
   const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
@@ -163,103 +164,102 @@ const StorageStatusPanel: React.FC<{}> = () => {
       {isLoadingVhostInfo ? (
         <Skeleton active />
       ) : (
-        <Descriptions bordered column={columnSetting}>
-          {isHostSupportQuota && (
-            <Descriptions.Item label={t("data.QuotaPerStorageVolume")}>
-              <Flex wrap="wrap" justify="between" direction="row">
-                <Typography.Text type="secondary">
-                  {t("data.Host")}
-                </Typography.Text>
-                <Spin spinning={isLoadingVhostInfo}>
-                  <Select
-                    filterOption={false}
-                    placeholder={t("data.SelectStorageHost")}
-                    onChange={(value) => {
-                      startTransition(() => {
-                        setSelectedStorageHost(value);
-                      });
-                    }}
-                    style={{ minWidth: 165 }}
-                    options={_.map(hosts, (host) => {
-                      return {
-                        value: host,
-                        label: host,
-                      };
-                    })}
-                  />
-                </Spin>
-              </Flex>
-              {isCurrentHostSupportQuota ? (
-                <>
-                  <Flex
-                    style={{ margin: "15px auto" }}
-                    justify="between"
-                    wrap="wrap"
-                  >
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        wordBreak: "keep-all",
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      {t("data.Project")}
-                      <br />({currentProject?.name})
-                    </Typography.Text>
-                    <UsageProgress
-                      usageProgressFrgmt={project_quota_scope || null}
-                    />
-                  </Flex>
-                  <Flex justify="between" wrap="wrap">
-                    <Typography.Text
-                      type="secondary"
-                      style={{
-                        wordBreak: "keep-all",
-                        wordWrap: "break-word",
-                      }}
-                    >
-                      {t("data.User")}
-                      <br />({baiClient?.email})
-                    </Typography.Text>
-                    <UsageProgress
-                      usageProgressFrgmt={user_quota_scope || null}
-                    />
-                  </Flex>
-                </>
-              ) : (
-                <Empty
-                  image={Empty.PRESENTED_IMAGE_SIMPLE}
-                  description={t("storageHost.QuotaDoesNotSupported")}
-                  style={{ margin: "25px auto" }}
-                />
-              )}
-            </Descriptions.Item>
-          )}
+        <Descriptions bordered column={columnSetting} size="small">
           <Descriptions.Item label={t("data.NumberOfFolders")}>
             <Progress
               size={[200, 15]}
               percent={numberOfFolderPercent}
               strokeColor={usageIndicatorColor(numberOfFolderPercent)}
               style={{ width: "95%" }}
+              status={numberOfFolderPercent >= 100 ? "exception" : "normal"}
             ></Progress>
-            <Flex direction="row" gap="xxs" wrap="wrap">
+            <Flex direction="row" gap={token.marginXXS} wrap="wrap">
               <Typography.Text type="secondary">
                 {t("data.Created")}:
               </Typography.Text>
               {createdCount}
               <Typography.Text type="secondary">{" / "}</Typography.Text>
               <Typography.Text type="secondary">
-                {t("data.Total")}:
+                {t("data.Limit")}:
               </Typography.Text>
               {maxVfolderCount}
             </Flex>
             <Divider style={{ margin: "12px auto" }} />
-            <Flex direction="row" gap="xxs" wrap="wrap">
+            <Flex direction="row" gap={token.marginXXS} wrap="wrap">
               <Typography.Text type="secondary">
-                {t("data.Invited")}:
+                {t("data.Shared")}:
               </Typography.Text>
               {invitedCount}
             </Flex>
+          </Descriptions.Item>
+          <Descriptions.Item label={t("data.QuotaPerStorageVolume")}>
+            <Flex wrap="wrap" justify="between" direction="row">
+              <Typography.Text type="secondary">
+                {t("data.Host")}
+              </Typography.Text>
+              <Spin spinning={isLoadingVhostInfo}>
+                <Select
+                  filterOption={false}
+                  placeholder={t("data.SelectStorageHost")}
+                  onChange={(value) => {
+                    startTransition(() => {
+                      setSelectedStorageHost(value);
+                    });
+                  }}
+                  style={{ minWidth: 165 }}
+                  options={_.map(hosts, (host) => {
+                    return {
+                      value: host,
+                      label: host,
+                    };
+                  })}
+                />
+              </Spin>
+            </Flex>
+            {isCurrentHostSupportQuota ? (
+              <>
+                <Flex
+                  style={{ margin: "15px auto" }}
+                  justify="between"
+                  wrap="wrap"
+                >
+                  <Typography.Text
+                    type="secondary"
+                    style={{
+                      wordBreak: "keep-all",
+                      wordWrap: "break-word",
+                    }}
+                  >
+                    {t("data.Project")}
+                    <br />({currentProject?.name})
+                  </Typography.Text>
+                  <UsageProgress
+                    usageProgressFrgmt={project_quota_scope || null}
+                  />
+                </Flex>
+                <Flex justify="between" wrap="wrap">
+                  <Typography.Text
+                    type="secondary"
+                    style={{
+                      wordBreak: "keep-all",
+                      wordWrap: "break-word",
+                    }}
+                  >
+                    {t("data.User")}
+                    <br />({baiClient?.email})
+                  </Typography.Text>
+                  <UsageProgress
+                    usageProgressFrgmt={user_quota_scope || null}
+                  />
+                </Flex>
+              </>
+            ) : (
+              <Empty
+                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                description={t("storageHost.QuotaDoesNotSupported")}
+                style={{ margin: "25px auto" }}
+              />
+            )}
           </Descriptions.Item>
         </Descriptions>
       )}
