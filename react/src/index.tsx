@@ -58,7 +58,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <StorageStatusPanel />
+        <StorageStatusPanel fetchKey={props.value || ""} />
       </DefaultProviders>
     );
   })

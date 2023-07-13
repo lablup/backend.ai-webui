@@ -1678,6 +1678,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         }
       });
       this.folders = folders;
+      this._triggerFolderListChanged();
       if (this.folders.length == 0) {
         this.listCondition = 'no-data';
       } else {

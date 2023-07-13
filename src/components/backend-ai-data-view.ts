@@ -62,13 +62,11 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({type: String}) apiMajorVersion = '';
-  @property({type: Object}) folders = Object();
-  @property({type: Object}) folderInfo = Object();
+  @property({type: Date}) folderListFetchKey = new Date();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
-  @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: String}) selectedVhost = '';
   @property({type: Array}) vhosts = [];
@@ -80,7 +78,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Object}) _lists = Object();
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
   @property({type: Object}) storageInfo = Object();
   @property({type: String}) _activeTab = 'general';
@@ -89,9 +86,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) _helpDescriptionStorageProxyInfo = Object();
   @property({type: Object}) options;
-  @property({type: Number}) createdCount;
-  @property({type: Number}) invitedCount;
-  @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
@@ -343,7 +337,7 @@ export default class BackendAIData extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
-        <backend-ai-react-storage-status-panel></backend-ai-react-storage-status-panel>
+        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
@@ -656,6 +650,9 @@ export default class BackendAIData extends BackendAIPage {
     } else { // already connected
       this._getStorageProxyInformation();
     }
+    document.addEventListener('backend-ai-folder-list-changed', () => {
+      this.folderListFetchKey = new Date();
+    });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
         const selectedItems = e.detail;

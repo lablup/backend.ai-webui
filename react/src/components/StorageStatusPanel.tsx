@@ -32,7 +32,9 @@ import { addQuotaScopeTypePrefix, usageIndicatorColor } from "../helper";
 import UsageProgress from "./UsageProgress";
 import _ from "lodash";
 
-const StorageStatusPanel: React.FC<{}> = () => {
+const StorageStatusPanel: React.FC<{
+  fetchKey: string;
+}> = ({ fetchKey }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
@@ -73,7 +75,7 @@ const StorageStatusPanel: React.FC<{}> = () => {
     false;
 
   const { data: vfolders } = useQuery(
-    "vfolders",
+    ["vfolders", { fetchKey }],
     () => {
       return baiClient.vfolder.list(currentProject?.id);
     },
