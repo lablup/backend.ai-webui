@@ -82,8 +82,9 @@ const StorageStatusPanel: React.FC<{}> = () => {
   const createdCount = vfolders?.filter(
     (item: any) => item.is_owner && item.ownership_type === "user"
   ).length;
-  const invitedCount = vfolders?.length - createdCount;
+  const sharedCount = vfolders?.length - createdCount;
 
+  // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
   const { keypair, user } = useLazyLoadQuery<StorageStatusPanelKeypairQuery>(
     graphql`
       query StorageStatusPanelKeypairQuery(
@@ -189,7 +190,7 @@ const StorageStatusPanel: React.FC<{}> = () => {
               <Typography.Text type="secondary">
                 {t("data.Shared")}:
               </Typography.Text>
-              {invitedCount}
+              {sharedCount}
             </Flex>
           </Descriptions.Item>
           <Descriptions.Item label={t("data.QuotaPerStorageVolume")}>
