@@ -15,6 +15,9 @@ const ResetPasswordRequired = React.lazy(
 const StorageHostSettingPage = React.lazy(
   () => import("./pages/StorageHostSettingPage")
 );
+const StorageStatusPanel = React.lazy(
+  () => import("./components/StorageStatusPanel")
+);
 
 customElements.define(
   "backend-ai-react-information",
@@ -45,6 +48,17 @@ customElements.define(
           key={props.value}
           storageHostId={props.value || ""}
         />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-storage-status-panel",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <StorageStatusPanel />
       </DefaultProviders>
     );
   })
