@@ -1,5 +1,5 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
-import React from "react";
+import React, { Suspense } from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
 
 // Load custom theme config once in react/index.tsx
@@ -17,6 +17,11 @@ const StorageHostSettingPage = React.lazy(
 );
 const StorageStatusPanel = React.lazy(
   () => import("./components/StorageStatusPanel")
+);
+const StorageStatusPanelFallback = React.lazy(() =>
+  import("./components/StorageStatusPanel").then((m) => ({
+    default: m.StorageStatusPanelFallback,
+  }))
 );
 
 customElements.define(
@@ -58,7 +63,9 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <StorageStatusPanel fetchKey={props.value || ""} />
+        <Suspense fallback={<StorageStatusPanelFallback />}>
+          <StorageStatusPanel fetchKey={props.value || ""} />
+        </Suspense>
       </DefaultProviders>
     );
   })

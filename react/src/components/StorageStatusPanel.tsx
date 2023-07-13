@@ -66,13 +66,6 @@ const StorageStatusPanel: React.FC<{
       suspense: false,
     }
   );
-  const hosts = vhostInfo?.allowed;
-  const isCurrentHostSupportQuota =
-    (vhostInfo?.volume_info &&
-      vhostInfo.volume_info[selectedStorageHost]?.capabilities?.includes(
-        "quota"
-      )) ??
-    false;
 
   const { data: vfolders } = useQuery(
     ["vfolders", { fetchKey }],
@@ -233,7 +226,7 @@ const StorageStatusPanel: React.FC<{
                     });
                   }}
                   style={{ minWidth: 165 }}
-                  options={_.map(hosts, (host) => {
+                  options={_.map(vhostInfo?.allowed, (host) => {
                     return {
                       value: host,
                       label: host,
@@ -242,7 +235,11 @@ const StorageStatusPanel: React.FC<{
                 />
               </Spin>
             </Flex>
-            {isCurrentHostSupportQuota ? (
+            {/* isCurrentHostSupportQuota */}
+            {vhostInfo?.volume_info &&
+            vhostInfo.volume_info[selectedStorageHost]?.capabilities?.includes(
+              "quota"
+            ) ? (
               <>
                 <Flex
                   style={{ margin: "15px auto" }}
@@ -289,6 +286,19 @@ const StorageStatusPanel: React.FC<{
           </Descriptions.Item>
         </Descriptions>
       )}
+    </Card>
+  );
+};
+
+export const StorageStatusPanelFallback = () => {
+  const { t } = useTranslation();
+  return (
+    <Card
+      size="small"
+      title={t("data.StorageStatus")}
+      style={{ margin: "3px 14px" }}
+    >
+      <Skeleton active />
     </Card>
   );
 };
