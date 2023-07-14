@@ -12,8 +12,6 @@ import {
   Descriptions,
   DescriptionsProps,
   Typography,
-  Spin,
-  Select,
   Empty,
   Divider,
   Skeleton,
@@ -30,7 +28,7 @@ import {
 } from "../hooks";
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from "../helper";
 import UsageProgress from "./UsageProgress";
-import _ from "lodash";
+import StorageSelector from "./StorageSelector";
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;
@@ -41,6 +39,7 @@ const StorageStatusPanel: React.FC<{
   const currentProject = useCurrentProjectValue();
 
   const [selectedStorageHost, setSelectedStorageHost] = useState<string>("");
+  const [volumeInfo, setVolumeInfo] = useState<any>();
   const [isPending, startTransition] = useTransition();
 
   const columnSetting: DescriptionsProps["column"] = {
@@ -51,21 +50,6 @@ const StorageStatusPanel: React.FC<{
     sm: 1,
     xs: 1,
   };
-
-  const { data: vhostInfo, isLoading: isLoadingVhostInfo } = useQuery<{
-    default: string;
-    allowed: Array<string>;
-    volume_info: any;
-  }>(
-    "vhostInfo",
-    () => {
-      return baiClient.vfolder.list_hosts();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    }
-  );
 
   const { data: vfolders } = useQuery(
     ["vfolders", { fetchKey }],
@@ -80,7 +64,9 @@ const StorageStatusPanel: React.FC<{
   const createdCount = vfolders?.filter(
     (item: any) => item.is_owner && item.ownership_type === "user"
   ).length;
-  const sharedCount = vfolders?.length - createdCount;
+  const projectFolderCount = vfolders?.filter(
+    (item: any) => item.ownership_type === "group"
+  ).length;
   const invitedCount = vfolders?.filter(
     (item: any) => !item.is_owner && item.ownership_type === "user"
   ).length;
@@ -163,129 +149,108 @@ const StorageStatusPanel: React.FC<{
       title={t("data.StorageStatus")}
       style={{ margin: "3px 14px" }}
     >
-      {isLoadingVhostInfo ? (
-        <Skeleton active />
-      ) : (
-        <Descriptions bordered column={columnSetting} size="small">
-          <Descriptions.Item label={t("data.NumberOfFolders")}>
-            <Progress
-              size={[200, 15]}
-              percent={numberOfFolderPercent}
-              strokeColor={usageIndicatorColor(numberOfFolderPercent)}
-              style={{ width: "95%" }}
-              status={numberOfFolderPercent >= 100 ? "exception" : "normal"}
-            ></Progress>
-            <Flex direction="row" gap={token.marginXXS} wrap="wrap">
+      <Descriptions bordered column={columnSetting} size="small">
+        <Descriptions.Item label={t("data.NumberOfFolders")}>
+          <Progress
+            size={[200, 15]}
+            percent={numberOfFolderPercent}
+            strokeColor={usageIndicatorColor(numberOfFolderPercent)}
+            style={{ width: "95%" }}
+            status={numberOfFolderPercent >= 100 ? "exception" : "normal"}
+          ></Progress>
+          <Flex direction="row" gap={token.marginXXS} wrap="wrap">
+            <Typography.Text type="secondary">
+              {t("data.Created")}:
+            </Typography.Text>
+            {createdCount}
+            <Typography.Text type="secondary">{" / "}</Typography.Text>
+            <Typography.Text type="secondary">
+              {t("data.Limit")}:
+            </Typography.Text>
+            {maxVfolderCount}
+          </Flex>
+          <Divider style={{ margin: "12px auto" }} />
+          <Flex direction="row" wrap="wrap" justify="between">
+            <Flex gap={token.marginXXS}>
               <Typography.Text type="secondary">
-                {t("data.Created")}:
+                {t("data.ProjectFolder")}:
               </Typography.Text>
-              {createdCount}
-              <Typography.Text type="secondary">{" / "}</Typography.Text>
-              <Typography.Text type="secondary">
-                {t("data.Limit")}:
-              </Typography.Text>
-              {maxVfolderCount}
+              {projectFolderCount}
             </Flex>
-            <Divider style={{ margin: "12px auto" }} />
-            <Flex direction="row" wrap="wrap" justify="between">
-              <Flex gap={token.marginXXS}>
-                <Typography.Text type="secondary">
-                  {t("data.Shared")}:
-                </Typography.Text>
-                {sharedCount}
-              </Flex>
-              <Flex gap={token.marginXXS} style={{ marginRight: 30 }}>
-                <Typography.Text type="secondary">
-                  {t("data.Invited")}:
-                </Typography.Text>
-                {invitedCount}
-              </Flex>
-            </Flex>
-          </Descriptions.Item>
-          <Descriptions.Item
-            label={
-              <div>
-                {t("data.QuotaPerStorageVolume")}
-                <Tooltip title={t("data.HostDetails")}>
-                  <Button type="link" icon={<InfoCircleOutlined />} />
-                </Tooltip>
-              </div>
-            }
-          >
-            <Flex wrap="wrap" justify="between" direction="row">
+            <Flex gap={token.marginXXS} style={{ marginRight: 30 }}>
               <Typography.Text type="secondary">
-                {t("data.Host")}
+                {t("data.Invited")}:
               </Typography.Text>
-              <Spin spinning={isLoadingVhostInfo}>
-                <Select
-                  filterOption={false}
-                  placeholder={t("data.SelectStorageHost")}
-                  onChange={(value) => {
-                    startTransition(() => {
-                      setSelectedStorageHost(value);
-                    });
+              {invitedCount}
+            </Flex>
+          </Flex>
+        </Descriptions.Item>
+        <Descriptions.Item
+          label={
+            <div>
+              {t("data.QuotaPerStorageVolume")}
+              <Tooltip title={t("data.HostDetails")}>
+                <Button type="link" icon={<InfoCircleOutlined />} />
+              </Tooltip>
+            </div>
+          }
+        >
+          <Flex wrap="wrap" justify="between" direction="row">
+            <Typography.Text type="secondary">{t("data.Host")}</Typography.Text>
+            <StorageSelector
+              onSelect={(value: string, option: any) => {
+                startTransition(() => {
+                  setSelectedStorageHost(value);
+                  setVolumeInfo(option?.volume_info);
+                });
+              }}
+              value={selectedStorageHost}
+            />
+          </Flex>
+          {volumeInfo?.capabilities?.includes("quota") ? (
+            <>
+              <Flex
+                style={{ margin: "15px auto" }}
+                justify="between"
+                wrap="wrap"
+              >
+                <Typography.Text
+                  type="secondary"
+                  style={{
+                    wordBreak: "keep-all",
+                    wordWrap: "break-word",
                   }}
-                  style={{ minWidth: 165 }}
-                  options={_.map(vhostInfo?.allowed, (host) => {
-                    return {
-                      value: host,
-                      label: host,
-                    };
-                  })}
-                />
-              </Spin>
-            </Flex>
-            {/* isCurrentHostSupportQuota */}
-            {vhostInfo?.volume_info &&
-            vhostInfo.volume_info[selectedStorageHost]?.capabilities?.includes(
-              "quota"
-            ) ? (
-              <>
-                <Flex
-                  style={{ margin: "15px auto" }}
-                  justify="between"
-                  wrap="wrap"
                 >
-                  <Typography.Text
-                    type="secondary"
-                    style={{
-                      wordBreak: "keep-all",
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    {t("data.Project")}
-                    <br />({currentProject?.name})
-                  </Typography.Text>
-                  <UsageProgress
-                    usageProgressFrgmt={project_quota_scope || null}
-                  />
-                </Flex>
-                <Flex justify="between" wrap="wrap">
-                  <Typography.Text
-                    type="secondary"
-                    style={{
-                      wordBreak: "keep-all",
-                      wordWrap: "break-word",
-                    }}
-                  >
-                    {t("data.User")}
-                    <br />({baiClient?.email})
-                  </Typography.Text>
-                  <UsageProgress
-                    usageProgressFrgmt={user_quota_scope || null}
-                  />
-                </Flex>
-              </>
-            ) : (
-              <Empty
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("storageHost.QuotaDoesNotSupported")}
-                style={{ margin: "25px auto" }}
-              />
-            )}
-          </Descriptions.Item>
-        </Descriptions>
-      )}
+                  {t("data.Project")}
+                  <br />({currentProject?.name})
+                </Typography.Text>
+                <UsageProgress
+                  usageProgressFrgmt={project_quota_scope || null}
+                />
+              </Flex>
+              <Flex justify="between" wrap="wrap">
+                <Typography.Text
+                  type="secondary"
+                  style={{
+                    wordBreak: "keep-all",
+                    wordWrap: "break-word",
+                  }}
+                >
+                  {t("data.User")}
+                  <br />({baiClient?.email})
+                </Typography.Text>
+                <UsageProgress usageProgressFrgmt={user_quota_scope || null} />
+              </Flex>
+            </>
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={t("storageHost.QuotaDoesNotSupported")}
+              style={{ margin: "25px auto" }}
+            />
+          )}
+        </Descriptions.Item>
+      </Descriptions>
     </Card>
   );
 };

@@ -765,7 +765,8 @@
     "SelectStorageHost": "Select storage host",
     "Used": "Used",
     "Limit": "Limit",
-    "HostDetails": "Displays quota information for the selected storage host."
+    "HostDetails": "Displays quota information for the selected storage host.",
+    "ProjectFolder": "Project Folder"
   },
   "dialog": {
     "warning": {
