@@ -206,9 +206,7 @@ const StorageStatusPanel: React.FC<{
             />
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
-            <Flex>
-              <FlexActivityIndicator />
-            </Flex>
+            <FlexActivityIndicator style={{ minHeight: 120 }} />
           ) : selectedVolumeInfo?.capabilities?.includes("quota") ? (
             <>
               <Flex

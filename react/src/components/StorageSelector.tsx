@@ -61,7 +61,6 @@ const StorageSelector: React.FC<Props> = ({
       placeholder={t("data.SelectStorageHost")}
       loading={isLoadingVhostInfo}
       style={{ minWidth: 165 }}
-      // defaultValue={vhostInfo?.default}
       // @ts-ignore
       value={value?.id || value}
       onChange={(id) => {
@@ -74,7 +73,6 @@ const StorageSelector: React.FC<Props> = ({
         return {
           value: host,
           label: host,
-          // volume_info: vhostInfo?.volume_info[host],
         };
       })}
       {...selectProps}
