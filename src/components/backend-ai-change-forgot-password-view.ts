@@ -43,7 +43,6 @@ export default class BackendAIChangeForgotPasswordView extends BackendAIPage {
   @property({type: Object}) notification = Object();
   @property({type: Object}) passwordChangeDialog = Object();
   @property({type: Object}) failDialog = Object();
-  @property({type: String}) token = '';
 
   static get styles(): CSSResultGroup | undefined {
     return [
