@@ -46,12 +46,13 @@ const StorageSelector: React.FC<Props> = ({
   );
 
   useEffect(() => {
-    if (autoSelectDefault && vhostInfo?.default) {
+    if (autoSelectDefault && !value && vhostInfo?.default) {
       onChange?.(vhostInfo?.default, {
         id: vhostInfo?.default,
         ...(vhostInfo?.volume_info[vhostInfo?.default] || {}),
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (

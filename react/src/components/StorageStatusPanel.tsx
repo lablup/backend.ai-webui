@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useState, useTransition } from "react";
+import React, { useDeferredValue, useState } from "react";
 import { useQuery } from "react-query";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
@@ -18,7 +18,6 @@ import {
   theme,
   Tooltip,
   Button,
-  Spin,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Flex from "./Flex";
@@ -41,8 +40,7 @@ const StorageStatusPanel: React.FC<{
   const currentProject = useCurrentProjectValue();
 
   const [selectedVolumeInfo, setSelectedVolumeInfo] = useState<VolumeInfo>();
-  const deferredVolumeInfo = useDeferredValue(selectedVolumeInfo);
-  const [isPending, startTransition] = useTransition();
+  const deferredSelectedVolumeInfo = useDeferredValue(selectedVolumeInfo);
 
   const columnSetting: DescriptionsProps["column"] = {
     xxl: 4,
@@ -130,11 +128,11 @@ const StorageStatusPanel: React.FC<{
           currentProject?.id
         ),
         user_quota_scope_id: addQuotaScopeTypePrefix("user", user?.id || ""),
-        storage_host_name: deferredVolumeInfo?.id || "",
+        storage_host_name: deferredSelectedVolumeInfo?.id || "",
         skipQuotaScope:
           currentProject?.id === undefined ||
           user?.id === undefined ||
-          !deferredVolumeInfo?.id,
+          !deferredSelectedVolumeInfo?.id,
       }
     );
 
@@ -207,7 +205,7 @@ const StorageStatusPanel: React.FC<{
               autoSelectDefault
             />
           </Flex>
-          {true ? (
+          {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
             <Flex>
               <FlexActivityIndicator />
             </Flex>
