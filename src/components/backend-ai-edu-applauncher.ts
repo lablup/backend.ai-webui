@@ -73,7 +73,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.resources = {
       cpu: queryParams.get('cpu'),
       mem: queryParams.get('mem'),
-      fgpu: queryParams.get('fgpu')
+      'cuda.shares': queryParams.get('cuda.shares')
     };
     await this._initClient(apiEndpoint);
     const loginSuccess = await this._token_login();
