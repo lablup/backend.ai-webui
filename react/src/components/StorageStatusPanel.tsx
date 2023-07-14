@@ -195,7 +195,12 @@ const StorageStatusPanel: React.FC<{
             </div>
           }
         >
-          <Flex wrap="wrap" justify="between" direction="row">
+          <Flex
+            wrap="wrap"
+            justify="between"
+            direction="row"
+            style={{ minWidth: "25vw" }}
+          >
             <Typography.Text type="secondary">{t("data.Host")}</Typography.Text>
             <StorageSelector
               onChange={(value, info) => {
