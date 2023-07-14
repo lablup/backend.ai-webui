@@ -1,7 +1,7 @@
 import { theme } from "antd";
 import React, { PropsWithChildren } from "react";
 
-interface FlexProps
+export interface FlexProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "dir">,
     PropsWithChildren {
   direction?: "row" | "row-reverse" | "column" | "column-reverse";

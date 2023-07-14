@@ -1,4 +1,4 @@
-import React, { useState, useTransition } from "react";
+import React, { useDeferredValue, useState, useTransition } from "react";
 import { useQuery } from "react-query";
 import graphql from "babel-plugin-relay/macro";
 import { useLazyLoadQuery } from "react-relay";
@@ -18,6 +18,7 @@ import {
   theme,
   Tooltip,
   Button,
+  Spin,
 } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import Flex from "./Flex";
@@ -28,7 +29,8 @@ import {
 } from "../hooks";
 import { addQuotaScopeTypePrefix, usageIndicatorColor } from "../helper";
 import UsageProgress from "./UsageProgress";
-import StorageSelector from "./StorageSelector";
+import StorageSelector, { VolumeInfo } from "./StorageSelector";
+import FlexActivityIndicator from "./FlexActivityIndicator";
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;
@@ -38,8 +40,8 @@ const StorageStatusPanel: React.FC<{
   const baiClient = useSuspendedBackendaiClient();
   const currentProject = useCurrentProjectValue();
 
-  const [selectedStorageHost, setSelectedStorageHost] = useState<string>("");
-  const [volumeInfo, setVolumeInfo] = useState<any>();
+  const [selectedVolumeInfo, setSelectedVolumeInfo] = useState<VolumeInfo>();
+  const deferredVolumeInfo = useDeferredValue(selectedVolumeInfo);
   const [isPending, startTransition] = useTransition();
 
   const columnSetting: DescriptionsProps["column"] = {
@@ -128,11 +130,11 @@ const StorageStatusPanel: React.FC<{
           currentProject?.id
         ),
         user_quota_scope_id: addQuotaScopeTypePrefix("user", user?.id || ""),
-        storage_host_name: selectedStorageHost,
+        storage_host_name: deferredVolumeInfo?.id || "",
         skipQuotaScope:
           currentProject?.id === undefined ||
           user?.id === undefined ||
-          selectedStorageHost === "",
+          !deferredVolumeInfo?.id,
       }
     );
 
@@ -198,16 +200,18 @@ const StorageStatusPanel: React.FC<{
           <Flex wrap="wrap" justify="between" direction="row">
             <Typography.Text type="secondary">{t("data.Host")}</Typography.Text>
             <StorageSelector
-              onSelect={(value: string, option: any) => {
-                startTransition(() => {
-                  setSelectedStorageHost(value);
-                  setVolumeInfo(option?.volume_info);
-                });
+              onChange={(value, info) => {
+                setSelectedVolumeInfo(info);
               }}
-              value={selectedStorageHost}
+              value={selectedVolumeInfo}
+              autoSelectDefault
             />
           </Flex>
-          {volumeInfo?.capabilities?.includes("quota") ? (
+          {true ? (
+            <Flex>
+              <FlexActivityIndicator />
+            </Flex>
+          ) : selectedVolumeInfo?.capabilities?.includes("quota") ? (
             <>
               <Flex
                 style={{ margin: "15px auto" }}
