@@ -31,7 +31,6 @@ import 'weightless/tab-group';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
@@ -63,13 +62,11 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({type: String}) apiMajorVersion = '';
-  @property({type: Object}) folders = Object();
-  @property({type: Object}) folderInfo = Object();
+  @property({type: Date}) folderListFetchKey = new Date();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
-  @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
   @property({type: String}) selectedVhost = '';
   @property({type: Array}) vhosts = [];
@@ -81,7 +78,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
   @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Object}) _lists = Object();
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
   @property({type: Object}) storageInfo = Object();
   @property({type: String}) _activeTab = 'general';
@@ -90,9 +86,6 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: String}) _helpDescriptionIcon = '';
   @property({type: Object}) _helpDescriptionStorageProxyInfo = Object();
   @property({type: Object}) options;
-  @property({type: Number}) createdCount;
-  @property({type: Number}) invitedCount;
-  @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
   @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
@@ -344,29 +337,7 @@ export default class BackendAIData extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
-        <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
-          <div slot="message">
-            <div class="horizontal layout wrap flex center center-justified">
-              <div class="storage-chart-wrapper">
-                <chart-js id="storage-status" type="doughnut" .data="${this.folders}" .options="${this.options}" height="250" width="250"></chart-js>
-              </div>
-              <div class="horizontal layout justified">
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.createdCount}</div>
-                  <span>${_t('data.Created')}</span>
-                </div>
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.invitedCount}</div>
-                  <span>${_t('data.Invited')}</span>
-                </div>
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.capacity}</div>
-                  <span>${_t('data.Capacity')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </lablup-activity-panel>
+        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
@@ -680,8 +651,7 @@ export default class BackendAIData extends BackendAIPage {
       this._getStorageProxyInformation();
     }
     document.addEventListener('backend-ai-folder-list-changed', () => {
-      // this.shadowRoot.querySelector('#storage-status').updateChart();
-      this._createStorageChart();
+      this.folderListFetchKey = new Date();
     });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
@@ -724,11 +694,9 @@ export default class BackendAIData extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         _init();
-        this._createStorageChart();
       }, true);
     } else {
       _init();
-      this._createStorageChart();
     }
   }
 
@@ -736,41 +704,6 @@ export default class BackendAIData extends BackendAIPage {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     return res.keypair.resource_policy;
-  }
-
-  /**
-   * create Storage Doughnut Chart
-   *
-   */
-  async _createStorageChart() {
-    const policyName = await this._getCurrentKeypairResourcePolicy();
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
-    const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
-    const groupId = globalThis.backendaiclient.current_group_id();
-    const folders = await globalThis.backendaiclient.vfolder.list(groupId);
-    this.createdCount = folders.filter((item) => item.is_owner).length;
-    this.invitedCount = folders.length - this.createdCount;
-    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
-    this.totalCount = this.capacity + this.createdCount + this.invitedCount;
-    this.folders = {
-      labels: [
-        _text('data.Created'),
-        _text('data.Invited'),
-        _text('data.Capacity')
-      ],
-      datasets: [{
-        data: [
-          this.createdCount,
-          this.invitedCount,
-          this.capacity
-        ],
-        backgroundColor: [
-          '#722cd7',
-          '#60bb43',
-          '#efefef'
-        ]
-      }]
-    };
   }
 
   _toggleFolderTypeInput() {
