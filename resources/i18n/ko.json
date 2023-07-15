@@ -759,7 +759,7 @@
     "Used": "사용됨",
     "Limit": "제한",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
-    "ProjectFolder": "그룹 폴더"
+    "ProjectFolder": "프로젝트 폴더"
   },
   "dialog": {
     "warning": {
