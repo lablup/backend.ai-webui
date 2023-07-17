@@ -11,12 +11,10 @@ import { GBToBytes, bytesToGB } from "../helper";
 interface Props extends ModalProps {
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
   onRequestClose: () => void;
-  resourcePolicyMaxVFolderSize?: number;
 }
 
 const QuotaSettingModal: React.FC<Props> = ({
   quotaScopeFrgmt = null,
-  resourcePolicyMaxVFolderSize,
   onRequestClose,
   ...props
 }) => {

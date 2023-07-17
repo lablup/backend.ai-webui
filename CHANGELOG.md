@@ -1,6 +1,41 @@
 # Changelog
 
-## v22.09.20 (25/05/2023)
+## v23.03.2 (05/07/2023)
+## What's Changed
+* hotfix: enable sftp-scaling-group feature from manager v22.03.3 by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1732
+* feat: automatically fill sign up token if query param exists by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1733
+* fix: touchup description for ssh sftp session by @lizable in https://github.com/lablup/backend.ai-webui/pull/1734
+* fix: set timeout value to 10sec on fetching `user_stats` by @lizable in https://github.com/lablup/backend.ai-webui/pull/1736
+* fix: SFTP scaling group session refusing to be created by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1738
+* fix: manually add roundup decimal places in used_slots and total_slots by @lizable in https://github.com/lablup/backend.ai-webui/pull/1740
+* misc: update image metadata with additional Python and CUDA versions by @adrysn in https://github.com/lablup/backend.ai-webui/pull/1756
+* fix: do not auto logout when preserve login true by @chisacam in https://github.com/lablup/backend.ai-webui/pull/1752
+* docs: Modified to fit nvidia brand notation by @Yaminyam in https://github.com/lablup/backend.ai-webui/pull/1748
+* feat: add support for Furiosa Warboy accelerator by @kyujin-cho in https://github.com/lablup/backend.ai-webui/pull/1702
+* feat: hide directory-based usage information based on configuration by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1737
+* feature: vfolder v3 setting UI by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1750
+* fix: parse fgpu slots to float by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1759
+* fix: annotate unused codes by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1760
+* hotfix: vfolder quota support by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1762
+* cosmetic changes of quota scope setting page by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1763
+* fix: used, capacity was changed in the resource panel and change the unset icon by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1764
+* compact ui version of storage quota setting by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1765
+
+## New Contributors
+* @chisacam made their first contribution in https://github.com/lablup/backend.ai-webui/pull/1752
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.03.1...v23.03.2
+
+
+## v23.03.1 / v22.09.21 (30/05/2023)
+## What's Changed
+* fix:  compile block of Make file for react build multi target (web,app) by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1727
+* fix: enable npu resource slider when limited by @lizable in https://github.com/lablup/backend.ai-webui/pull/1729
+* fix: let base64 encode convert padding with byte triplet condition by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1731
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v22.09.20...v22.09.21
+
+## v23.03.0 / v22.09.20 (25/05/2023)
 ## What's Changed
 * hotfix: remove inline styling applied in force terminate button by @lizable in https://github.com/lablup/backend.ai-webui/pull/1680
 * Support local vscode using remote ssh mode to session container by @studioego in https://github.com/lablup/backend.ai-webui/pull/1487

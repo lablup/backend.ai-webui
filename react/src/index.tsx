@@ -1,5 +1,5 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
-import React from "react";
+import React, { Suspense } from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
 
 // Load custom theme config once in react/index.tsx
@@ -14,6 +14,14 @@ const ResetPasswordRequired = React.lazy(
 );
 const StorageHostSettingPage = React.lazy(
   () => import("./pages/StorageHostSettingPage")
+);
+const StorageStatusPanel = React.lazy(
+  () => import("./components/StorageStatusPanel")
+);
+const StorageStatusPanelFallback = React.lazy(() =>
+  import("./components/StorageStatusPanel").then((m) => ({
+    default: m.StorageStatusPanelFallback,
+  }))
 );
 
 customElements.define(
@@ -45,6 +53,19 @@ customElements.define(
           key={props.value}
           storageHostId={props.value || ""}
         />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-storage-status-panel",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Suspense fallback={<StorageStatusPanelFallback />}>
+          <StorageStatusPanel fetchKey={props.value || ""} />
+        </Suspense>
       </DefaultProviders>
     );
   })
