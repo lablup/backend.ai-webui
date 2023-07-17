@@ -1032,7 +1032,9 @@
     "RetriesToSkip": "Times",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "AllowedSessionTypes": "Allowed session types",
-    "Domain": "Domain"
+    "Domain": "Domain",
+    "Public": "Public",
+    "PublicStatus": "Public Status"
   },
   "maintenance": {
     "General": "General",
