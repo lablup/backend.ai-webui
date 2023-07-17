@@ -11,6 +11,33 @@ const {
 } = require("@craco/craco");
 
 module.exports = {
+  // devServer: (devServerConfig, { env, paths, proxy, allowedHost }) => {
+  //   /* ... */
+  //   console.log(devServerConfig);
+  //   console.log(proxy);
+  //   return devServerConfig;
+  // },
+  devServer: {
+    proxy: {
+      "/manifest": {
+        target: "http://localhost:9081",
+      },
+      "/src": {
+        target: "http://localhost:9081",
+      },
+      "/dist": {
+        target: "http://localhost:9081",
+      },
+      "/node_modules": {
+        target: "http://localhost:9081",
+      },
+      "/resources": {
+        target: "http://localhost:9081",
+      },
+    },
+    watchFiles: ["../src/**/*", "../index.html"],
+  },
+
   webpack: {
     // When you change the this value, you might need to clear cache restart the dev server.
     // you can use `rm -rf node_modules/.cache` to clear cache.
@@ -33,9 +60,6 @@ module.exports = {
       }
 
       // For development when loading react bundle on other host, you need to set the public path to the dev server address.
-      if (env === "development") {
-        webpackConfig.output.publicPath = "http://127.0.0.1:3081/";
-      }
       if (process.env.BUILD_TARGET === "electron") {
         webpackConfig.output.publicPath = "es6://";
       }
