@@ -8,11 +8,6 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
-import './backend-ai-dialog';
-import './backend-ai-list-status';
-import './lablup-grid-sort-filter-column';
-import './backend-ai-session-launcher';
-
 import {Button} from '@material/mwc-button';
 import '@material/mwc-formfield';
 import '@material/mwc-icon-button';
@@ -20,6 +15,9 @@ import '@material/mwc-list';
 import '@material/mwc-radio';
 import {Select} from '@material/mwc-select';
 import '@material/mwc-textfield';
+import {Radio} from '@material/mwc-radio';
+import {Switch} from '@material/mwc-switch';
+import {TextField} from '@material/mwc-textfield';
 
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-column-group';
@@ -41,6 +39,14 @@ import 'weightless/select';
 import 'weightless/title';
 import 'weightless/textfield';
 
+import './backend-ai-dialog';
+import './backend-ai-list-status';
+import './backend-ai-session-launcher';
+import './lablup-grid-sort-filter-column';
+import './lablup-loading-spinner';
+import BackendAIDialog from './backend-ai-dialog';
+import LablupLoadingSpinner from './lablup-loading-spinner';
+
 import '../plastics/lablup-shields/lablup-shields';
 import {default as PainKiller} from './backend-ai-painkiller';
 import tus from '../lib/tus';
@@ -51,12 +57,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
-type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
-type Radio = HTMLElementTagNameMap['mwc-radio'];
-type Switch = HTMLElementTagNameMap['mwc-switch'];
-type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
 interface inviteeData {
   owner: string,
