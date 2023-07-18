@@ -27,6 +27,8 @@ export class BackendAIPage extends LitElement {
   public tasker: any; // Global Background tasker
   @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
+  @property({type: String}) permission; // Reserved for plugin pages
+  @property({type: String}) menuitem; // Reserved for plugin pages
 
   constructor() {
     super();
