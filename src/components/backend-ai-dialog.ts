@@ -97,6 +97,12 @@ export default class BackendAiDialog extends LitElement {
           padding: 5px 15px 15px 15px;
         }
 
+        mwc-dialog.ticker {
+          right: 20px!important;
+          bottom: 20px;
+            background-color:red;
+        }
+
         mwc-dialog[narrow] div.content,
         mwc-dialog[narrow] div.footer {
           padding: 0;

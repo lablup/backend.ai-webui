@@ -23,7 +23,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
  <lablup-progress-bar></lablup-progress-bar>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-progress-bar
  */
 
