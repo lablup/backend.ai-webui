@@ -1,8 +1,9 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import './backend-ai-error-log-list';
 import 'weightless/card';
@@ -27,11 +28,7 @@ import {
 export default class BackendAIErrorLogView extends BackendAIPage {
   @property({type: Object}) _lists = Object();
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -50,12 +47,13 @@ export default class BackendAIErrorLogView extends BackendAIPage {
   }
 
   firstUpdated() {
-    this._lists = this.shadowRoot.querySelectorAll('backend-ai-session-list');
+    this._lists = this.shadowRoot?.querySelectorAll('backend-ai-session-list');
   }
 
   render() {
     // language=HTML
     return html `
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-card class="item" elevation="1">
         <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
       </wl-card>

@@ -1,22 +1,23 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
-import {unsafeHTML} from 'lit-html/directives/unsafe-html';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
+import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-button';
 import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select';
-import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
+import {Switch} from '@material/mwc-switch';
 import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-textfield';
-
+import {TextField} from '@material/mwc-textfield';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -30,16 +31,19 @@ import 'weightless/tab-group';
 import 'weightless/textfield';
 
 import '../plastics/lablup-shields/lablup-shields';
-import '../plastics/chart-js';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
 import './lablup-activity-panel';
-import './lablup-loading-spinner';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
+
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 /**
  Backend.AI Data View
@@ -58,42 +62,39 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
 @customElement('backend-ai-data-view')
 export default class BackendAIData extends BackendAIPage {
   @property({type: String}) apiMajorVersion = '';
-  @property({type: Object}) folders = Object();
-  @property({type: Object}) folderInfo = Object();
+  @property({type: Date}) folderListFetchKey = new Date();
   @property({type: Boolean}) is_admin = false;
   @property({type: Boolean}) enableStorageProxy = false;
+  @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: Boolean}) authenticated = false;
-  @property({type: String}) deleteFolderId = '';
   @property({type: String}) vhost = '';
+  @property({type: String}) selectedVhost = '';
   @property({type: Array}) vhosts = [];
-  @property({type: Array}) usageModes = ['General', 'Data', 'Model'];
+  @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
   @property({type: Array}) allowedGroups = [];
-  @property({type: Array}) allowed_folder_type = [];
+  @property({type: Array}) allowed_folder_type:string[] = [];
   @property({type: Object}) notification = Object();
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) folderLists = Object();
   @property({type: String}) _status = 'inactive';
-  @property({type: Boolean}) active = true;
-  @property({type: Object}) _lists = Object();
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) _vfolderInnatePermissionSupport = false;
   @property({type: Object}) storageInfo = Object();
   @property({type: String}) _activeTab = 'general';
   @property({type: String}) _helpDescription = '';
   @property({type: String}) _helpDescriptionTitle = '';
   @property({type: String}) _helpDescriptionIcon = '';
+  @property({type: Object}) _helpDescriptionStorageProxyInfo = Object();
   @property({type: Object}) options;
-  @property({type: Number}) createdCount;
-  @property({type: Number}) invitedCount;
-  @property({type: Number}) totalCount;
   @property({type: Number}) capacity;
   @property({type: String}) cloneFolderName = '';
+  @property({type: Array}) quotaSupportStorageBackends = ['xfs', 'weka', 'spectrumscale'];
+  @property({type: Object}) storageProxyInfo = Object();
+  @property({type: String}) folderType = 'user';
+  @query('#add-folder-name') addFolderNameInput!: TextField;
+  @query('#clone-folder-name') cloneFolderNameInput!: TextField;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -225,18 +226,23 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
           --mdc-select-hover-line-color: var(--general-textfield-selected-color);
           --mdc-list-vertical-padding: 5px;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 172.5px;
+          --mdc-select-disabled-ink-color: #cccccc;
         }
 
-        mwc-select.full-width {
+        mwc-select.full-width.fixed-position {
           width: 100%;
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 345px;
+          --mdc-menu-min-width: 345px;
         }
 
-        mwc-select.full-width.fixed-position > mwc-list-item {
-          width: 314px; // default width
-        }
-
-        mwc-select.fixed-position > mwc-list-item {
-          width: 140px; // default width
+        mwc-select.fixed-position {
+          /* Need to be set when fixedMenuPosition attribute is enabled */
+          --mdc-menu-max-width: 172.5px;
+          --mdc-menu-min-width: 172.5px;
         }
 
         mwc-select mwc-icon-button {
@@ -252,25 +258,17 @@ export default class BackendAIData extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #automount-folder-lists > div {
+        #automount-folder-lists > div,
+        #model-folder-lists > div {
           background-color: white;
           color: var(--general-textfield-selected-color);
           border-bottom:0.5px solid var(--general-textfield-selected-color);
         }
 
-        #automount-folder-lists > div > p {
+        #automount-folder-lists > div > p ,
+        #model-folder-lists > div > p {
           color: var(--general-sidebar-color);
           margin-left: 10px;
-        }
-
-        @media screen and (max-width: 750px) {
-          mwc-tab {
-            --mdc-typography-button-font-size: 10px;
-          }
-
-          mwc-button > span {
-            display: none;
-          }
         }
 
         .storage-status-indicator {
@@ -286,37 +284,60 @@ export default class BackendAIData extends BackendAIPage {
           margin: 20px 50px 0px 50px;
         }
 
+        h4#default-quota-unit {
+          display:none;
+        }
+
+        @media screen and (max-width: 750px) {
+          mwc-tab {
+            --mdc-typography-button-font-size: 10px;
+          }
+
+          mwc-button > span {
+            display: none;
+          }
+        }
+
+        .host-status-indicator {
+          height: 16px;
+          padding-left: 8px;
+          padding-right: 8px;
+          border-radius: 8px;
+          font-size: 12px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: #fff;
+        }
+
+        .host-status-indicator.adequate {
+          background-color: rgba(58, 178, 97, 1);
+        }
+
+        .host-status-indicator.caution {
+          background-color: rgb(223, 179, 23);
+        }
+
+        .host-status-indicator.insufficient {
+          background-color:#ef5350;
+        }
       `];
   }
 
+  renderStatusIndicator(percentage:number, showTitle:boolean) {
+    const idx = percentage < 70 ? 0 : percentage < 90 ? 1 : 2;
+    const type = ['Adequate', 'Caution', 'Insufficient'][idx];
+    const title = [_t('data.usage.Adequate'), _t('data.usage.Caution'), _t('data.usage.Insufficient')][idx];
+    return html`<div class="host-status-indicator ${type.toLocaleLowerCase()} self-center">
+      ${showTitle ? title : ''}
+    </div>`;
+  }
   render() {
     // language=HTML
     return html`
-      <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
-      <div class="vertical layout" style="margin:20px;">
-        <lablup-activity-panel elevation="1" narrow title=${_t('data.StorageStatus')} autowidth>
-          <div slot="message">
-            <div class="horizontal layout wrap flex center center-justified">
-              <div class="storage-chart-wrapper">
-                <chart-js id="storage-status" type="doughnut" .data="${this.folders}" .options="${this.options}" height="250" width="250"></chart-js>
-              </div>
-              <div class="horizontal layout justified">
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.createdCount}</div>
-                  <span>${_t('data.Created')}</span>
-                </div>
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.invitedCount}</div>
-                  <span>${_t('data.Invited')}</span>
-                </div>
-                <div class="vertical layout center storage-status-indicator">
-                  <div class="big">${this.capacity}</div>
-                  <span>${_t('data.Capacity')}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </lablup-activity-panel>
+      <link rel="stylesheet" href="resources/custom.css">
+      <div class="vertical layout">
+        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
@@ -325,6 +346,10 @@ export default class BackendAIData extends BackendAIPage {
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
                 <mwc-tab title="automount" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
+                ${this.enableInferenceWorkload ? html`
+                <mwc-tab title="model" label="${_t('data.Models')}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>`: html``}
               </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button dense raised id="add-folder" icon="add" @click="${() => this._addFolderDialog()}" style="margin-right:15px;">
@@ -340,43 +365,76 @@ export default class BackendAIData extends BackendAIPage {
               </div>
               <backend-ai-storage-list id="automount-folder-storage" storageType="automount" ?active="${this.active === true && this._activeTab === 'automount'}"></backend-ai-storage-list>
             </div>
+            ${this.enableInferenceWorkload ? html`
+            <div id="model-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t('data.DialogModelFolder')}</p>
+              </div>
+              <backend-ai-storage-list id="model-folder-storage" storageType="model" ?active="${this.active === true && this._activeTab === 'model'}"></backend-ai-storage-list>
+            </div>` : html``}
           </div>
         </lablup-activity-panel>
       </div>
       <backend-ai-dialog id="add-folder-dialog" fixed backdrop>
         <span slot="title">${_t('data.CreateANewStorageFolder')}</span>
-        <div slot="content">
+        <div slot="content" class="vertical layout flex">
           <mwc-textfield id="add-folder-name" label="${_t('data.Foldername')}"
           @change="${() => this._validateFolderName()}" pattern="^[a-zA-Z0-9\._-]*$"
             required validationMessage="${_t('data.Allowslettersnumbersand-_dot')}" maxLength="64"
             placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
-          <mwc-select class="full-width fixed-position" id="add-folder-host" label="${_t('data.Host')}" fixedMenuPosition>
-            ${this.vhosts.map((item, idx) => html`
-              <mwc-list-item hasMeta value="${item}" ?selected="${idx === 0}">
-                <span>${item}</span>
-                <mwc-icon-button slot="meta" icon="info"
-                    @click="${(e) => this._showStorageDescription(e, item)}">
+          <mwc-select
+            class="full-width fixed-position"
+            id="add-folder-host"
+            label="${_t('data.Host')}"
+            fixedMenuPosition
+            @selected=${(e)=> this.selectedVhost = e.target.value}
+          >
+            ${this.vhosts.map((item) => {
+              const percentage = this.storageProxyInfo[item] && this.storageProxyInfo[item]?.usage && this.storageProxyInfo[item]?.usage?.percentage;
+              return html`<mwc-list-item
+                hasMeta
+                value="${item}"
+                ?selected="${item === this.vhost}"
+              >
+                <div class="horizontal layout justified center">
+                  <span>${item}</span>
+                  ${html`
+                    &nbsp;
+                    ${typeof percentage === 'number' ? this.renderStatusIndicator(percentage, false): ''}
+                  `}
+                </div>
+                <mwc-icon-button
+                  slot="meta"
+                  icon="info"
+                  @click="${(e) => this._showStorageDescription(e, item)}"
+                >
                 </mwc-icon-button>
-              </mwc-list-item>
-            `)}
+              </mwc-list-item>`;
+            })}
           </mwc-select>
+          <div class="horizontal layout start" style="margin-top:-5px;margin-bottom:10px;padding-left:16px;font-size:12px;">
+            ${typeof this.storageProxyInfo[this.selectedVhost]?.usage?.percentage == 'number' ? html`
+              ${_t('data.usage.StatusOfSelectedHost')}:&nbsp;${this.renderStatusIndicator(this.storageProxyInfo[this.selectedVhost]?.usage?.percentage, true)}
+              ` : html``
+            }
+          </div>
           <div class="horizontal layout">
             <mwc-select id="add-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
-              ${(this.allowed_folder_type as string[]).includes('user') ? html`
+                        style="width:${(!this.is_admin || !this.allowed_folder_type.includes('group')) ? '100%': '50%'}"
+                        @change=${this._toggleFolderTypeInput} required>
+              ${this.allowed_folder_type.includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
+              ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!this.allowed_folder_type.includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-select>
-            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-              <mwc-select class="fixed-position" id="add-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
+            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+              <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
                 ${(this.allowedGroups as any).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
-            </div>
           ` : html``}
           </div>
           ${this._vfolderInnatePermissionSupport ? html`
@@ -386,7 +444,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Type')}" fixedMenuPosition>
+              <mwc-select class="fixed-position" id="add-folder-permission" label="${_t('data.Permission')}" fixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
@@ -407,13 +465,13 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="add-button"
               icon="rowing"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._addFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
@@ -438,15 +496,15 @@ export default class BackendAIData extends BackendAIPage {
           </mwc-select>
           <div class="horizontal layout">
             <mwc-select id="clone-folder-type" label="${_t('data.Type')}"
-                        style="width:${(!this.is_admin || !(this.allowed_folder_type as string[]).includes('group')) ? '100%': '50%'}">
-              ${(this.allowed_folder_type as string[]).includes('user') ? html`
+                        style="width:${(!this.is_admin || !this.allowed_folder_type.includes('group')) ? '100%': '50%'}">
+              ${this.allowed_folder_type.includes('user') ? html`
                 <mwc-list-item value="user" selected>${_t('data.User')}</mwc-list-item>
               ` : html``}
-              ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
-                <mwc-list-item value="group" ?selected="${!(this.allowed_folder_type as string[]).includes('user')}">${_t('data.Project')}</mwc-list-item>
+              ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
+                <mwc-list-item value="group" ?selected="${!this.allowed_folder_type.includes('user')}">${_t('data.Project')}</mwc-list-item>
               ` : html``}
             </mwc-select>
-            ${this.is_admin && (this.allowed_folder_type as string[]).includes('group') ? html`
+            ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
                 <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
                   ${(this.allowedGroups as any).map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
@@ -461,7 +519,7 @@ export default class BackendAIData extends BackendAIPage {
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
               </mwc-select>
-              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Type')}" FixedMenuPosition>
+              <mwc-select class="fixed-position" id="clone-folder-permission" label="${_t('data.Permission')}" FixedMenuPosition>
                 ${this.permissions.map((item, idx) => html`
                   <mwc-list-item value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>
                 `)}
@@ -482,32 +540,65 @@ export default class BackendAIData extends BackendAIPage {
             ${_t('data.DialogFolderStartingWithDotAutomount')}
           </div>
         </div>
-        <div slot="footer" class="horizontal flex">
+        <div slot="footer" class="horizontal center-justified flex">
           <mwc-button
               unelevated
+              fullwidth
               id="clone-button"
               icon="file_copy"
               label="${_t('data.Create')}"
-              style="width:100%;"
               @click="${() => this._cloneFolder()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
-        <div slot="content" class="horizontal layout center">
-        ${this._helpDescriptionIcon == '' ? html`` : html`
-          <img slot="graphic" src="resources/icons/${this._helpDescriptionIcon}" style="width:64px;height:64px;margin-right:10px;" />
-          `}
-          <p style="font-size:14px;width:256px;">${unsafeHTML(this._helpDescription)}</p>
+        <div slot="content" class="vertical layout">
+          <div class="horizontal layout center">
+            ${this._helpDescriptionIcon == '' ? html`` : html`
+                  <img
+                    slot="graphic"
+                    src="resources/icons/${this._helpDescriptionIcon}"
+                    style="width:64px;height:64px;margin-right:10px;"
+                  />
+                `}
+            <p style="font-size:14px;width:256px;">
+              ${unsafeHTML(this._helpDescription)}
+            </p>
+          </div>
+          ${this._helpDescriptionStorageProxyInfo?.usage?.percentage !== undefined ? html`
+              <div class="vertical layout" style="padding-left:8px;">
+                <span><strong>${_t('data.usage.Status')}</strong></span>
+                <div class="horizontal layout">
+                  ${this.renderStatusIndicator(this._helpDescriptionStorageProxyInfo?.usage?.percentage, true)}
+                </div>
+                (${Math.floor(
+                  this._helpDescriptionStorageProxyInfo?.usage?.percentage
+                )}%
+                ${_t('data.usage.used')}
+                ${this._helpDescriptionStorageProxyInfo?.usage?.total &&
+                this._helpDescriptionStorageProxyInfo?.usage?.used
+                  ? html`
+                      ,
+                      ${globalThis.backendaiutils._humanReadableFileSize(
+                        this._helpDescriptionStorageProxyInfo?.usage?.used
+                      )}
+                      /
+                      ${globalThis.backendaiutils._humanReadableFileSize(
+                        this._helpDescriptionStorageProxyInfo?.usage?.total
+                      )}
+                    `
+                  : html``}
+                )
+              `
+            : html``}
         </div>
       </backend-ai-dialog>
     `;
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.folderLists = this.shadowRoot.querySelectorAll('backend-ai-storage-list');
+    this.folderLists = this.shadowRoot?.querySelectorAll('backend-ai-storage-list');
     fetch('resources/storage_metadata.json').then(
       (response) => response.json()
     ).then(
@@ -552,9 +643,15 @@ export default class BackendAIData extends BackendAIPage {
         }
       }
     };
+    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
+      document.addEventListener('backend-ai-connected', () => {
+        this._getStorageProxyInformation();
+      }, true);
+    } else { // already connected
+      this._getStorageProxyInformation();
+    }
     document.addEventListener('backend-ai-folder-list-changed', () => {
-      // this.shadowRoot.querySelector('#storage-status').updateChart();
-      this._createStorageChart();
+      this.folderListFetchKey = new Date();
     });
     document.addEventListener('backend-ai-vfolder-cloning', (e: any) => {
       if (e.detail) {
@@ -580,7 +677,12 @@ export default class BackendAIData extends BackendAIPage {
       this.is_admin = globalThis.backendaiclient.is_admin;
       this.authenticated = true;
       this.enableStorageProxy = globalThis.backendaiclient.supports('storage-proxy');
+      this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
+      if (this.enableInferenceWorkload && !this.usageModes.includes('Model')) {
+        this.usageModes.push('Model');
+      }
       this.apiMajorVersion = globalThis.backendaiclient.APIMajorVersion;
+      this._getStorageProxyInformation();
       if (globalThis.backendaiclient.isAPIVersionCompatibleWith('v4.20191215')) {
         this._vfolderInnatePermissionSupport = true;
       }
@@ -592,49 +694,20 @@ export default class BackendAIData extends BackendAIPage {
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       document.addEventListener('backend-ai-connected', () => {
         _init();
-        this._createStorageChart();
       }, true);
     } else {
       _init();
-      this._createStorageChart();
     }
   }
 
-  /** *
-   * create Storage Doughnut Chart
-   *
-   */
-  async _createStorageChart() {
+  private async _getCurrentKeypairResourcePolicy() {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
-    const policyName = res.keypair.resource_policy;
-    const resource_policy = await globalThis.backendaiclient.resourcePolicy.get(policyName, ['max_vfolder_count']);
-    const max_vfolder_count = resource_policy.keypair_resource_policy.max_vfolder_count;
-    const groupId = globalThis.backendaiclient.current_group_id();
-    const folders = await globalThis.backendaiclient.vfolder.list(groupId);
-    this.createdCount = folders.filter((item) => item.is_owner).length;
-    this.invitedCount = folders.length - this.createdCount;
-    this.capacity = (this.createdCount < max_vfolder_count ? (max_vfolder_count - this.createdCount) : 0);
-    this.totalCount = this.capacity + this.createdCount + this.invitedCount;
-    this.folders = {
-      labels: [
-        _text('data.Created'),
-        _text('data.Invited'),
-        _text('data.Capacity')
-      ],
-      datasets: [{
-        data: [
-          this.createdCount,
-          this.invitedCount,
-          this.capacity
-        ],
-        backgroundColor: [
-          '#722cd7',
-          '#60bb43',
-          '#efefef'
-        ]
-      }]
-    };
+    return res.keypair.resource_policy;
+  }
+
+  _toggleFolderTypeInput() {
+    this.folderType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
   }
 
   /**
@@ -643,11 +716,11 @@ export default class BackendAIData extends BackendAIPage {
    * @param {object} tab
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title + '-folder-lists').style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title + '-folder-lists') as HTMLDivElement).style.display = 'block';
     this._activeTab = tab.title;
   }
 
@@ -655,16 +728,16 @@ export default class BackendAIData extends BackendAIPage {
    * Clone folder dialog.
    */
   async _cloneFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    nameEl.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    if ((this.allowed_folder_type as string[]).includes('group')) {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.addFolderNameInput.value = ''; // reset folder name
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
+    if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
-    this.shadowRoot.querySelector('#clone-folder-name').value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
+    this.cloneFolderNameInput.value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
     this.openDialog('clone-folder-dialog');
   }
 
@@ -672,24 +745,29 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder dialog.
    */
   async _addFolderDialog() {
-    const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    nameEl.value = ''; // reset folder name
-    this.vhosts = vhost_info.allowed;
-    this.vhost = vhost_info.default;
-    if ((this.allowed_folder_type as string[]).includes('group')) {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.addFolderNameInput.value = ''; // reset folder name
+    this.vhosts = vhostInfo.allowed;
+    this.vhost = vhostInfo.default;
+    this.selectedVhost = vhostInfo.default;
+    if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
     }
     this.openDialog('add-folder-dialog');
   }
 
-  openDialog(id) {
-    this.shadowRoot.querySelector('#' + id).show();
+  async _getStorageProxyInformation() {
+    const vhostInfo = await globalThis.backendaiclient.vfolder.list_hosts();
+    this.storageProxyInfo = vhostInfo.volume_info || {};
   }
 
-  closeDialog(id) {
-    this.shadowRoot.querySelector('#' + id).hide();
+  openDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
+  }
+
+  closeDialog(id: string) {
+    (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
   /**
@@ -709,7 +787,9 @@ export default class BackendAIData extends BackendAIPage {
       this._helpDescriptionIcon = 'local.png';
       this._helpDescription = _text('data.NoStorageDescriptionFound');
     }
-    const desc = this.shadowRoot.querySelector('#help-description');
+
+    this._helpDescriptionStorageProxyInfo = this.storageProxyInfo[item];
+    const desc = this.shadowRoot?.querySelector('#help-description') as BackendAIDialog;
     desc.show();
   }
 
@@ -721,14 +801,13 @@ export default class BackendAIData extends BackendAIPage {
    * Add folder with name, host, type, usage mode and permission.
    */
   _addFolder() {
-    const nameEl = this.shadowRoot.querySelector('#add-folder-name');
-    const name = nameEl.value;
-    const host = this.shadowRoot.querySelector('#add-folder-host').value;
-    let ownershipType = this.shadowRoot.querySelector('#add-folder-type').value;
+    const name = this.addFolderNameInput.value;
+    const host = (this.shadowRoot?.querySelector('#add-folder-host') as Select).value;
+    let ownershipType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
     let group;
-    const usageModeEl = this.shadowRoot.querySelector('#add-folder-usage-mode');
-    const permissionEl = this.shadowRoot.querySelector('#add-folder-permission');
-    const cloneableEl = this.shadowRoot.querySelector('#add-folder-cloneable');
+    const usageModeEl = this.shadowRoot?.querySelector('#add-folder-usage-mode') as Select;
+    const permissionEl = this.shadowRoot?.querySelector('#add-folder-permission') as Select;
+    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as any;
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -738,7 +817,7 @@ export default class BackendAIData extends BackendAIPage {
     if (ownershipType === 'user') {
       group = '';
     } else {
-      group = this.is_admin ? this.shadowRoot.querySelector('#add-folder-group').value : globalThis.backendaiclient.current_group;
+      group = this.is_admin ? (this.shadowRoot?.querySelector('#add-folder-group') as Select).value : globalThis.backendaiclient.current_group;
     }
     if (usageModeEl) {
       usageMode = usageModeEl.value;
@@ -763,8 +842,8 @@ export default class BackendAIData extends BackendAIPage {
     if (cloneableEl) {
       cloneable = cloneableEl.checked;
     }
-    nameEl.reportValidity();
-    if (nameEl.checkValidity()) {
+    this.addFolderNameInput.reportValidity();
+    if (this.addFolderNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
       job.then((value) => {
         this.notification.text = _text('data.folders.FolderCreated');
@@ -787,13 +866,12 @@ export default class BackendAIData extends BackendAIPage {
    *
    */
   async _cloneFolder() {
-    const nameEl = this.shadowRoot.querySelector('#clone-folder-name');
-    const name = await this._checkFolderNameAlreadyExists(nameEl.value, true);
-    const host = this.shadowRoot.querySelector('#clone-folder-host').value;
-    let ownershipType = this.shadowRoot.querySelector('#clone-folder-type').value;
-    const usageModeEl = this.shadowRoot.querySelector('#clone-folder-usage-mode');
-    const permissionEl = this.shadowRoot.querySelector('#clone-folder-permission');
-    const cloneableEl = this.shadowRoot.querySelector('#clone-folder-cloneable');
+    const name = await this._checkFolderNameAlreadyExists(this.cloneFolderNameInput.value, true);
+    const host = (this.shadowRoot?.querySelector('#clone-folder-host') as Select).value;
+    let ownershipType = (this.shadowRoot?.querySelector('#clone-folder-type') as Select).value;
+    const usageModeEl = this.shadowRoot?.querySelector<Select>('#clone-folder-usage-mode');
+    const permissionEl = this.shadowRoot?.querySelector<Select>('#clone-folder-permission');
+    const cloneableEl = this.shadowRoot?.querySelector<Switch>('#clone-folder-cloneable');
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -826,9 +904,9 @@ export default class BackendAIData extends BackendAIPage {
         permission = 'rw';
       }
     }
-    cloneable = cloneableEl ? cloneableEl.checked : false;
-    nameEl.reportValidity();
-    if (nameEl.checkValidity()) {
+    cloneable = cloneableEl ? cloneableEl.selected : false;
+    this.cloneFolderNameInput.reportValidity();
+    if (this.cloneFolderNameInput.checkValidity()) {
       const input = {
         'cloneable': cloneable,
         'permission': permission,
@@ -837,7 +915,7 @@ export default class BackendAIData extends BackendAIPage {
         'usage_mode': usageMode
       };
       const job = globalThis.backendaiclient.vfolder.clone(input, this.cloneFolderName);
-      job.then((value) => {
+      job.then(() => {
         this.notification.text = _text('data.folders.FolderCloned');
         this.notification.show();
         this._refreshFolderList();
@@ -858,17 +936,16 @@ export default class BackendAIData extends BackendAIPage {
    * Validate folder name.
    */
   _validateFolderName() {
-    const folderName = this.shadowRoot.querySelector('#add-folder-name');
-    folderName.validityTransform = (newValue, nativeValidity) => {
+    this.addFolderNameInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          folderName.validationMessage = _text('data.FolderNameRequired');
+          this.addFolderNameInput.validationMessage = _text('data.FolderNameRequired');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
           };
         } else {
-          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.addFolderNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
           return {
             valid: nativeValidity.valid,
             customError: !nativeValidity.valid
@@ -877,13 +954,13 @@ export default class BackendAIData extends BackendAIPage {
       } else {
         // custom validation for folder name using regex
         const regex = /[`~!@#$%^&*()|+=?;:'",<>{}[\]\\/\s]/gi;
-        let isValid = !regex.test(folderName.value);
+        let isValid = !regex.test(this.addFolderNameInput.value);
         if (!isValid) {
-          folderName.validationMessage = _text('data.Allowslettersnumbersand-_dot');
+          this.addFolderNameInput.validationMessage = _text('data.Allowslettersnumbersand-_dot');
         }
-        if (folderName.value.length > 64) {
+        if (this.addFolderNameInput.value.length > 64) {
           isValid = false;
-          folderName.validationMessage = _text('data.FolderNameTooLong');
+          this.addFolderNameInput.validationMessage = _text('data.FolderNameTooLong');
         }
         return {
           valid: isValid,

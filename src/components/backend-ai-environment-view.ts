@@ -1,10 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -16,8 +17,8 @@ import 'weightless/card';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-button';
+import {Tab} from '@material/mwc-tab';
 import './lablup-activity-panel';
 import './backend-ai-dialog';
 import './backend-ai-environment-list';
@@ -43,11 +44,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   @property({type: Boolean}) is_superadmin = false;
   @property({type: String}) _activeTab = 'image-lists';
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -117,7 +114,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         type: Boolean
       },
       _activeTab: {
-        type: Boolean
+        type: String
       }
     };
   }
@@ -127,7 +124,7 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
    *
    * @param {Boolean} active
    */
-  async _viewStateChanged(active) {
+  async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
       return true;
@@ -146,20 +143,21 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
   /**
    * Display the tab.
    *
-   * @param {any} tab - tab webcomponent that has 'title' property
+   * @param {mwc-tab} tab - tab webcomponent that has 'title' property
    */
-  _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+  _showTab(tab: Tab) {
+    const els = this.shadowRoot?.querySelectorAll('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
     this._activeTab = tab.title;
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
   }
 
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
@@ -182,10 +180,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
         </div>
       </lablup-activity-panel>
     `;
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
   }
 }
 

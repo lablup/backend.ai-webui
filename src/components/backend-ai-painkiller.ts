@@ -13,7 +13,7 @@ declare global {
     backendaiclient: any;
     backendaiwsproxy: any;
     isElectron: boolean;
-    __local_proxy: string;
+    __local_proxy: any;
   }
 }
 
@@ -31,8 +31,13 @@ export default class BackendAIPainKiller {
     // virtual folders
     'server responded failure: 400 Bad Request - The virtual folder already exists with the same name.': 'error.VirtualFolderAlreadyExist',
     '400 Bad Request - The virtual folder already exists with the same name.': 'error.VirtualFolderAlreadyExist',
+    'server responded failure: 400 Bad Request - One of your accessible vfolders already has the name you requested.': 'error.VirtualFolderAlreadyExist',
     'server responded failure: 400 Bad Request - You cannot create more vfolders.': 'error.MaximumVfolderCreation',
     'server responded failure: 400 Bad Request - Missing or invalid API parameters. (You cannot create more vfolders.)': 'error.MaximumVfolderCreation',
+    'server responded failure: 400 Bad Request - Cannot change the options of a vfolder that is not owned by myself.': 'error.CannotChangeVirtualFolderOption',
+    'server responded failure: 403 Forbidden - Cannot share private dot-prefixed vfolders.': 'error.CannotSharePrivateAutomountFolder',
+    'server responded failure: 404 Not Found - No such vfolder invitation.': 'error.FolderSharingNotAvailableToUser',
+    'server responded failure: 404 Not Found - No such user.': 'error.FolderSharingNotAvailableToUser',
     // Resource
     'server responded failure: 412 Precondition Failed - You have reached your resource limit.': 'error.ReachedResourceLimit',
     // User
@@ -60,7 +65,11 @@ export default class BackendAIPainKiller {
    * */
   static relieve(msg) {
     if (typeof msg === 'undefined') {
-      return 'Problem occurred.';
+      if (globalThis.backendaiclient === undefined || globalThis.backendaiclient === null) {
+        return '_DISCONNECTED';
+      } else {
+        return 'Problem occurred.';
+      }
     }
     console.log('Error:', msg);
     if (globalThis.backendaiwebui.debug === true) {

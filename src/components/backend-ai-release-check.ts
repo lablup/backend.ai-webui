@@ -1,10 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from 'lit-translate';
-import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 /**
  Backend AI Release Check
@@ -21,7 +22,6 @@ import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, prop
 
 @customElement('backend-ai-release-check')
 export default class BackendAiReleaseCheck extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: String}) releaseURL = 'https://raw.githubusercontent.com/lablup/backend.ai-webui/release/version.json';
   @property({type: String}) localVersion = '';
   @property({type: String}) localBuild = '';
@@ -33,11 +33,7 @@ export default class BackendAiReleaseCheck extends LitElement {
   @property({type: String}) updateURL = '';
   @property({type: Object}) notification;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [];
   }
 
@@ -96,11 +92,11 @@ export default class BackendAiReleaseCheck extends LitElement {
    *
    * @param {string} v1 - version 1
    * @param {string} v2 - version 2
-   * @return {boolean} Comparison result. One of [0, -1, 1]
+   * @return {number} Comparison result. One of [0, -1, 1]
    * */
   compareVersion(v1, v2) {
-    if (typeof v1 !== 'string') return false;
-    if (typeof v2 !== 'string') return false;
+    if (typeof v1 !== 'string') return 0;
+    if (typeof v2 !== 'string') return 0;
     v1 = v1.split('.');
     v2 = v2.split('.');
     const k = Math.min(v1.length, v2.length);

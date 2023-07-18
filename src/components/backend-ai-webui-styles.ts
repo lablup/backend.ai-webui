@@ -1,4 +1,4 @@
-import {css} from 'lit-element';
+import {css} from 'lit';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 export const BackendAIWebUIStyles = [
@@ -12,11 +12,20 @@ export const BackendAIWebUIStyles = [
       left: 0;
       width: 100%;
       height: 100%;
-      background-image: url("/resources/images/loading-background-large.jpg");
+      background-image: url('/resources/images/loading-background-large.jpg');
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-position: top left;
       -webkit-user-select: none !important;
+    }
+
+    .loading-background-drag-area {
+      position: absolute;
+      background-color: transparent;
+      top:0;
+      left:0;
+      width:100%;
+      height: 80px;
       -webkit-app-region: drag !important;
     }
 
@@ -203,12 +212,12 @@ export const BackendAIWebUIStyles = [
       margin: auto 10px;
       background-image: none;
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
-    mwc-button[unelevate--mdc-theme-primary] {
+    mwc-button[unelevated] {
       --mdc-theme-primary: var(--general-button-background-color);
-      --mdc-on-theme-primary: var(--general-button-background-color);
+      --mdc-theme-on-primary: var(--general-button-color);
     }
 
     .page {
@@ -312,30 +321,6 @@ export const BackendAIWebUIStyles = [
       font-weight: bold;
     }
 
-    mwc-select#group-select {
-      font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-family: var(--general-font-family);
-      --mdc-typography-subtitle1-font-size: 14px;
-      --mdc-typography-subtitle1-font-color: black;
-      --mdc-typography-subtitle1-font-weight: 400;
-      --mdc-typography-subtitle1-line-height: 16px;
-      --mdc-theme-primary: transparent;
-      --mdc-select-idle-line-color: transparent;
-      --mdc-select-hover-line-color: transparent;
-      --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
-      --mdc-select-outlined-hover-border-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
-      --mdc-select-fill-color: transparent;
-      --mdc-select-disabled-fill-color: transparent;
-      --mdc-select-ink-color: black;
-      --mdc-select-label-ink-color: black;
-      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
-      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-dropdown-icon-color: #747474;
-      --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
-      --mdc-select-disabled-dropdown-icon-color: #747474;
-    }
-
     mwc-multi-select {
       width: 135px;
       min-width: 135px;
@@ -390,6 +375,10 @@ export const BackendAIWebUIStyles = [
       width: 100%;
     }
 
+    #user-preference-dialog mwc-textfield#secretkey {
+      --mdc-typography-subtitle1-font-size: 0.7rem;
+    }
+
     mwc-textarea {
       width: 100%;
     }
@@ -433,6 +422,11 @@ export const BackendAIWebUIStyles = [
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
       --mdc-theme-text-disabled-on-light: var(--paper-grey-800);
+      --mdc-ripple-focus-opacity: 0;
+    }
+
+    mwc-icon-button#mini-ui-toggle-button {
+      --mdc-ripple-focus-opacity: 0;
     }
 
     #sidebar-navbar-footer mwc-icon-button {
@@ -469,7 +463,7 @@ export const BackendAIWebUIStyles = [
       width: 48px;
       height: 48px;
       background-color: #ffffff;
-      background-image: url("/manifest/backend.ai-brand-simple.svg");
+      background-image: url('/manifest/backend.ai-brand-simple.svg');
       background-repeat: no-repeat;
       background-size: 36px 36px;
       background-position: center center;
@@ -485,6 +479,10 @@ export const BackendAIWebUIStyles = [
       -webkit-appearance: none;
       width: 0 !important;
       height: 0;
+    }
+
+    .terms-of-use {
+      margin-bottom: 10px;
     }
 
     footer#short-height {
@@ -534,6 +532,20 @@ export const BackendAIWebUIStyles = [
       height: 100px;
       background-color: var(--general-navbar-footer-background-color);
       color: var(--general-sidebar-navbar-footer-color);
+    }
+
+    #password-change-request {
+      background-color: var(--paper-orange-400);
+      color: white;
+      font-size: 14px;
+      height: 28px;
+      position: absolute;
+      right: 0;
+      width: 100vw;
+    }
+
+    #password-change-request > mwc-icon-button > i {
+      font-size: 14px;
     }
 
     @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {

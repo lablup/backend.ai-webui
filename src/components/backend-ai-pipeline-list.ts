@@ -4,10 +4,11 @@
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, customElement, html, property} from 'lit-element';
+import {css, html} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
 
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select/mwc-select';
+import '@material/mwc-list';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -21,6 +22,11 @@ import {
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+
 /**
  Backend AI Pipeline List
 
@@ -31,28 +37,24 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
  */
 @customElement('backend-ai-pipeline-list')
 export default class BackendAIPipelineList extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   // Pipeline prpoerties
   @property({type: Array}) pipelineFolders = Object();
   @property({type: String}) pipelineSelectedName;
   @property({type: Object}) pipelineSelectedConfig;
+  @query('#loading-spinner') spinner!: LablupLoadingSpinner;
+  @query('pipeline-selector') pipelineSelect!: Select;
 
   constructor() {
     super();
 
     try {
-      this.pipelineSelectedName = localStorage.getItem('backendaiconsole.pipeline.selectedName') || '';
-      this.pipelineSelectedConfig = JSON.parse(localStorage.getItem('backendaiconsole.pipeline.selectedConfig') || '{}');
+      this.pipelineSelectedName = localStorage.getItem('backendaiwebui.pipeline.selectedName') || '';
+      this.pipelineSelectedConfig = JSON.parse(localStorage.getItem('backendaiwebui.pipeline.selectedConfig') || '{}');
     } catch (e) {
       console.log(e);
-      localStorage.removeItem('backendaiconsole.pipeline.selectedName');
-      localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
+      localStorage.removeItem('backendaiwebui.pipeline.selectedName');
+      localStorage.removeItem('backendaiwebui.pipeline.selectedConfig');
     }
-  }
-
-  firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
   }
 
   async _viewStateChanged(active) {
@@ -78,9 +80,10 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     await this._fetchPipelineFolders();
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
-    this.shadowRoot.querySelector('#pipeline-selector').selectedText = this.pipelineSelectedConfig.title;
-    localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
+    // TODO remove protected property assignment
+    (this.pipelineSelect as any).selectedText = this.pipelineSelectedConfig.title;
+    localStorage.setItem('backendaiwebui.pipeline.selectedName', this.pipelineSelectedName);
+    localStorage.setItem('backendaiwebui.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
   }
 
   /**
@@ -90,9 +93,9 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     await this._fetchPipelineFolders();
     this.pipelineSelectedName = '';
     this.pipelineSelectedConfig = {};
-    this.shadowRoot.querySelector('#pipeline-selector').select(-1);
-    localStorage.removeItem('backendaiconsole.pipeline.selectedName');
-    localStorage.removeItem('backendaiconsole.pipeline.selectedConfig');
+    this.pipelineSelect.select(-1);
+    localStorage.removeItem('backendaiwebui.pipeline.selectedName');
+    localStorage.removeItem('backendaiwebui.pipeline.selectedConfig');
   }
 
   /**
@@ -107,8 +110,8 @@ export default class BackendAIPipelineList extends BackendAIPipelineCommon {
     }
     this.pipelineSelectedName = folderName;
     this.pipelineSelectedConfig = this.pipelineFolders[folderName].config;
-    localStorage.setItem('backendaiconsole.pipeline.selectedName', this.pipelineSelectedName);
-    localStorage.setItem('backendaiconsole.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
+    localStorage.setItem('backendaiwebui.pipeline.selectedName', this.pipelineSelectedName);
+    localStorage.setItem('backendaiwebui.pipeline.selectedConfig', JSON.stringify(this.pipelineSelectedConfig));
 
     const event = new CustomEvent(
       'backend-ai-pipeline-changed', {

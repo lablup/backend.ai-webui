@@ -1,20 +1,25 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {customElement, html, property} from 'lit-element';
+import {html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 /**
  Backend.AI Setting Storage
 
  `backend-ai-settings-store` is a general setting storage.
-@group Backend.AI Web UI
+  @group Backend.AI Web UI
  */
 @customElement('backend-ai-settings-store')
 export default class BackendAiSettingsStore extends BackendAIPage {
   @property({type: Object}) options = Object();
-
+  @property({type: Object}) imageInfo = Object();
+  @property({type: Object}) imageNames = Object();
+  @property({type: Object}) imageTagAlias = Object();
+  @property({type: Object}) imageTagReplace = Object();
 
   constructor() {
     super();

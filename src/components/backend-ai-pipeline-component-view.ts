@@ -4,7 +4,8 @@
  */
 
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
@@ -26,6 +27,13 @@ import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
 import './backend-ai-pipeline-component-create';
 import './backend-ai-pipeline-runner';
 
+/* FIXME:
+ * This type definition is a workaround for resolving both Type error and Importing error.
+ */
+type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
+type BackendAIPipelineComponentCreate = HTMLElementTagNameMap['backend-ai-pipeline-component-create'];
+type BackendAIPipelineRunner = HTMLElementTagNameMap['backend-ai-pipeline-runner'];
+
 /**
  Backend AI Pipeline Component View
 
@@ -36,21 +44,20 @@ import './backend-ai-pipeline-runner';
  */
 @customElement('backend-ai-pipeline-component-view')
 export default class BackendAIPipelineComponentView extends BackendAIPipelineCommon {
-  // Elements
-  @property({type: Object}) spinner = Object();
   @property({type: Object}) notification = Object();
-  @property({type: Object}) componentCreate = Object();
-  @property({type: Object}) pipelineRunner = Object();
   // Pipeline components prpoerties
   @property({type: String}) pipelineSelectedName = '';
   @property({type: Object}) pipelineSelectedConfig = Object();
   @property({type: Array}) network = Object();
   @property({type: Array}) networkOptions = Object();
-  @property({type: Object}) networkContainer = Object();
+  @query('#component-network') networkContainer!: HTMLDivElement;
   @property({type: Array}) nodes = [];
   @property({type: Array}) edges = [];
   @property({type: Object}) nodeInfo = Object();
   @property({type: Array}) componentsSelected = [];
+  @query('#loading-spinner', true) spinner!: LablupLoadingSpinner;
+  @query('backend-ai-pipeline-component-create') componentCreate!: BackendAIPipelineComponentCreate;
+  @query('backend-ai-pipeline-runner') pipelineRunner!: BackendAIPipelineRunner;
 
   constructor() {
     super();
@@ -103,10 +110,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#loading-spinner');
     this.notification = globalThis.lablupNotification;
-    this.componentCreate = this.shadowRoot.querySelector('backend-ai-pipeline-component-create');
-    this.pipelineRunner = this.shadowRoot.querySelector('backend-ai-pipeline-runner');
     this._initEventHandlers();
     this._initNetwork();
   }
@@ -147,7 +151,6 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
 
   _initNetwork() {
     const data = {nodes: this.nodes, edges: this.edges};
-    this.networkContainer = this.shadowRoot.querySelector('#component-network');
     this.network = new Network(this.networkContainer, data, this.networkOptions);
 
     // Event handling
@@ -275,7 +278,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return;
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -296,7 +299,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return html`
       <div class="card" elevation="0">
         <div class="layout horizontal center wrap" style="margin:0.2em">
-          <mwc-button dense outlined id="add-component-btn" icon="add"
+          <mwc-button outlined id="add-component-btn" icon="add"
               label="${_t('button.Add')}" @click="${() => this._openComponentAddDialog()}">
           </mwc-button>
           ${this.componentsSelected.length === 1 ? html`
@@ -315,7 +318,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
             </mwc-button>
           ` : html``}
           <span class="flex"></span>
-          <mwc-button dense raised id="run-pipeline-btn" icon="play_arrow"
+          <mwc-button raised id="run-pipeline-btn" icon="play_arrow"
               label="${_t('pipeline.RunPipeline')}" @click="${() => this._runPipeline()}">
           </mwc-button>
         </div>

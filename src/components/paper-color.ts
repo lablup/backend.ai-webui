@@ -11,7 +11,7 @@
  Modified for Backend.AI Console Project / Lit-element with TypeScript
  */
 
-import {css} from 'lit-element';
+import {css} from 'lit';
 
 export const PaperColor =
   // language=CSS

@@ -1,10 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, state} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
@@ -14,8 +15,11 @@ import '@material/mwc-tab';
 import './lablup-activity-panel';
 import './backend-ai-agent-list';
 import './backend-ai-storage-proxy-list';
-import './backend-ai-scaling-group-list';
+import './backend-ai-resource-group-list';
 import {BackendAiStyles} from './backend-ai-general-styles';
+
+type Status = 'active' | 'inactive';
+type Tab = 'running-lists' | 'terminated-lists' | 'storage-proxy-lists' | 'scaling-group-lists';
 
 /**
  Backend.AI Agent view page
@@ -32,15 +36,11 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('backend-ai-agent-view')
 export default class BackendAIAgentView extends BackendAIPage {
-  @property({type: String}) _status = 'inactive';
-  @property({type: String}) _tab = 'running-lists';
-  @property({type: Boolean}) enableStorageProxy = false;
+  @state() _status: Status = 'inactive';
+  @state() _tab: Tab = 'running-lists';
+  @state() enableStorageProxy = false;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       // language=CSS
@@ -84,15 +84,15 @@ export default class BackendAIAgentView extends BackendAIPage {
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (!active) {
-      this.shadowRoot.querySelector('#running-agents').active = false;
-      this.shadowRoot.querySelector('#terminated-agents').active = false;
-      this.shadowRoot.querySelector('#scaling-groups').active = false;
+      (this.shadowRoot?.querySelector('#running-agents') as BackendAIPage).active = false;
+      (this.shadowRoot?.querySelector('#terminated-agents') as BackendAIPage).active = false;
+      (this.shadowRoot?.querySelector('#scaling-groups') as BackendAIPage).active = false;
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#running-agents').active = true;
-    this.shadowRoot.querySelector('#terminated-agents').active = true;
-    this.shadowRoot.querySelector('#scaling-groups').active = false;
+    (this.shadowRoot?.querySelector('#running-agents') as BackendAIPage).active = true;
+    (this.shadowRoot?.querySelector('#terminated-agents') as BackendAIPage).active = true;
+    (this.shadowRoot?.querySelector('#scaling-groups') as BackendAIPage).active = false;
     this._status = 'active';
   }
 
@@ -102,17 +102,18 @@ export default class BackendAIAgentView extends BackendAIPage {
    * @param {mwc-tab} tab
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLElement>('.tab-content') as NodeListOf<HTMLElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title) as HTMLElement).style.display = 'block';
     this._tab = tab.title;
   }
 
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <lablup-activity-panel noheader narrow autowidth>
         <div slot="message">
           <h3 class="tab horizontal center layout">
@@ -140,9 +141,9 @@ export default class BackendAIAgentView extends BackendAIPage {
           ${this.enableStorageProxy ? html`
           <div id="storage-proxy-lists" class="tab-content" style="display:none;">
             <backend-ai-storage-proxy-list id="storage-proxies" ?active="${this._status === 'active' && this._tab === 'storage-proxy-lists'}"></backend-ai-storage-proxy-list>
-          </div>`:html``}
+          </div>` : html``}
           <div id="scaling-group-lists" class="tab-content" style="display:none;">
-            <backend-ai-scaling-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-scaling-group-list>
+            <backend-ai-resource-group-list id="scaling-groups" ?active="${this._status === 'active' && this._tab === 'scaling-group-lists'}"> </backend-ai-resource-group-list>
           </div>
         </div>
       </lablup-activity-panel>

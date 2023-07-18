@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import {setPassiveTouchGestures} from '@polymer/polymer/lib/utils/settings';
@@ -71,7 +73,6 @@ export default class BackendAIExperimentView extends BackendAIPage {
   public concurrency_max: any;
   public _status: any;
   public notification: any;
-  public shadowRoot: any;
   public vgpu_metric: any;
   public $: any;
 
@@ -132,7 +133,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
     return 'backend-ai-experiment-view';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -245,11 +246,11 @@ export default class BackendAIExperimentView extends BackendAIPage {
    * @param {HTMLElement} tab - tab element
    */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    this.shadowRoot.querySelector('#' + tab.value).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.value) as HTMLElement).style.display = 'block';
   }
 
   /**
@@ -337,7 +338,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -366,7 +367,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>2</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -395,7 +396,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -424,7 +425,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>16</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>
@@ -453,7 +454,7 @@ export default class BackendAIExperimentView extends BackendAIPage {
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="hardware:memory"></wl-icon>
                           <span>1</span>
-                          <span class="indicator">GB</span>
+                          <span class="indicator">GiB</span>
                         </div>
                         <div class="layout horizontal configuration">
                           <wl-icon class="fg blue" icon="icons:view-module"></wl-icon>

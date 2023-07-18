@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property, query} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property, query} from 'lit/decorators.js';
+
 import {BackendAiStyles} from './backend-ai-general-styles';
 import 'weightless/button';
 import 'weightless/card';
@@ -29,7 +31,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  */
 @customElement('backend-ai-dialog')
 export default class BackendAiDialog extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
@@ -39,8 +40,11 @@ export default class BackendAiDialog extends LitElement {
   @property({type: Boolean}) blockscrolling = false;
   @property({type: Boolean}) hideActions = true;
   @property({type: Boolean}) open = false;
-  @property({type: String}) type = 'normal';
   @property({type: Boolean}) closeWithConfirmation = false;
+  @property({type: Boolean}) stickyTitle = false;
+  @property({type: String}) type = 'normal';
+  @property({type: String}) escapeKeyAction = 'close';
+  @property({type: String}) scrimClickAction = 'close';
 
   @query('#dialog') protected dialog;
 
@@ -48,7 +52,7 @@ export default class BackendAiDialog extends LitElement {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -103,7 +107,7 @@ export default class BackendAiDialog extends LitElement {
         mwc-dialog[scrollable] div.content-area {
           overflow-y: scroll; /* Has to be scroll (not auto) to get smooth scrolling on iOS */
           -webkit-overflow-scrolling: touch;
-          max-height: calc(100vh - 120px);
+          max-height: calc(80vh - 127px);
         }
 
         mwc-dialog div.content h4 {
@@ -114,6 +118,16 @@ export default class BackendAiDialog extends LitElement {
           height: 20px;
           border-bottom: 1px solid #DDD !important;
         }
+
+        .sticky {
+          position: sticky;
+          position: -webkit-sticky;
+          position: -moz-sticky;
+          position: -ms-sticky;
+          position: -o-sticky;
+          top: 0;
+          z-index: 10;
+        }
       `];
   }
 
@@ -121,6 +135,9 @@ export default class BackendAiDialog extends LitElement {
     this.open = this.dialog.open;
     if (this.persistent) {
       this.dialog.scrimClickAction = '';
+    }
+    if (this.stickyTitle) {
+      (this.shadowRoot?.querySelector('h3') as HTMLElement).classList.add('sticky');
     }
     this.dialog.addEventListener('opened', () => {
       this.open = this.dialog.open;
@@ -136,8 +153,10 @@ export default class BackendAiDialog extends LitElement {
       /**
        * custom event for bubbling event of closing dialog
        */
-      const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
-      this.dispatchEvent(closeEvent);
+      if (e.target.id === 'dialog' && 'action' in e.detail && e.detail.action === 'close') {
+        const closeEvent = new CustomEvent('dialog-closed', {detail: ''});
+        this.dispatchEvent(closeEvent);
+      }
     });
   }
 
@@ -168,7 +187,16 @@ export default class BackendAiDialog extends LitElement {
       this.dispatchEvent(closeEvent);
     } else {
       this.dialog.close();
+      this._resetScroll();
     }
+  }
+
+  /**
+   * Move to top of the dialog.
+   */
+  _resetScroll() {
+    const content = this.shadowRoot?.querySelector('.content-area');
+    content?.scrollTo(0, 0);
   }
 
   render() {
@@ -181,12 +209,16 @@ export default class BackendAiDialog extends LitElement {
                     ?backdrop="${this.backdrop}"
                     ?persistent="${this.persistent}"
                     ?scrollable="${this.scrollable}"
+                    escapeKeyAction="${this.escapeKeyAction}"
                     blockscrolling="${this.blockscrolling}"
                     hideActions="${this.hideActions}"
+                    scrimClickAction="${this.scrimClickAction}"
                     style="padding:0;" class="${this.type}">
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold">
-            <span class="vertical center-justified layout"><slot name="title"></slot></span>
+            <span class="vertical center-justified layout">
+              <slot name="title"></slot>
+            </span>
             <div class="flex"></div>
             <slot name="action"></slot>
             ${this.noclosebutton ? html`` : html`
@@ -202,7 +234,7 @@ export default class BackendAiDialog extends LitElement {
           </div>
         </div>
       </mwc-dialog>
-      `;
+    `;
   }
 }
 

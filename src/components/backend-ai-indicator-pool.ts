@@ -1,8 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {get as _text} from 'lit-translate';
 
 import 'weightless/dialog';
@@ -26,7 +28,6 @@ import './backend-ai-indicator';
  */
 @customElement('backend-ai-indicator-pool')
 export default class BackendAIIndicatorPool extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) value = 0;
   @property({type: Number}) step = 0;
 
@@ -40,12 +41,12 @@ export default class BackendAIIndicatorPool extends LitElement {
     this.pool = [];
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [];
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot.querySelector('#app-progress-dialog');
+    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {

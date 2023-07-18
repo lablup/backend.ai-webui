@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import {BackendAIPage} from './backend-ai-page';
 
 import 'weightless/card';
@@ -41,11 +43,7 @@ import {
 export default class BackendAIStatisticsView extends BackendAIPage {
   @property({type: String}) _status = 'inactive';
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -107,7 +105,7 @@ export default class BackendAIStatisticsView extends BackendAIPage {
       this._status = 'inactive';
       return;
     }
-    this.shadowRoot.querySelector('#usage-list').setAttribute('active', true);
+    (this.shadowRoot?.querySelector('#usage-list') as HTMLElement).setAttribute('active', 'true');
     this._status = 'active';
   }
 
@@ -117,39 +115,37 @@ export default class BackendAIStatisticsView extends BackendAIPage {
    * @param {EventTarget} tab - usage tab to want to show
    * */
   _showTab(tab) {
-    const els = this.shadowRoot.querySelectorAll('.tab-content');
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
 
-    for (const el of els) {
+    for (const el of Array.from(els)) {
       el.style.display = 'none';
     }
 
-    this.shadowRoot.querySelector('#' + tab.title + '-stat').style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + tab.title + '-stat') as HTMLElement).style.display = 'block';
 
     els.forEach((e) => {
       e.children[0].removeAttribute('active');
     });
-    this.shadowRoot.querySelector(`#${tab.title}-list`).setAttribute('active', true);
+    (this.shadowRoot?.querySelector(`#${tab.title}-list`) as HTMLElement).setAttribute('active', 'true');
   }
 
   render() {
     // language=HTML
     return html`
-        <div style="margin:20px;">
-          <lablup-activity-panel elevation="1" noheader narrow autowidth>
-            <div slot="message">
-              <h3 class="tab horizontal center layout">
-                <mwc-tab-bar>
-                  <mwc-tab title="usage" label="${_t('statistics.Usage')}"></mwc-tab>
-                </mwc-tab-bar>
-              </h3>
-              <div class="horizontal wrap layout">
-                <div id="usage-stat" class="tab-content">
-                  <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
-                </div>
+        <lablup-activity-panel elevation="1" noheader narrow autowidth>
+          <div slot="message">
+            <h3 class="tab horizontal center layout">
+              <mwc-tab-bar>
+                <mwc-tab title="usage" label="${_t('statistics.UsageHistory')}"></mwc-tab>
+              </mwc-tab-bar>
+            </h3>
+            <div class="horizontal wrap layout">
+              <div id="usage-stat" class="tab-content">
+                <backend-ai-usage-list id="usage-list"><wl-progress-spinner active></wl-progress-spinner></backend-ai-usage-list>
               </div>
             </div>
-          </lablup-activity-panel>
-        </div>
+          </div>
+        </lablup-activity-panel>
       `;
   }
 }

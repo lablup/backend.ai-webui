@@ -1,11 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
-import '@material/mwc-textfield/mwc-textfield';
+import {TextField} from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
@@ -17,6 +18,8 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+
+import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Email Verification View
@@ -40,7 +43,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   @property({type: Object}) successDialog = Object();
   @property({type: Object}) failDialog = Object();
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,
@@ -68,11 +71,11 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.webUIShell = document.querySelector('#webui-shell');
     this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.successDialog = this.shadowRoot.querySelector('#verification-success-dialog');
-    this.failDialog = this.shadowRoot.querySelector('#verification-fail-dialog');
+    this.successDialog = this.shadowRoot?.querySelector('#verification-success-dialog');
+    this.failDialog = this.shadowRoot?.querySelector('#verification-fail-dialog');
 
-    this.clientConfig = new ai.backend.ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new ai.backend.Client(
+    this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
+    this.client = new Client(
       this.clientConfig,
       'Backend.AI Web UI.',
     );
@@ -121,7 +124,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
    * Send verification code to use email.
    */
   async sendVerificationCode() {
-    const emailEl = this.shadowRoot.querySelector('#email');
+    const emailEl = this.shadowRoot?.querySelector('#email') as TextField;
     if (!emailEl.value || !emailEl.validity.valid) return;
     try {
       await this.client.cloud.send_verification_email(emailEl.value);
@@ -137,6 +140,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
         <span slot="title">${_t('signup.EmailVerified')}</span>
 
@@ -145,9 +149,10 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
             <p style="width:256px;">${_t('signup.EmailVerifiedMessage')}</p>
           </div>
         </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
+        <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('login.Login')}"
               @click="${() => this._redirectToLoginPage()}"></mwc-button>
         </div>
@@ -171,10 +176,17 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
               unelevated
+              fullwidth
               label="${_t('signup.SendEmail')}"
               @click="${() => this.sendVerificationCode()}"></mwc-button>
         </div>
       </backend-ai-dialog>
     `;
+  }
+}
+
+declare global {
+  interface HTMLElementTagNameMap {
+    'backend-ai-email-verification-view': BackendAIEmailVerificationView;
   }
 }

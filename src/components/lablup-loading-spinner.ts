@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import 'weightless/progress-spinner';
 
 /**
@@ -21,15 +23,10 @@ import 'weightless/progress-spinner';
 
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) spinner;
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS
       css`
@@ -48,6 +45,7 @@ export default class LablupLoadingSpinner extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <wl-progress-spinner id="spinner"></wl-progress-spinner>
     `;
   }
@@ -57,7 +55,7 @@ export default class LablupLoadingSpinner extends LitElement {
   }
 
   firstUpdated() {
-    this.spinner = this.shadowRoot.querySelector('#spinner');
+    this.spinner = this.shadowRoot?.querySelector('#spinner');
     this.active = true;
   }
 

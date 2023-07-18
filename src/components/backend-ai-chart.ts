@@ -1,9 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import '../plastics/chart-js';
 import format from 'date-fns/esm/format';
@@ -53,7 +54,6 @@ const capitalize = (s) => {
 
 @customElement('backend-ai-chart')
 export default class BackendAIChart extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Number}) idx;
   @property({type: Object}) collection;
   @property({type: Object}) chartData;
@@ -73,7 +73,7 @@ export default class BackendAIChart extends LitElement {
   }
 
   firstUpdated() {
-    this.chart = this.shadowRoot.querySelector('#chart');
+    this.chart = this.shadowRoot?.querySelector('#chart');
     if (this.collection.axisTitle['y']) {
       this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
     }
@@ -82,7 +82,6 @@ export default class BackendAIChart extends LitElement {
 
   _updateChartData() {
     if (this.collection.unit_hint === 'bytes') this.scaleData();
-
     const temp = this.collection.data[0]
       .map((e) => (format(e.x, 'MMM dd HH:mm')));
     const colors = {
@@ -129,9 +128,9 @@ export default class BackendAIChart extends LitElement {
             sampleSize: 100,
             maxTicksLimit: maxTicksLimit,
             maxRotation: maxRotation,
-            callback: function(value) {
+            /* callback: function(value) {
               return value.slice(0, -2) + '00';
-            },
+            },*/
             font: function(context) {
               const width = context.chart.width;
               const size = Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;
@@ -152,8 +151,10 @@ export default class BackendAIChart extends LitElement {
           display: true,
           ticks: {
             maxTicksLimit: 5,
-            callback: function(value) {
-              return Math.round(value);
+            callback: (value) => {
+              if (value % 1 === 0) {
+                return value;
+              }
             },
             font: function(context) {
               const height = context.chart.height;
@@ -202,7 +203,7 @@ export default class BackendAIChart extends LitElement {
     return 'backend-ai-chart';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAiStyles,
       IronFlex,

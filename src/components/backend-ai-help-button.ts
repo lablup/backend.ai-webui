@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import '@material/mwc-icon-button';
 import {BackendAIPage} from './backend-ai-page';
 
@@ -41,11 +43,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
     'usersettings': 'user_settings/user_settings.html'
   };
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [css`
     mwc-icon-button {
       color: white;
@@ -55,10 +53,6 @@ export default class BackendAiHelpButton extends BackendAIPage {
 
   firstUpdated() {
     this.currentPage;
-  }
-
-  connectedCallback() {
-    super.connectedCallback();
   }
 
   get currentPage() {
@@ -90,6 +84,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
       }
     }
     this.showOnlineHelpPage(postfix);
+    this.blur();
   }
 
   /**
@@ -98,7 +93,7 @@ export default class BackendAiHelpButton extends BackendAIPage {
    * @param {string} postfix
    */
   showOnlineHelpPage(postfix: string) {
-    window.open(`https://console.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
+    window.open(`https://webui.docs.backend.ai/${this.lang}/latest/` + postfix, '_blank');
   }
 
   render() {

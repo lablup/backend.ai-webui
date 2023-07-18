@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
-import 'weightless/button';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
+import {Button} from 'weightless/button';
 import 'weightless/card';
 import 'weightless/icon';
 
@@ -26,7 +28,6 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
 
 @customElement('lablup-activity-panel')
 export default class LablupActivityPanel extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: String}) title = '';
   @property({type: String}) message = '';
   @property({type: String}) panelId = '';
@@ -37,7 +38,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Number}) width = 350;
   @property({type: Number}) widthpct = 0;
   @property({type: Number}) height = 0;
-  @property({type: Number}) marginWidth = 16;
+  @property({type: Number}) marginWidth = 14;
   @property({type: Number}) minwidth = 0;
   @property({type: Number}) maxwidth = 0;
   @property({type: Boolean}) pinned = false;
@@ -46,11 +47,7 @@ export default class LablupActivityPanel extends LitElement {
   @property({type: Boolean}) noheader = false;
   @property({type: Boolean}) scrollableY = false;
 
-  constructor() {
-    super();
-  }
-
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       IronFlex,
       IronFlexAlignment,
@@ -60,7 +57,7 @@ export default class LablupActivityPanel extends LitElement {
           display: block;
           background: var(--card-background-color, #ffffff);
           box-sizing: border-box;
-          margin: 16px;
+          margin: 14px;
           padding: 0;
           border-radius: 5px;
           box-shadow: rgba(4, 7, 22, 0.7) 0px 0px 4px -2px;
@@ -126,6 +123,7 @@ export default class LablupActivityPanel extends LitElement {
   render() {
     // language=HTML
     return html`
+      <link rel="stylesheet" href="resources/custom.css">
       <div class="card" id="activity" elevation="${this.elevation}" ?disabled="${this.disabled}">
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <span>${this.title}</span>
@@ -143,56 +141,58 @@ export default class LablupActivityPanel extends LitElement {
 
   firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
-      const button = this.shadowRoot.getElementById('button');
-      this.shadowRoot.querySelector('h4').removeChild(button);
-    }
-    if (this.autowidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.width = 'auto';
-    } else {
-      (this.shadowRoot.querySelector('.card') as any).style.width = this.widthpct !== 0 ? this.widthpct + '%' : this.width + 'px';
+      const button = this.shadowRoot?.getElementById('button') as Button;
+      this.shadowRoot?.querySelector('h4')?.removeChild(button);
     }
 
+    const card = this.shadowRoot?.querySelector('.card') as HTMLDivElement;
+    const header = this.shadowRoot?.querySelector('#header') as HTMLHeadingElement;
+
+    if (this.autowidth) {
+      card.style.width = 'auto';
+    } else {
+      card.style.width = this.widthpct !== 0 ? this.widthpct + '%' : this.width + 'px';
+    }
 
     if (this.minwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.minwidth + 'px';
+      card.style.minWidth = this.minwidth + 'px';
     }
+
     if (this.maxwidth) {
-      (this.shadowRoot.querySelector('.card') as any).style.minWidth = this.maxwidth + 'px';
+      card.style.minWidth = this.maxwidth + 'px';
     }
-    if (this.horizontalsize) {
-      if (this.horizontalsize == '2x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 2 + 32) + 'px';
-      }
-      if (this.horizontalsize == '3x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 3 + 64) + 'px';
-      }
-      if (this.horizontalsize == '4x') {
-        (this.shadowRoot.querySelector('.card') as any).style.width = (this.width * 4 + 96) + 'px';
-      }
+
+    if (this.horizontalsize === '2x') {
+      card.style.width = (this.width * 2 + 28) + 'px';
+    } else if (this.horizontalsize === '3x') {
+      card.style.width = (this.width * 3 + 56) + 'px';
+    } else if (this.horizontalsize == '4x') {
+      card.style.width = (this.width * 4 + 84) + 'px';
     }
-    (this.shadowRoot.querySelector('.card') as any).style.margin = this.marginWidth + 'px';
+
+    card.style.margin = this.marginWidth + 'px';
     if (this.headerColor !== '') {
-      this.shadowRoot.querySelector('#header').style.backgroundColor = this.headerColor;
+      header.style.backgroundColor = this.headerColor;
     }
-    if (this.narrow === true) {
-      this.shadowRoot.querySelector('div.card > div').style.margin = '0';
-      this.shadowRoot.querySelector('div.card > h4').style.marginBottom = '0';
+
+    if (this.narrow) {
+      (this.shadowRoot?.querySelector('div.card > div') as HTMLDivElement).style.margin = '0';
+      header.style.marginBottom = '0';
     }
+
     if (this.height > 0) {
       this.height == 130 ?
-        this.shadowRoot.querySelector('div.card').style.height = 'fit-content' :
-        this.shadowRoot.querySelector('div.card').style.height = this.height + 'px';
+        card.style.height = 'fit-content' :
+        card.style.height = this.height + 'px';
     }
-    if (this.noheader === true) {
-      this.shadowRoot.querySelector('#header').style.display = 'none';
-    }
-    if (this.scrollableY) {
-      this.shadowRoot.querySelector('.card').style.overflowY = 'auto';
-    }
-  }
 
-  connectedCallback() {
-    super.connectedCallback();
+    if (this.noheader) {
+      header.style.display = 'none';
+    }
+
+    if (this.scrollableY) {
+      card.style.overflowY = 'auto';
+    }
   }
 
   _removePanel() {

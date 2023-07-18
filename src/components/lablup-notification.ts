@@ -1,10 +1,12 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
 import {get as _text} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import 'weightless/snackbar';
 import 'weightless/button';
 import 'weightless/icon';
@@ -27,8 +29,6 @@ import {store} from '../store';
 
 @customElement('lablup-notification')
 export default class LablupNotification extends LitElement {
-  public shadowRoot: any;
-
   @property({type: String}) text = '';
   @property({type: String}) detail = '';
   @property({type: String}) url = '';
@@ -39,7 +39,7 @@ export default class LablupNotification extends LitElement {
   @property({type: Object}) indicator;
   @property({type: Array}) notifications;
   @property({type: Array}) notificationstore;
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) supportDesktopNotification = false;
   @property({type: Number}) step = 0;
   @property({type: Object}) newDesktopNotification = Object();
@@ -58,7 +58,7 @@ export default class LablupNotification extends LitElement {
     return 'lablup-notification';
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       // language=CSS
       css`
@@ -196,6 +196,9 @@ export default class LablupNotification extends LitElement {
    * @param {object} log - Log object that contains detail information
    * */
   async show(persistent = false, log: Record<string, unknown> = Object()) {
+    if (this.text === '_DISCONNECTED') {
+      return;
+    }
     const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = [] as any; // Reset notifications

@@ -4,7 +4,8 @@
 @group Backend.AI Web UI
  */
 import {get as _text, LanguageIdentifier, registerTranslateConfig} from 'lit-translate';
-import {LitElement, property} from 'lit-element';
+import {LitElement} from 'lit';
+import {property} from 'lit/decorators.js';
 
 /**
  Backend AI Page
@@ -22,10 +23,9 @@ registerTranslateConfig({
 });
 
 export class BackendAIPage extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   public notification: any; // Global notification
   public tasker: any; // Global Background tasker
-  @property({type: Boolean}) active = false;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Boolean}) hasLoadedStrings = false;
 
   constructor() {
@@ -52,14 +52,6 @@ export class BackendAIPage extends LitElement {
     return this.active;
   }
 
-  connectedCallback(): void {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback(): void {
-    super.disconnectedCallback();
-  }
-
   attributeChangedCallback(name: string, oldval: string|null, newval: string|null): void {
     if (name == 'active' && newval !== null) {
       this.active = true;
@@ -70,6 +62,7 @@ export class BackendAIPage extends LitElement {
     }
     super.attributeChangedCallback(name, oldval, newval);
   }
+
   /**
    * Hide the backend.ai dialog.
    *

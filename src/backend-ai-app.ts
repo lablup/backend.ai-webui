@@ -1,6 +1,6 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 export const UPDATE_PAGE = 'UPDATE_PAGE';
 export const UPDATE_OFFLINE = 'UPDATE_OFFLINE';
@@ -10,8 +10,8 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path: any, params: Record<string, unknown> = {}) => (dispatch: any) => {
   // Extract the page name from path.
-  if (['/summary', '/job', '/pipeline', '/experiment', '/data', '/statistics', '/usersettings',
-    '/agent', '/resource', '/user', '/credential', '/environment', '/settings',
+  if (['/summary', '/job', '/session', '/agent-summary', '/experiment', '/data', '/pipeline', '/pipeline-job', '/statistics', '/usersettings',
+    '/agent', '/storage-settings', '/resource', '/user', '/credential', '/environment', '/settings',
     '/maintenance', '/information', '/github', '/import'].includes(path) !== true) { // Fallback for Electron Shell/Windows OS
     const fragments = path.split(/[/]+/);
     if (fragments.length > 1 && fragments[0] === '') {
@@ -56,12 +56,22 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'job':
     import('./components/backend-ai-session-view.js');
     break;
-  case 'pipeline':
-    import('./components/backend-ai-pipeline-view.js');
+  case 'session':
+    import('./components/backend-ai-session-view-next.js');
     break;
-    /* case 'experiment':
-      import('./components/backend-ai-experiment-view.js');
-      break; */
+    // temporally block pipeline
+  /* case 'pipeline':
+    import('./pipeline/components/pipeline-view.js');
+    break;
+  case 'pipeline-job':
+    import('./pipeline/components/pipeline-job-view.js');
+    break;
+  case 'experiment':
+    import('./components/backend-ai-experiment-view.js');
+    break; */
+  case 'agent-summary':
+    import('./components/backend-ai-agent-summary-view.js');
+    break;
   case 'data':
     import('./components/backend-ai-data-view.js');
     break;
@@ -71,6 +81,9 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'agent':
   case 'resource':
     import('./components/backend-ai-agent-view.js');
+    break;
+  case 'storage-settings':
+    import('./components/backend-ai-storage-host-settings-view.js');
     break;
   case 'credential':
   case 'user':

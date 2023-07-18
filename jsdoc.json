@@ -37,10 +37,14 @@
         "hideGenerator": true,
         "navLinks": [
             {
-                "label": "Github",
+                "label": "GitHub (WebUI)",
                 "href": "https://github.com/lablup/backend.ai-webui"
             },
             {
+                "label": "GitHub (project)",
+                "href": "https://github.com/lablup/backend.ai"
+            },
+			{
                 "label": "Cloud",
                 "href": "https://cloud.backend.ai"
             }

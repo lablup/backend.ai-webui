@@ -20,8 +20,8 @@
       "Information": "Информация",
       "About": "О нас",
       "AboutBackendAI": "О Backend.AI",
-      "ChangeUserInformation": "Изменить информацию о пользователе",
-      "ChangeUserInfo": "Изменить информацию о пользователе",
+      "MyAccountInformation": "Изменить информацию о пользователе",
+      "MyAccount": "Изменить информацию о пользователе",
       "FullName": "ФИО",
       "FullNameInvalid": "Полное имя не должно превышать 64 символа.",
       "ChangePassword": "Изменить пароль",
@@ -53,7 +53,14 @@
       "Experiments": "Эксперименты",
       "Menu": "Меню",
       "Run": "Запустить",
-      "UserName": "Имя пользователя"
+      "UserName": "Имя пользователя",
+      "PipelineJob": "__NOT_TRANSLATED__",
+      "PleaseChangeYourPassword": "__NOT_TRANSLATED__",
+      "PasswordChangePlace": "__NOT_TRANSLATED__",
+      "AgentSummary": "__NOT_TRANSLATED__",
+      "SetupTotp": "__NOT_TRANSLATED__",
+      "TotpActivated": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",
@@ -104,7 +111,11 @@
     "NoInvitations": "Нет приглашений для отображения.",
     "AcceptSharedVFolder": "Теперь вы можете получить доступ к папке:",
     "DeclineSharedVFolder": "Папка приглашения удалена:",
-    "connectingToCluster": "Подключение к Backend.AI кластеру ..."
+    "connectingToCluster": "Подключение к Backend.AI кластеру ...",
+    "DownloadWebUIApp": "__NOT_TRANSLATED__",
+    "IPUEnabled": "__NOT_TRANSLATED__",
+    "ATOMEnabled": "__NOT_TRANSLATED__",
+    "WarboyEnabled": "__NOT_TRANSLATED__"
   },
   "session": {
     "launcher": {
@@ -129,6 +140,7 @@
       "Environments": "Вычислительные среды",
       "Start": "Старт",
       "FolderToMount": "Папка для монтажа",
+      "FolderToMountList": "Папка для монтажа",
       "ResourceAllocation": "Распределение ресурсов",
       "NoSuitablePreset": "Нет подходящей предустановки",
       "Advanced": "Продвинутый",
@@ -203,7 +215,40 @@
       "EnvironmentVariableConfigurationDone": "Переменная среды настроена успешно.",
       "EnvConfigWillDisappear": "Все несохраненные переменные среды и значения будут удалены.",
       "SharedMemoryAbbr": "Обш. Пам.",
-      "GPUSlot": "Слот"
+      "GPUSlot": "Слот",
+      "ConfirmAndLaunch": "__NOT_TRANSLATED__",
+      "FolderAliasOverlapping": "__NOT_TRANSLATED__",
+      "NoEnvConfigured": "__NOT_TRANSLATED__",
+      "FolderAlias": "__NOT_TRANSLATED__",
+      "NoAvailableFolderToMount": "__NOT_TRANSLATED__",
+      "MountedFolders": "__NOT_TRANSLATED__",
+      "EnvironmentVariablePaneTitle": "__NOT_TRANSLATED__",
+      "OpenMPOptimization": "__NOT_TRANSLATED__",
+      "DescOpenMPOptimization": "__NOT_TRANSLATED__",
+      "HPCOptimization": "__NOT_TRANSLATED__",
+      "CPUcorePerOpenMPthread": "__NOT_TRANSLATED__",
+      "(Automatic)": "__NOT_TRANSLATED__",
+      "NumOpenMPthreads": "__NOT_TRANSLATED__",
+      "NumOpenBLASthreads": "__NOT_TRANSLATED__",
+      "SwitchOpenMPoptimization": "__NOT_TRANSLATED__",
+      "DescFolderAlias": "__NOT_TRANSLATED__",
+      "InfiniteTime": "__NOT_TRANSLATED__",
+      "ResetStartTime": "__NOT_TRANSLATED__",
+      "SessionStartTime": "__NOT_TRANSLATED__",
+      "SessionType": "__NOT_TRANSLATED__",
+      "BatchMode": "__NOT_TRANSLATED__",
+      "InteractiveMode": "__NOT_TRANSLATED__",
+      "BatchModeConfig": "__NOT_TRANSLATED__",
+      "StartUpCommand": "__NOT_TRANSLATED__",
+      "ScheduleTime": "__NOT_TRANSLATED__",
+      "Architecture": "__NOT_TRANSLATED__",
+      "StartModelServing": "__NOT_TRANSLATED__",
+      "InferenceMode": "__NOT_TRANSLATED__",
+      "ImageDoesNotProvideModelPath": "__NOT_TRANSLATED__",
+      "ModelStorageToMount": "__NOT_TRANSLATED__",
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "DescAIAccelerator": "__NOT_TRANSLATED__",
+      "SessionAlreadyExists": "__NOT_TRANSLATED__"
     },
     "Preparing": "Подготовка ...",
     "PreparingSession": "Подготовка сеанса ...",
@@ -239,7 +284,8 @@
       "AppMustBeRun": "Запускать только тогда, когда приложение уже запущено",
       "AppMustBeRunDialog": "Доступ к этому приложению и его использование возможно только в том случае, если оно уже запущено через терминал. В противном случае вы будете перенаправлены на страницу с ошибкой, которая возникает, когда приложение не запущено.",
       "ConfirmAndRun": "Я проверил и начну",
-      "Prepared": "Готовый"
+      "Prepared": "Готовый",
+      "App": "__NOT_TRANSLATED__"
     },
     "TensorboardPath": "Каталог журналов для TensorBoard",
     "InputTensorboardPath": "Введите каталог журнала, на который будет ссылаться TensorBoard. Обратите внимание, что каталог журналов не будет создан автоматически.",
@@ -255,7 +301,78 @@
     "UseThisArguments": "Используйте эти аргументы",
     "UseYourFavoriteVNCApp": "Используйте свое любимое приложение VNC",
     "XRDPconnection": "RDP-соединение",
-    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop"
+    "UseYourFavoriteMSTSCApp": "Используйте ваше любимое приложение MS Remote Desktop",
+    "OnlyOneFolderAttached": "__NOT_TRANSLATED__",
+    "AllowedClientIps": "__NOT_TRANSLATED__",
+    "CommaSeparated": "__NOT_TRANSLATED__",
+    "StatusDetail": "__NOT_TRANSLATED__",
+    "TotalRetries": "__NOT_TRANSLATED__",
+    "LastTry": "__NOT_TRANSLATED__",
+    "SessionNameRequired": "__NOT_TRANSLATED__",
+    "EnterValidSessionName": "__NOT_TRANSLATED__",
+    "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+    "SessionRenamed": "__NOT_TRANSLATED__",
+    "NoLogMsgAvailable": "__NOT_TRANSLATED__",
+    "StatusInfo": "__NOT_TRANSLATED__",
+    "Interactive": "__NOT_TRANSLATED__",
+    "Batch": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "Validation": {
+      "SessionNameRequired": "__NOT_TRANSLATED__",
+      "EnterValidSessionName": "__NOT_TRANSLATED__",
+      "SessionNameAlreadyExist": "__NOT_TRANSLATED__",
+      "SluggedStrings": "__NOT_TRANSLATED__"
+    },
+    "AlreadyTerminatingSession": "__NOT_TRANSLATED__",
+    "NoSessionToDisplay": "__NOT_TRANSLATED__",
+    "CommitSession": "__NOT_TRANSLATED__",
+    "CommitOnGoing": "__NOT_TRANSLATED__",
+    "CommitFinished": "__NOT_TRANSLATED__",
+    "CommitFailed": "__NOT_TRANSLATED__",
+    "DescCommitSession": "__NOT_TRANSLATED__",
+    "Message": "сообщение",
+    "EnvironmentInfo": "__NOT_TRANSLATED__",
+    "DownloadingSessionLogs": "__NOT_TRANSLATED__",
+    "VSCodeRemoteConnection": "__NOT_TRANSLATED__",
+    "VSCodeRemoteDescription": "__NOT_TRANSLATED__",
+    "VSCodeRemotePasswordTitle": "__NOT_TRANSLATED__",
+    "VSCodeRemoteNoticeSSHConfig": "__NOT_TRANSLATED__",
+    "ElapsedTime": "__NOT_TRANSLATED__",
+    "Timeout": "__NOT_TRANSLATED__",
+    "SessionLifetime": "__NOT_TRANSLATED__",
+    "Inference": "__NOT_TRANSLATED__",
+    "UseSubdomain": "__NOT_TRANSLATED__",
+    "BypassAuthentication": "__NOT_TRANSLATED__",
+    "App": "__NOT_TRANSLATED__",
+    "SeeAppDialog": "__NOT_TRANSLATED__",
+    "ExecuteTerminalApp": "__NOT_TRANSLATED__",
+    "TerminateSession": "__NOT_TRANSLATED__",
+    "SeeContainerLogs": "__NOT_TRANSLATED__",
+    "RequestContainerCommit": "__NOT_TRANSLATED__",
+    "TimeoutExceeded": "__NOT_TRANSLATED__",
+    "UtilizationIdleChecks": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "Threshold": "__NOT_TRANSLATED__",
+    "IdleChecks": "__NOT_TRANSLATED__",
+    "IdleChecksDesc": "__NOT_TRANSLATED__",
+    "MaxSessionLifetime": "__NOT_TRANSLATED__",
+    "MaxSessionLifetimeDesc": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeout": "__NOT_TRANSLATED__",
+    "NetworkIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeout": "__NOT_TRANSLATED__",
+    "UtilizationIdleTimeoutDesc": "__NOT_TRANSLATED__",
+    "GracePeriod": "__NOT_TRANSLATED__",
+    "GracePeriodDesc": "__NOT_TRANSLATED__",
+    "UtilizationThreshold": "__NOT_TRANSLATED__",
+    "UtilizationThresholdDesc": "__NOT_TRANSLATED__",
+    "ExpiresAfter": "__NOT_TRANSLATED__",
+    "ConnectionExample": "__NOT_TRANSLATED__",
+    "System": "__NOT_TRANSLATED__",
+    "SFTPExtraNotification": "__NOT_TRANSLATED__",
+    "ConnectionNotice": "__NOT_TRANSLATED__",
+    "ReadMore": "__NOT_TRANSLATED__",
+    "Readless": "__NOT_TRANSLATED__",
+    "Readmore": "__NOT_TRANSLATED__"
   },
   "button": {
     "Cancel": "Отмена",
@@ -285,7 +402,12 @@
     "Generate": "Генерировать",
     "Continue": "Продолжить",
     "GoBackToSummaryPage": "Вернуться на страницу \"Обзор\"",
-    "ForceTerminate": "Принудительно завершить"
+    "ForceTerminate": "Принудительно завершить",
+    "Commit": "__NOT_TRANSLATED__",
+    "Reset": "Перезагрузить",
+    "EnterManually": "__NOT_TRANSLATED__",
+    "OptOut": "__NOT_TRANSLATED__",
+    "Activate": "__NOT_TRANSLATED__"
   },
   "agent": {
     "Endpoint": "Конечная точка",
@@ -300,7 +422,17 @@
     "Running": "Выполнение",
     "BackendType": "Тип бэкэнда",
     "Capabilities": "Возможности",
-    "NoNetworkSignal": "Нет сетевых сигналов."
+    "NoNetworkSignal": "Нет сетевых сигналов.",
+    "AgentSettingUpdated": "__NOT_TRANSLATED__",
+    "NoChanges": "__NOT_TRANSLATED__",
+    "Schedulable": "__NOT_TRANSLATED__",
+    "AgentSetting": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoAgentToDisplay": "__NOT_TRANSLATED__",
+    "Utilization": "__NOT_TRANSLATED__",
+    "NoAvailableLiveStat": "__NOT_TRANSLATED__",
+    "Allocation": "__NOT_TRANSLATED__",
+    "DiskPerc": "__NOT_TRANSLATED__"
   },
   "general": {
     "cores": "ядра",
@@ -379,7 +511,8 @@
       "PleaseSelectOption": "Пожалуйста, выберите один вариант",
       "LetterNumber-_dot": "Допускает буквы, цифры и -_.",
       "NameAlreadyExists": "Название политики уже существует!",
-      "ValidationFailed": "Проверка не удалась"
+      "ValidationFailed": "Проверка не удалась",
+      "PleaseSelectOptions": "Пожалуйста, выберите варианты"
     },
     "ProjectAndGroup": "Проекты и группы",
     "ModifyKeypairResourcePolicy": "Изменить политику ресурсов пары ключей",
@@ -392,7 +525,18 @@
     "UserAccountCreatedError": "Эта учетная запись уже была зарегистрирована.",
     "KeypairCreated": "Пара ключей успешно создана.",
     "UserNotFound": "Не удалось создать учетные данные, поскольку не удалось найти следующий идентификатор пользователя:",
-    "UserIDRequired": "Требуется идентификатор пользователя."
+    "UserIDRequired": "Требуется идентификатор пользователя.",
+    "Status": "__NOT_TRANSLATED__",
+    "UserStatus": "__NOT_TRANSLATED__",
+    "NoCredentialToDisplay": "__NOT_TRANSLATED__",
+    "NoUserToDisplay": "__NOT_TRANSLATED__",
+    "RateLimitInputRequired": "__NOT_TRANSLATED__",
+    "InvalidRateLimitValue": "__NOT_TRANSLATED__",
+    "WarningLessRateLimit": "__NOT_TRANSLATED__",
+    "KeypairDetail": "__NOT_TRANSLATED__",
+    "AdminCanOnlyRemoveTotp": "__NOT_TRANSLATED__",
+    "KeySeccessfullyDeleted": "__NOT_TRANSLATED__",
+    "SignoutSeccessfullyFinished": "__NOT_TRANSLATED__"
   },
   "data": {
     "Folders": "Папки",
@@ -463,7 +607,16 @@
       "Edit": "Редактировать",
       "EditDelete": "Изменить + Удалить",
       "KickOut": "Выкинуть пользователя",
-      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс."
+      "CannotDeleteFolder": "Невозможно удалить папку, установленную в одном или нескольких сеансах. Пожалуйста, сначала завершите сеанс.",
+      "FolderQuota": "__NOT_TRANSLATED__",
+      "MaxFolderQuota": "__NOT_TRANSLATED__",
+      "FolderUsage": "__NOT_TRANSLATED__",
+      "FolderUsing": "__NOT_TRANSLATED__",
+      "NoFolderToDisplay": "__NOT_TRANSLATED__",
+      "FolderInfo": "__NOT_TRANSLATED__",
+      "OpenAFolder": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "Serve": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Удалить...",
@@ -507,7 +660,20 @@
       "FileBrowserSessionRunningAlready": "Файловый браузер, поддерживающий сеанс, уже запущен. Пожалуйста, загрузите папку (и), используя этот сеанс.",
       "NotEnoughResourceForFileBrowserSession": "Недостаточно ресурсов (cpu: 1 Core, mem: 0,5GB) для создания сеанса для просмотра файлов. пожалуйста, проверьте доступные ресурсы.",
       "NoImagesSupportingFileBrowser": "Пока нет изображений, поддерживающих просмотрщик файлов. Для загрузки папок требуется по крайней мере одно или несколько изображений, поддерживающих просмотрщик файлов.",
-      "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов»."
+      "ClickFilebrowserButton": "Чтобы загрузить папку (и), нажмите кнопку «Выполнить просмотрщик файлов».",
+      "ReadOnlyFolderOnFileBrowser": "__NOT_TRANSLATED__",
+      "ExecuteSSH/SFTP": "__NOT_TRANSLATED__",
+      "NoImagesSupportingSystemSession": "__NOT_TRANSLATED__",
+      "SftpScalingGroupsDoNotExist": "__NOT_TRANSLATED__",
+      "ExecutingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "RunSSH/SFTPserver": "__NOT_TRANSLATED__",
+      "SFTPSessionNotAvailable": "__NOT_TRANSLATED__",
+      "StartingSSH/SFTPSession": "__NOT_TRANSLATED__",
+      "UploadFolder": "__NOT_TRANSLATED__",
+      "EmptyFilesAndFoldersAreNotUploaded": "__NOT_TRANSLATED__",
+      "FolderAlreadyExists": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededTitle": "__NOT_TRANSLATED__",
+      "NumberOfSFTPSessionsExceededBody": "__NOT_TRANSLATED__"
     },
     "invitation": {
       "EnterEmail": "Введите адрес электронной почты",
@@ -517,13 +683,24 @@
       "InvitationError": "Приглашение не прошло. Пользователь уже может быть приглашен.",
       "Shared": "Успешно предоставлен доступ к групповой папке",
       "NoOneWasShared": "Не удалось предоставить общий доступ к папке группы",
-      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту."
+      "SharingError": "Не удалось отправить. Возможно, пользователь уже находится в совместном доступе или не принадлежит соответствующему проекту.",
+      "FolderSharingNotAvailableToUser": "__NOT_TRANSLATED__"
     },
     "permission": {
       "NoChanges": "Никаких изменений не внесено",
       "PermissionModified": "Разрешение обновлено"
     },
-    "NoStorageDescriptionFound": "Нет описания."
+    "NoStorageDescriptionFound": "Нет описания.",
+    "DialogModelFolder": "__NOT_TRANSLATED__",
+    "usage": {
+      "adequate": "__NOT_TRANSLATED__",
+      "Adequate": "__NOT_TRANSLATED__",
+      "Caution": "__NOT_TRANSLATED__",
+      "Insufficient": "__NOT_TRANSLATED__",
+      "StatusOfSelectedHost": "__NOT_TRANSLATED__",
+      "Status": "__NOT_TRANSLATED__",
+      "used": "__NOT_TRANSLATED__"
+    }
   },
   "dialog": {
     "warning": {
@@ -535,7 +712,8 @@
       "DoYouWantToProceed": "Вы хотите продолжить?"
     },
     "title": {
-      "LetsDouble-Check": "Давайте дважды проверим"
+      "LetsDouble-Check": "Давайте дважды проверим",
+      "Notice": "__NOT_TRANSLATED__"
     },
     "ErrorOccurred": "Возникла ошибка",
     "error": {
@@ -588,7 +766,10 @@
     "AppInfoDeleted": "Информация о приложении успешно удалена.",
     "SuccessfullyModified": "Успешно изменено",
     "ProblemOccurred": "Возникла проблема",
-    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают."
+    "PasswordsDoNotMatch": "Пароль и подтверждение не совпадают.",
+    "NoChangeMade": "__NOT_TRANSLATED__",
+    "Architecture": "__NOT_TRANSLATED__",
+    "NoImageToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePreset": {
     "ResourcePresets": "Предустановки ресурсов",
@@ -608,7 +789,9 @@
     "MinimumMemUnit": "Память начинается с 1 ГБ",
     "MinimumShmemUnit": "Минимальный размер разделяемой памяти составляет 0,01 ГБ.",
     "RAM": "RAM (ГБ)",
-    "SharedMemory": "Общая память (ГБ)"
+    "SharedMemory": "Общая память (ГБ)",
+    "Deleted": "__NOT_TRANSLATED__",
+    "NoResourcePresetToDisplay": "__NOT_TRANSLATED__"
   },
   "usersettings": {
     "General": "Общий",
@@ -660,7 +843,12 @@
     "Edit_ShellScriptTitle_1": "Редактировать",
     "Edit_ShellScriptTitle_2": " сценарий оболочки",
     "AutoLogout": "Автоматический выход",
-    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)"
+    "DescAutoLogout": "Автоматический выход из системы, если все зарегистрированные страницы закрыты, кроме страниц, созданных в сеансе для приложений (например, блокнот jupyter, веб-терминал и т. Д.)",
+    "BootstrapScriptDescription": "__NOT_TRANSLATED__",
+    "NoExistingVSCodePassword": "__NOT_TRANSLATED__",
+    "VSCodePasswordClipboardCopy": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManually": "__NOT_TRANSLATED__",
+    "SSHKeypairEnterManuallyFinished": "__NOT_TRANSLATED__"
   },
   "webTerminalUsageGuide": {
     "CopyGuide": "Расширенное использование веб-терминала: копирование содержимого терминала",
@@ -681,7 +869,8 @@
     "RequestUrl": "Запросить URL",
     "Parameters": "Параметры",
     "ErrorType": "Тип ошибки",
-    "LogMessageRemoved": "Сообщения журнала были удалены."
+    "LogMessageRemoved": "Сообщения журнала были удалены.",
+    "NoLogToDisplay": "__NOT_TRANSLATED__"
   },
   "resourcePolicy": {
     "Resources": "Ресурсы",
@@ -706,7 +895,9 @@
     "SuccessfullyUpdated": "Политика ресурсов успешно обновлена.",
     "SuccessfullyDeleted": "Политика ресурсов успешно удалена.",
     "PolicyNameEmpty": "Имя политики не должно быть пустым.",
-    "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:"
+    "AboutToDeleteResourcePolicy": "Вы собираетесь удалить эту политику ресурсов:",
+    "MaxSessionLifeTime": "__NOT_TRANSLATED__",
+    "NoResourcePolicyToDisplay": "__NOT_TRANSLATED__"
   },
   "registry": {
     "Hostname": "Имя хоста",
@@ -738,7 +929,10 @@
     "RegistryUpdateFailed": "Не удалось обновить реестр.",
     "RescanImages": "Повторное сканирование изображений ...",
     "RescanFailed": "Ошибка повторного сканирования.",
-    "PleaseSelectOption": "Пожалуйста, выберите один вариант."
+    "PleaseSelectOption": "Пожалуйста, выберите один вариант.",
+    "RegistrySuccessfullyModified": "__NOT_TRANSLATED__",
+    "ModifyRegistry": "__NOT_TRANSLATED__",
+    "NoRegistryToDisplay": "__NOT_TRANSLATED__"
   },
   "resourceGroup": {
     "ResourceGroups": "Группы ресурсов",
@@ -763,7 +957,17 @@
     "ResourceGroupDeleted": "Группа ресурсов успешно удалена",
     "EnterValidResourceGroupName": "Введите действительное имя группы ресурсов",
     "ResourceGroupNameRequired": "Укажите название группы ресурсов.",
-    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует."
+    "ResourceGroupAlreadyExist": "Группа ресурсов с таким именем уже существует.",
+    "WsproxyAddress": "__NOT_TRANSLATED__",
+    "SetSchedulerOptions": "Установить параметры планировщика",
+    "TimeoutSeconds": "Секунды",
+    "ResourceGroupDetail": "Сведения о группе ресурсов",
+    "RetriesToSkip": "__NOT_TRANSLATED__",
+    "NoGroupToDisplay": "__NOT_TRANSLATED__",
+    "AllowedSessionTypes": "__NOT_TRANSLATED__",
+    "Domain": "Домен",
+    "Public": "__NOT_TRANSLATED__",
+    "PublicStatus": "__NOT_TRANSLATED__"
   },
   "maintenance": {
     "General": "Общий",
@@ -826,10 +1030,18 @@
     }
   },
   "statistics": {
-    "Usage": "Применение",
+    "UsageHistory": "История использования",
     "SelectPeriod": "Выберите период",
     "1Day": "1 день",
-    "1Week": "1 неделя"
+    "1Week": "1 неделя",
+    "UsageHistoryDesc": "__NOT_TRANSLATED__",
+    "SessionsDesc": "__NOT_TRANSLATED__",
+    "CPUDesc": "__NOT_TRANSLATED__",
+    "MemoryDesc": "__NOT_TRANSLATED__",
+    "GPUDesc": "__NOT_TRANSLATED__",
+    "IOReadDesc": "__NOT_TRANSLATED__",
+    "IOWriteDesc": "__NOT_TRANSLATED__",
+    "UsageHistoryNote": "__NOT_TRANSLATED__"
   },
   "language": {
     "Browser": "Браузер",
@@ -838,7 +1050,9 @@
     "Language": "Язык",
     "OSDefault": "ОС по умолчанию",
     "Russian": "русский",
-    "French": "Французский"
+    "French": "Французский",
+    "Mongolian": "__NOT_TRANSLATED__",
+    "Indonesian": "__NOT_TRANSLATED__"
   },
   "settings": {
     "General": "Общий",
@@ -856,7 +1070,7 @@
     "DescAllowAgentSideRegistration": "Разрешить агенту зарегистрироваться в качестве менеджера. <br/> Используйте, только если кластер Backend.AI управляется в безопасном месте.",
     "Plugins": "Плагины",
     "CUDAGPUsupport": "Поддержка CUDA GPU",
-    "DescCUDAGPUsupport": "Поддержка графического процессора NVidia CUDA. <br/> Требуется подключаемый модуль Backend.AI CUDA.",
+    "DescCUDAGPUsupport": "Поддержка графического процессора NVIDIA CUDA. <br/> Требуется подключаемый модуль Backend.AI CUDA.",
     "CUDAGPUdisabledByFGPUsupport": "Отключено, поскольку в системе используется плагин Fractional GPU.",
     "ROCMGPUsupport": "Поддержка графического процессора ROCm",
     "DescROCMGPUsupport": "Поддержка графического процессора AMD ROCm. <br/> Требуется подключаемый модуль Backend.AI ROCm.",
@@ -894,7 +1108,22 @@
       "digest": "Дайджест",
       "tag": "Тег",
       "none": "Никто"
-    }
+    },
+    "OverlayNetwork": "__NOT_TRANSLATED__",
+    "OverlayNetworkConfiguration": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettings": "__NOT_TRANSLATED__",
+    "OverlayNetworkSettingsDescription": "__NOT_TRANSLATED__",
+    "MTUDescription": "__NOT_TRANSLATED__",
+    "OutOfRange": "__NOT_TRANSLATED__",
+    "IPUsupport": "__NOT_TRANSLATED__",
+    "DescIPUsupport": "__NOT_TRANSLATED__",
+    "ATOMsupport": "__NOT_TRANSLATED__",
+    "DescATOMsupport": "__NOT_TRANSLATED__",
+    "RequireIPUPlugin": "__NOT_TRANSLATED__",
+    "RequireATOMPlugin": "__NOT_TRANSLATED__",
+    "Warboysupport": "__NOT_TRANSLATED__",
+    "DescWarboysupport": "__NOT_TRANSLATED__",
+    "RequireWarboyPlugin": "__NOT_TRANSLATED__"
   },
   "notification": {
     "SuccessfullyUpdated": "Успешно обновлено",
@@ -973,7 +1202,13 @@
     "InvalidChangePasswordToken": "Неверный токен",
     "InvalidChangePasswordTokenMessage": "Выданный токен для смены пароля содержит ошибку. Отправьте еще одно электронное письмо для смены пароля и повторите попытку.",
     "PleaseInputLoginInfo": "Пожалуйста, введите ID и пароль для входа.",
-    "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы."
+    "TooManyAttempt": "Слишком много попыток входа в систему. Попытки входа в систему на время заблокированы.",
+    "SingleSignOn": {
+      "LoginWithSAML": "__NOT_TRANSLATED__"
+    },
+    "EndpointInfo": "__NOT_TRANSLATED__",
+    "DescEndpoint": "__NOT_TRANSLATED__",
+    "EndpointStartWith": "__NOT_TRANSLATED__"
   },
   "signup": {
     "SignupBETA": "Регистрация (только приглашение в бета-версию)",
@@ -1055,7 +1290,14 @@
     "FolderName": "Имя импортированной папки:",
     "NotebookBadgeCodeHTML": "Код значка блокнота (HTML)",
     "NotebookBadgeCodeMarkdown": "Код значка блокнота (маркдаун)",
-    "Installed": "Установлены"
+    "Installed": "Установлены",
+    "GithubInternalError": "__NOT_TRANSLATED__",
+    "GithubAPILimitError": "__NOT_TRANSLATED__",
+    "GithubAPIEtcError": "__NOT_TRANSLATED__",
+    "ImportGitlabRepo": "__NOT_TRANSLATED__",
+    "GitlabRepoWillBeFolder": "__NOT_TRANSLATED__",
+    "GitlabURL": "__NOT_TRANSLATED__",
+    "GitlabDefaultBranch": "__NOT_TRANSLATED__"
   },
   "usagepanel": {
     "StatisticsForThisMonth": "Статистика за этот месяц",
@@ -1114,6 +1356,7 @@
     "20chars": "(максимум 20 символов)",
     "40chars": "(максимум 40 символов)",
     "64chars": "(максимум 64 символа)",
+    "200chars": "(максимум 200 символов)",
     "255chars": "(максимум 255 символов)",
     "500chars": "(максимум 500 символов)",
     "512chars": "(максимум 512 символов)",
@@ -1133,5 +1376,16 @@
   "explorer": {
     "ValueRequired": "НужноЗначение",
     "InputTooShort": "ВводОченьКороток"
+  },
+  "OpenVSCodeRemote": "__NOT_TRANSLATED__",
+  "totp": {
+    "OTP": "__NOT_TRANSLATED__",
+    "TotpRemoved": "__NOT_TRANSLATED__",
+    "TotpSetupCompleted": "__NOT_TRANSLATED__",
+    "InvalidTotpCode": "__NOT_TRANSLATED__",
+    "ScanQRToEnable": "__NOT_TRANSLATED__",
+    "TypeInAuthKey": "__NOT_TRANSLATED__",
+    "EnterConfirmationCode": "__NOT_TRANSLATED__",
+    "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
   }
 }

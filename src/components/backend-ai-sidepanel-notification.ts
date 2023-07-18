@@ -1,9 +1,11 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {translate as _t} from 'lit-translate';
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, property} from 'lit-element';
+import {css, CSSResultGroup, html} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
+
 import '../plastics/mwc/mwc-drawer';
 import '@material/mwc-icon';
 import '@material/mwc-list';
@@ -29,9 +31,7 @@ import {
  */
 @customElement('backend-ai-sidepanel-notification')
 export default class BackendAiSidepanelNotification extends BackendAIPage {
-  public shadowRoot: any;
-
-  @property({type: Boolean}) active = true;
+  @property({type: Boolean, reflect: true}) active = false;
   @property({type: Array}) notifications = [];
 
   /**
@@ -42,7 +42,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     super();
   }
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup {
     return [
       BackendAIWebUIStyles,
       IronFlex,
@@ -108,17 +108,9 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
     document.addEventListener('backend-ai-notification-changed', () => this.refresh());
   }
 
-  connectedCallback() {
-    super.connectedCallback();
-  }
-
-  disconnectedCallback() {
-    super.disconnectedCallback();
-  }
-
-  async refresh() {
+  refresh() {
     this.notifications = globalThis.lablupNotification.notifications;
-    await this.requestUpdate();
+    this.requestUpdate();
   }
 }
 declare global {

@@ -1,9 +1,10 @@
 /**
  @license
- Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
+ Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultArray, CSSResultOrNative, customElement, html, LitElement, property} from 'lit-element';
+import {css, CSSResultGroup, html, LitElement} from 'lit';
+import {customElement, property} from 'lit/decorators.js';
 
 import {
   IronFlex,
@@ -28,14 +29,13 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-progress-bar')
 export default class LablupProgressBar extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) progressBar;
   @property({type: Object}) frontDesc;
   @property({type: Object}) backDesc;
-  @property({type: Number}) progress = 0;
-  @property({type: String}) description = ''
+  @property({type: String}) progress = '';
+  @property({type: String}) description = '';
 
-  static get styles(): CSSResultOrNative | CSSResultArray {
+  static get styles(): CSSResultGroup | undefined {
     return [
       BackendAiStyles,
       IronFlex,
@@ -78,7 +78,7 @@ export default class LablupProgressBar extends LitElement {
           color: var(--progress-bar-font-color, black);
           clip-path: inset(0 0 0 100%);
           -webkit-clip-path: inset(0 0 0 100%);
-          transition: clip-path 1s linear;
+          transition: clip-path var(--progress-bar-transition-second, 1s) linear;
       }
 
       .front[slot=description-2] {
@@ -104,9 +104,9 @@ export default class LablupProgressBar extends LitElement {
   }
 
   firstUpdated() {
-    this.progressBar = this.shadowRoot.querySelector('#front');
-    this.frontDesc = this.shadowRoot.querySelector('#front');
-    this.backDesc = this.shadowRoot.querySelector('#back');
+    this.progressBar = this.shadowRoot?.querySelector('#front');
+    this.frontDesc = this.shadowRoot?.querySelector('#front');
+    this.backDesc = this.shadowRoot?.querySelector('#back');
     this.progressBar.style.clipPath = 'inset(0 0 0 0%)';
   }
 
