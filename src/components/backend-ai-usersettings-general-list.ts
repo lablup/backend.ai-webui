@@ -175,10 +175,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           scrollbar-width: none; /* firefox */
         }
 
-        #bootstrap-dialog wl-button {
-          margin-left: 5px;
-        }
-
         #bootstrap-dialog, #userconfig-dialog {
           --component-width: calc(100vw - 200px);
           --component-height: calc(100vh - 100px);

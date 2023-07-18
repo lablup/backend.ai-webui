@@ -271,22 +271,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           scrollbar-width: none; /* firefox */
         }
 
-        wl-button.vscode-desktop-password {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-icon#vscode-desktop-password-icon {
-          color: var(--paper-indigo-700);
-        }
-
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);

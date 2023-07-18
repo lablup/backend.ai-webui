@@ -146,30 +146,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            --icon-size: 24px;
            padding: 0;
          }
-         wl-icon {
-           --icon-size: 16px;
+         mwc-icon.indicator {
+           --mdc-icon-size: 16px;
            padding: 0;
-         }
-         wl-label {
-           --label-font-size: 13px;
-           --label-font-family: 'Ubuntu', Roboto;
-           -webkit-border-radius: 3px;
-           -moz-border-radius: 3px;
-           border-radius: 3px;
-           -moz-background-clip: padding;
-           -webkit-background-clip: padding-box;
-           background-clip: padding-box;
-           border: 1px solid #ccc;
-           background-color: #f9f9f9;
-           padding: 0 3px;
-           display: inline-block;
-           margin: 0;
-         }
-         wl-label.installed {
-           --label-color: #52595d;
-         }
-         wl-label.installing {
-           --label-color: var(--paper-orange-700);
          }
          img.indicator-icon {
            width: 16px;
@@ -1074,7 +1053,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
              <div class="layout horizontal center flex">
                <div class="layout horizontal configuration">
-                 <wl-icon class="fg green">developer_board</wl-icon>
+                 <mwc-icon class="fg green indicator">developer_board</mwc-icon>
                  <span>${rowData.item.cpu_limit_min}</span> ~
                  <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
                  <span class="indicator">${_t('general.cores')}</span>
@@ -1082,7 +1061,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
              </div>
              <div class="layout horizontal center flex">
                <div class="layout horizontal configuration">
-                 <wl-icon class="fg green">memory</wl-icon>
+                 <mwc-icon class="fg green indicator">memory</mwc-icon>
                  <span>${rowData.item.mem_limit_min}</span> ~
                  <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
                </div>
@@ -1100,7 +1079,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.cuda_shares_limit_min ? html`
                <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.cuda_shares_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                    <span class="indicator">CUDA FGPU</span>
@@ -1120,7 +1099,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.tpu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.tpu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                    <span class="indicator">TPU</span>
@@ -1130,7 +1109,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.ipu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.ipu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.ipu_device_limit_max)}</span>
                    <span class="indicator">IPU</span>
@@ -1140,7 +1119,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ${rowData.item.atom_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.atom_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.atom_device_limit_max)}</span>
                    <span class="indicator">ATOM</span>
@@ -1150,7 +1129,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ${rowData.item.warboy_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.warboy_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.warboy_device_limit_max)}</span>
                    <span class="indicator">Warboy</span>
@@ -1214,20 +1193,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
          <div class="layout horizontal center center-justified">
            ${rowData.item.installed ? html`
-           <wl-label class="installed"
-               id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                     rowData.item.name.replace('/', '-') + '-' +
-                     rowData.item.tag.replace(/\./gi, '-')}">
-             ${_t('environment.Installed')}
-           </wl-label>
+             <lablup-shields class="installed" description="${_t('environment.Installed')}" color="darkgreen"
+                             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                             rowData.item.name.replace('/', '-') + '-' +
+                             rowData.item.tag.replace(/\./gi, '-')}"></lablup-shields>
            ` : html`
-           <wl-label class="installing"
-             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                   rowData.item.name.replace('/', '-') + '-' +
-                   rowData.item.tag.replace(/\./gi, '-')}"
-             style="display:none">
-             ${_t('environment.Installing')}
-             </wl-label>
+             <lablup-shields class="installing" description="${_t('environment.Installing')}" color="green"
+                             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                             rowData.item.name.replace('/', '-') + '-' +
+                             rowData.item.tag.replace(/\./gi, '-')}"
+             style="display:none"></lablup-shields>
            `}
          </div>
        `
