@@ -448,16 +448,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return Promise.resolve(false);
   }
 
-  /**
-   * @deprecated it does not used now
-   */
-  _updateSelectedScalingGroup() {
-    const Sgroups = this.shadowRoot?.querySelector('#scaling-groups') as any;
-    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
-    const idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(idx);
-  }
-
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
@@ -669,7 +659,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _disableEnterKey() {
     this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
       // remove protected property assignment
-      (element as any).onKeyDown = (e) => {
+      (element as HTMLElement).onkeydown = (e) => {
         const enterKey = 13;
         if (e.keyCode === enterKey) {
           e.preventDefault();
