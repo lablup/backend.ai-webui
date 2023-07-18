@@ -48,6 +48,9 @@ export default class BackendAiDialog extends LitElement {
   @property({type: String}) sessionUuid; // Reserved for session list
   @property({type: String}) sessionName; // Reserved for session list
   @property({type: String}) sessionId; // Reserved for session list
+  @property({type: String}) filename; // Reserved for file list dialog
+  @property({type: Array}) files; // Reserved for file list dialog
+
   @query('#dialog') protected dialog;
 
   constructor() {

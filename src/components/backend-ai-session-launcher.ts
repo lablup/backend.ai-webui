@@ -48,6 +48,7 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
+import {Expansion} from 'weightless/expansion';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -2959,11 +2960,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
-      // TODO remove protected property assignment
-      (element as any).onKeyDown = (e) => {
-        const enterKey = 13;
-        if (e.keyCode === enterKey) {
+    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
+      // remove protected property assignment
+      (element as HTMLElement).onkeydown = (e) => {
+        if (e.key === 'Enter') {
           e.preventDefault();
         }
       };

@@ -58,6 +58,27 @@ type Radio = HTMLElementTagNameMap['mwc-radio'];
 type Switch = HTMLElementTagNameMap['mwc-switch'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
 
+interface inviteeData {
+  owner: string,
+  perm: string,
+  shared_to: {
+    uuid: string,
+    email: string
+  },
+  status: string,
+  type: string,
+  vfolder_id: string,
+  vfolder_name: string
+}
+
+interface fileData {
+  id: string,
+  progress: number,
+  caption: string,
+  error: boolean,
+  complete: boolean
+}
+
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
@@ -90,11 +111,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   @property({type: Object}) explorer = Object();
   @property({type: Array}) explorerFiles = [];
   @property({type: String}) existingFile = '';
-  @property({type: Array}) invitees = [];
+  @property({type: Array}) invitees : inviteeData[] = [];
   @property({type: String}) selectedFolder = '';
   @property({type: String}) selectedFolderType = '';
   @property({type: String}) downloadURL = '';
-  @property({type: Array}) uploadFiles = [];
+  @property({type: Array}) uploadFiles : fileData[] = [];
   @property({type: Object}) currentUploadFile = Object();
   @property({type: Array}) fileUploadQueue = [];
   @property({type: Number}) fileUploadCount = 0;
@@ -1129,11 +1150,11 @@ export default class BackendAiStorageList extends BackendAIPage {
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog wl-select');
     console.log(this.invitees);
-    const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
+    const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as inviteeData[])[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
-        'user': (this.invitees as any)[idx].shared_to.uuid,
-        'vfolder': (this.invitees as any)[idx].vfolder_id
+        'user': (this.invitees as inviteeData[])[idx].shared_to.uuid,
+        'vfolder': (this.invitees as inviteeData[])[idx].vfolder_id
       }));
     const promiseArray = inputList.map((input) => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
@@ -2479,14 +2500,14 @@ export default class BackendAiStorageList extends BackendAIPage {
                   file.caption = '';
                   file.error = false;
                   file.complete = false;
-                  (this.uploadFiles as any).push(file);
+                  this.uploadFiles.push(file);
                 }
               } else {
                 file.progress = 0;
                 file.caption = '';
                 file.error = false;
                 file.complete = false;
-                (this.uploadFiles as any).push(file);
+                this.uploadFiles.push(file);
               }
             }
           } else {
@@ -2593,7 +2614,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             file.caption = '';
             file.error = false;
             file.complete = false;
-            (this.uploadFiles as any).push(file);
+            this.uploadFiles.push(file);
           }
         } else {
           file.id = text;
@@ -2601,7 +2622,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           file.caption = '';
           file.error = false;
           file.complete = false;
-          (this.uploadFiles as any).push(file);
+          this.uploadFiles.push(file);
         }
       }
     }
@@ -2657,15 +2678,15 @@ export default class BackendAiStorageList extends BackendAIPage {
         },
         onError: (error) => {
           console.log('Failed because: ' + error);
-          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
+          this.currentUploadFile = this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
           this.fileUploadCount = this.fileUploadCount - 1;
           this.runFileUploadQueue();
         },
         onProgress: (bytesUploaded, bytesTotal) => {
-          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
+          this.currentUploadFile = this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
           if (!this._uploadFlag) {
             upload.abort();
-            (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `Canceling...`;
+            this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `Canceling...`;
             this.uploadFiles = this.uploadFiles.slice();
             setTimeout(() => {
               this.uploadFiles = [];
@@ -2688,17 +2709,17 @@ export default class BackendAiStorageList extends BackendAIPage {
             estimated_time_left = `${hour}:${min}:${sec}`;
           }
           const percentage = (bytesUploaded / bytesTotal * 100).toFixed(1);
-          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
-          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].progress = bytesUploaded / bytesTotal;
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].caption = `${percentage}% / Time left : ${estimated_time_left} / Speed : ${speed}`;
           this.uploadFiles = this.uploadFiles.slice();
         },
         onSuccess: () => {
           this._clearExplorer();
-          this.currentUploadFile = (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)];
-          (this.uploadFiles as any)[(this.uploadFiles as any).indexOf(fileObj)].complete = true;
+          this.currentUploadFile = this.uploadFiles[this.uploadFiles.indexOf(fileObj)];
+          this.uploadFiles[this.uploadFiles.indexOf(fileObj)].complete = true;
           this.uploadFiles = this.uploadFiles.slice();
           setTimeout(() => {
-            this.uploadFiles.splice((this.uploadFiles as any).indexOf(fileObj), 1);
+            this.uploadFiles.splice(this.uploadFiles.indexOf(fileObj), 1);
             this.uploadFilesExist = this.uploadFiles.length > 0 ? true : false;
             this.uploadFiles = this.uploadFiles.slice();
             this.fileUploadCount = this.fileUploadCount - 1;
@@ -2979,7 +3000,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     (this.renameFileDialog.querySelector('#old-file-name') as HTMLDivElement).textContent = fn;
     this.newFileNameInput.value = fn;
     // TODO define extended type for custom property
-    (this.renameFileDialog as any).filename = fn;
+    this.renameFileDialog.filename = fn;
     this.renameFileDialog.show();
     this.is_dir = is_dir;
 
@@ -2996,7 +3017,7 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _renameFile() {
     // TODO define extended type for custom property
-    const fn = (this.renameFileDialog as any).filename;
+    const fn = this.renameFileDialog.filename;
     const path = this.explorer.breadcrumb.concat(fn).join('/');
     const newName = this.newFileNameInput.value;
     this.fileExtensionChangeDialog.hide();
@@ -3036,8 +3057,8 @@ export default class BackendAiStorageList extends BackendAIPage {
   _openDeleteFileDialog(e) {
     const fn = e.target.getAttribute('filename');
     // TODO define extended type for custom properties
-    (this.deleteFileDialog as any).filename = fn;
-    (this.deleteFileDialog as any).files = [];
+    this.deleteFileDialog.filename = fn;
+    this.deleteFileDialog.files = [];
     this.deleteFileDialog.show();
   }
 
@@ -3048,8 +3069,8 @@ export default class BackendAiStorageList extends BackendAIPage {
    * */
   _openDeleteMultipleFileDialog(e?) {
     // TODO define extended type for custom property
-    (this.deleteFileDialog as any).files = this.fileListGrid.selectedItems;
-    (this.deleteFileDialog as any).filename = '';
+    this.deleteFileDialog.files = this.fileListGrid.selectedItems;
+    this.deleteFileDialog.filename = '';
     this.deleteFileDialog.show();
   }
 
@@ -3061,7 +3082,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _deleteFileWithCheck(e) {
     // TODO define extended type for custom property
-    const files = (this.deleteFileDialog as any).files;
+    const files = this.deleteFileDialog.files;
     if (files.length > 0) {
       const filenames: string[] = [];
       files.forEach((file) => {
@@ -3077,8 +3098,8 @@ export default class BackendAiStorageList extends BackendAIPage {
       });
     } else {
       // TODO define extended type for custom property
-      if ((this.deleteFileDialog as any).filename != '') {
-        const path = this.explorer.breadcrumb.concat((this.deleteFileDialog as any).filename).join('/');
+      if (this.deleteFileDialog.filename != '') {
+        const path = this.explorer.breadcrumb.concat(this.deleteFileDialog.filename).join('/');
         const job = globalThis.backendaiclient.vfolder.delete_files([path], true, this.explorer.id);
         job.then((res) => {
           this.notification.text = _text('data.folders.FileDeleted');
