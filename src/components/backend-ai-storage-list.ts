@@ -1361,7 +1361,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg green controls-running"
             icon="play_arrow"
-            title=${_t('data.folders.Serve')}
             @click="${(e) => this._inferModel(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-serve'}"
@@ -1370,7 +1369,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
-            title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-folderinfo'}"
@@ -1381,7 +1379,6 @@ export default class BackendAiStorageList extends BackendAIPage {
         <mwc-icon-button
           class="fg blue controls-running"
           icon="content_copy"
-          title=${_t('data.folders.CloneFolder')}
           disabled
           @click="${() => { this._requestCloneFolder(rowData.item);}}"
           id="${rowData.item.id+'-clone'}"
@@ -1393,7 +1390,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="share"
-            title=${_t('data.folders.ShareFolder')}
             @click="${(e) => this._shareFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
@@ -1403,7 +1399,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg cyan controls-running"
             icon="perm_identity"
-            title=${_t('data.folders.ModifyPermissions')}
             @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
@@ -1413,7 +1408,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="create"
-            title=${_t('data.folders.Rename')}
             @click="${(e) => this._renameFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-rename'}"
@@ -1422,7 +1416,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg blue controls-running"
             icon="settings"
-            title=${_t('data.folders.FolderOptionUpdate')}
             @click="${(e) => this._modifyFolderOptionDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-optionupdate'}"
@@ -1436,7 +1429,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg red controls-running"
             icon="delete"
-            title=${_t('data.folders.Delete')}
             @click="${(e) => this._deleteFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-delete'}"
@@ -1448,7 +1440,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg red controls-running"
             icon="remove_circle"
-            title=${_t('data.folders.LeaveFolder')}
             @click="${(e) => this._leaveInvitedFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-leavefolder'}"
