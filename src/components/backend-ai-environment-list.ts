@@ -26,13 +26,9 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/grid/vaadin-grid-filter-column';
 import '@vaadin/grid/vaadin-grid-sort-column';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/select';
-import 'weightless/textfield';
-import 'weightless/label';
-
 import {Button} from '@material/mwc-button/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import '@material/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -48,7 +44,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
   Backend.AI Environment List
- @group Backend.AI Web UI
+  @group Backend.AI Web UI
   @element backend-ai-environment-list
   */
 
@@ -142,10 +138,6 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin: 0px;
           padding: 5px 15px 5px 20px;
         }
-         wl-button > wl-icon {
-           --icon-size: 24px;
-           padding: 0;
-         }
          mwc-icon.indicator {
            --mdc-icon-size: 16px;
            padding: 0;
@@ -165,29 +157,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            text-align: left;
            width: 70px;
          }
-         wl-button {
-           --button-bg: var(--paper-orange-50);
-           --button-bg-hover: var(--paper-orange-100);
-           --button-bg-active: var(--paper-orange-600);
-           --button-color: #242424;
-           color: var(--paper-orange-900);
-         }
-         wl-button.operation {
-           margin: auto 10px;
-           padding: auto 10px;
-         }
          backend-ai-dialog {
            --component-min-width: 350px;
-         }
-         backend-ai-dialog#modify-image-dialog wl-select,
-         backend-ai-dialog#modify-image-dialog wl-textfield {
-           margin-bottom: 20px;
-         }
-         wl-select, wl-textfield {
-           --input-font-family: var(--general-font-family);
-         }
-         backend-ai-dialog wl-textfield {
-           --input-font-size: 14px;
          }
          #modify-app-dialog {
            --component-max-height: 550px;
@@ -311,24 +282,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const div = document.createElement('div');
     div.setAttribute('class', 'row extra');
 
-    const app = document.createElement('wl-textfield');
+    const app = document.createElement('mwc-textfield');
     app.setAttribute('type', 'text');
 
-    const protocol = document.createElement('wl-textfield');
+    const protocol = document.createElement('mwc-textfield');
     app.setAttribute('type', 'text');
 
-    const port = document.createElement('wl-textfield');
+    const port = document.createElement('mwc-textfield');
     app.setAttribute('type', 'number');
 
-    const button = document.createElement('wl-button');
+    const button = document.createElement('mwc-icon-button');
     button.setAttribute('class', 'fg pink');
-    button.setAttribute('fab', '');
-    button.setAttribute('flat', '');
+    button.setAttribute('icon', 'remove');
     button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
-
-    const icon = document.createElement('wl-icon');
-    icon.innerHTML = 'remove';
-    button.appendChild(icon);
 
     div.appendChild(port);
     div.appendChild(protocol);
@@ -348,7 +314,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.deleteAppRow = e.target.parentNode;
     const childRow = this.deleteAppRow.children;
     const textfieldsArray = [...childRow];
-    const appInfo = textfieldsArray.filter((item) => item.tagName === 'WL-TEXTFIELD').map((item) => item.value);
+    const appInfo = textfieldsArray.filter((item) => item.tagName === 'MWC-TEXTFIELD').map((item) => item.value);
     // if every value of the row is empty
     if (appInfo.filter((item) => item === '')?.length === appInfo.length) {
       this._removeRow();
@@ -365,7 +331,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const rows = this.modifyAppContainer.querySelectorAll('.row');
     const lastRow = rows[rows.length - 1];
 
-    lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
+    lastRow.querySelectorAll('mwc-textfield').forEach((tf) => {
       tf.value = '';
     });
     this.modifyAppContainer.querySelectorAll('.row.extra').forEach((e) => {
@@ -969,7 +935,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const rows = container.querySelectorAll('.row:not(.header)');
     const ports = new Set();
     for (const row of Array.from(rows)) {
-      const textFields = row.querySelectorAll('wl-textfield');
+      const textFields = row.querySelectorAll('mwc-textfield');
       if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
         continue;
       }
@@ -1009,9 +975,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
     const nonempty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('mwc-textfield'), (tf, idx) => tf.value === ''
     ).length === 0;
-    const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value).join(':');
+    const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value).join(':');
 
     return Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row)).join(',');
   }
@@ -1424,18 +1390,18 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            </div>
            ${this.servicePorts.map((item, index) => html`
            <div class="row">
-             <wl-textfield
+             <mwc-textfield
                type="text"
                value=${item.app}
-             ></wl-textfield>
-             <wl-textfield
+             ></mwc-textfield>
+             <mwc-textfield
                type="text"
                value=${item.protocol}
-             ></wl-textfield>
-             <wl-textfield
+             ></mwc-textfield>
+             <mwc-textfield
                type="number"
                value=${item.port}
-             ></wl-textfield>
+             ></mwc-textfield>
              <mwc-icon-button class="fg pink"
                               icon="remove"
                               @click=${(e) => this._checkDeleteAppInfo(e)}>
@@ -1443,9 +1409,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            </div>
            `)}
            <div class="row">
-             <wl-textfield type="text"></wl-textfield>
-             <wl-textfield type="text"></wl-textfield>
-             <wl-textfield type="number"></wl-textfield>
+             <mwc-textfield type="text"></mwc-textfield>
+             <mwc-textfield type="text"></mwc-textfield>
+             <mwc-textfield type="number"></mwc-textfield>
              <mwc-icon-button class="fg pink"
                               icon="add"
                               @click=${() => this._addRow()}>
