@@ -1207,7 +1207,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {Boolean} active - whether view states change or not
    * */
-  async _viewStateChanged(active) {
+  async _viewStateChanged() {
     await this.updateComplete;
 
     if (!this.active) {

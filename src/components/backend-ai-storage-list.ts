@@ -1128,6 +1128,7 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog wl-select');
+    console.log(this.invitees);
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as any)[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,

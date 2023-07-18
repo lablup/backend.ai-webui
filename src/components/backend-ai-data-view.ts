@@ -44,7 +44,15 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-
+interface groupData {
+  id: string,
+  name: string,
+  description: string,
+  is_active: boolean,
+  created_at: string,
+  modified_at: string,
+  domain_name: string
+}
 /**
  Backend.AI Data View
 
@@ -431,7 +439,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
-                ${(this.allowedGroups as any).map((item, idx) => html`
+                ${(this.allowedGroups as groupData[]).map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
@@ -506,7 +514,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
                 <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
-                  ${(this.allowedGroups as any).map((item, idx) => html`
+                  ${(this.allowedGroups as groupData[]).map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                   `)}
                 </mwc-select>
@@ -736,7 +744,6 @@ export default class BackendAIData extends BackendAIPage {
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
-      console.log(this.allowedGroups);
     }
     this.cloneFolderNameInput.value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
     this.openDialog('clone-folder-dialog');
@@ -808,7 +815,7 @@ export default class BackendAIData extends BackendAIPage {
     let group;
     const usageModeEl = this.shadowRoot?.querySelector('#add-folder-usage-mode') as Select;
     const permissionEl = this.shadowRoot?.querySelector('#add-folder-permission') as Select;
-    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as any;
+    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as Switch;
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -841,12 +848,12 @@ export default class BackendAIData extends BackendAIPage {
       }
     }
     if (cloneableEl) {
-      cloneable = cloneableEl.checked;
+      cloneable = cloneableEl.selected;
     }
     this.addFolderNameInput.reportValidity();
     if (this.addFolderNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
-      job.then((value) => {
+      job.then(() => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();
