@@ -1237,27 +1237,30 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * */
   _copyVSCodePassword(vscodePassword: string) {
     if (vscodePassword !== '') {
-      const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
-      if (copyText.length == 0) {
-        this.notification.text = _text('usersettings.NoExistingVSCodePassword');
-        this.notification.show();
-      } else {
-        if (navigator.clipboard !== undefined) { // for Chrome, Safari
-          navigator.clipboard.writeText(copyText).then( () => {
-            this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
-            this.notification.show();
-          }, (err) => {
-            console.error('Could not copy text: ', err);
-          });
-        } else { // other browsers
-          const tmpInputElement = document.createElement('input');
-          tmpInputElement.type = 'text';
-          tmpInputElement.value = copyText;
+      const passStore = this.shadowRoot?.querySelector(vscodePassword);
+      if (passStore && 'value' in passStore) {
+        const copyText = passStore.value as string;
+        if (copyText.length == 0) {
+          this.notification.text = _text('usersettings.NoExistingVSCodePassword');
+          this.notification.show();
+        } else {
+          if (navigator.clipboard !== undefined) { // for Chrome, Safari
+            navigator.clipboard.writeText(copyText).then(() => {
+              this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
+              this.notification.show();
+            }, (err) => {
+              console.error('Could not copy text: ', err);
+            });
+          } else { // other browsers
+            const tmpInputElement = document.createElement('input');
+            tmpInputElement.type = 'text';
+            tmpInputElement.value = copyText;
 
-          document.body.appendChild(tmpInputElement);
-          tmpInputElement.select();
-          document.execCommand('copy'); // copy operation
-          document.body.removeChild(tmpInputElement);
+            document.body.appendChild(tmpInputElement);
+            tmpInputElement.select();
+            document.execCommand('copy'); // copy operation
+            document.body.removeChild(tmpInputElement);
+          }
         }
       }
     }
