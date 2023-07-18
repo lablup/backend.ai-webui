@@ -91,7 +91,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-  
+
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -252,38 +252,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         mwc-button.shell-button {
           margin: 5px;
           width: 260px;
-        }
-
-        wl-icon.warning {
-          --icon-size: 16px;
-          padding: 0;
-          color: red;
-        }
-
-        wl-label.warning {
-          font-family: var(--general-font-family);
-          font-size: 12px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-button.ssh-keypair {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-button#ssh-keypair-details {
-          --button-bg: none;
-        }
-
-        wl-icon#ssh-keypair-icon {
-          color: var(--paper-indigo-700);
         }
 
         ::-webkit-scrollbar {
