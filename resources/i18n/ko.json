@@ -677,7 +677,9 @@
       "FolderUsing": "사용량",
       "FolderQuota": "가용량",
       "MaxFolderQuota": "최대 할당 가능 용량",
-      "Serve": "서비스"
+      "Serve": "서비스",
+      "CloneFolder": "폴더 클론",
+      "LeaveFolder": "초대된 폴더 나가기"
     },
     "explorer": {
       "Delete": "삭제",
@@ -734,7 +736,13 @@
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
       "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
-      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요.",
+      "Serve": "모델 서빙",
+      "FolderInfo": "폴더 정보",
+      "CloneFolder": "폴더 클론",
+      "Rename": "이름 변경",
+      "FolderOptionUpdate": "폴더 옵션 변경",
+      "LeaveFolder": "초대된 폴더 나가기"
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
