@@ -28,6 +28,7 @@ import '@vaadin/grid/vaadin-grid-filter-column';
 import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/progress-bar/vaadin-progress-bar';
 import '@vaadin/item/vaadin-item';
+import '@vaadin/tooltip';
 
 import 'weightless/button';
 import 'weightless/card';
@@ -1360,17 +1361,19 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg green controls-running"
             icon="play_arrow"
-            title=${_t('data.folders.Serve')}
             @click="${(e) => this._inferModel(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            id="${rowData.item.id+'-serve'}"
           ></mwc-icon-button>`: html``}
+          <vaadin-tooltip for="${rowData.item.id+'-serve'}" text="${_t('data.folders.Serve')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
-            title=${_t('data.folders.FolderInfo')}
             @click="${(e) => this._infoFolder(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            id="${rowData.item.id+'-folderinfo'}"
           ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-folderinfo'}" text="${_t('data.folders.FolderInfo')}" position="top-start"></vaadin-tooltip>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
       html`
         <mwc-icon-button
@@ -1378,40 +1381,47 @@ export default class BackendAiStorageList extends BackendAIPage {
           icon="content_copy"
           disabled
           @click="${() => { this._requestCloneFolder(rowData.item);}}"
+          id="${rowData.item.id+'-clone'}"
           ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-clone'}" text="${_t('data.folders.CloneFolder')}" position="top-start"></vaadin-tooltip>
       ` : html``}-->
       ${rowData.item.is_owner ?
         html`
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="share"
-            title=${_t('data.explorer.ShareFolder')}
             @click="${(e) => this._shareFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
+            id="${rowData.item.id+'-share'}"
           ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-share'}" text="${_t('data.folders.ShareFolder')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg cyan controls-running"
             icon="perm_identity"
-            title=${_t('data.explorer.ModifyPermissions')}
             @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
+            id="${rowData.item.id+'-modifypermission'}"
           ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-modifypermission'}" text="${_t('data.folders.ModifyPermissions')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="create"
-            title=${_t('data.folders.Rename')}
             @click="${(e) => this._renameFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
+            id="${rowData.item.id+'-rename'}"
           ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-rename'}" text="${_t('data.folders.Rename')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg blue controls-running"
             icon="settings"
-            title=${_t('data.folders.FolderOptionUpdate')}
             @click="${(e) => this._modifyFolderOptionDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
-          ></mwc-icon-button>` : html``}
+            id="${rowData.item.id+'-optionupdate'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-optionupdate'}" text="${_t('data.folders.FolderOptionUpdate')}" position="top-start"></vaadin-tooltip>
+        ` : html``}
       ${rowData.item.is_owner ||
         this._hasPermission(rowData.item, 'd') ||
         (rowData.item.type === 'group' && this.is_admin) ?
@@ -1419,10 +1429,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           <mwc-icon-button
             class="fg red controls-running"
             icon="delete"
-            title=${_t('data.folders.Delete')}
             @click="${(e) => this._deleteFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
-          ></mwc-icon-button>` : html``}
+            id="${rowData.item.id+'-delete'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-delete'}" text="${_t('data.folders.Delete')}" position="top-start"></vaadin-tooltip>
+        ` : html``}
       ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
         html`
           <mwc-icon-button
@@ -1430,7 +1442,10 @@ export default class BackendAiStorageList extends BackendAIPage {
             icon="remove_circle"
             @click="${(e) => this._leaveInvitedFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
-          ></mwc-icon-button>` : html``}
+            id="${rowData.item.id+'-leavefolder'}"
+          ></mwc-icon-button>
+          <vaadin-tooltip for="${rowData.item.id+'-leavefolder'}" text="${_t('data.folders.LeaveFolder')}" position="top-start"></vaadin-tooltip>
+        ` : html``}
         </div>
        `, root
     );

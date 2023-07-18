@@ -684,7 +684,11 @@
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
       "MaxFolderQuota": "Max Folder Quota",
-      "Serve": "Serve"
+      "Serve": "Model serving",
+      "CloneFolder": "Clone folder",
+      "LeaveFolder": "Leave folder",
+      "ShareFolder": "Share folder",
+      "ModifyPermissions": "Modify permissions"
     },
     "explorer": {
       "Delete": "Delete",
@@ -741,7 +745,13 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "Serve": "Serve",
+      "FolderInfo": "Folder information",
+      "CloneFolder": "Clone this folder",
+      "Rename": "Rename folder",
+      "FolderOptionUpdate": "Update folder options",
+      "LeaveFolder": "Leave a folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
