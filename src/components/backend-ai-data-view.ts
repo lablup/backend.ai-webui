@@ -699,13 +699,13 @@ export default class BackendAIData extends BackendAIPage {
       _init();
     }
   }
-
+/*
   private async _getCurrentKeypairResourcePolicy() {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     return res.keypair.resource_policy;
   }
-
+*/
   _toggleFolderTypeInput() {
     this.folderType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
   }

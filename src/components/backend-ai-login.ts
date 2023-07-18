@@ -1304,6 +1304,7 @@ export default class BackendAILogin extends BackendAIPage {
         });
         this.open();
         this._enableUserInput();
+        return Promise.resolve(true);
       } else { // Login already succeeded.
         this.is_connected = true;
         return this._connectGQL();
@@ -1749,18 +1750,18 @@ export default class BackendAILogin extends BackendAIPage {
               </fieldset>
             </form>
           </div>
-          <backend-ai-react-reset-password-required-modal 
+          <backend-ai-react-reset-password-required-modal
             value="${JSON.stringify({
               open: this.needToResetPassword,
               username: this.user_id,
               currentPassword: this.password,
               api_endpoint: this.api_endpoint,
-            })}" 
-            @cancel="${(e)=> this.needToResetPassword = false}" 
+            })}"
+            @cancel="${(e)=> this.needToResetPassword = false}"
             @ok="${(e)=> {
               this.needToResetPassword = false;
               this.passwordInput.value = '';
-              
+
               this.notification.text = _text('login.PasswordChanged');
               this.notification.show();
             }}"
