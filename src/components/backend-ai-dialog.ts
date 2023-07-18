@@ -45,7 +45,9 @@ export default class BackendAiDialog extends LitElement {
   @property({type: String}) type = 'normal';
   @property({type: String}) escapeKeyAction = 'close';
   @property({type: String}) scrimClickAction = 'close';
-
+  @property({type: String}) sessionUuid; // Reserved for session list
+  @property({type: String}) sessionName; // Reserved for session list
+  @property({type: String}) sessionId; // Reserved for session list
   @query('#dialog') protected dialog;
 
   constructor() {
