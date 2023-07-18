@@ -1151,18 +1151,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       html`
          <div id="controls" class="layout horizontal flex center">
-           <wl-button fab flat inverted
-             class="fg blue controls-running"
+           <mwc-icon-button class="fg controls-running blue"
+                            icon="settings"
              @click=${() => {
                 this.selectedIndex = rowData.index;
                 this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
                 this._launchDialogById('#modify-image-dialog');
                 this.requestUpdate();
               }}>
-             <wl-icon>settings</wl-icon>
-           </wl-button>
-           <wl-button fab flat inverted
-             class="fg pink controls-running"
+           </mwc-icon-button>
+           <mwc-icon-button class="fg controls-running pink"
+                            icon="apps"
              @click=${() => {
                 if (this.selectedIndex !== rowData.index) {
                   this._clearRows();
@@ -1172,8 +1171,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 this._launchDialogById('#modify-app-dialog');
                 this.requestUpdate();
               }}>
-             <wl-icon>apps</wl-icon>
-           </wl-button>
+           </mwc-icon-button>
          </div>
        `,
       root
@@ -1438,26 +1436,20 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                type="number"
                value=${item.port}
              ></wl-textfield>
-             <wl-button
-               fab flat
-               class="fg pink"
-               @click=${(e) => this._checkDeleteAppInfo(e)}
-             >
-               <wl-icon>remove</wl-icon>
-             </wl-button>
+             <mwc-icon-button class="fg pink"
+                              icon="remove"
+                              @click=${(e) => this._checkDeleteAppInfo(e)}>
+             </mwc-icon-button>
            </div>
            `)}
            <div class="row">
              <wl-textfield type="text"></wl-textfield>
              <wl-textfield type="text"></wl-textfield>
              <wl-textfield type="number"></wl-textfield>
-             <wl-button
-               fab flat
-               class="fg pink"
-               @click=${this._addRow}
-             >
-               <wl-icon>add</wl-icon>
-             </wl-button>
+             <mwc-icon-button class="fg pink"
+                              icon="add"
+                              @click=${() => this._addRow()}>
+             </mwc-icon-button>
            </div>
            <span style="color:red;">${this.servicePortsMsg}</span>
          </div>
