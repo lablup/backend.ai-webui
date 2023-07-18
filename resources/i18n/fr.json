@@ -618,7 +618,9 @@
       "Status": "__NOT_TRANSLATED__",
       "Serve": "__NOT_TRANSLATED__",
       "CloneFolder": "__NOT_TRANSLATED__",
-      "LeaveFolder": "__NOT_TRANSLATED__"
+      "LeaveFolder": "__NOT_TRANSLATED__",
+      "ShareFolder": "__NOT_TRANSLATED__",
+      "ModifyPermissions": "__NOT_TRANSLATED__"
     },
     "explorer": {
       "Delete": "Effacer...",

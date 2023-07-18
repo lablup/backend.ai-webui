@@ -686,7 +686,9 @@
       "MaxFolderQuota": "Max Folder Quota",
       "Serve": "Model serving",
       "CloneFolder": "Clone folder",
-      "LeaveFolder": "Leave folder"
+      "LeaveFolder": "Leave folder",
+      "ShareFolder": "Share folder",
+      "ModifyPermissions": "Modify permissions"
     },
     "explorer": {
       "Delete": "Delete",

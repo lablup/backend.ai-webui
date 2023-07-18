@@ -1366,7 +1366,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-serve'}"
           ></mwc-icon-button>`: html``}
-          <vaadin-tooltip for="${rowData.item.id+'-serve'}" text="${_t('data.explorer.Serve')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-serve'}" text="${_t('data.folders.Serve')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"
@@ -1375,7 +1375,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-folderinfo'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-folderinfo'}" text="${_t('data.explorer.FolderInfo')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-folderinfo'}" text="${_t('data.folders.FolderInfo')}" position="top-start"></vaadin-tooltip>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
       html`
         <mwc-icon-button
@@ -1386,30 +1386,30 @@ export default class BackendAiStorageList extends BackendAIPage {
           @click="${() => { this._requestCloneFolder(rowData.item);}}"
           id="${rowData.item.id+'-clone'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-clone'}" text="${_t('data.explorer.CloneFolder')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-clone'}" text="${_t('data.folders.CloneFolder')}" position="top-start"></vaadin-tooltip>
       ` : html``}-->
       ${rowData.item.is_owner ?
         html`
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="share"
-            title=${_t('data.explorer.ShareFolder')}
+            title=${_t('data.folders.ShareFolder')}
             @click="${(e) => this._shareFolderDialog(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
             id="${rowData.item.id+'-share'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-share'}" text="${_t('data.explorer.ShareFolder')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-share'}" text="${_t('data.folders.ShareFolder')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg cyan controls-running"
             icon="perm_identity"
-            title=${_t('data.explorer.ModifyPermissions')}
+            title=${_t('data.folders.ModifyPermissions')}
             @click=${(e) => (this._modifyPermissionDialog(rowData.item.id))}
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             style="display: ${isSharingAllowed ? '': 'none'}"
             id="${rowData.item.id+'-modifypermission'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-modifypermission'}" text="${_t('data.explorer.ModifyPermissions')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-modifypermission'}" text="${_t('data.folders.ModifyPermissions')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="create"
@@ -1418,7 +1418,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-rename'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-rename'}" text="${_t('data.explorer.Rename')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-rename'}" text="${_t('data.folders.Rename')}" position="top-start"></vaadin-tooltip>
           <mwc-icon-button
             class="fg blue controls-running"
             icon="settings"
@@ -1427,7 +1427,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-optionupdate'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-optionupdate'}" text="${_t('data.explorer.FolderOptionUpdate')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-optionupdate'}" text="${_t('data.folders.FolderOptionUpdate')}" position="top-start"></vaadin-tooltip>
         ` : html``}
       ${rowData.item.is_owner ||
         this._hasPermission(rowData.item, 'd') ||
@@ -1441,7 +1441,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-delete'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-delete'}" text="${_t('data.explorer.Delete')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-delete'}" text="${_t('data.folders.Delete')}" position="top-start"></vaadin-tooltip>
         ` : html``}
       ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
         html`
@@ -1453,7 +1453,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-leavefolder'}"
           ></mwc-icon-button>
-          <vaadin-tooltip for="${rowData.item.id+'-leavefolder'}" text="${_t('data.explorer.LeaveFolder')}" position="top-start"></vaadin-tooltip>
+          <vaadin-tooltip for="${rowData.item.id+'-leavefolder'}" text="${_t('data.folders.LeaveFolder')}" position="top-start"></vaadin-tooltip>
         ` : html``}
         </div>
        `, root

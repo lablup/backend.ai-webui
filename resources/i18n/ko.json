@@ -679,7 +679,9 @@
       "MaxFolderQuota": "최대 할당 가능 용량",
       "Serve": "서비스",
       "CloneFolder": "폴더 클론",
-      "LeaveFolder": "초대된 폴더 나가기"
+      "LeaveFolder": "초대된 폴더 나가기",
+      "ShareFolder": "폴더 공유하기",
+      "ModifyPermissions": "권한 수정"
     },
     "explorer": {
       "Delete": "삭제",
