@@ -736,6 +736,7 @@ export default class BackendAIData extends BackendAIPage {
     if (this.allowed_folder_type.includes('group')) {
       const group_info = await globalThis.backendaiclient.group.list();
       this.allowedGroups = group_info.groups;
+      console.log(this.allowedGroups);
     }
     this.cloneFolderNameInput.value = await this._checkFolderNameAlreadyExists(this.cloneFolderName);
     this.openDialog('clone-folder-dialog');

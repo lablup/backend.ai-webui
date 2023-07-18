@@ -421,7 +421,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   _validatePassword2() {
     // TODO define type for custom property
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
+    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as TextField;
     password2Input.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {

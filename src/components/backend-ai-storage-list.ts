@@ -1364,8 +1364,9 @@ export default class BackendAiStorageList extends BackendAIPage {
             @click="${(e) => this._inferModel(e)}"
             ?disabled="${this._checkProcessingStatus(rowData.item.status)}"
             id="${rowData.item.id+'-serve'}"
-          ></mwc-icon-button>`: html``}
+          ></mwc-icon-button>
           <vaadin-tooltip for="${rowData.item.id+'-serve'}" text="${_t('data.folders.Serve')}" position="top-start"></vaadin-tooltip>
+      `: html``}
           <mwc-icon-button
             class="fg green controls-running"
             icon="info"

@@ -448,8 +448,10 @@ export default class BackendAICredentialView extends BackendAIPage {
   _launchResourcePolicyDialog() {
     Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
       // TODO remove protected properties usage
-      (this.newPolicyNameInput as any).mdcFoundation.setValid(true);
-      (this.newPolicyNameInput as any).isUiValid = true;
+      // @ts-ignore
+      (this.newPolicyNameInput as TextField).mdcFoundation.setValid(true);
+      // @ts-ignore
+      (this.newPolicyNameInput as TextField).isUiValid = true;
       this.newPolicyNameInput.value = '';
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];
