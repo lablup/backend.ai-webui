@@ -14,6 +14,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-linear-progress';
 import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/card';
 import 'weightless/checkbox';
@@ -454,7 +455,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       if (this.direction === 'vertical') {
         if (this.scalingGroupSelectBox.firstChild) {
           // TODO clarify element type
-          (this.scalingGroupSelectBox.firstChild as any).value = this.resourceBroker.scaling_group;
+          (this.scalingGroupSelectBox.firstChild as Select).value = this.resourceBroker.scaling_group;
         }
       }
       if (forceUpdate === true) {

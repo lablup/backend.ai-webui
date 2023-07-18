@@ -352,7 +352,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.plugins['menuitem-user'] = [];
         this.plugins['menuitem-admin'] = [];
         this.plugins['menuitem-superadmin'] = [];
-        const pluginLoaderQueue = [] as any[];
+        const pluginLoaderQueue = [] as object[];
         for (const page of config.plugin.page.split(',')) {
           pluginLoaderQueue.push(import('../plugins/' + page + '.js').then(() => {
             const pageItem = document.createElement(page) as BackendAIPage;
