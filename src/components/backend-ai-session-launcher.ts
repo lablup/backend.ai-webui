@@ -231,6 +231,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'environment': '',
     'version': ['']
   };
+  @property({type: String}) launchButtonMessageTextContent = _text('session.launcher.Launch');
+
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
   @query('#environment') environment!: Select;
@@ -1519,7 +1521,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
 
     this.launchButton.disabled = true;
-    this.launchButtonMessage.textContent = _text('session.Preparing');
+    this.launchButtonMessageTextContent = _text('session.Preparing');
     this.notification.text = _text('session.PreparingSession');
     this.notification.show();
 
@@ -1544,7 +1546,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     Promise.all(createSessionQueue).then((res: any) => {
       this.newSessionDialog.hide();
       this.launchButton.disabled = false;
-      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.launchButtonMessageTextContent = _text('session.launcher.ConfirmAndLaunch');
       this._resetProgress();
       setTimeout(() => {
         this.metadata_updating = true;
@@ -1613,7 +1615,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
       document.dispatchEvent(event);
       this.launchButton.disabled = false;
-      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.launchButtonMessageTextContent = _text('session.launcher.ConfirmAndLaunch');
     });
   }
 
@@ -1911,7 +1913,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       }
       this.sessionResouceSlider.disabled = false;
       this.launchButton.disabled = false;
-      this.launchButtonMessage.textContent = _text('session.launcher.ConfirmAndLaunch');
+      this.launchButtonMessageTextContent = _text('session.launcher.ConfirmAndLaunch');
       let disableLaunch = false;
       let shmem_metric: any = {
         'min': 0.0625,
@@ -2249,7 +2251,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (this.cluster_support) {
           this.clusterSizeSlider.disabled = true;
         }
-        this.launchButtonMessage.textContent = _text('session.launcher.NotEnoughResource');
+        this.launchButtonMessageTextContent = _text('session.launcher.NotEnoughResource');
       } else {
         this.cpuResouceSlider.disabled = false;
         this.memoryResouceSlider.disabled = false;
@@ -2362,7 +2364,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       const pathCheckbox = document.createElement('mwc-checkbox');
       pathCheckbox.setAttribute('id', 'hide-guide');
       const checkboxMsg = document.createElement('span');
-      checkboxMsg.innerHTML = `${_text('dialog.hide.DonotShowThisAgain')}`;
+      checkboxMsg.append(document.createTextNode(`${_text('dialog.hide.DonotShowThisAgain')}`));
       div.appendChild(pathCheckbox);
       div.appendChild(checkboxMsg);
       pathContentLastChild.appendChild(div);
@@ -3190,7 +3192,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.prevButton.style.visibility = this.currentIndex == 1 ? 'hidden' : 'visible';
     this.nextButton.style.visibility = this.currentIndex == this.progressLength ? 'hidden' : 'visible';
     if (!this.launchButton.disabled) {
-      this.launchButtonMessage.textContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
+      this.launchButtonMessageTextContent = this.progressLength == this.currentIndex ? _text('session.launcher.Launch') : _text('session.launcher.ConfirmAndLaunch');
     }
 
     // if (this.currentIndex == 2) {
@@ -4061,7 +4063,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 id="launch-button"
                 icon="rowing"
                 @click="${() => this._newSessionWithConfirmation()}">
-              <span id="launch-button-msg">${_t('session.launcher.Launch')}</span>
+              <span id="launch-button-msg">${this.launchButtonMessageTextContent}</span>
             </mwc-button>
             <mwc-icon-button id="next-button"
                              icon="arrow_forward"
