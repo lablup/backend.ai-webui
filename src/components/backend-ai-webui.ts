@@ -734,7 +734,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             const component = this.shadowRoot?.querySelector(this._page) as BackendAIPage;
             component.active = true;
             // component.setAttribute('active', true);
-            component.render();
+            component.requestUpdate();
           }
         });
         break;
@@ -913,7 +913,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         const component = this.shadowRoot?.querySelector(this._page) as BackendAIPage;
         component.active = true;
         // component.setAttribute('active', true);
-        component.render();
+        component.requestUpdate();
       }
     }
   }
