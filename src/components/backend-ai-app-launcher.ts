@@ -1238,7 +1238,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   _copyVSCodePassword(vscodePassword: string) {
     if (vscodePassword !== '') {
       const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
-      if (copyText.length == 0) {
+      if (copyText.length === 0) {
         this.notification.text = _text('usersettings.NoExistingVSCodePassword');
         this.notification.show();
       } else {

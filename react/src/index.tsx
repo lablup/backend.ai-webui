@@ -23,6 +23,7 @@ const StorageStatusPanelFallback = React.lazy(() =>
     default: m.StorageStatusPanelFallback,
   }))
 );
+const CopyableText = React.lazy(() => import("./components/CopyableText"));
 
 customElements.define(
   "backend-ai-react-information",
@@ -66,6 +67,17 @@ customElements.define(
         <Suspense fallback={<StorageStatusPanelFallback />}>
           <StorageStatusPanel fetchKey={props.value || ""} />
         </Suspense>
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-copyable-text",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <CopyableText text={props.value || ""} />
       </DefaultProviders>
     );
   })

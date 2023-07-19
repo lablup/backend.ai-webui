@@ -565,7 +565,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <p>${_t('totp.ScanQRToEnable')}</p>
         <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
         <p>${_t('totp.TypeInAuthKey')}</p>
-        <blockquote>${this.totpKey}</blockquote>
+        <backend-ai-react-copyable-text value="${this.totpKey}" style="font-size:13px;"></backend-ai-react-copyable-text>
       </div>
       <div slot="content" class="layout vertical" style="width: 300px">
         <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
