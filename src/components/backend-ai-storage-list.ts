@@ -1150,7 +1150,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
   _modifySharedFolderPermissions() {
     const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog wl-select');
-    console.log(this.invitees);
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as inviteeData[])[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -1945,7 +1944,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       input['cloneable'] = cloneable;
     }
 
-    const modifyFolderJobQueue = [] as any;
+    const modifyFolderJobQueue: Promise<string>[] = [];
     if (Object.keys(input).length > 0) {
       const updateFolderConfig = globalThis.backendaiclient.vfolder.update_folder(input, globalThis.backendaiclient.vfolder.name);
       modifyFolderJobQueue.push(updateFolderConfig);
@@ -1958,7 +1957,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       }
     }
     if (modifyFolderJobQueue.length > 0) {
-      await Promise.all(modifyFolderJobQueue).then((res) => {
+      await Promise.all(modifyFolderJobQueue).then(() => {
         this.notification.text = _text('data.folders.FolderUpdated');
         this.notification.show();
         this._refreshFolderList(true, 'updateFolder');
