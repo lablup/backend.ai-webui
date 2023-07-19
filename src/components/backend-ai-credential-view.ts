@@ -449,9 +449,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     Promise.allSettled([this._getAllStorageHostsInfo(), this._getResourcePolicies()]).then((res) => {
       // TODO remove protected properties usage
       // @ts-ignore
-      (this.newPolicyNameInput as TextField).mdcFoundation.setValid(true);
+      this.newPolicyNameInput.mdcFoundation.setValid(true);
       // @ts-ignore
-      (this.newPolicyNameInput as TextField).isUiValid = true;
+      this.newPolicyNameInput.isUiValid = true;
       this.newPolicyNameInput.value = '';
       this.allowedVfolderHostsSelect.items = this.all_vfolder_hosts;
       this.allowedVfolderHostsSelect.selectedItemList = [this.default_vfolder_host];

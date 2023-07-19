@@ -44,7 +44,7 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-interface groupData {
+interface GroupData {
   id: string,
   name: string,
   description: string,
@@ -80,7 +80,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) vhosts = [];
   @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
-  @property({type: Array}) allowedGroups = [];
+  @property({type: Array}) allowedGroups: GroupData[] = [];
   @property({type: Array}) allowed_folder_type:string[] = [];
   @property({type: Object}) notification = Object();
   @property({type: Object}) folderLists = Object();
@@ -439,7 +439,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
-                ${(this.allowedGroups as groupData[]).map((item, idx) => html`
+                ${this.allowedGroups.map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
@@ -514,7 +514,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
                 <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
-                  ${(this.allowedGroups as groupData[]).map((item, idx) => html`
+                  ${this.allowedGroups.map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                   `)}
                 </mwc-select>

@@ -660,7 +660,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _disableEnterKey() {
     this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
       // remove protected property assignment
-      (element as HTMLElement).onkeydown = (e) => {
+      element.onkeydown = (e) => {
         if (e.key === 'Enter') {
           e.preventDefault();
         }
