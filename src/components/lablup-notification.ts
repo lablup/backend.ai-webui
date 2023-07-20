@@ -7,9 +7,8 @@ import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/snackbar';
-import 'weightless/button';
-import 'weightless/icon';
+import '@material/mwc-icon-button';
+import '../plastics/mwc/mwc-snackbar';
 
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
@@ -62,22 +61,11 @@ export default class LablupNotification extends LitElement {
     return [
       // language=CSS
       css`
-        wl-snackbar {
+        mwc-snackbar {
+          --mdc-snackbar-label-color: yellow;
+          --mdc-snackbar-action-color: #64dc17;
           position: fixed;
           right: 20px;
-          font-size: 16px;
-          font-weight: 400;
-          font-family: 'Ubuntu', Roboto, sans-serif;
-          z-index: 12345678;
-        }
-
-        wl-button {
-          --button-font-size: 11px;
-          --button-fab-size: 12px;
-        }
-
-        wl-icon {
-          --icon-size: 10px;
         }
       `];
   }
@@ -138,14 +126,14 @@ export default class LablupNotification extends LitElement {
   }
 
   /**
-   * When click the close_button, hide dialog(wl-snackbar).
+   * When click the close_button, hide dialog(mwc-snackbar).
    *
    * @param {Event} e - Click the close_button
    * */
   _hideNotification(e) {
     const hideButton = e.target;
-    const dialog = hideButton.closest('wl-snackbar');
-    dialog.hide();
+    const dialog = hideButton.closest('mwc-snackbar');
+    dialog.close();
   }
 
   /**
@@ -154,16 +142,6 @@ export default class LablupNotification extends LitElement {
    * @param {Event} e - Click the more_button
    * */
   _moreNotification(e) {
-    // const notification = e.target.closest('wl-snackbar');
-    // const button = e.target.closest('wl-button');
-    // notification.setAttribute('persistent', 'true');
-    // if (notification.querySelector('div') !== null) {
-    //   notification.querySelector('div').style.display = 'block';
-    // }
-    // button.parentNode.removeChild(button);
-    // if (notification.querySelector('wl-button') === null) {
-    //   this._createCloseButton(notification);
-    // }
     this._hideNotification(e);
     const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
@@ -180,12 +158,10 @@ export default class LablupNotification extends LitElement {
    * @param{HTMLElement} notification - Notification webcomponent
    * */
   _createCloseButton(notification) {
-    const button = document.createElement('wl-button');
-    button.setAttribute('slot', 'action');
-    button.setAttribute('flat', '');
-    button.setAttribute('fab', '');
+    const button = document.createElement('mwc-icon-button');
+    button.setAttribute('icon', 'close');
+    button.setAttribute('slot', 'dismiss');
     button.addEventListener('click', this._hideNotification.bind(this));
-    button.innerHTML = '<wl-icon>close</wl-icon>';
     notification.appendChild(button);
   }
 
@@ -199,14 +175,14 @@ export default class LablupNotification extends LitElement {
     if (this.text === '_DISCONNECTED') {
       return;
     }
-    const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
+    const snackbar = document.querySelector('mwc-snackbar[persistent=\'true\']');
     if (snackbar) {
       this.notifications = []; // Reset notifications
       document.body.removeChild(snackbar);
     }
     this.gc();
-    const notification = document.createElement('wl-snackbar');
-    notification.innerHTML = '<span style="overflow-x:hidden">' + this.text + '</span>';
+    const notification = document.createElement('mwc-snackbar');
+    notification.labelText = this.text;
     if (this.detail != '') {
       notification.innerHTML = notification.innerHTML + '<div style="display:none;"> : ' + this.detail + '</div>';
     }
@@ -216,35 +192,35 @@ export default class LablupNotification extends LitElement {
     }
 
     if (this.detail !== '') {
-      const more_button = document.createElement('wl-button');
-      more_button.style.fontSize = 12 + 'px';
+      const more_button = document.createElement('mwc-button');
+      // more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
-      more_button.setAttribute('flat', '');
-      more_button.setAttribute('fab', '');
-      more_button.style.width = 80 + 'px';
+      // more_button.style.width = 80 + 'px';
       if (this.url != '') {
-        more_button.innerHTML = _text('notification.Visit');
+        more_button.label = _text('notification.Visit');
+        //more_button.innerHTML = _text('notification.Visit');
         more_button.addEventListener('click', this._openURL.bind(this, this.url));
       } else {
-        more_button.innerHTML = _text('notification.SeeDetail');
+        more_button.label = _text('notification.SeeDetail');
+        // more_button.textContent = _text('notification.SeeDetail');
         more_button.addEventListener('click', this._moreNotification.bind(this));
       }
-      // more_button.innerHTML = "<wl-icon>expand_more</wl-icon>";
       notification.appendChild(more_button);
     }
     this.detail = ''; // Reset the temporary detail scripts
     this.url = '';
     if (persistent === false) {
-      notification.setAttribute('hideDelay', '3000');
+      notification.setAttribute('timeoutMs', '4000');
     } else {
+      notification.setAttribute('timeoutMs', '-1');
       notification.setAttribute('persistent', 'true');
       this._createCloseButton(notification);
     }
-    notification.setAttribute('backdrop', '');
-    notification.style.bottom = (20 + 55 * this.step) + 'px';
-    notification.style.position = 'fixed';
-    (notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
-    (notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
+    // notification.setAttribute('backdrop', '');
+    notification.style.setProperty('--mdc-snackbar-bottom', (20 + 55 * this.step) + 'px');
+    //notification.style.position = 'fixed';
+    //(notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
+    //(notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';

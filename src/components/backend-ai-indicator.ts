@@ -50,7 +50,7 @@ export default class BackendAIIndicator extends LitElement {
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
+    //this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {
