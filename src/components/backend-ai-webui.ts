@@ -27,6 +27,7 @@ import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@vaadin/tooltip';
 
 import toml from 'markty-toml';
 
@@ -922,30 +923,30 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Add tool tips by create popovers.
    */
   async addTooltips() {
-    this._createPopover('#summary-menu-icon', _text('webui.menu.Summary'));
-    this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
-    this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
-    this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
+    this._createPopover('summary-menu-icon', _text('webui.menu.Summary'));
+    this._createPopover('sessions-menu-icon', _text('webui.menu.Sessions'));
+    this._createPopover('data-menu-icon', _text('webui.menu.Data&Storage'));
+    this._createPopover('import-menu-icon', _text('webui.menu.Import&Run'));
 
     // temporally blcok pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
-    this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
-    this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
+    this._createPopover('statistics-menu-icon', _text('webui.menu.Statistics'));
+    this._createPopover('usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
     if (this.is_admin) {
-      this._createPopover('#user-menu-icon', _text('webui.menu.Users'));
+      this._createPopover('user-menu-icon', _text('webui.menu.Users'));
     }
     if (this.is_superadmin) {
-      this._createPopover('#resources-menu-icon', _text('webui.menu.Resources'));
-      this._createPopover('#environments-menu-icon', _text('webui.menu.Environments'));
-      this._createPopover('#configurations-menu-icon', _text('webui.menu.Configurations'));
-      this._createPopover('#maintenance-menu-icon', _text('webui.menu.Maintenance'));
-      this._createPopover('#information-menu-icon', _text('webui.menu.Information'));
+      this._createPopover('resources-menu-icon', _text('webui.menu.Resources'));
+      this._createPopover('environments-menu-icon', _text('webui.menu.Environments'));
+      this._createPopover('configurations-menu-icon', _text('webui.menu.Configurations'));
+      this._createPopover('maintenance-menu-icon', _text('webui.menu.Maintenance'));
+      this._createPopover('information-menu-icon', _text('webui.menu.Information'));
       // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
     if (!this.isHideAgents) {
-      this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
+      this._createPopover('agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     }
   }
 
@@ -956,22 +957,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} title
    */
   _createPopover(anchor: string, title: string) {
-    const popover = document.createElement('wl-popover');
-    popover.anchor = anchor;
-    popover.setAttribute('fixed', '');
-    popover.setAttribute('disablefocustrap', '');
-    popover.setAttribute('anchororiginx', 'right');
-    popover.setAttribute('anchororiginy', 'center');
-    popover.setAttribute('transformoriginx', 'left');
-    popover.setAttribute('transformoriginy', 'center');
-    popover.anchorOpenEvents = ['mouseover'];
-    popover.anchorCloseEvents = ['mouseout'];
-    const card = document.createElement('wl-popover-card');
-    const carddiv = document.createElement('div');
-    carddiv.style.padding = '5px';
-    carddiv.innerText = title;
-    card.appendChild(carddiv);
-    popover.appendChild(card);
+    const popover = document.createElement('vaadin-tooltip');
+    popover.for = anchor;
+    popover.position = 'end';
+    popover.text = title;
     const tooltipBox = this.shadowRoot?.querySelector('#mini-tooltips')!;
     tooltipBox.appendChild(popover);
   }
