@@ -4,9 +4,9 @@ import Flex from "./Flex";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useTranslation } from "react-i18next";
 
-interface ServiceLauncherProps {}
-const ServiceLauncher: React.FC = () => {
-  const [inputValue, setInputValue] = useState(0);
+interface SliderInputProps {}
+const SliderInput: React.FC = () => {
+  const [inputValue, setInputValue] = useState(0); // init value 0
   const [maxValue, setMaxValue] = useState(1);
   const [minValue, setMinValue] = useState(0);
   const baiClient = useSuspendedBackendaiClient();
@@ -48,4 +48,4 @@ const ServiceLauncher: React.FC = () => {
   );
 };
 
-export default ServiceLauncher;
+export default SliderInput;
