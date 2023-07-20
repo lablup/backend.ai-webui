@@ -15,6 +15,7 @@ import '@material/mwc-tab';
 import '@material/mwc-button';
 import {Select} from '@material/mwc-select';
 
+import '@vaadin/accordion';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
@@ -187,18 +188,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           --mdc-theme-primary: var(--general-sidebar-color);
         }
 
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-          --expansion-content-padding: 0;
-        }
-
-        wl-expansion {
-          font-weight: 200;
-        }
-
         wl-label {
           width: 100%;
           min-width: 60px;
@@ -317,11 +306,6 @@ export default class BackendAICredentialView extends BackendAIPage {
       this.inactiveCredentialList.refresh();
     }, true);
 
-    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
-      element.addEventListener('keydown', (event) => {
-        event.stopPropagation();
-      }, true);
-    });
     this._addInputValidator(this.userIdInput);
     // monkeypatch for height calculation.
     this.selectAreaHeight = this.dropdownArea.offsetHeight ? this.dropdownArea.offsetHeight : '123px';
@@ -722,8 +706,7 @@ export default class BackendAICredentialView extends BackendAIPage {
     case 'user-lists':
     case 'credential-lists':
       tabKeyword = this._activeTab.substring(0, this._activeTab.length - 1); // to remove '-s'.
-      innerTab = this.shadowRoot?.querySelector('wl-tab[value=active-' + tabKeyword + ']');
-      innerTab.checked = true;
+      innerTab = this.shadowRoot?.querySelector('mwc-tab[title=active-' + tabKeyword + ']');
       this._showList(innerTab);
       break;
     default:
@@ -741,9 +724,9 @@ export default class BackendAICredentialView extends BackendAIPage {
     for (let x = 0; x < els.length; x++) {
       els[x].style.display = 'none';
     }
-    (this.shadowRoot?.querySelector('#' + list.value) as HTMLElement).style.display = 'block';
+    (this.shadowRoot?.querySelector('#' + list.title) as HTMLElement).style.display = 'block';
     const event = new CustomEvent('user-list-updated', {});
-    this.shadowRoot?.querySelector('#' + list.value)?.dispatchEvent(event);
+    this.shadowRoot?.querySelector('#' + list.title)?.dispatchEvent(event);
   }
 
   /**
@@ -1087,10 +1070,12 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
-              <wl-tab-group style="margin-bottom:-8px;">
-                <wl-tab value="active-user-list" checked @click="${(e) => this._showList(e.target)}">${_t('credential.Active')}</wl-tab>
-                <wl-tab value="inactive-user-list" @click="${(e) => this._showList(e.target)}">${_t('credential.Inactive')}</wl-tab>
-              </wl-tab-group>
+              <mwc-tab-bar style="margin-bottom:-8px;">
+                <mwc-tab title="active-user-list" label="${_t('credential.Active')}"
+                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
+                <mwc-tab title="inactive-user-list" label="${_t('credential.Inactive')}"
+                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
+              </mwc-tab-bar>
               <span class="flex"></span>
               <mwc-button raised id="add-user" icon="add" label="${_t('credential.CreateUser')}"
                   @click="${this._launchUserAddDialog}"></mwc-button>
@@ -1102,10 +1087,12 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
           <div id="credential-lists" class="item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <wl-tab-group style="margin-bottom:-8px;">
-                <wl-tab value="active-credential-list" checked @click="${(e) => this._showList(e.target)}">${_t('credential.Active')}</wl-tab>
-                <wl-tab value="inactive-credential-list" @click="${(e) => this._showList(e.target)}">${_t('credential.Inactive')}</wl-tab>
-              </wl-tab-group>
+              <mwc-tab-bar style="margin-bottom:-8px;">
+                <mwc-tab title="active-credential-list" label="${_t('credential.Active')}"
+                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
+                <mwc-tab title="inactive-credential-list" label="${_t('credential.Inactive')}"
+                    @click="${(e) => this._showList(e.target)}"></mwc-tab>
+              </mwc-tab-bar>
               <div class="flex"></div>
               <mwc-button raised id="add-keypair" icon="add" label="${_t('credential.AddCredential')}"
                   @click="${this._launchKeyPairDialog}"></mwc-button>
@@ -1152,25 +1139,25 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <!--<wl-expansion name="advanced-keypair-info" style="width:100%;">
-              <span slot="title">${_t('general.Advanced')}</span>
-              <span slot="description"></span>
-              <div class="vertical layout center">
-              <mwc-textfield
-                  type="text"
-                  name="new_access_key"
-                  id="id_new_access_key"
-                  label="${_t('credential.UserIDAsEmail')}"
-                  autoValidate></mwc-textfield>
-              <mwc-textfield
-                  type="text"
-                  name="new_access_key"
-                  id="id_new_secret_key"
-                  label="${_t('credential.AccessKeyOptional')}"
-                  autoValidate
-                  .value="${this.new_access_key}"><mwc-textfield>
-              </div>
-            </wl-expansion>-->
+            <!--<vaadin-accordion name="advanced-keypair-info" summary="${_t('general.Advanced')}" style="width:100%;">
+              <vaadin-accordion-panel>
+                <div class="vertical layout center">
+                <mwc-textfield
+                    type="text"
+                    name="new_access_key"
+                    id="id_new_access_key"
+                    label="${_t('credential.UserIDAsEmail')}"
+                    autoValidate></mwc-textfield>
+                <mwc-textfield
+                    type="text"
+                    name="new_access_key"
+                    id="id_new_secret_key"
+                    label="${_t('credential.AccessKeyOptional')}"
+                    autoValidate
+                    .value="${this.new_access_key}"><mwc-textfield>
+                </div>
+              <vaadin-accordion-panel>
+            </vaadin-accordion>-->
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
