@@ -28,6 +28,7 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-button';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
@@ -228,6 +229,10 @@ export default class BackendAISessionList extends BackendAIPage {
           color: var(--paper-grey-700);
         }
 
+        mwc-icon.pagination {
+          color: var(--paper-grey-700);
+        }
+
         wl-button.pagination[disabled] wl-icon.pagination {
           color: var(--paper-grey-300);
         }
@@ -277,6 +282,10 @@ export default class BackendAISessionList extends BackendAIPage {
 
         mwc-icon {
           margin-right: 5px;
+        }
+
+        mwc-icon.indicator {
+          --mdc-icon-size: 16px;
         }
 
         mwc-icon.status-check {
@@ -2264,6 +2273,11 @@ export default class BackendAISessionList extends BackendAIPage {
           <div class="layout horizontal center flex">
             <div class="layout horizontal center configuration">
               ${rowData.item.mounts.length > 0 ? html`
+                <mwc-icon class="fg green indicator">folder_open</mwc-icon>
+                <span class="mount-button" @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
+                  @mouseleave="${() => this._removeMountedFolderDropdown()}">
+                  ${mountedFolderList.join(', ')}
+                </span>
                 <wl-icon class="fg green indicator">folder_open</wl-icon>
                 <button class="mount-button"
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
@@ -2271,7 +2285,7 @@ export default class BackendAISessionList extends BackendAIPage {
                   ${mountedFolderList.join(', ')}
                 </button>
               ` : html`
-              <wl-icon class="indicator no-mount">folder_open</wl-icon>
+              <mwc-icon class="no-mount indicator">folder_open</mwc-icon>
               <span class="no-mount">No mount</span>
               `}
             </div>
@@ -2279,19 +2293,19 @@ export default class BackendAISessionList extends BackendAIPage {
           ${rowData.item.scaling_group ? html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">work</wl-icon>
+              <mwc-icon class="fg green indicator">work</mwc-icon>
               <span>${rowData.item.scaling_group}</span>
               <span class="indicator">RG</span>
             </div>
           </div>` : html``}
           <div class="layout vertical flex" style="padding-left: 25px">
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">developer_board</wl-icon>
+              <mwc-icon class="fg green indicator">developer_board</mwc-icon>
               <span>${rowData.item.cpu_slot}</span>
               <span class="indicator">${_t('session.core')}</span>
             </div>
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">memory</wl-icon>
+              <mwc-icon class="fg green indicator">memory</mwc-icon>
               <span>${rowData.item.mem_slot}</span>
               <span class="indicator">GiB</span>
               ${this.isDisplayingAllocatedShmemEnabled ? html`
@@ -2317,12 +2331,12 @@ export default class BackendAISessionList extends BackendAIPage {
                 <span class="indicator">GPU</span>
                 ` : html``}
               ${rowData.item.tpu_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>${rowData.item.tpu_slot}</span>
                 <span class="indicator">TPU</span>
                 ` : html``}
               ${rowData.item.ipu_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>${rowData.item.tpu_slot}</span>
                 <span class="indicator">IPU</span>
                 ` : html``}
@@ -2343,7 +2357,7 @@ export default class BackendAISessionList extends BackendAIPage {
         !rowData.item.ipu_slot &&
         !rowData.item.atom_slot &&
         !rowData.item.warboy_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>-</span>
                 <span class="indicator">GPU</span>
                 ` : html``}
@@ -2469,7 +2483,7 @@ export default class BackendAISessionList extends BackendAIPage {
         // language=HTML
         html`
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
+          <mwc-icon class="fg green indicator" style="margin-right:3px;">developer_board</mwc-icon>
           ${rowData.item.cpu_used_time.D ? html`
           <div class="vertical center-justified center layout">
             <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
@@ -2501,7 +2515,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </div>` : html``}
         </div>
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
+          <mwc-icon class="fg blue indicator" style="margin-right:3px;">device_hub</mwc-icon>
           <div class="vertical start layout">
             <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
             <span class="indicator">READ</span>
@@ -2846,6 +2860,8 @@ export default class BackendAISessionList extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
+          <mwc-icon-button icon="delete" class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;"
+                           @click="${() => this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}</mwc-icon-button>
           <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
             <wl-icon style="--icon-size: 20px;">delete</wl-icon>
             ${_t('session.Terminate')}
@@ -2853,11 +2869,11 @@ export default class BackendAISessionList extends BackendAIPage {
         </div>
         <span class="flex"></span>
         <div class="vertical layout" style="display:none">
-          <wl-textfield id="access-key-filter" type="search" maxLength="64"
+          <mwc-textfield id="access-key-filter" type="search" maxLength="64"
                       label="${_t('general.AccessKey')}" no-label-float .value="${this.filterAccessKey}"
                       style="margin-right:20px;"
                       @change="${(e) => this._updateFilterAccessKey(e)}">
-          </wl-textfield>
+          </mwc-textfield>
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
@@ -2937,8 +2953,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
-        <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;display: none;width: 100%;"></iframe>
+        <iframe id="work-page" style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
@@ -2946,13 +2961,13 @@ export default class BackendAISessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+          <mwc-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
             ${_t('button.ForceTerminate')}
-          </wl-button>
+          </mwc-button>
           <span class="flex"></span>
-          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
+          <mwc-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
@@ -2961,14 +2976,14 @@ export default class BackendAISessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="warning fg red" inverted flat
+          <mwc-button class="warning fg red" inverted flat
                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
-          </wl-button>
+          </mwc-button>
           <span class="flex"></span>
-          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
-          </wl-button>
+          <mwc-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>
@@ -2986,7 +3001,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       ${this._renderCommitSessionConfirmationDialog(
-        this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
+    this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
     `;
   }
 
