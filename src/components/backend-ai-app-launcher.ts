@@ -242,28 +242,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin-right: 10px;
         }
 
-        p code {
-          font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
-          color: #52595d;
-          -webkit-border-radius: 3px;
-          -moz-border-radius: 3px;
-          border-radius: 3px;
-          -moz-background-clip: padding;
-          -webkit-background-clip: padding-box;
-          background-clip: padding-box;
-          border: 1px solid #cccccc;
-          background-color: #f9f9f9;
-          padding: 0px 3px;
-          display: inline-block;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
