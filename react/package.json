@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.1.4",
-    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
     "@types/jest": "^29.5.3",
@@ -13,7 +13,7 @@
     "@types/react": "^18.2.15",
     "@types/react-dom": "^18.2.7",
     "ahooks": "^3.7.8",
-    "antd": "^5.7.0",
+    "antd": "^5.7.1",
     "dayjs": "^1.11.9",
     "i18next": "^23.2.11",
     "i18next-http-backend": "^2.2.1",
