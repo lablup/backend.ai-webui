@@ -7,13 +7,16 @@ import Chart from 'chart.js/auto';
 import {css, html, LitElement, property, TemplateResult} from 'lit-element';
 
 export default class ChartJs extends LitElement {
-  public shadowRoot: any; // ShadowRoot
   @property({type: Object}) data = {};
   @property({type: Object}) options = {};
   @property({type: Object}) chart;
   @property({type: String}) type = 'line';
   @property({type: Number}) height = 0;
   @property({type: Number}) width = 0;
+
+  constructor() {
+    super();
+  }
 
   updated(prop) {
     super.update(prop);
@@ -80,8 +83,8 @@ export default class ChartJs extends LitElement {
       this._initializeChart();
     }
     if (this.height && this.width) {
-      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.height = this.height + 'px';
-      this.shadowRoot.querySelector('.chart-top-container .chart-sub-container').style.width = this.width + 'px';
+      (this.shadowRoot?.querySelector('.chart-top-container .chart-sub-container') as HTMLElement).style.height = this.height + 'px';
+      (this.shadowRoot?.querySelector('.chart-top-container .chart-sub-container') as HTMLElement).style.width = this.width + 'px';
     }
   }
 
