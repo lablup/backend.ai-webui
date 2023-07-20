@@ -1152,8 +1152,8 @@ export default class BackendAISessionList extends BackendAIPage {
         (this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement).innerHTML = `${sessionName} (${sessionUuid})`;
         (this.shadowRoot?.querySelector('#work-area') as HTMLDivElement).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         // TODO define extended type for custom properties
-        (this.workDialog as BackendAIDialog).sessionUuid = sessionUuid;
-        (this.workDialog as BackendAIDialog).sessionName = sessionName;
+        this.workDialog.sessionUuid = sessionUuid;
+        this.workDialog.sessionName = sessionName;
         this.workDialog.accessKey = accessKey;
         this.workDialog.show();
       }, 100);
@@ -1170,8 +1170,8 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _downloadLogs() {
-    const sessionUuid = (this.workDialog as BackendAIDialog).sessionUuid;
-    const sessionName = (this.workDialog as BackendAIDialog).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1193,8 +1193,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _refreshLogs() {
     // TODO define extended type for custom properties
-    const sessionUuid = (this.workDialog as BackendAIDialog).sessionUuid;
-    const sessionName = (this.workDialog as BackendAIDialog).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1357,8 +1357,8 @@ export default class BackendAISessionList extends BackendAIPage {
     const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
     // TODO define extended type for custom properties
-    (this.terminateSessionDialog as BackendAIDialog).sessionName = sessionName;
-    (this.terminateSessionDialog as BackendAIDialog).sessionId = sessionId;
+    this.terminateSessionDialog.sessionName = sessionName;
+    this.terminateSessionDialog.sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -1378,14 +1378,14 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     // TODO define extended type for custom properties
-    if (this.terminationQueue.includes((this.terminateSessionDialog as BackendAIDialog).sessionId)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return this._terminateKernel((this.terminateSessionDialog as BackendAIDialog).sessionId, (this.terminateSessionDialog as BackendAIDialog).accessKey, forced).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();

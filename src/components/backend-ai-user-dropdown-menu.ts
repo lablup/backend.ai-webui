@@ -300,7 +300,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       return;
     }
     // TODO define type for custom property
-    if (!newPassword1El.value || !(newPassword1El as TextField).validity.valid) {
+    if (!newPassword1El.value || !newPassword1El.validity.valid) {
       this.notification.text = _text('webui.menu.InvalidPasswordMessage');
       this.notification.show();
       return;

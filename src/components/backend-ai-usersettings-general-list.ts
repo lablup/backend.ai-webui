@@ -412,7 +412,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         // Force match mwc-select's selectedText to avoid mwc-select's bug
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        (this.languageSelect as Select).selectedText = this.languageSelect.selected?.textContent?.trim();
+        this.languageSelect.selectedText = this.languageSelect.selected?.textContent?.trim();
       }, 100);
     }
   }

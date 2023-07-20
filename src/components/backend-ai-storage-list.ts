@@ -1153,8 +1153,8 @@ export default class BackendAiStorageList extends BackendAIPage {
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as inviteeData[])[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
-        'user': (this.invitees as inviteeData[])[idx].shared_to.uuid,
-        'vfolder': (this.invitees as inviteeData[])[idx].vfolder_id
+        'user': this.invitees[idx].shared_to.uuid,
+        'vfolder': this.invitees[idx].vfolder_id
       }));
     const promiseArray = inputList.map((input) => globalThis.backendaiclient.vfolder.modify_invitee_permission(input));
     Promise.all(promiseArray).then((response: any) => {
