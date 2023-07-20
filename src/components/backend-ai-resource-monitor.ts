@@ -16,12 +16,6 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-switch';
 import {Select} from '@material/mwc-select';
 
-import 'weightless/card';
-import 'weightless/checkbox';
-import {Expansion} from 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -186,7 +180,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           background-color: transparent;
         }
 
-        wl-icon {
+        mwc-icon {
           --icon-size: 24px;
         }
 
@@ -282,15 +276,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
          border-radius: 5px;
         }
 
-        wl-button.resource-button.iron-selected {
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-600);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-bg-flat: var(--paper-orange-50);
-        }
-
         .resource-button h4 {
           padding: 5px 0;
           margin: 0;
@@ -352,16 +337,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-left: 0;
           margin-left: 0;
           margin-bottom: 1px;
-        }
-
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
-        }
-
-        wl-label {
-          margin-right: 10px;
-          outline: none;
         }
 
         .vertical-card > #resource-gauges > .monitor > .resource-name {
@@ -475,12 +450,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
         this._updatePageVariables(true);
-        this._disableEnterKey();
       }, {once: true});
     } else {
       this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
       await this._updatePageVariables(true);
-      this._disableEnterKey();
     }
   }
 
@@ -655,17 +628,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     } else {
       this._aggregateResourceUse(from);
     }
-  }
-
-  _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
-      // remove protected property assignment
-      element.onkeydown = (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-        }
-      };
-    });
   }
 
   _numberWithPostfix(str, postfix = '') {
@@ -924,7 +886,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
-            <wl-icon class="fg blue">group_work</wl-icon>
+            <mwc-icon class="fg blue">group_work</mwc-icon>
             <span class="gauge-name">${_t('session.launcher.Project')}</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">
