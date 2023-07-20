@@ -4,6 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
+import { Link, useNavigate } from "react-router-dom";
 
 
 // TODO: Need to implement wireframe of serving list using esm client
@@ -44,6 +45,7 @@ const ServingList: React.FC<ServingListProps> = ({
   ...tableProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();
+  const navigate = useNavigate();
 
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
@@ -54,13 +56,13 @@ const ServingList: React.FC<ServingListProps> = ({
       console.log(`selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`, selectedRows);
     }
   }
-
+  
   const columns: ColumnsType<DataType> = [
     {
       title: 'Endpoint ID',
       dataIndex: 'name',
       key: 'name',
-      render: text => <a>{text}</a>,
+      render: text => <Link to={'/serving/'+text}>{text}</Link>,
     },
     {
       title: 'Image',

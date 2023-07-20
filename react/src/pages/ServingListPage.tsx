@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   ConfigProvider,
   Segmented,
   Tabs,
@@ -11,8 +12,8 @@ import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import { ThunderboltTwoTone } from "@ant-design/icons";
 import ServingList from "../components/ServingList";
-import RoutingList from "../components/RoutingList";
-import ServiceLauncher from "../components/ServiceLauncher";
+import RoutingListPage from "./RoutingListPage";
+import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
 
@@ -26,6 +27,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
+
+  const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
 
   const [selectedTab, setSelectedTab] = useState<TabKey>("running");
   const [selectedGeneration, setSelectedGeneration] = useState<
@@ -42,7 +45,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       >
       { false ? (
         <Suspense fallback={<div>loading..</div>}>
-          <RoutingList
+          <RoutingListPage
             projectId={curProject.id}
             status={[]}
             extraFetchKey={""}
@@ -100,7 +103,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       <Button icon={<DownloadOutlined />} type="ghost" />
                     </Tooltip> */}
                       {/* @ts-ignore */}
-                      <ServiceLauncher></ServiceLauncher>
+                      <Button type="primary" onClick={ ()=>{
+                        setIsOpenServiceLauncher(true);
+                      } }>
+                        Start Service
+                      </Button>
+                      {/* <ServiceLauncherModal></ServiceLauncherModal> */}
                     </Flex>
                   ),
                 }}
@@ -127,6 +135,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Suspense>
         </Flex>
       </Flex>
+      <ServiceLauncherModal open={isOpenServiceLauncher} onCancel={()=>{
+        setIsOpenServiceLauncher(false);
+      }} onOk={()=>{
+        setIsOpenServiceLauncher(false);
+      }}/>
     </>
   );
 };

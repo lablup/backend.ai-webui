@@ -4,6 +4,7 @@ import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
 import { useTranslation } from 'react-i18next';
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
+import { useParams } from "react-router-dom";
 
 
 // TODO: Need to implement wireframe of serving list using esm client
@@ -33,7 +34,7 @@ interface DataType {
   trafficRatio: number;
 }
 
-const RoutingList: React.FC<ServingListProps> = ({
+const RoutingListPage: React.FC<ServingListProps> = ({
   status = [],
   limit = 50,
   currentPage = 1,
@@ -45,6 +46,10 @@ const RoutingList: React.FC<ServingListProps> = ({
 }) => {
   const baiClient = useSuspendedBackendaiClient();
 
+  const {serviceId} = useParams<{
+    serviceId: string
+  }>();
+  
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
@@ -125,6 +130,7 @@ const RoutingList: React.FC<ServingListProps> = ({
 
   return (
     <>
+      <h1>{serviceId}</h1>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
       <Table
@@ -163,4 +169,4 @@ const RoutingList: React.FC<ServingListProps> = ({
 //   );
 // };
 
-export default RoutingList;
+export default RoutingListPage;
