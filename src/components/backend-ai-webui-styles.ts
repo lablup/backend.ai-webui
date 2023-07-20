@@ -253,15 +253,6 @@ export const BackendAIWebUIStyles = [
       will-change: transform;
     }
 
-    wl-progress-spinner {
-      --progress-spinner-size: 48px;
-      --progress-spinner-stroke-width: 12px;
-      width: 48px;
-      height: 48px;
-      position: fixed;
-      top: calc(50vh - 24px);
-    }
-
     mwc-circular-progress {
       width: 48px;
       height: 48px;
@@ -271,24 +262,12 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-width: 899px) {
-      wl-progress-spinner {
-        left: calc(50% - 24px);
-      }
-
       mwc-circular-progress {
         left: calc(50% - 24px);
       }
     }
 
     @media screen and (min-width: 900px) {
-      wl-progress-spinner {
-        left: calc(50% + 71px);
-      }
-
-      .mini-ui wl-progress-spinner {
-        left: calc(50% + 29px);
-      }
-
       mwc-circular-progress {
         left: calc(50% + 71px);
       }
