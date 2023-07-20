@@ -6,6 +6,8 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query, state} from 'lit/decorators.js';
 
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
 import {TextField} from '@material/mwc-textfield';
 import '@material/mwc-list';
 import '@material/mwc-icon-button';
@@ -150,24 +152,6 @@ export default class BackendAICredentialView extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        wl-tab-group {
-          border-radius: 5px 5px 0 0;
-          --tab-group-indicator-bg: var(--general-tabbar-button-color);
-        }
-
-        wl-tab {
-          border-radius: 5px 5px 0 0;
-          --tab-color: var(--general-sidepanel-color);
-          --tab-color-hover: #26272a;
-          --tab-color-hover-filled: var(--general-tabbar-button-color);
-          --tab-color-active:var(--general-tabbar-button-color);
-          --tab-color-active-hover: var(--general-tabbar-button-color);
-          --tab-color-active-filled: var(--general-tabbar-button-color);
-          --tab-bg-active: #535457;
-          --tab-bg-filled: #26272a;
-          --tab-bg-active-hover: #535457;
-        }
-
         h3.tab {
           background-color: var(--general-tabbar-background-color);
           border-radius: 5px 5px 0 0;
@@ -181,6 +165,9 @@ export default class BackendAICredentialView extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
+        mwc-tab-bar.sub-bar mwc-tab {
+          --mdc-theme-primary: var(--general-tabbar-button-color);
+        }
 
         mwc-list-item {
           height: auto;
@@ -217,6 +204,12 @@ export default class BackendAICredentialView extends BackendAIPage {
           --checkbox-bg-checked: var(--general-checkbox-color);
           --checkbox-checkmark-stroke-color: white;
           --checkbox-color-checked: white;
+        }
+        mwc-checkbox {
+        }
+        mwc-formfield {
+          font-size: 8px;
+          --mdc-typography-body2-font-size: 10px;
         }
 
         mwc-textfield {
@@ -290,10 +283,6 @@ export default class BackendAICredentialView extends BackendAIPage {
         @media screen and (max-width: 805px) {
           mwc-tab, mwc-button {
             --mdc-typography-button-font-size: 10px;
-          }
-
-          wl-tab {
-            width: 5px;
           }
         }
       `];
@@ -1070,7 +1059,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar style="margin-bottom:-8px;">
+              <mwc-tab-bar style="margin-bottom:-8px;" class="sub-bar">
                 <mwc-tab title="active-user-list" label="${_t('credential.Active')}"
                     @click="${(e) => this._showList(e.target)}"></mwc-tab>
                 <mwc-tab title="inactive-user-list" label="${_t('credential.Inactive')}"
@@ -1087,7 +1076,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
           <div id="credential-lists" class="item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar style="margin-bottom:-8px;">
+              <mwc-tab-bar style="margin-bottom:-8px;" class="sub-bar">
                 <mwc-tab title="active-credential-list" label="${_t('credential.Active')}"
                     @click="${(e) => this._showList(e.target)}"></mwc-tab>
                 <mwc-tab title="inactive-credential-list" label="${_t('credential.Inactive')}"
@@ -1176,8 +1165,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           <h4>${_t('resourcePolicy.ResourcePolicy')}</h4>
           <div class="horizontal center layout distancing">
             <div class="vertical layout popup-right-margin">
-              <wl-label>CPU</wl-label>
-              <mwc-textfield class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
+              <mwc-textfield label="CPU" class="discrete resource-input" id="cpu-resource" type="number" min="0" max="512"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1185,17 +1173,14 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </wl-label>
             </div>
             <div class="vertical layout popup-both-margin">
-              <wl-label>RAM(GB)</wl-label>
-              <mwc-textfield class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
+              <mwc-textfield label="RAM(GB)" class="resource-input" id="ram-resource" type="number" min="0" max="100000" step="0.01"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
-              <wl-label class="unlimited">
-                <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
-                ${_t('resourcePolicy.Unlimited')}
-              </wl-label>
+              <mwc-formfield label="${_t('resourcePolicy.Unlimited')}" class="unlimited">
+                <mwc-checkbox @change="${(e) => this._toggleCheckbox(e)}"></mwc-checkbox>
+              </mwc-formfield>
             </div>
             <div class="vertical layout popup-both-margin">
-              <wl-label>GPU</wl-label>
-              <mwc-textfield class="resource-input" id="gpu-resource" type="number" min="0" max="64"
+              <mwc-textfield label="GPU" class="resource-input" id="gpu-resource" type="number" min="0" max="64"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1203,8 +1188,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </wl-label>
             </div>
             <div class="vertical layout popup-left-margin">
-              <wl-label>fGPU</wl-label>
-              <mwc-textfield class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
+              <mwc-textfield label="fGPU" class="resource-input" id="fgpu-resource" type="number" min="0" max="256" step="0.1"
                             @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               <wl-label class="unlimited">
                 <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1215,8 +1199,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           <h4>${_t('resourcePolicy.Sessions')}</h4>
           <div class="horizontal justified layout distancing wrap">
             <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
-                <wl-label>${_t('resourcePolicy.ContainerPerSession')}</wl-label>
-                <mwc-textfield class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
+                <mwc-textfield label="${_t('resourcePolicy.ContainerPerSession')}" class="discrete" id="container-per-session-limit" type="number" min="0" max="100"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1224,8 +1207,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </wl-label>
               </div>
               <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
-                <wl-label>${_t('resourcePolicy.IdleTimeoutSec')}</wl-label>
-                <mwc-textfield class="discrete" id="idle-timeout" type="number" min="0" max="1552000"
+                <mwc-textfield label="${_t('resourcePolicy.IdleTimeoutSec')}" class="discrete" id="idle-timeout" type="number" min="0" max="1552000"
                   @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1233,8 +1215,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </wl-label>
               </div>
               <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}">
-                  <wl-label>${_t('resourcePolicy.ConcurrentJobs')}</wl-label>
-                  <mwc-textfield class="discrete" id="concurrency-limit" type="number" min="0" max="100"
+                  <mwc-textfield label="${_t('resourcePolicy.ConcurrentJobs')}" class="discrete" id="concurrency-limit" type="number" min="0" max="100"
                       @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                   <wl-label class="unlimited">
                     <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1243,8 +1224,7 @@ export default class BackendAICredentialView extends BackendAIPage {
               </div>
               <div class="vertical left layout ${this.enableSessionLifetime ? 'sessions-section' : ''}"
                 style="${this.enableSessionLifetime ? '' : 'display:none;'}">
-                <wl-label>${_t('resourcePolicy.MaxSessionLifeTime')}</wl-label>
-                <mwc-textfield class="discrete" id="session-lifetime" type="number" min="0" max="100"
+                <mwc-textfield label="${_t('resourcePolicy.MaxSessionLifeTime')}" class="discrete" id="session-lifetime" type="number" min="0" max="100"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1257,8 +1237,7 @@ export default class BackendAICredentialView extends BackendAIPage {
             <backend-ai-multi-select open-up id="allowed-vfolder-hosts" label="${_t('resourcePolicy.AllowedHosts')}" style="width:100%;"></backend-ai-multi-select>
             <div class="horizontal layout justified" style="width:100%;">
               <div class="vertical layout flex popup-right-margin">
-                <wl-label class="folders">${_t('resourcePolicy.Capacity')}(GB)</wl-label>
-                <mwc-textfield id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
+                <mwc-textfield label="${_t('resourcePolicy.Capacity')}(GB)" id="vfolder-capacity-limit" type="number" min="0" max="1024" step="0.1"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
                 <wl-label class="unlimited">
                   <wl-checkbox @change="${(e) => this._toggleCheckbox(e)}"></wl-checkbox>
@@ -1266,8 +1245,7 @@ export default class BackendAICredentialView extends BackendAIPage {
                 </wl-label>
               </div>
               <div class="vertical layout flex popup-left-margin">
-                <wl-label class="folders">${_t('credential.Max#')}</wl-label>
-                <mwc-textfield class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
+                <mwc-textfield label="${_t('credential.Max#')}" class="discrete" id="vfolder-count-limit" type="number" min="0" max="50"
                     @change="${(e) => this._validateResourceInput(e)}"></mwc-textfield>
               </div>
             </div>
