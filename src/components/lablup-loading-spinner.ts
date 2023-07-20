@@ -6,7 +6,6 @@
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/progress-spinner';
 import '@material/mwc-circular-progress';
 
 /**
