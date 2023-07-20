@@ -11,6 +11,8 @@ import 'weightless/icon';
 import 'weightless/card';
 import 'weightless/title';
 import 'weightless/checkbox';
+import '@material/mwc-select';
+import {Select} from '@material/mwc-select';
 
 import './backend-ai-dialog';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -182,7 +184,7 @@ export default class LablupTermsOfService extends LitElement {
   }
 
   changeLanguage() {
-    const language = (this.shadowRoot?.querySelector('#select-language') as any).value;
+    const language = (this.shadowRoot?.querySelector('#select-language') as Select).value;
     this.tosContent = '';
     this.tosLanguage = this.tosLanguages.filter((item) => item.text === language).map((item) => item.code).toString();
     this._showTOSdialog(true);

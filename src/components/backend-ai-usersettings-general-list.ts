@@ -409,7 +409,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       globalThis.backendaioptions.set('current_language', lang);
       setLanguage(lang);
       setTimeout(() => {
-        (this.languageSelect as any).selectedText = this.languageSelect.selected?.textContent?.trim();
+        // Force match mwc-select's selectedText to avoid mwc-select's bug
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.languageSelect.selectedText = this.languageSelect.selected?.textContent?.trim();
       }, 100);
     }
   }
@@ -887,7 +890,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   _copySSHKey(keyName: string) {
     if (keyName !== '') {
-      const copyText = (this.shadowRoot?.querySelector(keyName) as any).value;
+      const copyText = (this.shadowRoot?.querySelector(keyName) as TextArea).value;
       if (copyText.length == 0) {
         this.notification.text = _text('usersettings.NoExistingSSHKeypair');
         this.notification.show();

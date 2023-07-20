@@ -560,7 +560,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return index === el.value;
     });
     (this.shadowRoot?.querySelector('#modify-image-'+el.id) as Button).label = currentVal[0];
-    // TODO button does not have value property
+    // TODO: button does not have value property
+    // TODO: Replace slides to lablup-slider
     (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
   }
 
