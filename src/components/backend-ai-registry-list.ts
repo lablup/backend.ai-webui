@@ -4,7 +4,7 @@
  */
 import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, query} from 'lit/decorators.js';
+import {customElement, query, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIIndicator from './backend-ai-indicator';
@@ -56,6 +56,7 @@ class BackendAIRegistryList extends BackendAIPage {
   private _boundControlsRenderer = this._controlsRenderer.bind(this);
   private _boundPasswordRenderer = this._passwordRenderer.bind(this);
 
+  @property({type: String}) private _projectNameValidationMsgTextContent = '';
   @query('#list-status') private _listStatus!: BackendAIListStatus;
   @query('#configure-registry-hostname') private _hostnameInput!: WlTextfield;
   @query('#configure-registry-password') private _passwordInput!: WlTextfield;
@@ -166,6 +167,7 @@ class BackendAIRegistryList extends BackendAIPage {
   protected override firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this._indicator = globalThis.lablupIndicator as BackendAIIndicatorPool;
+    this._projectNameValidationMsgTextContent = _text('registry.ForHarborOnly');
   }
 
   /**
@@ -478,13 +480,13 @@ class BackendAIRegistryList extends BackendAIPage {
     this._projectNameValidationMsg.style.display = 'block';
     if (['harbor', 'harbor2'].includes(this._registryType)) {
       if (!this._projectNameInput.value) {
-        this._projectNameValidationMsg.textContent = _text('registry.ProjectNameIsRequired');
+        this._projectNameValidationMsgTextContent = _text('registry.ProjectNameIsRequired');
       } else {
         this._projectNameValidationMsg.style.display = 'none';
       }
       this._projectNameInput.disabled = false;
     } else {
-      this._projectNameValidationMsg.textContent = _text('registry.ForHarborOnly');
+      this._projectNameValidationMsgTextContent = _text('registry.ForHarborOnly');
       this._projectNameInput.disabled = true;
     }
   }
@@ -794,7 +796,7 @@ class BackendAIRegistryList extends BackendAIPage {
             @change=${this._toggleValidationMsgOnProjectNameInput}
           ></wl-textfield>
           <wl-label class="helper-text" id="project-name-validation">
-            ${this._editMode ? html`` : _t('registry.ForHarborOnly')}
+            ${this._projectNameValidationMsgTextContent}
           </wl-label>
          </div>
         </div>
