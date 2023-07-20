@@ -61,6 +61,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
+  @property({type: String}) vscodeDesktopPassword = '';
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
@@ -239,52 +240,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-checkbox#hide-guide {
           margin-right: 10px;
-        }
-
-        p code {
-          font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
-          color: #52595d;
-          -webkit-border-radius: 3px;
-          -moz-border-radius: 3px;
-          border-radius: 3px;
-          -moz-background-clip: padding;
-          -webkit-background-clip: padding-box;
-          background-clip: padding-box;
-          border: 1px solid #cccccc;
-          background-color: #f9f9f9;
-          padding: 0px 3px;
-          display: inline-block;
-        }
-
-        mwc-textfield#vscode-desktop-password {
-          width: 360px;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        .vscode-desktop-password {
-          min-height: 80px;
-          overflow-y: scroll;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          scrollbar-width: none; /* firefox */
-        }
-
-        wl-button.vscode-desktop-password {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-icon#vscode-desktop-password-icon {
-          color: var(--paper-indigo-700);
         }
 
         @media screen and (max-width: 810px) {
@@ -989,11 +944,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readTempPasswd(sessionUuid) {
-    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-desktop-password') as HTMLInputElement;
     const file = '/home/work/.password';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     const rawText = await blob.text();
-    vscodePasswordEl.value = rawText;
+    this.vscodeDesktopPassword = rawText;
   }
 
   /**
@@ -1230,43 +1184,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     btn.textContent = isFolded ? _text('session.Readless') : _text('session.Readmore');
   }
 
-  /**
-   * Copy Remote VS Code password to clipboard
-   *
-   * @param {string} vscodePassword - ssh(remote VS Code) access password
-   * */
-  _copyVSCodePassword(vscodePassword: string) {
-    if (vscodePassword !== '') {
-      const passStore = this.shadowRoot?.querySelector<HTMLInputElement>(vscodePassword);
-      if (passStore && 'value' in passStore) {
-        const copyText = passStore.value;
-        if (copyText.length == 0) {
-          this.notification.text = _text('usersettings.NoExistingVSCodePassword');
-          this.notification.show();
-        } else {
-          if (navigator.clipboard !== undefined) { // for Chrome, Safari
-            navigator.clipboard.writeText(copyText).then(() => {
-              this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
-              this.notification.show();
-            }, (err) => {
-              console.error('Could not copy text: ', err);
-            });
-          } else { // other browsers
-            const tmpInputElement = document.createElement('input');
-            tmpInputElement.type = 'text';
-            tmpInputElement.value = copyText;
-
-            document.body.appendChild(tmpInputElement);
-            tmpInputElement.select();
-            document.execCommand('copy'); // copy operation
-            document.body.removeChild(tmpInputElement);
-          }
-        }
-      }
-    }
-  }
-
-
   render() {
     // language=HTML
     return html`
@@ -1453,19 +1370,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div>${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h3>${_t('session.ConnectionInformation')}</h4>
-            <div slot="content">
-              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
-              <mwc-textfield
-                readonly
-                class="vscode-desktop-password"
-                id="vscode-desktop-password"
-              ></mwc-textfield>
-              <mwc-icon-button
-                id="copy-vscode-password-button"
-                icon="content_copy"
-                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
-              ></mwc-icon-button>
-            </div>
+            <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
+            <backend-ai-react-copyable-code-text value="${this.vscodeDesktopPassword}" style="width:max-content;margin-bottom:10px;"></backend-ai-react-copyable-code-text>
             <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
               <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
               <p style="margin:auto 10px;">
