@@ -5,9 +5,8 @@
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/card';
-
 import '@material/mwc-icon-button';
+import {IconButton} from '@material/mwc-icon-button';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -141,7 +140,7 @@ export default class LablupActivityPanel extends LitElement {
 
   firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
-      const button = this.shadowRoot?.getElementById('button') as Button;
+      const button = this.shadowRoot?.getElementById('button') as IconButton;
       this.shadowRoot?.querySelector('h4')?.removeChild(button);
     }
 
