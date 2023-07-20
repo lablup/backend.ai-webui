@@ -61,6 +61,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
+  @property({type: String}) vscodeDesktopPassword = '';
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
@@ -256,35 +257,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           display: inline-block;
         }
 
-        mwc-textfield#vscode-desktop-password {
-          width: 360px;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        .vscode-desktop-password {
-          min-height: 80px;
-          overflow-y: scroll;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          scrollbar-width: none; /* firefox */
-        }
-
-        wl-button.vscode-desktop-password {
-          display: inline-block;
-          margin: 10px;
-        }
-
         wl-button.copy {
           --button-font-size: 10px;
           display: inline-block;
           max-width: 15px !important;
           max-height: 15px !important;
-        }
-
-        wl-icon#vscode-desktop-password-icon {
-          color: var(--paper-indigo-700);
         }
 
         @media screen and (max-width: 810px) {
@@ -989,11 +966,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readTempPasswd(sessionUuid) {
-    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-desktop-password') as HTMLInputElement;
     const file = '/home/work/.password';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     const rawText = await blob.text();
-    vscodePasswordEl.value = rawText;
+    this.vscodeDesktopPassword = rawText;
   }
 
   /**
@@ -1450,19 +1426,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div>${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h3>${_t('session.ConnectionInformation')}</h4>
-            <div slot="content">
-              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
-              <mwc-textfield
-                readonly
-                class="vscode-desktop-password"
-                id="vscode-desktop-password"
-              ></mwc-textfield>
-              <mwc-icon-button
-                id="copy-vscode-password-button"
-                icon="content_copy"
-                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
-              ></mwc-icon-button>
-            </div>
+            <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
+            <backend-ai-react-copyable-code-text value="${this.vscodeDesktopPassword}" style="width:max-content;margin-bottom:10px;"></backend-ai-react-copyable-code-text>
             <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
               <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
               <p style="margin:auto 10px;">
