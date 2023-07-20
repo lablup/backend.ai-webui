@@ -167,6 +167,7 @@ export default class BackendAICredentialView extends BackendAIPage {
 
         mwc-tab-bar.sub-bar mwc-tab {
           --mdc-theme-primary: var(--general-tabbar-button-color);
+          --mdc-tab-height:32px;
         }
 
         mwc-list-item {
@@ -1059,7 +1060,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </h3>
           <div id="user-lists" class="admin item tab-content card">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar style="margin-bottom:-8px;" class="sub-bar">
+              <mwc-tab-bar style="margin-bottom:-14px;" class="sub-bar">
                 <mwc-tab title="active-user-list" label="${_t('credential.Active')}"
                     @click="${(e) => this._showList(e.target)}"></mwc-tab>
                 <mwc-tab title="inactive-user-list" label="${_t('credential.Inactive')}"
@@ -1076,7 +1077,7 @@ export default class BackendAICredentialView extends BackendAIPage {
           </div>
           <div id="credential-lists" class="item tab-content card" style="display:none;">
             <h4 class="horizontal flex center center-justified layout">
-              <mwc-tab-bar style="margin-bottom:-8px;" class="sub-bar">
+              <mwc-tab-bar style="margin-bottom:-14px;" class="sub-bar">
                 <mwc-tab title="active-credential-list" label="${_t('credential.Active')}"
                     @click="${(e) => this._showList(e.target)}"></mwc-tab>
                 <mwc-tab title="inactive-credential-list" label="${_t('credential.Inactive')}"
