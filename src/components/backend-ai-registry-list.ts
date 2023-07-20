@@ -21,7 +21,7 @@ import '@material/mwc-button/mwc-button';
 import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
-
+import '@material/mwc-icon-button';
 import '@vaadin/grid/vaadin-grid';
 
 import 'weightless/button';
@@ -93,18 +93,6 @@ class BackendAIRegistryList extends BackendAIPage {
           font-size: 14px;
           margin: 0px;
           padding: 5px 15px 5px 20px;
-        }
-
-        wl-button {
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
-
-        wl-button.delete {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
         }
 
         backend-ai-dialog wl-textfield {
@@ -652,39 +640,28 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {object} rowData - the object with the properties related with the rendered item
    * */
   private _controlsRenderer(root: HTMLElement, column: HTMLElement, rowData) {
-    render(
-      html`
-        <div icon="settings" id="controls" class="layout horizontal flex center">
-          <wl-button fab flat inverted
-            class="fg blue"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._openEditRegistryDialog(rowData.item.hostname);
-            }}>
-            <wl-icon>settings</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            icon="delete"
-            class="fg red"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._launchDialogById('#delete-registry-dialog');
-            }}>
-            <wl-icon>delete</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            icon="refresh"
-            class="fg green"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._rescanImage();
-            }}>
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
-        </div>
-      `,
-      root
-    );
+    render(html`
+      <div icon="settings" id="controls" class="layout horizontal flex center">
+        <mwc-icon-button class="fg blue"
+                         icon="settings"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._openEditRegistryDialog(rowData.item.hostname);
+  }}></mwc-icon-button>
+        <mwc-icon-button class="fg red"
+                         icon="delete"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._launchDialogById('#delete-registry-dialog');
+  }}></mwc-icon-button>
+        <mwc-icon-button class="fg green"
+                         icon="refresh"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._rescanImage();
+  }}></mwc-icon-button>
+      </div>
+    `, root);
   }
 
   /**
