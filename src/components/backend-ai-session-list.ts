@@ -2683,7 +2683,7 @@ export default class BackendAISessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <mwc-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
+            <mwc-checkbox class="list-check" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
         `, root
       );
     } else {
