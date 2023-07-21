@@ -116,12 +116,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 186px;
         }
 
-        #scaling-group-select-box {
-          min-height: 100px;
-          padding-top: 20px;
-          padding-left: 20px;
+        #scaling-group-select-box.horizontal {
+          min-height: 80px;
+          min-width: 252px;
+          margin: 0;
+          padding: 0;
+        }
+
+        #scaling-group-select-box.vertical {
+          padding: 10px 20px;
+          min-height: 83px; /* 103px-20px */
           background-color: #F6F6F6;
-          margin-bottom: 15px;
+        }
+
+        #scaling-group-select-box.horizontal mwc-select {
+          width: 250px;
+          height: 58px;
+        }
+
+        #scaling-group-select-box.vertical mwc-select {
+          width: 305px;
+          height: 58px;
         }
 
         .vertical-panel #resource-gauges {
@@ -236,8 +251,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #scaling-group-select-box mwc-select {
-          width: 305px;
-          height: 58px;
           border: 0.1em solid #ccc;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
@@ -642,7 +655,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <div id="scaling-group-select-box" class="layout horizontal start-justified"></div>
+      <div class="layout ${this.direction} justified flex wrap">
+      <div id="scaling-group-select-box" class="layout horizontal center-justified ${this.direction}"></div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
           <div class="layout horizontal center-justified monitor">
@@ -858,27 +872,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </mwc-switch>
         </div>
       </div>
-      ${this.direction === 'vertical' ? html`
+      </div>
       <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
-        <div class="layout horizontal center start-justified resource-legend-stack">
+        <div class="layout horizontal center ${this.direction === 'vertical' ? 'start-justified' : 'end-justified'}
+                    resource-legend-stack">
           <div class="resource-legend-icon start"></div>
           <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
-        <div class="layout horizontal center start-justified">
+        <div class="layout horizontal center ${this.direction === 'vertical' ? 'start-justified' : 'end-justified'}"">
           <div class="resource-legend-icon end"></div>
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
-      </div>` : html`
-      <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
-        <div class="layout horizontal center end-justified resource-legend-stack">
-          <div class="resource-legend-icon start"></div>
-          <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
-        </div>
-        <div class="layout horizontal center end-justified">
-          <div class="resource-legend-icon end"></div>
-          <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
-        </div>
-      </div>`}
+      </div>
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />

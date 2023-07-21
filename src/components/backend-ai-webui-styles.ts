@@ -362,15 +362,6 @@ export const BackendAIWebUIStyles = [
       width: 100%;
     }
 
-    backend-ai-dialog wl-textfield,
-    wl-dialog wl-textfield {
-      --input-font-family: var(--general-font-family);
-      --input-color-disabled: #222222;
-      --input-label-color-disabled: #222222;
-      --input-label-font-size: 12px;
-      --input-border-style-disabled: 1px solid #cccccc;
-    }
-
     mwc-list-item {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
