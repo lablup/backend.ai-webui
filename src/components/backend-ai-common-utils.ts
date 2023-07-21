@@ -126,17 +126,17 @@ export default class BackendAiCommonUtils extends BackendAIPage {
   /**
    * Merge two nested objects into one.
    *
-   * @param {Object} obj1 - source object
-   * @param {Object} obj2 - the objects that will override obj1
-   * @return {Object} - Merged object
+   * @param {object} obj1 - source object
+   * @param {object} obj2 - the objects that will override obj1
+   * @return {object} - Merged object
    */
-  mergeNestedObjects(obj1: Object, obj2: Object) {
+  mergeNestedObjects(obj1: object, obj2: object) {
     if (!obj1 || !obj2) {
       return obj1 || obj2 || {};
     }
     function _merge(a, b) {
       return Object.entries(b).reduce((o, [k, v]) => {
-        o[k] = v && (v as any).constructor === Object ?
+        o[k] = v && (v as object).constructor === Object ?
           _merge(o[k] = o[k] || (Array.isArray(v) ? [] : {}), v) :
           v;
         return o;

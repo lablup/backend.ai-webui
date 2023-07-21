@@ -50,6 +50,7 @@ import BackendAICommonUtils from './backend-ai-common-utils';
 import BackendAISettingsStore from './backend-ai-settings-store';
 import BackendAIMetadataStore from './backend-ai-metadata-store';
 import BackendAITasker from './backend-ai-tasker';
+import {BackendAIPage} from './backend-ai-page';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 
 import './lablup-notification';
@@ -351,10 +352,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.plugins['menuitem-user'] = [];
         this.plugins['menuitem-admin'] = [];
         this.plugins['menuitem-superadmin'] = [];
-        const pluginLoaderQueue = [] as any[];
+        const pluginLoaderQueue:object[] = [];
         for (const page of config.plugin.page.split(',')) {
-          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then((module) => {
-            const pageItem = document.createElement(page) as any;
+          pluginLoaderQueue.push(import('../plugins/' + page + '.js').then(() => {
+            const pageItem = document.createElement(page) as BackendAIPage;
             pageItem.classList.add('page');
             pageItem.setAttribute('name', page);
             this.appPage.appendChild(pageItem);
@@ -393,7 +394,6 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
 
   refreshPage(): void {
     // TODO need more clear type for mwc-list-item
-    // (this.shadowRoot?.getElementById('sign-button') as any).icon = 'exit_to_app';
     this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
     this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
     this.needPasswordChange = globalThis.backendaiclient.need_password_change;
@@ -731,10 +731,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
           }
           if ('menuitem' in this.plugins && this.plugins['menuitem'].includes(this._page)) {
             // TODO specify type for web components from variable
-            const component = this.shadowRoot?.querySelector(this._page) as any;
+            const component = this.shadowRoot?.querySelector(this._page) as BackendAIPage;
             component.active = true;
-            component.setAttribute('active', true);
-            component.render();
+            // component.setAttribute('active', true);
+            component.requestUpdate();
           }
         });
         break;
@@ -903,17 +903,17 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       for (const item of this.plugins.menuitem) {
         if (item !== this._page) {
           // TODO specify type for web components from variable
-          const component = this.shadowRoot?.querySelector(item) as any;
+          const component = this.shadowRoot?.querySelector(item) as BackendAIPage;
           component.active = false;
           component.removeAttribute('active');
         }
       }
       if (this.plugins['menuitem'].includes(this._page)) {
         // TODO specify type for web components ffrom variable
-        const component = this.shadowRoot?.querySelector(this._page) as any;
+        const component = this.shadowRoot?.querySelector(this._page) as BackendAIPage;
         component.active = true;
-        component.setAttribute('active', true);
-        component.render();
+        // component.setAttribute('active', true);
+        component.requestUpdate();
       }
     }
   }

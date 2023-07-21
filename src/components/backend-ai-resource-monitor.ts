@@ -14,6 +14,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-linear-progress';
 import '@material/mwc-switch';
+import {Select} from '@material/mwc-select';
 
 import 'weightless/card';
 import 'weightless/checkbox';
@@ -448,23 +449,13 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     return Promise.resolve(false);
   }
 
-  /**
-   * @deprecated it does not used now
-   */
-  _updateSelectedScalingGroup() {
-    const Sgroups = this.shadowRoot?.querySelector('#scaling-groups') as any;
-    const selectedSgroup = Sgroups.items.find((item) => item.value === this.resourceBroker.scaling_group);
-    const idx = Sgroups.items.indexOf(selectedSgroup);
-    Sgroups.select(idx);
-  }
-
   async updateScalingGroup(forceUpdate = false, e) {
     await this.resourceBroker.updateScalingGroup(forceUpdate, e.target.value);
     if (this.active) {
       if (this.direction === 'vertical') {
         if (this.scalingGroupSelectBox.firstChild) {
           // TODO clarify element type
-          (this.scalingGroupSelectBox.firstChild as any).value = this.resourceBroker.scaling_group;
+          (this.scalingGroupSelectBox.firstChild as Select).value = this.resourceBroker.scaling_group;
         }
       }
       if (forceUpdate === true) {
@@ -669,9 +660,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
   _disableEnterKey() {
     this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
       // remove protected property assignment
-      (element as any).onKeyDown = (e) => {
-        const enterKey = 13;
-        if (e.keyCode === enterKey) {
+      element.onkeydown = (e) => {
+        if (e.key === 'Enter') {
           e.preventDefault();
         }
       };
