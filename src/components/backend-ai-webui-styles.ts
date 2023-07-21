@@ -362,10 +362,6 @@ export const BackendAIWebUIStyles = [
       width: 100%;
     }
 
-    wl-popover-card {
-      padding: 5px;
-    }
-
     backend-ai-dialog wl-textfield,
     wl-dialog wl-textfield {
       --input-font-family: var(--general-font-family);

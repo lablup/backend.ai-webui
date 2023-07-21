@@ -187,18 +187,6 @@ export default class BackendAISummary extends BackendAIPage {
           --mdc-typography-font-family: var(--general-font-family);
         }
 
-        wl-button[class*="green"] {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        wl-button[class*="red"] {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
         .notice-ticker {
           margin-left: 15px;
           margin-top: 10px;
@@ -490,7 +478,7 @@ export default class BackendAISummary extends BackendAIPage {
     const panel = e.target.closest('lablup-activity-panel');
     try {
       panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'true');
       });
       await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
@@ -499,7 +487,7 @@ export default class BackendAISummary extends BackendAIPage {
       this._refreshInvitations();
     } catch (err) {
       panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
       });
       this.notification.text = PainKiller.relieve(err.title);
@@ -522,7 +510,7 @@ export default class BackendAISummary extends BackendAIPage {
 
     try {
       panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'true');
       });
       await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
@@ -531,7 +519,7 @@ export default class BackendAISummary extends BackendAIPage {
       this._refreshInvitations();
     } catch (err) {
       panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
       });
       this.notification.text = PainKiller.relieve(err.title);
