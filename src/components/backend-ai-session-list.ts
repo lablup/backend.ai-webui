@@ -412,7 +412,7 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         div.pagination-label {
-          background-color: var(--paper-grey-500);
+          background-color: var(--paper-grey-100);
           min-width: 60px;
           font-size: 12px;
           font-family: var(--general-font-family);

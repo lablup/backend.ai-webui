@@ -28,16 +28,7 @@ import '@vaadin/progress-bar/vaadin-progress-bar';
 import '@vaadin/item/vaadin-item';
 import '@vaadin/tooltip';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/dialog';
-import 'weightless/divider';
-import 'weightless/icon';
-import 'weightless/label';
 import 'weightless/select';
-import 'weightless/title';
-import 'weightless/textfield';
 
 import './backend-ai-dialog';
 import './backend-ai-list-status';
@@ -289,22 +280,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        .folder-action-buttons wl-button {
-          margin-right: 10px;
+        mwc-icon-button {
+          --mdc-icon-size: 24px;
         }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
+        mwc-icon {
+          --mdc-icon-size: 16px;
           padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-button.button {
-          width: 330px;
         }
 
         mwc-icon-button.tiny {
@@ -411,16 +392,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-typography-button-font-size: 12px;
         }
 
-        wl-button.goto {
-          margin: 0;
-          padding: 5px;
-          min-width: 0;
-        }
-
-        wl-button.goto:last-of-type {
-          font-weight: bold;
-        }
-
         mwc-button#readonly-btn {
           width: 150px;
         }
@@ -454,13 +425,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         .progress-item {
           padding: 10px 30px;
-        }
-
-        wl-button {
-          --button-bg: var(--paper-orange-50);
-          --button-bg-hover: var(--paper-orange-100);
-          --button-bg-active: var(--paper-orange-600);
-          color: var(--paper-orange-900);
         }
 
         backend-ai-dialog mwc-textfield,
@@ -500,23 +464,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-radio {
           --mdc-theme-secondary: var(--general-textfield-selected-color);
-        }
-
-        #textfields wl-textfield,
-        wl-label {
-          margin-bottom: 20px;
-        }
-
-        wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: black;
-        }
-        wl-checkbox {
-          --checkbox-color: var(--paper-orange-900);
-          --checkbox-color-checked: var(--paper-orange-900);
-          --checkbox-bg-checked: var(--paper-orange-900);
-          --checkbox-color-disabled-checked: var(--paper-orange-900);
-          --checkbox-bg-disabled-checked: var(--paper-orange-900);
         }
 
         #modify-permission-dialog {
@@ -921,7 +868,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
             <div class="horizontal layout center progress-item flex">
               ${this.currentUploadFile?.complete ? html`
-                <wl-icon>check</wl-icon>
+                <mwc-icon>check</mwc-icon>
               ` : html``}
               <div class="vertical layout progress-item" style="width:100%;">
                 <span>${this.currentUploadFile?.name}</span>
@@ -979,12 +926,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div>
-                <wl-button fab flat @click="${() => this._addTextField()}">
-                  <wl-icon>add</wl-icon>
-                </wl-button>
-                <wl-button fab flat @click="${() => this._removeTextField()}">
-                  <wl-icon>remove</wl-icon>
-                </wl-button>
+                <mwc-icon-button icon="add" @click="${() => this._addTextField()}"></mwc-icon-button>
+                <mwc-icon-button icon="remove" @click="${() => this._removeTextField()}"></mwc-icon-button>
               </div>
             </div>
           </div>
@@ -1254,7 +1197,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-item class="progress-item">
         <div>
           ${rowData.item.complete ? html`
-            <wl-icon>check</wl-icon>
+            <mwc-icon>check</mwc-icon>
           ` : html``}
         </div>
       </vaadin-item>
@@ -1623,7 +1566,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout vertical center-justified">
-        ${rowData.item.type == 'user' ? html`<wl-icon>person</wl-icon>` : html`<wl-icon class="fg green">group</wl-icon>`}
+        ${rowData.item.type == 'user' ? html`<mwc-icon>person</mwc-icon>` : html`<mwc-icon class="fg green">group</mwc-icon>`}
         </div>
       `, root
     );
