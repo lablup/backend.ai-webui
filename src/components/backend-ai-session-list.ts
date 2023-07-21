@@ -223,24 +223,8 @@ export default class BackendAISessionList extends BackendAIPage {
           height: calc(100vh - 265px);
         }
 
-        wl-icon.indicator {
-          --icon-size: 16px;
-        }
-
-        wl-icon.pagination {
-          color: var(--paper-grey-700);
-        }
-
         mwc-icon.pagination {
           color: var(--paper-grey-700);
-        }
-
-        wl-button.pagination[disabled] wl-icon.pagination {
-          color: var(--paper-grey-300);
-        }
-
-        wl-icon.warning {
-          color: red;
         }
 
         wl-expansion {
@@ -253,7 +237,7 @@ export default class BackendAISessionList extends BackendAIPage {
           width: 100%;
         }
 
-        wl-button.pagination {
+        mwc-button.pagination {
           width: 15px;
           height: 15px;
           padding: 10px;
@@ -266,20 +250,24 @@ export default class BackendAISessionList extends BackendAIPage {
           --button-color-disabled: var(--paper-grey-200);
         }
 
-        wl-button.pagination[disabled] {
+        mwc-button.pagination[disabled] {
           --button-shadow-color: transparent;
         }
 
-        wl-button.controls-running {
-          --button-fab-size: 32px;
-          --button-padding: 3px;
-          margin-right: 5px;
+
+        mwc-icon-button.controls-running {
+          --mdc-icon-size: 24px;
         }
 
         img.indicator-icon {
           width: 16px;
           height: 16px;
           padding-right: 5px;
+        }
+
+        mwc-checkbox {
+          margin: 0 0 0 -6px;
+          padding: 0;
         }
 
         mwc-icon {
@@ -395,10 +383,6 @@ export default class BackendAISessionList extends BackendAIPage {
           height: 20px;
         }
 
-        div.configuration wl-icon {
-          padding-right: 5px;
-        }
-
         span.subheading {
           color: #666;
           font-weight: bold;
@@ -422,27 +406,19 @@ export default class BackendAISessionList extends BackendAIPage {
           word-break: break-word;
         }
 
-        wl-button.multiple-action-button {
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
-        }
-
         mwc-button.multiple-action-button {
           --mdc-theme-primary:var(--paper-red-600);
           --mdc-theme-on-primary: white;
         }
 
-        wl-label {
-          width: 100%;
+        div.pagination-label {
           background-color: var(--paper-grey-500);
           min-width: 60px;
           font-size: 12px;
-          --label-font-family: 'Ubuntu', Roboto;
+          font-family: var(--general-font-family);
+          padding-top: 5px;
+          width:auto;
+          text-align:center;
         }
 
         lablup-progress-bar.usage {
@@ -1430,7 +1406,7 @@ export default class BackendAISessionList extends BackendAIPage {
    * Clear checked attributes.
    * */
   _clearCheckboxes() {
-    const elm = Array.from(this.shadowRoot?.querySelectorAll<Checkbox>('wl-checkbox.list-check') as NodeListOf<Checkbox>);
+    const elm = Array.from(this.shadowRoot?.querySelectorAll<Checkbox>('mwc-checkbox.list-check') as NodeListOf<Checkbox>);
     [...elm].forEach((checkbox) => {
       checkbox.removeAttribute('checked');
     });
@@ -2880,7 +2856,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
-            <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            <vaadin-grid-column frozen width="50px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
             </vaadin-grid-column>
           ` : html``}
           <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -2934,8 +2910,8 @@ export default class BackendAISessionList extends BackendAIPage {
           icon="navigate_before"
           ?disabled="${this.current_page === 1}"
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
-        <wl-label style="padding-top: 5px; width:auto; text-align:center;">
-        ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
+        <div class="pagination-label">
+        ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</div>
         <mwc-icon-button
           class="pagination"
           id="next-page"
