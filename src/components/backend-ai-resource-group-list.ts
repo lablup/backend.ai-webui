@@ -19,7 +19,6 @@ import 'weightless/card';
 import 'weightless/icon';
 import 'weightless/label';
 import 'weightless/select';
-import 'weightless/switch';
 import 'weightless/textarea';
 import 'weightless/textfield';
 import 'weightless/title';
@@ -115,19 +114,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           padding: 5px 15px 5px 20px;
         }
 
-        wl-button {
-          --button-bg: var(--paper-light-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.delete {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          margin-top: 20px;
-        }
-
         backend-ai-dialog {
           --component-min-width: 350px;
         }
@@ -141,15 +127,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         }
 
         backend-ai-dialog wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
+          --label-font-family:  var(--general-font-family);
           --label-color: #282828;
           margin-bottom: 5px;
-        }
-
-        backend-ai-dialog wl-switch {
-          margin-bottom: 20px;
-          --switch-color-checked: #29b6f6;
-          --switch-bg-checked: #bbdefb;
         }
 
         mwc-button[outlined] {
@@ -340,18 +320,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
-          <wl-button fab flat inverted
-            class="fg green"
-            @click=${() => this._launchDetailDialog(rowData.item)}
-          ><wl-icon>assignment</wl-icon></wl-button>
-          <wl-button fab flat inverted
-            class="fg blue"
-            @click=${() => this._launchModifyDialog(rowData.item)}
-          ><wl-icon>settings</wl-icon></wl-button>
-          <wl-button fab flat inverted
-            class="fg red"
-            @click=${() => this._launchDeleteDialog(rowData.item)}
-          ><wl-icon>delete</wl-icon></wl-button>
+          <mwc-button class="fg green" icon="assignment"
+            @click=${() => this._launchDetailDialog(rowData.item)}></mwc-button>
+          <mwc-button class="fg blue" icon="settings"
+            @click=${() => this._launchModifyDialog(rowData.item)}></mwc-button>
+          <mwc-button class="fg red" icon="delete"
+            @click=${() => this._launchDeleteDialog(rowData.item)}></mwc-button>
         </div>
       `, root
     );

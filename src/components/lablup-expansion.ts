@@ -49,7 +49,9 @@ export default class LablupExpansion extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-expansion name="${this.name}">
+      <link rel="stylesheet" href="resources/custom.css">
+      <wl-expansion ?name="${this.name}">
+        <slot name="title"></slot>
         <slot></slot>
       </wl-expansion>
     `;
