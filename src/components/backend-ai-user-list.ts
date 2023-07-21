@@ -78,6 +78,9 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Array}) users = [];
   @property({type: Object}) userInfo = Object();
   @property({type: Array}) userInfoGroups = [];
+  @property({type: String}) userEmail = '';
+  @property({type: Boolean}) openUserInfoModal = false;
+  @property({type: Boolean}) openUserSettingModal = false;
   @property({type: String}) condition = '';
   @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
   @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
@@ -309,35 +312,16 @@ export default class BackendAIUserList extends BackendAIPage {
     });
   }
 
-  async _editUserDetail(e) {
-    this.editMode = true;
-    return this._showUserDetailDialog(e);
-  }
-
-  async _showUserDetail(e) {
-    this.editMode = false;
-    return this._showUserDetailDialog(e);
-  }
-
-  async _showUserDetailDialog(e) {
+  async _openUserSettingModal(e) {
     const controls = e.target.closest('#controls');
-    const user_id = controls['user-id'];
-    let groupNames;
-    try {
-      const data = await this._getUserData(user_id);
-      this.userInfo = data.user;
-      groupNames = this.userInfo.groups.map((item) => {
-        return item.name;
-      });
-      this.userInfoGroups = groupNames;
-      this.userInfoDialog.show();
-    } catch (err) {
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    }
+    this.userEmail = controls['user-id'];
+    this.openUserSettingModal = true;
+  }
+
+  async _openUserInfoModal(e) {
+    const controls = e.target.closest('#controls');
+    this.userEmail = controls['user-id'];
+    this.openUserInfoModal = true;
   }
 
   _signoutUserDialog(e) {
@@ -682,13 +666,13 @@ export default class BackendAIUserList extends BackendAIPage {
           <wl-button fab flat inverted
             class="fg green"
             icon="assignment"
-            @click="${(e) => this._showUserDetail(e)}">
+            @click="${(e) => this._openUserInfoModal(e)}">
             <wl-icon>assignment</wl-icon>
           </wl-button>
           <wl-button fab flat inverted
             class="fg blue"
             icon="settings"
-            @click="${(e) => this._editUserDetail(e)}">
+            @click="${(e) => this._openUserSettingModal(e)}">
             <wl-icon>settings</wl-icon>
           </wl-button>
 
@@ -820,6 +804,18 @@ export default class BackendAIUserList extends BackendAIPage {
               @click="${() => this._signoutUser()}"></mwc-button>
         </div>
       </backend-ai-dialog>
+      <backend-ai-react-user-info-dialog value="${JSON.stringify({
+          open: this.openUserInfoModal,
+          userEmail: this.userEmail,
+        })}"
+        @cancel="${() => this.openUserInfoModal = false}"
+        ></backend-ai-react-user-info-dialog>
+      <backend-ai-react-user-setting-dialog value="${JSON.stringify({
+          open: this.openUserSettingModal,
+          userEmail: this.userEmail,
+        })}"
+        @cancel="${() => this.openUserSettingModal = false}"
+        ></backend-ai-react-user-setting-dialog>
       <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
         <div slot="title" class="horizontal center layout">
           <span style="margin-right:15px;">${_t('credential.UserDetail')}</span>

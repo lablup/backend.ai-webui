@@ -56,10 +56,6 @@ const StorageStatusPanel: React.FC<{
     ["vfolders", { deferredFetchKey }],
     () => {
       return baiClient.vfolder.list(currentProject?.id);
-    },
-    {
-      // for to render even this fail query failed
-      suspense: true,
     }
   );
   const createdCount = vfolders?.filter(

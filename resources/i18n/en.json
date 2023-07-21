@@ -384,6 +384,7 @@
   "button": {
     "Cancel": "Cancel",
     "Okay": "Okay",
+    "OK": "OK",
     "Create": "Create",
     "View": "View",
     "Edit": "Edit",
@@ -554,6 +555,7 @@
     "Status": "Status",
     "Name": "Name",
     "UserDetail": "User Detail",
+    "ModifyUserDetail": "Modify User Detail",
     "DescRequirePasswordChange": "Require password change?",
     "Association": "Association",
     "Domain": "Domain",
