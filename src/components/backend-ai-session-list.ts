@@ -2939,13 +2939,13 @@ export default class BackendAISessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+          <mwc-button class="warning fg red" @click="${() => this._terminateSessionWithCheck(true)}">
             ${_t('button.ForceTerminate')}
           </mwc-button>
           <span class="flex"></span>
-          <mwc-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          <mwc-button class="cancel" @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
           </mwc-button>
-          <mwc-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</mwc-button>
+          <mwc-button class="ok" raised @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
