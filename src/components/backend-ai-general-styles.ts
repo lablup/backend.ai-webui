@@ -9,6 +9,7 @@ export const BackendAiStyles = [
       -webkit-box-sizing: border-box;
       -moz-box-sizing: border-box;
       box-sizing: border-box;
+      --general-text-color: #222222;
       --general-menu-background-color: transparent;
       --general-menu-background-color-less: rgba(255, 255, 255, 0.6);
       --general-menu-background-border: rgba(23, 23, 23, 1);
@@ -80,7 +81,7 @@ export const BackendAiStyles = [
       --lumo-font-family: var(--general-font-family);
       font-weight: 400;
       font-size: 14px;
-      color: #222222;
+      color: var(--general-text-color);
       margin: 0;
       overflow-x: hidden;
       word-break: keep-all;

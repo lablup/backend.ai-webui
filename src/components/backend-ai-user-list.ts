@@ -21,17 +21,11 @@ import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/snackbar';
-import 'weightless/switch';
-import 'weightless/textarea';
-import 'weightless/textfield';
-
 import '@material/mwc-button';
 import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 import '@material/mwc-switch';
+import '@material/mwc-icon-button';
 import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
@@ -135,22 +129,13 @@ export default class BackendAIUserList extends BackendAIPage {
           height: calc(100vh - 229px);
         }
 
-        backend-ai-dialog h4,
-        backend-ai-dialog wl-label {
+        backend-ai-dialog h4 {
           font-size: 14px;
           padding: 5px 15px 5px 12px;
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
           border-bottom: 1px solid #DDD;
-        }
-
-        wl-label {
-          font-family: Roboto;
-        }
-
-        wl-switch {
-          margin-right: 15px;
         }
 
         vaadin-item {
@@ -173,32 +158,19 @@ export default class BackendAIUserList extends BackendAIPage {
           max-width: 322px;
         }
 
-        backend-ai-dialog wl-textfield,
-        backend-ai-dialog wl-textarea {
-          padding-left: 15px;
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
-        }
+         mwc-textfield.display-textfield {
+           --mdc-text-field-disabled-ink-color: var(--general-text-color);
+         }
 
         backend-ai-dialog li {
           font-family: var(--general-font-family);
           font-size: 16px;
         }
 
-        wl-textfield:not([disabled]),
-        wl-textarea:not([disabled]) {
+        mwc-textfield:not([disabled]),
+        mwc-textarea:not([disabled]) {
           margin-bottom: 15px;
           width: 280px;
-        }
-
-        wl-button {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-          color: var(--paper-green-900);
         }
 
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
@@ -679,24 +651,13 @@ export default class BackendAIUserList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
           .user-id="${rowData.item.email}">
-          <wl-button fab flat inverted
-            class="fg green"
-            icon="assignment"
-            @click="${(e) => this._showUserDetail(e)}">
-            <wl-icon>assignment</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            class="fg blue"
-            icon="settings"
-            @click="${(e) => this._editUserDetail(e)}">
-            <wl-icon>settings</wl-icon>
-          </wl-button>
-
+          <mwc-icon-button class="fg green" icon="assignment"
+                           @click="${(e) => this._showUserDetail(e)}"></mwc-icon-button>
+          <mwc-icon-button class="fg blue" icon="settings"
+                           @click="${(e) => this._editUserDetail(e)}"></mwc-icon-button>
           ${globalThis.backendaiclient.is_superadmin && this._isActive() ? html`
-            <wl-button fab flat inverted class="fg red controls-running"
-                               @click="${(e) => this._signoutUserDialog(e)}">
-                               <wl-icon>delete_forever</wl-icon>
-            </wl-button>
+            <mwc-icon-button class="fg red controls-running" icon="delete_forever"
+                             @click="${(e) => this._signoutUserDialog(e)}"></mwc-icon-button>
           ` : html``}
         </div>
       `, root
@@ -829,21 +790,21 @@ export default class BackendAIUserList extends BackendAIPage {
           <div>
             <h4>${_text('credential.Information')}</h4>
             <div role="listbox" class="center vertical layout">
-              <mwc-textfield
+              <mwc-textfield class="display-textfield"
                   disabled
                   label="${_text('credential.UserID')}"
                   pattern="^[a-zA-Z0-9_-]+$"
                   value="${this.userInfo.email}"
                   maxLength="64"
                   helper="${_text('maxLength.64chars')}"></mwc-textfield>
-              <mwc-textfield
+              <mwc-textfield class="display-textfield"
                   ?disabled=${!this.editMode}
                   label="${_text('credential.UserName')}"
                   id="username"
                   value="${this.userInfo.username}"
                   maxLength="64"
                   helper="${_text('maxLength.64chars')}"></mwc-textfield>
-              <mwc-textfield
+              <mwc-textfield class="display-textfield"
                   ?disabled=${!this.editMode}
                   label="${_text('credential.FullName')}"
                   id="full_name"
@@ -852,7 +813,7 @@ export default class BackendAIUserList extends BackendAIPage {
                   helper="${_text('maxLength.64chars')}"></mwc-textfield>
               ${this.editMode ? html`
                 <div class="horizontal layout password-area">
-                  <mwc-textfield
+                  <mwc-textfield class="display-textfield"
                       type="password"
                       id="password"
                       autoValidate
@@ -866,7 +827,7 @@ export default class BackendAIUserList extends BackendAIPage {
                   </mwc-icon-button-toggle>
                 </div>
                 <div class="horizontal layout password-area">
-                  <mwc-textfield
+                  <mwc-textfield class="display-textfield"
                       type="password"
                       id="confirm"
                       autoValidate
@@ -879,7 +840,7 @@ export default class BackendAIUserList extends BackendAIPage {
                       @click="${(e) => this._togglePasswordVisibility(e.target)}">
                   </mwc-icon-button-toggle>
                 </div>
-                <mwc-textarea
+                <mwc-textarea class="display-textfield"
                     type="text"
                     id="description"
                     label="${_text('credential.Description')}"
@@ -908,16 +869,16 @@ export default class BackendAIUserList extends BackendAIPage {
                   </div>
                 ` : html``}
                 ` : html`
-                <mwc-textfield
+                <mwc-textfield class="display-textfield"
                     disabled
                     label="${_text('credential.DescActiveUser')}"
                     value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                <mwc-textfield
+                <mwc-textfield class="display-textfield"
                     disabled
                     label="${_text('credential.DescRequirePasswordChange')}"
                     value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
                 ${this.totpSupported ? html`
-                  <mwc-textfield
+                  <mwc-textfield class="display-textfield"
                       disabled
                       label="${_text('webui.menu.TotpActivated')}"
                       value="${this.userInfo.totp_activated ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
@@ -929,16 +890,16 @@ export default class BackendAIUserList extends BackendAIPage {
           <div>
             <h4>${_text('credential.Association')}</h4>
             <div role="listbox" style="margin: 0;">
-              <wl-textfield
+              <mwc-textfield class="display-textfield"
                 label="${_t('credential.Domain')}"
                 disabled
                 value="${this.userInfo.domain_name}">
-              </wl-textfield>
-              <wl-textfield
+              </mwc-textfield>
+              <mwc-textfield class="display-textfield"
                 label="${_t('credential.Role')}"
                 disabled
                 value="${this.userInfo.role}">
-              </wl-textfield>
+              </mwc-textfield>
             </div>
             <h4>${_text('credential.ProjectAndGroup')}</h4>
             <div role="listbox" style="margin: 0;">
