@@ -22,13 +22,15 @@ import 'weightless/expansion';
 import 'weightless/icon';
 import {Textfield} from 'weightless/textfield';
 
+import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-button';
+import '@material/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
@@ -430,6 +432,11 @@ export default class BackendAISessionList extends BackendAIPage {
           --button-bg-active-flat: var(--paper-red-600);
         }
 
+        mwc-button.multiple-action-button {
+          --mdc-theme-primary:var(--paper-red-600);
+          --mdc-theme-on-primary: white;
+        }
+
         wl-label {
           width: 100%;
           background-color: var(--paper-grey-500);
@@ -457,6 +464,7 @@ export default class BackendAISessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
+          font-family: var(--general-font-family);
         }
 
         .no-mount {
@@ -2274,11 +2282,6 @@ export default class BackendAISessionList extends BackendAIPage {
             <div class="layout horizontal center configuration">
               ${rowData.item.mounts.length > 0 ? html`
                 <mwc-icon class="fg green indicator">folder_open</mwc-icon>
-                <span class="mount-button" @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
-                  @mouseleave="${() => this._removeMountedFolderDropdown()}">
-                  ${mountedFolderList.join(', ')}
-                </span>
-                <wl-icon class="fg green indicator">folder_open</wl-icon>
                 <button class="mount-button"
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}">
@@ -2704,7 +2707,7 @@ export default class BackendAISessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <wl-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></wl-checkbox>
+            <mwc-checkbox class="list-check" style="--checkbox-size:12px;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
         `, root
       );
     } else {
@@ -2860,12 +2863,8 @@ export default class BackendAISessionList extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
-          <mwc-icon-button icon="delete" class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;"
-                           @click="${() => this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}</mwc-icon-button>
-          <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
-            <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            ${_t('session.Terminate')}
-          </wl-button>
+          <mwc-button icon="delete" class="multiple-action-button" raised style="margin:8px;"
+                           @click="${() => this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}</mwc-button>
         </div>
         <span class="flex"></span>
         <div class="vertical layout" style="display:none">
