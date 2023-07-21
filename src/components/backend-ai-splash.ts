@@ -6,9 +6,6 @@ import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
-import 'weightless/button';
-import 'weightless/icon';
-
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
 import '@material/mwc-icon-button';
@@ -25,7 +22,7 @@ import '@material/mwc-icon-button';
  ...
  this.shadowRoot.querySelector('backend-ai-splash').show()
  ```
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-splash
  */
 @customElement('backend-ai-splash')
@@ -56,8 +53,7 @@ export default class BackendAISplash extends LitElement {
 
         #splash-panel {
           --component-width: 350px;
-          --component-height: 350px;
-          --component-border-radius: 10px;
+          --component-height: 320px;
         }
 
         .splash-header {
@@ -66,7 +62,7 @@ export default class BackendAISplash extends LitElement {
           background-size: contain;
           background-repeat: no-repeat;
           background-position: left top;
-          background-image: url("manifest/backend.ai-text.svg");
+          background-image: url("/manifest/backend.ai-text.svg");
         }
 
         ul {

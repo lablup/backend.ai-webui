@@ -10,10 +10,6 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/textfield';
-
 import '@material/mwc-button';
 import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
@@ -220,10 +216,6 @@ export default class BackendAISummary extends BackendAIPage {
           padding-left: 10px;
           padding-right: 10px;
           text-align: center;
-        }
-
-        wl-icon {
-          --icon-size: 24px;
         }
 
         .invitation_folder_name {
