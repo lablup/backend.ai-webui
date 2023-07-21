@@ -353,8 +353,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal end-justified flex layout distancing">
           <mwc-button
-              unelevated
-              fullwidth
+              raised
+              class="full"
               id="create-policy-button"
               icon="check"
               label="${_t('button.Update')}"

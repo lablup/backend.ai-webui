@@ -220,6 +220,10 @@ export const BackendAIWebUIStyles = [
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
+    mwc-button.full {
+      width: 100%;
+    }
+
     .page {
       display: none;
     }
