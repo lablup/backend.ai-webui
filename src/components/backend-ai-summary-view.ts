@@ -11,9 +11,9 @@ import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@material/mwc-button';
-import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-select';
 
 import './lablup-activity-panel';
 import './backend-ai-resource-monitor';
@@ -155,25 +155,6 @@ export default class BackendAISummary extends BackendAIPage {
 
         a:hover {
           color: #3e872d;
-        }
-
-        mwc-linear-progress {
-          width: 190px;
-          height: 5px;
-          border-radius: 0;
-          --mdc-theme-primary: #3677eb;
-        }
-
-        mwc-linear-progress.start-bar {
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-          --mdc-theme-primary: #3677eb;
-        }
-
-        mwc-linear-progress.end-bar {
-          border-bottom-left-radius: 3px;
-          border-bottom-right-radius: 3px;
-          --mdc-theme-primary: #98be5a;
         }
 
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
