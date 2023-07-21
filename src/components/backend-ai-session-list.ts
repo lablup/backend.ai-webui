@@ -323,6 +323,9 @@ export default class BackendAISessionList extends BackendAIPage {
           --component-width: 390px;
         }
 
+        #terminate-selected-sessions-dialog {
+          --component-width: 390px;
+        }
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
