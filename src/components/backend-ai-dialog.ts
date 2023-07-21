@@ -30,7 +30,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  @element backend-ai-dialog
  */
 @customElement('backend-ai-dialog')
-export default class BackendAiDialog extends LitElement {
+export default class BackendAIDialog extends LitElement {
   @property({type: Boolean}) fixed = false;
   @property({type: Boolean}) narrowLayout = false;
   @property({type: Boolean}) scrollable = false;
@@ -251,6 +251,6 @@ export default class BackendAiDialog extends LitElement {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-dialog': BackendAiDialog;
+    'backend-ai-dialog': BackendAIDialog;
   }
 }
