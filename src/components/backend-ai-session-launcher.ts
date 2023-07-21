@@ -387,7 +387,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 10px;
         }
 
-        .environment-variables-container wl-textfield input {
+        .environment-variables-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -539,10 +539,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         wl-button > span {
           margin-left: 5px;
           font-weight: normal;
-        }
-
-        wl-icon {
-          --icon-size: 20px;
         }
 
         wl-expansion {
@@ -736,10 +732,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           overflow: hidden;
         }
 
-        mwc-button > mwc-icon {
-          display: none;
-        }
-
         p.title {
           padding: 15px 15px 0px;
           margin-top: 0;
@@ -822,9 +814,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 0;
         }
 
-        .environment-variables-container wl-textfield {
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222;
+        .environment-variables-container mwc-textfield {
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-text-field-disabled-ink-color: #222;
         }
 
         [name='resource-group'] mwc-list-item {
