@@ -10,19 +10,17 @@ import {customElement, property, query, state} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
-import '@material/mwc-list/mwc-list';
+import {TextField} from '@material/mwc-textfield';
+import '@material/mwc-button';
+import '@material/mwc-select';
+import '@material/mwc-list';
+import '@material/mwc-icon';
 
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-sort-column';
 import '@vaadin/icons/vaadin-icons';
 import '@vaadin/item/vaadin-item';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
 import 'weightless/checkbox';
 import 'weightless/label';
 
@@ -117,13 +115,8 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           padding: 0;
         }
 
-        wl-button {
-          --button-fab-size: 40px;
-          margin-right: 5px;
-        }
-
-        wl-button[disabled].fg {
-          color: rgba(0,0,0,0.4) !important;
+        mwc-icon.indicator {
+          --mdc-icon-size: 16px;
         }
 
         vaadin-item {
@@ -142,6 +135,10 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         }
 
         div.configuration wl-icon {
+          padding-right: 5px;
+        }
+
+        div.configuration mwc-icon {
           padding-right: 5px;
         }
 
@@ -237,7 +234,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
                     .items="${this.resourcePolicy}">
           <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center" .renderer="${this._indexRenderer}"></vaadin-grid-column>
           <vaadin-grid-sort-column resizable header="${_t('resourcePolicy.Name')}" path="name" .renderer="${this._boundPolicyNameRenderer}"></vaadin-grid-sort-column>
-          <vaadin-grid-column width="150px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
+          <vaadin-grid-column width="180px" resizable header="${_t('resourcePolicy.Resources')}" .renderer="${this._boundResourceRenderer}">
           </vaadin-grid-column>
           <vaadin-grid-column resizable header="${_t('resourcePolicy.Concurrency')}" .renderer="${this._boundConcurrencyRenderer}">
           </vaadin-grid-column>
@@ -430,15 +427,16 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
    */
   resourceRenderer(root, column?, rowData?) {
     render(
+      // language=HTML
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">developer_board</wl-icon>
+            <mwc-icon class="fg green indicator">developer_board</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cpu, false, 'cpu')}</span>
             <span class="indicator">cores</span>
           </div>
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">memory</wl-icon>
+            <mwc-icon class="fg green indicator">memory</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.mem, false, 'mem')}</span>
             <span class="indicator">GB</span>
           </div>
@@ -447,7 +445,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_device'] ?
     html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">view_module</wl-icon>
+            <mwc-icon class="fg green indicator">view_module</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_device, false, 'cuda_device')}</span>
             <span class="indicator">GPU</span>
           </div>
@@ -455,7 +453,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         ${rowData.item.total_resource_slots['cuda_shares'] ?
     html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">view_module</wl-icon>
+            <mwc-icon class="fg green indicator">view_module</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.total_resource_slots.cuda_shares, false, 'cuda_shares')}</span>
             <span class="indicator">fGPU</span>
           </div>
@@ -463,12 +461,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
         </div>
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">cloud_queue</wl-icon>
+            <mwc-icon class="fg green indicator">cloud_queue</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_size, true, 'max_vfolder_size')}</span>
             <span class="indicator">GB</span>
           </div>
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green indicator">folder</wl-icon>
+            <mwc-icon class="fg green indicator">folder</mwc-icon>
             <span>${this._displayResourcesByResourceUnit(rowData.item.max_vfolder_count, false, 'max_vfolder_count')}</span>
             <span class="indicator">Folders</span>
           </div>
@@ -502,14 +500,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center" .policy-name="${rowData.item.name}">
-          <wl-button fab flat inverted class="fg blue controls-running" ?disabled=${!this.is_super_admin}
+          <mwc-button icon="settings" class="fg blue controls-running" ?disabled=${!this.is_super_admin}
                       @click="${(e) => this._launchResourcePolicyDialog(e)}">
-            <wl-icon>settings</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted class="fg red controls-running" ?disabled=${!this.is_super_admin}
+          </mwc-button>
+          <mwc-button icon="delete" class="fg red controls-running" ?disabled=${!this.is_super_admin}
                       @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}">
-            <wl-icon>delete</wl-icon>
-          </wl-button>
+          </mwc-button>
       `, root
     );
   }
