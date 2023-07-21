@@ -67,8 +67,8 @@ export default class BackendAISessionView extends BackendAIPage {
   @query('#running-jobs') runningJobs!: BackendAISessionList;
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
   @query('#export-file-name') exportFileNameInput!: TextField;
-  @query('#date-from') dateFromInput!: Textfield;
-  @query('#date-to') dateToInput!: Textfield;
+  @query('#date-from') dateFromInput!: TextField;
+  @query('#date-to') dateToInput!: TextField;
   @query('#dropdown-menu') dropdownMenu!: Menu;
   @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
 
