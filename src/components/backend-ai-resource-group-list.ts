@@ -132,12 +132,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --component-min-width: 350px;
         }
 
-        backend-ai-dialog wl-textarea,
-        backend-ai-dialog wl-select {
-          margin-bottom: 20px;
-          --input-font-family: var(--general-font-family);
-        }
-
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-textarea {
           width: 100%;
@@ -156,13 +150,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin-bottom: 20px;
           --switch-color-checked: #29b6f6;
           --switch-bg-checked: #bbdefb;
-        }
-
-        wl-select {
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
         }
 
         mwc-button[outlined] {
@@ -231,15 +218,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         .scheduler-option-value {
           font-size: 16px;
           font-weight: 700;
-        }
-
-        #resource-group-detail-dialog wl-textarea {
-          margin-bottom: 0px;
-          --input-border-width: 0;
-          --input-padding-top-bottom: 0px;
-          --input-padding-left-right: 12px;
-          --input-font-size: 0.75rem;
-          --textarea-height: 100px;
         }
       `
     ];
@@ -990,8 +968,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <h4>
                 ${_t('resourceGroup.Description')}
               </h4>
-              <wl-textarea readonly value="${this.resourceGroupInfo?.description ?? ''}">
-              </wl-textarea>
+              <mwc-textarea readonly value="${this.resourceGroupInfo?.description ?? ''}">
+              </mwc-textarea>
             </div>
           </div>` : ``
 }
