@@ -222,10 +222,6 @@ export const BackendAiStyles = [
       --selected-item-text-transform: none;
     }
 
-    wl-icon.tiny {
-      --icon-size: 12px;
-    }
-
     div.card {
       display: block;
       background: white;

@@ -7,6 +7,7 @@ import {css, CSSResultGroup, TemplateResult, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 
+import '@vaadin/accordion';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-tree-toggle';
 import '@vaadin/grid/vaadin-grid-selection-column';
@@ -227,14 +228,14 @@ export default class BackendAISessionList extends BackendAIPage {
           color: var(--paper-grey-700);
         }
 
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-          --expansion-content-padding: 0;
-          --expansion-header-padding: 5px;
+        vaadin-accordion {
           width: 100%;
+        }
+
+        vaadin-accordion-heading {
+          padding-left: 15px;
+          border-bottom: 1px solid #ddd;
+          font-size: 14px;
         }
 
         mwc-button.pagination {
@@ -323,9 +324,11 @@ export default class BackendAISessionList extends BackendAIPage {
           --component-width: 390px;
         }
 
-        #terminate-selected-sessions-dialog {
+        #terminate-selected-sessions-dialog,
+        #terminate-session-dialog {
           --component-width: 390px;
         }
+
         @media screen and (max-width: 899px) {
           #work-dialog,
           #work-dialog.mini_ui {
@@ -1614,47 +1617,49 @@ export default class BackendAISessionList extends BackendAIPage {
               </mwc-list>
             </div>
           </div>
-          <wl-expansion name="predicates" open>
-          <div slot="title" class="horizontal layout center start-justified">
-            ${failedCount > 0 ? html`
-              <mwc-icon class="fg red">cancel</mwc-icon>
-              ` : html`
-              <mwc-icon class="fg green">check_circle</mwc-icon>
-            `}
-            Predicate Checks
-          </div>
-          <span slot="description">
-            ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
-            ${passedCount + ` Passed`}
-          </span>
-          <mwc-list>
+          <vaadin-accordion>
+            <vaadin-accordion-panel summary="Predicates">
+              <div slot="title" class="horizontal layout center start-justified">
+                ${failedCount > 0 ? html`
+                  <mwc-icon class="fg red">cancel</mwc-icon>
+                  ` : html`
+                  <mwc-icon class="fg green">check_circle</mwc-icon>
+                `}
+                Predicate Checks
+              </div>
+              <span slot="description">
+                ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
+                ${passedCount + ` Passed`}
+              </span>
+              <mwc-list>
           ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
     return html`
           ${item.name === 'reserved_time' ? html`
-              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
-                <span>${item.name}</span>
-                <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
-                <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
-              </mwc-list-item>` : html`
-              <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
-                <span>${item.name}</span>
-                <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
-                <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
-              </mwc-list-item>`}
-              <li divider role="separator"></li>`;
+                <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
+                  <span>${item.name}</span>
+                  <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
+                  <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
+                </mwc-list-item>` : html`
+                <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
+                  <span>${item.name}</span>
+                  <span slot="secondary" class="predicate-check-comment">${item.msg}</span>
+                  <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
+                </mwc-list-item>`}
+                <li divider role="separator"></li>`;
   })}
           ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
             return html`
-              <mwc-list-item graphic="icon" noninteractive>
-                <span style="padding-left:3px;">${item.name}</span>
-                <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked
-                </mwc-icon>
-              </mwc-list-item>
-              <li divider role="separator"></li>
+                <mwc-list-item graphic="icon" noninteractive>
+                  <span style="padding-left:3px;">${item.name}</span>
+                  <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked
+                  </mwc-icon>
+                </mwc-list-item>
+                <li divider role="separator"></li>
             `;
           })}
-          </mwc-list>
-        </wl-expansion>
+              </mwc-list>
+            </vaadin-accordion-panel>
+          </vaadin-accordion>
         </div>
     `);
     } else if (tmpSessionStatus.hasOwnProperty('error')) {

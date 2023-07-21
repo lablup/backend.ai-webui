@@ -64,6 +64,7 @@ export default class LablupNotification extends LitElement {
         mwc-snackbar {
           --mdc-snackbar-label-color: yellow;
           --mdc-snackbar-action-color: #64dc17;
+          --mdc-typography-body2-font-family: var(--general-font-family);
           position: fixed;
           right: 20px;
         }
