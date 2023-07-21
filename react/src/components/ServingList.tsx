@@ -1,14 +1,13 @@
-import { Space, Table, TableProps, Tag } from "antd";
+import { Form, Space, Table, TableProps, Tag } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { Link, useNavigate } from "react-router-dom";
-
+import ImageEnvironmentSelect from "./ImageEnvironmentSelect";
 
 // TODO: Need to implement wireframe of serving list using esm client
-
 
 // type Session = NonNullable<
 //   ServingListQuery["response"]["compute_session_list"]
@@ -53,69 +52,68 @@ const ServingList: React.FC<ServingListProps> = ({
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`, selectedRows);
-    }
-  }
-  
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
+        selectedRows
+      );
+    },
+  };
+
   const columns: ColumnsType<DataType> = [
     {
-      title: 'Endpoint ID',
-      dataIndex: 'name',
-      key: 'name',
-      render: text => <Link to={'/serving/'+text}>{text}</Link>,
+      title: "Endpoint ID",
+      dataIndex: "name",
+      key: "name",
+      render: (text) => <Link to={"/serving/" + text}>{text}</Link>,
     },
     {
-      title: 'Image',
-      dataIndex: 'image',
-      key: 'image',
+      title: "Image",
+      dataIndex: "image",
+      key: "image",
     },
     {
-      title: 'Desired Session Count',
-      dataIndex: 'desiredSessionCount',
-      key: 'desiredSessionCount',
+      title: "Desired Session Count",
+      dataIndex: "desiredSessionCount",
+      key: "desiredSessionCount",
     },
     {
-      title: 'Routings',
-      dataIndex: 'routings',
-      key: 'routings',
+      title: "Routings",
+      dataIndex: "routings",
+      key: "routings",
     },
     {
-      title: 'Session Owner',
-      dataIndex: 'sessionOwner',
-      key: 'sessionOwner',
+      title: "Session Owner",
+      dataIndex: "sessionOwner",
+      key: "sessionOwner",
     },
     {
-      title: 'Open To Public',
-      dataIndex: 'isOpenToPublic',
-      key: 'isOpenToPublic',
-      render: (isPublic) => (
-        isPublic ? <CheckOutlined />
-          : <CloseOutlined />
-      )
+      title: "Open To Public",
+      dataIndex: "isOpenToPublic",
+      key: "isOpenToPublic",
+      render: (isPublic) => (isPublic ? <CheckOutlined /> : <CloseOutlined />),
     },
   ];
 
-
-// dummy data
+  // dummy data
   const data: DataType[] = [
     {
-      key: '1',
-      name: 'Test-session',
-      endpointId: 'f95e5a5c-7087-42c0-aeb9-7bd71e023cad',
-      image: 'allinone:7080/repo/ngc-pytorch:22.02-py3',
+      key: "1",
+      name: "Test-session",
+      endpointId: "f95e5a5c-7087-42c0-aeb9-7bd71e023cad",
+      image: "allinone:7080/repo/ngc-pytorch:22.02-py3",
       desiredSessionCount: 1,
       routings: 1,
-      sessionOwner: 'John Doe',
+      sessionOwner: "John Doe",
       isOpenToPublic: true,
     },
     {
-      key: '2',
-      name: 'AI-Character-service',
-      endpointId: 'abcdefgh-8888-42c0-aeb9-1e027bd73cad',
-      image: 'allinone:7080/repo/ngc-pytorch:22.02-py3',
+      key: "2",
+      name: "AI-Character-service",
+      endpointId: "abcdefgh-8888-42c0-aeb9-1e027bd73cad",
+      image: "allinone:7080/repo/ngc-pytorch:22.02-py3",
       desiredSessionCount: 3,
       routings: 3,
-      sessionOwner: 'John Doe',
+      sessionOwner: "John Doe",
       isOpenToPublic: false,
     },
   ];
@@ -124,11 +122,17 @@ const ServingList: React.FC<ServingListProps> = ({
     <>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
+      <Form style={{ width: 500 }} layout="vertical" labelCol={{ span: 5 }}>
+        <ImageEnvironmentSelect />
+      </Form>
       <Table
         rowSelection={{
-            type: 'radio',
-            ...rowSelection}}
-        columns={columns} dataSource={data} />
+          type: "radio",
+          ...rowSelection,
+        }}
+        columns={columns}
+        dataSource={data}
+      />
     </>
   );
 };
