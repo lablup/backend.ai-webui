@@ -49,7 +49,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  ...
  </backend-ai-settings-view>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 

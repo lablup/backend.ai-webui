@@ -10,6 +10,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {Button} from '@material/mwc-button';
+import '@material/mwc-button';
 import {Checkbox} from '@material/mwc-checkbox/mwc-checkbox';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
@@ -3386,11 +3387,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <link rel="stylesheet" href="resources/custom.css">
-      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
-                 @click="${() => this._launchSessionDialog()}">
-        <wl-icon>power_settings_new</wl-icon>
-        <span>${_t('session.launcher.Start')}</span>
-      </wl-button>
+      <mwc-button class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
+                  icon="power_settings_new"
+                  @click="${() => this._launchSessionDialog()}">${_t('session.launcher.Start')}</mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent @dialog-closed="${() => this._toggleScheduleTime(true)}">
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
@@ -3507,13 +3506,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.value}"></mwc-textfield>
                     `)}
                   </div>
                 </div>
@@ -4033,13 +4032,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                      <nwc-textfield disabled value="${item.value}"></nwc-textfield>
                     `)}
                   </div>
                 </div>

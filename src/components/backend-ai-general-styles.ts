@@ -290,11 +290,6 @@ export const BackendAiStyles = [
       }
     }
 
-    wl-button.primary-action[raised] {
-      background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      height: 20px;
-    }
-
     mwc-multi-select {
       --mdc-select-min-width: 100px; /* Fallback to apply width */
     }
@@ -305,10 +300,9 @@ export const BackendAiStyles = [
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --mdc-theme-primary: transparent; /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-primary:  var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
     }
-
 
     mwc-button.operation {
       margin: 0px 5px;
@@ -657,47 +651,47 @@ export const BackendAiStyles = [
 
     .fg.red {
       color: var(--paper-red-400) !important;
-      --mdc-theme-on-primary: var(--paper-red-400) !important;
+      --mdc-theme-primary: var(--paper-red-400) !important;
     }
 
     .fg.yellow {
       color: var(--paper-yellow-400) !important;
-      --mdc-theme-on-primary: var(--paper-yellow-400) !important;
+      --mdc-theme-primary: var(--paper-yellow-400) !important;
     }
 
     .fg.orange {
       color: var(--paper-amber-400) !important;
-      --mdc-theme-on-primary: var(--paper-amber-400) !important;
+      --mdc-theme-primary: var(--paper-amber-400) !important;
     }
 
     .fg.green {
       color: var(--paper-green-400) !important;
-      --mdc-theme-on-primary: var(--paper-green-400) !important;
+      --mdc-theme-primary: var(--paper-green-400) !important;
     }
 
     .fg.teal {
       color: var(--paper-teal-400) !important;
-      --mdc-theme-on-primary: var(--paper-teal-400) !important;
+      --mdc-theme-primary: var(--paper-teal-400) !important;
     }
 
     .fg.cyan {
       color: var(--paper-cyan-400) !important;
-      --mdc-theme-on-primary: var(--paper-cyan-400) !important;
+      --mdc-theme-primary: var(--paper-cyan-400) !important;
     }
 
     .fg.lime {
       color: var(--paper-lime-400) !important;
-      --mdc-theme-on-primary: var(--paper-lime-400) !important;
+      --mdc-theme-primary: var(--paper-lime-400) !important;
     }
 
     .fg.pink {
       color: var(--paper-pink-a200) !important;
-      --mdc-theme-on-primary: var(--paper-pink-a200) !important;
+      --mdc-theme-primary: var(--paper-pink-a200) !important;
     }
 
     .fg.purple {
       color: var(--paper-purple-400) !important;
-      --mdc-theme-on-primary: var(--paper-purple-400) !important;
+      --mdc-theme-primary: var(--paper-purple-400) !important;
     }
 
     /* Layout */
@@ -719,7 +713,6 @@ export const BackendAiStyles = [
       margin: 15px;
     }
 
-    wl-card > h4,
     div.card > h4 {
       font-weight: 200;
     }
@@ -763,7 +756,7 @@ export const BackendAiStyles = [
     lablup-progress-bar {
       --progress-bar-width: 186px;
       --progress-bar-height: 17px;
-      --progres-bar-font-family: var(--general-font-family);
+      --progress-bar-font-family: var(--general-font-family);
       --progress-bar-border-radius: 3px;
       --progress-bar-font-color-inverse: white;
       --progress-bar-font-color: black;
