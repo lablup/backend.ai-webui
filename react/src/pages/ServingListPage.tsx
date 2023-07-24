@@ -4,8 +4,10 @@ import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import ServingList from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
+import { useQuery as useTanQuery } from "react-query";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
+import { baiSignedRequestWithPromise } from "../helper";
 
 type TabKey = "running" | "finished" | "others";
 
@@ -22,7 +24,28 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     "current" | "next"
   >("next");
 
-  // console.log(compute_session_list?.items[0].);
+  // const listQuery = useTanQuery(
+  //   ["modelService"], // key
+  //   () => {}, // async function
+  //   {
+  //     // for to render even this query fails
+  //   }
+  // );
+
+  const {data: modelServiceList } = useTanQuery({
+    queryKey: "modelService",
+    queryFn: () => {
+      return baiSignedRequestWithPromise({
+        method: "GET",
+        url: "/services",
+        client: baiClient,
+      });
+    },
+    // for to render even this query fails
+    suspense: true,
+    }
+  );
+
   return (
     <>
       <Flex
@@ -123,6 +146,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               projectId={curProject.id}
               status={[]}
               extraFetchKey={""}
+              dataSource={modelServiceList}
             />
           </Suspense>
         </Flex>
