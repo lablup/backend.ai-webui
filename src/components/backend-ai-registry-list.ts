@@ -455,11 +455,24 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
+   * Validate whether the url input field is a valid http or https url format
+   */
+  private _validateUrlInput() {
+    const registryUrl = this._urlInput.value;
+    try {
+      const validatedUrl = new URL(registryUrl);
+        return validatedUrl.protocol === 'http:' || validatedUrl.protocol === 'https:';
+    } catch (err) {
+      return false;
+    }
+   }
+
+  /**
    * Hide/Show validation msg on url input field in registry configuration dialog
    */
-  private _toggleValidationMsgOnUrlInput() {
-    this._registryUrlValidationMsg.style.display = this._urlInput.valid ? 'none' : 'block';
-  }
+    private _toggleValidationMsgOnUrlInput() {
+      this._registryUrlValidationMsg.style.display = this._validateUrlInput() ? 'none' : 'block';
+    }
 
   /**
    * Hide/Show validation msg on hostname input in registry configuration dialog
@@ -745,7 +758,6 @@ class BackendAIRegistryList extends BackendAIPage {
             class="helper-text"
             label="${_t('registry.RegistryURL')}"
             required
-            pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
             value="${this._registryList[this._selectedIndex]?.[''] || ''}"
             @click=${()=>this._toggleValidationMsgOnUrlInput()}
             @change=${()=>this._toggleValidationMsgOnUrlInput()}
