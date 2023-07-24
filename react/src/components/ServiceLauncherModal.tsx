@@ -7,19 +7,21 @@ import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelect from "./ImageEnvironmentSelectFormItems";
 import FlexActivityIndicator from "./FlexActivityIndicator";
 
-interface ServiceLauncherProps extends ModalProps {
+interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
+  onRequestClose: (success?: boolean) => void;
 }
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
+  onRequestClose,
   ...modalProps
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Content of the modal");
+  const [form] = Form.useForm();
   // const scalingGroupList = use;
   // modelStorageList: Record<string, any>[];
   // environmentList: Record<string, any>[];
@@ -29,40 +31,35 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   // npu?: number | string;
   // shmem?: number | string;
 
-  const showModal = () => {
-    setOpen(true);
-  };
-
   // Apply any operation after clicking OK button
   const handleOk = () => {
-    setModalText("Lorem Ipsum");
-    setConfirmLoading(true);
-    // TODO: send request to start service to manager server
-    setTimeout(() => {
-      setOpen(false);
-      setConfirmLoading(false);
-    }, 2000);
+    // setModalText("Lorem Ipsum");
+    // setConfirmLoading(true);
+    // // TODO: send request to start service to manager server
+    // setTimeout(() => {
+    //   setConfirmLoading(false);
+    // }, 2000);
+    onRequestClose(true);
   };
 
   // Apply any operation after clicking Cancel button
   const handleCancel = () => {
-    console.log("Clicked cancel button");
-    setOpen(false);
+    // console.log("Clicked cancel button");
+    onRequestClose();
   };
 
   return (
     <Modal
       title="Title"
-      open={open}
       onOk={handleOk}
+      onCancel={handleCancel}
       maskClosable={false}
       confirmLoading={confirmLoading}
-      onCancel={handleCancel}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         <p>{modalText}</p>
-        <Form layout="vertical" labelCol={{ span: 12 }}>
+        <Form form={form} layout="vertical" labelCol={{ span: 12 }}>
           <ImageEnvironmentSelect />
           <SliderInputItem name={"cpu"} label="CPU" max={30} />
           <SliderInputItem name={"gpu"} label="GPU" max={30} step={0.1} />
