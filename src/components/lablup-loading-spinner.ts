@@ -17,7 +17,7 @@ import '@material/mwc-circular-progress';
 
  <lablup-loading-spinner></lablup-loading-spinner>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-loading-spinner
  */
 
