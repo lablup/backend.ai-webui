@@ -11,12 +11,6 @@ const {
 } = require("@craco/craco");
 
 module.exports = {
-  // devServer: (devServerConfig, { env, paths, proxy, allowedHost }) => {
-  //   /* ... */
-  //   console.log(devServerConfig);
-  //   console.log(proxy);
-  //   return devServerConfig;
-  // },
   devServer: {
     proxy: {
       context: [
