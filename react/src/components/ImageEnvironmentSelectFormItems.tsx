@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
-import {
-  ImageEnvironmentSelectQuery,
-  ImageEnvironmentSelectQuery$data,
-} from "./__generated__/ImageEnvironmentSelectQuery.graphql";
 import _ from "lodash";
 import { Button, Divider, Form, Input, Select, Tag } from "antd";
 import { useBackendaiImageMetaData } from "../hooks";
@@ -14,9 +10,13 @@ import { useTranslation } from "react-i18next";
 import e from "express";
 import TextHighlighter from "./TextHighlighter";
 import DoubleTag from "./DoubleTag";
+import {
+  ImageEnvironmentSelectFormItemsQuery,
+  ImageEnvironmentSelectFormItemsQuery$data,
+} from "./__generated__/ImageEnvironmentSelectFormItemsQuery.graphql";
 
 type Image = NonNullable<
-  NonNullable<ImageEnvironmentSelectQuery$data>["images"]
+  NonNullable<ImageEnvironmentSelectFormItemsQuery$data>["images"]
 >[0];
 
 type ImageGroup = {
@@ -43,9 +43,9 @@ const ImageEnvironmentSelect = () => {
   const { t } = useTranslation();
   const [metadata, { getImageIcon, getImageMeta }] =
     useBackendaiImageMetaData();
-  const { images } = useLazyLoadQuery<ImageEnvironmentSelectQuery>(
+  const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
     graphql`
-      query ImageEnvironmentSelectQuery($installed: Boolean) {
+      query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
         images(is_installed: $installed) {
           name
           humanized_name
