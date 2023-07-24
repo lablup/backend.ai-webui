@@ -19,21 +19,9 @@ module.exports = {
   // },
   devServer: {
     proxy: {
-      "/manifest": {
-        target: "http://localhost:9081",
-      },
-      "/src": {
-        target: "http://localhost:9081",
-      },
-      "/dist": {
-        target: "http://localhost:9081",
-      },
-      "/node_modules": {
-        target: "http://localhost:9081",
-      },
-      "/resources": {
-        target: "http://localhost:9081",
-      },
+      context: [
+        "/manifest", "/src", "/dist", "/node_modules", "/resources"],
+      target: "http://localhost:9081",
     },
     watchFiles: ["../src/**/*", "../index.html"],
   },
