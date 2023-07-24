@@ -28,8 +28,6 @@ import '@vaadin/progress-bar/vaadin-progress-bar';
 import '@vaadin/item/vaadin-item';
 import '@vaadin/tooltip';
 
-import 'weightless/select';
-
 import './backend-ai-dialog';
 import './backend-ai-list-status';
 import './backend-ai-session-launcher';

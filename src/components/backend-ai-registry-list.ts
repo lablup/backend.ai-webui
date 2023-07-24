@@ -26,10 +26,6 @@ import '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
 import {TextField} from '@material/mwc-textfield';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-
 /**
  Backend AI Registry List
 

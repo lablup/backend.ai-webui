@@ -17,10 +17,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-
 import {Button} from '@material/mwc-button/mwc-button';
 
 import './lablup-activity-panel';

@@ -10,7 +10,6 @@ import {customElement, property, query} from 'lit/decorators.js';
 import '@material/mwc-list';
 import {Select} from '@material/mwc-select';
 
-import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 import {

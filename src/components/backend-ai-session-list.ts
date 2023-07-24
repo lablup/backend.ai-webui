@@ -16,10 +16,6 @@ import '@vaadin/icons/vaadin-icons';
 import '@vaadin/tooltip';
 
 import {default as AnsiUp} from '../lib/ansiup';
-import 'weightless/button';
-import {Checkbox} from 'weightless/checkbox';
-import 'weightless/icon';
-import {Textfield} from 'weightless/textfield';
 
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
@@ -30,6 +26,8 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-textfield';
+import {Checkbox} from '@material/mwc-checkbox';
+import {TextField} from '@material/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
@@ -189,7 +187,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-grid') _grid!: VaadinGrid;
-  @query('#access-key-filter') accessKeyFilterInput!: Textfield;
+  @query('#access-key-filter') accessKeyFilterInput!: TextField;
   @query('#multiple-action-buttons') multipleActionButtons!: HTMLDivElement;
   @query('#access-key-filter-helper-text') accessKeyFilterHelperText!: HTMLSpanElement;
   @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;

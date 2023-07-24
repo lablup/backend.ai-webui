@@ -45,7 +45,6 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import {Expansion} from 'weightless/expansion';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -2928,7 +2927,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('lablup-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll<LablupExpansion>('lablup-expansion').forEach((element) => {
       // remove protected property assignment
       element.onkeydown = (e) => {
         if (e.key === 'Enter') {

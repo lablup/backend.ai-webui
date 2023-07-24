@@ -9,11 +9,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import 'weightless/progress-spinner';
-import 'weightless/tab-group';
-import 'weightless/tab';
-
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
 
