@@ -21,6 +21,7 @@ interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   gpu: number;
   cpu: number;
   resourceGroup: string;
+  vFolderName: string;
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -137,7 +138,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             max={30}
             step={0.1}
           />
-          <Form.Item label={t("session.launcher.ModelStorageToMount")}>
+          <Form.Item
+            name={"vFolderName"}
+            label={t("session.launcher.ModelStorageToMount")}
+          >
             <VFolderSelect />
           </Form.Item>
         </Form>

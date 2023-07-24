@@ -40,25 +40,26 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   //   }
   // );
 
-  const {
-    data: { scaling_groups: resourceGroups },
-  } = useTanQuery({
+  const { data } = useTanQuery({
     queryKey: "ResourceGroupSelectorQuery",
     queryFn: () => {
       return baiRequestWithPromise({
         method: "GET",
         url: `/scaling-groups?group=${currentProject.name}`,
-      });
+      }) as Promise<{ scaling_groups: { name: string }[] }>;
     },
   });
+  const resourceGroups = data?.scaling_groups || [];
 
-  const autoSelectedOption = {
-    label: resourceGroups[0].name,
-    value: resourceGroups[0].name,
-  };
+  const autoSelectedOption = resourceGroups[0]
+    ? {
+        label: resourceGroups[0].name,
+        value: resourceGroups[0].name,
+      }
+    : undefined;
 
   useEffect(() => {
-    if (autoSelectDefault) {
+    if (autoSelectDefault && autoSelectedOption) {
       onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
   }, [autoSelectDefault]);
@@ -70,7 +71,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
       {_.map(resourceGroups, (resourceGroup, idx) => {
         return (
           <Select.Option key={resourceGroup.name} value={resourceGroup.name}>
-            {resourceGroup.group}
+            {resourceGroup.name}
           </Select.Option>
         );
       })}
