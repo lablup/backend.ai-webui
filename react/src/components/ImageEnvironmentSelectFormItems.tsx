@@ -40,7 +40,7 @@ export type ImageEnvironmentFormInput = {
   environments: {
     environment: string;
     version: string;
-    digest: string;
+    image: Image | undefined;
   };
 };
 
@@ -129,7 +129,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           environments: {
             environment: nextEnvironmentName,
             version: getImageFullName(nextNewImage),
-            digest: nextNewImage.digest || undefined,
+            image: nextNewImage,
           },
         });
       }
@@ -305,10 +305,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           {requirements && (
                             <DoubleTag
                               values={
-                                metadata?.tagAlias[requirements].split(":") || [
-                                  "",
-                                  "",
-                                ]
+                                metadata?.tagAlias[requirements]?.split(":") ||
+                                []
                               }
                             />
                           )}
@@ -322,7 +320,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           );
         }}
       </Form.Item>
-      <Form.Item noStyle hidden name={["environments", "digest"]}>
+      <Form.Item noStyle hidden name={["environments", "image"]}>
         <Input />
       </Form.Item>
     </>

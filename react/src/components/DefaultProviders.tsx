@@ -109,7 +109,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
   return (
     <>
       {RelayEnvironment && (
-        <RelayEnvironmentProvider environment={RelayEnvironment}>
+        <RelayEnvironmentProvider environment={RelayEnvironment} >
           <React.StrictMode>
             <style>
               {styles}
