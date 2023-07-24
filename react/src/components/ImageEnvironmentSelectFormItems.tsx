@@ -6,7 +6,7 @@ import {
   ImageEnvironmentSelectQuery$data,
 } from "./__generated__/ImageEnvironmentSelectQuery.graphql";
 import _ from "lodash";
-import { Button, Divider, Form, Select, Tag } from "antd";
+import { Button, Divider, Form, Input, Select, Tag } from "antd";
 import { useBackendaiImageMetaData } from "../hooks";
 import ImageMetaIcon from "./ImageMetaIcon";
 import Flex from "./Flex";
@@ -14,7 +14,6 @@ import { useTranslation } from "react-i18next";
 import e from "express";
 import TextHighlighter from "./TextHighlighter";
 import DoubleTag from "./DoubleTag";
-import { group } from "console";
 
 type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectQuery$data>["images"]
@@ -28,10 +27,16 @@ type ImageGroup = {
   }[];
 };
 
-const ImageEnvironmentSelect = () => {
-  const form = Form.useFormInstance();
+export type ImageEnvironmentFormInput = {
+  environments: {
+    environment: string;
+    version: string;
+    digest: string;
+  };
+};
 
-  const env = Form.useWatch("environments", form);
+const ImageEnvironmentSelect = () => {
+  const form = Form.useFormInstance<ImageEnvironmentFormInput>();
 
   const [environmentSearch, setEnvironmentSearch] = useState("");
   const [versionSearch, setVersionSearch] = useState("");
@@ -68,12 +73,14 @@ const ImageEnvironmentSelect = () => {
 
   // If not initial value, select first value
   useEffect(() => {
-    if (!form.getFieldValue("environments")) {
+    if (!form.getFieldValue("environments")?.environment) {
       form.setFieldsValue({
-        environments: imageGroups[0].environmentGroups[0].environmentName,
-        version: getImageFullName(
-          imageGroups[0].environmentGroups[0].images[0]
-        ),
+        environments: {
+          environment: imageGroups[0].environmentGroups[0].environmentName,
+          version: getImageFullName(
+            imageGroups[0].environmentGroups[0].images[0]
+          ),
+        },
       });
     }
   }, []);
@@ -94,7 +101,6 @@ const ImageEnvironmentSelect = () => {
       );
     })
     .map((images, groupName) => {
-      console.log(images);
       return {
         groupName,
         environmentGroups: _.chain(images)
@@ -120,7 +126,7 @@ const ImageEnvironmentSelect = () => {
   return (
     <>
       <Form.Item
-        name="environments"
+        name={["environments", "environment"]}
         label={`${t("session.launcher.Environments")} / ${t(
           "session.launcher.Version"
         )}`}
@@ -187,16 +193,19 @@ const ImageEnvironmentSelect = () => {
       </Form.Item>
       <Form.Item
         noStyle
-        shouldUpdate={(prev, cur) => prev.environments !== cur.environments}
+        shouldUpdate={(prev, cur) =>
+          prev.environments?.environments !== cur.environments?.environment
+        }
       >
-        {({ getFieldValue, setFieldValue }) => {
+        {({ getFieldValue, setFieldsValue }) => {
           let selectedEnvironmentGroup:
             | ImageGroup["environmentGroups"][0]
             | undefined;
           _.find(imageGroups, (group) => {
             return _.find(group.environmentGroups, (environment) => {
               if (
-                environment.environmentName === getFieldValue("environments")
+                environment.environmentName ===
+                getFieldValue("environments")?.environment
               ) {
                 selectedEnvironmentGroup = environment;
                 return true;
@@ -208,18 +217,27 @@ const ImageEnvironmentSelect = () => {
 
           if (
             !_.find(selectedEnvironmentGroup?.images, (image) => {
-              return getFieldValue("version") === getImageFullName(image);
+              return (
+                getFieldValue("environments")?.version ===
+                getImageFullName(image)
+              );
             })
           ) {
             if (selectedEnvironmentGroup?.images[0]) {
-              setFieldValue(
-                "version",
-                getImageFullName(selectedEnvironmentGroup?.images[0])
-              );
+              setFieldsValue({
+                environments: {
+                  version: getImageFullName(
+                    selectedEnvironmentGroup?.images[0]
+                  ),
+                },
+              });
             }
           }
           return (
-            <Form.Item name="version" rules={[{ required: true }]}>
+            <Form.Item
+              name={["environments", "version"]}
+              rules={[{ required: true }]}
+            >
               <Select
                 onChange={() => {}}
                 allowClear
@@ -270,6 +288,36 @@ const ImageEnvironmentSelect = () => {
                   }
                 )}
               </Select>
+            </Form.Item>
+          );
+        }}
+      </Form.Item>
+      <Form.Item
+        noStyle
+        hidden
+        shouldUpdate={(prev, cur) => {
+          return prev.environments?.version !== cur.environments?.version;
+        }}
+      >
+        {({ getFieldValue, setFieldValue }) => {
+          const selectedVersion = getFieldValue("environments")?.version;
+
+          const selectedImage = _.find(
+            images,
+            (image) => getImageFullName(image) === selectedVersion
+          );
+
+          if (selectedImage) {
+            // setFieldValue("digest", selectedImage.digest);
+            setFieldValue("environments", {
+              ...getFieldValue("environments"),
+              digest: selectedImage.digest,
+            });
+          }
+
+          return (
+            <Form.Item hidden name={["environments", "digest"]}>
+              <Input />
             </Form.Item>
           );
         }}

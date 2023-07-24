@@ -1,11 +1,10 @@
-import { Form, Space, Table, TableProps, Tag } from "antd";
+import { Table, TableProps } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { Link, useNavigate } from "react-router-dom";
-import ImageEnvironmentSelect from "./ImageEnvironmentSelectFormItems";
 
 // TODO: Need to implement wireframe of serving list using esm client
 

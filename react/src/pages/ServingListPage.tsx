@@ -1,16 +1,7 @@
-import {
-  Alert,
-  Button,
-  ConfigProvider,
-  Segmented,
-  Tabs,
-  Typography,
-  theme,
-} from "antd";
+import { Button, ConfigProvider, Tabs, theme } from "antd";
 import React, { PropsWithChildren, Suspense, useState } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
-import { ThunderboltTwoTone } from "@ant-design/icons";
 import ServingList from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";

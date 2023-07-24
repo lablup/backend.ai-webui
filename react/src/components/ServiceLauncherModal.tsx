@@ -4,13 +4,20 @@ import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
-import ImageEnvironmentSelect from "./ImageEnvironmentSelectFormItems";
+import ImageEnvironmentSelect, {
+  ImageEnvironmentFormInput,
+} from "./ImageEnvironmentSelectFormItems";
 import FlexActivityIndicator from "./FlexActivityIndicator";
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
+interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
+  gpu: number;
+  cpu: number;
+}
+
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   extraP,
   onRequestClose,
@@ -21,7 +28,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const baiClient = useSuspendedBackendaiClient();
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Content of the modal");
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<ServiceLauncherFormInput>();
   // const scalingGroupList = use;
   // modelStorageList: Record<string, any>[];
   // environmentList: Record<string, any>[];
@@ -39,7 +46,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     // setTimeout(() => {
     //   setConfirmLoading(false);
     // }, 2000);
-    onRequestClose(true);
+    form.validateFields().then((values) => {
+      console.log(values);
+
+      //do mutation and
+      onRequestClose(true);
+    });
   };
 
   // Apply any operation after clicking Cancel button
@@ -53,13 +65,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       title="Title"
       onOk={handleOk}
       onCancel={handleCancel}
+      destroyOnClose={true}
       maskClosable={false}
       confirmLoading={confirmLoading}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         <p>{modalText}</p>
-        <Form form={form} layout="vertical" labelCol={{ span: 12 }}>
+        <Form
+          form={form}
+          preserve={false}
+          layout="vertical"
+          labelCol={{ span: 12 }}
+          initialValues={
+            {
+              cpu: 1,
+              gpu: 0,
+            } as ServiceLauncherFormInput
+          }
+        >
           <ImageEnvironmentSelect />
           <SliderInputItem name={"cpu"} label="CPU" max={30} />
           <SliderInputItem name={"gpu"} label="GPU" max={30} step={0.1} />
