@@ -300,6 +300,10 @@ export const BackendAIWebUIStyles = [
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
     }
 
+    mwc-formfield {
+      --mdc-typography-body2-font-family: var(--general-font-family);
+    }
+
     span.full_name, mwc-select {
       font-weight: bold;
     }
