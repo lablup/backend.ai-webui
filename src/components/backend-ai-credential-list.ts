@@ -408,7 +408,7 @@ export default class BackendAICredentialList extends BackendAIPage {
 
   /**
    * Show the keypair detail dialog.
-   * 
+   *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
   _deleteKeyPairDialog(e) {
@@ -934,7 +934,7 @@ export default class BackendAICredentialList extends BackendAIPage {
                                    .renderer="${this._boundPermissionRenderer}"></vaadin-grid-sort-column>
           <vaadin-grid-sort-column auto-width resizable header="${_t('credential.KeyAge')}" path="created_at"
                                    .renderer="${this._boundKeyageRenderer}"></vaadin-grid-sort-column>
-          <vaadin-grid-column auto-width resizable header="${_t('credential.ResourcePolicy')}"
+          <vaadin-grid-column width="200px" resizable header="${_t('credential.ResourcePolicy')}"
                               .renderer="${this._boundResourcePolicyRenderer}"></vaadin-grid-column>
           <vaadin-grid-column auto-width resizable header="${_t('credential.Allocation')}"
                               .renderer="${this._boundAllocationRenderer}"></vaadin-grid-column>

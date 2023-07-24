@@ -846,10 +846,10 @@ export default class BackendAICredentialView extends BackendAIPage {
     const checkbox = textfield.closest('div').querySelector('wl-checkbox');
     if (textfield.value === '' || textfield.value === '0' ) {
       textfield.disabled = true;
-      checkbox.checked = true;
+      if (checkbox) checkbox.checked = true;
     } else {
       textfield.disabled = false;
-      checkbox.checked = false;
+      if (checkbox) checkbox.checked = false;
     }
   }
 
