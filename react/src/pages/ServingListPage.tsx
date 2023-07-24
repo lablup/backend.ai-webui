@@ -16,11 +16,7 @@ import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 
-
-type TabKey = 
-  | "running"
-  | "finished"
-  | "others";
+type TabKey = "running" | "finished" | "others";
 
 const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -43,16 +39,18 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         align="stretch"
         style={{ padding: token.padding, gap: token.margin }}
       >
-      { false ? (
-        <Suspense fallback={<div>loading..</div>}>
-          <RoutingListPage
-            projectId={curProject.id}
-            status={[]}
-            extraFetchKey={""}
-          />
-        </Suspense>
-      ) : (<></>)}
-      {children}
+        {false ? (
+          <Suspense fallback={<div>loading..</div>}>
+            <RoutingListPage
+              projectId={curProject.id}
+              status={[]}
+              extraFetchKey={""}
+            />
+          </Suspense>
+        ) : (
+          <></>
+        )}
+        {children}
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}
@@ -103,9 +101,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       <Button icon={<DownloadOutlined />} type="ghost" />
                     </Tooltip> */}
                       {/* @ts-ignore */}
-                      <Button type="primary" onClick={ ()=>{
-                        setIsOpenServiceLauncher(true);
-                      } }>
+                      <Button
+                        type="primary"
+                        onClick={() => {
+                          setIsOpenServiceLauncher(true);
+                        }}
+                      >
                         Start Service
                       </Button>
                       {/* <ServiceLauncherModal></ServiceLauncherModal> */}
@@ -135,11 +136,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Suspense>
         </Flex>
       </Flex>
-      <ServiceLauncherModal open={isOpenServiceLauncher} onCancel={()=>{
-        setIsOpenServiceLauncher(false);
-      }} onOk={()=>{
-        setIsOpenServiceLauncher(false);
-      }}/>
+      <ServiceLauncherModal
+        open={isOpenServiceLauncher}
+        onRequestClose={(success) => {
+          setIsOpenServiceLauncher(!isOpenServiceLauncher);
+        }}
+      />
     </>
   );
 };

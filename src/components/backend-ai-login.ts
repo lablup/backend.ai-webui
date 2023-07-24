@@ -1503,8 +1503,8 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
       globalThis.backendaiclient.ready = true;
-      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
-        this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as string) === -1) {
+        this.endpoints.push(globalThis.backendaiclient._config.endpoint as string);
         if (this.endpoints.length > 5) { // Keep latest
           this.endpoints = this.endpoints.slice(1, 6);
         }

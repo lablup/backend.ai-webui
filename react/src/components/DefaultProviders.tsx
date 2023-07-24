@@ -134,7 +134,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                       <Suspense fallback="">
                         <BrowserRouter>{children}</BrowserRouter>
                       </Suspense>
-                      {/* {children} */}
                     </StyleProvider>
                   </ConfigProvider>
                 </WebComponentContext.Provider>

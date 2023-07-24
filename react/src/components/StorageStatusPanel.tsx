@@ -41,6 +41,7 @@ const StorageStatusPanel: React.FC<{
 
   const [selectedVolumeInfo, setSelectedVolumeInfo] = useState<VolumeInfo>();
   const deferredSelectedVolumeInfo = useDeferredValue(selectedVolumeInfo);
+  const deferredFetchKey = useDeferredValue(fetchKey);
 
   const columnSetting: DescriptionsProps["column"] = {
     xxl: 4,
@@ -52,13 +53,13 @@ const StorageStatusPanel: React.FC<{
   };
 
   const { data: vfolders } = useQuery(
-    ["vfolders", { fetchKey }],
+    ["vfolders", { deferredFetchKey }],
     () => {
       return baiClient.vfolder.list(currentProject?.id);
     },
     {
       // for to render even this fail query failed
-      suspense: false,
+      suspense: true,
     }
   );
   const createdCount = vfolders?.filter(
