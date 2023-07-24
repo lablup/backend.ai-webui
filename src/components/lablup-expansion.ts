@@ -33,7 +33,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 export default class LablupExpansion extends LitElement {
   @property({type: String}) name = '';
   @property({type: Boolean}) open = false;
-  @query('.content') ContentBlock;
+  @query('#accordion') ExpansionShell;
   @query('#expand_icon') ExpandIcon;
 
   static get styles(): CSSResultGroup | undefined {
@@ -68,17 +68,27 @@ export default class LablupExpansion extends LitElement {
           overflow-x: hidden;
         }
 
-        div.content {
+        #accordion div.content {
           max-height: 0;
           transition: all .35s;
           padding: 0;
           margin: 0;
         }
 
-        div.content[open] {
+        #accordion[open] div.content {
           margin: var(--expansion-content-padding, 0);
           padding: var(--expansion-content-padding, 0);
           max-height: 100vh;
+        }
+
+        #accordion #expand_icon {
+          transition: all .35s;
+          transform: rotate(0deg);
+        }
+
+        #accordion[open] #expand_icon {
+          transition: all .35s;
+          transform: rotate(-180deg);
         }
 
         div[narrow] div.content {
@@ -97,19 +107,19 @@ export default class LablupExpansion extends LitElement {
       `];
   }
   _toggleAccordion() {
-    if (this.ContentBlock.hasAttribute('open')) {
-      this.ContentBlock.removeAttribute('open');
-      this.ExpandIcon.icon = 'expand_more';
+    if (this.ExpansionShell.hasAttribute('open')) {
+      this.ExpansionShell.removeAttribute('open');
+      //this.ExpandIcon.icon = 'expand_more';
     } else {
-      this.ContentBlock.setAttribute('open', 'true');
-      this.ExpandIcon.icon = 'expand_less';
+      this.ExpansionShell.setAttribute('open', 'true');
+      //this.ExpandIcon.icon = 'expand_less';
     }
   }
   render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <div .name="${this.name}" id="accordion">
+      <div .name="${this.name}" id="accordion" ${this.open ? 'open' : ''}>
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold" @click="${() => this._toggleAccordion()}">
             <span class="vertical center-justified layout">
@@ -120,7 +130,7 @@ export default class LablupExpansion extends LitElement {
             <mwc-icon-button id="expand_icon" icon="expand_more">
             </mwc-icon-button>
           </h3>
-          <div class="content" ${this.open ? 'open' : ''}>
+          <div class="content">
             <slot></slot>
           </div>
         </div>
