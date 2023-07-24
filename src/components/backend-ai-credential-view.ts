@@ -17,7 +17,6 @@ import '@material/mwc-tab';
 import '@material/mwc-button';
 import {Select} from '@material/mwc-select';
 
-import '@vaadin/accordion';
 import 'weightless/tab';
 import 'weightless/tab-group';
 import 'weightless/expansion';
@@ -25,6 +24,7 @@ import 'weightless/checkbox';
 import 'weightless/label';
 
 import './lablup-activity-panel';
+import './lablup-expansion';
 import './backend-ai-credential-list';
 import './backend-ai-dialog';
 import './backend-ai-multi-select';
@@ -1129,25 +1129,23 @@ export default class BackendAICredentialView extends BackendAIPage {
                   <mwc-list-item value="${item}">${item}</mwc-list-item>
               `)}
             </mwc-select>
-            <!--<vaadin-accordion name="advanced-keypair-info" summary="${_t('general.Advanced')}" style="width:100%;">
-              <vaadin-accordion-panel>
-                <div class="vertical layout center">
-                <mwc-textfield
-                    type="text"
-                    name="new_access_key"
-                    id="id_new_access_key"
-                    label="${_t('credential.UserIDAsEmail')}"
-                    autoValidate></mwc-textfield>
-                <mwc-textfield
-                    type="text"
-                    name="new_access_key"
-                    id="id_new_secret_key"
-                    label="${_t('credential.AccessKeyOptional')}"
-                    autoValidate
-                    .value="${this.new_access_key}"><mwc-textfield>
-                </div>
-              <vaadin-accordion-panel>
-            </vaadin-accordion>-->
+            <!--<lablup-expansion name="advanced-keypair-info" summary="${_t('general.Advanced')}" style="width:100%;">
+              <div class="vertical layout center">
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_access_key"
+                  label="${_t('credential.UserIDAsEmail')}"
+                  autoValidate></mwc-textfield>
+              <mwc-textfield
+                  type="text"
+                  name="new_access_key"
+                  id="id_new_secret_key"
+                  label="${_t('credential.AccessKeyOptional')}"
+                  autoValidate
+                  .value="${this.new_access_key}"><mwc-textfield>
+              </div>
+            </lablup-expansion>-->
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">

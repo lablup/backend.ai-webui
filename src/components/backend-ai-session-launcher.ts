@@ -28,17 +28,12 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/text-field/vaadin-text-field';
 import '@vaadin/date-time-picker/vaadin-date-time-picker';
 
-import 'weightless/checkbox';
-import 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-
 import './lablup-codemirror';
 import './lablup-expansion';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
+import LablupExpansion from './lablup-expansion';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -55,7 +50,6 @@ import {Expansion} from 'weightless/expansion';
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
-type WlExpansion = HTMLElementTagNameMap['wl-expansion'];
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
 type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
@@ -245,7 +239,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#owner-scaling-group') ownerScalingGroupSelect!: Select;
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
-  @query('#vfolder-mount-preview') vfolderMountPreview!: WlExpansion;
+  @query('#vfolder-mount-preview') vfolderMountPreview!: LablupExpansion;
   @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
@@ -535,11 +529,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
         #launch-session-form {
           height: calc(var(--component-height, auto) - 157px);
-        }
-
-        wl-button > span {
-          margin-left: 5px;
-          font-weight: normal;
         }
 
         lablup-expansion {
@@ -1266,7 +1255,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
-      const ownershipPanel = this.shadowRoot?.querySelector('lablup-expansion[name="ownership"]') as WlExpansion;
+      const ownershipPanel = this.shadowRoot?.querySelector('lablup-expansion[name="ownership"]') as LablupExpansion;
       if (globalThis.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
