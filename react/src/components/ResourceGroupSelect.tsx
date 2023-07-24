@@ -1,10 +1,14 @@
 import { Select, SelectProps } from "antd";
-import React, { useEffect } from "react";
+import React, { startTransition, useEffect } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
 import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
-import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
+import {
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from "../hooks";
 import { useQuery as useTanQuery } from "react-query";
 import {
   baiSignedRequestWithPromise,
@@ -40,14 +44,17 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   //   }
   // );
 
+  const [key, checkUpdate] = useUpdatableState("first");
+
   const { data } = useTanQuery({
-    queryKey: "ResourceGroupSelectorQuery",
+    queryKey: ["ResourceGroupSelectorQuery", key],
     queryFn: () => {
       return baiRequestWithPromise({
         method: "GET",
         url: `/scaling-groups?group=${currentProject.name}`,
       }) as Promise<{ scaling_groups: { name: string }[] }>;
     },
+    staleTime: 0,
   });
   const resourceGroups = data?.scaling_groups || [];
 
@@ -67,6 +74,13 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
     <Select
       defaultActiveFirstOption
       defaultValue={autoSelectDefault ? autoSelectedOption : undefined}
+      onDropdownVisibleChange={(open) => {
+        if (open) {
+          startTransition(() => {
+            checkUpdate();
+          });
+        }
+      }}
     >
       {_.map(resourceGroups, (resourceGroup, idx) => {
         return (

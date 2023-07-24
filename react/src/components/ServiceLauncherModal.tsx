@@ -126,8 +126,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           />
           <SliderInputItem
             name={"shmem"}
-            label={t("session.launcher.Memory")}
-            // tooltip={t("session.launcher.DescMemory")}
+            label={t("session.launcher.SharedMemory")}
+            // tooltip={t("session.launcher.DescSharedMemory")}
             max={30}
             step={0.1}
           />

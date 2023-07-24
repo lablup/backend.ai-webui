@@ -1,11 +1,11 @@
 import { Select, SelectProps } from "antd";
-import React from "react";
+import React, { startTransition } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import { useQuery as useTanQuery } from "react-query";
 import graphql from "babel-plugin-relay/macro";
 import { VFolderSelectQuery } from "./__generated__/VFolderSelectQuery.graphql";
 import _ from "lodash";
-import { useCurrentProjectValue } from "../hooks";
+import { useCurrentProjectValue, useUpdatableState } from "../hooks";
 import { useBaiSignedRequestWithPromise } from "../helper";
 
 type VFolder = {
@@ -69,20 +69,32 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   //   }
   // );
   // console.log("vfolder_list", vfolder_list);
+  const [key, checkUpdate] = useUpdatableState("first");
 
   const { data } = useTanQuery({
-    queryKey: "VFolderSelectQuery",
+    queryKey: ["VFolderSelectQuery", key],
     queryFn: () => {
       return baiRequestWithPromise({
         method: "GET",
         url: `/folders?group_id=${currentProject.id}`,
       }) as Promise<VFolder[]>;
     },
+    staleTime: 0,
   });
 
   const filteredVFolders = filter ? _.filter(data, filter) : data;
   return (
-    <Select showSearch {...selectProps}>
+    <Select
+      showSearch
+      {...selectProps}
+      onDropdownVisibleChange={(open) => {
+        if (open) {
+          startTransition(() => {
+            checkUpdate();
+          });
+        }
+      }}
+    >
       {_.map(filteredVFolders, (vfolder) => {
         return (
           <Select.Option value={vfolder?.name}>{vfolder?.name}</Select.Option>

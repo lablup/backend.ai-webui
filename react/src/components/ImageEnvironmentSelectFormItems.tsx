@@ -90,6 +90,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
     `,
     {
       installed: true,
+    },
+    {
+      fetchPolicy: "store-and-network",
     }
   );
 
