@@ -35,6 +35,7 @@ import 'weightless/label';
 import 'weightless/textfield';
 
 import './lablup-codemirror';
+import './lablup-expansion';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -541,28 +542,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
-        wl-expansion {
+        wl-expansion,
+        lablup-expansion {
           --font-family-serif: var(--general-font-family);
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
+          --expansion-header-font-weight: normal;
+          --expansion-header-font-size: 12px;
+          --expansion-header-font-color: rgb(64, 64, 64);
         }
 
-        wl-expansion span[slot="title"] {
-          font-size: 12px;
-          color: rgb(64, 64, 64);
-          font-weight: normal;
-        }
-
-        wl-expansion.vfolder,
-        wl-expansion.editor {
+        lablup-expansion.vfolder,
+        lablup-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px;
         }
 
-        wl-expansion span {
+        lablup-expansion span {
           font-size: 20px;
           font-weight: 200;
           display: block;
@@ -904,7 +903,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.updateResourceAllocationPane();
     });
 
-    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll('lablup-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
@@ -1275,7 +1274,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
-      const ownershipPanel = this.shadowRoot?.querySelector('wl-expansion[name="ownership"]') as WlExpansion;
+      const ownershipPanel = this.shadowRoot?.querySelector('lablup-expansion[name="ownership"]') as WlExpansion;
       if (globalThis.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
@@ -2948,7 +2947,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll<Expansion>('lablup-expansion').forEach((element) => {
       // remove protected property assignment
       element.onkeydown = (e) => {
         if (e.key === 'Enter') {
@@ -3509,7 +3508,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+            <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
@@ -3555,10 +3554,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-          <wl-expansion class="vfolder" name="vfolder" open>
+          <lablup-expansion class="vfolder" name="vfolder" open>
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
               <vaadin-grid
@@ -3586,8 +3585,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
+            </lablup-expansion>
+            <lablup-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
               <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
@@ -3610,8 +3609,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                       .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
                 </vaadin-grid>
               </div>
-            </wl-expansion>
-            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
+            </lablup-expansion>
+            <lablup-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
@@ -3634,7 +3633,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
@@ -3711,7 +3710,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
               </mwc-select>
             </div>
-            <wl-expansion name="resource-group">
+            <lablup-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical layout">
                 <div>
@@ -3794,7 +3793,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
             ${this.cluster_support ? html`
               <mwc-select id="cluster-mode" label="${_text('session.launcher.ClusterMode')}" required
                           icon="account_tree" fixedMenuPosition
@@ -3833,7 +3832,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             ` : html``}
-            <wl-expansion name="hpc-option-group">
+            <lablup-expansion name="hpc-option-group">
               <span slot="title">${_t('session.launcher.HPCOptimization')}</span>
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
@@ -3861,7 +3860,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.SessionInfo')}</p>
