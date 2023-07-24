@@ -1,9 +1,6 @@
-import React, { useState } from "react";
-import { Col, InputNumber, Row, Slider, theme, Form } from "antd";
+import React from "react";
+import { InputNumber, Slider, Form } from "antd";
 import Flex from "./Flex";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { useTranslation } from "react-i18next";
-import FormItem from "antd/es/form/FormItem";
 import { FormItemProps } from "antd/lib/form/FormItem";
 import { NamePath } from "antd/es/form/interface";
 
@@ -19,10 +16,11 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   max,
   step,
   rules,
+  required,
   ...formItemProps
 }) => {
   return (
-    <Form.Item {...formItemProps}>
+    <Form.Item required={required} {...formItemProps}>
       <Flex direction="row" gap={"md"}>
         <Flex direction="column" align="stretch" style={{ flex: 3 }}>
           <Form.Item name={name} noStyle rules={rules}>
