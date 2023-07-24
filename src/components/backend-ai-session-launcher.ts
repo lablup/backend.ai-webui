@@ -686,11 +686,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 500;
         }
 
-        wl-label {
-          margin-right: 10px;
-          outline: none;
-        }
-
         #help-description {
           --component-width: 350px;
         }
