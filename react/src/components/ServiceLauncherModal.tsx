@@ -100,6 +100,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <ResourceGroupSelect autoSelectDefault />
           </Form.Item>
+          <Form.Item
+            name={"vFolderName"}
+            label={t("session.launcher.ModelStorageToMount")}
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+          >
+            <VFolderSelect filter={(vf) => vf.usage_mode === "model"} />
+          </Form.Item>
           <ImageEnvironmentSelectFormItems
           // //TODO: test with real inference images
           // filter={(image) => {
@@ -138,12 +149,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             max={30}
             step={0.1}
           />
-          <Form.Item
-            name={"vFolderName"}
-            label={t("session.launcher.ModelStorageToMount")}
-          >
-            <VFolderSelect />
-          </Form.Item>
         </Form>
       </Suspense>
     </Modal>
