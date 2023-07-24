@@ -33,6 +33,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 export default class LablupExpansion extends LitElement {
   @property({type: String}) name = '';
   @property({type: Boolean}) open = false;
+
   @query('#accordion') ExpansionShell;
   @query('#expand_icon') ExpandIcon;
 

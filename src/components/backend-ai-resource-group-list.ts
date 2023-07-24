@@ -14,16 +14,6 @@ import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/textarea';
-import 'weightless/textfield';
-import 'weightless/title';
-import {Expansion} from 'weightless/expansion';
-
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
@@ -32,7 +22,9 @@ import '@material/mwc-textarea/mwc-textarea';
 import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
+import './lablup-expansion';
 import './backend-ai-multi-select';
+import LablupExpansion from './lablup-expansion';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -126,12 +118,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
         }
 
-        backend-ai-dialog wl-label {
-          --label-font-family:  var(--general-font-family);
-          --label-color: #282828;
-          margin-bottom: 5px;
-        }
-
         mwc-button[outlined] {
           width: 100%;
           margin: 10px auto;
@@ -164,11 +150,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --component-width: 350px;
         }
 
-        wl-expansion {
+        lablup-expansion {
           --expansion-content-padding: 2px;
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
         }
@@ -521,11 +504,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
-    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
+    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as LablupExpansion;
     this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
     this.allowedSessionTypesSelect.selectedItemList = ['interactive', 'batch'];
     this.resourceGroupSchedulerSelect.value = 'fifo';
-    schedulerOptsInputForms.checked = false;
+    schedulerOptsInputForms.open = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
     }
@@ -766,7 +749,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           </div>
           ${this.enableSchedulerOpts ? html`
             <br/>
-            <wl-expansion id="scheduler-options-input-form">
+            <lablup-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <div class="vertical layout flex">
                 <backend-ai-multi-select
@@ -801,7 +784,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     value="${this.resourceGroupInfo?.scheduler_opts?.config?.num_retries_to_skip ?? ''}"
                   ></mwc-textfield>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
             ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
