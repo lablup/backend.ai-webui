@@ -1,8 +1,10 @@
-import { Space, Table, TableProps, Tag, Radio } from "antd";
+import { Breadcrumb, Space, Table, TableProps, Tag, Typography, theme } from "antd";
 // import { Descriptions } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import React, { useDeferredValue } from "react";
+import Flex from "../components/Flex";
 import { useTranslation } from 'react-i18next';
+import { useWebComponentInfo } from "../components/DefaultProviders";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useParams } from "react-router-dom";
 
@@ -44,7 +46,9 @@ const RoutingListPage: React.FC<ServingListProps> = ({
   extraFetchKey = "",
   ...tableProps
 }) => {
+  const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
+  const { moveTo } = useWebComponentInfo();
 
   const {serviceId} = useParams<{
     serviceId: string
@@ -129,13 +133,35 @@ const RoutingListPage: React.FC<ServingListProps> = ({
   ];
 
   return (
-    <>
-      <h1>{serviceId}</h1>
+    <Flex
+      direction="column"
+      align="stretch"
+      style={{ margin: token.marginSM, gap: token.margin }}
+    >
+    {/* FIXME: routing doesn't work in here */}
+      <Breadcrumb
+        items={[
+          {
+            title: "Services",
+            onClick: (e) => {
+              e.preventDefault();
+              moveTo("/serving");
+            },
+            href: "/serving",
+          },
+          {
+            title: "Routing Info",
+          },
+        ]}
+      ></Breadcrumb>
+      <Typography.Title level={3} style={{ margin: 0 }}>
+        {serviceId || ""}
+      </Typography.Title>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
       <Table
         columns={columns} dataSource={data} />
-    </>
+    </Flex>
   );
 };
 
