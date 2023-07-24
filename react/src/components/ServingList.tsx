@@ -1,12 +1,12 @@
-import { Table, TableProps } from "antd";
-import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
+import { Button, Table, TableProps } from "antd";
+import { CheckOutlined, CloseOutlined, DeleteFilled, SettingFilled } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { Link, useNavigate } from "react-router-dom";
+import Flex from "./Flex";
 
-// TODO: Need to implement wireframe of serving list using esm client
 
 // type Session = NonNullable<
 //   ServingListQuery["response"]["compute_session_list"]
@@ -19,6 +19,7 @@ interface ServingListProps extends Omit<TableProps<any>, "dataSource"> {
   projectId?: string;
   // filter: (item: Session) => boolean;
   extraFetchKey?: string;
+  dataSource: Array<any>;
 }
 
 interface DataType {
@@ -38,6 +39,7 @@ const ServingList: React.FC<ServingListProps> = ({
   currentPage = 1,
   pageSize = 50,
   projectId,
+  dataSource = [],
   // filter,
   extraFetchKey = "",
   ...tableProps
@@ -66,30 +68,38 @@ const ServingList: React.FC<ServingListProps> = ({
       render: (text) => <Link to={"/serving/" + text}>{text}</Link>,
     },
     {
-      title: "Image",
-      dataIndex: "image",
-      key: "image",
+      title: "Service Id",
+      dataIndex: "id",
+      key: "id",
+    },
+    {
+      title: "Controls",
+      dataIndex: "controls",
+      key: "control",
+      render: () => (
+        <>
+          <Flex direction="row" align="stretch">
+            <Button type="text" icon={<SettingFilled />} />
+            <Button type="text" icon={<DeleteFilled />} />
+          </Flex>
+        </>
+      ),
     },
     {
       title: "Desired Session Count",
-      dataIndex: "desiredSessionCount",
-      key: "desiredSessionCount",
+      dataIndex: "desired_session_count",
+      key: "desired_session_count",
     },
     {
-      title: "Routings",
-      dataIndex: "routings",
-      key: "routings",
-    },
-    {
-      title: "Session Owner",
-      dataIndex: "sessionOwner",
-      key: "sessionOwner",
+      title: "Routing Count",
+      dataIndex: "active_route_count",
+      key: "active_route_count",
     },
     {
       title: "Open To Public",
-      dataIndex: "isOpenToPublic",
-      key: "isOpenToPublic",
-      render: (isPublic) => (isPublic ? <CheckOutlined /> : <CloseOutlined />),
+      dataIndex: "is_public",
+      key: "is_public",
+      render: (is_public) => (is_public ? <CheckOutlined /> : <CloseOutlined />),
     },
   ];
 
@@ -127,7 +137,7 @@ const ServingList: React.FC<ServingListProps> = ({
           ...rowSelection,
         }}
         columns={columns}
-        dataSource={data}
+        dataSource={dataSource ? dataSource: []}
       />
     </>
   );
