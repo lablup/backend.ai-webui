@@ -53,27 +53,32 @@ export default class LablupExpansion extends LitElement {
         #accordion > div.card > h3 {
           background-color: var(--general-dialog-background-color, #ffffff);
           padding: var(--expansion-header-padding, 0);
-          font-size: var(--expansion-header-font-size, 14px);
+          font-size: var(--expansion-header-font-size, 12px);
           font-weight: var(--expansion-header-font-weight, 600);
           font-family: var(--general-font-family);
-          line-height: 24px;
+          transition: all .35s;
         }
         #accordion > div.card > h3 > mwc-icon-button {
           --mdc-icon-button-size: 16px;
         }
 
         div.content {
-          padding: var(--expansion-content-padding, 0);
           font-size: var(--expansion-content-font-size, 14px);
           word-break: keep-all;
           overflow-x: hidden;
         }
+
         div.content {
-          display: none;
+          max-height: 0;
+          transition: all .35s;
+          padding: 0;
+          margin: 0;
         }
 
         div.content[open] {
-          display: block;
+          margin: var(--expansion-content-padding, 0);
+          padding: var(--expansion-content-padding, 0);
+          max-height: 100vh;
         }
 
         div[narrow] div.content {

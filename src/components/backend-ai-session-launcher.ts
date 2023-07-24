@@ -542,16 +542,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: normal;
         }
 
-        wl-expansion,
         lablup-expansion {
-          --font-family-serif: var(--general-font-family);
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
           --expansion-header-font-weight: normal;
-          --expansion-header-font-size: 12px;
+          --expansion-header-font-size: 14px;
           --expansion-header-font-color: rgb(64, 64, 64);
         }
 
@@ -559,12 +557,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         lablup-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px;
-        }
-
-        lablup-expansion span {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
         }
 
         .resources .monitor {
