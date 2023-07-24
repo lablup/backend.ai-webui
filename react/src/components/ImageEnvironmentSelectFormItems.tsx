@@ -113,7 +113,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
       });
     });
 
-    console.log(nextEnvironmentGroup);
     // if current version does'nt exist in next environment group, select a version of the first image of next environment group
     if (
       !_.find(
@@ -123,7 +122,6 @@ const ImageEnvironmentSelectFormItems: React.FC<
       )
     ) {
       const nextNewImage = nextEnvironmentGroup?.images[0];
-      console.log(nextNewImage);
       if (nextNewImage) {
         form.setFieldsValue({
           environments: {
