@@ -455,7 +455,7 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Validate whether the url input field is a valid http or https url format
+   * Validate whether the url input is a valid http or https url format
    */
   private _validateUrlInput() {
     const registryUrl = this._urlInput.value;
@@ -470,9 +470,9 @@ class BackendAIRegistryList extends BackendAIPage {
   /**
    * Hide/Show validation msg on url input field in registry configuration dialog
    */
-    private _toggleValidationMsgOnUrlInput() {
-      this._registryUrlValidationMsg.style.display = this._validateUrlInput() ? 'none' : 'block';
-    }
+  private _toggleValidationMsgOnUrlInput() {
+    this._registryUrlValidationMsg.style.display = this._validateUrlInput() ? 'none' : 'block';
+  }
 
   /**
    * Hide/Show validation msg on hostname input in registry configuration dialog
