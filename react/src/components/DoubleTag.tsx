@@ -22,9 +22,10 @@ const DoubleTag: React.FC<{
 
   return (
     <Flex direction="row">
-      {_.map(objectValues, (objValue) => {
+      {_.map(objectValues, (objValue, idx) => {
         return (
           <Tag
+            key={idx}
             style={
               _.last(objectValues) === objValue
                 ? undefined

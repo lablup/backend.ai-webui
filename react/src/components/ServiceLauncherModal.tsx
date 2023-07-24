@@ -9,6 +9,7 @@ import ImageEnvironmentSelectFormItems, {
 } from "./ImageEnvironmentSelectFormItems";
 import FlexActivityIndicator from "./FlexActivityIndicator";
 import _ from "lodash";
+import ResourceGroupSelect from "./ResourceGroupSelect";
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
@@ -85,6 +86,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             } as ServiceLauncherFormInput
           }
         >
+          {/* <Form.Item name="resourceGroup" label={t("session.ResourceGroup")}>
+            <ResourceGroupSelect />
+          </Form.Item> */}
           <ImageEnvironmentSelectFormItems
           // //TODO: test with real inference images
           // filter={(image) => {
