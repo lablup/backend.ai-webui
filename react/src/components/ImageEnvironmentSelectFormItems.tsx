@@ -2,7 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
-import { Button, Divider, Form, Input, Select, Tag } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Divider,
+  Empty,
+  Form,
+  Input,
+  Select,
+  Tag,
+} from "antd";
 import { useBackendaiImageMetaData } from "../hooks";
 import ImageMetaIcon from "./ImageMetaIcon";
 import Flex from "./Flex";
@@ -35,7 +44,12 @@ export type ImageEnvironmentFormInput = {
   };
 };
 
-const ImageEnvironmentSelect = () => {
+interface ImageEnvironmentSelectFormItemsProps {
+  filter?: (image: Image) => boolean;
+}
+const ImageEnvironmentSelectFormItems: React.FC<
+  ImageEnvironmentSelectFormItemsProps
+> = ({ filter }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
 
   const [environmentSearch, setEnvironmentSearch] = useState("");
@@ -73,7 +87,10 @@ const ImageEnvironmentSelect = () => {
 
   // If not initial value, select first value
   useEffect(() => {
-    if (!form.getFieldValue("environments")?.environment) {
+    if (
+      !form.getFieldValue("environments")?.environment &&
+      imageGroups[0]?.environmentGroups[0]
+    ) {
       form.setFieldsValue({
         environments: {
           environment: imageGroups[0].environmentGroups[0].environmentName,
@@ -93,6 +110,7 @@ const ImageEnvironmentSelect = () => {
 
   // const getKernelName = (image: Image) => {};
   const imageGroups: ImageGroup[] = _.chain(images)
+    .filter(filter ? filter : () => true)
     .groupBy((image) => {
       // group by using `group` property of image info
       return (
@@ -134,7 +152,6 @@ const ImageEnvironmentSelect = () => {
         style={{ marginBottom: 10 }}
       >
         <Select
-          allowClear
           showSearch
           autoClearSearchValue
           labelInValue={false}
@@ -240,7 +257,6 @@ const ImageEnvironmentSelect = () => {
             >
               <Select
                 onChange={() => {}}
-                allowClear
                 showSearch
                 searchValue={versionSearch}
                 onSearch={setVersionSearch}
@@ -326,4 +342,4 @@ const ImageEnvironmentSelect = () => {
   );
 };
 
-export default ImageEnvironmentSelect;
+export default ImageEnvironmentSelectFormItems;

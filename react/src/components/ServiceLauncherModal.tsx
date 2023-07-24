@@ -4,10 +4,11 @@ import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
-import ImageEnvironmentSelect, {
+import ImageEnvironmentSelectFormItems, {
   ImageEnvironmentFormInput,
 } from "./ImageEnvironmentSelectFormItems";
 import FlexActivityIndicator from "./FlexActivityIndicator";
+import _ from "lodash";
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
@@ -84,7 +85,17 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             } as ServiceLauncherFormInput
           }
         >
-          <ImageEnvironmentSelect />
+          <ImageEnvironmentSelectFormItems
+          // //TODO: test with real inference images
+          // filter={(image) => {
+          //   return !!_.find(image?.labels, (label) => {
+          //     return (
+          //       label?.key === "ai.backend.role" &&
+          //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+          //     );
+          //   });
+          // }}
+          />
           <SliderInputItem name={"cpu"} label="CPU" max={30} />
           <SliderInputItem name={"gpu"} label="GPU" max={30} step={0.1} />
         </Form>
