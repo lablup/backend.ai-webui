@@ -254,7 +254,7 @@ class BackendAIRegistryList extends BackendAIPage {
       return;
     }
 
-    if (!this._urlInput.valid) {
+    if (!this._validateUrlInput()) {
       if (this._registryUrlValidationMsg) {
         this._registryUrlValidationMsg.style.display = 'block';
       }
