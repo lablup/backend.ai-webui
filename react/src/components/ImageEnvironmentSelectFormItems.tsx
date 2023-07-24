@@ -121,8 +121,11 @@ const ImageEnvironmentSelect = () => {
     <>
       <Form.Item
         name="environments"
-        label={t("session.launcher.Environments")}
+        label={`${t("session.launcher.Environments")} / ${t(
+          "session.launcher.Version"
+        )}`}
         rules={[{ required: true }]}
+        style={{ marginBottom: 10 }}
       >
         <Select
           allowClear
@@ -216,11 +219,7 @@ const ImageEnvironmentSelect = () => {
             }
           }
           return (
-            <Form.Item
-              name="version"
-              label={t("session.launcher.Version")}
-              rules={[{ required: true }]}
-            >
+            <Form.Item name="version" rules={[{ required: true }]}>
               <Select
                 onChange={() => {}}
                 allowClear

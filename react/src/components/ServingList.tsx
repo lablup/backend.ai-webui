@@ -5,7 +5,7 @@ import React, { useDeferredValue } from "react";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { Link, useNavigate } from "react-router-dom";
-import ImageEnvironmentSelect from "./ImageEnvironmentSelect";
+import ImageEnvironmentSelect from "./ImageEnvironmentSelectFormItems";
 
 // TODO: Need to implement wireframe of serving list using esm client
 
@@ -122,9 +122,6 @@ const ServingList: React.FC<ServingListProps> = ({
     <>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Form style={{ width: 500 }} layout="vertical" labelCol={{ span: 5 }}>
-        <ImageEnvironmentSelect />
-      </Form>
       <Table
         rowSelection={{
           type: "radio",
