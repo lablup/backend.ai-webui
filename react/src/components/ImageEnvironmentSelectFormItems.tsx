@@ -24,7 +24,7 @@ import {
   ImageEnvironmentSelectFormItemsQuery$data,
 } from "./__generated__/ImageEnvironmentSelectFormItemsQuery.graphql";
 
-type Image = NonNullable<
+export type Image = NonNullable<
   NonNullable<ImageEnvironmentSelectFormItemsQuery$data>["images"]
 >[0];
 
