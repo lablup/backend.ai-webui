@@ -207,14 +207,13 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               <mwc-button
                   class="log"
                   icon="refresh"
-                  outlined
                   @click="${() => this._refreshLogs()}">
                 <span>${_t('button.Refresh')}</span>
               </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
-                  outlined
+                  raised
                   @click="${() => this._showClearLogsDialog()}">
                 <span>${_t('button.ClearLogs')}</span>
               </mwc-button>

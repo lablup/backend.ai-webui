@@ -473,7 +473,7 @@
     "ResourcePolicySuccessfullyCreated": "Resource Policy successfully created",
     "ResourcePolicySuccessfullyUpdated": "Resource Policy successfully updated",
     "ResourcePolicySuccessfullyDeleted": "Resource Policy successfully deleted",
-    "QuotaDoesNotSupported": "This storage host does not support quota.",
+    "QuotaDoesNotSupported": "This storage backend does not support quota.",
     "quotaSettings": {
       "QuotaScopeId": "Quota Scope ID",
       "QuotaSettings": "Quota Settings",
@@ -633,8 +633,9 @@
     "UsageMode": "Usage Mode",
     "Permission": "Permission",
     "StorageStatus": "Storage Status",
-    "Created": "created",
-    "Invited": "invited",
+    "Created": "Created",
+    "Shared": "Shared",
+    "Invited": "Invited",
     "Capacity": "capacity",
     "folders": {
       "Location": "Location",
@@ -683,7 +684,11 @@
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
       "MaxFolderQuota": "Max Folder Quota",
-      "Serve": "Serve"
+      "Serve": "Model serving",
+      "CloneFolder": "Clone folder",
+      "LeaveFolder": "Leave folder",
+      "ShareFolder": "Share folder",
+      "ModifyPermissions": "Modify permissions"
     },
     "explorer": {
       "Delete": "Delete",
@@ -740,7 +745,13 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "Serve": "Serve",
+      "FolderInfo": "Folder information",
+      "CloneFolder": "Clone this folder",
+      "Rename": "Rename folder",
+      "FolderOptionUpdate": "Update folder options",
+      "LeaveFolder": "Leave a folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -758,7 +769,14 @@
       "PermissionModified": "Permission updated"
     },
     "NoStorageDescriptionFound": "No description.",
-    "DialogModelFolder": "You can serve and manage models."
+    "DialogModelFolder": "You can serve and manage models.",
+    "QuotaPerStorageVolume": "Quota per storage volume",
+    "NumberOfFolders": "Number of folders",
+    "SelectStorageHost": "Select storage host",
+    "Used": "Used",
+    "Limit": "Limit",
+    "HostDetails": "Displays quota information for the selected storage host.",
+    "ProjectFolder": "Project Folder"
   },
   "dialog": {
     "warning": {
@@ -1024,7 +1042,9 @@
     "RetriesToSkip": "Times",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "AllowedSessionTypes": "Allowed session types",
-    "Domain": "Domain"
+    "Domain": "Domain",
+    "Public": "Public",
+    "PublicStatus": "Public Status"
   },
   "maintenance": {
     "General": "General",

@@ -1152,8 +1152,8 @@ export default class BackendAISessionList extends BackendAIPage {
         (this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement).innerHTML = `${sessionName} (${sessionUuid})`;
         (this.shadowRoot?.querySelector('#work-area') as HTMLDivElement).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         // TODO define extended type for custom properties
-        (this.workDialog as any).sessionUuid = sessionUuid;
-        (this.workDialog as any).sessionName = sessionName;
+        this.workDialog.sessionUuid = sessionUuid;
+        this.workDialog.sessionName = sessionName;
         this.workDialog.accessKey = accessKey;
         this.workDialog.show();
       }, 100);
@@ -1170,8 +1170,8 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _downloadLogs() {
-    const sessionUuid = (this.workDialog as any).sessionUuid;
-    const sessionName = (this.workDialog as any).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1193,8 +1193,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _refreshLogs() {
     // TODO define extended type for custom properties
-    const sessionUuid = (this.workDialog as any).sessionUuid;
-    const sessionName = (this.workDialog as any).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1357,8 +1357,8 @@ export default class BackendAISessionList extends BackendAIPage {
     const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
     // TODO define extended type for custom properties
-    (this.terminateSessionDialog as any).sessionName = sessionName;
-    (this.terminateSessionDialog as any).sessionId = sessionId;
+    this.terminateSessionDialog.sessionName = sessionName;
+    this.terminateSessionDialog.sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -1378,14 +1378,14 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     // TODO define extended type for custom properties
-    if (this.terminationQueue.includes((this.terminateSessionDialog as any).sessionId)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return this._terminateKernel((this.terminateSessionDialog as any).sessionId, (this.terminateSessionDialog as any).accessKey, forced).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1559,8 +1559,8 @@ export default class BackendAISessionList extends BackendAIPage {
    * Remove the dropdown menu when mouseleave the mount-button.
    * */
   _removeMountedFolderDropdown() {
-    const menu = document.getElementsByClassName('dropdown-menu') as any;
-    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+    const menu = document.getElementsByClassName('dropdown-menu') as HTMLCollectionOf<Menu>;
+    while (menu[0]) menu[0].parentNode?.removeChild(menu[0]);
   }
 
   _renderStatusDetail() {
@@ -1992,8 +1992,8 @@ export default class BackendAISessionList extends BackendAIPage {
    * Remove the dropdown menu when mouseleave the util button.
    * */
   _removeUtilizationIdleCheckDropdown() {
-    const menu = document.getElementsByClassName('util-dropdown-menu') as any;
-    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+    const menu = document.getElementsByClassName('util-dropdown-menu') as HTMLCollectionOf<Menu>;
+    while (menu[0]) menu[0].parentNode?.removeChild(menu[0]);
   }
 
   /**
@@ -2666,8 +2666,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
   /**
    * Aggregate shared memory allocated in session
-   * 
-   * @param {Object} sharedMemoryObj 
+   *
+   * @param {Object} sharedMemoryObj
    * @return {string} converted value from Bytes to GiB
    */
   _aggregateSharedMemory(sharedMemoryObj) {

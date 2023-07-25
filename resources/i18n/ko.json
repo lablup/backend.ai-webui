@@ -466,7 +466,7 @@
     "ResourcePolicySuccessfullyCreated": "자원 정책이 성공적으로 생성되었습니다.",
     "ResourcePolicySuccessfullyUpdated": "자원 정책이 성공적으로 수정되었습니다.",
     "ResourcePolicySuccessfullyDeleted": "자원 정책이 성공적으로 삭제되었습니다.",
-    "QuotaDoesNotSupported": "이 스토리지 호스트는 가용량 설정을 지원하지 않습니다.",
+    "QuotaDoesNotSupported": "이 스토리지 백엔드는 가용량 설정을 지원하지 않습니다.",
     "quotaSettings": {
       "QuotaScopeId": "가용량 범위 ID",
       "QuotaSettings": "가용량 설정",
@@ -627,7 +627,8 @@
     "Permission": "권한",
     "StorageStatus": "저장소 상태",
     "Created": "생성됨",
-    "Invited": "공유받음",
+    "Shared": "공유 받음",
+    "Invited": "초대 받음",
     "Capacity": "생성가능 갯수",
     "folders": {
       "Location": "위치",
@@ -676,7 +677,11 @@
       "FolderUsing": "사용량",
       "FolderQuota": "가용량",
       "MaxFolderQuota": "최대 할당 가능 용량",
-      "Serve": "서비스"
+      "Serve": "서비스",
+      "CloneFolder": "폴더 클론",
+      "LeaveFolder": "초대된 폴더 나가기",
+      "ShareFolder": "폴더 공유하기",
+      "ModifyPermissions": "권한 수정"
     },
     "explorer": {
       "Delete": "삭제",
@@ -733,7 +738,13 @@
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
       "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
-      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요.",
+      "Serve": "모델 서빙",
+      "FolderInfo": "폴더 정보",
+      "CloneFolder": "폴더 클론",
+      "Rename": "이름 변경",
+      "FolderOptionUpdate": "폴더 옵션 변경",
+      "LeaveFolder": "초대된 폴더 나가기"
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
@@ -751,7 +762,14 @@
       "PermissionModified": "권한이 변경되었습니다"
     },
     "NoStorageDescriptionFound": "별도 설명이 없습니다.",
-    "DialogModelFolder": "모델을 선택하여 실행하거나, 또는 모델을 관리할 수 있습니다."
+    "DialogModelFolder": "모델을 선택하여 실행하거나, 또는 모델을 관리할 수 있습니다.",
+    "QuotaPerStorageVolume": "스토리지 볼륨별 가용량",
+    "NumberOfFolders": "폴더 개수",
+    "SelectStorageHost": "호스트를 선택하세요",
+    "Used": "사용됨",
+    "Limit": "제한",
+    "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
+    "ProjectFolder": "프로젝트 폴더"
   },
   "dialog": {
     "warning": {
@@ -1017,7 +1035,9 @@
     "RetriesToSkip": "회",
     "NoGroupToDisplay": "그룹이 없습니다.",
     "AllowedSessionTypes": "허용된 세션 타입",
-    "Domain": "도메인"
+    "Domain": "도메인",
+    "Public": "공개",
+    "PublicStatus": "공개 상태"
   },
   "maintenance": {
     "General": "일반",

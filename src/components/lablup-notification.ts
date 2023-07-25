@@ -201,7 +201,7 @@ export default class LablupNotification extends LitElement {
     }
     const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
-      this.notifications = [] as any; // Reset notifications
+      this.notifications = []; // Reset notifications
       document.body.removeChild(snackbar);
     }
     this.gc();
@@ -243,8 +243,8 @@ export default class LablupNotification extends LitElement {
     notification.setAttribute('backdrop', '');
     notification.style.bottom = (20 + 55 * this.step) + 'px';
     notification.style.position = 'fixed';
-    (notification.querySelector('span') as any).style.overflowX = 'hidden';
-    (notification.querySelector('span') as any).style.maxWidth = '70vw';
+    (notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
+    (notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';
