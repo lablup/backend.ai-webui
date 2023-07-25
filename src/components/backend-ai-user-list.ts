@@ -814,6 +814,10 @@ export default class BackendAIUserList extends BackendAIPage {
           open: this.openUserSettingModal,
           userEmail: this.userEmail,
         })}"
+        @ok="${() => {
+          this.openUserSettingModal = false;
+          this.refresh();
+        }}"
         @cancel="${() => this.openUserSettingModal = false}"
         ></backend-ai-react-user-setting-dialog>
       <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>

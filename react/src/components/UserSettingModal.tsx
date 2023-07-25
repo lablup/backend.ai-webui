@@ -150,7 +150,7 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
           } else {
             message.error(res?.modify_user?.msg);
           }
-          dispatchEvent("cancel", null);
+          dispatchEvent("ok", null);
         },
         onError(err) {
           message.error(err?.message);
