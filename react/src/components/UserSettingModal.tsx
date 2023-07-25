@@ -199,15 +199,15 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
           <Switch />
         </Form.Item>
         {!!totpSupported && (
-          <Form.Item
-            name="totp_activated"
-            label={t("webui.menu.TotpActivated")}
-            valuePropName="checked"
-          >
-            <Spin spinning={isLoadingManagerSupportingTOTP}>
+          <Spin spinning={isLoadingManagerSupportingTOTP}>
+            <Form.Item
+              name="totp_activated"
+              label={t("webui.menu.TotpActivated")}
+              valuePropName="checked"
+            >
               <Switch />
-            </Spin>
-          </Form.Item>
+            </Form.Item>
+          </Spin>
         )}
       </Form>
     </Modal>
