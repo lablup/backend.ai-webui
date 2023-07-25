@@ -1,20 +1,24 @@
-import { Breadcrumb, Space, Table, TableProps, Tag, Typography, theme } from "antd";
+import {
+  Breadcrumb,
+  Space,
+  Table,
+  TableProps,
+  Tag,
+  Typography,
+  theme,
+} from "antd";
 // import { Descriptions } from 'antd';
-import type { ColumnsType } from 'antd/es/table';
+import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
 import Flex from "../components/Flex";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "../components/DefaultProviders";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
-import { useParams } from "react-router-dom";
-
+import { useNavigate, useParams } from "react-router-dom";
 
 // TODO: Need to implement wireframe of serving list using esm client
 
-type RoutingStatus = 
-  | "HEALTHY"
-  | "PROVISIONING"
-  | "UNHEALTHY";
+type RoutingStatus = "HEALTHY" | "PROVISIONING" | "UNHEALTHY";
 
 // type Session = NonNullable<
 //   ServingListQuery["response"]["compute_session_list"]
@@ -48,86 +52,90 @@ const RoutingListPage: React.FC<ServingListProps> = ({
 }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const { moveTo } = useWebComponentInfo();
-
-  const {serviceId} = useParams<{
-    serviceId: string
+  const navigate = useNavigate();
+  const { serviceId } = useParams<{
+    serviceId: string;
   }>();
-  
+
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
 
   const rowSelection = {
     onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      console.log(`selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`, selectedRows);
-    }
-  }
+      console.log(
+        `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
+        selectedRows
+      );
+    },
+  };
 
   // return color of tag by status
-  const applyStatusColor = (status: string = '') => {
-    let color = 'default';
+  const applyStatusColor = (status: string = "") => {
+    let color = "default";
     switch (status.toUpperCase()) {
-      case 'HEALTHY':
-        color = 'success';
+      case "HEALTHY":
+        color = "success";
         break;
-      case 'PROVISIONING':
-        color = 'processing';
+      case "PROVISIONING":
+        color = "processing";
         break;
-      case 'UNHEALTHY':
-        color = 'warning';
+      case "UNHEALTHY":
+        color = "warning";
         break;
     }
     return color;
-  }
+  };
 
   const columns: ColumnsType<DataType> = [
     {
-      title: '#',
-      dataIndex: 'key',
-      rowScope: 'row',
+      title: "#",
+      dataIndex: "key",
+      rowScope: "row",
     },
     {
-      title: 'Session ID',
-      dataIndex: 'sessionId',
-      key: 'sessionId',
-      render: text => <a>{text}</a>,
+      title: "Session ID",
+      dataIndex: "sessionId",
+      key: "sessionId",
+      render: (text) => <a>{text}</a>,
     },
     {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
       render: (_, { status }) => (
         <>
-          <Tag color={ applyStatusColor(status) } key={ status }>{status.toUpperCase()}</Tag>
+          <Tag color={applyStatusColor(status)} key={status}>
+            {status.toUpperCase()}
+          </Tag>
         </>
       ),
     },
     {
-      title: 'Traffic Ratio',
-      dataIndex: 'trafficRatio',
-      key: 'trafficRatio'
-    }
+      title: "Traffic Ratio",
+      dataIndex: "trafficRatio",
+      key: "trafficRatio",
+    },
   ];
 
   // dummy data for wireframe
   const data: DataType[] = [
     {
-      key: '1',
-      sessionId: 'stable-diffusion-session01',
-      status: 'HEALTHY',
+      key: "1",
+      sessionId: "stable-diffusion-session01",
+      status: "HEALTHY",
       trafficRatio: 1.0,
     },
     {
-      key: '2',
-      sessionId: 'stable-diffusion-session02',
-      status: 'PROVISIONING',
+      key: "2",
+      sessionId: "stable-diffusion-session02",
+      status: "PROVISIONING",
       trafficRatio: 1.0,
     },
     {
-      key: '3',
-      sessionId: 'stable-diffusion-session03',
-      status: 'UNHEALTHY',
+      key: "3",
+      sessionId: "stable-diffusion-session03",
+      status: "UNHEALTHY",
       trafficRatio: 1.0,
     },
   ];
@@ -138,14 +146,14 @@ const RoutingListPage: React.FC<ServingListProps> = ({
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-    {/* FIXME: routing doesn't work in here */}
+      {/* FIXME: routing doesn't work in here */}
       <Breadcrumb
         items={[
           {
             title: "Services",
             onClick: (e) => {
               e.preventDefault();
-              moveTo("/serving");
+              navigate("/serving");
             },
             href: "/serving",
           },
@@ -159,8 +167,7 @@ const RoutingListPage: React.FC<ServingListProps> = ({
       </Typography.Title>
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Table
-        columns={columns} dataSource={data} />
+      <Table columns={columns} dataSource={data} />
     </Flex>
   );
 };

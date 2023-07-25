@@ -1,7 +1,7 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import React, { Suspense } from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
-import { Route,  Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
@@ -12,7 +12,7 @@ const DefaultProviders = React.lazy(
 const Information = React.lazy(() => import("./components/Information"));
 const SessionList = React.lazy(() => import("./pages/SessionListPage"));
 const ServingList = React.lazy(() => import("./pages/ServingListPage"));
-const RoutingList=  React.lazy(() => import("./pages/RoutingListPage"));
+const RoutingList = React.lazy(() => import("./pages/RoutingListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );

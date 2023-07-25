@@ -916,6 +916,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         component.requestUpdate();
       }
     }
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**
