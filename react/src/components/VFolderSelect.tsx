@@ -1,5 +1,5 @@
 import { Select, SelectProps } from "antd";
-import React, { startTransition } from "react";
+import React, { startTransition, useEffect } from "react";
 import _ from "lodash";
 import { useCurrentProjectValue, useUpdatableState } from "../hooks";
 import { useBaiSignedRequestWithPromise } from "../helper";
@@ -29,11 +29,13 @@ type VFolder = {
 };
 
 interface VFolderSelectProps extends SelectProps {
+  autoSelectDefault?: boolean;
   filter?: (vFolder: VFolder) => boolean;
 }
 
 const VFolderSelect: React.FC<VFolderSelectProps> = ({
   filter,
+  autoSelectDefault,
   ...selectProps
 }) => {
   const currentProject = useCurrentProjectValue();
@@ -80,6 +82,18 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   });
 
   const filteredVFolders = filter ? _.filter(data, filter) : data;
+
+  const autoSelectedOption = _.first(filteredVFolders)
+    ? {
+        label: _.first(filteredVFolders)?.name,
+        value: _.first(filteredVFolders)?.name,
+      }
+    : undefined;
+  useEffect(() => {
+    if (autoSelectDefault && autoSelectedOption) {
+      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
+    }
+  }, [autoSelectDefault]);
   return (
     <Select
       showSearch

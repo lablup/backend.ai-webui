@@ -1,4 +1,14 @@
-import { Button, Form, Modal, ModalProps, Input, theme, Tooltip } from "antd";
+import {
+  Button,
+  Form,
+  Modal,
+  ModalProps,
+  Input,
+  theme,
+  Tooltip,
+  InputNumber,
+  Divider,
+} from "antd";
 import React, { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
 import Flex from "./Flex";
@@ -18,10 +28,14 @@ interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   onRequestClose: (success?: boolean) => void;
 }
 interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
+  serviceName: string;
   gpu: number;
   cpu: number;
+  mem: number;
+  shmem: number;
   resourceGroup: string;
   vFolderName: string;
+  desiredRoutingCount: number;
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -86,9 +100,24 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             {
               cpu: 1,
               gpu: 0,
+              mem: 1,
+              shmem: 1,
+              desiredRoutingCount: 1,
             } as ServiceLauncherFormInput
           }
         >
+          <Form.Item
+            //TODO: i18n
+            label={"Service Name"}
+            name="serviceName"
+            rules={[
+              {
+                max: 20,
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
           <Form.Item
             name="resourceGroup"
             label={t("session.ResourceGroup")}
@@ -109,7 +138,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               },
             ]}
           >
-            <VFolderSelect filter={(vf) => vf.usage_mode === "model"} />
+            <VFolderSelect
+              filter={(vf) => vf.usage_mode === "model"}
+              autoSelectDefault
+            />
           </Form.Item>
           <ImageEnvironmentSelectFormItems
           // //TODO: test with real inference images
@@ -127,13 +159,21 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             label={t("session.launcher.CPU")}
             // tooltip={t("session.launcher.DescCPU")}
             max={30}
+            inputNumberProps={{
+              addonAfter: t("session.launcher.Core"),
+            }}
+            required
           />
           <SliderInputItem
             name={"mem"}
             label={t("session.launcher.Memory")}
             // tooltip={t("session.launcher.DescMemory")}
             max={30}
+            inputNumberProps={{
+              addonAfter: "GB",
+            }}
             step={0.1}
+            required
           />
           <SliderInputItem
             name={"shmem"}
@@ -141,6 +181,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             // tooltip={t("session.launcher.DescSharedMemory")}
             max={30}
             step={0.1}
+            inputNumberProps={{
+              addonAfter: "GB",
+            }}
+            required
           />
           <SliderInputItem
             name={"gpu"}
@@ -148,6 +192,25 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             // tooltip={t("session.launcher.DescAIAccelerator")}
             max={30}
             step={0.1}
+            inputNumberProps={{
+              //TODO: change unit based on resource limit
+              addonAfter: "GPU",
+            }}
+            required
+          />
+          <SliderInputItem
+            label={"Desired Routing Count"}
+            name="desiredRoutingCount"
+            rules={[
+              {
+                required: true,
+              },
+            ]}
+            inputNumberProps={{
+              //TODO: change unit based on resource limit
+              addonAfter: "#",
+            }}
+            required
           />
         </Form>
       </Suspense>

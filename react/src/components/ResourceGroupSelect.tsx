@@ -9,11 +9,11 @@ import {
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from "../hooks";
-import { useQuery as useTanQuery } from "react-query";
 import {
   baiSignedRequestWithPromise,
   useBaiSignedRequestWithPromise,
 } from "../helper";
+import { useTanQuery } from "../hooks/reactQueryAlias";
 
 interface ResourceGroupSelectorProps extends SelectProps {
   projectId?: string;
@@ -25,7 +25,6 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   projectId,
   autoSelectDefault,
   filter,
-  onChange,
   ...selectProps
 }) => {
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
@@ -67,7 +66,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
 
   useEffect(() => {
     if (autoSelectDefault && autoSelectedOption) {
-      onChange?.(autoSelectedOption.value, autoSelectedOption);
+      selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
   }, [autoSelectDefault]);
   return (
@@ -81,6 +80,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
           });
         }
       }}
+      {...selectProps}
     >
       {_.map(resourceGroups, (resourceGroup, idx) => {
         return (

@@ -1,14 +1,24 @@
 import React from "react";
-import { InputNumber, Slider, Form } from "antd";
+import {
+  InputNumber,
+  Slider,
+  Form,
+  InputProps,
+  SliderSingleProps,
+  InputNumberProps,
+} from "antd";
 import Flex from "./Flex";
 import { FormItemProps } from "antd/lib/form/FormItem";
 import { NamePath } from "antd/es/form/interface";
+import { SliderRangeProps } from "antd/es/slider";
 
 interface SliderInputProps extends Omit<FormItemProps, "name"> {
   min?: number;
   max?: number;
   step?: number;
   name: NamePath;
+  inputNumberProps?: InputNumberProps;
+  sliderProps?: SliderSingleProps | SliderRangeProps;
 }
 const SliderInputItem: React.FC<SliderInputProps> = ({
   name,
@@ -17,6 +27,8 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
   step,
   rules,
   required,
+  inputNumberProps,
+  sliderProps,
   ...formItemProps
 }) => {
   return (
@@ -24,12 +36,17 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
       <Flex direction="row" gap={"md"}>
         <Flex direction="column" align="stretch" style={{ flex: 3 }}>
           <Form.Item name={name} noStyle rules={rules}>
-            <Slider max={max} min={min} step={step} />
+            <Slider max={max} min={min} step={step} {...sliderProps} />
           </Form.Item>
         </Flex>
-        <Flex>
+        <Flex style={{ flex: 2 }}>
           <Form.Item name={name} noStyle>
-            <InputNumber max={max} min={min} step={step} />
+            <InputNumber
+              max={max}
+              min={min}
+              step={step}
+              {...inputNumberProps}
+            />
           </Form.Item>
         </Flex>
       </Flex>
