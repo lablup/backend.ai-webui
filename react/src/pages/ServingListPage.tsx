@@ -45,6 +45,28 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     suspense: true,
   });
 
+// FIXME: struggling with sending data when active tab changes!
+  const runningModelServiceList = modelServiceList?.filter(
+    (item: any) => item.desired_session_count >= 0
+  );
+
+  const termiantedModelServiceList = modelServiceList?.filter(
+    (item: any) => item.desired_session_count < 0
+  );
+
+  const { data: resource } = useTanQuery({
+    queryKey: "modelService",
+    queryFn: () => {
+      return baiSignedRequestWithPromise({
+        method: "GET",
+        url: "/services",
+        client: baiClient,
+      });
+    },
+    // for to render even this query fails
+    suspense: true,
+  });
+
   return (
     <>
       <Flex
@@ -82,7 +104,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             >
               <Tabs
                 // type="card"
-                activeKey={""}
+                activeKey={selectedTab}
                 onChange={(key) => setSelectedTab(key as TabKey)}
                 tabBarStyle={{ marginBottom: 0 }}
                 style={{

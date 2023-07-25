@@ -103,29 +103,6 @@ const ServingList: React.FC<ServingListProps> = ({
     },
   ];
 
-  // dummy data
-  const data: DataType[] = [
-    {
-      key: "1",
-      name: "Test-session",
-      endpointId: "f95e5a5c-7087-42c0-aeb9-7bd71e023cad",
-      image: "allinone:7080/repo/ngc-pytorch:22.02-py3",
-      desiredSessionCount: 1,
-      routings: 1,
-      sessionOwner: "John Doe",
-      isOpenToPublic: true,
-    },
-    {
-      key: "2",
-      name: "AI-Character-service",
-      endpointId: "abcdefgh-8888-42c0-aeb9-1e027bd73cad",
-      image: "allinone:7080/repo/ngc-pytorch:22.02-py3",
-      desiredSessionCount: 3,
-      routings: 3,
-      sessionOwner: "John Doe",
-      isOpenToPublic: false,
-    },
-  ];
 
   return (
     <>
