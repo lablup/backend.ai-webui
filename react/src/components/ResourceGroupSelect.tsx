@@ -3,7 +3,7 @@ import React, { startTransition, useEffect } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
-import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
+// import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
