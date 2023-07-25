@@ -8,6 +8,8 @@ import {
   Tooltip,
   InputNumber,
   Divider,
+  Card,
+  message,
 } from "antd";
 import React, { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -15,6 +17,7 @@ import Flex from "./Flex";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelectFormItems, {
+  Image,
   ImageEnvironmentFormInput,
 } from "./ImageEnvironmentSelectFormItems";
 import FlexActivityIndicator from "./FlexActivityIndicator";
@@ -22,6 +25,7 @@ import _ from "lodash";
 import ResourceGroupSelect from "./ResourceGroupSelect";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import VFolderSelect from "./VFolderSelect";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
@@ -49,6 +53,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const [confirmLoading, setConfirmLoading] = useState(false);
   const [modalText, setModalText] = useState("Content of the modal");
   const [form] = Form.useForm<ServiceLauncherFormInput>();
+
+  const mutationToCreateService = useTanMutation({
+    mutationFn: (values: ServiceLauncherFormInput) => {
+      return new Promise((resolve, reject) => {
+        setTimeout(() => resolve("mock"), 3000);
+      });
+    },
+  });
   // const scalingGroupList = use;
   // modelStorageList: Record<string, any>[];
   // environmentList: Record<string, any>[];
@@ -69,8 +81,18 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     form.validateFields().then((values) => {
       console.log(values);
 
-      //do mutation and
-      onRequestClose(true);
+      // TODO: useTanMutation to request service start
+      mutationToCreateService.mutate(values, {
+        onSuccess: () => {
+          onRequestClose(true);
+        },
+        onError: (error) => {
+          // TODO: show error message
+        },
+      });
+      new Promise((resolve, reject) => {}).then(() => {
+        onRequestClose(true);
+      });
     });
   };
 
@@ -87,11 +109,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       onCancel={handleCancel}
       destroyOnClose={true}
       maskClosable={false}
+      okButtonProps={{
+        loading: mutationToCreateService.isLoading,
+      }}
       confirmLoading={confirmLoading}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
         <Form
+          disabled={mutationToCreateService.isLoading}
           form={form}
           preserve={false}
           layout="vertical"
@@ -100,8 +126,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             {
               cpu: 1,
               gpu: 0,
-              mem: 1,
-              shmem: 1,
+              mem: 0.25,
+              shmem: 0,
               desiredRoutingCount: 1,
             } as ServiceLauncherFormInput
           }
@@ -143,61 +169,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               autoSelectDefault
             />
           </Form.Item>
-          <ImageEnvironmentSelectFormItems
-          // //TODO: test with real inference images
-          // filter={(image) => {
-          //   return !!_.find(image?.labels, (label) => {
-          //     return (
-          //       label?.key === "ai.backend.role" &&
-          //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
-          //     );
-          //   });
-          // }}
-          />
-          <SliderInputItem
-            name={"cpu"}
-            label={t("session.launcher.CPU")}
-            // tooltip={t("session.launcher.DescCPU")}
-            max={30}
-            inputNumberProps={{
-              addonAfter: t("session.launcher.Core"),
-            }}
-            required
-          />
-          <SliderInputItem
-            name={"mem"}
-            label={t("session.launcher.Memory")}
-            // tooltip={t("session.launcher.DescMemory")}
-            max={30}
-            inputNumberProps={{
-              addonAfter: "GB",
-            }}
-            step={0.1}
-            required
-          />
-          <SliderInputItem
-            name={"shmem"}
-            label={t("session.launcher.SharedMemory")}
-            // tooltip={t("session.launcher.DescSharedMemory")}
-            max={30}
-            step={0.1}
-            inputNumberProps={{
-              addonAfter: "GB",
-            }}
-            required
-          />
-          <SliderInputItem
-            name={"gpu"}
-            label={t("session.launcher.AIAccelerator")}
-            // tooltip={t("session.launcher.DescAIAccelerator")}
-            max={30}
-            step={0.1}
-            inputNumberProps={{
-              //TODO: change unit based on resource limit
-              addonAfter: "GPU",
-            }}
-            required
-          />
           <SliderInputItem
             label={"Desired Routing Count"}
             name="desiredRoutingCount"
@@ -212,6 +183,118 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             }}
             required
           />
+          <Card
+            style={{
+              marginBottom: token.margin,
+            }}
+          >
+            <ImageEnvironmentSelectFormItems
+            // //TODO: test with real inference images
+            // filter={(image) => {
+            //   return !!_.find(image?.labels, (label) => {
+            //     return (
+            //       label?.key === "ai.backend.role" &&
+            //       label.value === "INFERENCE" //['COMPUTE', 'INFERENCE', 'SYSTEM']
+            //     );
+            //   });
+            // }}
+            />
+            <Form.Item
+              noStyle
+              shouldUpdate={(prev, cur) =>
+                prev.environments?.image?.digest !==
+                cur.environments?.image?.digest
+              }
+            >
+              {({ getFieldValue }) => {
+                // TODO: change min/max based on selected images resource limit and current user limit
+                const currentImage: Image =
+                  getFieldValue("environments")?.image;
+
+                return (
+                  <>
+                    <SliderInputItem
+                      name={"cpu"}
+                      label={t("session.launcher.CPU")}
+                      // tooltip={t("session.launcher.DescCPU")}
+
+                      min={parseInt(
+                        _.find(
+                          currentImage?.resource_limits,
+                          (i) => i?.key === "cpu"
+                        )?.min || "0"
+                      )}
+                      max={parseInt(
+                        _.find(
+                          currentImage?.resource_limits,
+                          (i) => i?.key === "cpu"
+                        )?.max || "100"
+                      )}
+                      inputNumberProps={{
+                        addonAfter: t("session.launcher.Core"),
+                      }}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    />
+                    <SliderInputItem
+                      name={"mem"}
+                      label={t("session.launcher.Memory")}
+                      // tooltip={t("session.launcher.DescMemory")}
+                      max={30}
+                      inputNumberProps={{
+                        addonAfter: "GB",
+                      }}
+                      step={0.05}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    />
+                    <SliderInputItem
+                      name={"shmem"}
+                      label={t("session.launcher.SharedMemory")}
+                      // tooltip={t("session.launcher.DescSharedMemory")}
+                      max={30}
+                      step={0.1}
+                      inputNumberProps={{
+                        addonAfter: "GB",
+                      }}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    />
+                    <SliderInputItem
+                      style={{ marginBottom: 0 }}
+                      name={"gpu"}
+                      label={t("session.launcher.AIAccelerator")}
+                      // tooltip={t("session.launcher.DescAIAccelerator")}
+                      max={30}
+                      step={0.1}
+                      inputNumberProps={{
+                        //TODO: change unit based on resource limit
+                        addonAfter: "GPU",
+                      }}
+                      required
+                      rules={[
+                        {
+                          required: true,
+                        },
+                      ]}
+                    />
+                  </>
+                );
+              }}
+            </Form.Item>
+          </Card>
         </Form>
       </Suspense>
     </Modal>
