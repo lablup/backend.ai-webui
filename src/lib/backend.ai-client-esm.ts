@@ -43,7 +43,7 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-  constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
+  constructor(accessKey?: string, secretKey?: string, endpoint?: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4. WILL BE DEPRECATED AND UPGRADED TO v6 FROM 23.03.
@@ -136,9 +136,9 @@ class ClientConfig {
    */
   static createFromEnv() {
     return new this(
-      process.env.BACKEND_ACCESS_KEY ?? '',
-      process.env.BACKEND_SECRET_KEY ?? '',
-      process.env.BACKEND_ENDPOINT ?? ''
+      process.env.BACKEND_ACCESS_KEY,
+      process.env.BACKEND_SECRET_KEY,
+      process.env.BACKEND_ENDPOINT
     );
   }
 }
