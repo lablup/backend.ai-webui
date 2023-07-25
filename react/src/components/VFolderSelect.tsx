@@ -1,9 +1,9 @@
 import { Select, SelectProps } from "antd";
 import React, { startTransition } from "react";
-import { useQuery as useTanQuery } from "react-query";
 import _ from "lodash";
 import { useCurrentProjectValue, useUpdatableState } from "../hooks";
 import { useBaiSignedRequestWithPromise } from "../helper";
+import { useTanQuery } from "../hooks/reactQueryAlias";
 
 type VFolder = {
   name: string;

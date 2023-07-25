@@ -4,10 +4,10 @@ import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import ServingList from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
-import { useQuery as useTanQuery } from "react-query";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
+import { useTanQuery } from "../hooks/reactQueryAlias";
 
 type TabKey = "running" | "finished" | "others";
 
@@ -32,7 +32,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   }
   // );
 
-  const {data: modelServiceList } = useTanQuery({
+  const { data: modelServiceList } = useTanQuery({
     queryKey: "modelService",
     queryFn: () => {
       return baiSignedRequestWithPromise({
@@ -43,8 +43,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     // for to render even this query fails
     suspense: true,
-    }
-  );
+  });
 
   return (
     <>
