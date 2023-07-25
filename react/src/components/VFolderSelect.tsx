@@ -1,9 +1,6 @@
 import { Select, SelectProps } from "antd";
 import React, { startTransition } from "react";
-import { useLazyLoadQuery } from "react-relay";
 import { useQuery as useTanQuery } from "react-query";
-import graphql from "babel-plugin-relay/macro";
-import { VFolderSelectQuery } from "./__generated__/VFolderSelectQuery.graphql";
 import _ from "lodash";
 import { useCurrentProjectValue, useUpdatableState } from "../hooks";
 import { useBaiSignedRequestWithPromise } from "../helper";
