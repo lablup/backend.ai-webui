@@ -1,14 +1,30 @@
 import React from "react";
 import graphql from "babel-plugin-relay/macro";
+import { useMutation } from "react-relay";
 import { useQuery } from "react-query";
 import { useLazyLoadQuery } from "react-relay";
-import { UserSettingModalQuery } from "./__generated__/UserSettingModalQuery.graphql";
+import {
+  UserSettingModalQuery,
+  UserSettingModalQuery$data,
+} from "./__generated__/UserSettingModalQuery.graphql";
+import { UserSettingModalMutation } from "./__generated__/UserSettingModalMutation.graphql";
 
-import { Modal, ModalProps, Form, Input, Select, Switch, Spin } from "antd";
+import {
+  Modal,
+  ModalProps,
+  Form,
+  Input,
+  Select,
+  Switch,
+  Spin,
+  message,
+} from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useSuspendedBackendaiClient } from "../hooks";
 import _ from "lodash";
+
+type User = UserSettingModalQuery$data["user"];
 
 type UserStatus = {
   [key: string]: string;
@@ -35,7 +51,7 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
   }
   const { open, userEmail } = parsedValue;
 
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<User>();
 
   const userStatus: UserStatus = {
     active: "Active",
@@ -100,6 +116,49 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
     }
   );
 
+  const [commitModifyUserSetting, isInFlightCommitModifyUserSetting] =
+    useMutation<UserSettingModalMutation>(
+      graphql`
+        mutation UserSettingModalMutation(
+          $email: String!
+          $props: ModifyUserInput!
+        ) {
+          modify_user(email: $email, props: $props) {
+            ok
+            msg
+          }
+        }
+      `
+    );
+
+  const _onOk = () => {
+    form.validateFields().then((values) => {
+      let input = { ...values };
+      if (!totpSupported) {
+        delete input?.totp_activated;
+      }
+      delete input.email;
+      input = _.omitBy(input, (item) => item === undefined || item === "");
+      commitModifyUserSetting({
+        variables: {
+          email: values?.email || "",
+          props: input,
+        },
+        onCompleted(res) {
+          if (res?.modify_user?.ok) {
+            message.success(t("environment.SuccessfullyModified"));
+          } else {
+            message.error(res?.modify_user?.msg);
+          }
+          dispatchEvent("cancel", null);
+        },
+        onError(err) {
+          message.error(err?.message);
+        },
+      });
+    });
+  };
+
   return (
     <Modal
       open={open}
@@ -109,6 +168,7 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
       centered
       title={t("credential.ModifyUserDetail")}
       destroyOnClose={true}
+      onOk={_onOk}
       {...modalProps}
     >
       <Form
@@ -143,12 +203,17 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
           <Input.Password />
         </Form.Item>
         <Form.Item
-          name="password-confirm"
+          name="password_confirm"
           dependencies={["password"]}
           label={t("webui.menu.NewPasswordAgain")}
           rules={[
             ({ getFieldValue }) => ({
               validator(_, value) {
+                if (!value && !!getFieldValue("password")) {
+                  return Promise.reject(
+                    new Error(t("webui.menu.PleaseConfirmYourPassword"))
+                  );
+                }
                 if (!value || getFieldValue("password") === value) {
                   return Promise.resolve();
                 }

@@ -39,6 +39,7 @@
       "InvalidPasswordMessage": "At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.",
       "NewPasswordMismatch": "Two new passwords do not match.",
       "PasswordMismatch": "Password mismatch",
+      "PleaseConfirmYourPassword": "Please confirm your password",
       "PasswordUpdated": "Password is successfully updated.",
       "FullnameUpdated": "Full name is successfully updated.",
       "TermsOfService": "Terms of Service",
