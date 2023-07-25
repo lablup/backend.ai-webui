@@ -382,6 +382,12 @@
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions"
   },
+  "modelService": {
+    "Running": "Running",
+    "Finished": "Finished",
+    "Others": "Others",
+    "Services": "Services"
+  },
   "button": {
     "Cancel": "Cancel",
     "Okay": "Okay",

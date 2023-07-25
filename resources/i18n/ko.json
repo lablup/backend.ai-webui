@@ -375,6 +375,12 @@
     "Readmore": "더 알아보기...",
     "Readless": "내용 접기"
   },
+  "modelService": {
+    "Running": "실행중",
+    "Finished": "종료",
+    "Others": "기타",
+    "Services": "모델 서비스"
+  },
   "button": {
     "Cancel": "취소",
     "Okay": "승인",

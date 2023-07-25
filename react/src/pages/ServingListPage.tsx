@@ -9,7 +9,9 @@ import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useTanQuery } from "../hooks/reactQueryAlias";
 
-type TabKey = "running" | "finished" | "others";
+
+// FIXME: need to apply filtering type of service later
+type TabKey = "services" //  "running" | "finished" | "others";
 
 const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -19,7 +21,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
 
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
 
-  const [selectedTab, setSelectedTab] = useState<TabKey>("running");
+  // FIXME: need to apply filtering type of service later
+  const [selectedTab, setSelectedTab] = useState<TabKey>("services");
   const [selectedGeneration, setSelectedGeneration] = useState<
     "current" | "next"
   >("next");
@@ -116,18 +119,22 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   borderTopRightRadius: token.borderRadius,
                 }}
                 items={[
-                  {
-                    key: "running",
-                    label: t("session.Running"),
-                  },
-                  {
-                    key: "finished",
-                    label: t("session.Finished"),
-                  },
-                  {
-                    key: "others",
-                    label: t("session.Others"),
-                  },
+                  {key: "services",
+                   label: t("modelService.Services")
+                  }
+                  // FIXME: need to apply filtering type of service later
+                  // {
+                  //   key: "running",
+                  //   label: t("session.Running"),
+                  // },
+                  // {
+                  //   key: "finished",
+                  //   label: t("session.Finished"),
+                  // },
+                  // {
+                  //   key: "others",
+                  //   label: t("session.Others"),
+                  // },
                 ]}
                 tabBarExtraContent={{
                   right: (
