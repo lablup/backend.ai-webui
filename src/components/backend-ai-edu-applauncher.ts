@@ -71,9 +71,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   async launch(apiEndpoint: string) {
     const queryParams = new URLSearchParams(window.location.search);
     this.resources = {
-      cpu: queryParams.get('cpu'),
-      mem: queryParams.get('mem'),
-      'cuda.shares': queryParams.get('cuda-shares')
+      'cpu': queryParams.get('cpu'),
+      'mem': queryParams.get('mem'),
+      'cuda.shares': queryParams.get('cuda.shares'),
+      'cuda.device': queryParams.get('cuda.device'),
     };
     await this._initClient(apiEndpoint);
     const loginSuccess = await this._token_login();
