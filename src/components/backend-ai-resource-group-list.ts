@@ -656,9 +656,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           </mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.resourceGroups}">
-        <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
+        <vaadin-grid-column frozen flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name" resizable>
+        <vaadin-grid-column frozen flex-grow="1" header="${_t('resourceGroup.Name')}" path="name" resizable>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description" resizable>
         </vaadin-grid-column>
@@ -674,7 +674,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr" resizable>
         </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
+        <vaadin-grid-column frozen-to-end auto-width flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="resource-group-dialog" fixed backdrop blockscrolling>
