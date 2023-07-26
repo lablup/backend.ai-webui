@@ -65,13 +65,13 @@ export default class LablupNotification extends LitElement {
       css`
         mwc-snackbar {
           --mdc-snackbar-label-color: yellow;
-          --mdc-snackbar-action-color: #64dc17;
+          --mdc-snackbar-action-color: var(--general-sidebar-selected-color, #38bd73);
           --mdc-typography-body2-font-family: var(--general-font-family);
           position: fixed;
           right: 20px;
         }
         mwc-button {
-          --mdc-theme-primary: var(--general-sidebar-selected-color);
+          --mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);
         }
       `];
   }

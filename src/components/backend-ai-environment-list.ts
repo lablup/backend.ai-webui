@@ -1241,7 +1241,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-          <vaadin-grid-selection-column frozen lex-grow="0" text-align="center" auto-select>
+          <vaadin-grid-selection-column frozen flex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
           <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
           </vaadin-grid-sort-column>
