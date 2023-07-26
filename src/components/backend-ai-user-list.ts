@@ -158,19 +158,13 @@ export default class BackendAIUserList extends BackendAIPage {
           max-width: 322px;
         }
 
-         mwc-textfield.display-textfield {
-           --mdc-text-field-disabled-ink-color: var(--general-text-color);
-         }
+        mwc-textfield.display-textfield {
+          --mdc-text-field-disabled-ink-color: var(--general-text-color);
+        }
 
         backend-ai-dialog li {
           font-family: var(--general-font-family);
           font-size: 16px;
-        }
-
-        mwc-textfield:not([disabled]),
-        mwc-textarea:not([disabled]) {
-          margin-bottom: 15px;
-          width: 280px;
         }
 
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
