@@ -299,7 +299,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
         const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
-        const resources = mounts ? {mounts, ...this.resources} : {};
+        const projects = await globalThis.backendaiclient.eduApp.get_user_projects();
+        const resources = mounts ? {mounts, ...this.resources, 'group_name': projects[0]} : {...this.resources, 'group_name': projects[0]};
         let response;
         try {
           this.appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));
