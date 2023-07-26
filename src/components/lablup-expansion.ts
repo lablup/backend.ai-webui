@@ -36,6 +36,7 @@ export default class LablupExpansion extends LitElement {
 
   @query('#accordion') ExpansionShell;
   @query('#expand_icon') ExpandIcon;
+  @query('div.content') ContentArea;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -144,6 +145,9 @@ export default class LablupExpansion extends LitElement {
   }
 
   firstUpdated() {
+    if (this.open) {
+      this.ExpansionShell.setAttribute('open', 'true');
+    }
   }
 }
 
