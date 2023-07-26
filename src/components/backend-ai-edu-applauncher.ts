@@ -73,8 +73,8 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.resources = {
       'cpu': queryParams.get('cpu'),
       'mem': queryParams.get('mem'),
-      'cuda.shares': queryParams.get('cuda.shares'),
-      'cuda.device': queryParams.get('cuda.device'),
+      'cuda.shares': queryParams.get('cuda-shares'),
+      'cuda.device': queryParams.get('cuda-device'),
     };
     await this._initClient(apiEndpoint);
     const loginSuccess = await this._token_login();
@@ -300,7 +300,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       try {
         const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
         const projects = await globalThis.backendaiclient.eduApp.get_user_projects();
-        const resources = mounts ? {mounts, ...this.resources, 'group_name': projects[0]} : {...this.resources, 'group_name': projects[0]};
+        const resources = mounts ? {mounts, ...this.resources, 'group_name': projects[0]['name']} : {...this.resources, 'group_name': projects[0]['name']};
         let response;
         try {
           this.appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));

@@ -4586,6 +4586,14 @@ class EduApp {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Get mount folders for auto-mount.
+   */
+  async get_user_projects() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class utils {
