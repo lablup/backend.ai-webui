@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useMutation } from "react-relay";
 import { useQuery } from "react-query";
@@ -21,7 +21,7 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
-import { useSuspendedBackendaiClient } from "../hooks";
+import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import _ from "lodash";
 
 type User = UserSettingModalQuery$data["user"];
@@ -32,9 +32,14 @@ type UserStatus = {
 type UserRole = {
   [key: string]: string[];
 };
-interface Props extends ModalProps {}
+interface Props extends ModalProps {
+  extraFetchKey?: string;
+}
 
-const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
+const UserSettingModal: React.FC<Props> = ({
+  extraFetchKey = "",
+  ...modalProps
+}) => {
   const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -64,6 +69,9 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
     superadmin: ["superadmin", "admin", "user", "monitor"],
     admin: ["admin", "user", "monitor"],
   };
+
+  const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
+  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const baiClient = useSuspendedBackendaiClient();
   let totpSupported = false;
@@ -113,6 +121,10 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
       email: userEmail,
       isTOTPSupported: totpSupported ?? false,
       loggedInUserEmail: baiClient?.email ?? "",
+    },
+    {
+      fetchKey: deferredMergedFetchKey,
+      fetchPolicy: "network-only",
     }
   );
 
@@ -147,6 +159,7 @@ const UserSettingModal: React.FC<Props> = ({ ...modalProps }) => {
         onCompleted(res) {
           if (res?.modify_user?.ok) {
             message.success(t("environment.SuccessfullyModified"));
+            updateFetchKey(values?.email + new Date().toISOString());
           } else {
             message.error(res?.modify_user?.msg);
           }
