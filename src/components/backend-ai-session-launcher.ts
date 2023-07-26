@@ -521,11 +521,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: var(--component-height, 36px);
         }
 
-        #launch-session[disabled] {
-          background-image: var(--general-sidebar-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
         #launch-session-form {
           height: calc(var(--component-height, auto) - 157px);
         }

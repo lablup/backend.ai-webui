@@ -61,6 +61,8 @@ export const BackendAiStyles = [
       --general-select-idle-color: var(--general-textfield-selected-color);
       --general-button-background-color: #27824F;
       --general-button-color: #ffffff;
+      --general-button-disabled-background-color: #27824F;
+      --general-button-disabled-color: #ffffff;
       --general-switch-off-color: #AAA;
       --general-switch-on-color: #27824F;
       --general-switch-on-background-color: #E3E7D8;
@@ -71,7 +73,7 @@ export const BackendAiStyles = [
       --general-progress-bar-bg: #e8e8e8;
       --general-progress-bar-reserved: linear-gradient(to left, #722cd7, #5c7cfa);
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
-                                       linear-gradient(to left, #722cd7, #5c7cfa);
+      linear-gradient(to left, #722cd7, #5c7cfa);
       --lumo-font-family: var(--general-font-family);
     }
 
@@ -200,7 +202,7 @@ export const BackendAiStyles = [
       --select-secondary-theme: var(--general-checkbox-color);
       --select-background-color: var(#E7EBEE, #efefef);
       --select-background-border-radius: 5px;
-      --select-box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+      --select-box-shadow: 0 1px 3px -1px rgba(0, 0, 0, 60%), 0 3px 12px -1px rgb(200, 200, 200, 80%);
 
       /* override for selected-area */
       --select-title-font-size: 10px;
@@ -282,7 +284,14 @@ export const BackendAiStyles = [
     mwc-button.primary-action[unelevated] {
       border-radius: 5px;
       background-image: linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
-      --mdc-theme-primary:  var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-primary: var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
+      --mdc-theme-on-primary: var(--general-button-color);
+    }
+
+    mwc-button.primary-action[disabled] {
+      border-radius: 5px;
+      background-image: linear-gradient(to bottom, rgba(105, 224, 224, 0.08) 0%, rgba(56, 189, 115, 0.2) 100%);
+      --mdc-theme-primary: var(--general-button-color); /* gradient-color doesn't work in mwc-button styling */
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
@@ -774,7 +783,7 @@ export const BackendAiStyles = [
     }
 
     .resource-legend-icon {
-      width:10px;
+      width: 10px;
       height: 10px;
       margin-top: 2px;
       margin-left: 10px;
@@ -806,7 +815,7 @@ export const BackendAiStyles = [
     backend-ai-session-launcher#session-launcher {
       --component-color: #ffffff;
       --component-bg: rgb(104, 185, 155);
-      --component-bg: linear-gradient(rgba(56,189,115, 0.5), rgba(56,189,115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
+      --component-bg: linear-gradient(rgba(56, 189, 115, 0.5), rgba(56, 189, 115, 0.5)), linear-gradient(to bottom, #69cee0 0%, #38bd73 100%);
       --component-bg-hover: linear-gradient(180deg, rgba(98, 180, 131, 1) 0%, rgba(104, 185, 155, 1) 50%, rgba(93, 178, 113, 1) 100%);
       --component-bg-active: rgb(104, 185, 155);
       --component-shadow-color: #37c995;
