@@ -1243,6 +1243,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         </div>
       </mwc-drawer>
       <div id="mini-tooltips" style="display:${this.mini_ui ? 'block' : 'none'};">
+        <vaddin-tooltip for="notification-icon" position="end" text="${_t('webui.menu.Notifications')}"></vaddin-tooltip>
+        <vaddin-tooltip for="task-icon" position="end" text="${_t('webui.menu.Tasks')}"></vaddin-tooltip>
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
