@@ -10,14 +10,10 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/textfield';
-
 import '@material/mwc-button';
-import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
+import '@material/mwc-select';
 
 import './lablup-activity-panel';
 import './backend-ai-resource-monitor';
@@ -161,42 +157,11 @@ export default class BackendAISummary extends BackendAIPage {
           color: #3e872d;
         }
 
-        mwc-linear-progress {
-          width: 190px;
-          height: 5px;
-          border-radius: 0;
-          --mdc-theme-primary: #3677eb;
-        }
-
-        mwc-linear-progress.start-bar {
-          border-top-left-radius: 3px;
-          border-top-right-radius: 3px;
-          --mdc-theme-primary: #3677eb;
-        }
-
-        mwc-linear-progress.end-bar {
-          border-bottom-left-radius: 3px;
-          border-bottom-right-radius: 3px;
-          --mdc-theme-primary: #98be5a;
-        }
-
         mwc-button, mwc-button[unelevated], mwc-button[outlined] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
           --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        wl-button[class*="green"] {
-          --button-bg: var(--paper-light-green-50);
-          --button-bg-hover: var(--paper-green-100);
-          --button-bg-active: var(--paper-green-600);
-        }
-
-        wl-button[class*="red"] {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
         }
 
         .notice-ticker {
@@ -232,10 +197,6 @@ export default class BackendAISummary extends BackendAIPage {
           padding-left: 10px;
           padding-right: 10px;
           text-align: center;
-        }
-
-        wl-icon {
-          --icon-size: 24px;
         }
 
         .invitation_folder_name {
@@ -490,7 +451,7 @@ export default class BackendAISummary extends BackendAIPage {
     const panel = e.target.closest('lablup-activity-panel');
     try {
       panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'true');
       });
       await globalThis.backendaiclient.vfolder.accept_invitation(invitation.id);
@@ -499,7 +460,7 @@ export default class BackendAISummary extends BackendAIPage {
       this._refreshInvitations();
     } catch (err) {
       panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
       });
       this.notification.text = PainKiller.relieve(err.title);
@@ -522,7 +483,7 @@ export default class BackendAISummary extends BackendAIPage {
 
     try {
       panel.setAttribute('disabled', 'true');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'true');
       });
       await globalThis.backendaiclient.vfolder.delete_invitation(invitation.id);
@@ -531,7 +492,7 @@ export default class BackendAISummary extends BackendAIPage {
       this._refreshInvitations();
     } catch (err) {
       panel.setAttribute('disabled', 'false');
-      panel.querySelectorAll('wl-button').forEach((btn) => {
+      panel.querySelectorAll('mwc-button').forEach((btn) => {
         btn.setAttribute('disabled', 'false');
       });
       this.notification.text = PainKiller.relieve(err.title);

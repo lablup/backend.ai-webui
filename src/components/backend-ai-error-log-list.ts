@@ -11,15 +11,6 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/grid/vaadin-grid-sort-column';
 import '@vaadin/icons/vaadin-icons';
 
-import 'weightless/card';
-import 'weightless/dialog';
-import 'weightless/checkbox';
-import 'weightless/title';
-import 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/button';
-import 'weightless/label';
-
 import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
 import '@material/mwc-icon';
@@ -98,24 +89,17 @@ export default class BackendAiErrorLogList extends BackendAIPage {
           color: red;
         }
 
-        wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: black;
+        div.pagination-label {
+          background-color: var(--paper-grey-100);
+          min-width: 60px;
+          font-size: 12px;
+          font-family: var(--general-font-family);
+          padding-top: 5px;
+          width:auto;
+          text-align:center;
         }
 
-        wl-icon.pagination {
-          color: var(--paper-grey-700);
-        }
-
-        wl-button.pagination[disabled] wl-icon.pagination {
-          color: var(--paper-grey-300);
-        }
-
-        wl-button.pagination {
-          width: 15px;
-          height: 15px;
-          padding: 10px;
-          box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.2);
+        mwc-icon-button.pagination {
           --button-bg: transparent;
           --button-bg-hover: var(--paper-teal-100);
           --button-bg-active: var(--paper-teal-600);
@@ -386,9 +370,8 @@ export default class BackendAiErrorLogList extends BackendAIPage {
             @click="${(e) => {
     this._updateItemsFromPage(e);
   }}"></mwc-icon-button>
-        <wl-label style="padding: 5px 15px 0px 15px;">
-          ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}
-        </wl-label>
+        <div class="pagination-label">
+          ${this._currentPage} / ${Math.ceil( this._totalLogCount / this._pageSize)}</div>
         <mwc-icon-button
             class="pagination"
             id="next-page"

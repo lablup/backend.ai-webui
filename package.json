@@ -23,11 +23,10 @@
     "copyresource": "cp -Rp resources build/rollup && cp -Rp manifest build/rollup",
     "copyconfig": "cp config.toml build/rollup && cp version.json build/rollup && cp manifest.json build/rollup",
     "copyindex": "cp index.html build/rollup",
-    "patchLib": "cd ./src/plastics/weightless && bash patch-input-behavior.sh",
+    "patchLib": "",
     "docs": "npx jsdoc -c ./jsdoc.json",
     "update": "npx tsc",
-    "postinstall": "npx concurrently -c \"auto\" --names \"patch:weightless,react-dependencies\" \"npm run patch:weightless\" \"cd react && npm install\"",
-    "patch:weightless": "cd ./src/plastics/weightless && bash ./patch-input-behavior.sh",
+    "postinstall": "npx concurrently -c \"auto\" --names \"react-dependencies\" \"cd react && npm install\"",
     "patch:lit-translate": "unzip -o ./scripts/lit-translate.zip -d ./node_modules/lit-translate && cp -f ./scripts/lit-translate-index.js ./node_modules/lit-translate/index.js"
   },
   "dependencies": {
@@ -45,11 +44,13 @@
     "@material/mwc-radio": "^0.27.0",
     "@material/mwc-select": "^0.27.0",
     "@material/mwc-slider": "^0.27.0",
+    "@material/mwc-snackbar": "^0.27.0",
     "@material/mwc-switch": "^0.27.0",
     "@material/mwc-tab-bar": "^0.27.0",
     "@material/mwc-textarea": "^0.27.0",
     "@material/mwc-textfield": "^0.27.0",
     "@material/mwc-top-app-bar-fixed": "^0.27.0",
+    "@material/web": "^1.0.0-pre.13",
     "@open-wc/dev-server-hmr": "^0.2.0",
     "@vaadin/combo-box": "^24.1.3",
     "@vaadin/date-time-picker": "^24.1.3",
@@ -83,7 +84,6 @@
     "vis-data": "^7.1.6",
     "vis-network": "^9.1.6",
     "vis-util": "^5.0.3",
-    "weightless": "^0.0.37",
     "winston": "^3.10.0"
   },
   "devDependencies": {
