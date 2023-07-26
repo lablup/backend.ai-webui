@@ -1609,6 +1609,12 @@ export default class BackendAILogin extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1652,11 +1658,16 @@ export default class BackendAILogin extends BackendAIPage {
                       @keyup="${this._submitIfEnter}"
                       >
                   </mwc-textfield>
-                  <mwc-textfield type="password" id="id_password" autocomplete="current-password"
-                      label="${_t('login.Password')}" icon="vpn_key"
-                      value="${this.password}"
-                      @keyup="${this._submitIfEnter}">
-                  </mwc-textfield>
+                  <div class="horizontal flex layout">
+                    <mwc-textfield type="password" id="id_password" autocomplete="current-password"
+                        label="${_t('login.Password')}" icon="vpn_key"
+                        value="${this.password}"
+                        @keyup="${this._submitIfEnter}">
+                    </mwc-textfield>
+                    <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                        @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                    </mwc-icon-button-toggle>
+                  </div>
                   <mwc-textfield type="number" id="otp"
                         style="display: ${this.otpRequired ? 'block' : 'none'};"
                         label="${_t('totp.OTP')}" icon="pin"
