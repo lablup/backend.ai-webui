@@ -215,9 +215,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            --mdc-typography-font-family: var(--general-font-family);
          }
          mwc-slider {
-           width: 100%;
+           width: 150px;
            margin: auto 10px;
-           --mdc-theme-secondary: var(--general-slider-color);
+           --mdc-theme-primary: var(--general-slider-color);
            --mdc-theme-text-primary-on-dark: #ffffff;
          }
        `];
@@ -1241,7 +1241,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-          <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+          <vaadin-grid-selection-column frozen lex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
           <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
           </vaadin-grid-sort-column>
@@ -1263,7 +1263,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
+          <vaadin-grid-column frozen-to-end width="110px" resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
