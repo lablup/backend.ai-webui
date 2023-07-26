@@ -154,13 +154,6 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
           width: 5rem;
         }
 
-        mwc-button, mwc-button[unelevated] {
-          background-image: none;
-          --mdc-theme-primary: var(--general-button-background-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
         mwc-list-item {
           --mdc-menu-item-height: auto;
           font-size : 14px;

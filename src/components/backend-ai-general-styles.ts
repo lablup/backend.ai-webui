@@ -587,12 +587,12 @@ export const BackendAiStyles = [
 
     .fg.grey {
       color: var(--paper-grey-600) !important;
-      --mdc-theme-on-primary: var(--paper-grey-600) !important;
+      --mdc-theme-primary: var(--paper-grey-600) !important;
     }
 
     .fg.blue {
       color: var(--paper-light-blue-400) !important;
-      --mdc-theme-on-primary: var(--paper-light-blue-400) !important;
+      --mdc-theme-primary: var(--paper-light-blue-400) !important;
     }
 
     .fg.red {
