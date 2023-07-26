@@ -68,6 +68,9 @@ export default class LablupNotification extends LitElement {
           position: fixed;
           right: 20px;
         }
+        mwc-button {
+          --mdc-theme-primary: var(--general-sidebar-selected-color);
+        }
       `];
   }
 
