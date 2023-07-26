@@ -439,12 +439,12 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center" .policy-name="${rowData.item.name}">
-          <mwc-button icon="settings" class="fg blue controls-running" ?disabled=${!this.is_super_admin}
+          <mwc-icon-button icon="settings" class="fg blue controls-running" ?disabled=${!this.is_super_admin}
                       @click="${(e) => this._launchResourcePolicyDialog(e)}">
-          </mwc-button>
-          <mwc-button icon="delete" class="fg red controls-running" ?disabled=${!this.is_super_admin}
+          </mwc-icon-button>
+          <mwc-icon-button icon="delete" class="fg red controls-running" ?disabled=${!this.is_super_admin}
                       @click="${(e) => this._openDeleteResourcePolicyListDialog(e)}">
-          </mwc-button>
+          </mwc-icon-button>
       `, root
     );
   }
