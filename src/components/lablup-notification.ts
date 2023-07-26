@@ -201,7 +201,7 @@ export default class LablupNotification extends LitElement {
       const more_button = document.createElement('mwc-button');
       // more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
-      // more_button.style.width = 80 + 'px';
+      more_button.setAttribute('style', '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);');
       if (this.url != '') {
         more_button.label = _text('notification.Visit');
         //more_button.innerHTML = _text('notification.Visit');
