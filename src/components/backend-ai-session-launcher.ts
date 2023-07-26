@@ -547,6 +547,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           border-bottom: 1px;
         }
 
+        lablup-expansion[name='resource-group'] {
+          --expansion-content-padding: 0 16px;
+        }
+
         .resources .monitor {
           margin-right: 5px;
         }

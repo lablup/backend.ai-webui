@@ -78,7 +78,7 @@ export default class LablupExpansion extends LitElement {
         }
 
         #accordion[open] div.content {
-          margin: var(--expansion-content-padding, 0);
+          margin: var(--expansion-content-margin, 0);
           padding: var(--expansion-content-padding, 0);
           max-height: 100vh;
         }
