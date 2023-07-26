@@ -63,7 +63,9 @@
       "AIAccelerator": "AI Accelerator",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "CurrentPassword": "Current Password",
-      "NewPasswordCannotBeSame": "Please enter a password that is different from your current password."
+      "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
+      "Notifications": "Notifications",
+      "Tasks": "Tasks"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -684,7 +686,11 @@
       "FolderUsing": "Using",
       "FolderQuota": "Capacity",
       "MaxFolderQuota": "Max Folder Quota",
-      "Serve": "Serve"
+      "Serve": "Model serving",
+      "CloneFolder": "Clone folder",
+      "LeaveFolder": "Leave folder",
+      "ShareFolder": "Share folder",
+      "ModifyPermissions": "Modify permissions"
     },
     "explorer": {
       "Delete": "Delete",
@@ -741,7 +747,13 @@
       "StartingSSH/SFTPSession": "Starting SFTP session...",
       "EmptyFilesAndFoldersAreNotUploaded": "Empty files and empty folders are not uploaded",
       "NumberOfSFTPSessionsExceededTitle": "Reached limit of running upload session count",
-      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session."
+      "NumberOfSFTPSessionsExceededBody": "You are running all available upload sessions you are allowed to create. Please terminated unused upload sessions before starting a new session.",
+      "Serve": "Serve",
+      "FolderInfo": "Folder information",
+      "CloneFolder": "Clone this folder",
+      "Rename": "Rename folder",
+      "FolderOptionUpdate": "Update folder options",
+      "LeaveFolder": "Leave a folder"
     },
     "invitation": {
       "EnterEmail": "Enter email address",
@@ -1032,7 +1044,9 @@
     "RetriesToSkip": "Times",
     "NoGroupToDisplay": "NoGroupToDisplay",
     "AllowedSessionTypes": "Allowed session types",
-    "Domain": "Domain"
+    "Domain": "Domain",
+    "Public": "Public",
+    "PublicStatus": "Public Status"
   },
   "maintenance": {
     "General": "General",

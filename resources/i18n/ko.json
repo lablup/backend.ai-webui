@@ -63,7 +63,9 @@
       "AIAccelerator": "AI 가속기",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "CurrentPassword": "현재 비밀번호",
-      "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요."
+      "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요.",
+      "Notifications": "알림",
+      "Tasks": "작업"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -677,7 +679,11 @@
       "FolderUsing": "사용량",
       "FolderQuota": "가용량",
       "MaxFolderQuota": "최대 할당 가능 용량",
-      "Serve": "서비스"
+      "Serve": "서비스",
+      "CloneFolder": "폴더 클론",
+      "LeaveFolder": "초대된 폴더 나가기",
+      "ShareFolder": "폴더 공유하기",
+      "ModifyPermissions": "권한 수정"
     },
     "explorer": {
       "Delete": "삭제",
@@ -734,7 +740,13 @@
       "StartingSSH/SFTPSession": "SFTP 서버 시작",
       "EmptyFilesAndFoldersAreNotUploaded": "빈 파일과 빈 폴더들은 업로드되지 않습니다.",
       "NumberOfSFTPSessionsExceededTitle": "생성 가능한 업로드 세션 갯수 한도에 도달했습니다.",
-      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요."
+      "NumberOfSFTPSessionsExceededBody": "설정된 업로드 세션 갯수를 초과하여 세션 생성을 시도하고 있습니다. 계속하기 전에 사용하지 않는 업로드 세션을 중지시키세요.",
+      "Serve": "모델 서빙",
+      "FolderInfo": "폴더 정보",
+      "CloneFolder": "폴더 클론",
+      "Rename": "이름 변경",
+      "FolderOptionUpdate": "폴더 옵션 변경",
+      "LeaveFolder": "초대된 폴더 나가기"
     },
     "invitation": {
       "EnterEmail": "이메일을 입력하세요",
@@ -1025,7 +1037,9 @@
     "RetriesToSkip": "회",
     "NoGroupToDisplay": "그룹이 없습니다.",
     "AllowedSessionTypes": "허용된 세션 타입",
-    "Domain": "도메인"
+    "Domain": "도메인",
+    "Public": "공개",
+    "PublicStatus": "공개 상태"
   },
   "maintenance": {
     "General": "일반",

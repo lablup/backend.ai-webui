@@ -13,6 +13,7 @@ import '@vanillawc/wc-codemirror/mode/shell/shell';
 import '@vanillawc/wc-codemirror/mode/yaml/yaml';
 import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
 import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
+import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
 
 /**
  Lablup Codemirror
@@ -67,7 +68,7 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as any;
+    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as WCCodeMirror;
     if (!cm.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;

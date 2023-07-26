@@ -300,7 +300,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       return;
     }
     // TODO define type for custom property
-    if (!newPassword1El.value || !(newPassword1El as any).validity.valid) {
+    if (!newPassword1El.value || !newPassword1El.validity.valid) {
       this.notification.text = _text('webui.menu.InvalidPasswordMessage');
       this.notification.show();
       return;
@@ -392,8 +392,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   _validatePassword1() {
     // TODO define type for custom property
-    const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as any;
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
+    const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as TextField;
+    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as TextField;
     password2Input.reportValidity();
     passwordInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
@@ -421,7 +421,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   _validatePassword2() {
     // TODO define type for custom property
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as any;
+    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as TextField;
     password2Input.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
@@ -565,7 +565,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <p>${_t('totp.ScanQRToEnable')}</p>
         <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
         <p>${_t('totp.TypeInAuthKey')}</p>
-        <blockquote>${this.totpKey}</blockquote>
+        <backend-ai-react-copyable-code-text value="${this.totpKey}"></backend-ai-react-copyable-code-text>
       </div>
       <div slot="content" class="layout vertical" style="width: 300px">
         <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>

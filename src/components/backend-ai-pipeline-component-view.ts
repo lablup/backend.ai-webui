@@ -13,7 +13,6 @@ import '@material/mwc-select/mwc-select';
 
 import {Network} from 'vis-network/standalone';
 
-import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 import {
