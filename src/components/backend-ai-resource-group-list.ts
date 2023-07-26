@@ -303,12 +303,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
-          <mwc-button class="fg green" icon="assignment"
-            @click=${() => this._launchDetailDialog(rowData.item)}></mwc-button>
-          <mwc-button class="fg blue" icon="settings"
-            @click=${() => this._launchModifyDialog(rowData.item)}></mwc-button>
-          <mwc-button class="fg red" icon="delete"
-            @click=${() => this._launchDeleteDialog(rowData.item)}></mwc-button>
+          <mwc-icon-button class="fg green" icon="assignment"
+            @click=${() => this._launchDetailDialog(rowData.item)}></mwc-icon-button>
+          <mwc-icon-button class="fg blue" icon="settings"
+            @click=${() => this._launchModifyDialog(rowData.item)}></mwc-icon-button>
+          <mwc-icon-button class="fg red" icon="delete"
+            @click=${() => this._launchDeleteDialog(rowData.item)}></mwc-icon-button>
         </div>
       `, root
     );
@@ -674,7 +674,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr" resizable>
         </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column frozen-to-end auto-width flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
+        <vaadin-grid-column frozen-to-end resizable width="150px" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="resource-group-dialog" fixed backdrop blockscrolling>
