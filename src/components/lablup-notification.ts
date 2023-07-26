@@ -12,6 +12,7 @@ import '../plastics/mwc/mwc-snackbar';
 
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Lablup Notification
@@ -59,6 +60,7 @@ export default class LablupNotification extends LitElement {
 
   static get styles(): CSSResultGroup {
     return [
+      BackendAiStyles,
       // language=CSS
       css`
         mwc-snackbar {
