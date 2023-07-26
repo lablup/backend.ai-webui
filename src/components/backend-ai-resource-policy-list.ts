@@ -200,7 +200,7 @@ export default class BackendAIResourcePolicyList extends BackendAIPage {
               .renderer="${this._boundClusterSizeRenderer}"></vaadin-grid-sort-column>
           <vaadin-grid-column resizable header="${_t('resourcePolicy.StorageNodes')}" .renderer="${this._boundStorageNodesRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column frozen-to-end auto-width header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
+          <vaadin-grid-column frozen-to-end width="110px" resizable header="${_t('general.Control')}" .renderer="${this._boundControlRenderer}">
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('resourcePolicy.NoResourcePolicyToDisplay')}"></backend-ai-list-status>
