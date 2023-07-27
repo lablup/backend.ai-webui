@@ -16,12 +16,15 @@ import {
   Input,
   Select,
   Switch,
-  Spin,
   message,
+  Tooltip,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
+import { useToggle } from "ahooks";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
+import { useTanMutation } from "../hooks/reactQueryAlias";
+import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
 
 type User = UserSettingModalQuery$data["user"];
@@ -29,9 +32,11 @@ type User = UserSettingModalQuery$data["user"];
 type UserStatus = {
   [key: string]: string;
 };
+
 type UserRole = {
   [key: string]: string[];
 };
+
 interface Props extends ModalProps {
   extraFetchKey?: string;
 }
@@ -143,14 +148,41 @@ const UserSettingModal: React.FC<Props> = ({
       `
     );
 
+  const mutationToRemoveTotp = useTanMutation({
+    mutationFn: (email: string) => {
+      return baiClient.remove_totp(email);
+    },
+  });
+
+  const [isOpenTOTPSettingModal, { toggle: toggleTOTPSettingModal }] =
+    useToggle(false);
+
   const _onOk = () => {
-    form.validateFields().then((values) => {
+    form.validateFields().then(async (values) => {
       let input = { ...values };
-      if (!totpSupported) {
-        delete input?.totp_activated;
-      }
       delete input.email;
       input = _.omitBy(input, (item) => item === undefined || item === "");
+
+      // TOTP setting
+      if (!totpSupported) {
+        delete input?.totp_activated;
+      } else if (
+        values?.totp_activated !== user?.totp_activated &&
+        values?.totp_activated &&
+        values?.email === baiClient?.email
+      ) {
+        toggleTOTPSettingModal();
+      } else if (
+        values?.totp_activated !== user?.totp_activated &&
+        !values?.totp_activated
+      ) {
+        mutationToRemoveTotp.mutate(user?.email || "", {
+          onError: (err) => {
+            console.log(err);
+          },
+        });
+      }
+
       commitModifyUserSetting({
         variables: {
           email: values?.email || "",
@@ -182,6 +214,7 @@ const UserSettingModal: React.FC<Props> = ({
       title={t("credential.ModifyUserDetail")}
       destroyOnClose={true}
       onOk={_onOk}
+      confirmLoading={isInFlightCommitModifyUserSetting}
       {...modalProps}
     >
       <Form
@@ -208,7 +241,7 @@ const UserSettingModal: React.FC<Props> = ({
           rules={[
             {
               pattern:
-                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\^\-_])[A-Za-z\d\^\-_]{8,}$/,
+                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\^\-_])[A-Za-z\d^\-_]{8,}$/,
               message: t("webui.menu.InvalidPasswordMessage"),
             },
           ]}
@@ -277,17 +310,36 @@ const UserSettingModal: React.FC<Props> = ({
           <Switch />
         </Form.Item>
         {!!totpSupported && (
-          <Spin spinning={isLoadingManagerSupportingTOTP}>
-            <Form.Item
-              name="totp_activated"
-              label={t("webui.menu.TotpActivated")}
-              valuePropName="checked"
+          <Form.Item
+            name="totp_activated"
+            label={t("webui.menu.TotpActivated")}
+            valuePropName="checked"
+          >
+            <Tooltip
+              title={
+                user?.email !== baiClient?.email && !user?.totp_activated
+                  ? t("credential.AdminCanOnlyRemoveTotp")
+                  : null
+              }
             >
-              <Switch />
-            </Form.Item>
-          </Spin>
+              <Switch
+                loading={isLoadingManagerSupportingTOTP}
+                disabled={
+                  user?.email !== baiClient?.email && !user?.totp_activated
+                }
+              />
+            </Tooltip>
+          </Form.Item>
         )}
       </Form>
+      {!!totpSupported && (
+        <TOTPActivateModal
+          open={isOpenTOTPSettingModal}
+          onRequestClose={() => {
+            toggleTOTPSettingModal();
+          }}
+        />
+      )}
     </Modal>
   );
 };
