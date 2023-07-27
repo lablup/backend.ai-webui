@@ -1,5 +1,5 @@
 import { Button, ConfigProvider, Tabs, theme } from "antd";
-import React, { PropsWithChildren, Suspense, useState } from "react";
+import React, { PropsWithChildren, Suspense, useEffect, useState } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import ServingList from "../components/ServingList";
@@ -18,7 +18,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
-
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
 
   // FIXME: need to apply filtering type of service later
@@ -49,13 +48,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   });
 
 // FIXME: struggling with sending data when active tab changes!
-  const runningModelServiceList = modelServiceList?.filter(
-    (item: any) => item.desired_session_count >= 0
-  );
+  // const runningModelServiceList = modelServiceList?.filter(
+  //   (item: any) => item.desired_session_count >= 0
+  // );
 
-  const termiantedModelServiceList = modelServiceList?.filter(
-    (item: any) => item.desired_session_count < 0
-  );
+  // const terminatedModelServiceList = modelServiceList?.filter(
+  //   (item: any) => item.desired_session_count < 0
+  // );
 
   const { data: resource } = useTanQuery({
     queryKey: "modelService",
