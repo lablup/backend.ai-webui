@@ -738,7 +738,7 @@ export default class BackendAIUserList extends BackendAIPage {
           ${this.condition !== 'active' ? html`
             <lablup-grid-sort-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
                               .renderer="${this._userStatusRenderer}"></lablup-grid-sort-filter-column>` : html``}
-          <vaadin-grid-column resizable header="${_t('general.Control')}"
+          <vaadin-grid-column frozen-to-end width="160px" resizable header="${_t('general.Control')}"
               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
