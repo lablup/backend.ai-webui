@@ -22,15 +22,14 @@ interface ServingListProps extends Omit<TableProps<any>, "dataSource"> {
   dataSource: Array<any>;
 }
 
-interface DataType {
-  key: string;
+export interface ServingListInfo {
   name: string;
-  endpointId: String;
+  id: String;
   image: string;
-  desiredSessionCount: number;
-  routings: number; // only count for routings in HEALTHY status
-  sessionOwner: string;
-  isOpenToPublic: boolean;
+  desired_session_count: number;
+  active_route_count: number; // only count for routings in HEALTHY status
+  session_owner: string;
+  is_public: boolean;
 }
 
 const ServingList: React.FC<ServingListProps> = ({
@@ -110,10 +109,11 @@ const ServingList: React.FC<ServingListProps> = ({
       {/* {fetchKey}, {deferredFetchKey} */}
       {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
       <Table
-        rowSelection={{
-          type: "radio",
-          ...rowSelection,
-        }}
+        // FIXME: temporally disable radio-button because of unexpected behaviour.(all-selected)
+        // rowSelection={{
+        //   type: "radio",
+        //   ...rowSelection,
+        // }}
         columns={columns}
         dataSource={dataSource ? dataSource: []}
       />
