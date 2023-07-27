@@ -59,6 +59,19 @@ const RoutingListPage: React.FC<ServingListProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+
+  const { data: modelServiceInfo } = useTanQuery({
+    queryKey: "serviceInfo",
+    queryFn: () => {
+      return baiSignedRequestWithPromise({
+        method: "GET",
+        url: `/services/${serviceId}`,
+        client: baiClient,
+      })
+    },
+    enabled: !!serviceId
+  });
+
   const { t } = useTranslation();
 
   const rowSelection = {

@@ -51,21 +51,22 @@ const ServingList: React.FC<ServingListProps> = ({
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
   const { t } = useTranslation();
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
-        selectedRows
-      );
-    },
-  };
+  // FIXME: temporally disable radio-button because of unexpected behaviour.(all-selected)
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys: React.Key[], selectedRows: ServingListInfo[]) => {
+  //     console.log(
+  //       `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
+  //       selectedRows
+  //     );
+  //   },
+  // };
 
-  const columns: ColumnsType<DataType> = [
+  const columns: ColumnsType<ServingListInfo> = [
     {
       title: "Endpoint ID",
       dataIndex: "name",
       key: "name",
-      render: (text) => <Link to={"/serving/" + text}>{text}</Link>,
+      render: (text, row) => <Link to={"/serving/" + row.id}>{text}</Link>,
     },
     {
       title: "Service Id",
