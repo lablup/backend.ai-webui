@@ -1,5 +1,6 @@
 import {
   Breadcrumb,
+  Descriptions,
   Space,
   Table,
   TableProps,
@@ -7,7 +8,7 @@ import {
   Typography,
   theme,
 } from "antd";
-// import { Descriptions } from 'antd';
+import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
 import Flex from "../components/Flex";
@@ -15,10 +16,25 @@ import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "../components/DefaultProviders";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
+import { baiSignedRequestWithPromise } from "../helper";
+import { useTanQuery } from "../hooks/reactQueryAlias";
 
-// TODO: Need to implement wireframe of serving list using esm client
+interface RoutingInfo {
+  route_id: string;
+  session_id: string;
+  traffic_ratio: number;
+}
+export interface ModelServiceInfo {
+  endpoint_id: string;
+  name: string;
+  desired_session_count: number;
+  active_routes: RoutingInfo[];
+  service_endpoint: string;
+  is_public: boolean;
+}
 
-type RoutingStatus = "HEALTHY" | "PROVISIONING" | "UNHEALTHY";
+// TODO: display all of routings when API/GQL supports
+// type RoutingStatus = "HEALTHY" | "PROVISIONING" | "UNHEALTHY";
 
 // type Session = NonNullable<
 //   ServingListQuery["response"]["compute_session_list"]
@@ -102,54 +118,28 @@ const RoutingListPage: React.FC<ServingListProps> = ({
 
   const columns: ColumnsType<DataType> = [
     {
-      title: "#",
-      dataIndex: "key",
-      rowScope: "row",
+      title: "Route ID",
+      dataIndex: "routeId",
+      key: "route_id",
+      render: (text) => <a>{text}</a>,
     },
     {
       title: "Session ID",
       dataIndex: "sessionId",
-      key: "sessionId",
-      render: (text) => <a>{text}</a>,
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      render: (_, { status }) => (
-        <>
-          <Tag color={applyStatusColor(status)} key={status}>
-            {status.toUpperCase()}
-          </Tag>
-        </>
-      ),
+      key: "session_id",
+      // FIXME: currently there's no status showing through REST API
+      // render: (_, { status }) => (
+      //   <>
+      //     <Tag color={applyStatusColor(status)} key={status}>
+      //       {status.toUpperCase()}
+      //     </Tag>
+      //   </>
+      // ),
     },
     {
       title: "Traffic Ratio",
       dataIndex: "trafficRatio",
-      key: "trafficRatio",
-    },
-  ];
-
-  // dummy data for wireframe
-  const data: DataType[] = [
-    {
-      key: "1",
-      sessionId: "stable-diffusion-session01",
-      status: "HEALTHY",
-      trafficRatio: 1.0,
-    },
-    {
-      key: "2",
-      sessionId: "stable-diffusion-session02",
-      status: "PROVISIONING",
-      trafficRatio: 1.0,
-    },
-    {
-      key: "3",
-      sessionId: "stable-diffusion-session03",
-      status: "UNHEALTHY",
-      trafficRatio: 1.0,
+      key: "traffic_ratio",
     },
   ];
 
@@ -176,43 +166,29 @@ const RoutingListPage: React.FC<ServingListProps> = ({
         ]}
       ></Breadcrumb>
       <Typography.Title level={3} style={{ margin: 0 }}>
-        {serviceId || ""}
+        {modelServiceInfo.name || ""}
       </Typography.Title>
-      {/* {fetchKey}, {deferredFetchKey} */}
-      {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Table columns={columns} dataSource={data} />
+      <Typography.Title level={4} style={{ margin: 0 }}>Service Info</Typography.Title>
+      <Descriptions
+        bordered
+        column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+      >
+        <Descriptions.Item label="Name">{modelServiceInfo.name}</Descriptions.Item>
+        <Descriptions.Item label="Endpoint ID">{modelServiceInfo.endpoint_id}</Descriptions.Item>
+        <Descriptions.Item label="Session Owner">{baiClient.email || ''}</Descriptions.Item>
+        <Descriptions.Item label="Desired Session Count">{modelServiceInfo.desired_session_count}</Descriptions.Item>
+        <Descriptions.Item label="Service Endpoint">{
+          modelServiceInfo.service_endpoint ? modelServiceInfo.service_endpoint :
+          <Tag>No service endpoint</Tag>}
+        </Descriptions.Item>
+        <Descriptions.Item label="Open To Public">{(modelServiceInfo.is_public) ? 
+        <CheckOutlined /> : <CloseOutlined />
+      }</Descriptions.Item>
+      </Descriptions>
+      <Typography.Title level={4} style={{ margin: 0 }}>Active Routes Info.</Typography.Title>
+      <Table columns={columns} dataSource={modelServiceInfo.active_routes ? modelServiceInfo.active_routes : []} />
     </Flex>
   );
 };
-
-// const ServiceInfo: React.FC = ({}) => {
-//     return (
-//         <div>
-//     <Descriptions
-//       title="Service Info"
-//       bordered
-//       column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-//     >
-//       <Descriptions.Item label="Name">Stable Diffusion V3</Descriptions.Item>
-//       <Descriptions.Item label="Endpoint ID">f95e5a5c-7087-42c0-aeb9-7bd71e023cad</Descriptions.Item>
-//       <Descriptions.Item label="Session Owner">d92b7fe3-dd07-4f0b-9f8-85dc4985e57</Descriptions.Item>
-//       <Descriptions.Item label="Desired Session Count">$80.00</Descriptions.Item>
-//       <Descriptions.Item label="Routings">
-//         Data disk type: MongoDB
-//         <br />
-//         Database version: 3.4
-//         <br />
-//         Package: dds.mongo.mid
-//         <br />
-//         Storage space: 10 GB
-//         <br />
-//         Replication factor: 3
-//         <br />
-//         Region: East China 1
-//       </Descriptions.Item>
-//     </Descriptions>
-//   </div>
-//   );
-// };
 
 export default RoutingListPage;
