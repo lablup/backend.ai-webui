@@ -20,6 +20,8 @@ interface ServingListProps extends Omit<TableProps<any>, "dataSource"> {
   // filter: (item: Session) => boolean;
   extraFetchKey?: string;
   dataSource: Array<any>;
+  onClickEdit: (row: ServingListInfo) => void;
+  onClickTerminate: (row: ServingListInfo) => void;
 }
 
 export interface ServingListInfo {
@@ -41,6 +43,8 @@ const ServingList: React.FC<ServingListProps> = ({
   dataSource = [],
   // filter,
   extraFetchKey = "",
+  onClickEdit,
+  onClickTerminate,
   ...tableProps
 }) => {
   const baiClient = useSuspendedBackendaiClient();

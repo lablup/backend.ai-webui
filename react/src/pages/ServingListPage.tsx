@@ -1,13 +1,15 @@
-import { Button, ConfigProvider, Tabs, theme } from "antd";
-import React, { PropsWithChildren, Suspense, useEffect, useState } from "react";
+import { Button, ConfigProvider, Modal, Tabs, theme } from "antd";
+import React, { PropsWithChildren, Suspense, useDeferredValue, useEffect, useState } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
-import ServingList from "../components/ServingList";
+import ServingList, { ServingListInfo } from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
+import { useToggle } from "ahooks";
 import { useTanQuery } from "../hooks/reactQueryAlias";
+import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 
 
 // FIXME: need to apply filtering type of service later
@@ -19,20 +21,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
-
+  const [selectedModelService, setSelectedModelService] = useState<ServingListInfo>();
+  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] = useState(false);
+  const [isOpenModelServiceTerminatingModal, setisOpenModelServiceTerminatingModal] = useState(false);
   // FIXME: need to apply filtering type of service later
   const [selectedTab, setSelectedTab] = useState<TabKey>("services");
   const [selectedGeneration, setSelectedGeneration] = useState<
     "current" | "next"
   >("next");
-
-  // const listQuery = useTanQuery(
-  //   ["modelService"], // key
-  //   () => {}, // async function
-  //   {
-  //     // for to render even this query fails
-  //   }
-  // );
 
   const { data: modelServiceList } = useTanQuery({
     queryKey: "modelService",
@@ -65,6 +61,27 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         client: baiClient,
       });
     },
+    // for to render even this query fails
+    suspense: true,
+  });
+
+  // FIXME: temporally trigger useQuery with refetch function
+  const {data, refetch} = useTanQuery({
+    queryKey: "terminateModelService",
+    queryFn: () => {
+      return baiSignedRequestWithPromise({
+        method: "DELETE",
+        url: "/services/"+ selectedModelService?.id,
+        client: baiClient,
+      });
+    },
+    onSuccess: (res: any) => {
+      console.log(res);
+    },
+    onError: (err: any) => {
+      console.log(err);
+    },
+    enabled: false,
     // for to render even this query fails
     suspense: true,
   });
@@ -174,10 +191,43 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               status={[]}
               extraFetchKey={""}
               dataSource={modelServiceList}
+              onClickEdit={(row) => {
+                setIsOpenModelServiceSettingModal(true);
+                setSelectedModelService(row);
+              }}
+              onClickTerminate={(row) => {
+                setisOpenModelServiceTerminatingModal(true);
+                setSelectedModelService(row);
+              }}
             />
           </Suspense>
         </Flex>
       </Flex>
+      <Modal
+        open={isOpenModelServiceTerminatingModal}
+        // TODO: translation
+        title={t("dialog.title.LetsDouble-Check")}
+        onOk={() => {
+          setisOpenModelServiceTerminatingModal(false);
+          // FIXME: any better idea for handling result?
+          refetch();
+        }}
+        onCancel={() => {
+          setisOpenModelServiceTerminatingModal(false);
+        }}
+      >
+        <Flex direction="column" align="stretch" justify="center">
+          <p>{"You are about to terminate " + (selectedModelService?.name || "") + "."}</p>
+          <p>{t("dialog.ask.DoYouWantToProceed")}</p>
+        </Flex>
+      </Modal>
+      <ModelServiceSettingModal
+        open={isOpenModelServiceSettingModal}
+        onRequestClose={() => {
+          setIsOpenModelServiceSettingModal(false);
+        }}
+        dataSource={selectedModelService || null}
+      ></ModelServiceSettingModal>
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         onRequestClose={(success) => {
