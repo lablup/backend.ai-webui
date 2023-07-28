@@ -35,7 +35,7 @@ import '@vaadin/vaadin-grid/vaadin-grid-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
 
-import 'weightless/expansion';
+import '../../components/lablup-expansion';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 
@@ -244,32 +244,6 @@ export default class PipelineConfigurationForm extends LitElement {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-        }
-
-        wl-expansion {
-          --font-family-serif: var(--general-font-family);
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-header-padding: 16px;
-          --expansion-margin-open: 0;
-        }
-
-        wl-expansion span[slot="title"] {
-          font-size: 12px;
-          color: rgb(64, 64, 64);
-          font-weight: normal;
-        }
-
-        wl-expansion.vfolder {
-          --expansion-content-padding: 0;
-          border-bottom: 1px;
-        }
-
-        wl-expansion span {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
         }
     `];
   }
@@ -1464,11 +1438,11 @@ export default class PipelineConfigurationForm extends LitElement {
       </mwc-select>
       <mwc-textfield id="mount-folder-input" label="Pipeline Folder Name (Optional)" type="text"
                     maxLength="64" placeholder="" helper="${_text('maxLength.64chars')}"></mwc-textfield>
-      <wl-expansion class="vfolder" name="vfolder">
+      <lablup-expansion class="vfolder" name="vfolder">
         <span slot="title">Additional mount (Optional)</span>
           ${this.renderAdditionalVFolderListTemplate()}
           ${this.renderMountedResultTemplate()}
-      </wl-expansion>
+      </lablup-expansion>
     </div>`;
   }
 

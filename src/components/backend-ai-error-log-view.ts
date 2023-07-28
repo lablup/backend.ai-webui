@@ -2,11 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html} from 'lit';
+import {CSSResultGroup, html} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
 import './backend-ai-error-log-list';
-import 'weightless/card';
 
 import {BackendAIPage} from './backend-ai-page';
 import {BackendAiStyles} from './backend-ai-general-styles';
@@ -20,8 +19,10 @@ import {
 /**
  Backend.AI Error Log View
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-error-log-view
+
+ Deprecated for now. Kept for future use (especially for window mode)
  */
 
 @customElement('backend-ai-error-log-view')
@@ -34,15 +35,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning,
-      // language=CSS
-      css`
-          wl-card h3.tab {
-              padding-top: 0;
-              padding-bottom: 0;
-              padding-left: 0;
-              }
-          `
+      IronPositioning
     ];
   }
 
@@ -54,9 +47,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
     // language=HTML
     return html `
       <link rel="stylesheet" href="resources/custom.css">
-      <wl-card class="item" elevation="1">
-        <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
-      </wl-card>
+      <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
       `;
   }
 }

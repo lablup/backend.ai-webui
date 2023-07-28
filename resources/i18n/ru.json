@@ -61,7 +61,9 @@
       "SetupTotp": "__NOT_TRANSLATED__",
       "TotpActivated": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
-      "Serving": "__NOT_TRANSLATED__"
+      "Serving": "__NOT_TRANSLATED__",
+      "Notifications": "__NOT_TRANSLATED__",
+      "Tasks": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "ТРЕБУЕТСЯ ВХОД",
     "YouAreOffline": "Вы сейчас не в сети",

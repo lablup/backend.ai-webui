@@ -10,6 +10,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {Button} from '@material/mwc-button';
+import '@material/mwc-button';
 import {Checkbox} from '@material/mwc-checkbox/mwc-checkbox';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
@@ -27,16 +28,12 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/text-field/vaadin-text-field';
 import '@vaadin/date-time-picker/vaadin-date-time-picker';
 
-import 'weightless/checkbox';
-import 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-
 import './lablup-codemirror';
+import './lablup-expansion';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
+import LablupExpansion from './lablup-expansion';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -48,12 +45,10 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import {Expansion} from 'weightless/expansion';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
-type WlExpansion = HTMLElementTagNameMap['wl-expansion'];
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
 type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
@@ -243,7 +238,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#owner-scaling-group') ownerScalingGroupSelect!: Select;
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
-  @query('#vfolder-mount-preview') vfolderMountPreview!: WlExpansion;
+  @query('#vfolder-mount-preview') vfolderMountPreview!: LablupExpansion;
   @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
@@ -386,7 +381,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 10px;
         }
 
-        .environment-variables-container wl-textfield input {
+        .environment-variables-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -526,49 +521,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: var(--component-height, 36px);
         }
 
-        #launch-session[disabled] {
-          background-image: var(--general-sidebar-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
         #launch-session-form {
           height: calc(var(--component-height, auto) - 157px);
         }
 
-        wl-button > span {
-          margin-left: 5px;
-          font-weight: normal;
-        }
-
-        wl-icon {
-          --icon-size: 20px;
-        }
-
-        wl-expansion {
-          --font-family-serif: var(--general-font-family);
+        lablup-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
+          --expansion-header-font-weight: normal;
+          --expansion-header-font-size: 14px;
+          --expansion-header-font-color: rgb(64, 64, 64);
         }
 
-        wl-expansion span[slot="title"] {
-          font-size: 12px;
-          color: rgb(64, 64, 64);
-          font-weight: normal;
-        }
-
-        wl-expansion.vfolder,
-        wl-expansion.editor {
+        lablup-expansion.vfolder,
+        lablup-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px;
         }
 
-        wl-expansion span {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
+        lablup-expansion[name='resource-group'] {
+          --expansion-content-padding: 0 16px;
         }
 
         .resources .monitor {
@@ -689,11 +664,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 500;
         }
 
-        wl-label {
-          margin-right: 10px;
-          outline: none;
-        }
-
         #help-description {
           --component-width: 350px;
         }
@@ -733,10 +703,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-        }
-
-        mwc-button > mwc-icon {
-          display: none;
         }
 
         p.title {
@@ -821,9 +787,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           margin: 0;
         }
 
-        .environment-variables-container wl-textfield {
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222;
+        .environment-variables-container mwc-textfield {
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-text-field-disabled-ink-color: #222;
         }
 
         [name='resource-group'] mwc-list-item {
@@ -916,7 +882,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.updateResourceAllocationPane();
     });
 
-    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll('lablup-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
@@ -1287,7 +1253,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
-      const ownershipPanel = this.shadowRoot?.querySelector('wl-expansion[name="ownership"]') as WlExpansion;
+      const ownershipPanel = this.shadowRoot?.querySelector('lablup-expansion[name="ownership"]') as LablupExpansion;
       if (globalThis.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
@@ -2960,7 +2926,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll<LablupExpansion>('lablup-expansion').forEach((element) => {
       // remove protected property assignment
       element.onkeydown = (e) => {
         if (e.key === 'Enter') {
@@ -3386,11 +3352,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <link rel="stylesheet" href="resources/custom.css">
-      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
-                 @click="${() => this._launchSessionDialog()}">
-        <wl-icon>power_settings_new</wl-icon>
-        <span>${_t('session.launcher.Start')}</span>
-      </wl-button>
+      <mwc-button class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
+                  icon="power_settings_new"
+                  @click="${() => this._launchSessionDialog()}">${_t('session.launcher.Start')}</mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent @dialog-closed="${() => this._toggleScheduleTime(true)}">
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
@@ -3507,13 +3471,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.value}"></mwc-textfield>
                     `)}
                   </div>
                 </div>
@@ -3523,7 +3487,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+            <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
@@ -3569,10 +3533,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-          <wl-expansion class="vfolder" name="vfolder" open>
+          <lablup-expansion class="vfolder" name="vfolder" open>
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
               <vaadin-grid
@@ -3600,8 +3564,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
+            </lablup-expansion>
+            <lablup-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
               <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
@@ -3624,8 +3588,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                       .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
                 </vaadin-grid>
               </div>
-            </wl-expansion>
-            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
+            </lablup-expansion>
+            <lablup-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
@@ -3648,7 +3612,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
@@ -3725,7 +3689,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
               </mwc-select>
             </div>
-            <wl-expansion name="resource-group">
+            <lablup-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical layout">
                 <div>
@@ -3808,7 +3772,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
             ${this.cluster_support ? html`
               <mwc-select id="cluster-mode" label="${_text('session.launcher.ClusterMode')}" required
                           icon="account_tree" fixedMenuPosition
@@ -3847,7 +3811,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             ` : html``}
-            <wl-expansion name="hpc-option-group">
+            <lablup-expansion name="hpc-option-group">
               <span slot="title">${_t('session.launcher.HPCOptimization')}</span>
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
@@ -3875,7 +3839,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.SessionInfo')}</p>
@@ -4033,13 +3997,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                      <nwc-textfield disabled value="${item.value}"></nwc-textfield>
                     `)}
                   </div>
                 </div>

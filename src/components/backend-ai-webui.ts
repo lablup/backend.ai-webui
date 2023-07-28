@@ -27,11 +27,9 @@ import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@vaadin/tooltip';
 
 import toml from 'markty-toml';
-
-import 'weightless/popover';
-import 'weightless/popover-card';
 
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
@@ -937,22 +935,22 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
     // temporally blcok pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
-    this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
-    this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
+    this._createPopover('statistics-menu-icon', _text('webui.menu.Statistics'));
+    this._createPopover('usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
     if (this.is_admin) {
-      this._createPopover('#user-menu-icon', _text('webui.menu.Users'));
+      this._createPopover('user-menu-icon', _text('webui.menu.Users'));
     }
     if (this.is_superadmin) {
-      this._createPopover('#resources-menu-icon', _text('webui.menu.Resources'));
-      this._createPopover('#environments-menu-icon', _text('webui.menu.Environments'));
-      this._createPopover('#configurations-menu-icon', _text('webui.menu.Configurations'));
-      this._createPopover('#maintenance-menu-icon', _text('webui.menu.Maintenance'));
-      this._createPopover('#information-menu-icon', _text('webui.menu.Information'));
+      this._createPopover('resources-menu-icon', _text('webui.menu.Resources'));
+      this._createPopover('environments-menu-icon', _text('webui.menu.Environments'));
+      this._createPopover('configurations-menu-icon', _text('webui.menu.Configurations'));
+      this._createPopover('maintenance-menu-icon', _text('webui.menu.Maintenance'));
+      this._createPopover('information-menu-icon', _text('webui.menu.Information'));
       // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
     if (!this.isHideAgents) {
-      this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
+      this._createPopover('agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     }
   }
 
@@ -963,22 +961,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} title
    */
   _createPopover(anchor: string, title: string) {
-    const popover = document.createElement('wl-popover');
-    popover.anchor = anchor;
-    popover.setAttribute('fixed', '');
-    popover.setAttribute('disablefocustrap', '');
-    popover.setAttribute('anchororiginx', 'right');
-    popover.setAttribute('anchororiginy', 'center');
-    popover.setAttribute('transformoriginx', 'left');
-    popover.setAttribute('transformoriginy', 'center');
-    popover.anchorOpenEvents = ['mouseover'];
-    popover.anchorCloseEvents = ['mouseout'];
-    const card = document.createElement('wl-popover-card');
-    const carddiv = document.createElement('div');
-    carddiv.style.padding = '5px';
-    carddiv.innerText = title;
-    card.appendChild(carddiv);
-    popover.appendChild(card);
+    const popover = document.createElement('vaadin-tooltip');
+    popover.for = anchor;
+    popover.position = 'end';
+    popover.text = title;
     const tooltipBox = this.shadowRoot?.querySelector('#mini-tooltips')!;
     tooltipBox.appendChild(popover);
   }
@@ -1048,11 +1034,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal center-justified center layout flex" style="max-height:40px;">
+          <div class="${this.mini_ui ? 'vertical' : 'horizontal'} center-justified center layout flex">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="temporarily-hide full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
+            <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
+            <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
@@ -1168,7 +1154,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230718</small>
+                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230724</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1192,7 +1178,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230718</small>
+              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230724</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1269,16 +1255,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         </div>
       </mwc-drawer>
       <div id="mini-tooltips" style="display:${this.mini_ui ? 'block' : 'none'};">
-        <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${['mouseover']}" fixed disablefocustrap
-           anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-          <wl-popover-card>
-            <div style="padding:5px">
-              <mwc-icon-button disabled class="temporarily-hide side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'red' : 'black'}" id="feedback-icon-popover" icon="question_answer"></mwc-icon-button>
-              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'red' : 'black'}" id="notification-icon-popover" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
-              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'red' : 'black'}" id="task-icon-popover" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
-            </div>
-          </wl-popover-card>
-        </wl-popover>
+        <vaadin-tooltip for="notification-icon" position="end" text="${_t('webui.menu.Notifications')}"></vaadin-tooltip>
+        <vaadin-tooltip for="task-icon" position="end" text="${_t('webui.menu.Tasks')}"></vaadin-tooltip>
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.
