@@ -34,7 +34,7 @@ const TOTPActivateModal: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   let { data, isLoading } = useQuery("totp", () => {
-    return baiClient.initialize_totp();
+    return modalProps.open ? baiClient.initialize_totp() : null;
   });
 
   const mutationToActivateTotp = useTanMutation({
