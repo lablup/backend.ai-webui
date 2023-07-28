@@ -4,13 +4,17 @@ import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
-import { useTanQuery } from "../hooks/reactQueryAlias";
+import { useTanQuery, useTanMutation } from "../hooks/reactQueryAlias";
 import { ServingListInfo } from "../components/ServingList";
 import Flex from "./Flex";
 
 interface Props extends ModalProps {
-  onRequestClose: () => void;
+  onRequestClose: (success?: boolean) => void;
   dataSource: ServingListInfo | null;
+}
+
+interface ServiceSettingFormInput {
+  desired_session_count: number,
 }
 
 const ModelServiceSettingModal: React.FC<Props> = ({
@@ -23,12 +27,42 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   const { t } = useTranslation();
   const [form] = Form.useForm();
 
-  const _onOk = (e: React.MouseEvent<HTMLElement>) => {
+  const mutationToUpdateService = useTanMutation({
+    mutationFn: (values: ServiceSettingFormInput) => {
+      const body = {
+        to: values.desired_session_count,
+      };
+      return baiSignedRequestWithPromise({
+        method: "POST",
+        url: `/services/${dataSource?.id}/scale`,
+        body,
+        client: baiClient,
+      })
+    },
+  });
+
+  // Apply any operation after clicking OK button
+  const handleOk = (e: React.MouseEvent<HTMLElement>) => {
     form.validateFields().then((values) => {
-      // TODO: send Requests
+      mutationToUpdateService.mutate(values, {
+        onSuccess: () => {
+          console.log("service updated");
+          onRequestClose(true);
+        },
+        onError: (error) => {
+          console.log(error);
+          // TODO: show error message
+        }
+      })
     }).catch((err) => {
       console.log(err)
     })
+  };
+
+  // Apply any operation after clicking Cancel button
+  const handleCancel = () => {
+    // console.log("Clicked cancel button");
+    onRequestClose();
   };
 
   return(
@@ -38,8 +72,8 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         zIndex: 10000,
       }}
       destroyOnClose
-      onOk={_onOk}
-      onCancel={onRequestClose}
+      onOk={handleOk}
+      onCancel={handleCancel}
       title={"Edit Model Service"} // TODO: translate needed
     >
       <Flex direction="row" align="stretch" justify="around">

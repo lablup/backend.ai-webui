@@ -154,7 +154,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     //   setConfirmLoading(false);
     // }, 2000);
     form.validateFields().then((values) => {
-      // TODO: useTanMutation to request service start
       mutationToCreateService.mutate(values, {
         onSuccess: () => {
           console.log("service created")
