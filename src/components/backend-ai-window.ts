@@ -102,7 +102,7 @@ export default class BackendAIWindow extends LitElement {
 
         div.mock {
           position: absolute;
-          z-index: 2000;
+          z-index: 20000;
         }
 
         div.win > h4 {
@@ -270,6 +270,7 @@ export default class BackendAIWindow extends LitElement {
     this.mock.style.width = this.win.offsetWidth.toString() + 'px';
     this.mock.style.height = this.win.offsetHeight.toString() + 'px';
     this.mock.style.border = '3px dotted #ccc';
+    this.mock.style.borderRadius = '10px';
     this.mock.style.position = 'absolute';
     this.moveMock(this.mousePosX + this.distX, this.mousePosY + this.distY);
     this.mock.style.display = 'block';
