@@ -4264,7 +4264,7 @@ class EduApp {
   }
 
   /**
-   * Get mount folders for auto-mount.
+   * Get projects of user.
    */
   async get_user_projects() {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
