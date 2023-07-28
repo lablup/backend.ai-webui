@@ -149,7 +149,6 @@ const RoutingListPage: React.FC<ServingListProps> = ({
       align="stretch"
       style={{ margin: token.marginSM, gap: token.margin }}
     >
-      {/* FIXME: routing doesn't work in here */}
       <Breadcrumb
         items={[
           {
