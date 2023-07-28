@@ -235,11 +235,17 @@ export const BackendAIWebUIStyles = [
       width: 100%;
     }
 
-    .page {
+    .page,
+    .page mwc-circular-progress {
       /* display: none; Disabled for supporting window mode */
     }
 
-    .page[active] {
+    .page mwc-circular-progress {
+      display: none;
+    }
+
+    .page[active],
+    .page[active] mwc-circular-progress{
       display: block;
     }
 

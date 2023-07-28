@@ -353,9 +353,8 @@ export default class BackendAIWindow extends LitElement {
    *  This method only hides window, without changing internal workflow, including background jobs.
    */
   hide_window() {
-    console.log("-----------------Hide window now");
-    //this.win.style.visibility = 'hidden';
-    //this.contents.style.visibility = 'hidden';
+    this.win.style.visibility = 'hidden';
+    this.contents.style.visibility = 'hidden';
   }
 
   // Window activation
@@ -387,6 +386,7 @@ export default class BackendAIWindow extends LitElement {
     const event = new CustomEvent('backend-ai-active-changed', {'detail': this.active});
     this.dispatchEvent(event);
     globalThis.backendaiwindowmanager.removeWindow(this);
+    this.hide_window();
   }
 
   // Button controls
