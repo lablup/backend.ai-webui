@@ -14,8 +14,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 
-import 'weightless/list-item';
-
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,

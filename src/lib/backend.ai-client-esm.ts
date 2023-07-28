@@ -590,6 +590,9 @@ class Client {
     if (this.isManagerVersionCompatibleWith('22.09.19')) {
       this._features['idle-checks'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('22.09.22')) {
+      this._features['is-public'] = true;
+    }
     if (this.isAPIVersionCompatibleWith('v6.20230315')) {
       this._features['inference-workload'] = true;
     }
@@ -839,9 +842,9 @@ class Client {
   async get_resource_slots() : Promise<any> {
     let rqst;
     if (this.isAPIVersionCompatibleWith('v4.20190601')) {
-      rqst = this.newPublicRequest('GET', '/config/resource-slots', null, '');
+      rqst = this.newSignedRequest('GET', '/config/resource-slots', null, '');
     } else {
-      rqst = this.newPublicRequest('GET', '/etcd/resource-slots', null, '');
+      rqst = this.newSignedRequest('GET', '/etcd/resource-slots', null, '');
     }
     return this._wrapWithPromise(rqst);
   }
@@ -3774,6 +3777,9 @@ class ScalingGroup {
       if (this.client.isManagerVersionCompatibleWith('21.09.0')) {
         fields.push('wsproxy_addr');
       }
+      if (this.client.isManagerVersionCompatibleWith('22.09.22')) {
+        fields.push('is_public');
+      }
       const q = `query {` +
         `  scaling_groups { ${fields.join(' ')} }` +
         `}`;
@@ -3819,6 +3825,7 @@ class ScalingGroup {
    *   'scheduler': String
    *   'scheduler_opts': JSONString   // NEW in manager 22.03
    *   'wsproxy_addr': String         // NEW in manager 21.09
+   *   'is_public': Boolean           // New in manager 23.03.1
    * }
    */
   async create(name, input): Promise<any> {
@@ -3861,6 +3868,7 @@ class ScalingGroup {
    * {
    *   'description': String          // description of scaling group
    *   'is_active': Boolean           // active status of scaling group
+   *   'is_public': Boolean
    *   'driver': String
    *   'driver_opts': JSONString
    *   'scheduler': String
@@ -3874,6 +3882,9 @@ class ScalingGroup {
       if (Object.keys(input).length < 1) {
         return Promise.resolve({modify_scaling_group: {ok: true}});
       }
+    }
+    if (!this.client.isManagerVersionCompatibleWith('22.09.22')) {
+      delete input.is_public;
     }
     let q = `mutation($name: String!, $input: ModifyScalingGroupInput!) {` +
       `  modify_scaling_group(name: $name, props: $input) {` +

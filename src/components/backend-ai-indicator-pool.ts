@@ -7,11 +7,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {get as _text} from 'lit-translate';
 
-import 'weightless/dialog';
-import 'weightless/banner';
-import 'weightless/progress-bar';
-import 'weightless/title';
-
 import './backend-ai-indicator';
 
 /**

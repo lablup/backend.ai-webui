@@ -11,11 +11,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-button';
 import {Tab} from '@material/mwc-tab';
@@ -73,12 +68,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               padding-left: 20px;
               border-bottom: 1px solid #ccc;
               width: 100%;
-          }
-
-          wl-card wl-card {
-              margin: 0;
-              padding: 0;
-              --card-elevation: 0;
           }
 
           @media screen and (max-width: 805px) {

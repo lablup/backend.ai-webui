@@ -38,6 +38,8 @@ export class BackendAIPage extends LitElement {
   @property({type: Boolean}) hasLoadedStrings = false;
   @property({type: String}) is; // Component name
   @property({type: BackendAIWindow}) windowNode;
+  @property({type: String}) permission; // Reserved for plugin pages
+  @property({type: String}) menuitem; // Reserved for plugin pages
 
   constructor() {
     super();

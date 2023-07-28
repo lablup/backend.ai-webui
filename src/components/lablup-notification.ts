@@ -7,13 +7,13 @@ import {get as _text} from 'lit-translate';
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import '@material/mwc-snackbar';
-import '@material/mwc-icon-button';
 import '@material/mwc-button';
 
 import {navigate} from '../backend-ai-app';
 import {store} from '../store';
 import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import '@material/mwc-icon-button';
+import '../plastics/mwc/mwc-snackbar';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
@@ -61,6 +61,7 @@ export default class LablupNotification extends LitElement {
 
   static get styles(): CSSResultGroup {
     return [
+      BackendAiStyles,
       // language=CSS
       BackendAiStyles,
       BackendAIWebUIStyles,
@@ -68,7 +69,14 @@ export default class LablupNotification extends LitElement {
         mwc-snackbar {
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-typography-body2-font-family: var(--general-font-family);
-          --mdc-snackbar-action-color: #64dc17;
+          --mdc-snackbar-label-color: yellow;
+          --mdc-snackbar-action-color: var(--general-sidebar-selected-color, #38bd73);
+          --mdc-typography-body2-font-family: var(--general-font-family);
+          position: fixed;
+          right: 20px;
+        }
+        mwc-button {
+          --mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);
         }
       `];
   }
@@ -145,16 +153,6 @@ export default class LablupNotification extends LitElement {
    * @param {Event} e - Click the more_button
    * */
   _moreNotification(e) {
-    // const notification = e.target.closest('wl-snackbar');
-    // const button = e.target.closest('wl-button');
-    // notification.setAttribute('persistent', 'true');
-    // if (notification.querySelector('div') !== null) {
-    //   notification.querySelector('div').style.display = 'block';
-    // }
-    // button.parentNode.removeChild(button);
-    // if (notification.querySelector('wl-button') === null) {
-    //   this._createCloseButton(notification);
-    // }
     this._hideNotification(e);
     const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
@@ -172,8 +170,9 @@ export default class LablupNotification extends LitElement {
    * */
   _createCloseButton(notification) {
     const button = document.createElement('mwc-icon-button');
-    button.setAttribute('slot', 'dismiss');
     button.setAttribute('icon', 'close');
+    button.setAttribute('slot', 'dismiss');
+    button.addEventListener('click', this._hideNotification.bind(this));
     notification.appendChild(button);
   }
 
@@ -190,15 +189,15 @@ export default class LablupNotification extends LitElement {
     const snackbar = document.querySelector('mwc-snackbar[timeoutMs=\'-1\']');
     // const snackbar = document.querySelector('wl-snackbar[persistent=\'true\']');
     if (snackbar) {
-      this.notifications = [] as any; // Reset notifications
+      this.notifications = []; // Reset notifications
       document.body.removeChild(snackbar);
     }
     this.gc();
     const notification = document.createElement('mwc-snackbar');
     notification.labelText = this.text;
-    /*if (this.detail != '') {
-      notification.labelText = this.text;// + '<div style="display:none;"> : ' + this.detail + '</div>';
-    }*/
+    if (this.detail != '') {
+      notification.labelText = notification.labelText + '<div style="display:none;"> : ' + this.detail + '</div>';
+    }
     if (Object.keys(log).length !== 0) {
       console.log(log);
       this._saveToLocalStorage('backendaiwebui.logs', log);
@@ -206,13 +205,16 @@ export default class LablupNotification extends LitElement {
 
     if (this.detail !== '') {
       const more_button = document.createElement('mwc-button');
-      more_button.style.fontSize = 12 + 'px';
+      // more_button.style.fontSize = 12 + 'px';
       more_button.setAttribute('slot', 'action');
+      more_button.setAttribute('style', '--mdc-theme-primary: var(--general-sidebar-selected-color, #38bd73);');
       if (this.url != '') {
-        more_button.innerHTML = _text('notification.Visit');
+        more_button.label = _text('notification.Visit');
+        //more_button.innerHTML = _text('notification.Visit');
         more_button.addEventListener('click', this._openURL.bind(this, this.url));
       } else {
-        more_button.innerHTML = _text('notification.SeeDetail');
+        more_button.label = _text('notification.SeeDetail');
+        // more_button.textContent = _text('notification.SeeDetail');
         more_button.addEventListener('click', this._moreNotification.bind(this));
       }
       notification.appendChild(more_button);
@@ -226,13 +228,14 @@ export default class LablupNotification extends LitElement {
       notification.setAttribute('timeoutMs', '4000');
     } else {
       notification.setAttribute('timeoutMs', '-1');
+      notification.setAttribute('persistent', 'true');
       this._createCloseButton(notification);
     }
-    notification.setAttribute('backdrop', '');
-    notification.style.bottom = (20 + 55 * this.step) + 'px';
-    notification.style.position = 'fixed';
-    //(notification.querySelector('span') as any).style.overflowX = 'hidden';
-    //(notification.querySelector('span') as any).style.maxWidth = '70vw';
+    // notification.setAttribute('backdrop', '');
+    notification.style.setProperty('--mdc-snackbar-bottom', (20 + 55 * this.step) + 'px');
+    //notification.style.position = 'fixed';
+    //(notification.querySelector('span') as HTMLElement).style.overflowX = 'hidden';
+    //(notification.querySelector('span') as HTMLElement).style.maxWidth = '70vw';
     notification.style.right = '20px';
     notification.style.fontSize = '16px';
     notification.style.fontWeight = '400';

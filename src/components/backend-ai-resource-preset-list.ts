@@ -9,15 +9,12 @@ import {customElement, property, query} from 'lit/decorators.js';
 import {BackendAIPage} from './backend-ai-page';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/icons/vaadin-icons';
 import '@vaadin/item/vaadin-item';
 
 import '@material/mwc-textfield';
 import '@material/mwc-button/mwc-button';
-
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-icon';
 
 import './backend-ai-dialog';
 import './backend-ai-list-status';
@@ -80,13 +77,8 @@ class BackendAiResourcePresetList extends BackendAIPage {
           height: calc(100vh - 229px);
         }
 
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
+        mwc-icon {
+          --mdc-icon-size: 16px;
           padding: 0;
         }
 
@@ -105,7 +97,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
           width: 70px !important;
         }
 
-        div.configuration wl-icon {
+        div.configuration mwc-icon {
           padding-right: 5px;
         }
 
@@ -150,12 +142,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
       html`
         <div class="layout horizontal wrap center">
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">developer_board</wl-icon>
+            <mwc-icon class="fg green">developer_board</mwc-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.cpu)}</span>
             <span class="indicator">${_t('general.cores')}</span>
           </div>
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">memory</wl-icon>
+            <mwc-icon class="fg green">memory</mwc-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots.mem_gib)}</span>
             <span class="indicator">GiB</span>
           </div>
@@ -164,7 +156,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         ${rowData.item.resource_slots['cuda.device'] ?
     html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
+            <mwc-icon class="fg green">view_module</mwc-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.device'])}</span>
             <span class="indicator">GPU</span>
           </div>
@@ -172,7 +164,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         ${rowData.item.resource_slots['cuda.shares'] ?
     html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg green">view_module</wl-icon>
+            <mwc-icon class="fg green">view_module</mwc-icon>
             <span>${this._markIfUnlimited(rowData.item.resource_slots['cuda.shares'])}</span>
             <span class="indicator">FGPU</span>
           </div>
@@ -180,7 +172,7 @@ class BackendAiResourcePresetList extends BackendAIPage {
         ${rowData.item.shared_memory ?
     html`
           <div class="layout horizontal configuration">
-            <wl-icon class="fg blue">memory</wl-icon>
+            <mwc-icon class="fg blue">memory</mwc-icon>
             <span>${rowData.item.shared_memory_gib}</span>
             <span class="indicator">GiB</span>
           </div>
@@ -196,14 +188,12 @@ class BackendAiResourcePresetList extends BackendAIPage {
         <div id="controls" class="layout horizontal flex center"
             .preset-name="${rowData.item.name}">
           ${this.is_admin ? html`
-            <wl-button class="fg blue controls-running" fab flat inverted
-              @click="${(e) => this._launchResourcePresetDialog(e)}">
-                <wl-icon>settings</wl-icon>
-            </wl-button>
-            <wl-button class="fg red controls-running" fab flat inverted
-              @click="${(e) => this._launchDeleteResourcePresetDialog(e)}">
-                <wl-icon>delete</wl-icon>
-            </wl-button>
+            <mwc-icon-button class="fg blue controls-running"
+                             icon="settings"
+              @click="${(e) => this._launchResourcePresetDialog(e)}"></mwc-icon-button>
+            <mwc-icon-button class="fg red controls-running"
+                             icon="delete"
+              @click="${(e) => this._launchDeleteResourcePresetDialog(e)}"></mwc-icon-button>
           ` : html``}
         </div>
       `, root

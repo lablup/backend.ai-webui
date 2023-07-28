@@ -9,19 +9,18 @@ import {customElement, property, query, queryAll} from 'lit/decorators.js';
 
 import './backend-ai-resource-monitor';
 import './backend-ai-session-list';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/icon';
-import {Textfield} from 'weightless/textfield';
 
-import {TextField} from '@material/mwc-textfield';
-import '@material/mwc-list';
 import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
 import '@material/mwc-icon-button';
+import '@material/mwc-list';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-tab-bar';
 import '@material/mwc-tab';
 import './backend-ai-window';
+import '@material/mwc-textfield';
+import {TextField} from '@material/mwc-textfield';
 
 import './lablup-activity-panel';
 import './backend-ai-session-launcher';
@@ -51,7 +50,7 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
  ...
  </backend-ai-settings-view>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-storage-list
  */
 
@@ -69,8 +68,8 @@ export default class BackendAISessionView extends BackendAIPage {
   @query('#running-jobs') runningJobs!: BackendAISessionList;
   @query('#resource-monitor') resourceMonitor!: BackendAIResourceMonitor;
   @query('#export-file-name') exportFileNameInput!: TextField;
-  @query('#date-from') dateFromInput!: Textfield;
-  @query('#date-to') dateToInput!: Textfield;
+  @query('#date-from') dateFromInput!: TextField;
+  @query('#date-to') dateToInput!: TextField;
   @query('#dropdown-menu') dropdownMenu!: Menu;
   @query('#export-to-csv') exportToCsvDialog!: BackendAIDialog;
 
@@ -99,40 +98,6 @@ export default class BackendAISessionView extends BackendAIPage {
           --mdc-text-transform: none;
           --mdc-tab-color-default: var(--general-tabbar-background-color);
           --mdc-tab-text-label-color-default: var(--general-sidebar-color);
-        }
-
-        wl-button {
-          --button-bg:  var(--paper-light-green-50);
-          --button-bg-hover:  var(--paper-green-100);
-          --button-bg-active:  var(--paper-green-600);
-        }
-
-        wl-label.unlimited {
-          margin: 12px 0;
-        }
-
-        wl-label.warning {
-          font-size: 10px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-checkbox#export-csv-checkbox {
-          margin-right: 5px;
-          --checkbox-size: 10px;
-          --checkbox-border-radius: 2px;
-          --checkbox-bg-checked: var(--paper-green-800);
-          --checkbox-checkmark-stroke-color: var(--paper-lime-100);
-          --checkbox-color-checked: var(--paper-green-800);
-        }
-
-        backend-ai-dialog wl-textfield {
-          padding: 10px 0;
-          --input-font-family: var(--general-font-family);
-          --input-font-size: 12px;
-          --input-color-disabled: #bbbbbb;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
         }
 
         mwc-menu {
@@ -561,23 +526,22 @@ export default class BackendAISessionView extends BackendAIPage {
                           value="${'session_' + this._defaultFileName}" required
                           style="margin-bottom:10px;"></mwc-textfield>
           <div class="horizontal center layout" style="display:none;">
-            <wl-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
+            <mwc-textfield id="date-from" label="From" type="date" style="margin-right:10px;"
                           value="${this._getFirstDateOfMonth()}" required
                           @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
-            <wl-textfield id="date-to" label="To" type="date"
+            </mwc-textfield>
+            <mwc-textfield id="date-to" label="To" type="date"
                           value="${new Date().toISOString().substring(0, 10)}" required
                           @change="${this._validateDateRange}">
-              <wl-icon slot="before">date_range</wl-icon>
-            </wl-textfield>
+            </mwc-textfield>
           </div>
-          <div class="horizontal center layout" style="display:none;">
-            <wl-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></wl-checkbox>
-            <wl-label class="unlimited" for="export-csv-checkbox">Export All-time data</wl-label>
+          <div class="horizontal center layout">
+            <mwc-formfield label="Export All-time data">
+              <mwc-checkbox id="export-csv-checkbox" @change="${(e) => this._toggleDialogCheckbox(e)}"></mwc-checkbox>
+            </mwc-formfield>
           </div>
         </div>
-        <div slot="footer" class="horizontal center-justified flex layout">
+        <div slot="footer" class="horizontal flex layout">
           <mwc-button unelevated
                       fullwidth
                       icon="get_app"

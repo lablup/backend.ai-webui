@@ -18,14 +18,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/card';
-import 'weightless/switch';
-import 'weightless/select';
-import 'weightless/tab';
-import 'weightless/tab-group';
-import 'weightless/icon';
-import 'weightless/button';
-
 import '@material/mwc-tab-bar';
 import {Tab} from '@material/mwc-tab';
 import '@material/mwc-button';
@@ -96,38 +88,6 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
         span.spinner {
           font-size: 9px;
           margin-right: 5px;
-        }
-
-        wl-card > div {
-          padding: 15px;
-        }
-
-        wl-card h3.tab {
-          padding-top: 0;
-          padding-bottom: 0;
-          padding-left: 0;
-        }
-
-        wl-card wl-card {
-          margin: 0;
-          padding: 0;
-          --card-elevation: 0;
-        }
-
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-teal-600);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: var(--paper-teal-600);
-          --tab-color-active-hover: var(--paper-teal-600);
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-teal-200);
-          --tab-bg-filled: var(--paper-teal-200);
-          --tab-bg-active-hover: var(--paper-teal-200);
         }
 
         h3.tab {
@@ -210,14 +170,13 @@ export default class BackendAiUserSettingsView extends BackendAIPage {
               <mwc-button
                   class="log"
                   icon="refresh"
-                  outlined
                   @click="${() => this._refreshLogs()}">
                 <span>${_t('button.Refresh')}</span>
               </mwc-button>
               <mwc-button
                   class="log"
                   icon="delete"
-                  outlined
+                  raised
                   @click="${() => this._showClearLogsDialog()}">
                 <span>${_t('button.ClearLogs')}</span>
               </mwc-button>

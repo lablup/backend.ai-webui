@@ -575,7 +575,7 @@ export default class BackendAIWindow extends LitElement {
 
   setTabOrder(order: number = 0) {
     if (this.shadowRoot?.querySelector('div.tab > h4')) {
-      this.shadowRoot.querySelector('div.tab > h4').style.marginLeft = (order * 200) + 'px';
+      (this.shadowRoot?.querySelector('div.tab > h4') as HTMLElement).style.marginLeft = (order * 200) + 'px';
     }
   }
 

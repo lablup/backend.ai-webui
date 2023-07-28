@@ -1299,9 +1299,9 @@ export default class BackendAIAgentList extends BackendAIPage {
       <div class="list-wrapper">
         <vaadin-grid class="${this.condition}" theme="row-stripes column-borders compact" aria-label="Job list"
                     .items="${this.agents}" multi-sort multi-sort-priority="append">
-          <vaadin-grid-column width="30px" flex-grow="0" header="#" text-align="center"
+          <vaadin-grid-column frozen width="30px" flex-grow="0" header="#" text-align="center"
                               .renderer="${this._indexRenderer}"></vaadin-grid-column>
-          <vaadin-grid-sort-column resizable width="100px" path="id" header="${_t('agent.Endpoint')}"
+          <vaadin-grid-sort-column frozen resizable width="100px" path="id" header="${_t('agent.Endpoint')}"
                               .renderer="${this._boundEndpointRenderer}">
           </vaadin-grid-sort-column>
           <vaadin-grid-column auto-width resizable header="${_t('agent.Region')}"
@@ -1327,7 +1327,7 @@ export default class BackendAIAgentList extends BackendAIPage {
           <vaadin-grid-sort-column auto-width flex-grow="0" resizable path="schedulable" header="${_t('agent.Schedulable')}"
                               .renderer="${this._boundSchedulableRenderer}"></vaadin-grid-sort-column>
           ` : html``}
-          <vaadin-grid-column resizable header="${_t('general.Control')}"
+          <vaadin-grid-column frozen-to-end auto-width flex-grow="0" header="${_t('general.Control')}"
                               .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('agent.NoAgentToDisplay')}"></backend-ai-list-status>

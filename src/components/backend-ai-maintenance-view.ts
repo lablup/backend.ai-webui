@@ -17,12 +17,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-
-import './backend-ai-window';
-
 import {Button} from '@material/mwc-button/mwc-button';
 
 import './lablup-activity-panel';
@@ -84,20 +78,6 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
 
         .setting-desc {
           width: 100%;
-        }
-
-        wl-card > div {
-          padding: 15px;
-        }
-
-        wl-button {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-100);
-          --button-bg-disabled: #ccc;
-          --button-color: var(--paper-red-100);
-          --button-color-hover: var(--paper-red-100);
-          --button-color-disabled: #ccc;
         }
 
         mwc-button[outlined] {

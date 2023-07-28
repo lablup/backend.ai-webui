@@ -16,23 +16,23 @@ import '@vaadin/icons/vaadin-icons';
 import '@vaadin/tooltip';
 
 import {default as AnsiUp} from '../lib/ansiup';
-import 'weightless/button';
-import {Checkbox} from 'weightless/checkbox';
-import 'weightless/expansion';
-import 'weightless/icon';
-import {Textfield} from 'weightless/textfield';
 
+import '@material/mwc-button';
 import '@material/mwc-checkbox';
+import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
-import '@material/mwc-textfield/mwc-textfield';
+import '@material/mwc-textfield';
+import {Checkbox} from '@material/mwc-checkbox';
+import {TextField} from '@material/mwc-textfield';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 import './backend-ai-dialog';
 import './backend-ai-list-status';
+import './lablup-expansion';
 import './lablup-grid-sort-filter-column';
 import './lablup-progress-bar';
 import '../plastics/lablup-shields/lablup-shields';
@@ -187,7 +187,7 @@ export default class BackendAISessionList extends BackendAIPage {
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#list-grid') _grid!: VaadinGrid;
-  @query('#access-key-filter') accessKeyFilterInput!: Textfield;
+  @query('#access-key-filter') accessKeyFilterInput!: TextField;
   @query('#multiple-action-buttons') multipleActionButtons!: HTMLDivElement;
   @query('#access-key-filter-helper-text') accessKeyFilterHelperText!: HTMLSpanElement;
   @query('#terminate-session-dialog') terminateSessionDialog!: BackendAIDialog;
@@ -221,33 +221,17 @@ export default class BackendAISessionList extends BackendAIPage {
           height: calc(100vh - 265px);
         }
 
-        wl-icon.indicator {
-          --icon-size: 16px;
-        }
-
-        wl-icon.pagination {
+        mwc-icon.pagination {
           color: var(--paper-grey-700);
         }
 
-        wl-button.pagination[disabled] wl-icon.pagination {
-          color: var(--paper-grey-300);
-        }
-
-        wl-icon.warning {
-          color: red;
-        }
-
-        wl-expansion {
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
-          --expansion-margin-open: 0;
-          --expansion-content-padding: 0;
-          --expansion-header-padding: 5px;
+        lablup-expansion {
           width: 100%;
+          --expansion-header-padding: 15px;
+          --expansion-header-font-size: 14px;
         }
 
-        wl-button.pagination {
+        mwc-button.pagination {
           width: 15px;
           height: 15px;
           padding: 10px;
@@ -260,14 +244,13 @@ export default class BackendAISessionList extends BackendAIPage {
           --button-color-disabled: var(--paper-grey-200);
         }
 
-        wl-button.pagination[disabled] {
+        mwc-button.pagination[disabled] {
           --button-shadow-color: transparent;
         }
 
-        wl-button.controls-running {
-          --button-fab-size: 32px;
-          --button-padding: 3px;
-          margin-right: 5px;
+
+        mwc-icon-button.controls-running {
+          --mdc-icon-size: 24px;
         }
 
         img.indicator-icon {
@@ -276,8 +259,17 @@ export default class BackendAISessionList extends BackendAIPage {
           padding-right: 5px;
         }
 
+        mwc-checkbox {
+          margin: 0 0 0 -6px;
+          padding: 0;
+        }
+
         mwc-icon {
           margin-right: 5px;
+        }
+
+        mwc-icon.indicator {
+          --mdc-icon-size: 16px;
         }
 
         mwc-icon.status-check {
@@ -330,6 +322,11 @@ export default class BackendAISessionList extends BackendAIPage {
         }
 
         #commit-session-dialog {
+          --component-width: 390px;
+        }
+
+        #terminate-selected-sessions-dialog,
+        #terminate-session-dialog {
           --component-width: 390px;
         }
 
@@ -393,10 +390,6 @@ export default class BackendAISessionList extends BackendAIPage {
           height: 20px;
         }
 
-        div.configuration wl-icon {
-          padding-right: 5px;
-        }
-
         span.subheading {
           color: #666;
           font-weight: bold;
@@ -420,22 +413,19 @@ export default class BackendAISessionList extends BackendAIPage {
           word-break: break-word;
         }
 
-        wl-button.multiple-action-button {
-          --button-color: var(--paper-red-600);
-          --button-color-active: red;
-          --button-color-hover: red;
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-red-600);
+        mwc-button.multiple-action-button {
+          --mdc-theme-primary:var(--paper-red-600);
+          --mdc-theme-on-primary: white;
         }
 
-        wl-label {
-          width: 100%;
-          background-color: var(--paper-grey-500);
+        div.pagination-label {
+          background-color: var(--paper-grey-100);
           min-width: 60px;
           font-size: 12px;
-          --label-font-family: 'Ubuntu', Roboto;
+          font-family: var(--general-font-family);
+          padding-top: 5px;
+          width:auto;
+          text-align:center;
         }
 
         lablup-progress-bar.usage {
@@ -457,6 +447,7 @@ export default class BackendAISessionList extends BackendAIPage {
           background: none;
           padding: 0;
           outline-style: none;
+          font-family: var(--general-font-family);
         }
 
         .no-mount {
@@ -1168,8 +1159,8 @@ export default class BackendAISessionList extends BackendAIPage {
         (this.shadowRoot?.querySelector('#work-title') as HTMLSpanElement).innerHTML = `${sessionName} (${sessionUuid})`;
         (this.shadowRoot?.querySelector('#work-area') as HTMLDivElement).innerHTML = `<pre>${logs}</pre>` || _text('session.NoLogs');
         // TODO define extended type for custom properties
-        (this.workDialog as any).sessionUuid = sessionUuid;
-        (this.workDialog as any).sessionName = sessionName;
+        this.workDialog.sessionUuid = sessionUuid;
+        this.workDialog.sessionName = sessionName;
         this.workDialog.accessKey = accessKey;
         this.workDialog.show();
       }, 100);
@@ -1186,8 +1177,8 @@ export default class BackendAISessionList extends BackendAIPage {
   }
 
   _downloadLogs() {
-    const sessionUuid = (this.workDialog as any).sessionUuid;
-    const sessionName = (this.workDialog as any).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1209,8 +1200,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _refreshLogs() {
     // TODO define extended type for custom properties
-    const sessionUuid = (this.workDialog as any).sessionUuid;
-    const sessionName = (this.workDialog as any).sessionName;
+    const sessionUuid = this.workDialog.sessionUuid;
+    const sessionName = this.workDialog.sessionName;
     const sessionId = (globalThis.backendaiclient.APIMajorVersion < 5) ? sessionName : sessionUuid;
     const accessKey = this.workDialog.accessKey;
     globalThis.backendaiclient.get_logs(sessionId, accessKey, 15000).then((req) => {
@@ -1374,8 +1365,8 @@ export default class BackendAISessionList extends BackendAIPage {
     const sessionId = controls['session-uuid'];
     const accessKey = controls['access-key'];
     // TODO define extended type for custom properties
-    (this.terminateSessionDialog as any).sessionName = sessionName;
-    (this.terminateSessionDialog as any).sessionId = sessionId;
+    this.terminateSessionDialog.sessionName = sessionName;
+    this.terminateSessionDialog.sessionId = sessionId;
     this.terminateSessionDialog.accessKey = accessKey;
     this.terminateSessionDialog.show();
   }
@@ -1395,14 +1386,14 @@ export default class BackendAISessionList extends BackendAIPage {
 
   _terminateSessionWithCheck(forced = false) {
     // TODO define extended type for custom properties
-    if (this.terminationQueue.includes((this.terminateSessionDialog as any).sessionId)) {
+    if (this.terminationQueue.includes(this.terminateSessionDialog.sessionId)) {
       this.notification.text = _text('session.AlreadyTerminatingSession');
       this.notification.show();
       return false;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    return this._terminateKernel((this.terminateSessionDialog as any).sessionId, (this.terminateSessionDialog as any).accessKey, forced).then((response) => {
+    return this._terminateKernel(this.terminateSessionDialog.sessionId, this.terminateSessionDialog.accessKey, forced).then((response) => {
       this._selected_items = [];
       this._clearCheckboxes();
       this.terminateSessionDialog.hide();
@@ -1576,8 +1567,8 @@ export default class BackendAISessionList extends BackendAIPage {
    * Remove the dropdown menu when mouseleave the mount-button.
    * */
   _removeMountedFolderDropdown() {
-    const menu = document.getElementsByClassName('dropdown-menu') as any;
-    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+    const menu = document.getElementsByClassName('dropdown-menu') as HTMLCollectionOf<Menu>;
+    while (menu[0]) menu[0].parentNode?.removeChild(menu[0]);
   }
 
   _renderStatusDetail() {
@@ -1635,23 +1626,23 @@ export default class BackendAISessionList extends BackendAIPage {
               </mwc-list>
             </div>
           </div>
-          <wl-expansion name="predicates" open>
-          <div slot="title" class="horizontal layout center start-justified">
-            ${failedCount > 0 ? html`
-              <mwc-icon class="fg red">cancel</mwc-icon>
-              ` : html`
-              <mwc-icon class="fg green">check_circle</mwc-icon>
-            `}
-            Predicate Checks
-          </div>
-          <span slot="description">
-            ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
-            ${passedCount + ` Passed`}
-          </span>
-          <mwc-list>
-          ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
-    return html`
-          ${item.name === 'reserved_time' ? html`
+          <lablup-expansion summary="Predicates">
+            <div slot="title" class="horizontal layout center start-justified">
+              ${failedCount > 0 ? html`
+                <mwc-icon class="fg red">cancel</mwc-icon>
+                ` : html`
+                <mwc-icon class="fg green">check_circle</mwc-icon>
+              `}
+              Predicate Checks
+            </div>
+            <span slot="description">
+              ${failedCount > 0 ? ` ${failedCount + ` Failed, `}` : ``}
+              ${passedCount + ` Passed`}
+            </span>
+            <mwc-list>
+        ${tmpSessionStatus.scheduler.failed_predicates.map((item) => {
+  return html`
+        ${item.name === 'reserved_time' ? html`
               <mwc-list-item twoline graphic="icon" noninteractive class="predicate-check">
                 <span>${item.name}</span>
                 <span slot="secondary" class="predicate-check-comment">${item.msg + ': ' + tmpSessionStatus.reserved_time}</span>
@@ -1663,19 +1654,19 @@ export default class BackendAISessionList extends BackendAIPage {
                 <mwc-icon slot="graphic" class="fg red inverted status-check">close</mwc-icon>
               </mwc-list-item>`}
               <li divider role="separator"></li>`;
-  })}
-          ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
-            return html`
+})}
+        ${tmpSessionStatus.scheduler.passed_predicates.map((item) => {
+          return html`
               <mwc-list-item graphic="icon" noninteractive>
                 <span style="padding-left:3px;">${item.name}</span>
                 <mwc-icon slot="graphic" class="fg green inverted status-check" style="padding-left:5px;">checked
                 </mwc-icon>
               </mwc-list-item>
               <li divider role="separator"></li>
-            `;
-          })}
-          </mwc-list>
-        </wl-expansion>
+          `;
+        })}
+            </mwc-list>
+          </lablup-expansion>
         </div>
     `);
     } else if (tmpSessionStatus.hasOwnProperty('error')) {
@@ -2009,8 +2000,8 @@ export default class BackendAISessionList extends BackendAIPage {
    * Remove the dropdown menu when mouseleave the util button.
    * */
   _removeUtilizationIdleCheckDropdown() {
-    const menu = document.getElementsByClassName('util-dropdown-menu') as any;
-    while (menu[0]) menu[0].parentNode.removeChild(menu[0]);
+    const menu = document.getElementsByClassName('util-dropdown-menu') as HTMLCollectionOf<Menu>;
+    while (menu[0]) menu[0].parentNode?.removeChild(menu[0]);
   }
 
   /**
@@ -2281,14 +2272,14 @@ export default class BackendAISessionList extends BackendAIPage {
           <div class="layout horizontal center flex">
             <div class="layout horizontal center configuration">
               ${rowData.item.mounts.length > 0 ? html`
-                <wl-icon class="fg green indicator">folder_open</wl-icon>
+                <mwc-icon class="fg green indicator">folder_open</mwc-icon>
                 <button class="mount-button"
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}">
                   ${mountedFolderList.join(', ')}
                 </button>
               ` : html`
-              <wl-icon class="indicator no-mount">folder_open</wl-icon>
+              <mwc-icon class="no-mount indicator">folder_open</mwc-icon>
               <span class="no-mount">No mount</span>
               `}
             </div>
@@ -2296,19 +2287,19 @@ export default class BackendAISessionList extends BackendAIPage {
           ${rowData.item.scaling_group ? html`
           <div class="layout horizontal center flex">
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">work</wl-icon>
+              <mwc-icon class="fg green indicator">work</mwc-icon>
               <span>${rowData.item.scaling_group}</span>
               <span class="indicator">RG</span>
             </div>
           </div>` : html``}
           <div class="layout vertical flex" style="padding-left: 25px">
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">developer_board</wl-icon>
+              <mwc-icon class="fg green indicator">developer_board</mwc-icon>
               <span>${rowData.item.cpu_slot}</span>
               <span class="indicator">${_t('session.core')}</span>
             </div>
             <div class="layout horizontal center configuration">
-              <wl-icon class="fg green indicator">memory</wl-icon>
+              <mwc-icon class="fg green indicator">memory</mwc-icon>
               <span>${rowData.item.mem_slot}</span>
               <span class="indicator">GiB</span>
               ${this.isDisplayingAllocatedShmemEnabled ? html`
@@ -2334,12 +2325,12 @@ export default class BackendAISessionList extends BackendAIPage {
                 <span class="indicator">GPU</span>
                 ` : html``}
               ${rowData.item.tpu_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>${rowData.item.tpu_slot}</span>
                 <span class="indicator">TPU</span>
                 ` : html``}
               ${rowData.item.ipu_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>${rowData.item.tpu_slot}</span>
                 <span class="indicator">IPU</span>
                 ` : html``}
@@ -2360,7 +2351,7 @@ export default class BackendAISessionList extends BackendAIPage {
         !rowData.item.ipu_slot &&
         !rowData.item.atom_slot &&
         !rowData.item.warboy_slot ? html`
-                <wl-icon class="fg green indicator">view_module</wl-icon>
+                <mwc-icon class="fg green indicator">view_module</mwc-icon>
                 <span>-</span>
                 <span class="indicator">GPU</span>
                 ` : html``}
@@ -2486,7 +2477,7 @@ export default class BackendAISessionList extends BackendAIPage {
         // language=HTML
         html`
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">developer_board</wl-icon>
+          <mwc-icon class="fg green indicator" style="margin-right:3px;">developer_board</mwc-icon>
           ${rowData.item.cpu_used_time.D ? html`
           <div class="vertical center-justified center layout">
             <span style="font-size:11px">${rowData.item.cpu_used_time.D}</span>
@@ -2518,7 +2509,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </div>` : html``}
         </div>
         <div class="layout horizontal center flex">
-          <wl-icon class="fg blue indicator" style="margin-right:3px;">device_hub</wl-icon>
+          <mwc-icon class="fg blue indicator" style="margin-right:3px;">device_hub</mwc-icon>
           <div class="vertical start layout">
             <span style="font-size:9px">${rowData.item.io_read_bytes_mb}<span class="indicator">MB</span></span>
             <span class="indicator">READ</span>
@@ -2683,8 +2674,8 @@ export default class BackendAISessionList extends BackendAIPage {
 
   /**
    * Aggregate shared memory allocated in session
-   * 
-   * @param {Object} sharedMemoryObj 
+   *
+   * @param {Object} sharedMemoryObj
    * @return {string} converted value from Bytes to GiB
    */
   _aggregateSharedMemory(sharedMemoryObj) {
@@ -2866,18 +2857,16 @@ export default class BackendAISessionList extends BackendAIPage {
       <link rel="stylesheet" href="resources/custom.css">
       <div class="layout horizontal center filters">
         <div id="multiple-action-buttons" style="display:none;">
-          <wl-button outlined class="multiple-action-button" style="margin:8px;--button-shadow-color:0;--button-shadow-color-hover:0;" @click="${() => this._openTerminateSelectedSessionsDialog()}">
-            <wl-icon style="--icon-size: 20px;">delete</wl-icon>
-            ${_t('session.Terminate')}
-          </wl-button>
+          <mwc-button icon="delete" class="multiple-action-button" raised style="margin:8px;"
+                           @click="${() => this._openTerminateSelectedSessionsDialog()}">${_t('session.Terminate')}</mwc-button>
         </div>
         <span class="flex"></span>
-        <div class="vertical layout" style="display:none;">
-          <wl-textfield id="access-key-filter" type="search" maxLength="64"
+        <div class="vertical layout" style="display:none">
+          <mwc-textfield id="access-key-filter" type="search" maxLength="64"
                       label="${_t('general.AccessKey')}" no-label-float .value="${this.filterAccessKey}"
                       style="margin-right:20px;"
                       @change="${(e) => this._updateFilterAccessKey(e)}">
-          </wl-textfield>
+          </mwc-textfield>
           <span id="access-key-filter-helper-text">${_t('maxLength.64chars')}</span>
         </div>
       </div>
@@ -2885,7 +2874,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
-            <vaadin-grid-column frozen width="40px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            <vaadin-grid-column frozen width="50px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
             </vaadin-grid-column>
           ` : html``}
           <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
@@ -2939,8 +2928,8 @@ export default class BackendAISessionList extends BackendAIPage {
           icon="navigate_before"
           ?disabled="${this.current_page === 1}"
           @click="${(e) => this._updateSessionPage(e)}"></mwc-icon-button>
-        <wl-label style="padding-top: 5px; width:auto; text-align:center;">
-        ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</wl-label>
+        <div class="pagination-label">
+        ${this.current_page} / ${Math.ceil(this.total_session_count / this.session_page_limit)}</div>
         <mwc-icon-button
           class="pagination"
           id="next-page"
@@ -2957,8 +2946,7 @@ export default class BackendAISessionList extends BackendAIPage {
           </mwc-icon-button>
         </div>
         <div slot="content" id="work-area" style="overflow:scroll;"></div>
-        <iframe id="work-page" frameborder="0" border="0" cellspacing="0"
-                style="border-style: none;display: none;width: 100%;"></iframe>
+        <iframe id="work-page" style="border-style: none;display: none;width: 100%;"></iframe>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-session-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
@@ -2966,13 +2954,13 @@ export default class BackendAISessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="warning fg red" inverted flat @click="${() => this._terminateSessionWithCheck(true)}">
+          <mwc-button class="warning fg red" @click="${() => this._terminateSessionWithCheck(true)}">
             ${_t('button.ForceTerminate')}
-          </wl-button>
+          </mwc-button>
           <span class="flex"></span>
-          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</wl-button>
+          <mwc-button class="cancel" @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button class="ok" raised @click="${() => this._terminateSessionWithCheck()}">${_t('button.Okay')}</mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="terminate-selected-sessions-dialog" fixed backdrop>
@@ -2981,14 +2969,14 @@ export default class BackendAISessionList extends BackendAIPage {
           <p>${_t('usersettings.SessionTerminationDialog')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
-          <wl-button class="warning fg red" inverted flat
+          <mwc-button class="warning fg red"
                       @click="${() => this._terminateSelectedSessionsWithCheck(true)}">${_t('button.ForceTerminate')}
-          </wl-button>
+          </mwc-button>
           <span class="flex"></span>
-          <wl-button class="cancel" inverted flat @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
-          </wl-button>
-          <wl-button class="ok" @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
-          </wl-button>
+          <mwc-button class="cancel" @click="${(e) => this._hideDialog(e)}">${_t('button.Cancel')}
+          </mwc-button>
+          <mwc-button class="ok" raised @click="${() => this._terminateSelectedSessionsWithCheck()}">${_t('button.Okay')}
+          </mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="status-detail-dialog" narrowLayout fixed backdrop>
@@ -3006,7 +2994,7 @@ export default class BackendAISessionList extends BackendAIPage {
         </div>
       </backend-ai-dialog>
       ${this._renderCommitSessionConfirmationDialog(
-        this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
+    this._parseSessionInfoToCommitSessionInfo(this.commitSessionDialog?.kernelImage, this.commitSessionDialog?.sessionName, this.commitSessionDialog?.sessionId))}
     `;
   }
 
