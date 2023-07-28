@@ -331,7 +331,8 @@ export default class BackendAIWindow extends LitElement {
           this.setToTop();
           this.show_window();
         } else if (this.active === false) {  // Hide window
-          this.hide_window();
+          //console.log('hide');
+          //this.hide_window();
         }
       }
     });
@@ -352,8 +353,9 @@ export default class BackendAIWindow extends LitElement {
    *  This method only hides window, without changing internal workflow, including background jobs.
    */
   hide_window() {
-    this.win.style.visibility = 'hidden';
-    this.contents.style.visibility = 'hidden';
+    console.log("-----------------Hide window now");
+    //this.win.style.visibility = 'hidden';
+    //this.contents.style.visibility = 'hidden';
   }
 
   // Window activation

@@ -236,7 +236,7 @@ export const BackendAIWebUIStyles = [
     }
 
     .page {
-      display: none;
+      /* display: none; Disabled for supporting window mode */
     }
 
     .page[active] {
