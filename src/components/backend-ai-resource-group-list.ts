@@ -730,7 +730,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     id="allowed-session-types"
                     label="${_t('resourceGroup.AllowedSessionTypes')}*"
                     validation-message="${_t('credential.validation.PleaseSelectOptions')}"
-                    style="width:100%;"></backend-ai-multi-select>
+                    style="width:100%; --select-title-padding-left: 16px;"></backend-ai-multi-select>
           ${this.enableWSProxyAddr ? html`
           <mwc-textfield
                 id="resource-group-wsproxy-address"
