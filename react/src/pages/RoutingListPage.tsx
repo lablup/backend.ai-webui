@@ -184,7 +184,7 @@ const RoutingListPage: React.FC<ServingListProps> = ({
         <CheckOutlined /> : <CloseOutlined />
       }</Descriptions.Item>
       </Descriptions>
-      <Typography.Title level={4} style={{ margin: 0 }}>Active Routes Info.</Typography.Title>
+      <Typography.Title level={4} style={{ margin: 0 }}>Active Routes Info</Typography.Title>
       <Table columns={columns} dataSource={modelServiceInfo.active_routes ? modelServiceInfo.active_routes : []} />
     </Flex>
   );
