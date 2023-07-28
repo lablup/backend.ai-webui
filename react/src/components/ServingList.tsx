@@ -1,4 +1,4 @@
-import { Button, Table, TableProps } from "antd";
+import { Button, Table, TableProps, Tag } from "antd";
 import { CheckOutlined, CloseOutlined, DeleteFilled, SettingFilled } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import React, { useDeferredValue } from "react";
@@ -64,6 +64,20 @@ const ServingList: React.FC<ServingListProps> = ({
   //   },
   // };
 
+ // return color of tag by status
+ const applyStatusColor = (status = '') => {
+  let color = 'default';
+  switch (status.toUpperCase()) {
+    case 'RUNNING':
+      color = 'success';
+      break;
+    // case 'TERMINATED':
+    //   color = 'default';
+    //   break;
+  }
+  return color;
+}
+
   const columns: ColumnsType<ServingListInfo> = [
     {
       title: "Endpoint ID",
@@ -80,12 +94,25 @@ const ServingList: React.FC<ServingListProps> = ({
       title: "Controls",
       dataIndex: "controls",
       key: "control",
-      render: () => (
+      render: (text, row: ServingListInfo) => (
         <>
           <Flex direction="row" align="stretch">
-            <Button type="text" icon={<SettingFilled />} />
-            <Button type="text" icon={<DeleteFilled />} />
+            <Button type="text" icon={<SettingFilled />} disabled={row.desired_session_count < 0}
+                    onClick={() => onClickEdit && onClickEdit(row)}/>
+            <Button type="text" icon={<DeleteFilled />} disabled={row.desired_session_count < 0}
+                    onClick={() => onClickTerminate && onClickTerminate(row)}/>
           </Flex>
+        </>
+      ),
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      render: (text, row: ServingListInfo) => (
+        <>
+          <Tag color={applyStatusColor(row.desired_session_count > 0 ? "RUNNING" : "TERMINATED")}>
+            {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
+          </Tag>
         </>
       ),
     },
