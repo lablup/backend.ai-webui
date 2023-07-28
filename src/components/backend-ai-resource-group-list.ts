@@ -724,6 +724,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <mwc-list-item value="${sched}">${sched}</mwc-list-item>
             `)}
           </mwc-select>
+          <backend-ai-multi-select
+                    open-up
+                    required
+                    id="allowed-session-types"
+                    label="${_t('resourceGroup.AllowedSessionTypes')}*"
+                    validation-message="${_t('credential.validation.PleaseSelectOptions')}"
+                    style="width:100%;"></backend-ai-multi-select>
           ${this.enableWSProxyAddr ? html`
           <mwc-textfield
                 id="resource-group-wsproxy-address"
@@ -752,13 +759,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
             <lablup-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <div class="vertical layout flex">
-                <backend-ai-multi-select
-                    open-up
-                    required
-                    id="allowed-session-types"
-                    label="${_t('resourceGroup.AllowedSessionTypes')}*"
-                    validation-message="${_t('credential.validation.PleaseSelectOptions')}"
-                    style="width:100%;"></backend-ai-multi-select>
                 <mwc-textfield
                     type="number"
                     value="0"
