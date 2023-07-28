@@ -95,6 +95,10 @@ export default class BackendAIWindow extends LitElement {
           /*transition: visibility 1s, opacity 0.5s linear;*/
           animation: fadeIn 0.3s;
         }
+        div.fullwin {
+           box-shadow: unset;
+          border-radius: 0;
+        }
 
         div.mock {
           position: absolute;
@@ -407,7 +411,7 @@ export default class BackendAIWindow extends LitElement {
       this.keepLastWindowInfo();
       this.contents.style.visibility = 'visible';
       console.log('is now a full screen', this.isFullScreen);
-      this.setWindow('0px', '0px', '100%', 'calc(100vh - 100px)');
+      this.setWindow('0px', '64px', '100%', 'calc(100vh - 64px)');
       this.isFullScreen = true;
     } else {
       this.setWindow(this.lastWindowInfo['posX'] + 'px', this.lastWindowInfo['posY'] + 'px', this.lastWindowInfo['width'] + 'px', this.lastWindowInfo['height'] + 'px');
@@ -419,6 +423,7 @@ export default class BackendAIWindow extends LitElement {
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
     this.win.style.left = posX;
     this.win.style.top = posY;
+    console.log(posX, posY);
     if (width) {
       this.win.style.width = width;
     }
@@ -524,12 +529,12 @@ export default class BackendAIWindow extends LitElement {
       if (this.posX !== 0) {
         this.win.style.left = this.posX + 'px';
       } else {
-        this.win.style.left = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+        this.win.style.left = 16 + globalThis.backendaiwindowmanager.count() * 30 + 'px';
       }
       if (this.posY !== 0) {
         this.win.style.top = this.posY + 'px';
       } else {
-        this.win.style.top = globalThis.backendaiwindowmanager.count() * 30 + 'px';
+        this.win.style.top = (64 + 16) + globalThis.backendaiwindowmanager.count() * 30 + 'px';
       }
       this.win.style.height = 'calc(100vh - 100px - ' + this.win.offsetTop + 'px)';
       this.win.style.width = this.defaultWidth;
@@ -587,7 +592,7 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="${this.viewType}" draggable="true" @click="${() => {this.setToTop();}}">
+      <div id="window" class="${this.viewType} ${this.isFullScreen ? 'fullwin': ''}" draggable="true" @click="${() => {this.setToTop();}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>

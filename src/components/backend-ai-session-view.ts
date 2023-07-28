@@ -180,7 +180,7 @@ export default class BackendAISessionView extends BackendAIPage {
     const _init = () => {
       this.enableInferenceWorkload = globalThis.backendaiclient.supports('inference-workload');
       this.enableSFTPSession = globalThis.backendaiclient.supports('sftp-scaling-group');
-      this.resourceMonitor.setAttribute('active', 'true');
+      // this.resourceMonitor.setAttribute('active', 'true');
       this.runningJobs.setAttribute('active', 'true');
       this._status = 'active';
     };
