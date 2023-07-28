@@ -1,15 +1,16 @@
 import {
   Button,
+  Card,
+  Divider,
   Form,
+  Input,
+  InputNumber,
+  message,
   Modal,
   ModalProps,
-  Input,
   theme,
+  Switch,
   Tooltip,
-  InputNumber,
-  Divider,
-  Card,
-  message,
 } from "antd";
 import React, { Suspense, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -26,6 +27,47 @@ import ResourceGroupSelect from "./ResourceGroupSelect";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import VFolderSelect from "./VFolderSelect";
 import { useTanMutation } from "../hooks/reactQueryAlias";
+import { useTanQuery } from "../hooks/reactQueryAlias";
+import { useCurrentDomainValue } from "../hooks";
+import { baiSignedRequestWithPromise } from "../helper";
+
+type ClusterMode = "single-node" | "multi-node";
+
+interface ServiceCreateConfigResourceOptsType {
+  shmem?: number | string;
+}
+interface ServiceCreateConfigResourceType {
+  cpu: number | string,
+  mem: string,
+  "cuda.device"?: number | string,
+  "cuda.shares"?: number | string,
+}
+
+interface ServiceCreateConfigType {
+  model: string,
+  model_version?: string,
+  model_mount_destination: string, // default == "/models"
+  environ: object, // environment variable
+  scaling_group: string,
+  resources: ServiceCreateConfigResourceType,
+  resource_opts?: ServiceCreateConfigResourceOptsType,
+}
+interface ServiceCreateType {
+  name: string,
+  desired_session_count: number,
+  image: string,
+  arch: string,
+  group: string,
+  domain: string,
+  cluster_size: number,
+  cluster_mode: ClusterMode,
+  tag?: string,
+  startup_command?: string,
+  bootstrap_script?: string,
+  owner_access_key?: string,
+  open_to_public: boolean,
+  config: ServiceCreateConfigType,
+}
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
@@ -40,6 +82,7 @@ interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   resourceGroup: string;
   vFolderName: string;
   desiredRoutingCount: number;
+  openToPublic: boolean,
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -51,13 +94,45 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const [modalText, setModalText] = useState("Content of the modal");
+  // const [modalText, setModalText] = useState("Content of the modal");
+  const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
-
+  
   const mutationToCreateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormInput) => {
-      return new Promise((resolve, reject) => {
-        setTimeout(() => resolve("mock"), 3000);
+      const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
+      const body: ServiceCreateType = {
+        name: values.serviceName,
+        desired_session_count: values.desiredRoutingCount,
+        image: image,
+        arch: (values.environments.image?.architecture as string),
+        group: baiClient.current_group, // current Project Group,
+        domain: currentDomain, // current Domain Group,
+        cluster_size: 1, // FIXME: hardcoded. change it with option later
+        cluster_mode: "single-node", // FIXME: hardcoded. change it with option later
+        open_to_public: values.openToPublic,
+        config: {
+          model : values.vFolderName,
+          model_mount_destination:"/models", // FIXME: hardcoded. change it with option later
+          environ: {}, // FIXME: hardcoded. change it with option later
+          scaling_group: values.resourceGroup,
+          resources: {
+            cpu: values.cpu,
+            mem: values.mem + "G",
+            "cuda.shares": values.gpu,
+          },
+        }
+      };
+      if (values.shmem && values.shmem > 0) {
+        body["config"].resource_opts = {
+          shmem: values.shmem
+        };
+      };
+      return baiSignedRequestWithPromise({
+        method: "POST",
+        url: "/services",
+        body,
+        client: baiClient,
       });
     },
   });
@@ -79,14 +154,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     //   setConfirmLoading(false);
     // }, 2000);
     form.validateFields().then((values) => {
-      console.log(values);
-
       // TODO: useTanMutation to request service start
       mutationToCreateService.mutate(values, {
         onSuccess: () => {
+          console.log("service created")
           onRequestClose(true);
         },
         onError: (error) => {
+          console.log(error)
           // TODO: show error message
         },
       });
@@ -154,6 +229,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ]}
           >
             <ResourceGroupSelect autoSelectDefault />
+          </Form.Item>
+          <Form.Item
+            name="openToPublic"
+            label="Open To Public">
+              <Switch defaultChecked></Switch>
           </Form.Item>
           <Form.Item
             name={"vFolderName"}

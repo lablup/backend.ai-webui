@@ -6,8 +6,7 @@ import ServingList, { ServingListInfo } from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useToggle } from "ahooks";
+import { baiSignedRequestWithPromise } from "../helper"
 import { useTanQuery } from "../hooks/reactQueryAlias";
 import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 
@@ -39,6 +38,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         client: baiClient,
       });
     },
+    refetchOnMount: true,
+    staleTime: 5000,
     // for to render even this query fails
     suspense: true,
   });
@@ -227,7 +228,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           setIsOpenModelServiceSettingModal(false);
         }}
         dataSource={selectedModelService || null}
-      ></ModelServiceSettingModal>
+      />
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
         onRequestClose={(success) => {
