@@ -232,7 +232,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           <Form.Item
             name="openToPublic"
             label="Open To Public">
-              <Switch defaultChecked></Switch>
+              <Switch></Switch>
           </Form.Item>
           <Form.Item
             name={"vFolderName"}
