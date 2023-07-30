@@ -691,7 +691,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
       uri = new URL(uri.href);
     }
-    console.log('new uri:', uri)
     const rqst_proxy = {
       method: 'GET',
       app: app,
