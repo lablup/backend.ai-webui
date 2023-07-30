@@ -679,16 +679,23 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {object | null} args
    */
   async _close_wsproxy(sessionUuid, app = 'jupyter') {
+    console.log('_close_wsproxy', sessionUuid, app)
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
     const token = globalThis.backendaiclient._config.accessKey;
-    let uri = await this._getProxyURL(sessionUuid);
-    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
+    let uri: string | URL = await this._getProxyURL(sessionUuid);
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri);
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      console.log(localStorage.getItem('backendaiwebui.appproxy-permit-key'))
+      uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      uri = new URL(uri.href);
+    }
+    console.log('new uri:', uri)
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri,
+      uri: uri.href,
       credentials: 'include',
       mode: 'cors'
     };

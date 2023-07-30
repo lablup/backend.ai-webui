@@ -1097,10 +1097,18 @@ export default class BackendAISessionList extends BackendAIPage {
     return this.sendRequest(rqst)
       .then((response) => {
         this.total_session_count -= 1;
+        let uri = new URL(`proxy/${token}/${sessionId}/delete`, proxyURL);
+        console.log('uri:', uri)
+        if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+          console.log(localStorage.getItem('backendaiwebui.appproxy-permit-key'))
+          uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+          uri = new URL(uri.href);
+        }
+        console.log('new uri:', uri)
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href,
+            uri: uri.href,
             credentials: 'include',
             mode: 'cors'
           };
