@@ -679,7 +679,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {object | null} args
    */
   async _close_wsproxy(sessionUuid, app = 'jupyter') {
-    console.log('_close_wsproxy', sessionUuid, app)
     if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
       return false;
     }
