@@ -1734,7 +1734,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const res = this._getVersionInfo(version, architecture);
     const resultArray: string[] = [];
     res.forEach((item) => {
-      resultArray.push(item.tag);
+      if (item.tag !== '' && item.tag !== null){
+        resultArray.push(item.tag);
+      }
     });
     // TODO remove protected field access
     (this.version_selector as any).selectedText = resultArray.join(' / ');
