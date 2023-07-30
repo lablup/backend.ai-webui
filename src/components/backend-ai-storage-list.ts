@@ -28,17 +28,6 @@ import '@vaadin/progress-bar/vaadin-progress-bar';
 import '@vaadin/item/vaadin-item';
 import '@vaadin/tooltip';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/checkbox';
-import 'weightless/dialog';
-import 'weightless/divider';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/title';
-import 'weightless/textfield';
-
 import './backend-ai-dialog';
 import './backend-ai-list-status';
 import './backend-ai-session-launcher';
@@ -289,22 +278,12 @@ export default class BackendAiStorageList extends BackendAIPage {
           margin-bottom: 10px;
         }
 
-        .folder-action-buttons wl-button {
-          margin-right: 10px;
+        mwc-icon-button {
+          --mdc-icon-size: 24px;
         }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
+        mwc-icon {
+          --mdc-icon-size: 16px;
           padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-button.button {
-          width: 330px;
         }
 
         mwc-icon-button.tiny {
@@ -411,16 +390,6 @@ export default class BackendAiStorageList extends BackendAIPage {
           --mdc-typography-button-font-size: 12px;
         }
 
-        wl-button.goto {
-          margin: 0;
-          padding: 5px;
-          min-width: 0;
-        }
-
-        wl-button.goto:last-of-type {
-          font-weight: bold;
-        }
-
         mwc-button#readonly-btn {
           width: 150px;
         }
@@ -454,13 +423,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         .progress-item {
           padding: 10px 30px;
-        }
-
-        wl-button {
-          --button-bg: var(--paper-orange-50);
-          --button-bg-hover: var(--paper-orange-100);
-          --button-bg-active: var(--paper-orange-600);
-          color: var(--paper-orange-900);
         }
 
         backend-ai-dialog mwc-textfield,
@@ -500,23 +462,6 @@ export default class BackendAiStorageList extends BackendAIPage {
 
         mwc-radio {
           --mdc-theme-secondary: var(--general-textfield-selected-color);
-        }
-
-        #textfields wl-textfield,
-        wl-label {
-          margin-bottom: 20px;
-        }
-
-        wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: black;
-        }
-        wl-checkbox {
-          --checkbox-color: var(--paper-orange-900);
-          --checkbox-color-checked: var(--paper-orange-900);
-          --checkbox-bg-checked: var(--paper-orange-900);
-          --checkbox-color-disabled-checked: var(--paper-orange-900);
-          --checkbox-bg-disabled-checked: var(--paper-orange-900);
         }
 
         #modify-permission-dialog {
@@ -921,7 +866,7 @@ export default class BackendAiStorageList extends BackendAIPage {
             </div>
             <div class="horizontal layout center progress-item flex">
               ${this.currentUploadFile?.complete ? html`
-                <wl-icon>check</wl-icon>
+                <mwc-icon>check</mwc-icon>
               ` : html``}
               <div class="vertical layout progress-item" style="width:100%;">
                 <span>${this.currentUploadFile?.name}</span>
@@ -979,12 +924,8 @@ export default class BackendAiStorageList extends BackendAIPage {
                 </mwc-textfield>
               </div>
               <div>
-                <wl-button fab flat @click="${() => this._addTextField()}">
-                  <wl-icon>add</wl-icon>
-                </wl-button>
-                <wl-button fab flat @click="${() => this._removeTextField()}">
-                  <wl-icon>remove</wl-icon>
-                </wl-button>
+                <mwc-icon-button icon="add" @click="${() => this._addTextField()}"></mwc-icon-button>
+                <mwc-icon-button icon="remove" @click="${() => this._removeTextField()}"></mwc-icon-button>
               </div>
             </div>
           </div>
@@ -1140,7 +1081,7 @@ export default class BackendAiStorageList extends BackendAIPage {
     document.addEventListener('backend-ai-group-changed', (e) => this._refreshFolderList(true, 'group-changed'));
     document.addEventListener('backend-ai-ui-changed', (e) => this._refreshFolderUI(e));
     this._refreshFolderUI({'detail': {'mini-ui': globalThis.mini_ui}});
-    //@ts-ignore
+    // @ts-ignore
     const params = (new URL(document.location)).searchParams;
     const folderName = params.get('folder');
     if (folderName) {
@@ -1149,7 +1090,7 @@ export default class BackendAiStorageList extends BackendAIPage {
   }
 
   _modifySharedFolderPermissions() {
-    const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog wl-select');
+    const selectNodeList = this.shadowRoot?.querySelectorAll('#modify-permission-dialog mwc-select');
     const inputList = Array.prototype.filter.call(selectNodeList, (pulldown, idx) => pulldown.value !== (this.invitees as inviteeData[])[idx].perm)
       .map((pulldown, idx) => ({
         'perm': pulldown.value === 'kickout' ? null : pulldown.value,
@@ -1183,25 +1124,25 @@ export default class BackendAiStorageList extends BackendAIPage {
     render(
       html`
       <div class="vertical layout">
-        <wl-select label="${_t('data.folders.SelectPermission')}">
+        <mwc-select label="${_t('data.folders.SelectPermission')}">
           <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
           <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
           <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
           <option value="kickout">${_t('data.folders.KickOut')}</option>
-        </wl-select>
+        </mwc-select>
       </div>`, root);
-    this.shadowRoot?.querySelector('wl-select')?.requestUpdate().then(() => {
+    /* this.shadowRoot?.querySelector('mwc-select')?.requestUpdate().then(() => {
       render(
         html`
         <div class="vertical layout">
-          <wl-select label="${_t('data.folders.SelectPermission')}">
+          <mwc-select label="${_t('data.folders.SelectPermission')}">
             <option ?selected=${rowData.item.perm === 'ro'} value="ro">${_t('data.folders.View')}</option>
             <option ?selected=${rowData.item.perm === 'rw'} value="rw">${_t('data.folders.Edit')}</option>
             <option ?selected=${rowData.item.perm === 'wd'} value="wd">${_t('data.folders.EditDelete')}</option>
             <option value="kickout">${_t('data.folders.KickOut')}</option>
-          </wl-select>
+          </mwc-select>
         </div>`, root);
-    });
+    });*/
   }
 
   folderListRenderer(root, column?, rowData?) {
@@ -1254,7 +1195,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       <vaadin-item class="progress-item">
         <div>
           ${rowData.item.complete ? html`
-            <wl-icon>check</wl-icon>
+            <mwc-icon>check</mwc-icon>
           ` : html``}
         </div>
       </vaadin-item>
@@ -1379,7 +1320,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           folder-type="${rowData.item.type}"
         >
          ${this.enableInferenceWorkload && rowData.item.usage_mode == 'model' ?
-      html`
+    html`
           <mwc-icon-button
             class="fg green controls-running"
             icon="play_arrow"
@@ -1398,18 +1339,20 @@ export default class BackendAiStorageList extends BackendAIPage {
           ></mwc-icon-button>
           <vaadin-tooltip for="${rowData.item.id+'-folderinfo'}" text="${_t('data.folders.FolderInfo')}" position="top-start"></vaadin-tooltip>
           <!--${this._hasPermission(rowData.item, 'r') && this.enableStorageProxy ?
-      html`
+    html`
         <mwc-icon-button
           class="fg blue controls-running"
           icon="content_copy"
           disabled
-          @click="${() => { this._requestCloneFolder(rowData.item);}}"
+          @click="${() => {
+    this._requestCloneFolder(rowData.item);
+  }}"
           id="${rowData.item.id+'-clone'}"
           ></mwc-icon-button>
           <vaadin-tooltip for="${rowData.item.id+'-clone'}" text="${_t('data.folders.CloneFolder')}" position="top-start"></vaadin-tooltip>
       ` : html``}-->
       ${rowData.item.is_owner ?
-        html`
+    html`
           <mwc-icon-button
             class="fg ${rowData.item.type == 'user' ? 'blue' : 'green'} controls-running"
             icon="share"
@@ -1448,7 +1391,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       ${rowData.item.is_owner ||
         this._hasPermission(rowData.item, 'd') ||
         (rowData.item.type === 'group' && this.is_admin) ?
-        html`
+    html`
           <mwc-icon-button
             class="fg red controls-running"
             icon="delete"
@@ -1459,7 +1402,7 @@ export default class BackendAiStorageList extends BackendAIPage {
           <vaadin-tooltip for="${rowData.item.id+'-delete'}" text="${_t('data.folders.Delete')}" position="top-start"></vaadin-tooltip>
         ` : html``}
       ${(!rowData.item.is_owner && rowData.item.type == 'user') ?
-        html`
+    html`
           <mwc-icon-button
             class="fg red controls-running"
             icon="remove_circle"
@@ -1623,7 +1566,7 @@ export default class BackendAiStorageList extends BackendAIPage {
       // language=HTML
       html`
         <div class="layout vertical center-justified">
-        ${rowData.item.type == 'user' ? html`<wl-icon>person</wl-icon>` : html`<wl-icon class="fg green">group</wl-icon>`}
+        ${rowData.item.type == 'user' ? html`<mwc-icon>person</mwc-icon>` : html`<mwc-icon class="fg green">group</mwc-icon>`}
         </div>
       `, root
     );
@@ -2953,7 +2896,7 @@ export default class BackendAiStorageList extends BackendAIPage {
         await globalThis.backendaiclient.get_resource_slots();
         indicator.set(50, _text('data.explorer.StartingSSH/SFTPSession'));
         const sessionResponse = await globalThis.backendaiclient.createIfNotExists(environment, `sftp-${this.explorer.uuid}`, imageResource, 15000, undefined);
-        if (sessionResponse.status === "CANCELLED") { // Max # of upload sessions exceeded for this used
+        if (sessionResponse.status === 'CANCELLED') { // Max # of upload sessions exceeded for this used
           this.notification.text = PainKiller.relieve(_text('data.explorer.NumberOfSFTPSessionsExceededTitle'));
           this.notification.detail = _text('data.explorer.NumberOfSFTPSessionsExceededBody');
           this.notification.show(true, {
