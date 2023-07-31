@@ -8,7 +8,6 @@ import React, {
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import ServingList, { ServingListInfo } from "../components/ServingList";
-import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import {
   useCurrentProjectValue,
@@ -111,18 +110,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         align="stretch"
         style={{ padding: token.padding, gap: token.margin }}
       >
-        {false ? (
-          <Suspense fallback={<div>loading..</div>}>
-            <RoutingListPage
-              projectId={curProject.id}
-              status={[]}
-              extraFetchKey={""}
-            />
-          </Suspense>
-        ) : (
-          <></>
-        )}
-        {children}
         {/* <Card bordered title={t("summary.ResourceStatistics")}>
           <p>SessionList</p>
         </Card> */}

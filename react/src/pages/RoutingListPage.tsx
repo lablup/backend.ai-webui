@@ -1,7 +1,6 @@
 import {
   Breadcrumb,
   Descriptions,
-  Space,
   Table,
   TableProps,
   Tag,
@@ -10,11 +9,9 @@ import {
 } from "antd";
 import { CheckOutlined, CloseOutlined } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import React, { useDeferredValue } from "react";
+import React from "react";
 import Flex from "../components/Flex";
-import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from "../components/DefaultProviders";
-import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
+import { useSuspendedBackendaiClient } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useTanQuery } from "../hooks/reactQueryAlias";
@@ -73,8 +70,8 @@ const RoutingListPage: React.FC<ServingListProps> = ({
     serviceId: string;
   }>();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+  // const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
+  // const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const { data: modelServiceInfo } = useTanQuery({
     queryKey: ["serviceInfo", serviceId],
@@ -88,40 +85,40 @@ const RoutingListPage: React.FC<ServingListProps> = ({
     enabled: !!serviceId,
   });
 
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
 
-  const rowSelection = {
-    onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-      console.log(
-        `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
-        selectedRows
-      );
-    },
-  };
+  // const rowSelection = {
+  //   onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
+  //     console.log(
+  //       `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
+  //       selectedRows
+  //     );
+  //   },
+  // };
 
   // return color of tag by status
-  const applyStatusColor = (status: string = "") => {
-    let color = "default";
-    switch (status.toUpperCase()) {
-      case "HEALTHY":
-        color = "success";
-        break;
-      case "PROVISIONING":
-        color = "processing";
-        break;
-      case "UNHEALTHY":
-        color = "warning";
-        break;
-    }
-    return color;
-  };
+  // const applyStatusColor = (status: string = "") => {
+  //   let color = "default";
+  //   switch (status.toUpperCase()) {
+  //     case "HEALTHY":
+  //       color = "success";
+  //       break;
+  //     case "PROVISIONING":
+  //       color = "processing";
+  //       break;
+  //     case "UNHEALTHY":
+  //       color = "warning";
+  //       break;
+  //   }
+  //   return color;
+  // };
 
   const columns: ColumnsType<DataType> = [
     {
       title: "Route ID",
       dataIndex: "routeId",
       key: "route_id",
-      render: (text) => <a>{text}</a>,
+      render: (text) => text,
     },
     {
       title: "Session ID",
