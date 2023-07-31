@@ -1,10 +1,10 @@
 import React from "react";
 
 import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
-import { useTranslation } from "react-i18next";
+// import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
-import { useTanQuery, useTanMutation } from "../hooks/reactQueryAlias";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 import { ServingListInfo } from "../components/ServingList";
 import Flex from "./Flex";
 
@@ -14,7 +14,7 @@ interface Props extends ModalProps {
 }
 
 interface ServiceSettingFormInput {
-  desired_session_count: number,
+  desired_session_count: number;
 }
 
 const ModelServiceSettingModal: React.FC<Props> = ({
@@ -24,7 +24,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const { t } = useTranslation();
+  // const { t } = useTranslation();
   const [form] = Form.useForm();
 
   const mutationToUpdateService = useTanMutation({
@@ -37,26 +37,29 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         url: `/services/${dataSource?.id}/scale`,
         body,
         client: baiClient,
-      })
+      });
     },
   });
 
   // Apply any operation after clicking OK button
   const handleOk = (e: React.MouseEvent<HTMLElement>) => {
-    form.validateFields().then((values) => {
-      mutationToUpdateService.mutate(values, {
-        onSuccess: () => {
-          console.log("service updated");
-          onRequestClose(true);
-        },
-        onError: (error) => {
-          console.log(error);
-          // TODO: show error message
-        }
+    form
+      .validateFields()
+      .then((values) => {
+        mutationToUpdateService.mutate(values, {
+          onSuccess: () => {
+            console.log("service updated");
+            onRequestClose(true);
+          },
+          onError: (error) => {
+            console.log(error);
+            // TODO: show error message
+          },
+        });
       })
-    }).catch((err) => {
-      console.log(err)
-    })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   // Apply any operation after clicking Cancel button
@@ -65,7 +68,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
     onRequestClose();
   };
 
-  return(
+  return (
     <Modal
       {...props}
       style={{
@@ -74,6 +77,9 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       destroyOnClose
       onOk={handleOk}
       onCancel={handleCancel}
+      okButtonProps={{
+        loading: mutationToUpdateService.isLoading,
+      }}
       title={"Edit Model Service"} // TODO: translate needed
     >
       <Flex direction="row" align="stretch" justify="around">
@@ -86,18 +92,20 @@ const ModelServiceSettingModal: React.FC<Props> = ({
           initialValues={{
             desired_session_count: dataSource?.desired_session_count,
           }}
-          style={{ marginBottom: token.marginLG, marginTop: token.margin }}>
-            <Form.Item 
-              name="desired_session_count"
-              label="Desired Session Count"
-              rules={[
-                {
-                  pattern: /^[0-9]+$/,
-                  message: "Only Allows non-negative integers."
-                }
-              ]}>
-              <InputNumber type="number" min={0} />
-            </Form.Item>
+          style={{ marginBottom: token.marginLG, marginTop: token.margin }}
+        >
+          <Form.Item
+            name="desired_session_count"
+            label="Desired Session Count"
+            rules={[
+              {
+                pattern: /^[0-9]+$/,
+                message: "Only Allows non-negative integers.",
+              },
+            ]}
+          >
+            <InputNumber type="number" min={0} />
+          </Form.Item>
         </Form>
       </Flex>
     </Modal>
