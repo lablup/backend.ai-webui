@@ -7,7 +7,6 @@ import {css, CSSResultGroup, html, render} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
-import QR from '../lib/qr';
 
 import './backend-ai-dialog';
 import './backend-ai-list-status';
@@ -29,7 +28,6 @@ import '@material/mwc-icon-button';
 import {Select} from '@material/mwc-select';
 
 import {default as PainKiller} from './backend-ai-painkiller';
-import BackendAiCommonUtils from './backend-ai-common-utils';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
@@ -44,7 +42,6 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
  */
 type TextArea = HTMLElementTagNameMap['mwc-textarea'];
 type TextField = HTMLElementTagNameMap['mwc-textfield'];
-type Switch = HTMLElementTagNameMap['mwc-switch'];
 type VaadinGrid = HTMLElementTagNameMap['vaadin-grid'];
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
