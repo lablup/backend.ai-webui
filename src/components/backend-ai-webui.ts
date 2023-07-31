@@ -119,6 +119,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: Boolean}) isHideAgents = true;
+  @property({type: Boolean}) supportServing = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -271,6 +272,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.full_name = input;
       }
     });
+    document.addEventListener('backend-ai-connected', () => {
+      this.supportServing = globalThis.backendaiclient.supports('model-serving');
+    }, {once:true});
   }
 
   async connectedCallback() {
@@ -1053,10 +1057,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
-            <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+            ${this.supportServing ? html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('session')}">
               <i class="fa fa-rocket" slot="graphic" id="serving-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Serving')}</span>
-            </mwc-list-item>
+              </mwc-list-item>`: html``}
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
                 <i class="fas fa-flask" slot="graphic"></i>
