@@ -1,14 +1,21 @@
-import React from "react";
+import React, { PropsWithChildren } from "react";
 import { Typography } from "antd";
 
-interface Props {
-  text: string;
+interface Props extends PropsWithChildren {
+  text?: string;
 }
 
-const CopyableCodeText: React.FC<Props> = ({ text = "" }) => {
+const CopyableCodeText: React.FC<Props> = ({ text = "", children }) => {
   return (
-    <Typography.Text copyable code>
+    <Typography.Text
+      copyable
+      code
+      style={{
+        backgroundColor: "transparent",
+      }}
+    >
       {text}
+      {children}
     </Typography.Text>
   );
 };
