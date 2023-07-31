@@ -4,6 +4,7 @@ import React, {
   Suspense,
   useState,
   useTransition,
+  startTransition as startTransitionWithoutPendingState,
 } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
@@ -67,7 +68,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   // >("next");
 
   useRafInterval(() => {
-    startRefetchTransition(() => {
+    startTransitionWithoutPendingState(() => {
       updateServicesFetchKey();
     });
   }, 7000);
@@ -130,7 +131,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         projectID: curProject.id,
       },
       {
-        fetchPolicy: "store-and-network",
+        fetchPolicy: "network-only",
         fetchKey: servicesFetchKey,
       }
     );
@@ -290,7 +291,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 },
                 {
                   title: "Service Id",
-                  dataIndex: "id",
+                  dataIndex: "endpoint_id",
                 },
                 {
                   title: "Controls",
