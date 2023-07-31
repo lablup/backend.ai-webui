@@ -59,14 +59,9 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <Routes>
-              <Route path="/serving" element={
-                <ServingList>{props.children}</ServingList>
-              }/>
-              <Route path="/serving/:serviceId" element={
-                <RoutingList/>
-              }/>
-              </Routes>
-        
+          <Route path="/serving" element={<ServingList />} />
+          <Route path="/serving/:serviceId" element={<RoutingList />} />
+        </Routes>
       </DefaultProviders>
     );
   })
