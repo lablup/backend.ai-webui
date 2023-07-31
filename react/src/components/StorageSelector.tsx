@@ -38,10 +38,6 @@ const StorageSelector: React.FC<Props> = ({
     "vhostInfo",
     () => {
       return baiClient.vfolder.list_hosts();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: true,
     }
   );
 

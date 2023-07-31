@@ -83,7 +83,6 @@ const SessionList: React.FC<SessionListProps> = ({
       }
     `,
     {
-      // skipCodejong: false,
       limit: pageSize,
       offset: (currentPage - 1) * pageSize,
       status: status?.join(","),
