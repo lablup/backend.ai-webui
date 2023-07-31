@@ -1,9 +1,11 @@
-import { Button, Table, TableProps, Tag } from "antd";
+import { Button, Table, TableProps, Tag, theme } from "antd";
 import {
   CheckOutlined,
   CloseOutlined,
   DeleteFilled,
+  DeleteOutlined,
   SettingFilled,
+  SettingOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
 import React from "react";
@@ -49,6 +51,7 @@ const ServingList: React.FC<ServingListProps> = ({
   onClickTerminate,
   ...tableProps
 }) => {
+  const { token } = theme.useToken();
   // const baiClient = useSuspendedBackendaiClient();
   // const navigate = useNavigate();
 
@@ -102,13 +105,30 @@ const ServingList: React.FC<ServingListProps> = ({
           <Flex direction="row" align="stretch">
             <Button
               type="text"
-              icon={<SettingFilled />}
+              icon={<SettingOutlined />}
+              style={
+                row.desired_session_count > 0
+                  ? {
+                      color: "#29b6f6",
+                    }
+                  : undefined
+              }
               disabled={row.desired_session_count < 0}
               onClick={() => onClickEdit && onClickEdit(row)}
             />
             <Button
               type="text"
-              icon={<DeleteFilled />}
+              icon={
+                <DeleteOutlined
+                  style={
+                    row.desired_session_count > 0
+                      ? {
+                          color: token.colorError,
+                        }
+                      : undefined
+                  }
+                />
+              }
               disabled={row.desired_session_count < 0}
               onClick={() => onClickTerminate && onClickTerminate(row)}
             />
