@@ -81,6 +81,7 @@ export default class BackendAIMultiSelect extends LitElement {
         span.title {
           font-size: var(--select-title-font-size, 14px);
           font-weight: var(--select-title-font-weight, 500);
+          padding-left: var(--select-title-padding-left, 0px);
         }
 
         mwc-button {

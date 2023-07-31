@@ -60,7 +60,10 @@
       "AgentSummary": "__NOT_TRANSLATED__",
       "SetupTotp": "__NOT_TRANSLATED__",
       "TotpActivated": "__NOT_TRANSLATED__",
-      "AIAccelerator": "__NOT_TRANSLATED__"
+      "AIAccelerator": "__NOT_TRANSLATED__",
+      "Serving": "__NOT_TRANSLATED__",
+      "Notifications": "__NOT_TRANSLATED__",
+      "Tasks": "__NOT_TRANSLATED__"
     },
     "LOGINREQUIRED": "LOGIN DIBUTUHKAN",
     "YouAreOffline": "Anda sekarang offline",

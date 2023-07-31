@@ -5,6 +5,7 @@
       "WelcomeMessage_2": "님",
       "Summary": "요약",
       "Sessions": "세션",
+      "Serving": "모델 서빙",
       "Import&Run": "가져오기 & 실행",
       "Data&Storage": "데이터 & 폴더",
       "AgentSummary": "자원 요약",
@@ -63,7 +64,9 @@
       "AIAccelerator": "AI 가속기",
       "YouMushChangeYourPassword": "보안을 위해 비밀번호를 주기적으로 변경하는 것이 좋습니다. 비밀번호를 변경한 지 일정 시간이 지났으므로, 서비스를 계속 이용하려면 비밀번호를 변경해야 합니다.",
       "CurrentPassword": "현재 비밀번호",
-      "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요."
+      "NewPasswordCannotBeSame": "기존 비밀번호와 다른 새 비밀번호를 입력해주세요.",
+      "Notifications": "알림",
+      "Tasks": "작업"
     },
     "LOGINREQUIRED": "로그인이 필요합니다",
     "YouAreOffline": "오프라인 상태가 되었습니다",
@@ -110,7 +113,7 @@
     "Announcement": "공지",
     "SystemResources": "시스템 자원",
     "CurrentVersion": "현재 버전",
-    "NoAnnouncement": "표시 할 안내문이 없습니다.",
+    "NoAnnouncement": "표시할 안내문이 없습니다.",
     "NoInvitations": "초대 받은 폴더가 없습니다.",
     "AcceptSharedVFolder": "다음 폴더에 대한 공유를 받습니다. 공유 받은 폴더 명: ",
     "DeclineSharedVFolder": "다음 폴더에 대한 초대를 거부하였습니다. 거부한 폴더 명: ",
@@ -373,6 +376,12 @@
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
     "Readless": "내용 접기"
+  },
+  "modelService": {
+    "Running": "실행중",
+    "Finished": "종료",
+    "Others": "기타",
+    "Services": "모델 서비스"
   },
   "button": {
     "Cancel": "취소",

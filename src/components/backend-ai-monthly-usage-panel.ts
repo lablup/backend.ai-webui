@@ -8,8 +8,6 @@ import {customElement, property} from 'lit/decorators.js';
 
 import {translate as _t} from 'lit-translate';
 
-import 'weightless/title';
-
 import {
   IronFlex,
   IronFlexAlignment,
@@ -45,10 +43,6 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
       IronPositioning,
       // language=CSS
       css`
-        wl-card {
-          padding: 20px;
-        }
-
         .value {
           padding: 15px;
           font-size: 25px;
@@ -92,8 +86,8 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wl-card>
-        <wl-title level="3">${_t('usagepanel.StatisticsForThisMonth')}</wl-title>
+      <div class="card">
+        <h3>${_t('usagepanel.StatisticsForThisMonth')}</h3>
         <div class="horizontal layout">
           <div class="vertical center layout">
             <span class="value">${this.num_sessions}</span>
@@ -120,7 +114,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
             <span class="desc">${_t('usagepanel.TrafficUsed')}</span>
           </div>
         </div>
-      </wl-card>
+      </div>
     `;
   }
 }

@@ -16,6 +16,7 @@ import Flex from "./Flex";
 import { useQuery } from "react-query";
 import { newLineToBrElement } from "../helper";
 import { useSuspendedBackendaiClient } from "../hooks";
+import DoubleTag from "./DoubleTag";
 
 const DescriptionLabel: React.FC<{
   title: string;
@@ -28,18 +29,6 @@ const DescriptionLabel: React.FC<{
       {subtitle && (
         <Typography.Text type="secondary">{subtitle}</Typography.Text>
       )}
-    </Flex>
-  );
-};
-
-const DoubleTag: React.FC<{
-  label: string;
-  value: string;
-}> = ({ label, value }) => {
-  return (
-    <Flex direction="row">
-      <Tag style={{ margin: 0, marginRight: -1, zIndex: 1 }}>{label}</Tag>
-      <Tag color="green">{value}</Tag>
     </Flex>
   );
 };
@@ -117,8 +106,10 @@ const Information: React.FC<InformationProps> = () => {
                 >
                   Backend.AI {baiClient.managerVersion}
                   <DoubleTag
-                    label={t("information.Installation")}
-                    value={baiClient.managerVersion}
+                    values={[
+                      t("information.Installation"),
+                      baiClient.managerVersion,
+                    ]}
                   />
                   {/* TODO: get manager_version_latest  */}
                   {/* <DoubleTag

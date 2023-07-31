@@ -27,11 +27,9 @@ import '@material/mwc-list/mwc-list-item';
 import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
+import '@vaadin/tooltip';
 
 import toml from 'markty-toml';
-
-import 'weightless/popover';
-import 'weightless/popover-card';
 
 import './backend-ai-app-launcher';
 import './backend-ai-common-utils';
@@ -121,6 +119,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: Boolean}) isHideAgents = true;
+  @property({type: Boolean}) supportServing = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -130,7 +129,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
-    'environment', 'agent', 'storage-settings', 'settings', 'maintenance',
+    'environment', 'agent', 'storage-settings', 'settings', 'maintenance', 'serving',
     'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent', 'storage-settings',
     'settings', 'maintenance', 'information'];
@@ -273,6 +272,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.full_name = input;
       }
     });
+    document.addEventListener('backend-ai-connected', () => {
+      this.supportServing = globalThis.backendaiclient.supports('model-serving');
+    }, {once:true});
   }
 
   async connectedCallback() {
@@ -916,6 +918,12 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         component.requestUpdate();
       }
     }
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**
@@ -924,28 +932,29 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   async addTooltips() {
     this._createPopover('#summary-menu-icon', _text('webui.menu.Summary'));
     this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
+    this._createPopover('#serving-menu-icon', _text('webui.menu.Serving'));
     this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
     this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
 
     // temporally blcok pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
     // this._createPopover('#pipeline-job-menu-icon', _text('webui.menu.PipelineJob'));
-    this._createPopover('#statistics-menu-icon', _text('webui.menu.Statistics'));
-    this._createPopover('#usersettings-menu-icon', _text('webui.menu.Settings'));
+    this._createPopover('statistics-menu-icon', _text('webui.menu.Statistics'));
+    this._createPopover('usersettings-menu-icon', _text('webui.menu.Settings'));
     this._createPopover('backend-ai-help-button', _text('webui.menu.Help'));
     if (this.is_admin) {
-      this._createPopover('#user-menu-icon', _text('webui.menu.Users'));
+      this._createPopover('user-menu-icon', _text('webui.menu.Users'));
     }
     if (this.is_superadmin) {
-      this._createPopover('#resources-menu-icon', _text('webui.menu.Resources'));
-      this._createPopover('#environments-menu-icon', _text('webui.menu.Environments'));
-      this._createPopover('#configurations-menu-icon', _text('webui.menu.Configurations'));
-      this._createPopover('#maintenance-menu-icon', _text('webui.menu.Maintenance'));
-      this._createPopover('#information-menu-icon', _text('webui.menu.Information'));
+      this._createPopover('resources-menu-icon', _text('webui.menu.Resources'));
+      this._createPopover('environments-menu-icon', _text('webui.menu.Environments'));
+      this._createPopover('configurations-menu-icon', _text('webui.menu.Configurations'));
+      this._createPopover('maintenance-menu-icon', _text('webui.menu.Maintenance'));
+      this._createPopover('information-menu-icon', _text('webui.menu.Information'));
       // this._createPopover("#admin-menu-icon", _text("webui.menu.Administration"));
     }
     if (!this.isHideAgents) {
-      this._createPopover('#agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
+      this._createPopover('agent-summary-menu-icon', _text('webui.menu.AgentSummary'));
     }
   }
 
@@ -956,22 +965,10 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * @param {string} title
    */
   _createPopover(anchor: string, title: string) {
-    const popover = document.createElement('wl-popover');
-    popover.anchor = anchor;
-    popover.setAttribute('fixed', '');
-    popover.setAttribute('disablefocustrap', '');
-    popover.setAttribute('anchororiginx', 'right');
-    popover.setAttribute('anchororiginy', 'center');
-    popover.setAttribute('transformoriginx', 'left');
-    popover.setAttribute('transformoriginy', 'center');
-    popover.anchorOpenEvents = ['mouseover'];
-    popover.anchorCloseEvents = ['mouseout'];
-    const card = document.createElement('wl-popover-card');
-    const carddiv = document.createElement('div');
-    carddiv.style.padding = '5px';
-    carddiv.innerText = title;
-    card.appendChild(carddiv);
-    popover.appendChild(card);
+    const popover = document.createElement('vaadin-tooltip');
+    popover.for = anchor;
+    popover.position = 'end';
+    popover.text = title;
     const tooltipBox = this.shadowRoot?.querySelector('#mini-tooltips')!;
     tooltipBox.appendChild(popover);
   }
@@ -1041,11 +1038,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="flex"></span>
             </div>
           </div>
-          <div class="horizontal center-justified center layout flex" style="max-height:40px;">
+          <div class="${this.mini_ui ? 'vertical' : 'horizontal'} center-justified center layout flex">
             <mwc-icon-button id="mini-ui-toggle-button" style="color:#fff;" icon="menu" slot="navigationIcon" @click="${() => this.toggleSidebarUI()}"></mwc-icon-button>
             <mwc-icon-button disabled class="temporarily-hide full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'yellow' : 'white'}" id="feedback-icon" icon="question_answer"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
-            <mwc-icon-button class="full-menu side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
+            <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'yellow' : 'white'}" id="notification-icon" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
+            <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'yellow' : 'white'}" id="task-icon" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
           </div>
           <mwc-list id="sidebar-menu" class="sidebar list" @selected="${(e) => this._menuSelected(e)}">
             <mwc-list-item graphic="icon" ?selected="${this._page === 'summary'}" @click="${() => this._moveTo('/summary')}" ?disabled="${this.blockedMenuitem.includes('summary')}">
@@ -1060,6 +1057,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
+            ${this.supportServing ? html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+              <i class="fa fa-rocket" slot="graphic" id="serving-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Serving')}</span>
+              </mwc-list-item>`: html``}
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
                 <i class="fas fa-flask" slot="graphic"></i>
@@ -1157,7 +1159,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               </div>
               <address class="full-menu">
                 <small class="sidebar-footer">Lablup Inc.</small>
-                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230718</small>
+                <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230724</small>
               </address>
               <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
                 <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1181,7 +1183,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
             </div>
             <address class="full-menu">
               <small class="sidebar-footer">Lablup Inc.</small>
-              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230718</small>
+              <small class="sidebar-footer" style="font-size:9px;">23.09.0-alpha.2.230724</small>
             </address>
             <div id="sidebar-navbar-footer" class="vertical start end-justified layout" style="margin-left:16px;">
               <backend-ai-help-button active style="margin-left:4px;"></backend-ai-help-button>
@@ -1229,6 +1231,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <backend-ai-session-view-next class="page" name="session" ?active="${this._page === 'session'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+                    <backend-ai-serving-list class="page" name="serving" ?active="${this._page === 'serving'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-list>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>
@@ -1257,16 +1260,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         </div>
       </mwc-drawer>
       <div id="mini-tooltips" style="display:${this.mini_ui ? 'block' : 'none'};">
-        <wl-popover anchor="#mini-ui-toggle-button" .anchorOpenEvents="${['mouseover']}" fixed disablefocustrap
-           anchororiginx="right" anchororiginy="center" transformoriginx="left" transformOriginY="center">
-          <wl-popover-card>
-            <div style="padding:5px">
-              <mwc-icon-button disabled class="temporarily-hide side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'feedback' ? 'red' : 'black'}" id="feedback-icon-popover" icon="question_answer"></mwc-icon-button>
-              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'notification' ? 'red' : 'black'}" id="notification-icon-popover" icon="notification_important" @click="${() => this._openSidePanel('notification')}"></mwc-icon-button>
-              <mwc-icon-button class="side-menu fg ${this.contentBody && this.contentBody.open === true && this._sidepanel === 'task' ? 'red' : 'black'}" id="task-icon-popover" icon="ballot" @click="${() => this._openSidePanel('task')}"></mwc-icon-button>
-            </div>
-          </wl-popover-card>
-        </wl-popover>
+        <vaadin-tooltip for="notification-icon" position="end" text="${_t('webui.menu.Notifications')}"></vaadin-tooltip>
+        <vaadin-tooltip for="task-icon" position="end" text="${_t('webui.menu.Tasks')}"></vaadin-tooltip>
       </div>
       <backend-ai-offline-indicator ?active="${this._offlineIndicatorOpened}">
         ${this._offline ? _t('webui.YouAreOffline') : _t('webui.YouAreOnline')}.

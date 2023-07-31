@@ -5,6 +5,7 @@
       "WelcomeMessage_2": " .",
       "Summary": "Summary",
       "Sessions": "Sessions",
+      "Serving": "Serving",
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
@@ -63,7 +64,9 @@
       "AIAccelerator": "AI Accelerator",
       "YouMushChangeYourPassword": "It is recommended to periodically change your password for security reasons. Since a certain amount of time has passed since you last changed your password, you must change it in order to continue using the service.",
       "CurrentPassword": "Current Password",
-      "NewPasswordCannotBeSame": "Please enter a password that is different from your current password."
+      "NewPasswordCannotBeSame": "Please enter a password that is different from your current password.",
+      "Notifications": "Notifications",
+      "Tasks": "Tasks"
     },
     "LOGINREQUIRED": "LOGIN REQUIRED",
     "YouAreOffline": "You are now offline",
@@ -380,6 +383,12 @@
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions"
+  },
+  "modelService": {
+    "Running": "Running",
+    "Finished": "Finished",
+    "Others": "Others",
+    "Services": "Services"
   },
   "button": {
     "Cancel": "Cancel",
