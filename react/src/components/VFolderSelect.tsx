@@ -93,6 +93,7 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     if (autoSelectDefault && autoSelectedOption) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
   return (
     <Select

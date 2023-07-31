@@ -2,21 +2,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
-import {
-  Button,
-  ConfigProvider,
-  Divider,
-  Empty,
-  Form,
-  Input,
-  Select,
-  Tag,
-} from "antd";
+import { Divider, Form, Input, Select } from "antd";
 import { useBackendaiImageMetaData } from "../hooks";
 import ImageMetaIcon from "./ImageMetaIcon";
 import Flex from "./Flex";
 import { useTranslation } from "react-i18next";
-import e from "express";
 import TextHighlighter from "./TextHighlighter";
 import DoubleTag from "./DoubleTag";
 import {
@@ -63,8 +53,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
   const [environmentSearch, setEnvironmentSearch] = useState("");
   const [versionSearch, setVersionSearch] = useState("");
   const { t } = useTranslation();
-  const [metadata, { getImageIcon, getImageMeta }] =
-    useBackendaiImageMetaData();
+  const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
   const { images } = useLazyLoadQuery<ImageEnvironmentSelectFormItemsQuery>(
     graphql`
       query ImageEnvironmentSelectFormItemsQuery($installed: Boolean) {
@@ -135,6 +124,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentEnvironmentsFormData?.environment]);
 
   const imageGroups: ImageGroup[] = useMemo(
@@ -170,6 +160,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         })
         .sortBy((item) => item.groupName)
         .value(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [images, metadata, filter]
   );
 

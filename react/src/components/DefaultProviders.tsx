@@ -21,7 +21,7 @@ import { useCustomThemeConfig } from "../helper/customThemeConfig";
 
 // @ts-ignore
 import rawFixAntCss from "../fix_antd.css?raw";
-import { BrowserRouter, useLocation, useNavigate } from "react-router-dom";
+import { BrowserRouter, useNavigate } from "react-router-dom";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
@@ -157,7 +157,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
 
 const RoutingEventHandler = () => {
   const navigate = useNavigate();
-  const location = useLocation();
   useLayoutEffect(() => {
     const handleNavigate = (e: any) => {
       const { detail } = e;

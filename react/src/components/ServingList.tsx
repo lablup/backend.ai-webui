@@ -2,9 +2,7 @@ import { Button, Table, TableProps, Tag, theme } from "antd";
 import {
   CheckOutlined,
   CloseOutlined,
-  DeleteFilled,
   DeleteOutlined,
-  SettingFilled,
   SettingOutlined,
 } from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";

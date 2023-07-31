@@ -8,7 +8,7 @@ import { EditOutlined } from "@ant-design/icons";
 import Flex from "../Flex";
 import { useTranslation } from "react-i18next";
 import {
-  useBackendaiImageMetaData,
+  // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from "../../hooks";
 import ImageMetaIcon from "../ImageMetaIcon";
@@ -51,7 +51,7 @@ const SessionInfoCell: React.FC<{
     sessionFrgmt
   );
 
-  const metadata = useBackendaiImageMetaData();
+  // const metadata = useBackendaiImageMetaData();
 
   const mutation = useTanMutation({
     mutationFn: (newName: string) => {

@@ -1,18 +1,9 @@
 import { Select, SelectProps } from "antd";
 import React, { startTransition, useEffect } from "react";
-import { useLazyLoadQuery } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
 // import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
-import {
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-  useUpdatableState,
-} from "../hooks";
-import {
-  baiSignedRequestWithPromise,
-  useBaiSignedRequestWithPromise,
-} from "../helper";
+import { useCurrentProjectValue, useUpdatableState } from "../hooks";
+import { useBaiSignedRequestWithPromise } from "../helper";
 import { useTanQuery } from "../hooks/reactQueryAlias";
 
 interface ResourceGroupSelectorProps extends SelectProps {
@@ -68,6 +59,7 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
     if (autoSelectDefault && autoSelectedOption) {
       selectProps.onChange?.(autoSelectedOption.value, autoSelectedOption);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoSelectDefault]);
   return (
     <Select

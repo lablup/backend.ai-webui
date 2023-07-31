@@ -3,7 +3,6 @@ import {
   InputNumber,
   Slider,
   Form,
-  InputProps,
   SliderSingleProps,
   InputNumberProps,
 } from "antd";

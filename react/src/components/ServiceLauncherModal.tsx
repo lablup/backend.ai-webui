@@ -1,20 +1,6 @@
-import {
-  Button,
-  Card,
-  Divider,
-  Form,
-  Input,
-  InputNumber,
-  message,
-  Modal,
-  ModalProps,
-  theme,
-  Switch,
-  Tooltip,
-} from "antd";
-import React, { Suspense, useState } from "react";
+import { Card, Form, Input, Modal, ModalProps, theme, Switch } from "antd";
+import React, { Suspense } from "react";
 import { useTranslation } from "react-i18next";
-import Flex from "./Flex";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelectFormItems, {
@@ -24,10 +10,8 @@ import ImageEnvironmentSelectFormItems, {
 import FlexActivityIndicator from "./FlexActivityIndicator";
 import _ from "lodash";
 import ResourceGroupSelect from "./ResourceGroupSelect";
-import { InfoCircleOutlined } from "@ant-design/icons";
 import VFolderSelect from "./VFolderSelect";
 import { useTanMutation } from "../hooks/reactQueryAlias";
-import { useTanQuery } from "../hooks/reactQueryAlias";
 import { useCurrentDomainValue } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 
@@ -37,36 +21,36 @@ interface ServiceCreateConfigResourceOptsType {
   shmem?: number | string;
 }
 interface ServiceCreateConfigResourceType {
-  cpu: number | string,
-  mem: string,
-  "cuda.device"?: number | string,
-  "cuda.shares"?: number | string,
+  cpu: number | string;
+  mem: string;
+  "cuda.device"?: number | string;
+  "cuda.shares"?: number | string;
 }
 
 interface ServiceCreateConfigType {
-  model: string,
-  model_version?: string,
-  model_mount_destination: string, // default == "/models"
-  environ: object, // environment variable
-  scaling_group: string,
-  resources: ServiceCreateConfigResourceType,
-  resource_opts?: ServiceCreateConfigResourceOptsType,
+  model: string;
+  model_version?: string;
+  model_mount_destination: string; // default == "/models"
+  environ: object; // environment variable
+  scaling_group: string;
+  resources: ServiceCreateConfigResourceType;
+  resource_opts?: ServiceCreateConfigResourceOptsType;
 }
 interface ServiceCreateType {
-  name: string,
-  desired_session_count: number,
-  image: string,
-  arch: string,
-  group: string,
-  domain: string,
-  cluster_size: number,
-  cluster_mode: ClusterMode,
-  tag?: string,
-  startup_command?: string,
-  bootstrap_script?: string,
-  owner_access_key?: string,
-  open_to_public: boolean,
-  config: ServiceCreateConfigType,
+  name: string;
+  desired_session_count: number;
+  image: string;
+  arch: string;
+  group: string;
+  domain: string;
+  cluster_size: number;
+  cluster_mode: ClusterMode;
+  tag?: string;
+  startup_command?: string;
+  bootstrap_script?: string;
+  owner_access_key?: string;
+  open_to_public: boolean;
+  config: ServiceCreateConfigType;
 }
 
 interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
@@ -82,7 +66,7 @@ interface ServiceLauncherFormInput extends ImageEnvironmentFormInput {
   resourceGroup: string;
   vFolderName: string;
   desiredRoutingCount: number;
-  openToPublic: boolean,
+  openToPublic: boolean;
 }
 
 const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
@@ -93,11 +77,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  const [confirmLoading, setConfirmLoading] = useState(false);
   // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
-  
+
   const mutationToCreateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormInput) => {
       const image: string = `${values.environments.image?.registry}/${values.environments.image?.name}:${values.environments.image?.tag}`;
@@ -105,15 +88,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         name: values.serviceName,
         desired_session_count: values.desiredRoutingCount,
         image: image,
-        arch: (values.environments.image?.architecture as string),
+        arch: values.environments.image?.architecture as string,
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: 1, // FIXME: hardcoded. change it with option later
         cluster_mode: "single-node", // FIXME: hardcoded. change it with option later
         open_to_public: values.openToPublic,
         config: {
-          model : values.vFolderName,
-          model_mount_destination:"/models", // FIXME: hardcoded. change it with option later
+          model: values.vFolderName,
+          model_mount_destination: "/models", // FIXME: hardcoded. change it with option later
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
@@ -121,13 +104,13 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             mem: values.mem + "G",
             "cuda.shares": values.gpu,
           },
-        }
+        },
       };
       if (values.shmem && values.shmem > 0) {
         body["config"].resource_opts = {
-          shmem: values.shmem
+          shmem: values.shmem,
         };
-      };
+      }
       return baiSignedRequestWithPromise({
         method: "POST",
         url: "/services",
@@ -156,11 +139,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     form.validateFields().then((values) => {
       mutationToCreateService.mutate(values, {
         onSuccess: () => {
-          console.log("service created")
+          console.log("service created");
           onRequestClose(true);
         },
         onError: (error) => {
-          console.log(error)
+          console.log(error);
           // TODO: show error message
         },
       });
@@ -183,10 +166,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       onCancel={handleCancel}
       destroyOnClose={true}
       maskClosable={false}
-      okButtonProps={{
-        loading: mutationToCreateService.isLoading,
-      }}
-      confirmLoading={confirmLoading}
+      confirmLoading={mutationToCreateService.isLoading}
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
@@ -229,10 +209,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <ResourceGroupSelect autoSelectDefault />
           </Form.Item>
-          <Form.Item
-            name="openToPublic"
-            label="Open To Public">
-              <Switch></Switch>
+          <Form.Item name="openToPublic" label="Open To Public">
+            <Switch></Switch>
           </Form.Item>
           <Form.Item
             name={"vFolderName"}
