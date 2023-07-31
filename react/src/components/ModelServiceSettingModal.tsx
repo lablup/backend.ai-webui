@@ -5,12 +5,14 @@ import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useTanMutation } from "../hooks/reactQueryAlias";
-import { ServingListInfo } from "../components/ServingList";
 import Flex from "./Flex";
+import { useFragment } from "react-relay";
+import graphql from "babel-plugin-relay/macro";
+import { ModelServiceSettingModal_endpoint$key } from "./__generated__/ModelServiceSettingModal_endpoint.graphql";
 
 interface Props extends ModalProps {
+  endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
   onRequestClose: (success?: boolean) => void;
-  dataSource: ServingListInfo | null;
 }
 
 interface ServiceSettingFormInput {
@@ -19,13 +21,23 @@ interface ServiceSettingFormInput {
 
 const ModelServiceSettingModal: React.FC<Props> = ({
   onRequestClose,
-  dataSource,
+  endpointFrgmt,
   ...props
 }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   // const { t } = useTranslation();
   const [form] = Form.useForm();
+
+  const endpoint = useFragment(
+    graphql`
+      fragment ModelServiceSettingModal_endpoint on Endpoint {
+        endpoint_id
+        desired_session_count
+      }
+    `,
+    endpointFrgmt
+  );
 
   const mutationToUpdateService = useTanMutation({
     mutationFn: (values: ServiceSettingFormInput) => {
@@ -34,7 +46,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       };
       return baiSignedRequestWithPromise({
         method: "POST",
-        url: `/services/${dataSource?.id}/scale`,
+        url: `/services/${endpoint?.endpoint_id}/scale`,
         body,
         client: baiClient,
       });
@@ -90,7 +102,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
           // wrapperCol={{ span: 6 }}
           validateTrigger={["onChange", "onBlur"]}
           initialValues={{
-            desired_session_count: dataSource?.desired_session_count,
+            desired_session_count: endpoint?.desired_session_count,
           }}
           style={{ marginBottom: token.marginLG, marginTop: token.margin }}
         >

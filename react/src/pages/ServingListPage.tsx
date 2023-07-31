@@ -1,13 +1,22 @@
-import { Button, ConfigProvider, Modal, Tabs, theme } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Modal,
+  Table,
+  Tabs,
+  Tag,
+  Typography,
+  theme,
+} from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
   useState,
   useTransition,
+  startTransition as startTransitionWithoutPendingState,
 } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
-import ServingList, { ServingListInfo } from "../components/ServingList";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import {
   useCurrentProjectValue,
@@ -15,12 +24,34 @@ import {
   useUpdatableState,
 } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
-import { useTanMutation, useTanQuery } from "../hooks/reactQueryAlias";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 import { useRafInterval } from "ahooks";
+import graphql from "babel-plugin-relay/macro";
+import { useLazyLoadQuery } from "react-relay";
+import {
+  ServingListPageQuery,
+  ServingListPageQuery$data,
+} from "./__generated__/ServingListPageQuery.graphql";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteOutlined,
+  SettingOutlined,
+} from "@ant-design/icons";
+import { Link } from "react-router-dom";
+import _ from "lodash";
 
 // FIXME: need to apply filtering type of service later
 type TabKey = "services"; //  "running" | "finished" | "others";
+
+type Endpoint = NonNullable<
+  NonNullable<
+    NonNullable<
+      NonNullable<ServingListPageQuery$data>["endpoint_list"]
+    >["items"]
+  >[0]
+>;
 
 const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -28,17 +59,26 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
-  const [selectedModelService, setSelectedModelService] =
-    useState<ServingListInfo>();
+  const [selectedModelService, setSelectedModelService] = useState<Endpoint>();
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
+
+  // const [paginationState, setPaginationState] = useState<{
+  const [paginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 100,
+  });
 
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [
     isOpenModelServiceTerminatingModal,
     setIsOpenModelServiceTerminatingModal,
   ] = useState(false);
-  const [servicesFetchKey, updateServicesFetchKey] = useUpdatableState("init");
+  const [servicesFetchKey, updateServicesFetchKey] =
+    useUpdatableState("initial-fetch");
   // FIXME: need to apply filtering type of service later
   const [selectedTab, setSelectedTab] = useState<TabKey>("services");
   // const [selectedGeneration, setSelectedGeneration] = useState<
@@ -46,24 +86,65 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   // >("next");
 
   useRafInterval(() => {
-    startRefetchTransition(() => {
+    startTransitionWithoutPendingState(() => {
       updateServicesFetchKey();
     });
   }, 7000);
 
-  const { data: modelServiceList } = useTanQuery({
-    queryKey: ["modelService", servicesFetchKey],
-    queryFn: () => {
-      return baiSignedRequestWithPromise({
-        method: "GET",
-        url: "/services",
-        client: baiClient,
-      });
-    },
-    refetchOnMount: true,
-    staleTime: 5000,
-    suspense: true,
-  });
+  const { endpoint_list: modelServiceList } =
+    useLazyLoadQuery<ServingListPageQuery>(
+      graphql`
+        query ServingListPageQuery(
+          $offset: Int!
+          $limit: Int!
+          $projectID: UUID
+        ) {
+          endpoint_list(
+            offset: $offset
+            limit: $limit
+            project: $projectID
+            filter: "name != 'koalpaca-test'"
+          ) {
+            total_count
+            items {
+              name
+              endpoint_id
+              image
+              model
+              domain
+              project
+              resource_group
+              resource_slots
+              url
+              open_to_public
+              desired_session_count @required(action: NONE)
+              routings {
+                routing_id
+                endpoint
+                session
+                traffic_ratio
+                status
+              }
+              ...ModelServiceSettingModal_endpoint
+            }
+          }
+        }
+      `,
+      {
+        offset: (paginationState.current - 1) * paginationState.pageSize,
+        limit: paginationState.pageSize,
+        projectID: curProject.id,
+      },
+      {
+        fetchPolicy:
+          servicesFetchKey === "initial-fetch"
+            ? "store-and-network"
+            : "network-only",
+        fetchKey: servicesFetchKey,
+      }
+    );
+
+  const sortedEndpointList = _.sortBy(modelServiceList?.items, "name");
 
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
@@ -78,7 +159,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     mutationFn: () => {
       return baiSignedRequestWithPromise({
         method: "DELETE",
-        url: "/services/" + selectedModelService?.id,
+        url: "/services/" + selectedModelService?.endpoint_id,
         client: baiClient,
       });
     },
@@ -157,21 +238,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 ]}
                 tabBarExtraContent={{
                   right: (
-                    <Flex direction="row" gap={"sm"}>
-                      {/* <Tooltip title={t("session.exportCSV")}>
-                      <Button icon={<DownloadOutlined />} type="ghost" />
-                    </Tooltip> */}
-                      {/* @ts-ignore */}
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          setIsOpenServiceLauncher(true);
-                        }}
-                      >
-                        Start Service
-                      </Button>
-                      {/* <ServiceLauncherModal></ServiceLauncherModal> */}
-                    </Flex>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        setIsOpenServiceLauncher(true);
+                      }}
+                    >
+                      Start Service
+                    </Button>
                   ),
                 }}
               />
@@ -189,7 +263,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         active
       /> */}
           <Suspense fallback={<div>loading..</div>}>
-            <ServingList
+            {/* <ServingList
               loading={isRefetchPending}
               projectId={curProject.id}
               status={[]}
@@ -203,6 +277,146 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 setIsOpenModelServiceTerminatingModal(true);
                 setSelectedModelService(row);
               }}
+            /> */}
+            <Table
+              loading={isRefetchPending}
+              dataSource={(sortedEndpointList || []) as Endpoint[]}
+              columns={[
+                {
+                  title: "Endpoint name",
+                  dataIndex: "endpoint_id",
+                  fixed: "left",
+                  render: (endpoint_id, row) => (
+                    <Link to={"/serving/" + endpoint_id}>{row.name}</Link>
+                  ),
+                },
+                {
+                  title: "Endpoint Id",
+                  dataIndex: "endpoint_id",
+                  width: 310,
+                  render: (endpoint_id) => (
+                    <Typography.Text code>{endpoint_id}</Typography.Text>
+                  ),
+                },
+                {
+                  title: "Controls",
+                  dataIndex: "controls",
+                  render: (text, row) => (
+                    <Flex direction="row" align="stretch">
+                      <Button
+                        type="text"
+                        icon={<SettingOutlined />}
+                        style={
+                          row.desired_session_count > 0
+                            ? {
+                                color: "#29b6f6",
+                              }
+                            : undefined
+                        }
+                        disabled={row.desired_session_count < 0}
+                        onClick={() => {
+                          setIsOpenModelServiceSettingModal(true);
+                          setSelectedModelService(row);
+                        }}
+                      />
+                      <Button
+                        type="text"
+                        icon={
+                          <DeleteOutlined
+                            style={
+                              row.desired_session_count > 0
+                                ? {
+                                    color: token.colorError,
+                                  }
+                                : undefined
+                            }
+                          />
+                        }
+                        disabled={row.desired_session_count < 0}
+                        onClick={() => {
+                          setIsOpenModelServiceTerminatingModal(true);
+                          setSelectedModelService(row);
+                        }}
+                      />
+                    </Flex>
+                  ),
+                },
+                {
+                  title: "Status",
+                  dataIndex: "status",
+                  render: (text, row) => (
+                    <Tag
+                      color={applyStatusColor(
+                        row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
+                      )}
+                    >
+                      {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
+                    </Tag>
+                  ),
+                },
+                {
+                  title: "Desired Session Count",
+                  dataIndex: "desired_session_count",
+                  render: (desired_session_count) => {
+                    return desired_session_count < 0
+                      ? "-"
+                      : desired_session_count;
+                  },
+                },
+                {
+                  title: (
+                    <Flex direction="column" align="start">
+                      Routings Count
+                      <br />
+                      <Typography.Text
+                        type="secondary"
+                        style={{ fontWeight: "normal" }}
+                      >
+                        (active/total)
+                      </Typography.Text>
+                    </Flex>
+                  ),
+                  // dataIndex: "active_route_count",
+                  render: (text, row) => {
+                    return (
+                      _.filter(row.routings, (r) => r?.status === "healthy")
+                        .length +
+                      " / " +
+                      row.routings?.length
+                    );
+                    // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
+                  },
+                },
+                {
+                  title: "Public",
+                  render: (text, row) =>
+                    row.open_to_public ? (
+                      <CheckOutlined style={{ color: token.colorSuccess }} />
+                    ) : (
+                      <CloseOutlined
+                        style={{ color: token.colorTextSecondary }}
+                      />
+                    ),
+                },
+              ]}
+              pagination={false}
+              // pagination={{
+              //   pageSize: paginationState.pageSize,
+              //   current: paginationState.current,
+              //   total: modelServiceList?.total_count || 0,
+              //   showSizeChanger: true,
+              //   // showTotal(total, range) {
+              //   //   return `${range[0]}-${range[1]} of ${total}`;
+              //   // },
+              //   onChange(page, pageSize) {
+              //     startRefetchTransition(() => {
+              //       setPaginationState({
+              //         current: page,
+              //         pageSize: pageSize || 100,
+              //       });
+              //     });
+              //   },
+              // }}
             />
           </Suspense>
         </Flex>
@@ -251,7 +465,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             });
           }
         }}
-        dataSource={selectedModelService || null}
+        endpointFrgmt={selectedModelService || null}
       />
       <ServiceLauncherModal
         open={isOpenServiceLauncher}
@@ -266,6 +480,19 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       />
     </>
   );
+};
+
+const applyStatusColor = (status = "") => {
+  let color = "default";
+  switch (status.toUpperCase()) {
+    case "RUNNING":
+      color = "success";
+      break;
+    // case 'TERMINATED':
+    //   color = 'default';
+    //   break;
+  }
+  return color;
 };
 
 export default ServingListPage;
