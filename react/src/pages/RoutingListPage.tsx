@@ -3,7 +3,6 @@ import {
   Button,
   Descriptions,
   Table,
-  TableProps,
   Tag,
   Tooltip,
   Typography,
@@ -14,13 +13,10 @@ import {
   CloseOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import type { ColumnsType } from "antd/es/table";
 import React, { useTransition } from "react";
 import Flex from "../components/Flex";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useTanQuery } from "../hooks/reactQueryAlias";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import {
@@ -47,39 +43,12 @@ export interface ModelServiceInfo {
 // TODO: display all of routings when API/GQL supports
 // type RoutingStatus = "HEALTHY" | "PROVISIONING" | "UNHEALTHY";
 
-// type Session = NonNullable<
-//   ServingListQuery["response"]["compute_session_list"]
-// >["items"][0];
-interface ServingListProps extends Omit<TableProps<any>, "dataSource"> {
-  status?: string[];
-  limit?: number;
-  currentPage?: number;
-  pageSize?: number;
-  projectId?: string;
-  // filter: (item: Session) => boolean;
-  extraFetchKey?: string;
-}
-
-interface DataType {
-  key: string;
-  sessionId: string;
-  status: string;
-  trafficRatio: number;
-}
+interface RoutingListPageProps {}
 
 type EndPoint = NonNullable<RoutingListPageQuery$data["endpoint"]>;
 type Routing = NonNullable<NonNullable<EndPoint["routings"]>[0]>;
 
-const RoutingListPage: React.FC<ServingListProps> = ({
-  status = [],
-  limit = 50,
-  currentPage = 1,
-  pageSize = 50,
-  projectId,
-  // filter,
-  extraFetchKey = "",
-  ...tableProps
-}) => {
+const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const navigate = useNavigate();
@@ -89,7 +58,6 @@ const RoutingListPage: React.FC<ServingListProps> = ({
 
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const [isPendingRefetch, startRefetchTransition] = useTransition();
-  // const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
@@ -121,17 +89,7 @@ const RoutingListPage: React.FC<ServingListProps> = ({
       fetchKey,
     }
   );
-
   // const { t } = useTranslation();
-
-  // const rowSelection = {
-  //   onChange: (selectedRowKeys: React.Key[], selectedRows: DataType[]) => {
-  //     console.log(
-  //       `selectedRowKeys: ${selectedRowKeys}, 'selectedRow':`,
-  //       selectedRows
-  //     );
-  //   },
-  // };
 
   // return color of tag by status
   const applyStatusColor = (status: string = "") => {
