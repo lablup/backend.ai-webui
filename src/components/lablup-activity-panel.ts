@@ -5,9 +5,8 @@
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import {Button} from 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
+import '@material/mwc-icon-button';
+import {IconButton} from '@material/mwc-icon-button';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -22,7 +21,7 @@ import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-c
  ...
  </lablup-activity-panel>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-activity-panel
  */
 
@@ -128,9 +127,9 @@ export default class LablupActivityPanel extends LitElement {
         <h4 id="header" class="horizontal center justified layout" style="font-weight:bold">
           <span>${this.title}</span>
           <div class="flex"></div>
-          <wl-button id="button" fab flat inverted @click="${() => this._removePanel()}">
-            <wl-icon>close</wl-icon>
-          </wl-button>
+          <mwc-icon-button id="button" class="fg"
+                           icon="close"
+                           @click="${() => this._removePanel()}"></mwc-icon-button>
         </h4>
         <div class="${this.disabled ? `disabled` : `enabled`}">
           <slot name="message"></slot>
@@ -141,7 +140,7 @@ export default class LablupActivityPanel extends LitElement {
 
   firstUpdated() {
     if (this.pinned || this.panelId == undefined) {
-      const button = this.shadowRoot?.getElementById('button') as Button;
+      const button = this.shadowRoot?.getElementById('button') as IconButton;
       this.shadowRoot?.querySelector('h4')?.removeChild(button);
     }
 

@@ -16,12 +16,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/switch';
-import 'weightless/select';
-import 'weightless/icon';
-import 'weightless/button';
-import 'weightless/label';
-
 import {Button} from '@material/mwc-button';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-switch';
@@ -91,7 +85,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
   @query('#ssh-keypair-form-dialog') sshKeypairFormDialog!: BackendAIDialog;
   @query('#entered-ssh-public-key') enteredSSHPublicKeyInput!: TextArea;
   @query('#entered-ssh-private-key') enteredSSHPrivateKeyInput!: TextArea;
-  
+
   @query('#ui-language') languageSelect!: Select;
   @query('#delete-rcfile') deleteRcfileButton!: Button;
 
@@ -175,10 +169,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
           scrollbar-width: none; /* firefox */
         }
 
-        #bootstrap-dialog wl-button {
-          margin-left: 5px;
-        }
-
         #bootstrap-dialog, #userconfig-dialog {
           --component-width: calc(100vw - 200px);
           --component-height: calc(100vh - 100px);
@@ -252,38 +242,6 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
         mwc-button.shell-button {
           margin: 5px;
           width: 260px;
-        }
-
-        wl-icon.warning {
-          --icon-size: 16px;
-          padding: 0;
-          color: red;
-        }
-
-        wl-label.warning {
-          font-family: var(--general-font-family);
-          font-size: 12px;
-          --label-color: var(--paper-red-600);
-        }
-
-        wl-button.ssh-keypair {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-button#ssh-keypair-details {
-          --button-bg: none;
-        }
-
-        wl-icon#ssh-keypair-icon {
-          color: var(--paper-indigo-700);
         }
 
         ::-webkit-scrollbar {
@@ -445,7 +403,10 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
       globalThis.backendaioptions.set('current_language', lang);
       setLanguage(lang);
       setTimeout(() => {
-        (this.languageSelect as any).selectedText = this.languageSelect.selected?.textContent?.trim();
+        // Force match mwc-select's selectedText to avoid mwc-select's bug
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        this.languageSelect.selectedText = this.languageSelect.selected?.textContent?.trim();
       }, 100);
     }
   }
@@ -923,7 +884,7 @@ export default class BackendAiUsersettingsGeneralList extends BackendAIPage {
    * */
   _copySSHKey(keyName: string) {
     if (keyName !== '') {
-      const copyText = (this.shadowRoot?.querySelector(keyName) as any).value;
+      const copyText = (this.shadowRoot?.querySelector(keyName) as TextArea).value;
       if (copyText.length == 0) {
         this.notification.text = _text('usersettings.NoExistingSSHKeypair');
         this.notification.show();

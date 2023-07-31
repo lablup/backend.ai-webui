@@ -405,22 +405,12 @@ export default class PipelineList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center wrap" .pipeline-id="${rowData.item.name}">
-          <wl-button fab flat inverted
-            class="fg green" @click="${() => this._launchPipelineDetailDialog(rowData.item)}">
-            <wl-icon>info</wl-icon>
-          </wl-button>
-          <!--<wl-button fab flat inverted
-            class="fg blue">
-            <wl-icon>settings</wl-icon>
-          </wl-button>-->
-          <wl-button fab flat inverted
-            class="fg blue" @click="${() => this.loadPipeline(rowData.item)}">
-            <wl-icon>account_tree</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted class="fg red controls-running" 
-            @click="${() => this._launchPipelineDeleteDialog(rowData.item)}">
-            <wl-icon>delete_forever</wl-icon>
-          </wl-button>
+          <mwc-icon-button icon="info" class="fg green" @click="${() => this._launchPipelineDetailDialog(rowData.item)}">
+          </mwc-icon-button>
+          <mwc-icon-button icon="account_tree" class="fg blue" @click="${() => this.loadPipeline(rowData.item)}">
+          </mwc-icon-button>
+          <mwc-icon-button icon="delete_forever" class="fg red" @click="${() => this._launchPipelineDeleteDialog(rowData.item)}">
+          </mwc-icon-button>
         </div>
       `, root
     );
@@ -462,7 +452,7 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Render pipeline create dialog
-   * 
+   *
    * @returns {string} stringified html
    */
   renderCreatePipelineDialogTemplate() {
@@ -481,7 +471,7 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Render pipeline delete confirmation dialog
-   * 
+   *
    * @returns {string} stringified html
    */
   renderDeletePipelineDialogTemplate() {
@@ -505,7 +495,7 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Render pipeline detail dialog
-   * 
+   *
    * @param {PipelineInfoExtended} pipeline
    * @returns {string} stringified html
    */
@@ -572,7 +562,7 @@ export default class PipelineList extends BackendAIPage {
 
   /**
    * Render pipeline YAML dialog
-   * 
+   *
    * @returns {string} stringified html
    */
   renderPipelineYAMLDialogTemplate() {

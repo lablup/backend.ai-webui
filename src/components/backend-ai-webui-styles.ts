@@ -220,6 +220,10 @@ export const BackendAIWebUIStyles = [
       --mdc-theme-on-primary: var(--general-button-color);
     }
 
+    mwc-button.full {
+      width: 100%;
+    }
+
     .page {
       display: none;
     }
@@ -253,15 +257,6 @@ export const BackendAIWebUIStyles = [
       will-change: transform;
     }
 
-    wl-progress-spinner {
-      --progress-spinner-size: 48px;
-      --progress-spinner-stroke-width: 12px;
-      width: 48px;
-      height: 48px;
-      position: fixed;
-      top: calc(50vh - 24px);
-    }
-
     mwc-circular-progress {
       width: 48px;
       height: 48px;
@@ -271,24 +266,12 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-width: 899px) {
-      wl-progress-spinner {
-        left: calc(50% - 24px);
-      }
-
       mwc-circular-progress {
         left: calc(50% - 24px);
       }
     }
 
     @media screen and (min-width: 900px) {
-      wl-progress-spinner {
-        left: calc(50% + 71px);
-      }
-
-      .mini-ui wl-progress-spinner {
-        left: calc(50% + 29px);
-      }
-
       mwc-circular-progress {
         left: calc(50% + 71px);
       }
@@ -315,6 +298,10 @@ export const BackendAIWebUIStyles = [
     mwc-menu {
       font-family: var(--general-font-family);
       --mdc-typography-subtitle1-font-family: var(--general-font-family);
+    }
+
+    mwc-formfield {
+      --mdc-typography-body2-font-family: var(--general-font-family);
     }
 
     span.full_name, mwc-select {
@@ -381,19 +368,6 @@ export const BackendAIWebUIStyles = [
 
     mwc-textarea {
       width: 100%;
-    }
-
-    wl-popover-card {
-      padding: 5px;
-    }
-
-    backend-ai-dialog wl-textfield,
-    wl-dialog wl-textfield {
-      --input-font-family: var(--general-font-family);
-      --input-color-disabled: #222222;
-      --input-label-color-disabled: #222222;
-      --input-label-font-size: 12px;
-      --input-border-style-disabled: 1px solid #cccccc;
     }
 
     mwc-list-item {

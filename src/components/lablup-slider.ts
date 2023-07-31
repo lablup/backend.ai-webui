@@ -26,7 +26,7 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
  <lablup-slider></lablup-slider>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-slider
  */
 

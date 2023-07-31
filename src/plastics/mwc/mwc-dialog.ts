@@ -14,7 +14,8 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import {css, customElement} from 'lit-element';
+import {css} from 'lit';
+import {customElement} from 'lit/decorators.js';
 
 import {DialogBase} from '@material/mwc-dialog/mwc-dialog-base';
 import {styles} from '@material/mwc-dialog/mwc-dialog.css';

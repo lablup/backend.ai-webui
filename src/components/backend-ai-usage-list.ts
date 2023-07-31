@@ -11,7 +11,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import '@vaadin/select';
-import 'weightless/card';
+
 import {BackendAiStyles} from './backend-ai-general-styles';
 import './backend-ai-chart';
 import './backend-ai-monthly-usage-panel';

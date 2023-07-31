@@ -26,7 +26,9 @@ export const useDateISOState = (initialValue?: string) => {
   return [value, update] as const;
 };
 
-export const useUpdatableState = useDateISOState;
+export const useUpdatableState = (initialValue: string) => {
+  return useDateISOState(initialValue);
+};
 
 export const useCurrentDomainValue = () => {
   const baiClient = useSuspendedBackendaiClient();
@@ -154,7 +156,12 @@ export const useBackendaiImageMetaData = () => {
   const getImageMeta = (imageName: string) => {
     // cr.backend.ai/multiarch/python:3.9-ubuntu20.04
     // key = python, tags = [3.9, ubuntu20.04]
-    console.log(imageName);
+    if (!imageName) {
+      return {
+        key: "",
+        tags: [],
+      };
+    }
     const specs = imageName.split("/");
 
     const [key, tag] = (specs[2] || specs[1]).split(":");
@@ -185,13 +192,13 @@ export const useBackendaiImageMetaData = () => {
       },
       getBaseVersion: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
-
         return tags[0];
       },
       getBaseImage: (imageName: string) => {
         const { tags } = getImageMeta(imageName);
         return tags[1];
       },
+      getImageMeta,
     },
   ] as const;
 };
