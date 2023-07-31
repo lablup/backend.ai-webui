@@ -52,6 +52,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Boolean}) totpSupported = false;
   @property({type: Boolean}) totpActivated = false;
   @property({type: Boolean}) forceTotp = false;
+  @property({type: Boolean}) isOpen = false;
   @property({type: String}) totpKey = '';
   @property({type: String}) totpUri = '';
 
@@ -192,19 +193,24 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.keyPairInfo.keypairs.reverse();
   }
 
+  async _setIsOpen() {
+    this.isOpen = !this.isOpen;
+  }
   /**
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    this.userPreferenceDialog?.show();
+    //this.userPreferenceDialog?.show();
+    this._setIsOpen();
   }
 
   /**
    * Hide the user preference dialog.
    */
   _hideUserPrefDialog() {
-    this.userPreferenceDialog?.hide();
+    //this.userPreferenceDialog?.hide();
+    this._setIsOpen();
   }
 
   /**
@@ -586,6 +592,17 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t('button.Confirm')}</mwc-button>
       </div>
     </backend-ai-dialog>
+    <backend-ai-react-user-pref-modal
+      value="${JSON.stringify({
+        isOpen: this.isOpen,
+        userName: this._getUsername(),
+        keyPairInfo: this.keyPairInfo
+      })}"
+      @cancel="${(e)=> this._hideUserPrefDialog()}"
+    >
+    </backend-ai-react-user-pref-modal>
+    <!--주석-->
+    <!--
     <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
       <span slot="title">${_t('webui.menu.MyAccountInformation')}</span>
       <div slot="content" class="layout vertical" style="width:300px;">
@@ -656,6 +673,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
             @click="${this._updateUserInformation}"></mwc-button>
       </div>
     </backend-ai-dialog>
+  -->
     `;
   }
 }

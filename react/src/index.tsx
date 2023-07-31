@@ -26,6 +26,9 @@ const StorageStatusPanelFallback = React.lazy(() =>
 const CopyableCodeText = React.lazy(
   () => import("./components/CopyableCodeText")
 );
+const UserPrefModal = React.lazy(
+  () => import("./components/UserPrefModal")
+);
 
 customElements.define(
   "backend-ai-react-information",
@@ -80,6 +83,17 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <CopyableCodeText text={props.value || ""} />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-user-pref-modal",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserPrefModal />
       </DefaultProviders>
     );
   })
