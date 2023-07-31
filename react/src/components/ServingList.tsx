@@ -1,12 +1,14 @@
 import { Button, Table, TableProps, Tag } from "antd";
-import { CheckOutlined, CloseOutlined, DeleteFilled, SettingFilled } from "@ant-design/icons";
+import {
+  CheckOutlined,
+  CloseOutlined,
+  DeleteFilled,
+  SettingFilled,
+} from "@ant-design/icons";
 import type { ColumnsType } from "antd/es/table";
-import React, { useDeferredValue } from "react";
-import { useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
-import { Link, useNavigate } from "react-router-dom";
+import React from "react";
+import { Link } from "react-router-dom";
 import Flex from "./Flex";
-
 
 // type Session = NonNullable<
 //   ServingListQuery["response"]["compute_session_list"]
@@ -47,12 +49,12 @@ const ServingList: React.FC<ServingListProps> = ({
   onClickTerminate,
   ...tableProps
 }) => {
-  const baiClient = useSuspendedBackendaiClient();
-  const navigate = useNavigate();
+  // const baiClient = useSuspendedBackendaiClient();
+  // const navigate = useNavigate();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
-  const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
-  const { t } = useTranslation();
+  // const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
+  // const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
+  // const { t } = useTranslation();
 
   // FIXME: temporally disable radio-button because of unexpected behaviour.(all-selected)
   // const rowSelection = {
@@ -64,25 +66,26 @@ const ServingList: React.FC<ServingListProps> = ({
   //   },
   // };
 
- // return color of tag by status
- const applyStatusColor = (status = '') => {
-  let color = 'default';
-  switch (status.toUpperCase()) {
-    case 'RUNNING':
-      color = 'success';
-      break;
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-  return color;
-}
+  // return color of tag by status
+  const applyStatusColor = (status = "") => {
+    let color = "default";
+    switch (status.toUpperCase()) {
+      case "RUNNING":
+        color = "success";
+        break;
+      // case 'TERMINATED':
+      //   color = 'default';
+      //   break;
+    }
+    return color;
+  };
 
   const columns: ColumnsType<ServingListInfo> = [
     {
       title: "Endpoint ID",
       dataIndex: "name",
       key: "name",
+      fixed: "left",
       render: (text, row) => <Link to={"/serving/" + row.id}>{text}</Link>,
     },
     {
@@ -97,10 +100,18 @@ const ServingList: React.FC<ServingListProps> = ({
       render: (text, row: ServingListInfo) => (
         <>
           <Flex direction="row" align="stretch">
-            <Button type="text" icon={<SettingFilled />} disabled={row.desired_session_count < 0}
-                    onClick={() => onClickEdit && onClickEdit(row)}/>
-            <Button type="text" icon={<DeleteFilled />} disabled={row.desired_session_count < 0}
-                    onClick={() => onClickTerminate && onClickTerminate(row)}/>
+            <Button
+              type="text"
+              icon={<SettingFilled />}
+              disabled={row.desired_session_count < 0}
+              onClick={() => onClickEdit && onClickEdit(row)}
+            />
+            <Button
+              type="text"
+              icon={<DeleteFilled />}
+              disabled={row.desired_session_count < 0}
+              onClick={() => onClickTerminate && onClickTerminate(row)}
+            />
           </Flex>
         </>
       ),
@@ -110,7 +121,11 @@ const ServingList: React.FC<ServingListProps> = ({
       dataIndex: "status",
       render: (text, row: ServingListInfo) => (
         <>
-          <Tag color={applyStatusColor(row.desired_session_count > 0 ? "RUNNING" : "TERMINATED")}>
+          <Tag
+            color={applyStatusColor(
+              row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
+            )}
+          >
             {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
           </Tag>
         </>
@@ -130,25 +145,22 @@ const ServingList: React.FC<ServingListProps> = ({
       title: "Open To Public",
       dataIndex: "is_public",
       key: "is_public",
-      render: (is_public) => (is_public ? <CheckOutlined /> : <CloseOutlined />),
+      render: (is_public) =>
+        is_public ? <CheckOutlined /> : <CloseOutlined />,
     },
   ];
 
-
   return (
-    <>
-      {/* {fetchKey}, {deferredFetchKey} */}
-      {/* {fetchKey !== deferredFetchKey && <div>loading...{deferredFetchKey}</div>} */}
-      <Table
-        // FIXME: temporally disable radio-button because of unexpected behaviour.(all-selected)
-        // rowSelection={{
-        //   type: "radio",
-        //   ...rowSelection,
-        // }}
-        columns={columns}
-        dataSource={dataSource ? dataSource: []}
-      />
-    </>
+    <Table
+      // FIXME: temporally disable radio-button because of unexpected behaviour.(all-selected)
+      // rowSelection={{
+      //   type: "radio",
+      //   ...rowSelection,
+      // }}
+      rowKey={(record) => record.id}
+      columns={columns}
+      dataSource={dataSource ? dataSource : []}
+    />
   );
 };
 
