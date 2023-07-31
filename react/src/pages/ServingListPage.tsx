@@ -148,6 +148,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       }
     );
 
+  const sortedEndpointList = _.sortBy(modelServiceList?.items, "name");
+
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
   //   (item: any) => item.desired_session_count >= 0
@@ -282,7 +284,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             /> */}
             <Table
               loading={isRefetchPending}
-              dataSource={(modelServiceList?.items || []) as Endpoint[]}
+              dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
                   title: "Endpoint ID",
@@ -386,23 +388,24 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                     ),
                 },
               ]}
-              pagination={{
-                pageSize: paginationState.pageSize,
-                current: paginationState.current,
-                total: modelServiceList?.total_count || 0,
-                showSizeChanger: true,
-                // showTotal(total, range) {
-                //   return `${range[0]}-${range[1]} of ${total}`;
-                // },
-                onChange(page, pageSize) {
-                  startRefetchTransition(() => {
-                    setPaginationState({
-                      current: page,
-                      pageSize: pageSize || 100,
-                    });
-                  });
-                },
-              }}
+              pagination={false}
+              // pagination={{
+              //   pageSize: paginationState.pageSize,
+              //   current: paginationState.current,
+              //   total: modelServiceList?.total_count || 0,
+              //   showSizeChanger: true,
+              //   // showTotal(total, range) {
+              //   //   return `${range[0]}-${range[1]} of ${total}`;
+              //   // },
+              //   onChange(page, pageSize) {
+              //     startRefetchTransition(() => {
+              //       setPaginationState({
+              //         current: page,
+              //         pageSize: pageSize || 100,
+              //       });
+              //     });
+              //   },
+              // }}
             />
           </Suspense>
         </Flex>
