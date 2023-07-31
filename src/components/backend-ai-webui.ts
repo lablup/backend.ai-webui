@@ -119,6 +119,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Boolean}) auto_logout = false;
   @property({type: Boolean}) isUserInfoMaskEnabled;
   @property({type: Boolean}) isHideAgents = true;
+  @property({type: Boolean}) supportServing = false;
   @property({type: String}) lang = 'default';
   @property({type: Array}) supportLanguageCodes = ['en', 'ko', 'ru', 'fr', 'mn', 'id'];
   @property({type: Array}) blockedMenuitem;
@@ -128,7 +129,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) supports = Object();
   @property({type: Array}) availablePages = ['summary', 'verify-email', 'change-password', 'job',
     'data', 'agent-summary', 'statistics', 'usersettings', 'credential',
-    'environment', 'agent', 'storage-settings', 'settings', 'maintenance',
+    'environment', 'agent', 'storage-settings', 'settings', 'maintenance', 'serving',
     'information', 'github', 'import', 'unauthorized']; // temporally block pipeline from available pages 'pipeline', 'pipeline-job', 'session'
   @property({type: Array}) adminOnlyPages = ['experiment', 'credential', 'environment', 'agent', 'storage-settings',
     'settings', 'maintenance', 'information'];
@@ -271,6 +272,9 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         this.full_name = input;
       }
     });
+    document.addEventListener('backend-ai-connected', () => {
+      this.supportServing = globalThis.backendaiclient.supports('model-serving');
+    }, {once:true});
   }
 
   async connectedCallback() {
@@ -914,16 +918,23 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
         component.requestUpdate();
       }
     }
+
+    document.dispatchEvent(
+      new CustomEvent('react-navigate', {
+        detail: url,
+      }),
+    );
   }
 
   /**
    * Add tool tips by create popovers.
    */
   async addTooltips() {
-    this._createPopover('summary-menu-icon', _text('webui.menu.Summary'));
-    this._createPopover('sessions-menu-icon', _text('webui.menu.Sessions'));
-    this._createPopover('data-menu-icon', _text('webui.menu.Data&Storage'));
-    this._createPopover('import-menu-icon', _text('webui.menu.Import&Run'));
+    this._createPopover('#summary-menu-icon', _text('webui.menu.Summary'));
+    this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
+    this._createPopover('#serving-menu-icon', _text('webui.menu.Serving'));
+    this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
+    this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
 
     // temporally blcok pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));
@@ -1046,6 +1057,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <i class="fas fa-list-alt" slot="graphic" id="sessions-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
+            ${this.supportServing ? html`
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('session')}">
+              <i class="fa fa-rocket" slot="graphic" id="serving-menu-icon"></i>
+              <span class="full-menu">${_t('webui.menu.Serving')}</span>
+              </mwc-list-item>`: html``}
             ${this._useExperiment ? html`
               <mwc-list-item graphic="icon" ?selected="${this._page === 'experiment'}" @click="${() => this._moveTo('/experiment')}" ?disabled="${this.blockedMenuitem.includes('experiment')}">
                 <i class="fas fa-flask" slot="graphic"></i>
@@ -1215,6 +1231,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
                     <backend-ai-import-view class="page" name="import" ?active="${this._page === 'github' || this._page === 'import'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-import-view>
                     <backend-ai-session-view class="page" name="job" ?active="${this._page === 'job'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view>
                     <backend-ai-session-view-next class="page" name="session" ?active="${this._page === 'session'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-session-view-next>
+                    <backend-ai-serving-list class="page" name="serving" ?active="${this._page === 'serving'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-serving-list>
                     <!--<backend-ai-experiment-view class="page" name="experiment" ?active="${this._page === 'experiment'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-experiment-view>-->
                     <backend-ai-usersettings-view class="page" name="usersettings" ?active="${this._page === 'usersettings'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-usersettings-view>
                     <backend-ai-credential-view class="page" name="credential" ?active="${this._page === 'credential'}"><mwc-circular-progress indeterminate></mwc-circular-progress></backend-ai-credential-view>

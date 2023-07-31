@@ -5,6 +5,7 @@
       "WelcomeMessage_2": " .",
       "Summary": "Summary",
       "Sessions": "Sessions",
+      "Serving": "Serving",
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
@@ -383,6 +384,12 @@
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions"
+  },
+  "modelService": {
+    "Running": "Running",
+    "Finished": "Finished",
+    "Others": "Others",
+    "Services": "Services"
   },
   "button": {
     "Cancel": "Cancel",
