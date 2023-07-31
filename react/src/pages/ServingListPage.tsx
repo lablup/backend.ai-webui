@@ -1,18 +1,27 @@
 import { Button, ConfigProvider, Modal, Tabs, theme } from "antd";
-import React, { PropsWithChildren, Suspense, useDeferredValue, useEffect, useState } from "react";
+import React, {
+  PropsWithChildren,
+  Suspense,
+  useState,
+  useTransition,
+} from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
 import ServingList, { ServingListInfo } from "../components/ServingList";
 import RoutingListPage from "./RoutingListPage";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
-import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper"
-import { useTanQuery } from "../hooks/reactQueryAlias";
+import {
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+  useUpdatableState,
+} from "../hooks";
+import { baiSignedRequestWithPromise } from "../helper";
+import { useTanMutation, useTanQuery } from "../hooks/reactQueryAlias";
 import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
-
+import { useRafInterval } from "ahooks";
 
 // FIXME: need to apply filtering type of service later
-type TabKey = "services" //  "running" | "finished" | "others";
+type TabKey = "services"; //  "running" | "finished" | "others";
 
 const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
@@ -20,17 +29,31 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
   const [isOpenServiceLauncher, setIsOpenServiceLauncher] = useState(false);
-  const [selectedModelService, setSelectedModelService] = useState<ServingListInfo>();
-  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] = useState(false);
-  const [isOpenModelServiceTerminatingModal, setisOpenModelServiceTerminatingModal] = useState(false);
+  const [selectedModelService, setSelectedModelService] =
+    useState<ServingListInfo>();
+  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
+    useState(false);
+
+  const [isRefetchPending, startRefetchTransition] = useTransition();
+  const [
+    isOpenModelServiceTerminatingModal,
+    setIsOpenModelServiceTerminatingModal,
+  ] = useState(false);
+  const [servicesFetchKey, updateServicesFetchKey] = useUpdatableState("init");
   // FIXME: need to apply filtering type of service later
   const [selectedTab, setSelectedTab] = useState<TabKey>("services");
-  const [selectedGeneration, setSelectedGeneration] = useState<
-    "current" | "next"
-  >("next");
+  // const [selectedGeneration, setSelectedGeneration] = useState<
+  //   "current" | "next"
+  // >("next");
+
+  useRafInterval(() => {
+    startRefetchTransition(() => {
+      updateServicesFetchKey();
+    });
+  }, 7000);
 
   const { data: modelServiceList } = useTanQuery({
-    queryKey: "modelService",
+    queryKey: ["modelService", servicesFetchKey],
     queryFn: () => {
       return baiSignedRequestWithPromise({
         method: "GET",
@@ -40,11 +63,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     },
     refetchOnMount: true,
     staleTime: 5000,
-    // for to render even this query fails
     suspense: true,
   });
 
-// FIXME: struggling with sending data when active tab changes!
+  // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
   //   (item: any) => item.desired_session_count >= 0
   // );
@@ -53,39 +75,34 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   //   (item: any) => item.desired_session_count < 0
   // );
 
-  const { data: resource } = useTanQuery({
-    queryKey: "modelService",
-    queryFn: () => {
-      return baiSignedRequestWithPromise({
-        method: "GET",
-        url: "/services",
-        client: baiClient,
-      });
-    },
-    // for to render even this query fails
-    suspense: true,
-  });
-
-  // FIXME: temporally trigger useQuery with refetch function
-  const {data, refetch} = useTanQuery({
-    queryKey: "terminateModelService",
-    queryFn: () => {
+  const terminateModelServiceMutation = useTanMutation({
+    mutationFn: () => {
       return baiSignedRequestWithPromise({
         method: "DELETE",
-        url: "/services/"+ selectedModelService?.id,
+        url: "/services/" + selectedModelService?.id,
         client: baiClient,
       });
     },
-    onSuccess: (res: any) => {
-      console.log(res);
-    },
-    onError: (err: any) => {
-      console.log(err);
-    },
-    enabled: false,
-    // for to render even this query fails
-    suspense: true,
   });
+  // const { data, refetch } = useTanQuery({
+  //   queryKey: "terminateModelService",
+  //   queryFn: () => {
+  //     return baiSignedRequestWithPromise({
+  //       method: "DELETE",
+  //       url: "/services/" + selectedModelService?.id,
+  //       client: baiClient,
+  //     });
+  //   },
+  //   onSuccess: (res: any) => {
+  //     console.log(res);
+  //   },
+  //   onError: (err: any) => {
+  //     console.log(err);
+  //   },
+  //   enabled: false,
+  //   // for to render even this query fails
+  //   suspense: true,
+  // });
 
   return (
     <>
@@ -136,9 +153,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   borderTopRightRadius: token.borderRadius,
                 }}
                 items={[
-                  {key: "services",
-                   label: t("modelService.Services")
-                  }
+                  { key: "services", label: t("modelService.Services") },
                   // FIXME: need to apply filtering type of service later
                   // {
                   //   key: "running",
@@ -188,6 +203,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       /> */}
           <Suspense fallback={<div>loading..</div>}>
             <ServingList
+              loading={isRefetchPending}
               projectId={curProject.id}
               status={[]}
               extraFetchKey={""}
@@ -197,7 +213,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 setSelectedModelService(row);
               }}
               onClickTerminate={(row) => {
-                setisOpenModelServiceTerminatingModal(true);
+                setIsOpenModelServiceTerminatingModal(true);
                 setSelectedModelService(row);
               }}
             />
@@ -208,24 +224,45 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         open={isOpenModelServiceTerminatingModal}
         // TODO: translation
         title={t("dialog.title.LetsDouble-Check")}
+        okButtonProps={{
+          loading: terminateModelServiceMutation.isLoading,
+        }}
         onOk={() => {
-          setisOpenModelServiceTerminatingModal(false);
           // FIXME: any better idea for handling result?
-          refetch();
+          terminateModelServiceMutation.mutate(undefined, {
+            onSuccess: (res) => {
+              startRefetchTransition(() => {
+                updateServicesFetchKey();
+              });
+              setIsOpenModelServiceTerminatingModal(false);
+            },
+            onError: (err) => {
+              console.log("terminateModelServiceMutation Error", err);
+            },
+          });
         }}
         onCancel={() => {
-          setisOpenModelServiceTerminatingModal(false);
+          setIsOpenModelServiceTerminatingModal(false);
         }}
       >
         <Flex direction="column" align="stretch" justify="center">
-          <p>{"You are about to terminate " + (selectedModelService?.name || "") + "."}</p>
+          <p>
+            {"You are about to terminate " +
+              (selectedModelService?.name || "") +
+              "."}
+          </p>
           <p>{t("dialog.ask.DoYouWantToProceed")}</p>
         </Flex>
       </Modal>
       <ModelServiceSettingModal
         open={isOpenModelServiceSettingModal}
-        onRequestClose={() => {
+        onRequestClose={(success) => {
           setIsOpenModelServiceSettingModal(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateServicesFetchKey();
+            });
+          }
         }}
         dataSource={selectedModelService || null}
       />
@@ -233,6 +270,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         open={isOpenServiceLauncher}
         onRequestClose={(success) => {
           setIsOpenServiceLauncher(!isOpenServiceLauncher);
+          if (success) {
+            startRefetchTransition(() => {
+              updateServicesFetchKey();
+            });
+          }
         }}
       />
     </>
