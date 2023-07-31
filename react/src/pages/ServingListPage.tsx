@@ -1,4 +1,13 @@
-import { Button, ConfigProvider, Modal, Table, Tabs, Tag, theme } from "antd";
+import {
+  Button,
+  ConfigProvider,
+  Modal,
+  Table,
+  Tabs,
+  Tag,
+  Typography,
+  theme,
+} from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
@@ -54,7 +63,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
 
-  const [paginationState, setPaginationState] = useState<{
+  // const [paginationState, setPaginationState] = useState<{
+  const [paginationState] = useState<{
     current: number;
     pageSize: number;
   }>({
@@ -80,20 +90,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       updateServicesFetchKey();
     });
   }, 7000);
-
-  // const { data: modelServiceList } = useTanQuery({
-  //   queryKey: ["modelService", servicesFetchKey],
-  //   queryFn: () => {
-  //     return baiSignedRequestWithPromise({
-  //       method: "GET",
-  //       url: "/services",
-  //       client: baiClient,
-  //     });
-  //   },
-  //   refetchOnMount: true,
-  //   staleTime: 5000,
-  //   suspense: true,
-  // });
 
   const { endpoint_list: modelServiceList } =
     useLazyLoadQuery<ServingListPageQuery>(
@@ -287,7 +283,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
-                  title: "Endpoint ID",
+                  title: "Endpoint name",
                   dataIndex: "endpoint_id",
                   fixed: "left",
                   render: (endpoint_id, row) => (
@@ -295,8 +291,12 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: "Service Id",
+                  title: "Endpoint Id",
                   dataIndex: "endpoint_id",
+                  width: 310,
+                  render: (endpoint_id) => (
+                    <Typography.Text code>{endpoint_id}</Typography.Text>
+                  ),
                 },
                 {
                   title: "Controls",
@@ -364,7 +364,18 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   },
                 },
                 {
-                  title: "Routings Count(active/total)",
+                  title: (
+                    <Flex direction="column" align="start">
+                      Routings Count
+                      <br />
+                      <Typography.Text
+                        type="secondary"
+                        style={{ fontWeight: "normal" }}
+                      >
+                        (active/total)
+                      </Typography.Text>
+                    </Flex>
+                  ),
                   // dataIndex: "active_route_count",
                   render: (text, row) => {
                     return (
@@ -377,7 +388,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   },
                 },
                 {
-                  title: "Open To Public",
+                  title: "Public",
                   render: (text, row) =>
                     row.open_to_public ? (
                       <CheckOutlined style={{ color: token.colorSuccess }} />
