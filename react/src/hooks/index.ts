@@ -26,7 +26,9 @@ export const useDateISOState = (initialValue?: string) => {
   return [value, update] as const;
 };
 
-export const useUpdatableState = useDateISOState;
+export const useUpdatableState = (initialValue: string) => {
+  return useDateISOState(initialValue);
+};
 
 export const useCurrentDomainValue = () => {
   const baiClient = useSuspendedBackendaiClient();
