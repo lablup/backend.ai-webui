@@ -59,7 +59,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     isOpenModelServiceTerminatingModal,
     setIsOpenModelServiceTerminatingModal,
   ] = useState(false);
-  const [servicesFetchKey, updateServicesFetchKey] = useUpdatableState("init");
+  const [servicesFetchKey, updateServicesFetchKey] =
+    useUpdatableState("initial-fetch");
   // FIXME: need to apply filtering type of service later
   const [selectedTab, setSelectedTab] = useState<TabKey>("services");
   // const [selectedGeneration, setSelectedGeneration] = useState<
@@ -125,7 +126,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         projectID: curProject.id,
       },
       {
-        fetchPolicy: "network-only",
+        fetchPolicy:
+          servicesFetchKey === "initial-fetch"
+            ? "store-and-network"
+            : "network-only",
         fetchKey: servicesFetchKey,
       }
     );
