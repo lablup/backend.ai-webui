@@ -660,7 +660,7 @@ class BackendAIRegistryList extends BackendAIPage {
               label="${_t('registry.RegistryHostname')}"
               required
               ?disabled="${this._editMode}"
-              pattern="/^.+$/"
+              pattern="^.+$"
               value="${this._registryList[this._selectedIndex]?.hostname || ''}"
               validationMessage="${_t('registry.DescHostnameIsEmpty')}"
             ></mwc-textfield>
