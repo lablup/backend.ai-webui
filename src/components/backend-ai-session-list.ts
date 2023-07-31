@@ -1462,12 +1462,8 @@ export default class BackendAISessionList extends BackendAIPage {
     });
   }
 
-  _requestDestroySession(sessionId, accessKey, forced, err = null) {
+  _requestDestroySession(sessionId, accessKey, forced) {
     globalThis.backendaiclient.destroy(sessionId, accessKey, forced).then((req) => {
-      if (err) {
-        this.notification.text = PainKiller.relieve(err["title"]);
-        this.notification.show(true, err);
-      }
       setTimeout(async () => {
         this.terminationQueue = [];
         // await this.refreshList(true, false); // Will be called from session-view from the event below
@@ -1493,11 +1489,10 @@ export default class BackendAISessionList extends BackendAIPage {
     return this._terminateApp(sessionId).then(() => {
       this._requestDestroySession(sessionId, accessKey, forced);
     }).catch((err) => {
-      console.log(err);
       if (err && err.message) {
-        if (err.statusCode == 500) {
+        if (err.statusCode == 404) {
           // Even if wsproxy address is invalid, session must be deleted.
-          this._requestDestroySession(sessionId, accessKey, forced, err = err);
+          this._requestDestroySession(sessionId, accessKey, forced);
         } else {
           this.notification.text = PainKiller.relieve(err.title);
           this.notification.detail = err.message;
