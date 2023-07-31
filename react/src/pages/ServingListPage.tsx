@@ -8,7 +8,6 @@ import React, {
 } from "react";
 import Flex from "../components/Flex";
 import { useTranslation } from "react-i18next";
-import ServingList, { ServingListInfo } from "../components/ServingList";
 import ServiceLauncherModal from "../components/ServiceLauncherModal";
 import {
   useCurrentProjectValue,
@@ -16,7 +15,7 @@ import {
   useUpdatableState,
 } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
-import { useTanMutation, useTanQuery } from "../hooks/reactQueryAlias";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 import { useRafInterval } from "ahooks";
 import graphql from "babel-plugin-relay/macro";
@@ -95,12 +94,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $limit: Int!
           $projectID: UUID
         ) {
-          endpoint_list(
-            offset: $offset
-            limit: $limit
-            project: $projectID
-            order: "-name"
-          ) {
+          endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
             items {
               name
               endpoint_id
@@ -135,8 +129,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         fetchKey: servicesFetchKey,
       }
     );
-
-  console.log(modelServiceList);
 
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
@@ -230,21 +222,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 ]}
                 tabBarExtraContent={{
                   right: (
-                    <Flex direction="row" gap={"sm"}>
-                      {/* <Tooltip title={t("session.exportCSV")}>
-                      <Button icon={<DownloadOutlined />} type="ghost" />
-                    </Tooltip> */}
-                      {/* @ts-ignore */}
-                      <Button
-                        type="primary"
-                        onClick={() => {
-                          setIsOpenServiceLauncher(true);
-                        }}
-                      >
-                        Start Service
-                      </Button>
-                      {/* <ServiceLauncherModal></ServiceLauncherModal> */}
-                    </Flex>
+                    <Button
+                      type="primary"
+                      onClick={() => {
+                        setIsOpenServiceLauncher(true);
+                      }}
+                    >
+                      Start Service
+                    </Button>
                   ),
                 }}
               />

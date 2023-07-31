@@ -5,7 +5,6 @@ import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useTanMutation } from "../hooks/reactQueryAlias";
-import { ServingListInfo } from "../components/ServingList";
 import Flex from "./Flex";
 import { useFragment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
