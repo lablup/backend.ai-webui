@@ -271,10 +271,10 @@ const UserSettingModal: React.FC<Props> = ({
         </Form.Item>
         <Form.Item name="status" label={t("credential.UserStatus")}>
           <Select
-            options={_.map(userStatus, (item) => {
+            options={_.map(userStatus, (value, key) => {
               return {
-                value: item,
-                label: userStatus[item],
+                value: key,
+                label: value,
               };
             })}
           />

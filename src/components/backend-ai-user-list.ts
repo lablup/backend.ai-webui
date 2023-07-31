@@ -89,8 +89,6 @@ export default class BackendAIUserList extends BackendAIPage {
   @property({type: Boolean}) isUserInfoMaskEnabled = false;
   @property({type: Boolean}) totpSupported = false;
   @property({type: Boolean}) totpActivated = false;
-  @property({type: String}) totpKey = '';
-  @property({type: String}) totpUri = '';
   @property({type: Object}) userStatus = {
     'active': 'Active',
     'inactive': 'Inactive',
@@ -105,13 +103,8 @@ export default class BackendAIUserList extends BackendAIPage {
   @query('#username') usernameInput!: TextField;
   @query('#full_name') fullNameInput!: TextField;
   @query('#description') descriptionInput!: TextArea;
-  @query('#need_password_change') needPasswordChangeSwitch!: Switch;
   @query('#status') statusSelect!: Select;
   @query('#signout-user-dialog') signoutUserDialog!: BackendAIDialog;
-  @query('#user-info-dialog') userInfoDialog!: BackendAIDialog;
-  @query('#totp-setup-dialog') totpSetupDialog: BackendAIDialog | undefined;
-  @query('#totp-confirm-otp') confirmOtpTextfield: TextField | undefined;
-  @query('#totp-uri-qrcode') totpUriQrImage: HTMLImageElement | undefined;
 
   constructor() {
     super();
@@ -378,146 +371,6 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   /**
-   * Toggle password visible/invisible mode.
-   *
-   * @param {HTMLElement} element - password visibility toggle component
-   */
-  _togglePasswordVisibility(element) {
-    const isVisible = element.__on;
-    const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
-  }
-
-  /**
-   * Toggle password and confirm input field is required or not.
-   *
-   */
-  _togglePasswordInputRequired() {
-    const password = this.passwordInput.value;
-    const confirm = this.confirmInput.value;
-    this.passwordInput.required = (password === '' && confirm !== '') ? true : false;
-    this.confirmInput.required = (password !== '' && confirm === '') ? true : false;
-    this.passwordInput.reportValidity();
-    this.confirmInput.reportValidity();
-  }
-
-  /**
-   * Save any changes. - username, full_name, password, etc.
-   *
-   * @param {Event} event - click SaveChanges button
-   * */
-  async _saveChanges(event) {
-    const username = this.usernameInput.value;
-    const full_name = this.fullNameInput.value;
-    const password = this.passwordInput.value;
-    const confirm = this.confirmInput.value;
-    const description = this.descriptionInput.value;
-    const status = this.statusSelect.value;
-    const need_password_change = this.needPasswordChangeSwitch.selected;
-    let totpSwitch;
-    if (this.totpSupported) {
-      totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
-    }
-
-    this._togglePasswordInputRequired();
-
-    if (!this.passwordInput.checkValidity() || !this.confirmInput.checkValidity()) {
-      return;
-    }
-
-    if (password !== confirm) {
-      this.notification.text = _text('environment.PasswordsDoNotMatch');
-      this.notification.show();
-      return;
-    }
-
-    const input: any = Object();
-
-    if (password !== '') {
-      input.password = password;
-    }
-
-    if (username !== this.userInfo.username) {
-      input.username = username;
-    }
-
-    if (full_name !== this.userInfo.full_name) {
-      input.full_name = full_name;
-    }
-
-    if (description !== this.userInfo.description) {
-      input.description = description;
-    }
-
-    if (need_password_change !== this.userInfo.need_password_change) {
-      input.need_password_change = need_password_change;
-    }
-
-    if (status !== this.userInfo.status) {
-      input.status = status;
-    }
-
-    if (Object.entries(input).length === 0 && (this.totpSupported && totpSwitch.selected === this.userInfo.totp_activated)) {
-      this._hideDialog(event);
-
-      this.notification.text = _text('environment.NoChangeMade');
-      this.notification.show();
-
-      return;
-    }
-
-    // globalThis.backendaiclient.user.modify(this.userInfo.email, input)
-    const updateQueue: Array<any> = [];
-    if (Object.entries(input).length > 0) {
-      const updateUser = await globalThis.backendaiclient.user.update(this.userInfo.email, input)
-        .then((res) => {
-          if (res.modify_user.ok) {
-            this.notification.text = _text('environment.SuccessfullyModified');
-            this.userInfo = {...this.userInfo, ...input, password: null};
-            this._refreshUserData();
-            this.passwordInput.value = '';
-            this.confirmInput.value = '';
-          } else {
-            this.notification.text = PainKiller.relieve(res.modify_user.msg);
-            this.usernameInput.value = this.userInfo.username;
-            this.descriptionInput.value = this.userInfo.description;
-          }
-          this.notification.show();
-        });
-      updateQueue.push(updateUser);
-    }
-
-    if (this.totpSupported && !totpSwitch.selected && totpSwitch.selected !== this.userInfo.totp_activated) {
-      const stopUsingTotp = await globalThis.backendaiclient.remove_totp(this.userInfo.email)
-        .then(() => {
-          this.notification.text = _text('totp.TotpRemoved');
-          this.notification.show();
-        });
-      updateQueue.push(stopUsingTotp);
-    }
-
-    await Promise.all(updateQueue)
-      .then(() => {
-        this.userInfoDialog.hide();
-        this.refresh();
-      })
-      .catch((err) => {
-        console.log(err);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      });
-
-    // if updated user info is current user, then apply it right away
-    if (this.userInfo.email === globalThis.backendaiclient.email) {
-      const event = new CustomEvent('current-user-info-changed', {detail: input});
-      document.dispatchEvent(event);
-    }
-  }
-
-  /**
    * Get user id according to configuration
    *
    * @param {string} userId
@@ -541,60 +394,12 @@ export default class BackendAIUserList extends BackendAIPage {
     return username;
   }
 
-  async _toggleActivatingSwitch() {
-    const totpSwitch = this.shadowRoot?.querySelector('#totp_activated_change') as Switch;
-    if (!this.userInfo.totp_activated && totpSwitch.selected) {
-      if (this.userInfo.email !== globalThis.backendaiclient.email) {
-        totpSwitch.selected = false;
-        this.notification.text = _text('credential.AdminCanOnlyRemoveTotp');
-        this.notification.show();
-      } else {
-        await this._openTotpSetupDialog();
-      }
-    }
-  }
-
-  /**
-   * Open the TOTP Setup dialog.
-   */
-  async _openTotpSetupDialog() {
-    this.totpSetupDialog?.show();
-    const result = await globalThis.backendaiclient.initialize_totp();
-    this.totpKey = result.totp_key;
-    this.totpUri = result.totp_uri;
-    const pngURL = QR.generatePNG(result.totp_uri, null);
-    if (this.totpUriQrImage) {
-      this.totpUriQrImage.src = pngURL;
-    }
-  }
-
-  /**
-   * Hide the TOTP Setup dialog.
-   */
-  _hideTotpSetupDialog() {
-    this.totpSetupDialog?.hide();
-  }
-
   async _setTotpActivated() {
     if (this.totpSupported) {
       const userInfo = await globalThis.backendaiclient.user.get(
         globalThis.backendaiclient.email, ['totp_activated']
       );
       this.totpActivated = userInfo.user.totp_activated;
-    }
-  }
-
-  async _confirmOtpSetup() {
-    const validationCode = this.confirmOtpTextfield?.value;
-    try {
-      await globalThis.backendaiclient.activate_totp(validationCode);
-      this.notification.text = _text('totp.TotpSetupCompleted');
-      this.notification.show();
-      await this._setTotpActivated();
-      this._hideTotpSetupDialog();
-    } catch (e) {
-      this.notification.text = _text('totp.InvalidTotpCode');
-      this.notification.show();
     }
   }
 
@@ -775,165 +580,6 @@ export default class BackendAIUserList extends BackendAIPage {
         }}"
         @cancel="${() => this.openUserSettingModal = false}"
         ></backend-ai-react-user-setting-dialog>
-      <backend-ai-dialog id="user-info-dialog" fixed backdrop narrowLayout>
-        <div slot="title" class="horizontal center layout">
-          <span style="margin-right:15px;">${_t('credential.UserDetail')}</span>
-          <lablup-shields app="" description="user" ui="flat"></lablup-shields>
-        </div>
-        <div slot="content" class="horizontal layout" style="overflow-x:hidden;">
-          <div>
-            <h4>${_text('credential.Information')}</h4>
-            <div role="listbox" class="center vertical layout">
-              <mwc-textfield class="display-textfield"
-                  disabled
-                  label="${_text('credential.UserID')}"
-                  pattern="^[a-zA-Z0-9_-]+$"
-                  value="${this.userInfo.email}"
-                  maxLength="64"
-                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
-              <mwc-textfield class="display-textfield"
-                  ?disabled=${!this.editMode}
-                  label="${_text('credential.UserName')}"
-                  id="username"
-                  value="${this.userInfo.username}"
-                  maxLength="64"
-                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
-              <mwc-textfield class="display-textfield"
-                  ?disabled=${!this.editMode}
-                  label="${_text('credential.FullName')}"
-                  id="full_name"
-                  value="${this.userInfo.full_name ? this.userInfo.full_name : ' '}"
-                  maxLength="64"
-                  helper="${_text('maxLength.64chars')}"></mwc-textfield>
-              ${this.editMode ? html`
-                <div class="horizontal layout password-area">
-                  <mwc-textfield class="display-textfield"
-                      type="password"
-                      id="password"
-                      autoValidate
-                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern=${BackendAiCommonUtils.passwordRegex}
-                      maxLength="64"
-                      label="${_text('general.NewPassword')}"
-                      @change=${() => this._togglePasswordInputRequired()}></mwc-textfield>
-                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
-                  </mwc-icon-button-toggle>
-                </div>
-                <div class="horizontal layout password-area">
-                  <mwc-textfield class="display-textfield"
-                      type="password"
-                      id="confirm"
-                      autoValidate
-                      validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
-                      pattern=${BackendAiCommonUtils.passwordRegex}
-                      maxLength="64"
-                      @change=${() => this._togglePasswordInputRequired()}
-                      label="${_text('webui.menu.NewPasswordAgain')}"></mwc-textfield>
-                  <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                      @click="${(e) => this._togglePasswordVisibility(e.target)}">
-                  </mwc-icon-button-toggle>
-                </div>
-                <mwc-textarea class="display-textfield"
-                    type="text"
-                    id="description"
-                    label="${_text('credential.Description')}"
-                    placeholder="${_text('maxLength.500chars')}"
-                    value="${this.userInfo.description}"
-                    id="description"></mwc-textarea>`: html``}
-              ${this.editMode ? html`
-                <mwc-select class="full-width" id="status" label="${_text('credential.UserStatus')}" fixedMenuPosition>
-                  ${Object.keys(this.userStatus).map((item) => html`
-                    <mwc-list-item value="${item}" ?selected="${item === this.userInfo.status}">${this.userStatus[item]}</mwc-list-item>
-                  `)}
-                </mwc-select>
-                <div class="horizontal layout center" style="margin:10px;">
-                  <p class="label">${_text('credential.DescRequirePasswordChange')}</p>
-                  <mwc-switch
-                      id="need_password_change"
-                      ?selected=${this.userInfo.need_password_change}></mwc-switch>
-                </div>
-                ${this.totpSupported ? html`
-                  <div class="horizontal layout center">
-                    <p class="label">${_text('webui.menu.TotpActivated')}</p>
-                    <mwc-switch
-                        id="totp_activated_change"
-                        ?selected=${this.userInfo.totp_activated}
-                        @click="${() => this._toggleActivatingSwitch()}"></mwc-switch>
-                  </div>
-                ` : html``}
-                ` : html`
-                <mwc-textfield class="display-textfield"
-                    disabled
-                    label="${_text('credential.DescActiveUser')}"
-                    value="${(this.userInfo.status === 'active') ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                <mwc-textfield class="display-textfield"
-                    disabled
-                    label="${_text('credential.DescRequirePasswordChange')}"
-                    value="${this.userInfo.need_password_change ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                ${this.totpSupported ? html`
-                  <mwc-textfield class="display-textfield"
-                      disabled
-                      label="${_text('webui.menu.TotpActivated')}"
-                      value="${this.userInfo.totp_activated ? `${_text('button.Yes')}` : `${_text('button.No')}`}"></mwc-textfield>
-                ` : html``}
-            `}
-          </div>
-        </div>
-        ${this.editMode ? html`` : html`
-          <div>
-            <h4>${_text('credential.Association')}</h4>
-            <div role="listbox" style="margin: 0;">
-              <mwc-textfield class="display-textfield"
-                label="${_t('credential.Domain')}"
-                disabled
-                value="${this.userInfo.domain_name}">
-              </mwc-textfield>
-              <mwc-textfield class="display-textfield"
-                label="${_t('credential.Role')}"
-                disabled
-                value="${this.userInfo.role}">
-              </mwc-textfield>
-            </div>
-            <h4>${_text('credential.ProjectAndGroup')}</h4>
-            <div role="listbox" style="margin: 0;">
-              <ul>
-              ${this.userInfoGroups.map((item) => html`
-                <li>${item}</li>
-              `)}
-              </ul>
-            </div>
-          </div>
-        `}
-        </div>
-        <div slot="footer" class="horizontal center-justified flex layout distancing">
-        ${this.editMode ? html`
-          <mwc-button
-              unelevated
-              fullwidth
-              label="${_t('button.SaveChanges')}"
-              icon="check"
-              @click=${(e) => this._saveChanges(e)}></mwc-button>`:html``}
-        </div>
-      </backend-ai-dialog>
-      <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
-        <span slot="title">${_t('webui.menu.SetupTotp')}</span>
-        <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
-          <p>${_t('totp.ScanQRToEnable')}</p>
-          <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
-          <p>${_t('totp.TypeInAuthKey')}</p>
-          <backend-ai-react-copyable-code-text value="${this.totpKey}"></backend-ai-react-copyable-code-text>
-        </div>
-        <div slot="content" class="layout vertical" style="width: 300px">
-          <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
-          <mwc-textfield id="totp-confirm-otp" type="number" no-label-float placeholder="000000"
-            min="0" max="999999" style="margin-left:1em;width:120px;">
-            </mwc-textfield>
-        </div>
-        <div slot="footer" class="horizontal end-justified flex layout">
-          <mwc-button unelevated @click="${() => this._confirmOtpSetup()}">${_t('button.Confirm')}</mwc-button>
-        </div>
-      </backend-ai-dialog>
     `;
   }
 }
