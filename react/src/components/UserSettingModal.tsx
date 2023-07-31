@@ -17,7 +17,7 @@ import {
   Select,
   Switch,
   message,
-  Tooltip,
+  Typography,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
@@ -154,7 +154,7 @@ const UserSettingModal: React.FC<Props> = ({
     },
   });
 
-  const [isOpenTOTPSettingModal, { toggle: toggleTOTPSettingModal }] =
+  const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
 
   const _onOk = () => {
@@ -167,14 +167,8 @@ const UserSettingModal: React.FC<Props> = ({
       if (!totpSupported) {
         delete input?.totp_activated;
       } else if (
-        values?.totp_activated !== user?.totp_activated &&
-        values?.totp_activated &&
-        values?.email === baiClient?.email
-      ) {
-        toggleTOTPSettingModal();
-      } else if (
-        values?.totp_activated !== user?.totp_activated &&
-        !values?.totp_activated
+        !values?.totp_activated &&
+        values?.totp_activated !== user?.totp_activated
       ) {
         mutationToRemoveTotp.mutate(user?.email || "", {
           onError: (err) => {
@@ -314,29 +308,37 @@ const UserSettingModal: React.FC<Props> = ({
             name="totp_activated"
             label={t("webui.menu.TotpActivated")}
             valuePropName="checked"
+            extra={
+              user?.email !== baiClient?.email && (
+                <Typography.Text type="secondary" style={{ fontSize: 12 }}>
+                  {t("credential.AdminCanOnlyRemoveTotp")}
+                </Typography.Text>
+              )
+            }
           >
-            <Tooltip
-              title={
+            <Switch
+              loading={isLoadingManagerSupportingTOTP}
+              disabled={
                 user?.email !== baiClient?.email && !user?.totp_activated
-                  ? t("credential.AdminCanOnlyRemoveTotp")
-                  : null
               }
-            >
-              <Switch
-                loading={isLoadingManagerSupportingTOTP}
-                disabled={
-                  user?.email !== baiClient?.email && !user?.totp_activated
+              onChange={(checked: boolean) => {
+                if (
+                  !!checked &&
+                  !user?.totp_activated &&
+                  user?.email === baiClient?.email
+                ) {
+                  toggleTOTPActivateModal();
                 }
-              />
-            </Tooltip>
+              }}
+            />
           </Form.Item>
         )}
       </Form>
       {!!totpSupported && (
         <TOTPActivateModal
-          open={isOpenTOTPSettingModal}
+          open={isOpenTOTPActivateModal}
           onRequestClose={() => {
-            toggleTOTPSettingModal();
+            toggleTOTPActivateModal();
           }}
         />
       )}

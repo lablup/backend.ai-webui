@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 
 import {
@@ -10,6 +10,7 @@ import {
   theme,
   Form,
   message,
+  Spin,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
@@ -33,9 +34,13 @@ const TOTPActivateModal: React.FC<Props> = ({
   const [form] = Form.useForm<TOTPActivateFormInput>();
 
   const baiClient = useSuspendedBackendaiClient();
-  let { data, isLoading } = useQuery("totp", () => {
+  let { data, isLoading, refetch } = useQuery("totp", () => {
     return modalProps.open ? baiClient.initialize_totp() : null;
   });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, modalProps.open]);
 
   const mutationToActivateTotp = useTanMutation({
     mutationFn: (values: TOTPActivateFormInput) => {
@@ -71,45 +76,51 @@ const TOTPActivateModal: React.FC<Props> = ({
       style={{ zIndex: 1 }}
       {...modalProps}
     >
-      <Form
-        preserve={false}
-        form={form}
-        validateTrigger={["onChange", "onBlur"]}
-      >
-        {t("totp.TypeInAuthKey")}
-        <Flex
-          justify="center"
-          style={{ margin: token.marginSM, gap: token.margin }}
-        >
-          <QRCode
-            value={data?.totp_uri}
-            status={isLoading ? "loading" : undefined}
-          />
+      {!data ? (
+        <Flex justify="center" direction="row">
+          <Spin />
         </Flex>
-        {t("totp.ScanQRToEnable")}
-        <Flex
-          justify="center"
-          style={{ margin: token.marginSM, gap: token.margin }}
+      ) : (
+        <Form
+          preserve={false}
+          form={form}
+          validateTrigger={["onChange", "onBlur"]}
         >
-          <Typography.Text copyable code>
-            {data?.totp_key}
-          </Typography.Text>
-        </Flex>
-        {t("totp.TypeInAuthKey")}
-        <Flex
-          justify="center"
-          style={{ margin: token.marginSM, gap: token.margin }}
-        >
-          <Form.Item required name="otp">
-            <Input
-              maxLength={6}
-              allowClear
-              placeholder="000000"
-              style={{ maxWidth: 120 }}
+          {t("totp.TypeInAuthKey")}
+          <Flex
+            justify="center"
+            style={{ margin: token.marginSM, gap: token.margin }}
+          >
+            <QRCode
+              value={data?.totp_uri}
+              status={isLoading ? "loading" : undefined}
             />
-          </Form.Item>
-        </Flex>
-      </Form>
+          </Flex>
+          {t("totp.ScanQRToEnable")}
+          <Flex
+            justify="center"
+            style={{ margin: token.marginSM, gap: token.margin }}
+          >
+            <Typography.Text copyable code>
+              {data?.totp_key}
+            </Typography.Text>
+          </Flex>
+          {t("totp.TypeInAuthKey")}
+          <Flex
+            justify="center"
+            style={{ margin: token.marginSM, gap: token.margin }}
+          >
+            <Form.Item required name="otp">
+              <Input
+                maxLength={6}
+                allowClear
+                placeholder="000000"
+                style={{ maxWidth: 120 }}
+              />
+            </Form.Item>
+          </Flex>
+        </Form>
+      )}
     </Modal>
   );
 };
