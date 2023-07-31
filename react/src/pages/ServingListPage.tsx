@@ -54,6 +54,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
     useState(false);
 
+  const [paginationState, setPaginationState] = useState<{
+    current: number;
+    pageSize: number;
+  }>({
+    current: 1,
+    pageSize: 100,
+  });
+
   const [isRefetchPending, startRefetchTransition] = useTransition();
   const [
     isOpenModelServiceTerminatingModal,
@@ -95,7 +103,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           $limit: Int!
           $projectID: UUID
         ) {
-          endpoint_list(offset: $offset, limit: $limit, project: $projectID) {
+          endpoint_list(
+            offset: $offset
+            limit: $limit
+            project: $projectID
+            filter: "name != 'koalpaca-test'"
+          ) {
+            total_count
             items {
               name
               endpoint_id
@@ -121,8 +135,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         }
       `,
       {
-        offset: 0,
-        limit: 10,
+        offset: (paginationState.current - 1) * paginationState.pageSize,
+        limit: paginationState.pageSize,
         projectID: curProject.id,
       },
       {
@@ -372,6 +386,23 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                     ),
                 },
               ]}
+              pagination={{
+                pageSize: paginationState.pageSize,
+                current: paginationState.current,
+                total: modelServiceList?.total_count || 0,
+                showSizeChanger: true,
+                // showTotal(total, range) {
+                //   return `${range[0]}-${range[1]} of ${total}`;
+                // },
+                onChange(page, pageSize) {
+                  startRefetchTransition(() => {
+                    setPaginationState({
+                      current: page,
+                      pageSize: pageSize || 100,
+                    });
+                  });
+                },
+              }}
             />
           </Suspense>
         </Flex>
