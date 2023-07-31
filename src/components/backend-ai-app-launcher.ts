@@ -686,7 +686,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     let uri: string | URL = await this._getProxyURL(sessionUuid);
     uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri);
     if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
-      console.log(localStorage.getItem('backendaiwebui.appproxy-permit-key'))
       uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
       uri = new URL(uri.href);
     }
