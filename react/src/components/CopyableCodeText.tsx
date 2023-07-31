@@ -5,17 +5,10 @@ interface Props extends PropsWithChildren {
   text?: string;
 }
 
-const CopyableCodeText: React.FC<Props> = ({ text = "", children }) => {
+const CopyableCodeText: React.FC<Props> = ({ text, children }) => {
   return (
-    <Typography.Text
-      copyable
-      code
-      style={{
-        backgroundColor: "transparent",
-      }}
-    >
-      {text}
-      {children}
+    <Typography.Text copyable code>
+      {text || children}
     </Typography.Text>
   );
 };
