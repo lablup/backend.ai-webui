@@ -135,6 +135,9 @@ const ServingList: React.FC<ServingListProps> = ({
       title: "Desired Session Count",
       dataIndex: "desired_session_count",
       key: "desired_session_count",
+      render: (desired_session_count) => {
+        return desired_session_count < 0 ? "-" : desired_session_count;
+      },
     },
     {
       title: "Routing Count",
