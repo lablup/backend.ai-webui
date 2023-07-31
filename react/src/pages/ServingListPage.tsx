@@ -363,7 +363,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 {
                   title: "Open To Public",
                   render: (text, row) =>
-                    row.open_to_public ? <CheckOutlined /> : <CloseOutlined />,
+                    row.open_to_public ? (
+                      <CheckOutlined style={{ color: token.colorSuccess }} />
+                    ) : (
+                      <CloseOutlined
+                        style={{ color: token.colorTextSecondary }}
+                      />
+                    ),
                 },
               ]}
             />
