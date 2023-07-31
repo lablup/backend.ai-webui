@@ -77,15 +77,15 @@ const RoutingListPage: React.FC<ServingListProps> = ({
   const deferredMergedFetchKey = useDeferredValue(fetchKey + extraFetchKey);
 
   const { data: modelServiceInfo } = useTanQuery({
-    queryKey: "serviceInfo",
+    queryKey: ["serviceInfo", serviceId],
     queryFn: () => {
       return baiSignedRequestWithPromise({
         method: "GET",
         url: `/services/${serviceId}`,
         client: baiClient,
-      })
+      });
     },
-    enabled: !!serviceId
+    enabled: !!serviceId,
   });
 
   const { t } = useTranslation();
@@ -167,25 +167,45 @@ const RoutingListPage: React.FC<ServingListProps> = ({
       <Typography.Title level={3} style={{ margin: 0 }}>
         {modelServiceInfo.name || ""}
       </Typography.Title>
-      <Typography.Title level={4} style={{ margin: 0 }}>Service Info</Typography.Title>
+      <Typography.Title level={4} style={{ margin: 0 }}>
+        Service Info
+      </Typography.Title>
       <Descriptions
         bordered
         column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
       >
-        <Descriptions.Item label="Name">{modelServiceInfo.name}</Descriptions.Item>
-        <Descriptions.Item label="Endpoint ID">{modelServiceInfo.endpoint_id}</Descriptions.Item>
-        <Descriptions.Item label="Session Owner">{baiClient.email || ''}</Descriptions.Item>
-        <Descriptions.Item label="Desired Session Count">{modelServiceInfo.desired_session_count}</Descriptions.Item>
-        <Descriptions.Item label="Service Endpoint">{
-          modelServiceInfo.service_endpoint ? modelServiceInfo.service_endpoint :
-          <Tag>No service endpoint</Tag>}
+        <Descriptions.Item label="Name">
+          {modelServiceInfo.name}
         </Descriptions.Item>
-        <Descriptions.Item label="Open To Public">{(modelServiceInfo.is_public) ? 
-        <CheckOutlined /> : <CloseOutlined />
-      }</Descriptions.Item>
+        <Descriptions.Item label="Endpoint ID">
+          {modelServiceInfo.endpoint_id}
+        </Descriptions.Item>
+        <Descriptions.Item label="Session Owner">
+          {baiClient.email || ""}
+        </Descriptions.Item>
+        <Descriptions.Item label="Desired Session Count">
+          {modelServiceInfo.desired_session_count}
+        </Descriptions.Item>
+        <Descriptions.Item label="Service Endpoint">
+          {modelServiceInfo.service_endpoint ? (
+            modelServiceInfo.service_endpoint
+          ) : (
+            <Tag>No service endpoint</Tag>
+          )}
+        </Descriptions.Item>
+        <Descriptions.Item label="Open To Public">
+          {modelServiceInfo.is_public ? <CheckOutlined /> : <CloseOutlined />}
+        </Descriptions.Item>
       </Descriptions>
-      <Typography.Title level={4} style={{ margin: 0 }}>Active Routes Info</Typography.Title>
-      <Table columns={columns} dataSource={modelServiceInfo.active_routes ? modelServiceInfo.active_routes : []} />
+      <Typography.Title level={4} style={{ margin: 0 }}>
+        Active Routes Info
+      </Typography.Title>
+      <Table
+        columns={columns}
+        dataSource={
+          modelServiceInfo.active_routes ? modelServiceInfo.active_routes : []
+        }
+      />
     </Flex>
   );
 };
