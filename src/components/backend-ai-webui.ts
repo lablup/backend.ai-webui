@@ -930,11 +930,11 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
    * Add tool tips by create popovers.
    */
   async addTooltips() {
-    this._createPopover('#summary-menu-icon', _text('webui.menu.Summary'));
-    this._createPopover('#sessions-menu-icon', _text('webui.menu.Sessions'));
-    this._createPopover('#serving-menu-icon', _text('webui.menu.Serving'));
-    this._createPopover('#data-menu-icon', _text('webui.menu.Data&Storage'));
-    this._createPopover('#import-menu-icon', _text('webui.menu.Import&Run'));
+    this._createPopover('summary-menu-icon', _text('webui.menu.Summary'));
+    this._createPopover('sessions-menu-icon', _text('webui.menu.Sessions'));
+    this._createPopover('serving-menu-icon', _text('webui.menu.Serving'));
+    this._createPopover('data-menu-icon', _text('webui.menu.Data&Storage'));
+    this._createPopover('import-menu-icon', _text('webui.menu.Import&Run'));
 
     // temporally blcok pipeline menu
     // this._createPopover('#pipeline-menu-icon', _text('webui.menu.Pipeline'));

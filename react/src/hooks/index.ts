@@ -182,8 +182,8 @@ export const useBackendaiImageMetaData = () => {
         const { key } = getImageMeta(imageName);
         return (
           path +
-          (metadata?.imageInfo[key].icon !== undefined
-            ? metadata?.imageInfo[key].icon
+          (metadata?.imageInfo[key]?.icon !== undefined
+            ? metadata?.imageInfo[key]?.icon
             : "default.png")
         );
       },
