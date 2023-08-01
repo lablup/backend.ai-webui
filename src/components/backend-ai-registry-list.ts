@@ -25,7 +25,6 @@ import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
 import {TextField} from '@material/mwc-textfield';
-import { TextFieldChangeEvent } from '@vaadin/text-field';
 
 /**
  Backend AI Registry List
@@ -408,10 +407,10 @@ class BackendAIRegistryList extends BackendAIPage {
 
   /**
    * Hide/Show validation msg on registry URL input in registry URL dialog
-   * Hide when registry URL protocol is "http" or "https" and valid URL
-   * Show and validate when registry URL protocol is not "http" or "https" or invalid URL format
+   * Hide when the registry URL is a valid URL format and the protocol is either "http" or "https"
+   * Show and validate when registry URL is a invalid URL format or protocol is neither "http" nor "https"
    */
-  private _checkValidationMsgOnRegistryURLInput(ev) {
+  private _checkValidationMsgOnRegistryUrlInput(ev) {
     try {
       const registryUrl = new URL(this._urlInput.value)
         if(registryUrl.protocol === 'http:' || registryUrl.protocol === 'https:'){
@@ -423,7 +422,6 @@ class BackendAIRegistryList extends BackendAIPage {
       ev.target.setCustomValidity(_t('registry.DescURLStartString'))
     }
   }
-
 
   /**
    * Hide/Show validation msg on project name input in registry configuration dialog
@@ -693,8 +691,8 @@ class BackendAIRegistryList extends BackendAIPage {
               label="${_t('registry.RegistryURL')}"
               required
               value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-              @change=${this._checkValidationMsgOnRegistryURLInput}
-              @click=${this._checkValidationMsgOnRegistryURLInput}
+              @change=${this._checkValidationMsgOnRegistryUrlInput}
+              @click=${this._checkValidationMsgOnRegistryUrlInput}
             ></mwc-textfield>
           </div>
           <div class="horizontal layout flex">
