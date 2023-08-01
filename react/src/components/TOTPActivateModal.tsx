@@ -21,6 +21,12 @@ type TOTPActivateFormInput = {
   otp: number;
 };
 
+type User = {
+  user: {
+    totp_activated: boolean;
+  };
+};
+
 interface Props extends ModalProps {
   onRequestClose: (success?: boolean) => void;
 }
@@ -35,11 +41,18 @@ const TOTPActivateModal: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   let { data, isLoading, refetch } = useQuery("totp", () => {
-    return modalProps.open ? baiClient.initialize_totp() : null;
+    return baiClient.user
+      .get(baiClient.email, ["totp_activated"])
+      .then((data: User) => {
+        if (!data.user.totp_activated) return baiClient.initialize_totp();
+        return null;
+      });
   });
 
   useEffect(() => {
-    refetch();
+    if (modalProps.open) {
+      refetch();
+    }
   }, [refetch, modalProps.open]);
 
   const mutationToActivateTotp = useTanMutation({
