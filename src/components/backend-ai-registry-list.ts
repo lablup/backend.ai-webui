@@ -217,11 +217,11 @@ class BackendAIRegistryList extends BackendAIPage {
     const registryType = this._selectedRegistryTypeInput.value;
     const projectName = this._projectNameInput.value.replace(/\s/g, '');
 
-    if (!this._hostnameInput.checkValidity()) {
+    if (!this._hostnameInput.validity.valid) {
       return;
     }
 
-    if (!this._urlInput.checkValidity()) {
+    if (!this._urlInput.validity.valid) {
       return;
     }
 
