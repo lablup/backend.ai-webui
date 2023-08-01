@@ -25,6 +25,7 @@ import '@material/mwc-icon-button';
 import '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
 import {TextField} from '@material/mwc-textfield';
+import { TextFieldChangeEvent } from '@vaadin/text-field';
 
 /**
  Backend AI Registry List
@@ -406,6 +407,25 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
+   * Hide/Show validation msg on registry URL input in registry URL dialog
+   * Hide when registry URL protocol is "http" or "https" and valid URL
+   * Show and validate when registry URL protocol is not "http" or "https" or invalid URL format
+   */
+  private _checkValidationMsgOnRegistryURLInput(ev) {
+    try {
+      const registryUrl = new URL(this._urlInput.value)
+        if(registryUrl.protocol === 'http:' || registryUrl.protocol === 'https:'){
+          ev.target.setCustomValidity('')
+        } else {
+          ev.target.setCustomValidity(_t('registry.DescURLStartString'))
+        }
+    } catch (err) {
+      ev.target.setCustomValidity(_t('registry.DescURLStartString'))
+    }
+  }
+
+
+  /**
    * Hide/Show validation msg on project name input in registry configuration dialog
    * Hide when registry is "docker", Show and validate when registry is "harbor" or "harbor2"
    */
@@ -672,9 +692,9 @@ class BackendAIRegistryList extends BackendAIPage {
               class="hostname"
               label="${_t('registry.RegistryURL')}"
               required
-              pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
               value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-              validationMessage="${_t('registry.DescURLStartString')}"
+              @change=${this._checkValidationMsgOnRegistryURLInput}
+              @click=${this._checkValidationMsgOnRegistryURLInput}
             ></mwc-textfield>
           </div>
           <div class="horizontal layout flex">
