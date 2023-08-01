@@ -419,7 +419,7 @@ class BackendAIRegistryList extends BackendAIPage {
           ev.target.setCustomValidity(_t('registry.DescURLStartString'))
         }
     } catch (err) {
-      ev.target.setCustomValidity(_t('registry.DescURLStartString'))
+      ev.target.setCustomValidity(_t('import.WrongURLType'))
     }
   }
 
