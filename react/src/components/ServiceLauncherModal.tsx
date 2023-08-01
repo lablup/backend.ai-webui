@@ -209,7 +209,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <ResourceGroupSelect autoSelectDefault />
           </Form.Item>
-          <Form.Item name="openToPublic" label="Open To Public">
+          <Form.Item name="openToPublic" label="Open To Public" valuePropName="checked">
             <Switch></Switch>
           </Form.Item>
           <Form.Item
