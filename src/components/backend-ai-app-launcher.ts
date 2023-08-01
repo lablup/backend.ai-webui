@@ -646,7 +646,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.checkOpenToPublic.checked = false;
     }
 
-
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
@@ -692,12 +691,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
     const token = globalThis.backendaiclient._config.accessKey;
-    let uri = await this._getProxyURL(sessionUuid);
-    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
+    let uri: string | URL = await this._getProxyURL(sessionUuid);
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri);
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      uri = new URL(uri.href);
+    }
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri,
+      uri: uri.href,
       credentials: 'include',
       mode: 'cors'
     };
@@ -774,11 +777,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
             } else {
-              await this._connectToProxyWorker(response.url, urlPostfix);
+              const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
-                globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
-                // globalThis.open(response.url + urlPostfix, '_blank');
+                globalThis.backendaiwindowmanager.addWindowWithURL(appConnectUrl || response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
+                // globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
                 // console.log(appName + " proxy loaded: ");
                 // console.log(sessionUuid);
               }, 1000);
@@ -789,23 +792,82 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   async _connectToProxyWorker(url, urlPostfix) {
-    const rqst_proxy = {
+    // Try to get permit key since it is not possible to get it with the
+    // redirect request. This is required to reuse the existing port.
+    let rqstUrl = new URL(url + urlPostfix);
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      rqstUrl = new URL(rqstUrl.href);
+    }
+    const rqstGetPermitKey = {
       method: 'GET',
-      uri: url + urlPostfix,
-      mode: 'no-cors',
-      redirect: 'follow', // 'manual'
-      credentials: 'include'
+      uri: rqstUrl.href,
+      headers: {'Accept': 'application/json'},
     };
-    let count = 0;
-    while (count < 5) {
-      const result = await this.sendRequest(rqst_proxy);
-      if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
-        await this._sleep(1000);
-        count = count + 1;
-      } else {
-        count = 6;
+    const resp = await this.sendRequest(rqstGetPermitKey);
+    if (resp && resp.redirect_url) {
+      // Save permit key to local storage if possible.
+      const redirectUrl = new URL(resp.redirect_url);
+      const permitKey = redirectUrl.searchParams.get('permit_key');
+      if (permitKey && permitKey.length > 0) {
+        localStorage.setItem('backendaiwebui.appproxy-permit-key', permitKey);
+      }
+
+      if (!resp.reuse) {
+        // For the new permit, we need to follow the redirect to open the
+        // corresponding port.
+        const redirectRqst = {
+          method: 'GET',
+          uri: redirectUrl.href,
+          mode: 'no-cors',
+          redirect: 'follow',
+          credentials: 'include',
+        };
+        let count = 0;
+        while (count < 5) {
+          const result = await this.sendRequest(redirectRqst);
+          if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
+            await this._sleep(1000);
+            count = count + 1;
+            console.warn(`Retry connect to proxy worker (${count})...`);
+          } else {
+            count = 6;
+          }
+        }
+      }
+    } else {
+      // When there is no redirect_url or encountered an error in fetching the
+      // permit key.
+      rqstUrl = new URL(url + urlPostfix);
+      if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+        rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+        rqstUrl = new URL(rqstUrl.href);
+      }
+      const rqst_proxy = {
+        method: 'GET',
+        uri: rqstUrl.href,
+        mode: 'no-cors',
+        redirect: 'follow', // 'manual'
+        credentials: 'include',
+      };
+      let count = 0;
+      while (count < 5) {
+        const result = await this.sendRequest(rqst_proxy);
+        if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
+          await this._sleep(1000);
+          count = count + 1;
+          console.warn(`Retry connect to proxy worker (${count})...`);
+        } else {
+          count = 6;
+        }
       }
     }
+
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      rqstUrl = new URL(rqstUrl.href);
+    }
+    return rqstUrl.href;
   }
 
   async _sleep(ms) {
@@ -901,7 +963,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
-          await this._connectToProxyWorker(response.url, urlPostfix);
+          const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.sshHost = '127.0.0.1';
@@ -930,9 +992,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              console.log(response.url + urlPostfix);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
-              //globalThis.open(response.url + urlPostfix, '_blank');
+              // console.log(response.url + urlPostfix);
+              globalThis.backendaiwindowmanager.addWindowWithURL(appConnectUrl || response.url + urlPostfix, appName + ' - ' + sessionName, sessionUuid, icon);
+              // globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
             }, 1000);
@@ -985,13 +1047,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
         .then(async (response) => {
-          await this._connectToProxyWorker(response.url, '');
+          const appConnectUrl = await this._connectToProxyWorker(response.url, '');
           if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
               console.log(this.appTemplate['ttyd'].src);
-              globalThis.backendaiwindowmanager.addWindowWithURL(response.url, 'Console - ' + (sessionName ? sessionName : sessionUuid), sessionUuid, './resources/icons/terminal.svg');
-              //globalThis.open(response.url, '_blank');
+              globalThis.backendaiwindowmanager.addWindowWithURL(appConnectUrl || response.url, 'Console - ' + (sessionName ? sessionName : sessionUuid), sessionUuid, './resources/icons/terminal.svg');
+              // globalThis.open(appConnectUrl || response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");
               // console.log(sessionUuid);
@@ -1070,15 +1132,15 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
       const path: Record<string, unknown> = {'--logdir': this.tensorboardPath};
       this._open_wsproxy(sessionUuid, appName, port, null, path).then(async (response) => {
-        await this._connectToProxyWorker(response.url, urlPostfix);
+        const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
         this._hideAppLauncher();
         this._hideTensorboardDialog();
         button.removeAttribute('disabled');
         setTimeout(() => {
-          globalThis.backendaiwindowmanager.addWindowWithURL(response.url + urlPostfix, appName + ' - ' + sessionUuid, sessionUuid, icon);
-          //globalThis.open(response.url + urlPostfix, '_blank');
-          console.log(appName + ' proxy loaded: ');
-          console.log(sessionUuid);
+          globalThis.backendaiwindowmanager.addWindowWithURL(appConnectUrl || response.url + urlPostfix, appName + ' - ' + sessionUuid, sessionUuid, icon);
+          // globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
+          // console.log(appName + ' proxy loaded: ');
+          // console.log(sessionUuid);
         }, 1000);
       });
     } catch (e) {

@@ -1112,10 +1112,15 @@ export default class BackendAISessionList extends BackendAIPage {
     return this.sendRequest(rqst)
       .then((response) => {
         this.total_session_count -= 1;
+        let uri = new URL(`proxy/${token}/${sessionId}/delete`, proxyURL);
+        if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+          uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+          uri = new URL(uri.href);
+        }
         if (response !== undefined && response.code !== 404) {
           const rqst = {
             method: 'GET',
-            uri: new URL(`proxy/${token}/${sessionId}/delete`, proxyURL).href,
+            uri: uri.href,
             credentials: 'include',
             mode: 'cors'
           };
@@ -1478,35 +1483,42 @@ export default class BackendAISessionList extends BackendAIPage {
     });
   }
 
-  // General closing
+  _requestDestroySession(sessionId, accessKey, forced) {
+    globalThis.backendaiclient.destroy(sessionId, accessKey, forced).then((req) => {
+      setTimeout(async () => {
+        this.terminationQueue = [];
+        // await this.refreshList(true, false); // Will be called from session-view from the event below
+        const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
+        document.dispatchEvent(event);
+      }, 1000);
+    }).catch((err) => {
+      // this.refreshList(true, false); // Will be called from session-view from the event below
+      const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
+      document.dispatchEvent(event);
+      if ('description' in err) {
+        this.notification.text = PainKiller.relieve(err.description);
+      } else {
+        this.notification.text = PainKiller.relieve('Problem occurred during termination.');
+      }
+      this.notification.show(true, err);
+    });
+  }
 
+  // General closing
   async _terminateKernel(sessionId, accessKey, forced = false) {
     this.terminationQueue.push(sessionId);
     return this._terminateApp(sessionId).then(() => {
-      globalThis.backendaiclient.destroy(sessionId, accessKey, forced).then((req) => {
-        setTimeout(async () => {
-          this.terminationQueue = [];
-          // await this.refreshList(true, false); // Will be called from session-view from the event below
-          const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
-          document.dispatchEvent(event);
-        }, 1000);
-      }).catch((err) => {
-        // this.refreshList(true, false); // Will be called from session-view from the event below
-        const event = new CustomEvent('backend-ai-session-list-refreshed', {'detail': 'running'});
-        document.dispatchEvent(event);
-        if ('description' in err) {
-          this.notification.text = PainKiller.relieve(err.description);
-        } else {
-          this.notification.text = PainKiller.relieve('Problem occurred during termination.');
-        }
-        this.notification.show(true, err);
-      });
+      this._requestDestroySession(sessionId, accessKey, forced);
     }).catch((err) => {
-      console.log(err);
       if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
+        if (err.statusCode == 404) {
+          // Even if wsproxy address is invalid, session must be deleted.
+          this._requestDestroySession(sessionId, accessKey, forced);
+        } else {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
       }
     });
   }

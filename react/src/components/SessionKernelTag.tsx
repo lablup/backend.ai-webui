@@ -1,7 +1,5 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { useBackendaiImageMetaData } from "../hooks";
-import _ from "lodash";
-import { Tag } from "antd";
 
 const SessionKernelTag: React.FC<{
   image: string | null;

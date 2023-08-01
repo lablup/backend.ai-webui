@@ -274,7 +274,7 @@ export default class BackendAIData extends BackendAIPage {
                          icon="resources/menu_icons/data.svg">
       <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
-        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
+        <backend-ai-react-storage-status-panel .value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
