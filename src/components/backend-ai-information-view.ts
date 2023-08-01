@@ -5,7 +5,7 @@
 
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
-import {get as _text, translate as _t} from 'lit-translate';
+import {translate as _t} from 'lit-translate';
 
 import {BackendAIPage} from './backend-ai-page';
 

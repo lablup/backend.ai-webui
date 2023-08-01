@@ -2,11 +2,13 @@
  @license
 Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
+import {translate as _t} from 'lit-translate';
 
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
+import './backend-ai-window';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {
@@ -49,7 +51,11 @@ export default class BackendAIServingList extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <backend-ai-react-serving-list></backend-ai-react-serving-list>
+      <backend-ai-window ?active="${this.active}" title="${_t('webui.menu.Serving')}" defaultWidth="800px" name="serving"
+                         icon="resources/menu_icons/serving.svg">
+        <link rel="stylesheet" href="resources/custom.css">
+        <backend-ai-react-serving-list></backend-ai-react-serving-list>
+      </backend-ai-window>
     `;
   }
 }

@@ -1217,8 +1217,8 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <span class="full-menu">${_t('webui.menu.Sessions')} new</span> -->
             </mwc-list-item>
             ${this.supportServing ? html`
-              <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('session')}">
-              <i class="fa fa-rocket" slot="graphic" id="serving-menu-icon"></i>
+              <mwc-list-item graphic="icon" ?selected="${this._page === 'serving'}" ?activated="${this._page === 'serving'}" @click="${() => this._moveTo('/serving')}" ?disabled="${this.blockedMenuitem.includes('serving')}">
+              <i class="fas fa-rocket" slot="graphic" id="serving-menu-icon"></i>
               <span class="full-menu">${_t('webui.menu.Serving')}</span>
               </mwc-list-item>`: html``}
             ${this._useExperiment ? html`
