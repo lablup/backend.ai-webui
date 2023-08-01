@@ -43,7 +43,7 @@ typings/
 .npm
 
 # npm
-#package-lock.json
+# package-lock.json
 
 # Optional eslint cache
 .eslintcache
@@ -100,6 +100,8 @@ images/
 resources/
 manifest/
 node_modules/
-scripts/
-src/
-tests/
+# # used in copy webui-dev scripts in Dockerfile
+# scripts/
+# # used in `RUN make compile_wsproxy`
+# src/
+tests/ 

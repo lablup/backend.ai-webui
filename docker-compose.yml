@@ -1,34 +1,20 @@
-version: '3.1'
-
+version: '3'
 services:
-  webui-dev:
+  web:
+    # Add to solve the error(image's platform not match host platform)
+    platform: linux/amd64
     build:
       context: .
-      dockerfile: ./Dockerfile
-    ports:
-      - "8080:8080"
+      dockerfile: Dockerfile
     volumes:
-      - ./webserver.conf:/webserver.conf
-      - ./build/rollup:/webserver/src/ai/backend/web/static
-    environment:
-      - BACKEND_ENDPOINT_TYPE=api
-    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
-    networks:
-      - backend
-  webui:
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+      - .:/webui
     ports:
-      - "443:443"
-    volumes:
-      - ./webserver.conf:/webserver.conf
-      - ./certificates:/etc/certificates
-    environment:
-      - BACKEND_ENDPOINT_TYPE=api
-    command: /bin/bash -c "redis-server --daemonize yes && python3 -m ai.backend.web.server -f /webserver.conf"
-    networks:
-      - backend
-networks:
-  backend:
-    driver: bridge
+      # webui react server
+      - 3081:3081
+      # webui web socket proxy
+      - 5050:5050
+      # webui web-dev server
+      - 9081:9081
+    command: /start-webui-dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
