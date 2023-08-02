@@ -21,6 +21,7 @@ const UserPrefModal : React.FC = () => {
   let parsedValue: {
     isOpen: boolean;
     userName: string;
+    userId: string;
     loggedAccount: {
       access_key: string;
     };
@@ -37,11 +38,12 @@ const UserPrefModal : React.FC = () => {
     parsedValue = {
       isOpen: false,
       userName: "",
+      userId: "",
       loggedAccount: {access_key: ""},
       keyPairInfo: {keypairs:[{access_key: "", secret_key: ""}]}
     };
   };
-  const { isOpen, userName, loggedAccount, keyPairInfo } = parsedValue;
+  const { isOpen, userName, userId, loggedAccount, keyPairInfo } = parsedValue;
 
   let selectOptions: any[] = [];
   if (keyPairInfo.keypairs) {
@@ -73,9 +75,38 @@ const UserPrefModal : React.FC = () => {
     }
   }
 
+  const _updateUserName = (newUserName: string) => {
+    if (newUserName === userName) {
+      console.log("close")
+      dispatchEvent("cancel", null);
+    } else {
+      //mutation
+      console.log("mutation userName")
+    }
+  };
+
+  const _updatePassword = (oldPassword: string, newPassword: string, newPassword2: string) => {
+    if (!oldPassword && !newPassword && !newPassword2) {
+      console.log("close");
+      dispatchEvent("cancel", null);
+    }
+    if (!oldPassword) {
+      _openNotification(t("webui.menu.InputOriginalPassword"));
+    } else if (!newPassword) {
+      _openNotification(t("webui.menu.InvalidPasswordMessage"));
+    } else if (newPassword !== newPassword2) {
+      _openNotification(t("webui.menu.NewPasswordMismatch"));
+    } else {
+      console.log("mutation password")
+    }
+    //mutation
+  }
+
   const _onSubmit = () => {
     form.validateFields().then((values) => {
       console.log(values);
+      _updateUserName(values.userNameInput);
+      _updatePassword(values.prefOriginalPasswordInput, values.prefNewPasswordInput, values.prefNewPassword2Input);
     })
     .catch((errorInfo) => {
       errorInfo.errorFields.map((error: {errors: string[]})=> {

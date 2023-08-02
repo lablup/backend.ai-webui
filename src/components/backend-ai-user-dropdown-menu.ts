@@ -596,6 +596,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       value="${JSON.stringify({
         isOpen: this.isOpen,
         userName: this._getUsername(),
+        userId: this._getUserId(),
         loggedAccount: 
           Object.keys(this.loggedAccount).length === 0 ? {access_key: ""} : this.loggedAccount,
         keyPairInfo: 
