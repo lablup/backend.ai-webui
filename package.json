@@ -16,7 +16,7 @@
     "server:p": "npm run patchLib && serve build/rollup",
     "server:d": "npm run patchLib && cd react && npm start",
     "server:d-ie11": "npm run patchLib && npx web-dev-server --node-resolve --open --watch --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index demo/index.html --file-extensions .ts",
-    "build:d": "npm run patchLib && npx concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && npm run relay -- --watch\" \"npx web-dev-server --node-resolve --watch --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index index.html --file-extensions .ts\"",
+    "build:d": "npm run patchLib && npx concurrently -c \"auto\" --names \"webcomponent,react-relay,webdev\" \"./node_modules/typescript/bin/tsc --watch\" \"cd react && npm run relay -- --watch\" \"npx web-dev-server --node-resolve --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index index.html --file-extensions .ts\"",
     "electron:d": "npx electron . --dev",
     "copywc": "mkdir -p build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/bundles src/lib && cp node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js build/rollup/src/lib && cp -r node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js src/lib",
     "copywa": "mkdir -p build/rollup/src/lib/web-animations-js && mkdir -p src/lib/web-animations-js && cp node_modules/web-animations-js/web-animations-next-lite.min.js src/lib/web-animations-js && cp src/lib/web-animations-js/web-animations-next-lite.min.js build/rollup/src/lib/web-animations-js",
