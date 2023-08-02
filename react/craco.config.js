@@ -14,10 +14,22 @@ module.exports = {
   devServer: {
     proxy: {
       context: [
-        "/manifest", "/src", "/dist", "/node_modules", "/resources"],
+        "/src",
+        "/config.toml",
+        "/manifest",
+        "/dist",
+        "/resources",
+        "/node_modules",
+      ],
       target: "http://localhost:3081",
     },
-    watchFiles: ["../src/**/*", "../index.html"],
+    watchFiles: [
+      "../index.html",
+      "../config.toml",
+      "../manifest/**/*",
+      "../dist/**/*",
+      "../resources/**/*",
+    ],
   },
 
   webpack: {
