@@ -7,7 +7,7 @@ import {generateRandomString} from './helper';
 
 // TODO: test server url is hard-coded.
 fixture `Login Fixture`
-    .page `http://localhost:3081/data`;
+    .page `http://localhost:9081/data`;
 
 test('Create and delete user folder', async t => {
   const folderName = 'test-' + generateRandomString();
