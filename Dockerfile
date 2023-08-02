@@ -3,7 +3,8 @@ FROM node:18.17.0
 # Install Homebrew
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 # Install watchman with Homebrew
-# RUN brew install watchman # now not working, `/bin/sh: 1: brew: not found`
+ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
+RUN brew install watchman
 
 WORKDIR /webui
 COPY ./scripts/webui-dev /start-webui-dev
