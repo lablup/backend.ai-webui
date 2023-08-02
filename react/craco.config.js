@@ -15,7 +15,7 @@ module.exports = {
     proxy: {
       context: [
         "/manifest", "/src", "/dist", "/node_modules", "/resources"],
-      target: "http://localhost:9081",
+      target: "http://localhost:3081",
     },
     watchFiles: ["../src/**/*", "../index.html"],
   },
