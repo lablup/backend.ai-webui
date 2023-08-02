@@ -396,7 +396,7 @@
     "Active/Total": "활성/전체",
     "Public": "공개",
     "EditModelService": "모델 서비스 수정",
-    "OnlyAllowsNonNegativeIntegers": "양의 정수만 사용 가능합니다.",
+    "OnlyAllowsNonNegativeIntegers": "0 이상을 입력해주세요.",
     "RoutingInfo": "라우팅 정보",
     "ServiceInfo": "서비스 정보",
     "StartService": "서비스 시작",
