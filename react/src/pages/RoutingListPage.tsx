@@ -18,6 +18,7 @@ import Flex from "../components/Flex";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
 import { useLazyLoadQuery } from "react-relay";
+import { useTranslation } from "react-i18next";
 import graphql from "babel-plugin-relay/macro";
 import {
   RoutingListPageQuery,
@@ -49,6 +50,7 @@ type EndPoint = NonNullable<RoutingListPageQuery$data["endpoint"]>;
 type Routing = NonNullable<NonNullable<EndPoint["routings"]>[0]>;
 
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
+  const { t } = useTranslation();
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
   const navigate = useNavigate();
@@ -117,7 +119,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <Breadcrumb
         items={[
           {
-            title: "Services",
+            title: t("modelService.Services"),
             onClick: (e) => {
               e.preventDefault();
               navigate("/serving");
@@ -125,7 +127,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             href: "/serving",
           },
           {
-            title: "Routing Info",
+            title: t("modelService.RoutingInfo"),
           },
         ]}
       ></Breadcrumb>
@@ -133,7 +135,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ""}
         </Typography.Title>
-        <Tooltip title="Refresh">
+        <Tooltip title={t("button.Refresh")}>
           <Button
             loading={isPendingRefetch}
             icon={<ReloadOutlined />}
@@ -146,7 +148,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         </Tooltip>
       </Flex>
       <Typography.Title level={4} style={{ margin: 0 }}>
-        Service Info
+        {t("modelService.ServiceInfo")}
       </Typography.Title>
       <Descriptions
         bordered
@@ -155,22 +157,26 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           backgroundColor: token.colorBgBase,
         }}
       >
-        <Descriptions.Item label="Name">
+        <Descriptions.Item label={t("modelService.EndpointName")}>
           <Typography.Text copyable>{endpoint?.name}</Typography.Text>
         </Descriptions.Item>
-        <Descriptions.Item label="Endpoint ID">
+        <Descriptions.Item label={t("modelService.EndpointId")}>
           {endpoint?.endpoint_id}
         </Descriptions.Item>
-        <Descriptions.Item label="Session Owner">
+        <Descriptions.Item label={t("modelService.SessionOwner")}>
           {baiClient.email || ""}
         </Descriptions.Item>
-        <Descriptions.Item label="Desired Session Count">
+        <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
           {endpoint?.desired_session_count}
         </Descriptions.Item>
-        <Descriptions.Item label="Service Endpoint">
-          {endpoint?.url ? endpoint?.url : <Tag>No service endpoint</Tag>}
+        <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
+          {endpoint?.url ? (
+            endpoint?.url
+          ) : (
+            <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
+          )}
         </Descriptions.Item>
-        <Descriptions.Item label="Open To Public">
+        <Descriptions.Item label={t("modelService.OpenToPublic")}>
           {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
         </Descriptions.Item>
         <Descriptions.Item label="Image">
@@ -183,20 +189,20 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         </Descriptions.Item>
       </Descriptions>
       <Typography.Title level={4} style={{ margin: 0 }}>
-        Routes Info
+        {t("modelService.RoutesInfo")}
       </Typography.Title>
       <Table
         columns={[
           {
-            title: "Route ID",
+            title: t("modelService.RouteId"),
             dataIndex: "routing_id",
           },
           {
-            title: "Session ID",
+            title: t("modelService.SessionId"),
             dataIndex: "session",
           },
           {
-            title: "Status",
+            title: t("modelService.Status"),
             render: (_, { status }) =>
               status && (
                 <Tag color={applyStatusColor(status)} key={status}>
@@ -205,7 +211,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ),
           },
           {
-            title: "Traffic Ratio",
+            title: t("modelService.TrafficRatio"),
             dataIndex: "traffic_ratio",
           },
         ]}

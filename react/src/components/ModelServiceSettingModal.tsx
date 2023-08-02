@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
-// import { useTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useTanMutation } from "../hooks/reactQueryAlias";
@@ -26,7 +26,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
-  // const { t } = useTranslation();
+  const { t } = useTranslation();
   const [form] = Form.useForm();
 
   const endpoint = useFragment(
@@ -92,14 +92,12 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       okButtonProps={{
         loading: mutationToUpdateService.isLoading,
       }}
-      title={"Edit Model Service"} // TODO: translate needed
+      title={t("modelService.EditModelService")}
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form
           form={form}
           preserve={false}
-          // labelCol={{ span: 12 }}
-          // wrapperCol={{ span: 6 }}
           validateTrigger={["onChange", "onBlur"]}
           initialValues={{
             desired_session_count: endpoint?.desired_session_count,
@@ -108,11 +106,11 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         >
           <Form.Item
             name="desired_session_count"
-            label="Desired Session Count"
+            label={t("modelService.DesiredSessionCount")}
             rules={[
               {
                 pattern: /^[0-9]+$/,
-                message: "Only Allows non-negative integers.",
+                message: t("modelService.OnlyAllowsNonNegativeIntegers"),
               },
             ]}
           >
