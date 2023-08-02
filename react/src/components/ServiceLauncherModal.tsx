@@ -161,7 +161,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   return (
     <Modal
-      title="Title"
+      title={t("modelService.StartNewServing")}
       onOk={handleOk}
       onCancel={handleCancel}
       destroyOnClose={true}
@@ -187,8 +187,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           }
         >
           <Form.Item
-            //TODO: i18n
-            label={"Service Name"}
+            label={t("modelService.ServiceName")}
             name="serviceName"
             rules={[
               {
@@ -209,7 +208,11 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           >
             <ResourceGroupSelect autoSelectDefault />
           </Form.Item>
-          <Form.Item name="openToPublic" label="Open To Public" valuePropName="checked">
+          <Form.Item
+            name="openToPublic"
+            label={t("modelService.OpenToPublic")}
+            valuePropName="checked"
+          >
             <Switch></Switch>
           </Form.Item>
           <Form.Item
@@ -227,7 +230,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             />
           </Form.Item>
           <SliderInputItem
-            label={"Desired Routing Count"}
+            label={t("modelService.DesiredRoutingCount")}
             name="desiredRoutingCount"
             rules={[
               {

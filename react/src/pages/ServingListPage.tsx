@@ -244,7 +244,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         setIsOpenServiceLauncher(true);
                       }}
                     >
-                      Start Service
+                      {t("modelService.StartService")}
                     </Button>
                   ),
                 }}
@@ -283,7 +283,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
-                  title: "Endpoint name",
+                  title: t("modelService.EndpointName"),
                   dataIndex: "endpoint_id",
                   fixed: "left",
                   render: (endpoint_id, row) => (
@@ -291,7 +291,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: "Endpoint Id",
+                  title: t("modelService.EndpointId"),
                   dataIndex: "endpoint_id",
                   width: 310,
                   render: (endpoint_id) => (
@@ -299,7 +299,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: "Controls",
+                  title: t("modelService.Controls"),
                   dataIndex: "controls",
                   render: (text, row) => (
                     <Flex direction="row" align="stretch">
@@ -342,7 +342,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: "Status",
+                  title: t("modelService.Status"),
                   dataIndex: "status",
                   render: (text, row) => (
                     <Tag
@@ -355,7 +355,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: "Desired Session Count",
+                  title: t("modelService.DesiredSessionCount"),
                   dataIndex: "desired_session_count",
                   render: (desired_session_count) => {
                     return desired_session_count < 0
@@ -366,13 +366,13 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 {
                   title: (
                     <Flex direction="column" align="start">
-                      Routings Count
+                      {t("modelService.RoutingsCount")}
                       <br />
                       <Typography.Text
                         type="secondary"
                         style={{ fontWeight: "normal" }}
                       >
-                        (active/total)
+                        ({t("modelService.Active/Total")})
                       </Typography.Text>
                     </Flex>
                   ),
@@ -388,7 +388,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   },
                 },
                 {
-                  title: "Public",
+                  title: t("modelService.Public"),
                   render: (text, row) =>
                     row.open_to_public ? (
                       <CheckOutlined style={{ color: token.colorSuccess }} />
@@ -423,7 +423,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       </Flex>
       <Modal
         open={isOpenModelServiceTerminatingModal}
-        // TODO: translation
         title={t("dialog.title.LetsDouble-Check")}
         okButtonProps={{
           loading: terminateModelServiceMutation.isLoading,
@@ -448,7 +447,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       >
         <Flex direction="column" align="stretch" justify="center">
           <p>
-            {"You are about to terminate " +
+            {t("modelService.YouAreAboutToTerminate") +
               (selectedModelService?.name || "") +
               "."}
           </p>
