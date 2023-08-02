@@ -350,10 +350,10 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.appLauncher._open_wsproxy(sessionId, appName, null, null)
       .then(async (resp) => {
         if (resp.url) {
-          await this.appLauncher._connectToProxyWorker(resp.url, '');
+          const appConnectUrl = await this.appLauncher._connectToProxyWorker(resp.url, '');
           this.appLauncher.indicator.set(100, _text('session.applauncher.Prepared'));
           setTimeout(() => {
-            globalThis.open(resp.url, '_self');
+            globalThis.open(appConnectUrl || resp.url, '_self');
             // globalThis.open(resp.url);
           });
         } else {

@@ -5,6 +5,7 @@
       "WelcomeMessage_2": " .",
       "Summary": "Summary",
       "Sessions": "Sessions",
+      "Serving": "Serving",
       "Import&Run": "Import & Run",
       "Data&Storage": "Data & Storage",
       "Pipeline": "Pipeline (Beta)",
@@ -39,6 +40,7 @@
       "InvalidPasswordMessage": "At least 1 alphabet, 1 number and 1 special character is required with at least 8 chars.",
       "NewPasswordMismatch": "Two new passwords do not match.",
       "PasswordMismatch": "Password mismatch",
+      "PleaseConfirmYourPassword": "Please confirm your password",
       "PasswordUpdated": "Password is successfully updated.",
       "FullnameUpdated": "Full name is successfully updated.",
       "TermsOfService": "Terms of Service",
@@ -383,9 +385,16 @@
     "ConnectionNotice": "Notice",
     "System": "Upload Sessions"
   },
+  "modelService": {
+    "Running": "Running",
+    "Finished": "Finished",
+    "Others": "Others",
+    "Services": "Services"
+  },
   "button": {
     "Cancel": "Cancel",
     "Okay": "Okay",
+    "OK": "OK",
     "Create": "Create",
     "View": "View",
     "Edit": "Edit",
@@ -556,6 +565,7 @@
     "Status": "Status",
     "Name": "Name",
     "UserDetail": "User Detail",
+    "ModifyUserDetail": "Modify User Detail",
     "DescRequirePasswordChange": "Require password change?",
     "Association": "Association",
     "Domain": "Domain",
