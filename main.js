@@ -342,7 +342,7 @@ function createWindow() {
     // Load HTML into new Window (dynamic serving for develop)
     console.log("Running on live debug mode...");
     mainWindow.loadURL(url.format({
-      pathname: '127.0.0.1:3081',
+      pathname: '127.0.0.1:9081',
       protocol: 'http',
       slashes: true
     }));
