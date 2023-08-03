@@ -109,7 +109,9 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
     >
       {_.map(filteredVFolders, (vfolder) => {
         return (
-          <Select.Option value={vfolder?.name}>{vfolder?.name}</Select.Option>
+          <Select.Option key={vfolder?.id} value={vfolder?.name}>
+            {vfolder?.name}
+          </Select.Option>
         );
       })}
     </Select>

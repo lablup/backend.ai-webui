@@ -220,9 +220,9 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             {environmentGroup.environmentName}
                           </TextHighlighter>
                         </Flex>
-                        <Flex direction="row" gap="xs">
-                          {/* <Tag>Multiarch</Tag> */}
-                        </Flex>
+                        {/* <Flex direction="row" gap="xs"> */}
+                        {/* <Tag>Multiarch</Tag> */}
+                        {/* </Flex> */}
                       </Flex>
                     </Select.Option>
                   );
