@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useQuery } from "react-query";
 import { useFragment } from "react-relay";
@@ -49,17 +49,22 @@ const TOTPActivateModal: React.FC<Props> = ({
   );
 
   const baiClient = useSuspendedBackendaiClient();
-  let { data, isLoading, refetch } = useQuery("totp", () => {
-    return user?.email === baiClient?.email && !user?.totp_activated
-      ? baiClient.initialize_totp()
-      : null;
+  let initializedTotp = useQuery<{
+    totp_key: string;
+    totp_uri: string;
+  }>({
+    queryKey: ["initialize_totp", baiClient?.email, modalProps.open],
+    queryFn: () => {
+      return user?.email === baiClient?.email &&
+        !user?.totp_activated &&
+        modalProps.open
+        ? baiClient.initialize_totp()
+        : null;
+    },
+    suspense: false,
+    staleTime: 0,
+    cacheTime: 0,
   });
-
-  useEffect(() => {
-    if (modalProps.open) {
-      refetch();
-    }
-  }, [refetch, modalProps.open]);
 
   const mutationToActivateTotp = useTanMutation({
     mutationFn: (values: TOTPActivateFormInput) => {
@@ -95,9 +100,13 @@ const TOTPActivateModal: React.FC<Props> = ({
       style={{ zIndex: 1 }}
       {...modalProps}
     >
-      {!data ? (
+      {initializedTotp.isLoading ? (
         <Flex justify="center" direction="row">
           <Spin />
+        </Flex>
+      ) : !initializedTotp.data ? (
+        <Flex justify="center" direction="row">
+          {t("totp.TotpSetupNotAvailable")}
         </Flex>
       ) : (
         <Form
@@ -111,8 +120,8 @@ const TOTPActivateModal: React.FC<Props> = ({
             style={{ margin: token.marginSM, gap: token.margin }}
           >
             <QRCode
-              value={data?.totp_uri}
-              status={isLoading ? "loading" : undefined}
+              value={initializedTotp.data.totp_key}
+              // status={isLoading ? "loading" : undefined}
             />
           </Flex>
           {t("totp.ScanQRToEnable")}
@@ -121,7 +130,7 @@ const TOTPActivateModal: React.FC<Props> = ({
             style={{ margin: token.marginSM, gap: token.margin }}
           >
             <Typography.Text copyable code>
-              {data?.totp_key}
+              {initializedTotp.data.totp_key}
             </Typography.Text>
           </Flex>
           {t("totp.TypeInAuthKey")}
