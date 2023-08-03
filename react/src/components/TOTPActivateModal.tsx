@@ -1,5 +1,8 @@
 import React, { useEffect } from "react";
+import graphql from "babel-plugin-relay/macro";
 import { useQuery } from "react-query";
+import { useFragment } from "react-relay";
+import { TOTPActivateModalFragment$key } from "./__generated__/TOTPActivateModalFragment.graphql";
 
 import {
   Modal,
@@ -21,17 +24,13 @@ type TOTPActivateFormInput = {
   otp: number;
 };
 
-type User = {
-  user: {
-    totp_activated: boolean;
-  };
-};
-
 interface Props extends ModalProps {
+  userFrgmt?: TOTPActivateModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
 const TOTPActivateModal: React.FC<Props> = ({
+  userFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -39,14 +38,18 @@ const TOTPActivateModal: React.FC<Props> = ({
   const { token } = theme.useToken();
   const [form] = Form.useForm<TOTPActivateFormInput>();
 
+  const user = useFragment(
+    graphql`
+      fragment TOTPActivateModalFragment on User {
+        totp_activated
+      }
+    `,
+    userFrgmt
+  );
+
   const baiClient = useSuspendedBackendaiClient();
   let { data, isLoading, refetch } = useQuery("totp", () => {
-    return baiClient.user
-      .get(baiClient.email, ["totp_activated"])
-      .then((data: User) => {
-        if (!data.user.totp_activated) return baiClient.initialize_totp();
-        return null;
-      });
+    return !user?.totp_activated ? baiClient.initialize_totp() : null;
   });
 
   useEffect(() => {

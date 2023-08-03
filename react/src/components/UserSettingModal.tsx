@@ -116,6 +116,7 @@ const UserSettingModal: React.FC<Props> = ({
             name
           }
           totp_activated @include(if: $isTOTPSupported)
+          ...TOTPActivateModalFragment
         }
         loggedInUser: user(email: $loggedInUserEmail) {
           role
@@ -336,6 +337,7 @@ const UserSettingModal: React.FC<Props> = ({
       </Form>
       {!!totpSupported && (
         <TOTPActivateModal
+          userFrgmt={user || null}
           open={isOpenTOTPActivateModal}
           onRequestClose={() => {
             toggleTOTPActivateModal();
