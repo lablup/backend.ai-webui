@@ -93,6 +93,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     <Modal
       title={t("webui.menu.SetupTotp")}
       maskClosable={false}
+      confirmLoading={mutationToActivateTotp.isLoading}
       onOk={_onOk}
       onCancel={() => {
         onRequestClose();
