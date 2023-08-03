@@ -88,7 +88,8 @@
     "TotpSetupCompleted": "Enabled 2FA",
     "InvalidTotpCode": "Invalid OTP",
     "ConfirmTotpRemovalBody": "Are you sure to opt out from using two-factor authentication?",
-    "TotpSetupNotAvailable": "Two-factor authentication cannot be set up."
+    "TotpSetupNotAvailable": "Two-factor authentication cannot be set up.",
+    "RemoveTotpSetupCompleted": "Disabled 2FA"
   },
   "summary": {
     "Dashboard": "Dashboard",

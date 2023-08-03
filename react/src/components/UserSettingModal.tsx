@@ -167,15 +167,6 @@ const UserSettingModal: React.FC<Props> = ({
       // TOTP setting
       if (!totpSupported) {
         delete input?.totp_activated;
-      } else if (
-        !values?.totp_activated &&
-        values?.totp_activated !== user?.totp_activated
-      ) {
-        mutationToRemoveTotp.mutate(user?.email || "", {
-          onError: (err) => {
-            console.log(err);
-          },
-        });
       }
 
       commitModifyUserSetting({
@@ -186,7 +177,7 @@ const UserSettingModal: React.FC<Props> = ({
         onCompleted(res) {
           if (res?.modify_user?.ok) {
             message.success(t("environment.SuccessfullyModified"));
-            updateFetchKey(values?.email + new Date().toISOString());
+            updateFetchKey(new Date().toISOString());
           } else {
             message.error(res?.modify_user?.msg);
           }
@@ -318,13 +309,27 @@ const UserSettingModal: React.FC<Props> = ({
             }
           >
             <Switch
-              loading={isLoadingManagerSupportingTOTP}
+              loading={
+                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isLoading
+              }
               disabled={
                 user?.email !== baiClient?.email && !user?.totp_activated
               }
               onChange={(checked: boolean) => {
                 if (checked) {
                   toggleTOTPActivateModal();
+                } else {
+                  if (user?.totp_activated) {
+                    mutationToRemoveTotp.mutate(user?.email || "", {
+                      onSuccess: () => {
+                        message.success(t("totp.RemoveTotpSetupCompleted"));
+                        updateFetchKey();
+                      },
+                      onError: (err) => {
+                        console.log(err);
+                      },
+                    });
+                  }
                 }
               }}
             />
@@ -336,7 +341,9 @@ const UserSettingModal: React.FC<Props> = ({
           userFrgmt={user}
           open={isOpenTOTPActivateModal}
           onRequestClose={(success) => {
-            if (!success) {
+            if (success) {
+              updateFetchKey();
+            } else {
               form.setFieldValue("totp_activated", false);
             }
             toggleTOTPActivateModal();
