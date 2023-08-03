@@ -217,11 +217,11 @@ class BackendAIRegistryList extends BackendAIPage {
     const registryType = this._selectedRegistryTypeInput.value;
     const projectName = this._projectNameInput.value.replace(/\s/g, '');
 
-    if (!this._hostnameInput.validity) {
+    if (!this._hostnameInput.validity.valid) {
       return;
     }
 
-    if (!this._urlInput.validity) {
+    if (!this._urlInput.validity.valid) {
       return;
     }
 
@@ -403,6 +403,24 @@ class BackendAIRegistryList extends BackendAIPage {
     this._registryType = this._registryList[this._selectedIndex]?.type as string;
     this.requestUpdate(); // call for explicit update
     this._launchDialogById('#configure-registry-dialog');
+  }
+
+  /**
+   * Hide/Show validation msg on registry URL input in registry URL dialog
+   * Hide when the registry URL is a valid URL format and the protocol is either "http" or "https"
+   * Show and validate when registry URL is a invalid URL format or protocol is neither "http" nor "https"
+   */
+  private _checkValidationMsgOnRegistryUrlInput(ev) {
+    try {
+      const registryUrl = new URL(this._urlInput.value)
+        if(registryUrl.protocol === 'http:' || registryUrl.protocol === 'https:'){
+          ev.target.setCustomValidity('')
+        } else {
+          ev.target.setCustomValidity(_t('registry.DescURLStartString'))
+        }
+    } catch (err) {
+      ev.target.setCustomValidity(_t('import.WrongURLType'))
+    }
   }
 
   /**
@@ -660,7 +678,7 @@ class BackendAIRegistryList extends BackendAIPage {
               label="${_t('registry.RegistryHostname')}"
               required
               ?disabled="${this._editMode}"
-              pattern="/^.+$/"
+              pattern="^.+$"
               value="${this._registryList[this._selectedIndex]?.hostname || ''}"
               validationMessage="${_t('registry.DescHostnameIsEmpty')}"
             ></mwc-textfield>
@@ -672,9 +690,9 @@ class BackendAIRegistryList extends BackendAIPage {
               class="hostname"
               label="${_t('registry.RegistryURL')}"
               required
-              pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
               value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-              validationMessage="${_t('registry.DescURLStartString')}"
+              @change=${this._checkValidationMsgOnRegistryUrlInput}
+              @click=${this._checkValidationMsgOnRegistryUrlInput}
             ></mwc-textfield>
           </div>
           <div class="horizontal layout flex">
