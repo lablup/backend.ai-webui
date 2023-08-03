@@ -62,7 +62,6 @@ const UserSettingModal: React.FC<Props> = ({
   const { open, userEmail } = parsedValue;
 
   const [form] = Form.useForm<User>();
-  const currentFormData = Form.useWatch("totp_activation", form);
 
   const userStatus: UserStatus = {
     active: "Active",
@@ -168,8 +167,7 @@ const UserSettingModal: React.FC<Props> = ({
     ) {
       form.setFieldValue("totp_activated", false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentFormData?.totp_activated]);
+  });
 
   const _onOk = () => {
     form.validateFields().then(async (values) => {
