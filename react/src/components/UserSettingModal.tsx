@@ -201,7 +201,6 @@ const UserSettingModal: React.FC<Props> = ({
 
   return (
     <Modal
-      forceRender
       open={open}
       onCancel={() => {
         dispatchEvent("cancel", null);

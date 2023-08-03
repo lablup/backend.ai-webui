@@ -119,10 +119,7 @@ const TOTPActivateModal: React.FC<Props> = ({
             justify="center"
             style={{ margin: token.marginSM, gap: token.margin }}
           >
-            <QRCode
-              value={initializedTotp.data.totp_key}
-              // status={isLoading ? "loading" : undefined}
-            />
+            <QRCode value={initializedTotp.data.totp_uri} />
           </Flex>
           {t("totp.ScanQRToEnable")}
           <Flex
