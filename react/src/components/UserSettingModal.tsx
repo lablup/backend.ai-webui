@@ -164,7 +164,7 @@ const UserSettingModal: React.FC<Props> = ({
     if (
       !isOpenTOTPActivateModal &&
       !user?.totp_activated &&
-      form.getFieldValue("totp_activated")
+      !!form.getFieldValue("totp_activated")
     ) {
       form.setFieldValue("totp_activated", false);
     }
