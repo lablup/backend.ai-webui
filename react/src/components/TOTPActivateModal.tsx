@@ -41,6 +41,7 @@ const TOTPActivateModal: React.FC<Props> = ({
   const user = useFragment(
     graphql`
       fragment TOTPActivateModalFragment on User {
+        email
         totp_activated
       }
     `,
@@ -49,7 +50,9 @@ const TOTPActivateModal: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   let { data, isLoading, refetch } = useQuery("totp", () => {
-    return !user?.totp_activated ? baiClient.initialize_totp() : null;
+    return user?.email === baiClient?.email && !user?.totp_activated
+      ? baiClient.initialize_totp()
+      : null;
   });
 
   useEffect(() => {
