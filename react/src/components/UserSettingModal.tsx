@@ -1,4 +1,4 @@
-import React, { useDeferredValue } from "react";
+import React, { useDeferredValue, useEffect } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useMutation } from "react-relay";
 import { useQuery } from "react-query";
@@ -157,6 +157,17 @@ const UserSettingModal: React.FC<Props> = ({
 
   const [isOpenTOTPActivateModal, { toggle: toggleTOTPActivateModal }] =
     useToggle(false);
+
+  useEffect(() => {
+    // Off the totp switch when user cancels totp activation
+    if (
+      !isOpenTOTPActivateModal &&
+      !user?.totp_activated &&
+      form.getFieldValue("totp_activated")
+    ) {
+      form.setFieldValue("totp_activated", false);
+    }
+  });
 
   const _onOk = () => {
     form.validateFields().then(async (values) => {
