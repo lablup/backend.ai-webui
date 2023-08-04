@@ -193,24 +193,22 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.keyPairInfo.keypairs.reverse();
   }
 
-  async _setIsOpen() {
-    this.isOpen = !this.isOpen;
+  async _setIsOpen(openState: boolean) {
+    this.isOpen = openState;
   }
   /**
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    //this.userPreferenceDialog?.show();
-    this._setIsOpen();
+    this._setIsOpen(true);
   }
 
   /**
    * Hide the user preference dialog.
    */
   _hideUserPrefDialog() {
-    //this.userPreferenceDialog?.hide();
-    this._setIsOpen();
+    this._setIsOpen(false);
   }
 
   /**
@@ -595,7 +593,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     <backend-ai-react-user-pref-modal
       value="${JSON.stringify({
         isOpen: this.isOpen,
-        userName: this._getUsername(),
+        full_name: this._getUsername(),
         userId: this._getUserId(),
         loggedAccount: 
           Object.keys(this.loggedAccount).length === 0 ? {access_key: ""} : this.loggedAccount,
