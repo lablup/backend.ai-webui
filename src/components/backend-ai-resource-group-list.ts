@@ -14,17 +14,6 @@ import '@vaadin/item/vaadin-item';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/switch';
-import 'weightless/textarea';
-import 'weightless/textfield';
-import 'weightless/title';
-import {Expansion} from 'weightless/expansion';
-
 import '@material/mwc-button/mwc-button';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
@@ -33,7 +22,9 @@ import '@material/mwc-textarea/mwc-textarea';
 import '@material/mwc-textfield/mwc-textfield';
 
 import './backend-ai-dialog';
+import './lablup-expansion';
 import './backend-ai-multi-select';
+import LablupExpansion from './lablup-expansion';
 import {default as PainKiller} from './backend-ai-painkiller';
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
@@ -115,27 +106,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           padding: 5px 15px 5px 20px;
         }
 
-        wl-button {
-          --button-bg: var(--paper-light-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.delete {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          margin-top: 20px;
-        }
-
         backend-ai-dialog {
           --component-min-width: 350px;
-        }
-
-        backend-ai-dialog wl-textarea,
-        backend-ai-dialog wl-select {
-          margin-bottom: 20px;
-          --input-font-family: var(--general-font-family);
         }
 
         backend-ai-dialog mwc-textfield,
@@ -144,25 +116,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           margin: 5px auto 5px auto;
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-textfield-selected-color);
-        }
-
-        backend-ai-dialog wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: #282828;
-          margin-bottom: 5px;
-        }
-
-        backend-ai-dialog wl-switch {
-          margin-bottom: 20px;
-          --switch-color-checked: #29b6f6;
-          --switch-bg-checked: #bbdefb;
-        }
-
-        wl-select {
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
         }
 
         mwc-button[outlined] {
@@ -197,11 +150,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           --component-width: 350px;
         }
 
-        wl-expansion {
+        lablup-expansion {
           --expansion-content-padding: 2px;
-          --expansion-elevation: 0;
-          --expansion-elevation-open: 0;
-          --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
         }
@@ -231,15 +181,6 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         .scheduler-option-value {
           font-size: 16px;
           font-weight: 700;
-        }
-
-        #resource-group-detail-dialog wl-textarea {
-          margin-bottom: 0px;
-          --input-border-width: 0;
-          --input-padding-top-bottom: 0px;
-          --input-padding-left-right: 12px;
-          --input-font-size: 0.75rem;
-          --textarea-height: 100px;
         }
       `
     ];
@@ -362,18 +303,12 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
     render(
       html`
         <div id="controls" class="layout horizontal flex center">
-          <wl-button fab flat inverted
-            class="fg green"
-            @click=${() => this._launchDetailDialog(rowData.item)}
-          ><wl-icon>assignment</wl-icon></wl-button>
-          <wl-button fab flat inverted
-            class="fg blue"
-            @click=${() => this._launchModifyDialog(rowData.item)}
-          ><wl-icon>settings</wl-icon></wl-button>
-          <wl-button fab flat inverted
-            class="fg red"
-            @click=${() => this._launchDeleteDialog(rowData.item)}
-          ><wl-icon>delete</wl-icon></wl-button>
+          <mwc-icon-button class="fg green" icon="assignment"
+            @click=${() => this._launchDetailDialog(rowData.item)}></mwc-icon-button>
+          <mwc-icon-button class="fg blue" icon="settings"
+            @click=${() => this._launchModifyDialog(rowData.item)}></mwc-icon-button>
+          <mwc-icon-button class="fg red" icon="delete"
+            @click=${() => this._launchDeleteDialog(rowData.item)}></mwc-icon-button>
         </div>
       `, root
     );
@@ -569,11 +504,11 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
    * reset all value to default in scheduler option input form in create dialog.
    * */
   _initializeCreateSchedulerOpts() {
-    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as Expansion;
+    const schedulerOptsInputForms = this.shadowRoot?.querySelector('#scheduler-options-input-form') as LablupExpansion;
     this.allowedSessionTypesSelect.items = this.allowedSessionTypes;
     this.allowedSessionTypesSelect.selectedItemList = ['interactive', 'batch'];
     this.resourceGroupSchedulerSelect.value = 'fifo';
-    schedulerOptsInputForms.checked = false;
+    schedulerOptsInputForms.open = false;
     if (this.timeoutInput?.value) {
       this.timeoutInput.value = '';
     }
@@ -721,9 +656,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           </mwc-button>
       </h4>
       <vaadin-grid theme="row-stripes column-borders compact" aria-label="Job list" .items="${this.resourceGroups}">
-        <vaadin-grid-column flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
+        <vaadin-grid-column frozen flex-grow="0" header="#" width="40px" .renderer=${this._indexRenderer}>
         </vaadin-grid-column>
-        <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Name')}" path="name" resizable>
+        <vaadin-grid-column frozen flex-grow="1" header="${_t('resourceGroup.Name')}" path="name" resizable>
         </vaadin-grid-column>
         <vaadin-grid-column flex-grow="1" header="${_t('resourceGroup.Description')}" path="description" resizable>
         </vaadin-grid-column>
@@ -739,7 +674,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
         <vaadin-grid-column resizable header="${_t('resourceGroup.WsproxyAddress')}" path="wsproxy_addr" resizable>
         </vaadin-grid-column>
         ` : html``}
-        <vaadin-grid-column flex-grow="1" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
+        <vaadin-grid-column frozen-to-end resizable width="150px" header="${_t('general.Control')}" .renderer=${this._boundControlRenderer}>
         </vaadin-grid-column>
       </vaadin-grid>
       <backend-ai-dialog id="resource-group-dialog" fixed backdrop blockscrolling>
@@ -789,6 +724,13 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <mwc-list-item value="${sched}">${sched}</mwc-list-item>
             `)}
           </mwc-select>
+          <backend-ai-multi-select
+                    open-up
+                    required
+                    id="allowed-session-types"
+                    label="${_t('resourceGroup.AllowedSessionTypes')}*"
+                    validation-message="${_t('credential.validation.PleaseSelectOptions')}"
+                    style="width:100%; --select-title-padding-left: 16px;"></backend-ai-multi-select>
           ${this.enableWSProxyAddr ? html`
           <mwc-textfield
                 id="resource-group-wsproxy-address"
@@ -814,16 +756,9 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
           </div>
           ${this.enableSchedulerOpts ? html`
             <br/>
-            <wl-expansion id="scheduler-options-input-form">
+            <lablup-expansion id="scheduler-options-input-form">
               <span slot="title">${_t('resourceGroup.SchedulerOptions')}</span>
               <div class="vertical layout flex">
-                <backend-ai-multi-select
-                    open-up
-                    required
-                    id="allowed-session-types"
-                    label="${_t('resourceGroup.AllowedSessionTypes')}*"
-                    validation-message="${_t('credential.validation.PleaseSelectOptions')}"
-                    style="width:100%;"></backend-ai-multi-select>
                 <mwc-textfield
                     type="number"
                     value="0"
@@ -849,7 +784,7 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
                     value="${this.resourceGroupInfo?.scheduler_opts?.config?.num_retries_to_skip ?? ''}"
                   ></mwc-textfield>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
             ` : html``}
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -990,8 +925,8 @@ export default class BackendAIResourceGroupList extends BackendAIPage {
               <h4>
                 ${_t('resourceGroup.Description')}
               </h4>
-              <wl-textarea readonly value="${this.resourceGroupInfo?.description ?? ''}">
-              </wl-textarea>
+              <mwc-textarea readonly value="${this.resourceGroupInfo?.description ?? ''}">
+              </mwc-textarea>
             </div>
           </div>` : ``
 }

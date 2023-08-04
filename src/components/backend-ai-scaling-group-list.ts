@@ -14,17 +14,8 @@ import '@vaadin/grid/vaadin-grid';
 
 import '../plastics/lablup-shields/lablup-shields';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/switch';
-import 'weightless/textarea';
-import 'weightless/textfield';
-import 'weightless/title';
-
 import '@material/mwc-button/mwc-button';
+
 import '@material/mwc-list/mwc-list-item';
 import {Switch} from '@material/mwc-switch';
 import {Select} from '@material/mwc-select';
@@ -46,7 +37,7 @@ import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
 
  <backend-ai-scaling-group-list active></backend-ai-scaling-group-list>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-scaling-group-list
  */
 
@@ -102,50 +93,12 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           padding: 5px 15px 5px 20px;
         }
 
-        wl-button {
-          --button-bg: var(--paper-light-blue-50);
-          --button-bg-hover: var(--paper-blue-100);
-          --button-bg-active: var(--paper-blue-600);
-        }
-
-        wl-button.delete {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-          margin-top: 20px;
-        }
-
-        backend-ai-dialog wl-textarea,
-        backend-ai-dialog wl-select {
-          margin-bottom: 20px;
-          --input-font-family: var(--general-font-family);
-        }
-
         backend-ai-dialog mwc-textfield,
         backend-ai-dialog mwc-textarea {
           width: 100%;
           margin: 10px auto 20px auto;
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-theme-primary: var(--general-textfield-selected-color);
-        }
-
-        backend-ai-dialog wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: #282828;
-          margin-bottom: 5px;
-        }
-
-        backend-ai-dialog wl-switch {
-          margin-bottom: 20px;
-          --switch-color-checked: #29b6f6;
-          --switch-bg-checked: #bbdefb;
-        }
-
-        wl-select {
-          --input-color-disabled: #222;
-          --input-label-color-disabled: #222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #ccc;
         }
 
         mwc-button[outlined] {
@@ -323,22 +276,19 @@ export default class BackendAIScalingGroupList extends BackendAIPage {
           id="controls"
           class="layout horizontal flex center"
         >
-          <wl-button fab flat inverted
-            icon="settings"
-            class="fg blue"
+          <mwc-icon-button class="fg blue"
+                           icon="settings"
             @click=${() => {
     this.selectedIndex = rowData.index;
     this.modifyScalingGroupActive.selected = this.scalingGroups[rowData.index].is_active;
     this._launchDialogById('#modify-scaling-group-dialog');
-  }}
-          ><wl-icon>settings</wl-icon></wl-button>
-          <wl-button fab flat inverted
-            icon="delete"
-            class="fg red"
+  }}></mwc-icon-button>
+          <mwc-icon-button class="fg red"
+                           icon="delete"
             @click=${() => {
     this.selectedIndex = rowData.index;
     this._launchDialogById('#delete-scaling-group-dialog');
-  }}><wl-icon>delete</wl-icon></wl-button>
+  }}></mwc-icon-button>
         </div>
       `, root
     );

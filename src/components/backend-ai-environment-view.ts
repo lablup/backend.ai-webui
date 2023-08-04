@@ -11,11 +11,6 @@ import {BackendAIPage} from './backend-ai-page';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-import 'weightless/tab';
-import 'weightless/tab-group';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-button';
 import {Tab} from '@material/mwc-tab';
@@ -51,22 +46,6 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
       IronFlexAlignment,
       // language=CSS
       css`
-          wl-tab-group {
-              --tab-group-indicator-bg: var(--paper-yellow-600);
-          }
-
-          wl-tab {
-              --tab-color: #666;
-              --tab-color-hover: #222;
-              --tab-color-hover-filled: #222;
-              --tab-color-active: var(--paper-yellow-900);
-              --tab-color-active-hover: var(--paper-yellow-900);
-              --tab-color-active-filled: #ccc;
-              --tab-bg-active: var(--paper-yellow-200);
-              --tab-bg-filled: var(--paper-yellow-200);
-              --tab-bg-active-hover: var(--paper-yellow-200);
-          }
-
           h3.tab {
             background-color: var(--general-tabbar-background-color);
             border-radius: 5px 5px 0px 0px;
@@ -89,19 +68,9 @@ export default class BackendAIEnvironmentView extends BackendAIPage {
               width: 100%;
           }
 
-          wl-card wl-card {
-              margin: 0;
-              padding: 0;
-              --card-elevation: 0;
-          }
-
           @media screen and (max-width: 805px) {
             mwc-tab, mwc-button {
               --mdc-typography-button-font-size: 10px;
-            }
-
-            wl-tab {
-              width: 5px;
             }
           }
       `

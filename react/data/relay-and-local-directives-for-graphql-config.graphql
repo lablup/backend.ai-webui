@@ -1,4 +1,3 @@
-# RELAY DIRECTIVES
 directive @relay_test_operation on QUERY | MUTATION | SUBSCRIPTION
 directive @inline on FRAGMENT_DEFINITION
 directive @no_inline(raw_response_type: Boolean) on FRAGMENT_DEFINITION
@@ -68,5 +67,4 @@ directive @alias(as: String) on FRAGMENT_SPREAD | INLINE_FRAGMENT
 directive @static on ARGUMENT_DEFINITION
 
 
-# CLIENT DIRECTIVES
 directive @skipOnClient(if: Boolean) on FIELD

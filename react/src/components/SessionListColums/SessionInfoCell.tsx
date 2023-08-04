@@ -7,13 +7,13 @@ import { Button, Form, Input, Typography, theme } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import Flex from "../Flex";
 import { useTranslation } from "react-i18next";
-import { useMutation as useTanMutation } from "react-query";
 import {
-  useBackendaiImageMetaData,
+  // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from "../../hooks";
 import ImageMetaIcon from "../ImageMetaIcon";
 import SessionKernelTag from "../SessionKernelTag";
+import { useTanMutation } from "../../hooks/reactQueryAlias";
 
 const isRunningStatus = (status: string = "") => {
   return [
@@ -51,7 +51,7 @@ const SessionInfoCell: React.FC<{
     sessionFrgmt
   );
 
-  const metadata = useBackendaiImageMetaData();
+  // const metadata = useBackendaiImageMetaData();
 
   const mutation = useTanMutation({
     mutationFn: (newName: string) => {
