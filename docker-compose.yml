@@ -1,7 +1,8 @@
-version: '3'
+version: "3.7"
+
 services:
-  web:
-    # Add to solve the error(image's platform not match host platform)
+
+  lit:
     platform: linux/amd64
     build:
       context: .
@@ -9,12 +10,32 @@ services:
     volumes:
       - .:/webui
     ports:
-      # webui react server
       - 3081:3081
-      # webui web socket proxy
-      - 5050:5050
-      # webui web-dev server
+    command: /scripts/dev-lit
+
+  react:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/webui
+    ports:
+      # development server
       - 9081:9081
-    command: /start-webui-dev
+    command: /scripts/dev-react
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    environment:
+      - IS_CONTAINER=1
+
+  wsproxy:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - .:/webui
+    ports:
+      - 5050:5050
+    command: /scripts/dev-wsproxy

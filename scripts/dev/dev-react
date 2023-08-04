@@ -1,0 +1,11 @@
+#!/bin/bash
+
+npm i
+
+npm run patchLib && \
+cd react && \
+npx concurrently -c "auto" \
+    --names \
+    "react-rely,react" \
+    "npm run relay -- --watch" \
+    "npm start"

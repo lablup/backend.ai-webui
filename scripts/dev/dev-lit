@@ -1,0 +1,10 @@
+#!/bin/bash
+
+npm i
+
+npm run patchLib && \
+npx concurrently -c "auto" \
+    --names \
+    "webcomponent,webdev" \
+    "./node_modules/typescript/bin/tsc --watch" \
+    "npx web-dev-server --node-resolve --port 3081 --hostname 127.0.0.1 --esbuild-target auto --app-index index.html --file-extensions .ts"
