@@ -195,6 +195,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
           color: var(--paper-blue-600);
+          background-color : #fafafa;
           --mdc-icon-size: 24px;
         }
 
@@ -1665,6 +1666,7 @@ export default class BackendAILogin extends BackendAIPage {
                         @keyup="${this._submitIfEnter}">
                     </mwc-textfield>
                     <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                        style="background-color: #fafafa;border-bottom: 1px inset #27824f;"
                         @click="${(e) => this._togglePasswordVisibility(e.target)}">
                     </mwc-icon-button-toggle>
                   </div>
