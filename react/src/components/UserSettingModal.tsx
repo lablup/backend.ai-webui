@@ -145,6 +145,22 @@ const UserSettingModal: React.FC<Props> = ({
           modify_user(email: $email, props: $props) {
             ok
             msg
+            user {
+              email
+              username
+              need_password_change
+              full_name
+              description
+              status
+              domain_name
+              role
+              groups {
+                id
+                name
+              }
+              totp_activated @skipOnClient(if: $isNotSupportTotp)
+              ...TOTPActivateModalFragment
+            }
           }
         }
       `
@@ -179,7 +195,6 @@ const UserSettingModal: React.FC<Props> = ({
         onCompleted(res) {
           if (res?.modify_user?.ok) {
             message.success(t("environment.SuccessfullyModified"));
-            updateFetchKey(new Date().toISOString());
           } else {
             message.error(res?.modify_user?.msg);
           }
