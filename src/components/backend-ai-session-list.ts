@@ -1495,7 +1495,7 @@ export default class BackendAISessionList extends BackendAIPage {
       this._requestDestroySession(sessionId, accessKey, forced);
     }).catch((err) => {
       if (err && err.message) {
-        if (err.statusCode == 404) {
+        if (err.statusCode == 500) {
           // Even if wsproxy address is invalid, session must be deleted.
           this._requestDestroySession(sessionId, accessKey, forced);
         } else {
