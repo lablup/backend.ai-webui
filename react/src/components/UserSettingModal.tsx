@@ -26,6 +26,7 @@ import { useTanMutation } from "../hooks/reactQueryAlias";
 import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
 import { useQuery } from "react-query";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 type User = UserSettingModalQuery$data["user"];
 
@@ -337,13 +338,28 @@ const UserSettingModal: React.FC<Props> = ({
                   toggleTOTPActivateModal();
                 } else {
                   if (user?.totp_activated) {
-                    mutationToRemoveTotp.mutate(user?.email || "", {
-                      onSuccess: () => {
-                        message.success(t("totp.RemoveTotpSetupCompleted"));
-                        updateFetchKey();
+                    form.setFieldValue("totp_activated", true);
+                    Modal.confirm({
+                      title: t("totp.TurnOffTotp"),
+                      icon: <ExclamationCircleFilled />,
+                      content: t("totp.ConfirmTotpRemovalBody"),
+                      okText: t("button.Yes"),
+                      okType: "danger",
+                      cancelText: t("button.No"),
+                      onOk() {
+                        mutationToRemoveTotp.mutate(user?.email || "", {
+                          onSuccess: () => {
+                            message.success(t("totp.RemoveTotpSetupCompleted"));
+                            updateFetchKey();
+                            form.setFieldValue("totp_activated", false);
+                          },
+                          onError: (err) => {
+                            console.log(err);
+                          },
+                        });
                       },
-                      onError: (err) => {
-                        console.log(err);
+                      onCancel() {
+                        form.setFieldValue("totp_activated", true);
                       },
                     });
                   }
