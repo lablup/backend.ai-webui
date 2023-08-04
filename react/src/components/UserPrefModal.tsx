@@ -1,26 +1,33 @@
 import React, { useEffect } from 'react';
-import { Modal, Input, Form, Select, Divider, notification } from 'antd';
+import {
+  Modal,
+  Input,
+  Form,
+  Select,
+  Divider,
+  message
+} from 'antd';
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from './DefaultProviders';
 import { passwordPattern } from './ResetPasswordRequired';
+import { useSuspendedBackendaiClient } from "../hooks";
+import { baiSignedRequestWithPromise } from '../helper';
+import { useTanMutation } from '../hooks/reactQueryAlias';
 
 const UserPrefModal : React.FC = () => {
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
 
-  const [api, contextHolder] = notification.useNotification();
-  const _openNotification = (message: string) => {
-    api.info({
-      message: message,
-      placement: "bottomRight"
-    });
+  const [messageApi, contextHolder] = message.useMessage();
+  const _showMessage = (message: string) => {
+    messageApi.info(message);
   };
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     isOpen: boolean;
-    userName: string;
+    full_name: string;
     userId: string;
     loggedAccount: {
       access_key: string;
@@ -37,13 +44,13 @@ const UserPrefModal : React.FC = () => {
   } catch (error) {
     parsedValue = {
       isOpen: false,
-      userName: "",
+      full_name: "",
       userId: "",
       loggedAccount: {access_key: ""},
       keyPairInfo: {keypairs:[{access_key: "", secret_key: ""}]}
     };
   };
-  const { isOpen, userName, userId, loggedAccount, keyPairInfo } = parsedValue;
+  const { isOpen, full_name, userId, loggedAccount, keyPairInfo } = parsedValue;
 
   let selectOptions: any[] = [];
   if (keyPairInfo.keypairs) {
@@ -52,12 +59,41 @@ const UserPrefModal : React.FC = () => {
     }
   };
 
+  const baiClient = useSuspendedBackendaiClient();
+  const mutationToUpdateUserFullName = useTanMutation({
+    mutationFn: (body: {
+      full_name: string;
+      email: string
+    }) => {
+      return baiSignedRequestWithPromise({
+        method: "POST",
+        url: `/auth/update-full-name`,
+        body,
+        client: baiClient,
+      });
+    }
+  });
+  const mutationToUpdateUserPassword = useTanMutation({
+    mutationFn: (body: {
+      old_password: string;
+      new_password: string;
+      new_password2: string;
+    }) => {
+      return baiSignedRequestWithPromise({
+        method: "POST",
+        url: `/auth/update-password`,
+        body,
+        client: baiClient,
+      });
+    }
+  });
+  
   useEffect(()=> {
     for(let i=0; i<selectOptions.length; i++) {
       if (loggedAccount.access_key === selectOptions[i].label) {
         form.setFieldsValue({
-          accessKeySelect: selectOptions[i].label,
-          secretKeyInput: selectOptions[i].value
+          access_key: selectOptions[i].label,
+          secret_key: selectOptions[i].value
         })
         break;
       }
@@ -68,53 +104,74 @@ const UserPrefModal : React.FC = () => {
     for (let i=0; i< keyPairInfo.keypairs.length; i++) {
       if (keyPairInfo.keypairs[i].access_key === value) {
         form.setFieldsValue({
-          secretKeyInput: keyPairInfo.keypairs[i].secret_key
+          secret_key: keyPairInfo.keypairs[i].secret_key
         });
         break;
       }
     }
   }
 
-  const _updateUserName = (newUserName: string) => {
-    if (newUserName === userName) {
-      console.log("close")
-      dispatchEvent("cancel", null);
-    } else {
+  const _updateUserName = (newFullName: string) => {
+    if (newFullName !== full_name) {
       //mutation
-      console.log("mutation userName")
+      _showMessage(t("webui.menu.FullnameUpdated"));
+      return;
     }
   };
 
   const _updatePassword = (oldPassword: string, newPassword: string, newPassword2: string) => {
     if (!oldPassword && !newPassword && !newPassword2) {
-      console.log("close");
       dispatchEvent("cancel", null);
+      return;
     }
     if (!oldPassword) {
-      _openNotification(t("webui.menu.InputOriginalPassword"));
-    } else if (!newPassword) {
-      _openNotification(t("webui.menu.InvalidPasswordMessage"));
-    } else if (newPassword !== newPassword2) {
-      _openNotification(t("webui.menu.NewPasswordMismatch"));
-    } else {
-      console.log("mutation password")
+      _showMessage(t("webui.menu.InputOriginalPassword"));
+      return;
+    }
+    if (!newPassword) {
+      _showMessage(t("webui.menu.InvalidPasswordMessage"));
+      return;
+    }
+    if (newPassword !== newPassword2) {
+      _showMessage(t("webui.menu.NewPasswordMismatch"));
+      return;
     }
     //mutation
+    _showMessage(t("webui.menu.PasswordUpdated"));
+    return;
   }
 
   const _onSubmit = () => {
     form.validateFields().then((values) => {
       console.log(values);
-      _updateUserName(values.userNameInput);
-      _updatePassword(values.prefOriginalPasswordInput, values.prefNewPasswordInput, values.prefNewPassword2Input);
-    })
-    .catch((errorInfo) => {
-      errorInfo.errorFields.map((error: {errors: string[]})=> {
-        _openNotification(error.errors[0])
-      })
+      mutationToUpdateUserFullName.mutate(
+        {
+          full_name: values.full_name,
+          email: userId,
+        }, {
+        onSuccess: () => {
+          console.log("good")
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
+      mutationToUpdateUserPassword.mutate(
+        {
+          old_password: values.originalPassword,
+          new_password: values.newPassword,
+          new_password2: values.newPasswordConfirm
+        }, {
+          onSuccess: () => {
+            console.log("good password");
+          },
+          onError: (error) => {
+            console.log(error)
+          }
+        }
+      )
     });
   };
-
 
   return (
     <>
@@ -133,9 +190,9 @@ const UserPrefModal : React.FC = () => {
           form={form}
         >
           <Form.Item
-            name='userNameInput'
+            name='full_name'
             label={t('webui.menu.FullName')}
-            initialValue={userName}
+            initialValue={full_name}
             rules={[
               () => ({
                 validator(_, value) {
@@ -152,7 +209,7 @@ const UserPrefModal : React.FC = () => {
             <Input/>
           </Form.Item>
           <Form.Item
-            name='accessKeySelect'
+            name='access_key'
             label={t('general.AccessKey')}
             rules={[{ required: true }]}
           >
@@ -163,19 +220,19 @@ const UserPrefModal : React.FC = () => {
             </Select>
           </Form.Item>
           <Form.Item
-            name='secretKeyInput'
+            name='secret_key'
             label={t('general.SecretKey')}
           >
             <Input disabled/>
           </Form.Item>
           <Form.Item
-            name='prefOriginalPasswordInput'
+            name='originalPassword'
             label={t('webui.menu.OriginalPassword')}
           >
             <Input.Password/>
           </Form.Item>
           <Form.Item
-            name='prefNewPasswordInput'
+            name='newPassword'
             label={t('webui.menu.NewPassword')}
             rules={[
               {
@@ -187,12 +244,12 @@ const UserPrefModal : React.FC = () => {
             <Input.Password/>
           </Form.Item>
           <Form.Item
-            name='prefNewPassword2Input'
+            name='newPasswordConfirm'
             label={t('webui.menu.NewPasswordAgain')}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("prefNewPasswordInput") === value) {
+                  if (!value || getFieldValue("newPassword") === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
