@@ -51,7 +51,7 @@ export default class BackendAIPainKiller {
     'integrity error: duplicate key value violates unique constraint "pk_scaling_groups"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) already exists.[\\n]': 'error.ScalingGroupAlreadyExist',
     'integrity error: duplicate key value violates unique constraint "uq_users_username"[\\n]DETAIL:  Key \\(username\\)=\\([\\w]+\\) already exists.[\\n]': 'error.UserNameAlreadyExist',
     'server responded failure: 400 Bad Request - Missing or invalid API parameters. (Your resource quota is exceeded. (cpu=24 mem=512g cuda.shares=80))': 'error.ResourceLimitExceed',
-    'integrity error: \\(sqlalchemy.dialects.postgresql.asyncpg.IntegrityError\\) \\<class \'asyncpg.exceptions.ForeignKeyViolationError\'\\>: update or delete on table "keypair_resource_policies" violates foreign key constraint "fk_keypairs_resource_policy_keypair_resource_policies" on table "keypairs"[\\n]DETAIL:  Key \\(name\\)=\\([\\w]+\\) is still referenced from table "keypairs".[\\n]\\w*': 'error.ResourcePolicyStillReferenced',
+    '\\w*Key \\(name\\)=\\([\\w]+\\) is still referenced from table "keypairs".\\w*': 'error.ResourcePolicyStillReferenced',
     'Your resource request is smaller than the minimum required by the image. (\\w*)': 'error.SmallerResourceThenImageRequires',
   };
   public errorMessageTable: any;
