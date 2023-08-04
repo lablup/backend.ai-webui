@@ -1,7 +1,6 @@
 import React, { useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useMutation } from "react-relay";
-import { useQuery } from "react-query";
 import { useLazyLoadQuery } from "react-relay";
 import {
   UserSettingModalQuery,
@@ -26,6 +25,7 @@ import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
+import { useQuery } from "react-query";
 
 type User = UserSettingModalQuery$data["user"];
 
@@ -80,21 +80,20 @@ const UserSettingModal: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   let totpSupported = false;
-  let isLoadingManagerSupportingTOTP = false;
-  // let {
-  //   data: isManagerSupportingTOTP,
-  //   isLoading: isLoadingManagerSupportingTOTP,
-  // } = useQuery(
-  //   "isManagerSupportingTOTP",
-  //   () => {
-  //     return baiClient.isManagerSupportingTOTP();
-  //   },
-  //   {
-  //     // for to render even this fail query failed
-  //     suspense: false,
-  //   }
-  // );
-  // totpSupported = baiClient?.supports("2FA") && isManagerSupportingTOTP;
+  let {
+    data: isManagerSupportingTOTP,
+    isLoading: isLoadingManagerSupportingTOTP,
+  } = useQuery(
+    "isManagerSupportingTOTP",
+    () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    {
+      // for to render even this fail query failed
+      suspense: false,
+    }
+  );
+  totpSupported = baiClient?.supports("2FA") && isManagerSupportingTOTP;
 
   const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
@@ -110,7 +109,8 @@ const UserSettingModal: React.FC<Props> = ({
           full_name
           description
           status
-          domain_name @skip(if: $isNotSupportTotp)
+          domain_name
+          role
           groups {
             id
             name
