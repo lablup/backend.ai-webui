@@ -1493,6 +1493,9 @@
     "ScanQRToEnable": "이중 인증 프로그램으로 하단의 QR 코드를 스캔하여 이중 인증을 인증기에 등록하세요.",
     "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다.",
     "EnterConfirmationCode": "이제 확인을 위해 인증기에서 보이는 6자리 숫자를 입력하세요.",
-    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?"
+    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?",
+    "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
+    "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
+    "TurnOffTotp": "이중 인증 비활성화"
   }
 }
