@@ -1,8 +1,6 @@
 module.exports = {
-  schema: [
-    // To update graphql schema, run `./backend.ai mgr gql show` and copy the output to schema.graphql
-    "./react/data/schema.graphql",
-    // "./react/data/relay-and-local-directives-for-graphql-config.graphql"
-  ],
+  // To update the GraphQL schema,
+  //  please refer to the "How to update GraphQL schema" section of the README.md file.
+  schema: "./react/data/merged_schema_for_graphql_config.graphql",
   documents: ["./react/src/**/*.{graphql,ts,tsx}"],
 };

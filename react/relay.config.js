@@ -15,6 +15,16 @@ fs.writeFileSync(
   mergedSchema
 );
 
+fs.writeFileSync(
+  path.join(__dirname, "./data/merged_schema_for_graphql_config.graphql"),
+  mergedSchema +
+    "\n" +
+    fs.readFileSync(
+      path.join(__dirname, "./data/relay-directives.graphql"),
+      "utf8"
+    )
+);
+
 module.exports = {
   // ...
   // Configuration options accepted by the `relay-compiler` command-line tool and `babel-plugin-relay`.

@@ -41,6 +41,9 @@ This is a react project to integrate WebUI by wrapping web components.
     }
     ```
 
+## How to update the GraphQL schema:
+1. Run `./backend.ai mgr gql show` on your backend.ai and copy the output to `react/data/schema.graphql`.
+2. Rerun `yarn relay` in the `/react` directory to update the `react/data/merged_schema.graphql` file.
 ## Limitations & Recommendation
 - static assets
   - put that file to `/resources`, and use the path directly.
