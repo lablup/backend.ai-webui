@@ -355,8 +355,8 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Toggle icon accornding to the status of event-target
-   * 
-   * @param {event} e 
+   *
+   * @param {event} e
    */
   _toggleRunningIcon(e) {
     const button = e.target;
@@ -369,7 +369,7 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Set current pipelineJobInfo from argument
-   * 
+   *
    * @param {PipelineJob} pipelineJob
    */
   _togglePipelineJobExecution(pipelineJob: PipelineJob) {
@@ -378,15 +378,15 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Send request to stop running pipeline job by id
-   * 
-   * @param {PipelineJob} pipelineJob 
+   *
+   * @param {PipelineJob} pipelineJob
    * @returns {Promise}
    */
   _stopPipelineJobExecution(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
     /**
      * TODO: update the status of selected pipelineJob
-     * 
+     *
      */
     return globalThis.backendaiclient.pipelineJob.stop(this.pipelineJobInfo.id).then((res) => {
       console.log(res);
@@ -402,8 +402,8 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Load current pipeline job information and trigger tab-change to pipeline-job-view
-   * 
-   * @param {PipelineJob} pipelineJob 
+   *
+   * @param {PipelineJob} pipelineJob
    */
   _loadPipelineJobView(pipelineJob: PipelineJob) {
     this.pipelineJobInfo = pipelineJob;
@@ -464,7 +464,7 @@ export default class PipelineJobList extends BackendAIPage {
    * Render rowData according to type of the column (plain, filtered, sorted)
    */
   _setVaadinGridRenderers() {
-    
+
     // plain columns
     this.pipelineJobGridColumnList[0].renderer = (root, column, rowData) => { // #
       root.textContent = rowData.index + 1;
@@ -537,14 +537,14 @@ export default class PipelineJobList extends BackendAIPage {
           <div class="layout horizontal center flex">
             <div class="layout horizontal center configuration">
               ${rowData.item.yaml.mounts.length > 0 ? html`
-                <wl-icon class="fg green indicator">folder_open</wl-icon>
+                <mwc-icon class="fg green indicator">folder_open</mwc-icon>
                 <button class="mount-button"
                   @mouseenter="${(e) => this._createMountedFolderDropdown(e, mountedFolderList)}"
                   @mouseleave="${() => this._removeMountedFolderDropdown()}">
                   ${mountedFolderList.join(', ')}
                 </button>
               ` : html`
-              <wl-icon class="indicator no-mount">folder_open</wl-icon>
+              <mwc-icon class="indicator no-mount">folder_open</mwc-icon>
               <span class="no-mount">No mount</span>
               `}
             </div>
@@ -555,7 +555,7 @@ export default class PipelineJobList extends BackendAIPage {
 
   /**
    * Render pipeline job detail dialog
-   * 
+   *
    * @returns {string} stringified html
    */
   renderPipelineJobDetailDialogTemplate() {
@@ -612,7 +612,7 @@ export default class PipelineJobList extends BackendAIPage {
             </mwc-list-item>
             <mwc-list-item id="workflow-item" twoline>
               <span><strong>View Workflow File</strong></span>
-              <mwc-button id="view-workflow-button" unelevated slot="secondary" 
+              <mwc-button id="view-workflow-button" unelevated slot="secondary"
                 icon="assignment" label="View workflow file"
                 @click="${() => this._launchWorkFlowDialog()}">
               </mwc-button>

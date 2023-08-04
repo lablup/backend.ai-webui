@@ -16,12 +16,6 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-switch';
 import {Select} from '@material/mwc-select';
 
-import 'weightless/card';
-import 'weightless/checkbox';
-import {Expansion} from 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
@@ -122,12 +116,27 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           width: 186px;
         }
 
-        #scaling-group-select-box {
-          min-height: 100px;
-          padding-top: 20px;
-          padding-left: 20px;
+        #scaling-group-select-box.horizontal {
+          min-height: 80px;
+          min-width: 252px;
+          margin: 0;
+          padding: 0;
+        }
+
+        #scaling-group-select-box.vertical {
+          padding: 10px 20px;
+          min-height: 83px; /* 103px-20px */
           background-color: #F6F6F6;
-          margin-bottom: 15px;
+        }
+
+        #scaling-group-select-box.horizontal mwc-select {
+          width: 250px;
+          height: 58px;
+        }
+
+        #scaling-group-select-box.vertical mwc-select {
+          width: 305px;
+          height: 58px;
         }
 
         .vertical-panel #resource-gauges {
@@ -186,7 +195,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           background-color: transparent;
         }
 
-        wl-icon {
+        mwc-icon {
           --icon-size: 24px;
         }
 
@@ -242,8 +251,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         #scaling-group-select-box mwc-select {
-          width: 305px;
-          height: 58px;
           border: 0.1em solid #ccc;
           font-family: var(--general-font-family);
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
@@ -280,15 +287,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           --mdc-select-outlined-hover-border-color: #dddddd;
          background-color: white!important;
          border-radius: 5px;
-        }
-
-        wl-button.resource-button.iron-selected {
-          --button-color: var(--paper-red-600);
-          --button-bg: var(--paper-red-600);
-          --button-bg-active: var(--paper-red-600);
-          --button-bg-hover: var(--paper-red-600);
-          --button-bg-active-flat: var(--paper-orange-50);
-          --button-bg-flat: var(--paper-orange-50);
         }
 
         .resource-button h4 {
@@ -352,16 +350,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           padding-left: 0;
           margin-left: 0;
           margin-bottom: 1px;
-        }
-
-        wl-button[fab] {
-          --button-fab-size: 70px;
-          border-radius: 6px;
-        }
-
-        wl-label {
-          margin-right: 10px;
-          outline: none;
         }
 
         .vertical-card > #resource-gauges > .monitor > .resource-name {
@@ -475,12 +463,10 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
       document.addEventListener('backend-ai-connected', () => {
         this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
         this._updatePageVariables(true);
-        this._disableEnterKey();
       }, {once: true});
     } else {
       this.project_resource_monitor = this.resourceBroker.allow_project_resource_monitor;
       await this._updatePageVariables(true);
-      this._disableEnterKey();
     }
   }
 
@@ -657,17 +643,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     }
   }
 
-  _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
-      // remove protected property assignment
-      element.onkeydown = (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault();
-        }
-      };
-    });
-  }
-
   _numberWithPostfix(str, postfix = '') {
     if (isNaN(parseInt(str))) {
       return '';
@@ -680,7 +655,8 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <div id="scaling-group-select-box" class="layout horizontal start-justified"></div>
+      <div class="layout ${this.direction} justified flex wrap">
+      <div id="scaling-group-select-box" class="layout horizontal center-justified ${this.direction}"></div>
       <div class="layout ${this.direction}-card flex wrap">
         <div id="resource-gauges" class="layout ${this.direction} ${this.direction}-panel resources flex wrap">
           <div class="layout horizontal center-justified monitor">
@@ -896,27 +872,18 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
           </mwc-switch>
         </div>
       </div>
-      ${this.direction === 'vertical' ? html`
+      </div>
       <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
-        <div class="layout horizontal center start-justified resource-legend-stack">
+        <div class="layout horizontal center ${this.direction === 'vertical' ? 'start-justified' : 'end-justified'}
+                    resource-legend-stack">
           <div class="resource-legend-icon start"></div>
           <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
         </div>
-        <div class="layout horizontal center start-justified">
+        <div class="layout horizontal center ${this.direction === 'vertical' ? 'start-justified' : 'end-justified'}"">
           <div class="resource-legend-icon end"></div>
           <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
         </div>
-      </div>` : html`
-      <div class="vertical start-justified layout ${this.direction}-card" id="resource-legend">
-        <div class="layout horizontal center end-justified resource-legend-stack">
-          <div class="resource-legend-icon start"></div>
-          <span class="resource-legend">${_t('session.launcher.CurrentResourceGroup')} (${this.scaling_group})</span>
-        </div>
-        <div class="layout horizontal center end-justified">
-          <div class="resource-legend-icon end"></div>
-          <span class="resource-legend">${_t('session.launcher.UserResourceLimit')}</span>
-        </div>
-      </div>`}
+      </div>
       ${this.direction === 'vertical' && this.project_resource_monitor === true &&
     (this.total_project_slot.cpu > 0 || this.total_project_slot.cpu === Infinity) ? html`
       <hr />
@@ -924,7 +891,7 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         <div class="flex"></div>
         <div class="layout horizontal center-justified monitor">
           <div class="layout vertical center center-justified" style="margin-right:5px;">
-            <wl-icon class="fg blue">group_work</wl-icon>
+            <mwc-icon class="fg blue">group_work</mwc-icon>
             <span class="gauge-name">${_t('session.launcher.Project')}</span>
           </div>
           <div class="layout vertical start-justified wrap short-indicator">

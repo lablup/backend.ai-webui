@@ -1,3 +1,5 @@
+import { useSuspendedBackendaiClient } from "../hooks";
+
 export const newLineToBrElement = (
   text: string,
   separatorRegExp = /(<br\s*\/?>|\n)/
@@ -20,6 +22,25 @@ export const baiSignedRequestWithPromise = ({
 }) => {
   let request = client?.newSignedRequest(method, url, body, null);
   return client?._wrapWithPromise(request);
+};
+
+export const useBaiSignedRequestWithPromise = () => {
+  const baiClient = useSuspendedBackendaiClient();
+  return ({
+    method,
+    url,
+    body = null,
+  }: {
+    method: string;
+    url: string;
+    body?: any;
+  }) =>
+    baiSignedRequestWithPromise({
+      method,
+      url,
+      body,
+      client: baiClient,
+    });
 };
 
 /**

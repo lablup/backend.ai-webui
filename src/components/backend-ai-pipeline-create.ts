@@ -11,7 +11,6 @@ import '@material/mwc-list';
 import {Select} from '@material/mwc-select';
 import {TextField} from '@material/mwc-textfield';
 
-import 'weightless/card';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
 import {
