@@ -80,26 +80,27 @@ const UserSettingModal: React.FC<Props> = ({
 
   const baiClient = useSuspendedBackendaiClient();
   let totpSupported = false;
-  let {
-    data: isManagerSupportingTOTP,
-    isLoading: isLoadingManagerSupportingTOTP,
-  } = useQuery(
-    "isManagerSupportingTOTP",
-    () => {
-      return baiClient.isManagerSupportingTOTP();
-    },
-    {
-      // for to render even this fail query failed
-      suspense: false,
-    }
-  );
-  totpSupported = baiClient?.supports("2FA") && isManagerSupportingTOTP;
+  let isLoadingManagerSupportingTOTP = false;
+  // let {
+  //   data: isManagerSupportingTOTP,
+  //   isLoading: isLoadingManagerSupportingTOTP,
+  // } = useQuery(
+  //   "isManagerSupportingTOTP",
+  //   () => {
+  //     return baiClient.isManagerSupportingTOTP();
+  //   },
+  //   {
+  //     // for to render even this fail query failed
+  //     suspense: false,
+  //   }
+  // );
+  // totpSupported = baiClient?.supports("2FA") && isManagerSupportingTOTP;
 
   const { user, loggedInUser } = useLazyLoadQuery<UserSettingModalQuery>(
     graphql`
       query UserSettingModalQuery(
         $email: String
-        $isTOTPSupported: Boolean!
+        $isNotSupportTotp: Boolean!
         $loggedInUserEmail: String
       ) {
         user(email: $email) {
@@ -109,13 +110,12 @@ const UserSettingModal: React.FC<Props> = ({
           full_name
           description
           status
-          domain_name
-          role
+          domain_name @skip(if: $isNotSupportTotp)
           groups {
             id
             name
           }
-          totp_activated @include(if: $isTOTPSupported)
+          totp_activated @skipOnClient(if: $isNotSupportTotp)
           ...TOTPActivateModalFragment
         }
         loggedInUser: user(email: $loggedInUserEmail) {
@@ -125,7 +125,7 @@ const UserSettingModal: React.FC<Props> = ({
     `,
     {
       email: userEmail,
-      isTOTPSupported: totpSupported ?? false,
+      isNotSupportTotp: !totpSupported,
       loggedInUserEmail: baiClient?.email ?? "",
     },
     {
@@ -140,6 +140,7 @@ const UserSettingModal: React.FC<Props> = ({
         mutation UserSettingModalMutation(
           $email: String!
           $props: ModifyUserInput!
+          $isNotSupportTotp: Boolean!
         ) {
           modify_user(email: $email, props: $props) {
             ok
@@ -173,6 +174,7 @@ const UserSettingModal: React.FC<Props> = ({
         variables: {
           email: values?.email || "",
           props: input,
+          isNotSupportTotp: !totpSupported,
         },
         onCompleted(res) {
           if (res?.modify_user?.ok) {

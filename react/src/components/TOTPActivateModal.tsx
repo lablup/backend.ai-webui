@@ -42,7 +42,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     graphql`
       fragment TOTPActivateModalFragment on User {
         email
-        totp_activated
+        totp_activated @skipOnClient(if: $isNotSupportTotp)
       }
     `,
     userFrgmt
