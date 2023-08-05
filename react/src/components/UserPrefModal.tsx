@@ -111,11 +111,21 @@ const UserPrefModal : React.FC = () => {
     }
   }
 
-  const _updateUserName = (newFullName: string) => {
-    if (newFullName !== full_name) {
-      //mutation
-      _showMessage(t("webui.menu.FullnameUpdated"));
-      return;
+  const _updateFullName = (newFullName: string) => {
+    if (full_name !== newFullName) {
+      mutationToUpdateUserFullName.mutate(
+        {
+          full_name: newFullName,
+          email: userId,
+        }, {
+        onSuccess: () => {
+          _showMessage(t("webui.menu.FullnameUpdated"));
+          dispatchEvent("updateFullName",{ newFullName });
+        },
+        onError: (error) => {
+          console.log(error);
+        }
+      });
     }
   };
 
@@ -136,40 +146,33 @@ const UserPrefModal : React.FC = () => {
       _showMessage(t("webui.menu.NewPasswordMismatch"));
       return;
     }
-    //mutation
-    _showMessage(t("webui.menu.PasswordUpdated"));
-    return;
+    mutationToUpdateUserPassword.mutate(
+      {
+        old_password: oldPassword,
+        new_password: newPassword,
+        new_password2: newPassword2
+      }, {
+        onSuccess: () => {
+          _showMessage(t("webui.menu.PasswordUpdated"));
+          form.setFieldsValue({
+            originalPassword: "",
+            newPassword: "",
+            newPasswordConfirm: ""
+          })
+        },
+        onError: (error) => {
+          console.log(error)
+        }
+      }
+    )
   }
 
   const _onSubmit = () => {
     form.validateFields().then((values) => {
-      console.log(values);
-      mutationToUpdateUserFullName.mutate(
-        {
-          full_name: values.full_name,
-          email: userId,
-        }, {
-        onSuccess: () => {
-          console.log("good")
-        },
-        onError: (error) => {
-          console.log(error);
-        }
-      });
-      mutationToUpdateUserPassword.mutate(
-        {
-          old_password: values.originalPassword,
-          new_password: values.newPassword,
-          new_password2: values.newPasswordConfirm
-        }, {
-          onSuccess: () => {
-            console.log("good password");
-          },
-          onError: (error) => {
-            console.log(error)
-          }
-        }
-      )
+      _updateFullName(values.full_name);
+      _updatePassword(values.originalPassword, values.newPassword, values.newPasswordConfirm);
+      dispatchEvent("cancel",null);
+      dispatchEvent("refresh",null);
     });
   };
 
