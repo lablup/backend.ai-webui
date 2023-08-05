@@ -124,6 +124,11 @@ const UserPrefModal : React.FC = () => {
         },
         onError: (error) => {
           console.log(error);
+        },
+        onSettled: () => {
+          form.setFieldsValue({
+            full_name: full_name
+          })
         }
       });
     }
@@ -154,14 +159,16 @@ const UserPrefModal : React.FC = () => {
       }, {
         onSuccess: () => {
           _showMessage(t("webui.menu.PasswordUpdated"));
+        },
+        onError: (error) => {
+          console.log(error)
+        },
+        onSettled: () => {
           form.setFieldsValue({
             originalPassword: "",
             newPassword: "",
             newPasswordConfirm: ""
           })
-        },
-        onError: (error) => {
-          console.log(error)
         }
       }
     )
