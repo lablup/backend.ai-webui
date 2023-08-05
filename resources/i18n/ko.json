@@ -37,6 +37,7 @@
       "NewPassword": "새 비밀번호",
       "NewPasswordAgain": "새 비밀번호 (재입력)",
       "InputOriginalPassword": "기존 비밀번호를 입력해주세요.",
+      "InputNewPassword": "새 비밀번호를 입력해주세요.",
       "InvalidPasswordMessage": "영문자, 숫자, 특수 문자를 하나 이상 포함해서 8자 이상 입력하세요",
       "NewPasswordMismatch": "새로 입력한 두 비밀번호가 일치하지 않습니다.",
       "PasswordMismatch": "비밀번호가 일치하지 않습니다",

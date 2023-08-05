@@ -20,9 +20,18 @@ const UserPrefModal : React.FC = () => {
   const [form] = Form.useForm();
 
   const [messageApi, contextHolder] = message.useMessage();
-  const _showMessage = (message: string) => {
-    messageApi.info(message);
+  const _showSuccessMessage = (successMessage: string) => {
+    messageApi.open({
+      type: "success",
+      content: successMessage
+    });
   };
+  const _showErrorMessage = (errorMessage: string) => {
+    messageApi.open({
+      type: "error",
+      content: errorMessage
+    })
+  }
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -119,11 +128,11 @@ const UserPrefModal : React.FC = () => {
           email: userId,
         }, {
         onSuccess: () => {
-          _showMessage(t("webui.menu.FullnameUpdated"));
+          _showSuccessMessage(t("webui.menu.FullnameUpdated"));
           dispatchEvent("updateFullName",{ newFullName });
         },
-        onError: (error) => {
-          console.log(error);
+        onError: (error: any) => {
+          _showErrorMessage(error.message);
         },
         onSettled: () => {
           form.setFieldsValue({
@@ -140,15 +149,15 @@ const UserPrefModal : React.FC = () => {
       return;
     }
     if (!oldPassword) {
-      _showMessage(t("webui.menu.InputOriginalPassword"));
+      _showErrorMessage(t("webui.menu.InputOriginalPassword"));
       return;
     }
     if (!newPassword) {
-      _showMessage(t("webui.menu.InvalidPasswordMessage"));
+      _showErrorMessage(t("webui.menu.InputNewPassword"));
       return;
     }
     if (newPassword !== newPassword2) {
-      _showMessage(t("webui.menu.NewPasswordMismatch"));
+      _showErrorMessage(t("webui.menu.NewPasswordMismatch"));
       return;
     }
     mutationToUpdateUserPassword.mutate(
@@ -158,10 +167,11 @@ const UserPrefModal : React.FC = () => {
         new_password2: newPassword2
       }, {
         onSuccess: () => {
-          _showMessage(t("webui.menu.PasswordUpdated"));
+          _showSuccessMessage(t("webui.menu.PasswordUpdated"));
+          dispatchEvent("cancel",null);
         },
-        onError: (error) => {
-          console.log(error)
+        onError: (error: any) => {
+          _showErrorMessage(error.message);
         },
         onSettled: () => {
           form.setFieldsValue({
@@ -178,7 +188,6 @@ const UserPrefModal : React.FC = () => {
     form.validateFields().then((values) => {
       _updateFullName(values.full_name);
       _updatePassword(values.originalPassword, values.newPassword, values.newPasswordConfirm);
-      dispatchEvent("cancel",null);
       dispatchEvent("refresh",null);
     });
   };
