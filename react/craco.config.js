@@ -21,7 +21,7 @@ module.exports = {
         "/resources",
         "/node_modules",
       ],
-      target: process.env.IS_CONTAINER ? "http://host.docker.internal:3081" : "http://localhost:3081",
+      target: "http://localhost:3081",
     },
     watchFiles: [
       "../index.html",

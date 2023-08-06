@@ -7,8 +7,8 @@ ENV PATH="/home/linuxbrew/.linuxbrew/bin:${PATH}"
 RUN brew install watchman
 
 WORKDIR /webui
-COPY ./scripts/dev /scripts
+COPY ./scripts/webui-dev /start-webui-dev
 
 # Add for substitution and authorization
-RUN find /scripts -type f -exec sed -i 's/\r//' {} \; \
-    && find /scripts -type f -exec chmod +x {} \;
+RUN sed -i 's/\r//' /start-webui-dev \
+    && chmod +x /start-webui-dev

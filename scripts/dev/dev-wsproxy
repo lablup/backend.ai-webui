@@ -1,4 +1,0 @@
-#!/bin/bash
-
-make compile ws_proxy
-npm run wsproxy
