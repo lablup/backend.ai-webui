@@ -1,9 +1,7 @@
 #!/bin/bash
 
 npm i
-# make clean
 make compile_wsproxy
-
-npm run wsproxy &
-npm run build:d &
+npm run wsproxy & 
+npm run build:d & 
 npm run server:d
