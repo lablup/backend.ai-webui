@@ -107,6 +107,9 @@ const UserPrefModal : React.FC = () => {
         break;
       }
     }
+    form.setFieldsValue({
+      full_name: full_name
+    });
   });
 
   const _onSelectAccessKey = (value: string) => {
@@ -129,7 +132,7 @@ const UserPrefModal : React.FC = () => {
         }, {
         onSuccess: () => {
           _showSuccessMessage(t("webui.menu.FullnameUpdated"));
-          dispatchEvent("updateFullName",{ newFullName });
+          dispatchEvent("updateFullName", { newFullName });
         },
         onError: (error: any) => {
           _showErrorMessage(error.message);
@@ -178,10 +181,10 @@ const UserPrefModal : React.FC = () => {
             originalPassword: "",
             newPassword: "",
             newPasswordConfirm: ""
-          })
+          });
         }
       }
-    )
+    );
   }
 
   const _onSubmit = () => {
@@ -211,7 +214,6 @@ const UserPrefModal : React.FC = () => {
           <Form.Item
             name='full_name'
             label={t('webui.menu.FullName')}
-            initialValue={full_name}
             rules={[
               () => ({
                 validator(_, value) {
