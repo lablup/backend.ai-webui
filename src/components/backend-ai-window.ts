@@ -14,8 +14,8 @@ type windowInfo = {
   width: number,
   height: number
 }
-type windowType = 'win' | 'widget';
-type viewType = 'win' | 'tab';
+type windowType = 'win' | 'widget' | 'page';
+type viewType = 'win' | 'tab' | 'spa';
 
 /**
  Backend AI Window Shell

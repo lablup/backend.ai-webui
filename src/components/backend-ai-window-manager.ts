@@ -7,7 +7,7 @@ import {customElement, state} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
 
-type viewType = 'win' | 'tab';
+type viewType = 'win' | 'tab' | 'spa';
 
 /**
  Backend AI Window Manager
