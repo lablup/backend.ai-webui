@@ -382,7 +382,32 @@
     "Running": "실행중",
     "Finished": "종료",
     "Others": "기타",
-    "Services": "모델 서비스"
+    "Services": "모델 서비스",
+    "StartNewServing": "새 서비스 시작",
+    "ServiceName": "서비스 이름",
+    "OpenToPublic": "앱을 외부에 공개",
+    "DesiredRoutingCount": "원하는 라우팅 수",
+    "DesiredSessionCount": "원하는 세션 수",
+    "EndpointName": "엔드포인트 이름",
+    "EndpointId": "엔드포인트 ID",
+    "Controls": "제어",
+    "Status": "상태",
+    "RoutingsCount": "라우팅 수",
+    "Active/Total": "활성/전체",
+    "Public": "공개",
+    "EditModelService": "모델 서비스 수정",
+    "OnlyAllowsNonNegativeIntegers": "0 이상을 입력해주세요.",
+    "RoutingInfo": "라우팅 정보",
+    "ServiceInfo": "서비스 정보",
+    "StartService": "서비스 시작",
+    "SessionOwner": "세션 소유자",
+    "ServiceEndpoint": "서비스 엔드포인트",
+    "NoServiceEndpoint": "서비스 엔드포인트가 없습니다.",
+    "RoutesInfo": "라우트 정보",
+    "RouteId": "라우트 ID",
+    "SessionId": "세션 ID",
+    "TrafficRatio": "트래픽 비율",
+    "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: "
   },
   "button": {
     "Cancel": "취소",
@@ -1468,6 +1493,9 @@
     "ScanQRToEnable": "이중 인증 프로그램으로 하단의 QR 코드를 스캔하여 이중 인증을 인증기에 등록하세요.",
     "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다.",
     "EnterConfirmationCode": "이제 확인을 위해 인증기에서 보이는 6자리 숫자를 입력하세요.",
-    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?"
+    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?",
+    "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
+    "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
+    "TurnOffTotp": "이중 인증 비활성화"
   }
 }
