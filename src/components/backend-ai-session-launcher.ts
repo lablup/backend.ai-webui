@@ -3456,37 +3456,33 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                        @change="${this._getSchedulableTime}"
                                        style="display:none;"></vaadin-date-time-picker>
             </div>
-            <div class="horizontal layout center justified">
-              <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
-              <mwc-button
-                unelevated
-                icon="rule"
-                label="${_text('session.launcher.Config')}"
-                style="width:auto;margin-right:15px;"
-                @click="${() => this._showEnvDialog()}"></mwc-button>
-            </div>
-            <div class="environment-variables-container" style="margin-top:18px;">
-              ${this.environ.length > 0 ? html`
-                <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
-                  <div role="listbox">
-                    <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
-                    ${this.environ.map((item) => html`
-                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
-                    `)}
+            <lablup-expansion leftIconName="expand_more"
+                              rightIconName="settings"
+                              .rightCustomFunction="${() => this._showEnvDialog()}">
+              <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <div class="environment-variables-container">
+                ${this.environ.length > 0 ? html`
+                  <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
+                    <div role="listbox">
+                      <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.name}"></mwc-textfield>
+                      `)}
+                    </div>
+                    <div role="listbox" style="margin-left:15px;">
+                      <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.value}"></mwc-textfield>
+                      `)}
+                    </div>
                   </div>
-                  <div role="listbox" style="margin-left:15px;">
-                    <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
-                    ${this.environ.map((item) => html`
-                      <mwc-textfield disabled value="${item.value}"></mwc-textfield>
-                    `)}
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoEnvConfigured')}</span>
                   </div>
-                </div>
-              ` : html`
-                <div class="vertical layout center flex blank-box">
-                  <span>${_t('session.launcher.NoEnvConfigured')}</span>
-                </div>
-              `}
-            </div>
+                `}
+              </div>
+            </lablup-expansion>
             <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
