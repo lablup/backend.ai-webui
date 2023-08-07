@@ -28,6 +28,7 @@ import {Menu} from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '@material/mwc-formfield';
+import '@material/mwc-switch';
 import '@vaadin/tooltip';
 
 import toml from 'markty-toml';

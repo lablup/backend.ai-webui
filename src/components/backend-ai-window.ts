@@ -141,6 +141,7 @@ export default class BackendAIWindow extends LitElement {
           border-radius: 0;
           box-shadow: none;
           position: absolute;
+          top: 64px!important;
           resize: both;
           overflow: hidden;
           animation: fadeIn 0.3s;

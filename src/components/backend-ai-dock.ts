@@ -7,6 +7,8 @@ import {customElement, state, property, query} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
+type viewType = 'win' | 'tab';
+
 /**
  Backend AI Dock
 
@@ -19,6 +21,7 @@ export default class BackendAIDock extends LitElement {
   @state() protected dockOrder : string[] = [];
   @property({type: Boolean, reflect: true}) active = false;
   @query('#dock') dock!: HTMLDivElement;
+  @state() protected mode : viewType = 'win';
 
   constructor() {
     super();
@@ -29,7 +32,7 @@ export default class BackendAIDock extends LitElement {
       BackendAiStyles,
       // language=CSS
       css`
-        #dock {
+        #dock.win {
           background: rgba(192,192,192,0.1);
           backdrop-filter: blur(10px);
           color: #efefef;
@@ -118,8 +121,8 @@ export default class BackendAIDock extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="dock" class="dock">
-        ${this.dockOrder.map(name =>
+      <div id="dock" class="dock ${this.mode}">
+           ${this.dockOrder.map(name =>
           globalThis.backendaiwindowmanager.windows[name]?.icon ?
             globalThis.backendaiwindowmanager.windows[name].icon.includes('/') ?
                html`<mwc-icon-button area-label="${globalThis.backendaiwindowmanager.windows[name].title}"
