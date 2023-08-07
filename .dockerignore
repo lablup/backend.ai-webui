@@ -102,6 +102,6 @@ manifest/
 node_modules/
 # # used in copy webui-dev scripts in Dockerfile
 # scripts/
-# # used in `RUN make compile_wsproxy`
-# src/
+# used in `RUN make compile_wsproxy`
+src/
 tests/ 
