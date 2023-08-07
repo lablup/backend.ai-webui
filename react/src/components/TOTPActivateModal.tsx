@@ -1,5 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
+import graphql from "babel-plugin-relay/macro";
 import { useQuery } from "react-query";
+import { useFragment } from "react-relay";
+import { TOTPActivateModalFragment$key } from "./__generated__/TOTPActivateModalFragment.graphql";
 
 import {
   Modal,
@@ -22,10 +25,12 @@ type TOTPActivateFormInput = {
 };
 
 interface Props extends ModalProps {
+  userFrgmt?: TOTPActivateModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
 
 const TOTPActivateModal: React.FC<Props> = ({
+  userFrgmt = null,
   onRequestClose,
   ...modalProps
 }) => {
@@ -33,14 +38,33 @@ const TOTPActivateModal: React.FC<Props> = ({
   const { token } = theme.useToken();
   const [form] = Form.useForm<TOTPActivateFormInput>();
 
-  const baiClient = useSuspendedBackendaiClient();
-  let { data, isLoading, refetch } = useQuery("totp", () => {
-    return modalProps.open ? baiClient.initialize_totp() : null;
-  });
+  const user = useFragment(
+    graphql`
+      fragment TOTPActivateModalFragment on User {
+        email
+        totp_activated @skipOnClient(if: $isNotSupportTotp)
+      }
+    `,
+    userFrgmt
+  );
 
-  useEffect(() => {
-    refetch();
-  }, [refetch, modalProps.open]);
+  const baiClient = useSuspendedBackendaiClient();
+  let initializedTotp = useQuery<{
+    totp_key: string;
+    totp_uri: string;
+  }>({
+    queryKey: ["initialize_totp", baiClient?.email, modalProps.open],
+    queryFn: () => {
+      return user?.email === baiClient?.email &&
+        !user?.totp_activated &&
+        modalProps.open
+        ? baiClient.initialize_totp()
+        : null;
+    },
+    suspense: false,
+    staleTime: 0,
+    cacheTime: 0,
+  });
 
   const mutationToActivateTotp = useTanMutation({
     mutationFn: (values: TOTPActivateFormInput) => {
@@ -69,6 +93,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     <Modal
       title={t("webui.menu.SetupTotp")}
       maskClosable={false}
+      confirmLoading={mutationToActivateTotp.isLoading}
       onOk={_onOk}
       onCancel={() => {
         onRequestClose();
@@ -76,9 +101,13 @@ const TOTPActivateModal: React.FC<Props> = ({
       style={{ zIndex: 1 }}
       {...modalProps}
     >
-      {!data ? (
+      {initializedTotp.isLoading ? (
         <Flex justify="center" direction="row">
           <Spin />
+        </Flex>
+      ) : !initializedTotp.data ? (
+        <Flex justify="center" direction="row">
+          {t("totp.TotpSetupNotAvailable")}
         </Flex>
       ) : (
         <Form
@@ -91,10 +120,7 @@ const TOTPActivateModal: React.FC<Props> = ({
             justify="center"
             style={{ margin: token.marginSM, gap: token.margin }}
           >
-            <QRCode
-              value={data?.totp_uri}
-              status={isLoading ? "loading" : undefined}
-            />
+            <QRCode value={initializedTotp.data.totp_uri} />
           </Flex>
           {t("totp.ScanQRToEnable")}
           <Flex
@@ -102,7 +128,7 @@ const TOTPActivateModal: React.FC<Props> = ({
             style={{ margin: token.marginSM, gap: token.margin }}
           >
             <Typography.Text copyable code>
-              {data?.totp_key}
+              {initializedTotp.data.totp_key}
             </Typography.Text>
           </Flex>
           {t("totp.TypeInAuthKey")}

@@ -1,7 +1,6 @@
 import React, { useDeferredValue } from "react";
 import graphql from "babel-plugin-relay/macro";
 import { useMutation } from "react-relay";
-import { useQuery } from "react-query";
 import { useLazyLoadQuery } from "react-relay";
 import {
   UserSettingModalQuery,
@@ -26,6 +25,8 @@ import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
+import { useQuery } from "react-query";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 type User = UserSettingModalQuery$data["user"];
 
@@ -99,7 +100,7 @@ const UserSettingModal: React.FC<Props> = ({
     graphql`
       query UserSettingModalQuery(
         $email: String
-        $isTOTPSupported: Boolean!
+        $isNotSupportTotp: Boolean!
         $loggedInUserEmail: String
       ) {
         user(email: $email) {
@@ -115,7 +116,8 @@ const UserSettingModal: React.FC<Props> = ({
             id
             name
           }
-          totp_activated @include(if: $isTOTPSupported)
+          totp_activated @skipOnClient(if: $isNotSupportTotp)
+          ...TOTPActivateModalFragment
         }
         loggedInUser: user(email: $loggedInUserEmail) {
           role
@@ -124,7 +126,7 @@ const UserSettingModal: React.FC<Props> = ({
     `,
     {
       email: userEmail,
-      isTOTPSupported: totpSupported ?? false,
+      isNotSupportTotp: !totpSupported,
       loggedInUserEmail: baiClient?.email ?? "",
     },
     {
@@ -139,10 +141,27 @@ const UserSettingModal: React.FC<Props> = ({
         mutation UserSettingModalMutation(
           $email: String!
           $props: ModifyUserInput!
+          $isNotSupportTotp: Boolean!
         ) {
           modify_user(email: $email, props: $props) {
             ok
             msg
+            user {
+              email
+              username
+              need_password_change
+              full_name
+              description
+              status
+              domain_name
+              role
+              groups {
+                id
+                name
+              }
+              totp_activated @skipOnClient(if: $isNotSupportTotp)
+              ...TOTPActivateModalFragment
+            }
           }
         }
       `
@@ -166,26 +185,17 @@ const UserSettingModal: React.FC<Props> = ({
       // TOTP setting
       if (!totpSupported) {
         delete input?.totp_activated;
-      } else if (
-        !values?.totp_activated &&
-        values?.totp_activated !== user?.totp_activated
-      ) {
-        mutationToRemoveTotp.mutate(user?.email || "", {
-          onError: (err) => {
-            console.log(err);
-          },
-        });
       }
 
       commitModifyUserSetting({
         variables: {
           email: values?.email || "",
           props: input,
+          isNotSupportTotp: !totpSupported,
         },
         onCompleted(res) {
           if (res?.modify_user?.ok) {
             message.success(t("environment.SuccessfullyModified"));
-            updateFetchKey(values?.email + new Date().toISOString());
           } else {
             message.error(res?.modify_user?.msg);
           }
@@ -317,17 +327,42 @@ const UserSettingModal: React.FC<Props> = ({
             }
           >
             <Switch
-              loading={isLoadingManagerSupportingTOTP}
+              loading={
+                isLoadingManagerSupportingTOTP || mutationToRemoveTotp.isLoading
+              }
               disabled={
                 user?.email !== baiClient?.email && !user?.totp_activated
               }
               onChange={(checked: boolean) => {
-                if (
-                  !!checked &&
-                  !user?.totp_activated &&
-                  user?.email === baiClient?.email
-                ) {
+                if (checked) {
                   toggleTOTPActivateModal();
+                } else {
+                  if (user?.totp_activated) {
+                    form.setFieldValue("totp_activated", true);
+                    Modal.confirm({
+                      title: t("totp.TurnOffTotp"),
+                      icon: <ExclamationCircleFilled />,
+                      content: t("totp.ConfirmTotpRemovalBody"),
+                      okText: t("button.Yes"),
+                      okType: "danger",
+                      cancelText: t("button.No"),
+                      onOk() {
+                        mutationToRemoveTotp.mutate(user?.email || "", {
+                          onSuccess: () => {
+                            message.success(t("totp.RemoveTotpSetupCompleted"));
+                            updateFetchKey();
+                            form.setFieldValue("totp_activated", false);
+                          },
+                          onError: (err) => {
+                            console.log(err);
+                          },
+                        });
+                      },
+                      onCancel() {
+                        form.setFieldValue("totp_activated", true);
+                      },
+                    });
+                  }
                 }
               }}
             />
@@ -336,8 +371,14 @@ const UserSettingModal: React.FC<Props> = ({
       </Form>
       {!!totpSupported && (
         <TOTPActivateModal
+          userFrgmt={user}
           open={isOpenTOTPActivateModal}
-          onRequestClose={() => {
+          onRequestClose={(success) => {
+            if (success) {
+              updateFetchKey();
+            } else {
+              form.setFieldValue("totp_activated", false);
+            }
             toggleTOTPActivateModal();
           }}
         />
