@@ -1480,6 +1480,9 @@
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
   },
+  "inputLimit": {
+    "4to64chars": "(4~64자)"
+  },
   "explorer": {
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
