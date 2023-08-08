@@ -82,6 +82,9 @@ export default class BackendAIWindowManager extends LitElement {
       const event = new CustomEvent('backend-ai-window-added', {'detail': win.name});
       document.dispatchEvent(event);
     }
+    if (this.viewMode === 'spa' && Object.keys(this.windows).length > 1) { // Legacy single-page application mode closes other windows.
+      this.removeOtherWindows(win);
+    }
     console.log('Active windows:', this.windows);
   }
 
@@ -98,6 +101,14 @@ export default class BackendAIWindowManager extends LitElement {
       }
       const event = new CustomEvent('backend-ai-window-removed', {'detail': win.name});
       document.dispatchEvent(event);
+    }
+  }
+
+  removeOtherWindows(win: BackendAIWindow) {
+    for (const index in this.windows) {
+      if (index !== win.name) {
+        this.removeWindow(this.windows[index]);
+      }
     }
   }
 
