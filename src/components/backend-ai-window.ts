@@ -14,8 +14,7 @@ type windowInfo = {
   width: number,
   height: number
 }
-type windowType = 'win' | 'widget' | 'page';
-type viewType = 'win' | 'tab' | 'spa';
+import {viewType, windowType} from './backend-ai-window-manager';
 
 /**
  Backend AI Window Shell
@@ -168,6 +167,15 @@ export default class BackendAIWindow extends LitElement {
           overflow: hidden;
           cursor: move;
           background: var(--card-background-color, #ffffff);
+        }
+
+        div.spa {
+          border: none;
+        }
+
+        div.spa > h4,
+        div.spa #resize-guide {
+          display: none!important;
         }
 
         .button-area {
@@ -488,8 +496,10 @@ export default class BackendAIWindow extends LitElement {
     }
     if (this.viewMode === 'win') {
       this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
-    } else {
+    } else if (this.viewMode === 'tab') {
       this.contents.style.height = 'calc(100vh - 64px - 32px)';
+    } else { // SPA
+      this.contents.style.height = 'calc(100vh - 64px)';
     }
   }
 
@@ -500,10 +510,13 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
+    console.log("============================", globalThis.backendaiwindowmanager?.viewMode);
     if (globalThis.backendaiwindowmanager?.viewMode === 'tab') {
       this.viewMode = 'tab';
-    } else {
+    } else if (globalThis.backendaiwindowmanager?.viewMode === 'win') {
       this.viewMode = 'win';
+    } else {
+      this.viewMode = 'spa';
     }
     this.setWindowMode();
     if (this.posZ !== 1000) {

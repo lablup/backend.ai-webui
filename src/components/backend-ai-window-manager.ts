@@ -3,11 +3,12 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {LitElement} from 'lit';
-import {customElement, state} from 'lit/decorators.js';
+import {customElement, state, property} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import './backend-ai-window';
 
-type viewType = 'win' | 'tab' | 'spa';
+export type viewType = 'win' | 'tab' | 'spa'; // SPA: single-page application, legacy mode.
+export type windowType = 'win' | 'widget' | 'page';
 
 /**
  Backend AI Window Manager
@@ -19,7 +20,8 @@ type viewType = 'win' | 'tab' | 'spa';
 export default class BackendAIWindowManager extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
   @state() protected zOrder : string[] = [];
-  @state() protected viewMode : viewType = 'win';
+  // @state() protected viewMode : viewType = 'win';
+  @property({type: String}) viewMode : viewType = 'win';
 
   count() {
     return Object.keys(this.windows).length;
@@ -150,4 +152,3 @@ export default class BackendAIWindowManager extends LitElement {
     });
   }
 }
-

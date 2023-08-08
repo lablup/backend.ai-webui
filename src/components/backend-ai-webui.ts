@@ -149,7 +149,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
-  @property({type: String}) viewMode : viewType = 'win';
+  @property({type: String}) viewMode : viewType = 'spa';
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -166,6 +166,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   constructor() {
     super();
     this.blockedMenuitem = [];
+    globalThis.backendaiwindowmanager.setViewType('spa');//this.viewMode;
   }
 
   static get styles(): CSSResultGroup {
@@ -1361,7 +1362,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
               <backend-ai-sidepanel-task class="sidepanel" ?active="${this._sidepanel === 'task'}"></backend-ai-sidepanel-task>
             </div>
             <div slot="appContent">
-              <backend-ai-desktop></backend-ai-desktop>
+              <backend-ai-desktop viewMode="${this.viewMode}"></backend-ai-desktop>
               <mwc-top-app-bar-fixed id="main-toolbar">
                 <div class="horizontal layout center" id="drawer-toggle-button" slot="navigationIcon" style="margin:auto 20px;" @click="${() => this.toggleDrawer()}">
                   <i class="fas fa-bars fa-lg" style="color:#747474;"></i>

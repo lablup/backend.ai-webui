@@ -6,8 +6,7 @@ import {LitElement, CSSResultGroup, html, css} from 'lit';
 import {customElement, state, property, query} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import {BackendAiStyles} from './backend-ai-general-styles';
-
-type viewType = 'win' | 'tab' | 'spa';
+import {viewType} from './backend-ai-window-manager';
 
 /**
  Backend AI Dock
