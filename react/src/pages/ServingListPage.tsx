@@ -1,13 +1,4 @@
-import {
-  Button,
-  ConfigProvider,
-  Modal,
-  Table,
-  Tabs,
-  Tag,
-  Typography,
-  theme,
-} from "antd";
+import { Button, Modal, Table, Tabs, Tag, Typography, theme } from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
@@ -197,59 +188,47 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
           <Flex style={{ flex: 1 }}>
-            <ConfigProvider
-              theme={{
-                algorithm: theme.darkAlgorithm,
-                components: {
-                  Tabs: {
-                    colorPrimary: "#92E868",
-                  },
-                },
+            <Tabs
+              // type="card"
+              activeKey={selectedTab}
+              onChange={(key) => setSelectedTab(key as TabKey)}
+              tabBarStyle={{ marginBottom: 0 }}
+              style={{
+                width: "100%",
+                paddingLeft: token.paddingMD,
+                paddingRight: token.paddingMD,
+                borderTopLeftRadius: token.borderRadius,
+                borderTopRightRadius: token.borderRadius,
               }}
-            >
-              <Tabs
-                // type="card"
-                activeKey={selectedTab}
-                onChange={(key) => setSelectedTab(key as TabKey)}
-                tabBarStyle={{ marginBottom: 0 }}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#2A2C30",
-                  paddingLeft: token.paddingMD,
-                  paddingRight: token.paddingMD,
-                  borderTopLeftRadius: token.borderRadius,
-                  borderTopRightRadius: token.borderRadius,
-                }}
-                items={[
-                  { key: "services", label: t("modelService.Services") },
-                  // FIXME: need to apply filtering type of service later
-                  // {
-                  //   key: "running",
-                  //   label: t("session.Running"),
-                  // },
-                  // {
-                  //   key: "finished",
-                  //   label: t("session.Finished"),
-                  // },
-                  // {
-                  //   key: "others",
-                  //   label: t("session.Others"),
-                  // },
-                ]}
-                tabBarExtraContent={{
-                  right: (
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        setIsOpenServiceLauncher(true);
-                      }}
-                    >
-                      {t("modelService.StartService")}
-                    </Button>
-                  ),
-                }}
-              />
-            </ConfigProvider>
+              items={[
+                { key: "services", label: t("modelService.Services") },
+                // FIXME: need to apply filtering type of service later
+                // {
+                //   key: "running",
+                //   label: t("session.Running"),
+                // },
+                // {
+                //   key: "finished",
+                //   label: t("session.Finished"),
+                // },
+                // {
+                //   key: "others",
+                //   label: t("session.Others"),
+                // },
+              ]}
+              tabBarExtraContent={{
+                right: (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsOpenServiceLauncher(true);
+                    }}
+                  >
+                    {t("modelService.StartService")}
+                  </Button>
+                ),
+              }}
+            />
             {/* <Button type="ghost" icon={<MoreOutlined />} /> */}
           </Flex>
           {/* <Button type="primary" icon={<PoweroffOutlined />}>
