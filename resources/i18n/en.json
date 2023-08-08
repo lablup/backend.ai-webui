@@ -1494,7 +1494,7 @@
     "2048": "(<= 2048)"
   },
   "inputLimit": {
-    "4to64": "(4~64 chars)"
+    "4to64chars": "(4~64 chars)"
   },
   "explorer": {
     "ValueRequired": "ValueRequired",
