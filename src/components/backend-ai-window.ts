@@ -123,7 +123,7 @@ export default class BackendAIWindow extends LitElement {
           text-overflow: ellipsis;
           overflow: hidden;
           cursor: move;
-          background: var(--card-background-color, #ffffff);
+          background: var(--general-window-background-color, #ffffff);
         }
 
         #titlebarCenter {
@@ -166,7 +166,7 @@ export default class BackendAIWindow extends LitElement {
           text-overflow: ellipsis;
           overflow: hidden;
           cursor: move;
-          background: var(--card-background-color, #ffffff);
+          background: var(--general-window-background-color, #ffffff);
         }
 
         div.spa {
@@ -189,7 +189,7 @@ export default class BackendAIWindow extends LitElement {
         }
 
         #content {
-          background: var(--card-background-color, #ffffff);
+          background: var(--general-window-background-color, #ffffff);
           box-sizing: border-box;
           overflow-y: scroll;
           overflow-x: hidden;

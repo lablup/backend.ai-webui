@@ -48,6 +48,7 @@ export const BackendAiStyles = [
       --general-sidebar-item-odd-background-color: rgba(239, 240, 242, 0.95);
       --general-sidepanel-color: #dddddd;
       --general-sidepanel-background-color: #ffffff; /*rgba(244, 245, 247, 1); rgba(48, 48, 48, 1.0);*/
+      --general-window-background-color: #efefef;
       --general-tabbar-background-color: var(--general-sidebar-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: rgba(103, 172, 91, 1.00);
