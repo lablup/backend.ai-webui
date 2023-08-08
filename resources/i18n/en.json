@@ -1493,6 +1493,9 @@
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
   },
+  "inputLimit": {
+    "4to64": "(4~64 chars)"
+  },
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"

@@ -1400,5 +1400,8 @@
     "TypeInAuthKey": "__NOT_TRANSLATED__",
     "EnterConfirmationCode": "__NOT_TRANSLATED__",
     "ConfirmTotpRemovalBody": "__NOT_TRANSLATED__"
+  },
+  "inputLimit": {
+    "4to64": "__NOT_TRANSLATED__"
   }
 }
