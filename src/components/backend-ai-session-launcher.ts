@@ -3436,7 +3436,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_text('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
-                           helper="${_text('inputLimit.4to64')}"
+                           helper="${_text('inputLimit.4to64chars')}"
                            validationMessage="${_text('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
             <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
