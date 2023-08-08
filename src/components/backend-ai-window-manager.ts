@@ -85,15 +85,20 @@ export default class BackendAIWindowManager extends LitElement {
     if (this.viewMode === 'spa' && Object.keys(this.windows).length > 1) { // Legacy single-page application mode closes other windows.
       this.removeOtherWindows(win);
     }
+    this.reorderWindow({'detail': win.name});
     console.log('Active windows:', this.windows);
   }
 
   removeWindow(win: BackendAIWindow) {
     if (Object.keys(this.windows).includes(win.name)) {
       if (this.windows[win.name].group !== '' && this.windows[win.name].group !== 'system') {
+        win.active = false;
+        win.isTop = false;
         this.windows[win.name].remove();
       }
-      //this.windows[win.name].remove();
+      // this.windows[win.name].remove();
+      // win.active = false;
+      win.isTop = false;
       delete this.windows[win.name];
       const index = this.zOrder.indexOf(win.name);
       if (index > -1) {
@@ -107,7 +112,9 @@ export default class BackendAIWindowManager extends LitElement {
   removeOtherWindows(win: BackendAIWindow) {
     for (const index in this.windows) {
       if (index !== win.name) {
-        this.removeWindow(this.windows[index]);
+        // this.windows[index].hide_window();
+        this.windows[index].deactivate_window();
+        //this.removeWindow(this.windows[index]);
       }
     }
   }

@@ -89,11 +89,12 @@ export class BackendAIPage extends LitElement {
     if (name == 'active' && newval !== null) {
       //console.log("attribute changed to page");
       this.active = true;
+      // Logic to sync active state from shell view to internal backend-ai-window
       this.windowNode?.setAttribute('active', '');
       this._viewStateChanged(true);
     } else if (name === 'active') {
       console.log("attribute changed to page, false");
-
+      // Logic to sync active state from shell view to internal backend-ai-window
       this.active = false;
       this.windowNode?.removeAttribute('active');
       this._viewStateChanged(false);

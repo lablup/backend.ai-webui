@@ -205,6 +205,12 @@ export default class BackendAIWindow extends LitElement {
           border-radius: 0;
           margin-bottom: 0;
         }
+
+        div.spa #content {
+          border-radius: 0;
+          margin-bottom: 0;
+        }
+
         div.tab #minimize-button,
         div.tab #maximize-button {
           display: none;
@@ -345,7 +351,6 @@ export default class BackendAIWindow extends LitElement {
           this.setToTop();
           this.show_window();
         } else if (this.active === false) {  // Hide window
-          //console.log('hide');
           //this.hide_window();
         }
       }
@@ -360,6 +365,7 @@ export default class BackendAIWindow extends LitElement {
   show_window() {
     this.win.style.visibility = 'visible';
     this.contents.style.visibility = 'visible';
+    this.win.style.display = 'block';
   }
 
   /**
@@ -369,6 +375,7 @@ export default class BackendAIWindow extends LitElement {
   hide_window() {
     this.win.style.visibility = 'hidden';
     this.contents.style.visibility = 'hidden';
+    this.win.style.display = 'none';
   }
 
   // Window activation
@@ -422,12 +429,9 @@ export default class BackendAIWindow extends LitElement {
   }
 
   maximize_window() {
-    console.log(this.isFullScreen);
     if (!this.isFullScreen) {
-      console.log('is not a full screen');
       this.keepLastWindowInfo();
       this.contents.style.visibility = 'visible';
-      console.log('is now a full screen', this.isFullScreen);
       this.setWindow('0px', '64px', '100%', 'calc(100vh - 64px)');
       this.isFullScreen = true;
     } else {
@@ -440,7 +444,6 @@ export default class BackendAIWindow extends LitElement {
   setWindow(posX: string, posY: string, width: string | undefined, height: string | undefined) {
     this.win.style.left = posX;
     this.win.style.top = posY;
-    console.log(posX, posY);
     if (width) {
       this.win.style.width = width;
     }
@@ -510,7 +513,6 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
-    console.log("============================", globalThis.backendaiwindowmanager?.viewMode);
     if (globalThis.backendaiwindowmanager?.viewMode === 'tab') {
       this.viewMode = 'tab';
     } else if (globalThis.backendaiwindowmanager?.viewMode === 'win') {
@@ -576,7 +578,7 @@ export default class BackendAIWindow extends LitElement {
       this.win.style.top = '0px';
       this.win.style.height ='calc(100vh - 64px)';
       this.win.style.width = 'calc(100%)';
-      this.contents.style.height = 'calc(100vh - 64px - 32px)';
+      this.contents.style.height = 'calc(100vh - 64px)';
     }
   }
   setPosZ(value) {
@@ -620,7 +622,7 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="${this.viewMode} ${this.isFullScreen ? 'fullwin': ''}" draggable="true" @click="${() => {this.setToTop();}}">
+      <div id="window" class="${this.viewMode} ${this.isFullScreen ? 'fullwin': ''}" draggable="${this.viewMode === 'spa' ? 'false' : 'true'}" @click="${() => {this.setToTop();}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>
