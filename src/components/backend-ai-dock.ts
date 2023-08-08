@@ -7,7 +7,7 @@ import {customElement, state, property, query} from 'lit/decorators.js';
 import BackendAIWindow from './backend-ai-window';
 import {BackendAiStyles} from './backend-ai-general-styles';
 
-type viewType = 'win' | 'tab';
+type viewType = 'win' | 'tab' | 'spa';
 
 /**
  Backend AI Dock
@@ -47,7 +47,7 @@ export default class BackendAIDock extends LitElement {
           height: 64px;
           width: 10px;
           overflow: hidden;
-          z-index: 9999;
+          z-index: 1999;
         }
 
         mwc-icon-button {
