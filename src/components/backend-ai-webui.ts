@@ -69,6 +69,8 @@ import {
 } from '../plastics/layout/iron-flex-layout-classes';
 import '../plastics/mwc/mwc-multi-select';
 
+type viewType = 'win' | 'tab' | 'spa';
+
 registerTranslateConfig({
   loader: (lang) => fetch(`/resources/i18n/${lang}.json`).then((res) => res.json())
 });
@@ -147,6 +149,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
+  @property({type: String}) viewMode : viewType = 'win';
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -1433,7 +1436,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
       </backend-ai-offline-indicator>
       <backend-ai-login active id="login-panel"></backend-ai-login>
       <backend-ai-splash id="about-backendai-panel"></backend-ai-splash>
-      <backend-ai-dock></backend-ai-dock>
+      <backend-ai-dock viewMode="${this.viewMode}"></backend-ai-dock>
       <lablup-notification id="notification"></lablup-notification>
       <backend-ai-indicator-pool id="indicator"></backend-ai-indicator-pool>
       <lablup-terms-of-service id="terms-of-service" block></lablup-terms-of-service>

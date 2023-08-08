@@ -21,7 +21,8 @@ export default class BackendAIDock extends LitElement {
   @state() protected dockOrder : string[] = [];
   @property({type: Boolean, reflect: true}) active = false;
   @query('#dock') dock!: HTMLDivElement;
-  @state() protected mode : viewType = 'win';
+  // @state() protected viewMode : viewType; // deprecated. it should be injected from outside.
+  @property({type: String}) viewMode : viewType = 'win';
 
   constructor() {
     super();
@@ -48,6 +49,10 @@ export default class BackendAIDock extends LitElement {
           width: 10px;
           overflow: hidden;
           z-index: 1999;
+        }
+
+        #dock.spa {
+          display: none;
         }
 
         mwc-icon-button {
@@ -121,7 +126,7 @@ export default class BackendAIDock extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="dock" class="dock ${this.mode}">
+      <div id="dock" class="dock ${this.viewMode}">
            ${this.dockOrder.map(name =>
           globalThis.backendaiwindowmanager.windows[name]?.icon ?
             globalThis.backendaiwindowmanager.windows[name].icon.includes('/') ?

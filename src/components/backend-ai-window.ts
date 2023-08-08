@@ -37,7 +37,7 @@ export default class BackendAIWindow extends LitElement {
   @property({type: String}) defaultWidth = '80%';
   @property({type: String}) defaultHeight = '';
   @property({type: String}) type: windowType = 'win';
-  @property({type: String}) viewType: viewType = 'win';
+  @property({type: String}) viewMode: viewType = 'win';
   @property({type: String}) group = '';
   @property({type: String}) groupColor = '';
   @property({type: String}) title = '';
@@ -98,8 +98,9 @@ export default class BackendAIWindow extends LitElement {
 
         div.fullwin {
           box-shadow: unset;
-          border-radius: 0;
+          border-radius: 0!important;
         }
+
         div.fullwin > h4 {
           border-radius: 0!important;
         }
@@ -485,7 +486,7 @@ export default class BackendAIWindow extends LitElement {
       this.contents.style.display = 'block';
       this.resizeGuide.style.display = 'block';
     }
-    if (this.viewType === 'win') {
+    if (this.viewMode === 'win') {
       this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
     } else {
       this.contents.style.height = 'calc(100vh - 64px - 32px)';
@@ -499,10 +500,10 @@ export default class BackendAIWindow extends LitElement {
     this.win.addEventListener('dragleave', this.dragleave.bind(this));
     this.win.addEventListener('dragend', this.dragend.bind(this));
     new ResizeObserver((obj) => this.resized()).observe(this.win);
-    if (globalThis.backendaiwindowmanager?.mode === 'tab') {
-      this.viewType = 'tab';
+    if (globalThis.backendaiwindowmanager?.viewMode === 'tab') {
+      this.viewMode = 'tab';
     } else {
-      this.viewType = 'win';
+      this.viewMode = 'win';
     }
     this.setWindowMode();
     if (this.posZ !== 1000) {
@@ -533,7 +534,7 @@ export default class BackendAIWindow extends LitElement {
   }
 
   setWindowMode() {
-    if (this.viewType === 'win') {
+    if (this.viewMode === 'win') {
       if (this.posX !== 0) {
         this.win.style.left = this.posX + 'px';
       } else {
@@ -551,7 +552,13 @@ export default class BackendAIWindow extends LitElement {
       } else {
         this.contents.style.height = 'calc(' + this.win.offsetHeight + 'px - 38px)';
       }
-    } else { // Tab mode
+    } else if (this.viewMode === 'tab') { // Tab mode
+      this.win.style.left = '0px';
+      this.win.style.top = '0px';
+      this.win.style.height ='calc(100vh - 64px)';
+      this.win.style.width = 'calc(100%)';
+      this.contents.style.height = 'calc(100vh - 64px - 32px)';
+    } else { // SPA mode
       this.win.style.left = '0px';
       this.win.style.top = '0px';
       this.win.style.height ='calc(100vh - 64px)';
@@ -564,8 +571,8 @@ export default class BackendAIWindow extends LitElement {
     this.win.style.zIndex = this.posZ.toString();
   }
 
-  setViewType(viewType: viewType = 'win') {
-    this.viewType = viewType;
+  setViewType(viewMode: viewType = 'win') {
+    this.viewMode = viewMode;
     this.setWindowMode();
   }
 
@@ -600,7 +607,7 @@ export default class BackendAIWindow extends LitElement {
   render() {
     // language=HTML
     return html`
-      <div id="window" class="${this.viewType} ${this.isFullScreen ? 'fullwin': ''}" draggable="true" @click="${() => {this.setToTop();}}">
+      <div id="window" class="${this.viewMode} ${this.isFullScreen ? 'fullwin': ''}" draggable="true" @click="${() => {this.setToTop();}}">
         <h4 id="titlebar" class="horizontal center justified layout" style="font-weight:bold;" @click="${() => {this.setToTop();}}">
           ${this.icon ? html`
             <img src="${this.icon}" style="width: 24px; height: 24px;"/>

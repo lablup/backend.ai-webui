@@ -19,7 +19,7 @@ type viewType = 'win' | 'tab' | 'spa';
 export default class BackendAIWindowManager extends LitElement {
   @state() protected windows : Record<string, BackendAIWindow> = {};
   @state() protected zOrder : string[] = [];
-  @state() protected mode : viewType = 'win';
+  @state() protected viewMode : viewType = 'win';
 
   count() {
     return Object.keys(this.windows).length;
@@ -139,7 +139,7 @@ export default class BackendAIWindowManager extends LitElement {
     for (const [index, name] of this.zOrder.entries()) {
       this.windows[name]?.setViewType(viewType);
     }
-    this.mode = viewType;
+    this.viewMode = viewType;
   }
 
   constructor() {
