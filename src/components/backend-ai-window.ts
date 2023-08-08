@@ -95,9 +95,13 @@ export default class BackendAIWindow extends LitElement {
           /*transition: visibility 1s, opacity 0.5s linear;*/
           animation: fadeIn 0.3s;
         }
+
         div.fullwin {
-           box-shadow: unset;
+          box-shadow: unset;
           border-radius: 0;
+        }
+        div.fullwin > h4 {
+          border-radius: 0!important;
         }
 
         div.mock {
