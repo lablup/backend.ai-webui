@@ -377,7 +377,7 @@
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
     "Readless": "내용 접기",
-    "SessionType": "__NOT_TRANSLATED__"
+    "SessionType": "세션 타입"
   },
   "modelService": {
     "Running": "실행중",
@@ -445,7 +445,7 @@
     "OptOut": "비활성화",
     "Activate": "활성화",
     "Unset": "초기화",
-    "OK": "__NOT_TRANSLATED__"
+    "OK": "확인"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -625,7 +625,7 @@
     "AdminCanOnlyRemoveTotp": "다른 사용자의 이중 인증은 해제만 가능합니다.",
     "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다.",
     "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
-    "ModifyUserDetail": "__NOT_TRANSLATED__"
+    "ModifyUserDetail": "사용자 상세 정보 수정"
   },
   "data": {
     "Folders": "폴더",
