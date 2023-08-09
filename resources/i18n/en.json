@@ -88,7 +88,10 @@
     "TotpRemoved": "Successfully disabled 2FA",
     "TotpSetupCompleted": "Enabled 2FA",
     "InvalidTotpCode": "Invalid OTP",
-    "ConfirmTotpRemovalBody": "Are you sure to opt out from using two-factor authentication?"
+    "ConfirmTotpRemovalBody": "Are you sure to opt out from using two-factor authentication?",
+    "TotpSetupNotAvailable": "Two-factor authentication cannot be set up.",
+    "RemoveTotpSetupCompleted": "Disabled 2FA",
+    "TurnOffTotp": "Turn off two-factor authentication"
   },
   "summary": {
     "Dashboard": "Dashboard",
@@ -384,7 +387,8 @@
     "UtilizationThresholdDesc": "Threshold criteria of each compute resource. When one or more resource of a compute session does not exceed the configured threshold criteria for a certain time, the session will be garbage collected (terminated). For example, if you set 1% of CUDA utilization threshold, compute sessions that show less than 1% CUDA GPU utilization, for a certain duration of time, will be destroyed. Resources with empty values are excluded from the garbage collection criteria.",
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
-    "System": "Upload Sessions"
+    "System": "Upload Sessions",
+    "SessionType": "SessionType"
   },
   "modelService": {
     "Running": "Running",
@@ -1490,6 +1494,9 @@
     "512": "(<= 512)",
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
+  },
+  "inputLimit": {
+    "4to64chars": "(4~64 chars)"
   },
   "explorer": {
     "ValueRequired": "ValueRequired",
