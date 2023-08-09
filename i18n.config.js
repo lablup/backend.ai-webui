@@ -11,7 +11,7 @@ module.exports = {
   options: {
     debug: true,
     func: {
-      list: ['_t', '_tr', '_text', 't'], // _t for normal text, _tr for HTML text, t for 
+      list: ['_t', '_tr', '_text', 't'], // _t for normal text, _tr for HTML text, t for react
       extensions: ['.ts', '.js', '.jsx', '.tsx']
     },
     trans: false,
@@ -53,8 +53,10 @@ module.exports = {
       ++count;
     });
 
+    let colored = file.path.includes('/react/src') ? chalk.magenta : chalk.yellow;
+
     if (count > 0) {
-      console.log(`i18next-scanner: count=${chalk.cyan(count)}, file=${chalk.yellow(JSON.stringify(file.relative))}`);
+      console.log(`i18next-scanner: count=${chalk.cyan(count)}, file=${colored(JSON.stringify(file.relative))}`);
     }
 
     done();
