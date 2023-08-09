@@ -386,7 +386,8 @@
     "UtilizationThresholdDesc": "Threshold criteria of each compute resource. When one or more resource of a compute session does not exceed the configured threshold criteria for a certain time, the session will be garbage collected (terminated). For example, if you set 1% of CUDA utilization threshold, compute sessions that show less than 1% CUDA GPU utilization, for a certain duration of time, will be destroyed. Resources with empty values are excluded from the garbage collection criteria.",
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
-    "System": "Upload Sessions"
+    "System": "Upload Sessions",
+    "SessionType": "SessionType"
   },
   "modelService": {
     "Running": "Running",
