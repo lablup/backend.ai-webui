@@ -59,6 +59,10 @@ const MaintenanceView : React.FC = () => {
 							color: "#38bd73",
 							borderWidth: "2px",
 							borderColor: "#e0e0e0",
+							fontWeight: 400,
+							padding: "15px",
+							justifyContent: "center",
+							display: "flex"
 						}}
 						onClick={()=> dispatchEvent("recalculate", null)}
 					>
@@ -101,6 +105,10 @@ const MaintenanceView : React.FC = () => {
 							color: "#38bd73",
 							borderWidth: "2px",
 							borderColor: "#e0e0e0",
+							fontWeight: 400,
+							padding: "15px",
+							justifyContent: "center",
+							display: "flex"
 						}}
 						onClick={()=> dispatchEvent("rescan", null)}
 					>
