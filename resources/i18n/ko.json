@@ -376,7 +376,8 @@
     "SFTPExtraNotification": "개수 제한이 있으므로 다 사용한 후에는 삭제하는 것이 좋습니다. 일정 시간 업로드를 하지 않는 세션은 자동으로 삭제될 수 있습니다.",
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
-    "Readless": "내용 접기"
+    "Readless": "내용 접기",
+    "SessionType": "세션 타입"
   },
   "modelService": {
     "Running": "실행중",
@@ -443,7 +444,8 @@
     "Reset": "초기화",
     "OptOut": "비활성화",
     "Activate": "활성화",
-    "Unset": "초기화"
+    "Unset": "초기화",
+    "OK": "확인"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -622,7 +624,8 @@
     "KeypairDetail": "키페어 정보",
     "AdminCanOnlyRemoveTotp": "다른 사용자의 이중 인증은 해제만 가능합니다.",
     "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다.",
-    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다."
+    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
+    "ModifyUserDetail": "사용자 상세 정보 수정"
   },
   "data": {
     "Folders": "폴더",
@@ -1480,6 +1483,9 @@
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
   },
+  "inputLimit": {
+    "4to64chars": "(4~64자)"
+  },
   "explorer": {
     "ValueRequired": "값이 필요합니다.",
     "InputTooShort": "입력값이 너무 짧습니다."
@@ -1493,6 +1499,9 @@
     "ScanQRToEnable": "이중 인증 프로그램으로 하단의 QR 코드를 스캔하여 이중 인증을 인증기에 등록하세요.",
     "TypeInAuthKey": "혹은, 하단의 인증 코드를 입력하여 직접 이중 인증을 활성화할 수도 있습니다.",
     "EnterConfirmationCode": "이제 확인을 위해 인증기에서 보이는 6자리 숫자를 입력하세요.",
-    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?"
+    "ConfirmTotpRemovalBody": "이중 인증을 정말 비활성화 하시겠습니까?",
+    "TotpSetupNotAvailable": "이중 인증 설정이 불가합니다.",
+    "RemoveTotpSetupCompleted": "이중 인증이 비활성화 되었습니다.",
+    "TurnOffTotp": "이중 인증 비활성화"
   }
 }
