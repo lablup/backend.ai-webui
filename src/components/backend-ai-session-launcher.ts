@@ -230,6 +230,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'version': ['']
   };
   @property({type: String}) launchButtonMessageTextContent = _text('session.launcher.Launch');
+  @property({type: Boolean}) isExceedMaxCountForPreOpenedPort = false;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -1045,6 +1046,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     globalThis.addEventListener('resize', () => {
       document.body.dispatchEvent(new Event('click'));
     });
+    this.maxCountForPreOpenedPort = globalThis.backendaiclient?._config.maxCountForPreOpenedPort;
   }
 
   _enableLaunchButton() {
@@ -3023,6 +3025,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const lastChild = this.modifyPreOpenPortContainer?.children[this.modifyPreOpenPortContainer.children.length - 1];
     const div = this._createPreOpenPortRow(port);
     this.modifyPreOpenPortContainer?.insertBefore(div, lastChild as ChildNode);
+    this._updateIsExceedMaxCountForPreOpenedPort();
   }
 
   /**
@@ -3046,7 +3049,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const removeButton = document.createElement('mwc-icon-button');
     removeButton.setAttribute('icon', 'remove');
     removeButton.setAttribute('class', 'green minus-btn');
-    removeButton.addEventListener('click', (e) => this._removeItems(e));
+    removeButton.addEventListener('click', (e) => this._removeEnvItem(e));
 
     div.append(env);
     div.append(val);
@@ -3069,7 +3072,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const removeButton = document.createElement('mwc-icon-button');
     removeButton.setAttribute('icon', 'remove');
     removeButton.setAttribute('class', 'green minus-btn');
-    removeButton.addEventListener('click', (e) => this._removeItems(e));
+    removeButton.addEventListener('click', (e) => this._removePreOpenPortItem(e));
 
     div.append(row);
     div.append(removeButton);
@@ -3081,10 +3084,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    *
    * @param {Event} e - Dispatches from the native input event each time the input changes.
    */
-  _removeItems(e) {
+  _removeEnvItem(e) {
     // htmlCollection should be converted to Array.
     const parentNode = e.target.parentNode;
     parentNode.remove();
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   * And update `isExceedMaxCountForPreOpenedPort`.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _removePreOpenPortItem(e) {
+    // htmlCollection should be converted to Array.
+    const parentNode = e.target.parentNode;
+    parentNode.remove();
+    this._updateIsExceedMaxCountForPreOpenedPort();
   }
 
   /**
@@ -3535,6 +3551,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     } else {
       this.dateTimePicker.helperText = _text('session.launcher.SessionStartTime') + getRelativeTime(+new Date(this.dateTimePicker.value));
     }
+  }
+
+  _updateIsExceedMaxCountForPreOpenedPort() {
+    const maxCountForPreOpenedPort = globalThis.backendaiclient?._config?.maxCountForPreOpenedPort;
+    const currentRowCount = this.modifyPreOpenPortContainer?.querySelectorAll('mwc-textfield')?.length ?? 0;
+    this.isExceedMaxCountForPreOpenedPort = currentRowCount >= maxCountForPreOpenedPort;
   }
 
   render() {
@@ -4273,14 +4295,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <mwc-textfield value="${item.name}"></mwc-textfield>
                   <mwc-textfield value="${item.value}"></mwc-textfield>
                   <mwc-icon-button class="green minus-btn" icon="remove"
-                    @click="${(e) => this._removeItems(e)}"></mwc-icon-button>
+                    @click="${(e) => this._removeEnvItem(e)}"></mwc-icon-button>
                 </div>
               `)}
             <div class="horizontal layout center row">
               <mwc-textfield></mwc-textfield>
               <mwc-textfield></mwc-textfield>
               <mwc-icon-button class="green minus-btn" icon="remove"
-                @click="${(e) => this._removeItems(e)}"></mwc-icon-button>
+                @click="${(e) => this._removeEnvItem(e)}"></mwc-icon-button>
             </div>
           </div>
           <mwc-button id="env-add-btn" outlined icon="add" class="horizontal flex layout center"
@@ -4317,16 +4339,17 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="horizontal layout center row">
                 <mwc-textfield value="${item}" type="number" min="1024" max="65535"></mwc-textfield>
                 <mwc-icon-button class="green minus-btn" icon="remove"
-                  @click="${(e) => this._removeItems(e)}"></mwc-icon-button>
+                  @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
               </div>
             `)}
             <div class="horizontal layout center row">
                <mwc-textfield type="number" min="1024" max="65535"></mwc-textfield>
               <mwc-icon-button class="green minus-btn" icon="remove"
-                @click="${(e) => this._removeItems(e)}"></mwc-icon-button>
+                @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
             </div>
           </div>
           <mwc-button id="pre-open-port-add-btn" outlined icon="add" class="horizontal flex layout center"
+            ?disabled="${this.isExceedMaxCountForPreOpenedPort}"
             @click="${() => this._appendPreOpenPortRow()}">Add</mwc-button>
         </div>
         <div slot="footer" class="horizontal layout">
