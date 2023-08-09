@@ -2694,7 +2694,7 @@ export default class BackendAISessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <mwc-checkbox class="list-check" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
+            <mwc-checkbox class="list-check" style="display:contents;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
         `, root
       );
     } else {
@@ -2867,7 +2867,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
-            <vaadin-grid-column frozen width="50px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            <vaadin-grid-column frozen width="60px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
             </vaadin-grid-column>
           ` : html``}
           <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
