@@ -1524,7 +1524,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['env'] = this.environ_values;
     }
     if (this.preOpenPorts.length > 0) {
-      config['preopen_ports'] = this.preOpenPorts.map((port) => Number(port));
+      config['preopen_ports'] = [...new Set(this.preOpenPorts.map((port) => Number(port)))];
     }
     if (this.openMPSwitch.selected === false) {
       const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
