@@ -376,7 +376,8 @@
     "SFTPExtraNotification": "개수 제한이 있으므로 다 사용한 후에는 삭제하는 것이 좋습니다. 일정 시간 업로드를 하지 않는 세션은 자동으로 삭제될 수 있습니다.",
     "ConnectionNotice": "주의",
     "Readmore": "더 알아보기...",
-    "Readless": "내용 접기"
+    "Readless": "내용 접기",
+    "SessionType": "세션 타입"
   },
   "modelService": {
     "Running": "실행중",
@@ -443,7 +444,8 @@
     "Reset": "초기화",
     "OptOut": "비활성화",
     "Activate": "활성화",
-    "Unset": "초기화"
+    "Unset": "초기화",
+    "OK": "확인"
   },
   "agent": {
     "Endpoint": "엔드포인트",
@@ -622,7 +624,8 @@
     "KeypairDetail": "키페어 정보",
     "AdminCanOnlyRemoveTotp": "다른 사용자의 이중 인증은 해제만 가능합니다.",
     "KeySeccessfullyDeleted": "키페어가 정상적으로 삭제되었습니다.",
-    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다."
+    "SignoutSeccessfullyFinished": "사용자 계정이 성공적으로 삭제되었습니다.",
+    "ModifyUserDetail": "사용자 상세 정보 수정"
   },
   "data": {
     "Folders": "폴더",
@@ -1479,6 +1482,9 @@
     "512": "(<= 512)",
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
+  },
+  "inputLimit": {
+    "4to64chars": "(4~64자)"
   },
   "explorer": {
     "ValueRequired": "값이 필요합니다.",
