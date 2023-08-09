@@ -258,12 +258,13 @@
       "AIAccelerator": "AI 가속기",
       "DescAIAccelerator": "<p>AI 가속기 (GPU 및 NPU)는 기계 학습과 관련된 행렬 / 벡터 계산에 적합합니다. AI 가속기는 훈련 및 인퍼런스 알고리즘을 몇 배나 가속화하여 기계 학습 워크로드의 실행 시간을 몇 주에서 몇 일로 줄입니다.</p>",
       "PreOpenPortTitle": "사전 개방 포트",
-      "DescSetPreOpenPort": "네트워크 기기 또는 컴퓨터에서 외부로부터의 접속을 허용하는 특정 포트 번호를 '사전 개방 포트' 값으로 설정합니다. ",
+      "DescSetPreOpenPort": "네트워크 기기 또는 컴퓨터에서 외부로부터의 접속을 허용하는 특정 포트 번호를 '사전 개방 포트' 값으로 설정합니다.",
       "PortsTitleWithRange": "포트 값 (1024 ~ 65535 사이)",
       "PrePortConfigWillDisappear": "저장되지 않은 사전 개방 포트값은 사라집니다.",
       "PreOpenPortConfigurationDone": "사전 개방 포트값이 설정되었습니다.",
       "PreOpenPortPanelTitle": "추가될 사전 개방 포트값 (옵션)",
-      "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다."
+      "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
+      "IncreaseMaxCountForPreOpenedPort": "maxCountForPreOpenedPort 값을 0 이상으로 설정해주세요."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",
