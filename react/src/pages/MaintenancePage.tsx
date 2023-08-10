@@ -2,9 +2,9 @@ import React from 'react';
 import { Button, Card, Row, Col } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import { useTranslation, Trans } from "react-i18next";
-import { useWebComponentInfo } from './DefaultProviders';
+import { useWebComponentInfo } from '../components/DefaultProviders';
 
-const MaintenanceView : React.FC = () => {
+const MaintenancePage : React.FC = () => {
 	const { t } = useTranslation();
 
 	const { value, dispatchEvent } = useWebComponentInfo();
@@ -120,4 +120,4 @@ const MaintenanceView : React.FC = () => {
 	);
 }
 
-export default MaintenanceView;
+export default MaintenancePage;

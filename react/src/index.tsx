@@ -34,8 +34,8 @@ const UserInfoModal = React.lazy(() => import("./components/UserInfoModal"));
 const UserSettingsModal = React.lazy(
   () => import("./components/UserSettingModal")
 );
-const MaintenanceView = React.lazy(
-  () => import("./components/MaintenanceView")
+const MaintenancePage = React.lazy(
+  () => import("./pages/MaintenancePage")
 );
 
 customElements.define(
@@ -148,7 +148,7 @@ customElements.define(
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <MaintenanceView />
+        <MaintenancePage />
       </DefaultProviders>
     );
   })
