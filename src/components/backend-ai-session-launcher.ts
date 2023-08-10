@@ -953,6 +953,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
+        this.maxCountForPreOpenedPort = globalThis.backendaiclient._config.maxCountForPreOpenedPort;
         this.is_connected = true;
         this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
@@ -978,6 +979,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
+      this.maxCountForPreOpenedPort = globalThis.backendaiclient._config.maxCountForPreOpenedPort;
       this.is_connected = true;
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
@@ -1038,12 +1040,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         return a.every((elem, index) => elem === b[index]);
       };
 
-      if (!isEquivalent(currentPorts, this.preOpenPorts)) {
-        this.hidePreOpenPortDialog = true;
-        this.openDialog('pre-open-port-config-confirmation');
-      } else {
+      if (isEquivalent(currentPorts, this.preOpenPorts) || this.maxCountForPreOpenedPort <= 0) {
         this.modifyPreOpenPortDialog.closeWithConfirmation = false;
         this.closeDialog('modify-pre-open-port-dialog');
+      } else {
+        this.hidePreOpenPortDialog = true;
+        this.openDialog('pre-open-port-config-confirmation');
       }
     });
     this.currentIndex = 1;
@@ -1054,7 +1056,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     globalThis.addEventListener('resize', () => {
       document.body.dispatchEvent(new Event('click'));
     });
-    this.maxCountForPreOpenedPort = globalThis.backendaiclient?._config.maxCountForPreOpenedPort;
   }
 
   _enableLaunchButton() {
