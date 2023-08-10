@@ -4250,20 +4250,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            <p class="title">${_t('session.launcher.PreOpenPortPanelTitle')}</p>
-            <div class="pre-open-port-container">
-              ${this.preOpenPorts.length > 0 ? html`
-                <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
-                  ${this.preOpenPorts.map((port) => html`
-                    <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
-                  `)}
-                </div>
-              ` : html`
-                <div class="vertical layout center flex blank-box">
-                  <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
-                </div>
-              `}
-            </div>
+            ${this.maxCountForPreOpenedPort > 0 ? html`
+              <p class="title">${_t('session.launcher.PreOpenPortPanelTitle')}</p>
+              <div class="pre-open-port-container">
+                ${this.preOpenPorts.length > 0 ? html`
+                  <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                    ${this.preOpenPorts.map((port) => html`
+                      <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                    `)}
+                  </div>
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                  </div>
+                `}
+              </div>
+            ` : html``}
           </div>
         </form>
         <div slot="footer" class="vertical flex layout">
