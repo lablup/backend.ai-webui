@@ -276,8 +276,7 @@
       "PrePortConfigWillDisappear": "Any unsaved pre-open ports will be disappeared.",
       "PreOpenPortConfigurationDone": "Pre-open ports configured successfully.",
       "PreOpenPortPanelTitle": "Pre-open ports to set (optional)",
-      "PreOpenPortRange": "Pre-open ports are only available from 1024 to 65535.",
-      "IncreaseMaxCountForPreOpenedPort": "Set maxCountForPreOpenedPort larger than 0."
+      "PreOpenPortRange": "Pre-open ports are only available from 1024 to 65535."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",

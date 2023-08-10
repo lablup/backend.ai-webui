@@ -263,8 +263,7 @@
       "PrePortConfigWillDisappear": "저장되지 않은 사전 개방 포트값은 사라집니다.",
       "PreOpenPortConfigurationDone": "사전 개방 포트값이 설정되었습니다.",
       "PreOpenPortPanelTitle": "추가될 사전 개방 포트값 (옵션)",
-      "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다.",
-      "IncreaseMaxCountForPreOpenedPort": "maxCountForPreOpenedPort 값을 0 이상으로 설정해주세요."
+      "PreOpenPortRange": "사전 개방 포트는 1024 ~ 65535 사이만 설정할 수 있습니다."
     },
     "Preparing": "준비중...",
     "PreparingSession": "세션 준비중...",

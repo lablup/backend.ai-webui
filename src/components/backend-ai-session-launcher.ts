@@ -1040,12 +1040,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         return a.every((elem, index) => elem === b[index]);
       };
 
-      if (isEquivalent(currentPorts, this.preOpenPorts) || this.maxCountForPreOpenedPort <= 0) {
-        this.modifyPreOpenPortDialog.closeWithConfirmation = false;
-        this.closeDialog('modify-pre-open-port-dialog');
-      } else {
+      if (!isEquivalent(currentPorts, this.preOpenPorts)) {
         this.hidePreOpenPortDialog = true;
         this.openDialog('pre-open-port-config-confirmation');
+      } else {
+        this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-pre-open-port-dialog');
       }
     });
     this.currentIndex = 1;
@@ -3704,24 +3704,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 `}
               </div>
             </lablup-expansion>
-            <lablup-expansion leftIconName="expand_more"
-                              rightIconName="settings"
-                              .rightCustomFunction="${() => this._showPreOpenPortDialog()}">
-              <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
-              <div class="pre-open-port-container">
-                ${this.preOpenPorts.length > 0 ? html`
-                  <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
-                    ${this.preOpenPorts.map((port) => html`
-                      <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
-                    `)}
-                  </div>
-                ` : html`
-                  <div class="vertical layout center flex blank-box">
-                    <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
-                  </div>
-                `}
-              </div>
-            </lablup-expansion>
+            ${this.maxCountForPreOpenedPort > 0 ? html`
+              <lablup-expansion leftIconName="expand_more"
+                                rightIconName="settings"
+                                .rightCustomFunction="${() => this._showPreOpenPortDialog()}">
+                <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
+                <div class="pre-open-port-container">
+                  ${this.preOpenPorts.length > 0 ? html`
+                    <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                      ${this.preOpenPorts.map((port) => html`
+                        <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                      `)}
+                    </div>
+                  ` : html`
+                    <div class="vertical layout center flex blank-box">
+                      <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                    </div>
+                  `}
+                </div>
+              </lablup-expansion>
+            ` : html``}
             <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
@@ -4340,54 +4342,43 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           <mwc-icon-button icon="info" @click="${(e) => this._showPreOpenPortConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
         </span>
         <div slot="content" id="modify-pre-open-port-container">
-          ${this.maxCountForPreOpenedPort <= 0 ? html`
-            <div class="vertical layout center flex blank-box">
-              <div class="layout horizontal center center-justified">
-                <mwc-icon id="error-icon" class="fg red">error_outlined</mwc-icon>
-                <div>${_t('session.launcher.IncreaseMaxCountForPreOpenedPort')}</div>
-              </div>
-            </div>
-          `: html`
-            <div class="horizontal layout center flex justified header">
-              <div> ${_t('session.launcher.PortsTitleWithRange')} </div>
-            </div>
-            <div class="layout center">
-              ${this.preOpenPorts.forEach((item: number) => html`
-                <div class="horizontal layout center row">
-                  <mwc-textfield value="${item}" type="number" min="1024" max="65535"></mwc-textfield>
-                  <mwc-icon-button class="green minus-btn" icon="remove"
-                    @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
-                </div>
-              `)}
+          <div class="horizontal layout center flex justified header">
+            <div> ${_t('session.launcher.PortsTitleWithRange')} </div>
+          </div>
+          <div class="layout center">
+            ${this.preOpenPorts.forEach((item: number) => html`
               <div class="horizontal layout center row">
-                <mwc-textfield type="number" min="1024" max="65535"></mwc-textfield>
+                <mwc-textfield value="${item}" type="number" min="1024" max="65535"></mwc-textfield>
                 <mwc-icon-button class="green minus-btn" icon="remove"
                   @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
               </div>
+            `)}
+            <div class="horizontal layout center row">
+              <mwc-textfield type="number" min="1024" max="65535"></mwc-textfield>
+              <mwc-icon-button class="green minus-btn" icon="remove"
+                @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
             </div>
-            <mwc-button id="pre-open-port-add-btn" outlined icon="add" class="horizontal flex layout center"
-              ?disabled="${this.isExceedMaxCountForPreOpenedPort}"
-              @click="${() => this._appendPreOpenPortRow()}">Add</mwc-button>
-          `}
-        </div>
-        ${this.maxCountForPreOpenedPort <= 0 ? html`` : html`
-          <div slot="footer" class="horizontal layout">
-            <mwc-button
-              class="delete-all-button"
-              slot="footer"
-              icon="delete"
-              style="width:100px"
-              label="${_text('button.Reset')}"
-              @click="${()=>this._clearPreOpenPortRows()}"></mwc-button>
-            <mwc-button
-              unelevated
-              slot="footer"
-              icon="check"
-              style="width:100px"
-              label="${_text('button.Save')}"
-              @click="${()=>this.modifyPreOpenPorts()}"></mwc-button>
           </div>
-        `}
+          <mwc-button id="pre-open-port-add-btn" outlined icon="add" class="horizontal flex layout center"
+            ?disabled="${this.isExceedMaxCountForPreOpenedPort}"
+            @click="${() => this._appendPreOpenPortRow()}">Add</mwc-button>
+        </div>
+        <div slot="footer" class="horizontal layout">
+          <mwc-button
+            class="delete-all-button"
+            slot="footer"
+            icon="delete"
+            style="width:100px"
+            label="${_text('button.Reset')}"
+            @click="${()=>this._clearPreOpenPortRows()}"></mwc-button>
+          <mwc-button
+            unelevated
+            slot="footer"
+            icon="check"
+            style="width:100px"
+            label="${_text('button.Save')}"
+            @click="${()=>this.modifyPreOpenPorts()}"></mwc-button>
+        </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
         <span slot="title">${this._helpDescriptionTitle}</span>
