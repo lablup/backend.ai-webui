@@ -3137,6 +3137,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         row.parentNode.removeChild(row);
       }
     });
+    this._updateIsExceedMaxCountForPreOpenedPort();
   }
 
   /**
