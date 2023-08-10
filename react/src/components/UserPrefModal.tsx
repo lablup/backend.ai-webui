@@ -1,12 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Modal,
-  Input,
-  Form,
-  Select,
-  Divider,
-  message
-} from 'antd';
+import { Modal, Input, Form, Select, Divider, message, Switch } from 'antd';
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from './DefaultProviders';
 import { passwordPattern } from './ResetPasswordRequired';
@@ -38,6 +31,8 @@ const UserPrefModal : React.FC = () => {
     isOpen: boolean;
     full_name: string;
     userId: string;
+    totpSupported: boolean;
+    totpActivated: boolean;
     loggedAccount: {
       access_key: string;
     };
@@ -55,11 +50,13 @@ const UserPrefModal : React.FC = () => {
       isOpen: false,
       full_name: "",
       userId: "",
+      totpSupported: false,
+      totpActivated: false,
       loggedAccount: {access_key: ""},
       keyPairInfo: {keypairs:[{access_key: "", secret_key: ""}]}
     };
   };
-  const { isOpen, full_name, userId, loggedAccount, keyPairInfo } = parsedValue;
+  const { isOpen, full_name, userId, totpSupported, totpActivated, loggedAccount, keyPairInfo } = parsedValue;
 
   let selectOptions: any[] = [];
   if (keyPairInfo.keypairs) {
@@ -282,6 +279,18 @@ const UserPrefModal : React.FC = () => {
           >
             <Input.Password/>
           </Form.Item>
+          {
+            totpSupported ?
+            <Form.Item
+              label={t("webui.menu.TotpActivated")}
+            >
+              <Switch
+                defaultChecked={totpActivated}
+                onChange={(e)=> totpActivated ? dispatchEvent("confirmRemovingTotp", e) : dispatchEvent("startActivatingTotp", e)}
+              />
+            </Form.Item> :
+            ""
+          }
         </Form>
       </Modal>
     </>

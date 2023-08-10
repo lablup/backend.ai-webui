@@ -417,6 +417,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         isOpen: this.isOpen,
         full_name: this._getUsername(),
         userId: this._getUserId(),
+        totpSupported: this.totpSupported,
+        totpActivated: this.totpActivated,
         loggedAccount: 
           Object.keys(this.loggedAccount).length === 0 ? {access_key: ""} : this.loggedAccount,
         keyPairInfo: 
@@ -425,6 +427,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       @cancel="${(e)=> this._hideUserPrefDialog()}"
       @refresh="${(e)=> this._refreshUserInfoPanel()}"
       @updateFullName="${(e)=> this._updateUserFullName(e.detail.newFullName)}"
+      @confirmRemovingTotp="${(e)=> this._confirmRemovingTotp(e)}"
+      @startActivatingTotp="${(e)=> this._startActivatingTotp(e)}"
     >
     </backend-ai-react-user-pref-modal>
     `;
