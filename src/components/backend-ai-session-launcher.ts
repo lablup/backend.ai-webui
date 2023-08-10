@@ -17,7 +17,6 @@ import '@material/mwc-linear-progress';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-list/mwc-check-list-item';
-import '@material/mwc-icon/mwc-icon';
 import {Select} from '@material/mwc-select';
 import {Switch} from '@material/mwc-switch';
 import '@material/mwc-slider';
