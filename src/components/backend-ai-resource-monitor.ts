@@ -301,7 +301,6 @@ export default class BackendAiResourceMonitor extends BackendAIPage {
         }
 
         .resources .monitor {
-          margin-right: 20px;
           margin-bottom: 15px;
         }
 
