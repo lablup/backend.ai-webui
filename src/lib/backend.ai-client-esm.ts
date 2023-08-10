@@ -4230,6 +4230,10 @@ class Enterprise {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
         let cert = await this.client._wrapWithPromise(rqst);
+        // The open-source project version does not have a license URL.
+        if (cert.type.includes('url-not-found')) {
+          return Promise.resolve(false);
+        }
         this.certificate = cert.certificate;
         this.certificate['valid'] = cert.status === 'valid';
         return Promise.resolve(this.certificate);
