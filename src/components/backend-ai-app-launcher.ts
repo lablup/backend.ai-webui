@@ -113,6 +113,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           --mdc-typography-font-family: var(--general-font-family);
         }
 
+        mwc-icon-button {
+          color: #27824f;
+        }
+
         #ssh-dialog {
           --component-width: 375px;
         }
@@ -1245,6 +1249,39 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     collapsibleArea.style.maxHeight = isFolded ? '100%': '83px';
     btn.textContent = isFolded ? _text('session.Readless') : _text('session.Readmore');
   }
+  /**
+   * Copy SSH Connection Example to Clipboard
+   */
+
+  _copySSHConnectionExample(divSelector) {
+    const divElement = this.shadowRoot?.querySelector(divSelector);
+    if (divElement) {
+      const textToCopy = divElement.textContent;
+
+      if (textToCopy.length === 0) {
+        this.notification.text = _text('emptyDivMessage');
+        this.notification.show();
+      } else {
+        if (navigator.clipboard !== undefined) { // for Chrome, Safari
+          navigator.clipboard.writeText(textToCopy).then(() => {
+            this.notification.text = _text('SSHConnectionExampleClipboardCopy');
+            this.notification.show();
+          }, (err) => {
+            console.error('Could not copy text: ', err);
+          });
+        } else { // other browsers
+          const tmpInputElement = document.createElement('input');
+          tmpInputElement.type = 'text';
+          tmpInputElement.value = textToCopy;
+
+          document.body.appendChild(tmpInputElement);
+          tmpInputElement.select();
+          document.execCommand('copy');
+          document.body.removeChild(tmpInputElement);
+        }
+      }
+    }
+  }
 
   render() {
     // language=HTML
@@ -1343,11 +1380,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
-            <div class="monospace" style="background-color:#242424;padding:15px;">
-              <span style="color:#ffffff;">
+            <div class="monospace" style="display:flex;">
+              <div style="color:#ffffff; background-color:#242424; padding:15px; margin:0 5px 0 0" id="current-ssh-connection-example">
                 sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}<br/>
                 scp -i ./id_container -P ${this.sshPort} -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
                 rsync -av -e "ssh -i ./id_container" /path/to/source/ work@${this.sshHost}:~/<vfolder-name>/<br/>
+              </div>
+              <mwc-icon-button
+                id="copy-current-ssh-connection-example-button"
+                icon="content_copy"
+                @click="${() => this._copySSHConnectionExample('#current-ssh-connection-example')}">
+              </mwc-icon-button>
             </div>
           </section>
         </div>
