@@ -27,6 +27,12 @@ export default function reactToWebComponent(
       this.reactRoot = ReactDOM.createRoot(this.mountPoint);
       this.attachShadow({ mode: "open" });
       this.shadowRoot?.appendChild(this.mountPoint);
+
+      // Add custom css
+      const link = document.createElement("link");
+      link.rel = "stylesheet";
+      link.href = "resources/custom.css";
+      this.shadowRoot?.appendChild(link);
     }
 
     mountPoint: HTMLSpanElement;
