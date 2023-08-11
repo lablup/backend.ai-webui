@@ -149,7 +149,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   @property({type: Object}) loggedAccount = Object();
   @property({type: Object}) roleInfo = Object();
   @property({type: Object}) keyPairInfo = Object();
-  @property({type: String}) viewMode : viewType = 'spa';
+  @property({type: String}) viewMode : viewType = 'win';
   @query('#app-body') appBody!: Drawer;
   @query('#app-page') appPage!: HTMLDivElement;
   @query('#content-body') contentBody!: Drawer;
@@ -166,7 +166,7 @@ export default class BackendAIWebUI extends connect(store)(LitElement) {
   constructor() {
     super();
     this.blockedMenuitem = [];
-    globalThis.backendaiwindowmanager.setViewType('spa');//this.viewMode;
+    globalThis.backendaiwindowmanager.setViewType(this.viewMode);//this.viewMode;
   }
 
   static get styles(): CSSResultGroup {

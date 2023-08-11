@@ -46,6 +46,7 @@ export default class BackendAIDesktop extends LitElement {
 
   protected firstUpdated(_changedProperties: PropertyValues) {
     super.firstUpdated(_changedProperties);
+    console.log(this.viewMode);
     if (this.viewMode === 'win') {
       this.background.style.backgroundImage = 'url(' + this.backgroundURL + ')';
     } else { // Tab mode
