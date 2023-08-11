@@ -12,6 +12,9 @@
   "components": {
     "Tag": {
       "borderRadiusSM": 1
+    },
+    "Tabs":{
+      "colorPrimary": "#92E868"
     }
   }
 }

@@ -254,7 +254,16 @@
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
       "DescAIAccelerator": "__NOT_TRANSLATED__",
-      "SessionAlreadyExists": "__NOT_TRANSLATED__"
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "PreOpenPortTitle": "__NOT_TRANSLATED__",
+      "DescSetPreOpenPort": "__NOT_TRANSLATED__",
+      "SetPreopenPorts": "__NOT_TRANSLATED__",
+      "PreOpenPortConfigurationDone": "__NOT_TRANSLATED__",
+      "NoPreOpenPortsConfigured": "__NOT_TRANSLATED__",
+      "PortsTitleWithRange": "__NOT_TRANSLATED__",
+      "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
+      "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
+      "PreOpenPortRange": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",

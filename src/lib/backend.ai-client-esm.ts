@@ -966,6 +966,9 @@ class Client {
       if (resources['env']) {
         params['config'].environ = resources['env'];
       }
+      if (resources['preopen_ports']) {
+        params['config'].preopen_ports = resources['preopen_ports'];
+      }
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
