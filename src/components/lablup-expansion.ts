@@ -33,10 +33,15 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 export default class LablupExpansion extends LitElement {
   @property({type: String}) name = '';
   @property({type: Boolean}) open = false;
+  @property({type: String}) leftIconName = '';
+  @property({type: String}) rightIconName = 'expand_more';
+  @property({type: Function, attribute: false}) leftCustomFunction;
+  @property({type: Function, attribute: false}) rightCustomFunction;
 
-  @query('#accordion') ExpansionShell;
-  @query('#expand_icon') ExpandIcon;
-  @query('div.content') ContentArea;
+  @query('#accordion') expansionShell;
+  @query('#left-icon') leftIcon;
+  @query('#right-icon') rightIcon;
+  @query('div.content') contentArea;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -61,7 +66,7 @@ export default class LablupExpansion extends LitElement {
           transition: all .35s;
         }
         #accordion > div.card > h3 > mwc-icon-button {
-          --mdc-icon-button-size: 16px;
+          --mdc-icon-button-size: 24px;
         }
 
         div.content {
@@ -83,12 +88,23 @@ export default class LablupExpansion extends LitElement {
           max-height: 100vh;
         }
 
-        #accordion #expand_icon {
+        #accordion #left-icon,
+        #accordion #right-icon {
           transition: all .35s;
           transform: rotate(0deg);
+          margin: var(--expansion-icon-margin, 0 5px 0 0);
         }
 
-        #accordion[open] #expand_icon {
+        #accordion #left-icon {
+          margin: var(--expansion-left-icon-margin, 0 5px 0 0);
+        }
+
+        #accordion #right-icon {
+          margin: var(--expansion-right-icon-margin, 0 5px 0 0);
+        }
+
+        #accordion[open] #left-icon:not(.noRotate),
+        #accordion[open] #right-icon:not(.noRotate) {
           transition: all .35s;
           transform: rotate(-180deg);
         }
@@ -109,12 +125,10 @@ export default class LablupExpansion extends LitElement {
       `];
   }
   _toggleAccordion() {
-    if (this.ExpansionShell.hasAttribute('open')) {
-      this.ExpansionShell.removeAttribute('open');
-      //this.ExpandIcon.icon = 'expand_more';
+    if (this.expansionShell.hasAttribute('open')) {
+      this.expansionShell.removeAttribute('open');
     } else {
-      this.ExpansionShell.setAttribute('open', 'true');
-      //this.ExpandIcon.icon = 'expand_less';
+      this.expansionShell.setAttribute('open', 'true');
     }
   }
   render() {
@@ -124,13 +138,33 @@ export default class LablupExpansion extends LitElement {
       <div .name="${this.name}" id="accordion" ${this.open ? 'open' : ''}>
         <div elevation="1" class="card" style="margin: 0;padding:0;">
           <h3 class="horizontal justified layout" style="font-weight:bold" @click="${() => this._toggleAccordion()}">
+            ${this.leftIconName && html`
+              <mwc-icon-button id="left-icon"
+                               icon="${this.leftIconName}"
+                               class="${this.leftCustomFunction ? 'noRotate' : ''}"
+                               @click="${(e) => {
+                                if (this.leftCustomFunction) {
+                                  e.stopPropagation();
+                                  this.leftCustomFunction();
+                                }
+                                }}"></mwc-icon-button>
+            `}
             <span class="vertical center-justified layout">
               <slot name="title"></slot>
             </span>
             <div class="flex"></div>
             <slot name="action"></slot>
-            <mwc-icon-button id="expand_icon" icon="expand_more">
-            </mwc-icon-button>
+            ${this.rightIconName && html`
+              <mwc-icon-button id="right-icon"
+                               icon="${this.rightIconName}"
+                               class="${this.rightCustomFunction ? 'noRotate' : ''}"
+                               @click="${(e) => {
+                                if (this.rightCustomFunction) {
+                                  e.stopPropagation();
+                                  this.rightCustomFunction();
+                                }
+                                }}"></mwc-icon-button>
+            `}
           </h3>
           <div class="content">
             <slot></slot>
@@ -146,7 +180,7 @@ export default class LablupExpansion extends LitElement {
 
   firstUpdated() {
     if (this.open) {
-      this.ExpansionShell.setAttribute('open', 'true');
+      this.expansionShell.setAttribute('open', 'true');
     }
   }
 }

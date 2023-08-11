@@ -72,6 +72,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
   @property({type: Boolean}) hideEnvDialog = false;
+  @property({type: Boolean}) hidePreOpenPortDialog = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
@@ -211,6 +212,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) deleteEnvInfo = Object();
   @property({type: Object}) deleteEnvRow = Object();
   @property({type: Array}) environ;
+  @property({type: Array}) preOpenPorts;
   @property({type: Object}) environ_values = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
@@ -228,6 +230,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'version': ['']
   };
   @property({type: String}) launchButtonMessageTextContent = _text('session.launcher.Launch');
+  @property({type: Boolean}) isExceedMaxCountForPreOpenedPort = false;
+  @property({type: Number}) maxCountForPreOpenedPort = 10;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -254,6 +258,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
   @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
   @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
+  @query('#modify-env-container') modifyEnvContainer!: HTMLDivElement;
+  @query('#modify-pre-open-port-dialog') modifyPreOpenPortDialog!: BackendAIDialog;
+  @query('#modify-pre-open-port-container') modifyPreOpenPortContainer!: HTMLDivElement;
   @query('#launch-confirmation-dialog') launchConfirmationDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
 
@@ -266,6 +273,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.resourceBroker = globalThis.resourceBroker;
     this.notification = globalThis.lablupNotification;
     this.environ = [];
+    this.preOpenPorts = [];
     this.init_resource();
   }
 
@@ -365,8 +373,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.vfolder-list,
         div.vfolder-mounted-list,
         #mounted-folders-container,
-        .environment-variables-container
-         {
+        .environment-variables-container,
+        .pre-open-port-container {
           background-color: rgba(244,244,244,1);
           overflow-y: scroll;
         }
@@ -376,12 +384,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           max-height: 335px;
         }
 
-        .environment-variables-container {
+        .environment-variables-container, .pre-open-port-container {
           font-size: 0.8rem;
           padding: 10px;
         }
 
-        .environment-variables-container mwc-textfield input {
+        .environment-variables-container mwc-textfield input,
+        .pre-open-port-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -672,7 +681,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #launch-confirmation-dialog, #env-config-confirmation {
+        #launch-confirmation-dialog,
+        #env-config-confirmation,
+        #pre-open-port-config-confirmation {
           --component-width: 400px;
           --component-font-size: 14px;
         }
@@ -685,6 +696,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-icon-size: 13px;
           margin-right: 2px;
           vertical-align: middle;
+        }
+
+        #error-icon {
+          width: 24px;
+          --mdc-icon-size: 24px;
+          margin-right: 10px;
         }
 
         ul {
@@ -740,12 +757,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           border: 1px solid #ccc;
         }
 
-        #modify-env-dialog {
+        #modify-env-dialog, #modify-pre-open-port-dialog {
           --component-max-height: 550px;
           --component-width: 400px;
         }
 
-        #modify-env-dialog div.container {
+        #modify-env-dialog div.container,
+        #modify-pre-open-port-dialog div.container {
           display: flex;
           flex-direction: column;
           padding: 0px 30px;
@@ -756,13 +774,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           grid-template-columns: 4fr 4fr 1fr;
         }
 
-        #modify-env-dialog div[slot="footer"] {
+        #modify-env-dialog div[slot="footer"],
+        #modify-pre-open-port-dialog div[slot="footer"] {
           display: flex;
           margin-left: auto;
           gap: 15px;
         }
 
-        #modify-env-container mwc-textfield {
+        #modify-env-container mwc-textfield,
+        #modify-pre-open-port-dialog mwc-textfield {
           width: 90%;
           margin: auto 5px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
@@ -770,11 +790,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
         }
 
-        #env-add-btn {
+        #env-add-btn, #pre-open-port-add-btn {
           margin: 20px auto 10px auto;
         }
 
-        #delete-all-button {
+        .delete-all-button {
           --mdc-theme-primary: var(--paper-red-600);
         }
 
@@ -783,13 +803,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           color: #27824F;
         }
 
-        .environment-variables-container h4 {
+        .environment-variables-container h4,
+        .pre-open-port-container h4 {
           margin: 0;
         }
 
-        .environment-variables-container mwc-textfield {
+        .environment-variables-container mwc-textfield,
+        .pre-open-port-container mwc-textfield {
           --mdc-typography-subtitle1-font-family: var(--general-font-family);
           --mdc-text-field-disabled-ink-color: #222;
+        }
+
+        .optional-buttons {
+          margin: auto 12px;
+        }
+
+        .optional-buttons mwc-button {
+          width: 50%;
+          --mdc-typography-button-font-size: 0.5vw;
         }
 
         [name='resource-group'] mwc-list-item {
@@ -921,6 +952,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
+        this.maxCountForPreOpenedPort = globalThis.backendaiclient._config.maxCountForPreOpenedPort;
         this.is_connected = true;
         this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
@@ -946,14 +978,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
+      this.maxCountForPreOpenedPort = globalThis.backendaiclient._config.maxCountForPreOpenedPort;
       this.is_connected = true;
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
     this.modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const currentEnv = {};
-      const container = this.shadowRoot?.querySelector('#modify-env-container');
-      const rows = container?.querySelectorAll('.row');
+      const rows = this.modifyEnvContainer?.querySelectorAll('.row');
 
       // allow any input in variable or value
       const nonempty = (row) => Array.prototype.filter.call(
@@ -993,6 +1025,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this.modifyEnvDialog.closeWithConfirmation = false;
         this.closeDialog('modify-env-dialog');
+      }
+    });
+    this.modifyPreOpenPortDialog.addEventListener('dialog-closing-confirm', () => {
+      const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+      const currentPorts = Array.from(rows).filter((row) => row.value !== '').map((row) => row.value);
+
+      // check if there's any changes occurred
+      const isEquivalent = (a, b): boolean => {
+        if (a.length !== b.length) {
+          return false;
+        }
+        return a.every((elem, index) => elem === b[index]);
+      };
+
+      if (!isEquivalent(currentPorts, this.preOpenPorts)) {
+        this.hidePreOpenPortDialog = true;
+        this.openDialog('pre-open-port-config-confirmation');
+      } else {
+        this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-pre-open-port-dialog');
       }
     });
     this.currentIndex = 1;
@@ -1478,6 +1530,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
       config['env'] = this.environ_values;
+    }
+    if (this.preOpenPorts.length > 0) {
+      config['preopen_ports'] = [...new Set(this.preOpenPorts.map((port) => Number(port)))];
     }
     if (this.openMPSwitch.selected === false) {
       const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
@@ -2744,6 +2799,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  _showPreOpenPortConfigDescription(e) {
+    e.stopPropagation();
+    this._helpDescriptionTitle = _text('session.launcher.PreOpenPortTitle');
+    this._helpDescription = _text('session.launcher.DescSetPreOpenPort');
+    this._helpDescriptionIcon = '';
+    this.helpDescriptionDialog.show();
+  }
+
   _resourceTemplateToCustom() {
     // TODO remove protected property assignment
     (this.resourceTemplatesSelect as any).selectedText = _text('session.launcher.CustomResourceApplied');
@@ -2956,11 +3019,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {string} value - environment variable value
    */
   _appendEnvRow(name = '', value = '') {
-    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
-    const lastChild = container?.children[container.children.length - 1];
+    const lastChild = this.modifyEnvContainer?.children[this.modifyEnvContainer.children.length - 1];
     const div = this._createEnvRow(name, value);
-    container?.insertBefore(div, lastChild as ChildNode);
+    this.modifyEnvContainer?.insertBefore(div, lastChild as ChildNode);
   }
+
+  /**
+   * Append a row to the environment variable list.
+   *
+   * @param {number} port - pre open port
+   */
+  _appendPreOpenPortRow(port=null) {
+    const lastChild = this.modifyPreOpenPortContainer?.children[this.modifyPreOpenPortContainer.children.length - 1];
+    const div = this._createPreOpenPortRow(port);
+    this.modifyPreOpenPortContainer?.insertBefore(div, lastChild as ChildNode);
+    this._updateIsExceedMaxCountForPreOpenedPort();
+  }
+
   /**
    * Create a row in the environment variable list.
    *
@@ -2990,6 +3065,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return div;
   }
 
+  _createPreOpenPortRow(port) {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'horizontal layout center row');
+
+    const row = document.createElement('mwc-textfield');
+    if (port) {
+      row.setAttribute('value', port);
+    }
+    row.setAttribute('type', 'number');
+    row.setAttribute('min', '1024');
+    row.setAttribute('max', '65535');
+
+    const removeButton = document.createElement('mwc-icon-button');
+    removeButton.setAttribute('icon', 'remove');
+    removeButton.setAttribute('class', 'green minus-btn');
+    removeButton.addEventListener('click', (e) => this._removePreOpenPortItem(e));
+
+    div.append(row);
+    div.append(removeButton);
+    return div;
+  }
+
   /**
    * Check whether delete operation will proceed or not.
    *
@@ -2997,16 +3094,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _removeEnvItem(e) {
     // htmlCollection should be converted to Array.
-    this.deleteEnvRow = e.target.parentNode;
-    this.deleteEnvRow.remove();
+    const parentNode = e.target.parentNode;
+    parentNode.remove();
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   * And update `isExceedMaxCountForPreOpenedPort`.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _removePreOpenPortItem(e) {
+    // htmlCollection should be converted to Array.
+    const parentNode = e.target.parentNode;
+    parentNode.remove();
+    this._updateIsExceedMaxCountForPreOpenedPort();
   }
 
   /**
    * Remove empty env input fields
    */
   _removeEmptyEnv() {
-    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
-    const rows = container?.querySelectorAll('.row') as NodeListOf<HTMLDivElement>;
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row') as NodeListOf<HTMLDivElement>;
     const empty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('mwc-textfield'), (tf) => tf.value === ''
     ).length === 2;
@@ -3015,6 +3124,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         row.parentNode.removeChild(row);
       }
     });
+  }
+
+  _removeEmptyPreOpenPorts() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header)') as NodeListOf<HTMLDivElement>;
+    const empty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('mwc-textfield'), (tf) => tf.value === ''
+    ).length === 1;
+    Array.prototype.filter.call(rows, (row) => empty(row)).map((row, idx) => {
+      if (idx !== 0 || this.preOpenPorts.length > 0) {
+        row.parentNode.removeChild(row);
+      }
+    });
+    this._updateIsExceedMaxCountForPreOpenedPort();
   }
 
   /**
@@ -3030,11 +3152,38 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Modify pre open ports for current session.
+   */
+  modifyPreOpenPorts() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+    const isPreOpenPortsValid = Array.from(rows).filter((row) => !row.checkValidity()).length === 0;
+    if (!isPreOpenPortsValid) {
+      this.notification.text = _text('session.launcher.PreOpenPortRange');
+      this.notification.show();
+      return;
+    }
+    this._parseAndSavePreOpenPortList();
+    this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+    this.modifyPreOpenPortDialog.hide();
+    this.notification.text = _text('session.launcher.PreOpenPortConfigurationDone');
+    this.notification.show();
+  }
+
+  /**
    * load environment variables for current session
    */
   _loadEnv() {
     this.environ.forEach((item: any) => {
       this._appendEnvRow(item.name, item.value);
+    });
+  }
+
+  /**
+   * load pre open ports for current session
+   */
+  _loadPreOpenPorts() {
+    this.preOpenPorts.forEach((item) => {
+      this._appendPreOpenPortRow(item);
     });
   }
 
@@ -3048,10 +3197,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Show pre-open ports popup.
+   */
+  _showPreOpenPortDialog() {
+    this._removeEmptyPreOpenPorts();
+    this.modifyPreOpenPortDialog.closeWithConfirmation = true;
+    this.modifyPreOpenPortDialog.show();
+  }
+
+  /**
    * Close confirmation dialog and environment variable dialog and reset the environment variable and value
    */
   _closeAndResetEnvInput() {
-    this._clearRows(true);
+    this._clearEnvRows(true);
     this.closeDialog('env-config-confirmation');
     if (this.hideEnvDialog) {
       this._loadEnv();
@@ -3061,12 +3219,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Close confirmation dialog and environment variable dialog and reset the environment variable and value
+   */
+  _closeAndResetPreOpenPortInput() {
+    this._clearPreOpenPortRows(true);
+    this.closeDialog('pre-open-port-config-confirmation');
+    if (this.hidePreOpenPortDialog) {
+      this._loadPreOpenPorts();
+      this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+      this.modifyPreOpenPortDialog.hide();
+    }
+  }
+
+  /**
    * Parse environment variables on UI.
    */
   _parseEnvVariableList() {
     this.environ_values = {};
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
     ).length === 0;
@@ -3085,11 +3255,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
   }
 
+  _parseAndSavePreOpenPortList() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+    this.preOpenPorts = Array.from(rows).filter((row) => row.value !== '').map((row) => row.value);
+  }
+
   _resetEnvironmentVariables() {
     this.environ = [];
     this.environ_values = {};
     if (this.modifyEnvDialog !== null) {
-      this._clearRows(true);
+      this._clearEnvRows(true);
+    }
+  }
+
+  _resetPreOpenPorts() {
+    this.preOpenPorts = [];
+    if (this.modifyPreOpenPortDialog !== null) {
+      this._clearPreOpenPortRows(true);
     }
   }
 
@@ -3097,9 +3279,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Clear rows from the environment variable.
    * @param {Boolean} force - Whether removing all rows except first row or not.
    */
-  _clearRows(force = false) {
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row') as NodeListOf<Element>;
+  _clearEnvRows(force = false) {
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row') as NodeListOf<Element>;
     const firstRow = rows[0];
 
     // show confirm dialog if not empty.
@@ -3110,6 +3291,39 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (Array.prototype.filter.call(rows, (row) => nonempty(row)).length > 0) {
         this.hideEnvDialog = false;
         this.openDialog('env-config-confirmation');
+        return;
+      }
+    }
+
+    // remain first row element and clear values
+    firstRow?.querySelectorAll('mwc-textfield').forEach((tf) => {
+      tf.value = '';
+    });
+
+    // delete extra rows
+    rows.forEach((e, idx) => {
+      if (idx !== 0) {
+        e.remove();
+      }
+    });
+  }
+
+  /**
+   * Clear rows from the pre open port.
+   * @param {Boolean} force - Whether removing all rows except first row or not.
+   */
+  _clearPreOpenPortRows(force = false) {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row') as NodeListOf<Element>;
+    const firstRow = rows[0];
+
+    // show confirm dialog if not empty.
+    if (!force) {
+      const nonempty = (row) => Array.prototype.filter.call(
+        row.querySelectorAll('mwc-textfield'), (item) => item.value.length > 0
+      ).length > 0;
+      if (Array.prototype.filter.call(rows, (row) => nonempty(row)).length > 0) {
+        this.hidePreOpenPortDialog = false;
+        this.openDialog('pre-open-port-config-confirmation');
         return;
       }
     }
@@ -3184,6 +3398,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _resetProgress() {
     this.moveProgress(-this.currentIndex + 1);
     this._resetEnvironmentVariables();
+    this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
   }
 
@@ -3347,6 +3562,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _updateIsExceedMaxCountForPreOpenedPort() {
+    const currentRowCount = this.modifyPreOpenPortContainer?.querySelectorAll('mwc-textfield')?.length ?? 0;
+    this.isExceedMaxCountForPreOpenedPort = currentRowCount >= this.maxCountForPreOpenedPort;
+  }
+
   render() {
     // language=HTML
     return html`
@@ -3436,7 +3656,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_text('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
-                           helper="${_text('maxLength.64chars')}"
+                           helper="${_text('inputLimit.4to64chars')}"
                            validationMessage="${_text('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
             <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
@@ -3456,37 +3676,53 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                        @change="${this._getSchedulableTime}"
                                        style="display:none;"></vaadin-date-time-picker>
             </div>
-            <div class="horizontal layout center justified">
-              <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
-              <mwc-button
-                unelevated
-                icon="rule"
-                label="${_text('session.launcher.Config')}"
-                style="width:auto;margin-right:15px;"
-                @click="${() => this._showEnvDialog()}"></mwc-button>
-            </div>
-            <div class="environment-variables-container" style="margin-top:18px;">
-              ${this.environ.length > 0 ? html`
-                <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
-                  <div role="listbox">
-                    <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
-                    ${this.environ.map((item) => html`
-                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
-                    `)}
+            <lablup-expansion leftIconName="expand_more"
+                              rightIconName="settings"
+                              .rightCustomFunction="${() => this._showEnvDialog()}">
+              <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <div class="environment-variables-container">
+                ${this.environ.length > 0 ? html`
+                  <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
+                    <div role="listbox">
+                      <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.name}"></mwc-textfield>
+                      `)}
+                    </div>
+                    <div role="listbox" style="margin-left:15px;">
+                      <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.value}"></mwc-textfield>
+                      `)}
+                    </div>
                   </div>
-                  <div role="listbox" style="margin-left:15px;">
-                    <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
-                    ${this.environ.map((item) => html`
-                      <mwc-textfield disabled value="${item.value}"></mwc-textfield>
-                    `)}
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoEnvConfigured')}</span>
                   </div>
+                `}
+              </div>
+            </lablup-expansion>
+            ${this.maxCountForPreOpenedPort > 0 ? html`
+              <lablup-expansion leftIconName="expand_more"
+                                rightIconName="settings"
+                                .rightCustomFunction="${() => this._showPreOpenPortDialog()}">
+                <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
+                <div class="pre-open-port-container">
+                  ${this.preOpenPorts.length > 0 ? html`
+                    <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                      ${this.preOpenPorts.map((port) => html`
+                        <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                      `)}
+                    </div>
+                  ` : html`
+                    <div class="vertical layout center flex blank-box">
+                      <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                    </div>
+                  `}
                 </div>
-              ` : html`
-                <div class="vertical layout center flex blank-box">
-                  <span>${_t('session.launcher.NoEnvConfigured')}</span>
-                </div>
-              `}
-            </div>
+              </lablup-expansion>
+            ` : html``}
             <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
@@ -4013,6 +4249,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
+            ${this.maxCountForPreOpenedPort > 0 ? html`
+              <p class="title">${_t('session.launcher.PreOpenPortPanelTitle')}</p>
+              <div class="pre-open-port-container">
+                ${this.preOpenPorts.length > 0 ? html`
+                  <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                    ${this.preOpenPorts.map((port) => html`
+                      <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                    `)}
+                  </div>
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                  </div>
+                `}
+              </div>
+            ` : html``}
           </div>
         </form>
         <div slot="footer" class="vertical flex layout">
@@ -4070,12 +4322,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal layout">
           <mwc-button
-              id="delete-all-button"
+              class="delete-all-button"
               slot="footer"
               icon="delete"
               style="width:100px"
               label="${_text('button.Reset')}"
-              @click="${()=>this._clearRows()}"></mwc-button>
+              @click="${()=>this._clearEnvRows()}"></mwc-button>
           <mwc-button
               unelevated
               slot="footer"
@@ -4083,6 +4335,50 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               style="width:100px"
               label="${_text('button.Save')}"
               @click="${()=>this.modifyEnv()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-pre-open-port-dialog" fixed backdrop persistent closeWithConfirmation>
+        <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
+        <span slot="action">
+          <mwc-icon-button icon="info" @click="${(e) => this._showPreOpenPortConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+        </span>
+        <div slot="content" id="modify-pre-open-port-container">
+          <div class="horizontal layout center flex justified header">
+            <div> ${_t('session.launcher.PortsTitleWithRange')} </div>
+          </div>
+          <div class="layout center">
+            ${this.preOpenPorts.forEach((item: number) => html`
+              <div class="horizontal layout center row">
+                <mwc-textfield value="${item}" type="number" min="1024" max="65535"></mwc-textfield>
+                <mwc-icon-button class="green minus-btn" icon="remove"
+                  @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
+              </div>
+            `)}
+            <div class="horizontal layout center row">
+              <mwc-textfield type="number" min="1024" max="65535"></mwc-textfield>
+              <mwc-icon-button class="green minus-btn" icon="remove"
+                @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
+            </div>
+          </div>
+          <mwc-button id="pre-open-port-add-btn" outlined icon="add" class="horizontal flex layout center"
+            ?disabled="${this.isExceedMaxCountForPreOpenedPort}"
+            @click="${() => this._appendPreOpenPortRow()}">Add</mwc-button>
+        </div>
+        <div slot="footer" class="horizontal layout">
+          <mwc-button
+            class="delete-all-button"
+            slot="footer"
+            icon="delete"
+            style="width:100px"
+            label="${_text('button.Reset')}"
+            @click="${()=>this._clearPreOpenPortRows()}"></mwc-button>
+          <mwc-button
+            unelevated
+            slot="footer"
+            icon="check"
+            style="width:100px"
+            label="${_text('button.Save')}"
+            @click="${()=>this.modifyPreOpenPorts()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
@@ -4131,6 +4427,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               id="env-config-reset-button"
               label="${_text('button.DismissAndProceed')}"
               @click="${() => this._closeAndResetEnvInput()}"
+              style="width:auto;">
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="pre-open-port-config-confirmation" warning fixed>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('session.launcher.PrePortConfigWillDisappear')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              id="pre-open-port-remain-button"
+              label="${_text('button.Cancel')}"
+              @click="${() => this.closeDialog('pre-open-port-config-confirmation')}"
+              style="width:auto;margin-right:10px;">
+          </mwc-button>
+          <mwc-button
+              unelevated
+              id="pre-open-port-config-reset-button"
+              label="${_text('button.DismissAndProceed')}"
+              @click="${() => this._closeAndResetPreOpenPortInput()}"
               style="width:auto;">
           </mwc-button>
         </div>

@@ -158,7 +158,8 @@
       "SessionStartTime": "Session Starts: ",
       "ResetStartTime": "Please reset the start time.",
       "InfiniteTime": "Infinite",
-      "SetEnvironmentVariable": "Set Environment Variable (optional)",
+      "SetEnvironmentVariable": "Environment Variable (optional)",
+      "SetPreopenPorts": "Pre-open Ports (optional)",
       "Config": "Config",
       "ChooseEnvironment": "Choose Environment",
       "Version": "Version",
@@ -212,6 +213,7 @@
       "NoFolderMounted": "No storage folder is mounted",
       "NoAvailableFolderToMount": "There's no available folder to mount.",
       "NoEnvConfigured": "No additional environment variable is configured",
+      "NoPreOpenPortsConfigured": "No additional pre-open port is configured",
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
       "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
       "Launch": "Launch",
@@ -267,7 +269,15 @@
       "InferenceMode": "Inference",
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
       "AIAccelerator": "AI Accelerator",
-      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>"
+      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>",
+      "PreOpenPortTitle": "Pre-Open Port",
+      "NotePreOpenPort": "This port is a container internal port.",
+      "DescSetPreOpenPort": "'Pre-open port' refers to a specific <span style='color:var(--paper-red-400);'>internal container port</span> that allows incoming connections from external devices or computers on a network device or computer.",
+      "PortsTitleWithRange": "Port value (between 1024 ~ 65535)",
+      "PrePortConfigWillDisappear": "Any unsaved pre-open ports will be disappeared.",
+      "PreOpenPortConfigurationDone": "Pre-open ports configured successfully.",
+      "PreOpenPortPanelTitle": "Pre-open ports to set (optional)",
+      "PreOpenPortRange": "Pre-open ports are only available from 1024 to 65535."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -386,7 +396,8 @@
     "UtilizationThresholdDesc": "Threshold criteria of each compute resource. When one or more resource of a compute session does not exceed the configured threshold criteria for a certain time, the session will be garbage collected (terminated). For example, if you set 1% of CUDA utilization threshold, compute sessions that show less than 1% CUDA GPU utilization, for a certain duration of time, will be destroyed. Resources with empty values are excluded from the garbage collection criteria.",
     "ConnectionExample": "Connection Example",
     "ConnectionNotice": "Notice",
-    "System": "Upload Sessions"
+    "System": "Upload Sessions",
+    "SessionType": "SessionType"
   },
   "modelService": {
     "Running": "Running",
@@ -1492,6 +1503,9 @@
     "512": "(<= 512)",
     "1024": "(<= 1024)",
     "2048": "(<= 2048)"
+  },
+  "inputLimit": {
+    "4to64chars": "(4~64 chars)"
   },
   "explorer": {
     "ValueRequired": "ValueRequired",
