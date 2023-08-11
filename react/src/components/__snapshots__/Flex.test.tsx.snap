@@ -1,0 +1,55 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Flex default render 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "center",
+      "backgroundColor": "transparent",
+      "border": "0 solid black",
+      "boxSizing": "border-box",
+      "display": "flex",
+      "flexBasis": "auto",
+      "flexDirection": "row",
+      "flexShrink": 0,
+      "flexWrap": "nowrap",
+      "gap": 0,
+      "justifyContent": "flex-start",
+      "listStyle": "none",
+      "margin": 0,
+      "minHeight": 0,
+      "minWidth": 0,
+      "padding": 0,
+      "position": "relative",
+      "textDecoration": "none",
+    }
+  }
+/>
+`;
+
+exports[`Flex render with custom props 1`] = `
+<div
+  style={
+    Object {
+      "alignItems": "flex-start",
+      "backgroundColor": "blue",
+      "border": "0 solid black",
+      "boxSizing": "border-box",
+      "display": "flex",
+      "flexBasis": "auto",
+      "flexDirection": "column",
+      "flexShrink": 0,
+      "flexWrap": "wrap-reverse",
+      "gap": 12,
+      "justifyContent": "center",
+      "listStyle": "none",
+      "margin": 0,
+      "minHeight": 0,
+      "minWidth": 0,
+      "padding": 0,
+      "position": "relative",
+      "textDecoration": "none",
+    }
+  }
+/>
+`;
