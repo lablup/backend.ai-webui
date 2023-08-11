@@ -782,6 +782,7 @@ export default class BackendAISessionList extends BackendAIPage {
             }
           }
           const service_info = JSON.parse(sessions[objectKey].service_ports);
+          sessions[objectKey].service_ports = service_info;
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map((a) => a.name);
             sessions[objectKey].app_services_option = {};
@@ -2177,7 +2178,8 @@ export default class BackendAISessionList extends BackendAIPage {
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}"
-             .app-services-option="${rowData.item.app_services_option}">
+             .app-services-option="${rowData.item.app_services_option}"
+             .service-ports="${rowData.item.service_ports}">
           ${(rowData.item.appSupport && this.condition !== 'system') ? html`
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"

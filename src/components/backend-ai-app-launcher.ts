@@ -13,6 +13,7 @@ import {TextField} from '@material/mwc-textfield';
 import 'macro-carousel';
 
 import BackendAIDialog from './backend-ai-dialog';
+import './lablup-expansion';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -36,6 +37,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) jobs = Object();
   @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
+  @property({type: Array}) preOpenedPortList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -55,10 +57,9 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
-  @property({type: Object}) openPortToPublic = false;
-  @property({type: Object}) allowPreferredPort = false;
+  @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
-  @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
   @property({type: String}) vscodeDesktopPassword = '';
@@ -80,6 +81,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   constructor() {
     super();
     this.appSupportList = [];
+    this.preOpenedPortList = [];
     this.appSupportOption = [];
   }
 
@@ -185,6 +187,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           height: auto;
           max-height: 83px;
           overflow-y: hidden;
+        }
+
+        #pre-open-port-expansion {
+          --expansion-header-font-size: 1.17em;
+          --expansion-header-padding: 0 0 0 15px;
+          --expansion-right-icon-margin: 0 10px 0 0;
         }
 
         .slide {
@@ -407,6 +415,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const appServices = controls['app-services'];
     const mode = controls['mode'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
+    const servicePorts = controls['service-ports'];
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
       param['mode'] = mode;
@@ -424,8 +433,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       return this._runAppWithParameters(param);
     }
+    this.preOpenedPortList = [];
+    const preOpenAppNameList = servicePorts.filter((item) => item.protocol === 'preopen').map((item) => item.name);
+    preOpenAppNameList.forEach((elm) => {
+      this.preOpenedPortList.push({
+        'name': elm,
+        'title': elm,
+        // TODO: change image according to the connected app.
+        'src': '/resources/icons/default_app.svg',
+      });
+    });
+    const filteredAppServices = appServices.filter((item) => !preOpenAppNameList.includes(item));
     this.appSupportList = [];
-    if (!appServices.includes('ttyd')) {
+    if (!filteredAppServices.includes('ttyd')) {
       this.appSupportList.push({ // Force push terminal
         'name': 'ttyd',
         'title': 'Console',
@@ -443,7 +463,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
-    appServices.forEach((elm) => {
+    filteredAppServices.forEach((elm) => {
       if (!(elm in this.appTemplate)) {
         this.appTemplate[elm] = [];
         this.appTemplate[elm].push({
@@ -455,12 +475,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         });
       }
     });
-    appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+    filteredAppServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     if (Object.keys(appServicesOption).length > 0) {
       this.appSupportOption = appServicesOption;
     }
-    appServices.forEach((elm) => {
+    filteredAppServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
           if (interText !== this.appTemplate[elm][0].category) {
@@ -493,7 +513,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (
       globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
       globalThis.isElectron &&
-      !appServices.includes('vscode-desktop')
+      !filteredAppServices.includes('vscode-desktop')
     ) {
       const insertAfterIndex = this.appSupportList.findIndex((item) => item.name === 'vscode');
       this.appSupportList.splice(insertAfterIndex + 1, 0, {
@@ -1275,6 +1295,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>`}
             `)}
           </div>
+          ${this.preOpenedPortList.length > 0 ? html`
+            <lablup-expansion id="pre-open-port-expansion" open>
+              <span slot="title" class="horizontal layout">
+                ${_t('session.launcher.PreOpenPortTitle')}
+              </span>
+              <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+                ${this.preOpenedPortList.map((item) => html`
+                  <div class="vertical layout center center-justified app-icon">
+                    <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                     @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
+                      <img src="${item.src}"/>
+                    </mwc-icon-button>
+                    <span class="label">${item.title}</span>
+                  </div>
+                `)}
+              </div>
+            </lablup-expansion>
+          ` : html``}
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
