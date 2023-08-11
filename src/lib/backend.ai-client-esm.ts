@@ -415,22 +415,19 @@ class Client {
           errorDesc = body.title;
         }
       }
-      // Consider 404 status as a non-server error, exclude from `throw` target.
-      if (resp.status != '404') {
-        throw {
-          isError: true,
-          timestamp: new Date().toUTCString(),
-          type: errorType,
-          requestUrl: rqst.uri,
-          requestMethod: rqst.method,
-          requestParameters: rqst.body,
-          statusCode: resp.status,
-          statusText: resp.statusText,
-          title: errorTitle,
-          message: errorMsg,
-          description: errorDesc
-        };
-      }
+      throw {
+        isError: true,
+        timestamp: new Date().toUTCString(),
+        type: errorType,
+        requestUrl: rqst.uri,
+        requestMethod: rqst.method,
+        requestParameters: rqst.body,
+        statusCode: resp.status,
+        statusText: resp.statusText,
+        title: errorTitle,
+        message: errorMsg,
+        description: errorDesc
+      };
     }
 
     let previous_log = JSON.parse(localStorage.getItem('backendaiwebui.logs') as any);

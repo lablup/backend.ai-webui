@@ -49,7 +49,9 @@ const Information: React.FC<InformationProps> = () => {
   }>(
     "licenseInfo",
     () => {
-      return baiClient.enterprise.getLicense();
+      return baiClient.enterprise.getLicense().catch((e: any) => {
+        if (e.statusCode === 404) return null;
+      });
     },
     {
       // for to render even this fail query failed
