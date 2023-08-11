@@ -37,7 +37,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) jobs = Object();
   @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
-  @property({type: Array}) preOpenPortList;
+  @property({type: Array}) preOpenedPortList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -81,7 +81,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   constructor() {
     super();
     this.appSupportList = [];
-    this.preOpenPortList = [];
+    this.preOpenedPortList = [];
     this.appSupportOption = [];
   }
 
@@ -433,10 +433,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       return this._runAppWithParameters(param);
     }
-    this.preOpenPortList = [];
+    this.preOpenedPortList = [];
     const preOpenAppNameList = servicePorts.filter((item) => item.protocol === 'preopen').map((item) => item.name);
     preOpenAppNameList.forEach((elm) => {
-      this.preOpenPortList.push({
+      this.preOpenedPortList.push({
         'name': elm,
         'title': elm,
         // TODO: change image according to the connected app.
@@ -1295,13 +1295,13 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>`}
             `)}
           </div>
-          ${this.preOpenPortList.length > 0 ? html`
+          ${this.preOpenedPortList.length > 0 ? html`
             <lablup-expansion id="pre-open-port-expansion" open>
               <span slot="title" class="horizontal layout">
                 ${_t('session.launcher.PreOpenPortTitle')}
               </span>
               <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
-                ${this.preOpenPortList.map((item) => html`
+                ${this.preOpenedPortList.map((item) => html`
                   <div class="vertical layout center center-justified app-icon">
                     <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
                                      @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
