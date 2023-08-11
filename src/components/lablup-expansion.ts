@@ -92,10 +92,15 @@ export default class LablupExpansion extends LitElement {
         #accordion #right-icon {
           transition: all .35s;
           transform: rotate(0deg);
+          margin: var(--expansion-icon-margin, 0 5px 0 0);
         }
 
         #accordion #left-icon {
-          margin-right: 5px;
+          margin: var(--expansion-left-icon-margin, 0 5px 0 0);
+        }
+
+        #accordion #right-icon {
+          margin: var(--expansion-right-icon-margin, 0 5px 0 0);
         }
 
         #accordion[open] #left-icon:not(.noRotate),
