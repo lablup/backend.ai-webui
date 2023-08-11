@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useLazyLoadQuery } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import _ from "lodash";
-import { Divider, Form, Input, Select } from "antd";
+import { Divider, Form, Input, Select, Tag } from "antd";
 import { useBackendaiImageMetaData } from "../hooks";
 import ImageMetaIcon from "./ImageMetaIcon";
 import Flex from "./Flex";
@@ -22,6 +22,8 @@ type ImageGroup = {
   groupName: string;
   environmentGroups: {
     environmentName: string;
+    displayName: string;
+    prefix?: string;
     images: Image[];
   }[];
 };
@@ -44,6 +46,23 @@ const getImageFullName = (image: Image) => {
     : undefined;
 };
 
+function compareVersions(version1: string, version2: string): number {
+  const v1 = version1.split(".").map(Number);
+  const v2 = version2.split(".").map(Number);
+
+  for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
+    const num1 = v1[i] || 0;
+    const num2 = v2[i] || 0;
+
+    if (num1 > num2) {
+      return 1;
+    } else if (num1 < num2) {
+      return -1;
+    }
+  }
+
+  return 0;
+}
 const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter }) => {
@@ -133,6 +152,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
         .filter(filter ? filter : () => true)
         .groupBy((image) => {
           // group by using `group` property of image info
+          console.log(getImageMeta(getImageFullName(image) || ""));
           return (
             metadata?.imageInfo[getImageMeta(getImageFullName(image) || "").key]
               ?.group || "Custom Environments"
@@ -145,14 +165,25 @@ const ImageEnvironmentSelectFormItems: React.FC<
               // sub group by using (environment) `name` property of image info
               .groupBy((image) => {
                 return (
-                  metadata?.imageInfo[
-                    getImageMeta(getImageFullName(image) || "").key
-                  ]?.name || image?.name
+                  // metadata?.imageInfo[
+                  //   getImageMeta(getImageFullName(image) || "").key
+                  // ]?.name || image?.name
+                  image?.name
                 );
               })
               .map((images, environmentName) => ({
                 environmentName,
-                images,
+                displayName:
+                  metadata?.imageInfo[environmentName.split("/")?.[1]]?.name ||
+                  environmentName,
+                prefix: environmentName.split("/")?.[0],
+                images: images.sort((a, b) =>
+                  compareVersions(
+                    // latest version comes first
+                    b?.tag?.split("-")?.[0] ?? "",
+                    a?.tag?.split("-")?.[0] ?? ""
+                  )
+                ),
               }))
               .sortBy((item) => item.environmentName)
               .value(),
@@ -163,6 +194,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [images, metadata, filter]
   );
+
+  console.log(imageGroups);
 
   return (
     <>
@@ -202,7 +235,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                 height: 15,
                               }}
                             />
-                            {environmentGroup.environmentName}
+                            {environmentGroup.displayName}
                           </Flex>
                         </Flex>
                       }
@@ -217,11 +250,17 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             }}
                           />
                           <TextHighlighter keyword={environmentSearch}>
-                            {environmentGroup.environmentName}
+                            {environmentGroup.displayName}
                           </TextHighlighter>
                         </Flex>
                         {/* <Flex direction="row" gap="xs"> */}
                         {/* <Tag>Multiarch</Tag> */}
+                        {environmentGroup.prefix &&
+                          !["lablup", "cloud", "stable"].includes(
+                            environmentGroup.prefix
+                          ) && (
+                            <Tag color="purple">{environmentGroup.prefix}</Tag>
+                          )}
                         {/* </Flex> */}
                       </Flex>
                     </Select.Option>
@@ -270,6 +309,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
               >
                 {_.map(
                   _.uniqBy(selectedEnvironmentGroup?.images, "digest"),
+
                   (image) => {
                     const [version, tag, requirements] = image?.tag?.split(
                       "-"
