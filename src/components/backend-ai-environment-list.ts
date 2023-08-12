@@ -63,6 +63,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
   @property({type: Boolean}) _ipu_disabled = false;
   @property({type: Boolean}) _atom_disabled = false;
   @property({type: Boolean}) _warboy_disabled = false;
+  @property({type: Boolean}) openManageAppsModal = false;
   @property({type: Object}) alias = Object();
   @property({type: Object}) indicator = Object();
   @property({type: Array}) installImageNameList;
@@ -1135,7 +1136,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 }
                 this.selectedIndex = rowData.index;
                 this._decodeServicePort();
-                this._launchDialogById('#modify-app-dialog');
+                this.openManageAppsModal = true;
+                // this._launchDialogById('#modify-app-dialog');
                 this.requestUpdate();
               }}>
            </mwc-icon-button>
@@ -1380,6 +1382,13 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                @click="${() => this.modifyImage()}"></mwc-button>
          </div>
        </backend-ai-dialog>
+       <!-- TODO-START -->
+       <backend-ai-react-manage-app-dialog value="${JSON.stringify({
+        servicePorts: this.servicePorts,
+        open: this.openManageAppsModal,
+       })}"
+       ></backend-ai-react-manage-app-dialog>
+       <!-- TODO-END -->
        <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
          <span slot="title">${_t('environment.ManageApps')}</span>
          <div slot="content" id="modify-app-container">
