@@ -33,28 +33,8 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
         };
     }
     const { open, servicePorts } = parsedValue;
-    const columns = [
-        {
-            key: '1',
-            title: t('environmnent.AppName'),
-        },
-        {
-            key: '2',
-            title: t('environmnent.Protocol'),
-        },
-        {
-            key: '3',
-            title: t('environmnent.Port'),
-        },
-        {
-            key: '4',
-            title: t('environmnent.Action'),
-        }
-    ]
 
     return (
-        <>
-
         <Modal
             open={open}
             onCancel={() => {
@@ -62,6 +42,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
             }}
             centered
             title={t('environment.ManageApps')}
+            cancelButtonProps={{style:{display: 'none'}}}
             {...modalProps}
         >
             <Space direction="vertical">
@@ -77,14 +58,13 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                             <Input style={{ width: '30%' }} defaultValue={item.app}/>
                             <Input style={{ width: '30%' }} defaultValue={item.protocol}/>
                             <Input style={{ width: '30%' }} defaultValue={item.port}/>
-                            <Button icon={<DeleteOutlined />} style={{ width: '10%' }}/>
+                            <Button style={{ width: '10%' }} icon={<DeleteOutlined />}/>
                         </Space.Compact>
                     )
                 })}
                 <Button block icon={<PlusOutlined />}>{t('general.Add')}</Button>
             </Space>
         </Modal>
-        </>
     )
 }
 

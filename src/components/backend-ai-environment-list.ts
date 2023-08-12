@@ -1387,6 +1387,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
         servicePorts: this.servicePorts,
         open: this.openManageAppsModal,
        })}"
+       @cancel="${() => this.openManageAppsModal = false}"
        ></backend-ai-react-manage-app-dialog>
        <!-- TODO-END -->
        <backend-ai-dialog id="modify-app-dialog" fixed backdrop>
