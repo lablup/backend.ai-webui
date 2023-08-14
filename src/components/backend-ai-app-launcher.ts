@@ -116,7 +116,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         }
 
         mwc-icon-button {
-          color: #27824f;
+          color: var(--general-button-background-color);
         }
 
         #ssh-dialog {
