@@ -183,7 +183,6 @@ export default class BackendAILogin extends BackendAIPage {
           font-family: var(--general-font-family);
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
-          --mdc-text-field-hover-line-color: #27824f;
           width: 100%;
         }
 
@@ -1629,7 +1628,7 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;">
             <div>${this.connection_mode === 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
@@ -1667,7 +1666,7 @@ export default class BackendAILogin extends BackendAIPage {
                         @keyup="${this._submitIfEnter}">
                     </mwc-textfield>
                     <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                        style="background-color: #fafafa;border-bottom: 1px inset #27824f;"
+                        style="position: absolute; right: 0;"
                         @click="${(e) => this._togglePasswordVisibility(e.target)}">
                     </mwc-icon-button-toggle>
                   </div>
@@ -1695,7 +1694,7 @@ export default class BackendAILogin extends BackendAIPage {
             </form>
             <form>
               <fieldset>
-                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
+                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none; padding-bottom: 10px;">
                   <mwc-icon-button id="endpoint-button" icon="cloud_queue"
                       @click="${() => this._toggleEndpoint()}">
                   </mwc-icon-button>
