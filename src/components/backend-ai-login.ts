@@ -130,7 +130,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) otp;
   @property({type: Boolean}) needToResetPassword = false;
   @property({type: Boolean}) directoryBasedUsage = false;
-  @property({type: Number}) maxCountForPreOpenedPort = 10;
+  @property({type: Number}) maxCountForPreopenPorts = 10;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -782,12 +782,12 @@ export default class BackendAILogin extends BackendAIPage {
         value: (generalConfig?.directoryBasedUsage),
       } as ConfigValueObject) as boolean;
 
-    // Maximum allowed number of the pre-opend port
-    this.maxCountForPreOpenedPort = this._getConfigValueByExists(generalConfig,
+    // Maximum allowed number of the preopend port
+    this.maxCountForPreopenPorts = this._getConfigValueByExists(generalConfig,
         {
           valueType: 'number',
-          defaultValue: this.maxCountForPreOpenedPort, // default value has been already assigned in property declaration
-          value: parseInt(generalConfig?.maxCountForPreOpenedPort),
+          defaultValue: this.maxCountForPreopenPorts, // default value has been already assigned in property declaration
+          value: parseInt(generalConfig?.maxCountForPreopenPorts),
         } as ConfigValueObject) as number;
   }
 
@@ -1511,7 +1511,7 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
-      globalThis.backendaiclient._config.maxCountForPreOpenedPort = this.maxCountForPreOpenedPort;
+      globalThis.backendaiclient._config.maxCountForPreopenPorts = this.maxCountForPreopenPorts;
       globalThis.backendaiclient.ready = true;
       if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as string) === -1) {
         this.endpoints.push(globalThis.backendaiclient._config.endpoint as string);

@@ -189,7 +189,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           overflow-y: hidden;
         }
 
-        #pre-open-port-expansion {
+        #preopen-ports-expansion {
           --expansion-header-font-size: 1.17em;
           --expansion-header-padding: 0 0 0 15px;
           --expansion-right-icon-margin: 0 10px 0 0;
@@ -1296,7 +1296,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             `)}
           </div>
           ${this.preOpenedPortList.length > 0 ? html`
-            <lablup-expansion id="pre-open-port-expansion" open>
+            <lablup-expansion id="preopen-ports-expansion" open>
               <span slot="title" class="horizontal layout">
                 ${_t('session.launcher.PreOpenPortTitle')}
               </span>
