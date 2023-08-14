@@ -183,6 +183,7 @@ export default class BackendAILogin extends BackendAIPage {
           font-family: var(--general-font-family);
           --mdc-theme-primary: black;
           --mdc-text-field-fill-color: rgb(250, 250, 250);
+          --mdc-text-field-hover-line-color: #27824f;
           width: 100%;
         }
 
@@ -1715,7 +1716,7 @@ export default class BackendAILogin extends BackendAIPage {
                       </mwc-list-item>
                     `)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" style="background-color: #fafafa;"
                       maxLength="2048" label="${_t('login.Endpoint')}"
                       pattern="^https?:\/\/(.*)" auto-validate validationMessage="${_text('login.EndpointStartWith')}"
                       value="${this.api_endpoint}"
