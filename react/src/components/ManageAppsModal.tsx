@@ -67,13 +67,31 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                         <>
                             {fields.map((field, index) => (
                                 <Space.Compact block key={field.key}>
-                                    <Form.Item {...field} name={[field.name, 'app']} initialValue={servicePorts[index]?.app}>
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'app']}
+                                        initialValue={servicePorts[index]?.app}
+                                        rules={[
+                                            {
+                                                required: true,
+                                                message: t('environment.AppNameMustNotBeEmpty'),
+                                            }
+                                        ]}
+                                    >
                                         <Input />
                                     </Form.Item>
-                                    <Form.Item {...field} name={[field.name, 'protocol']} initialValue={servicePorts[index]?.protocol}>
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'protocol']}
+                                        initialValue={servicePorts[index]?.protocol}
+                                    >
                                         <Input />
                                     </Form.Item>
-                                    <Form.Item {...field} name={[field.name, 'port']} initialValue={servicePorts[index]?.port}>
+                                    <Form.Item
+                                        {...field}
+                                        name={[field.name, 'port']}
+                                        initialValue={servicePorts[index]?.port}
+                                    >
                                         <Input />
                                     </Form.Item>
                                     <Button onClick={() => remove(field.name)} style={{ width: '10%' }} icon={<DeleteOutlined />}/>
