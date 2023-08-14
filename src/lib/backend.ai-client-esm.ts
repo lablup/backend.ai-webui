@@ -4229,13 +4229,20 @@ class Enterprise {
     if (this.client.is_superadmin === true) {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
-        let cert = await this.client._wrapWithPromise(rqst);
-        this.certificate = cert.certificate;
-        this.certificate['valid'] = cert.status === 'valid';
+        let cert = await this.client._wrapWithPromise(rqst).catch((e: any) => {
+          if (e.statusCode == 404) {
+            // The open-source project version does not have a certificate.
+            return Promise.resolve(null);
+          } 
+        })
+        if (cert) {
+          this.certificate = cert.certificate;
+          this.certificate['valid'] = cert.status === 'valid';
+        }
         return Promise.resolve(this.certificate);
       }
     } else {
-      return Promise.resolve(false);
+      return Promise.resolve(undefined);
     }
   }
 }
