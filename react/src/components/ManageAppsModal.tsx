@@ -6,6 +6,7 @@ import {
     Typography,
     Space,
     Button,
+    Form,
 } from "antd";
 import { 
     DeleteOutlined,
@@ -33,6 +34,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
         };
     }
     const { open, servicePorts } = parsedValue;
+    const onFinish = (values: any) => { console.log('Saved settings. ', values)};
 
     return (
         <Modal
@@ -45,7 +47,45 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
             cancelButtonProps={{style:{display: 'none'}}}
             {...modalProps}
         >
-            <Space direction="vertical">
+            <Form
+                initialValues={{ apps: servicePorts.map((item: { app: any; protocol: any; port: any; }) => ({
+                    app: item.app,
+                    protocol: item.protocol,
+                    port: item.port
+                }))}}
+                onFinish={onFinish}
+                autoComplete="off"
+            >
+                <Space.Compact block>
+                    <Text style={{ width: '30%' }}>{t('environment.AppName')}</Text>
+                    <Text style={{ width: '30%' }}>{t('environment.Protocol')}</Text>
+                    <Text style={{ width: '30%' }}>{t('environment.Port')}</Text>
+                    <Text style={{ width: '10%', textAlign: 'center' }}>{t('environment.Action')}</Text>
+                </Space.Compact>
+                <Form.List name="apps">
+                    {(fields, { add, remove }) => (
+                        <>
+                            {fields.map((field, index) => (
+                                <Space.Compact block key={field.key}>
+                                    <Form.Item {...field} name={[field.name, 'app']} initialValue={servicePorts[index]?.app}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item {...field} name={[field.name, 'protocol']} initialValue={servicePorts[index]?.protocol}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Form.Item {...field} name={[field.name, 'port']} initialValue={servicePorts[index]?.port}>
+                                        <Input />
+                                    </Form.Item>
+                                    <Button onClick={() => remove(field.name)} style={{ width: '10%' }} icon={<DeleteOutlined />}/>
+                                </Space.Compact>
+                            ))}
+                            <Button onClick={(() => add())} block icon={<PlusOutlined />}>{t('general.Add')}</Button>
+                        </>
+                    )}
+                    
+                </Form.List>
+            </Form>
+            {/* <Space direction="vertical">
                 <Space.Compact block>
                     <Text style={{ width: '30%' }}>{t('environment.AppName')}</Text>
                     <Text style={{ width: '30%' }}>{t('environment.Protocol')}</Text>
@@ -63,7 +103,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                     )
                 })}
                 <Button block icon={<PlusOutlined />}>{t('general.Add')}</Button>
-            </Space>
+            </Space> */}
         </Modal>
     )
 }
