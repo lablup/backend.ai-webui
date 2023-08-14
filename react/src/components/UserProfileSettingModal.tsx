@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
-import { Modal, Input, Form, Select, Divider, message, Switch } from 'antd';
+import React, { useEffect } from "react";
+import { Modal, Input, Form, Select, Divider, message, Switch } from "antd";
 import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from './DefaultProviders';
-import { passwordPattern } from './ResetPasswordRequired';
+import { useWebComponentInfo } from "./DefaultProviders";
+import { passwordPattern } from "./ResetPasswordRequired";
 import { useSuspendedBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from '../helper';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { baiSignedRequestWithPromise } from "../helper";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 
-const UserPrefModal : React.FC = () => {
+const UserProfileSettingModal : React.FC = () => {
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
@@ -23,8 +23,8 @@ const UserPrefModal : React.FC = () => {
     messageApi.open({
       type: "error",
       content: errorMessage
-    })
-  }
+    });
+  };
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -41,7 +41,7 @@ const UserPrefModal : React.FC = () => {
         access_key: string;
         secret_key: string;
       }];
-    }
+    };
   };
   try {
     parsedValue = JSON.parse(value || "");
@@ -62,7 +62,7 @@ const UserPrefModal : React.FC = () => {
   if (keyPairInfo.keypairs) {
     for (let i=0; i < keyPairInfo.keypairs.length; i++) {
       selectOptions.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
-    }
+    };
   };
 
   const baiClient = useSuspendedBackendaiClient();
@@ -116,9 +116,9 @@ const UserPrefModal : React.FC = () => {
           secret_key: keyPairInfo.keypairs[i].secret_key
         });
         break;
-      }
-    }
-  }
+      };
+    };
+  };
 
   const _updateFullName = (newFullName: string) => {
     if (full_name !== newFullName) {
@@ -140,26 +140,26 @@ const UserPrefModal : React.FC = () => {
           })
         }
       });
-    }
+    };
   };
 
   const _updatePassword = (oldPassword: string, newPassword: string, newPassword2: string) => {
     if (!oldPassword && !newPassword && !newPassword2) {
       dispatchEvent("cancel", null);
       return;
-    }
+    };
     if (!oldPassword) {
       _showErrorMessage(t("webui.menu.InputOriginalPassword"));
       return;
-    }
+    };
     if (!newPassword) {
       _showErrorMessage(t("webui.menu.InputNewPassword"));
       return;
-    }
+    };
     if (newPassword !== newPassword2) {
       _showErrorMessage(t("webui.menu.NewPasswordMismatch"));
       return;
-    }
+    };
     mutationToUpdateUserPassword.mutate(
       {
         old_password: oldPassword,
@@ -182,7 +182,7 @@ const UserPrefModal : React.FC = () => {
         }
       }
     );
-  }
+  };
 
   const _onSubmit = () => {
     form.validateFields().then((values) => {
@@ -297,4 +297,4 @@ const UserPrefModal : React.FC = () => {
   );
 };
 
-export default UserPrefModal;
+export default UserProfileSettingModal;

@@ -34,8 +34,8 @@ const UserInfoModal = React.lazy(() => import("./components/UserInfoModal"));
 const UserSettingsModal = React.lazy(
   () => import("./components/UserSettingModal")
 );
-const UserPrefModal = React.lazy(
-  () => import("./components/UserPrefModal")
+const UserProfileSettingModal = React.lazy(
+  () => import("./components/UserProfileSettingModal")
 );
 
 customElements.define(
@@ -144,11 +144,11 @@ customElements.define(
 );
 
 customElements.define(
-  "backend-ai-react-user-pref-modal",
+  "backend-ai-react-user-profile-dialog",
   reactToWebComponent((props) => {
     return (
       <DefaultProviders {...props}>
-        <UserPrefModal />
+        <UserProfileSettingModal />
       </DefaultProviders>
     );
   })

@@ -412,7 +412,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t('button.Confirm')}</mwc-button>
       </div>
     </backend-ai-dialog>
-    <backend-ai-react-user-pref-modal
+    <backend-ai-react-user-profile-dialog
       value="${JSON.stringify({
         isOpen: this.isOpen,
         full_name: this._getUsername(),
@@ -430,7 +430,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       @confirmRemovingTotp="${(e)=> this._confirmRemovingTotp(e)}"
       @startActivatingTotp="${(e)=> this._startActivatingTotp(e)}"
     >
-    </backend-ai-react-user-pref-modal>
+    </backend-ai-react-user-profile-dialog>
     `;
   }
 }
