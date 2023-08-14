@@ -1694,7 +1694,7 @@ export default class BackendAILogin extends BackendAIPage {
             </form>
             <form>
               <fieldset>
-                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none; padding-bottom: 10px;">
+                <div class="horizontal layout" id="id_api_endpoint_container" style="display:none;">
                   <mwc-icon-button id="endpoint-button" icon="cloud_queue"
                       @click="${() => this._toggleEndpoint()}">
                   </mwc-icon-button>
@@ -1727,7 +1727,7 @@ export default class BackendAILogin extends BackendAIPage {
                     maxLength="2048" style="display:none;"
                     label="${_t('login.Endpoint')}" icon="cloud" value="">
                 </mwc-textfield>
-                <mwc-button unelevated fullwidth id="login-button" icon="check"
+                <mwc-button unelevated fullwidth id="login-button" icon="check" style="padding-top: 10px;"
                     label="${_t('login.Login')}"
                     @click="${() => this._login()}">
                 </mwc-button>
