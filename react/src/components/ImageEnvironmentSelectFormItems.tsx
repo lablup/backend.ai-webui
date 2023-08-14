@@ -231,7 +231,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       environmentGroup.environmentName.split("/")?.[1]
                     ];
 
-                  const extraFilterValues = [];
+                  const extraFilterValues: string[] = [];
                   let environmentPrefixTag = null;
                   if (
                     environmentGroup.prefix &&
@@ -394,7 +394,38 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }
                     }
 
-                    console.log(requirements);
+                    const extraFilterValues: string[] = [];
+                    const requirementTags =
+                      requirements.length > 0 ? (
+                        <Flex
+                          direction="row"
+                          wrap="wrap"
+                          style={{
+                            flex: 1,
+                          }}
+                          gap={"xxs"}
+                        >
+                          {_.map(requirements, (requirement, idx) => (
+                            <DoubleTag
+                              key={idx}
+                              values={
+                                metadata?.tagAlias[requirement]
+                                  ?.split(":")
+                                  .map((str) => {
+                                    extraFilterValues.push(str);
+                                    return (
+                                      <TextHighlighter keyword={versionSearch}>
+                                        {str}
+                                      </TextHighlighter>
+                                    );
+                                  }) || requirements
+                              }
+                            />
+                          ))}
+                        </Flex>
+                      ) : (
+                        "-"
+                      );
                     return (
                       <Select.Option
                         key={image?.digest}
@@ -403,7 +434,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           version,
                           tagAlias,
                           image?.architecture,
-                          // metadata?.tagAlias[requirements],
+                          ...extraFilterValues,
                         ].join("\t")}
                         label={[
                           version,
@@ -427,35 +458,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                             {image?.architecture}
                           </TextHighlighter>
                           <Divider type="vertical" />
-                          {requirements.length > 0 ? (
-                            <Flex
-                              direction="row"
-                              wrap="wrap"
-                              style={{
-                                flex: 1,
-                              }}
-                              gap={"xxs"}
-                            >
-                              {_.map(requirements, (requirement, idx) => (
-                                <DoubleTag
-                                  key={idx}
-                                  values={
-                                    metadata?.tagAlias[requirement]
-                                      ?.split(":")
-                                      .map((str) => (
-                                        <TextHighlighter
-                                          keyword={versionSearch}
-                                        >
-                                          {str}
-                                        </TextHighlighter>
-                                      )) || requirements
-                                  }
-                                />
-                              ))}
-                            </Flex>
-                          ) : (
-                            "-"
-                          )}
+                          {requirementTags}
                         </Flex>
                       </Select.Option>
                     );
