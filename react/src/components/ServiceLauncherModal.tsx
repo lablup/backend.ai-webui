@@ -1,6 +1,6 @@
 import { Card, Form, Input, Modal, ModalProps, theme, Switch } from "antd";
 import React, { Suspense } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelectFormItems, {
@@ -276,8 +276,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"cpu"}
                       label={t("session.launcher.CPU")}
-                      // tooltip={t("session.launcher.DescCPU")}
-
+                      tooltip={<Trans i18nKey={"session.launcher.DescCPU"} />}
                       min={parseInt(
                         _.find(
                           currentImage?.resource_limits,
@@ -303,7 +302,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"mem"}
                       label={t("session.launcher.Memory")}
-                      // tooltip={t("session.launcher.DescMemory")}
+                      tooltip={
+                        <Trans i18nKey={"session.launcher.DescMemory"} />
+                      }
                       max={30}
                       inputNumberProps={{
                         addonAfter: "GB",
@@ -319,7 +320,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"shmem"}
                       label={t("session.launcher.SharedMemory")}
-                      // tooltip={t("session.launcher.DescSharedMemory")}
+                      tooltip={
+                        <Trans i18nKey={"session.launcher.DescSharedMemory"} />
+                      }
                       max={30}
                       step={0.1}
                       inputNumberProps={{
@@ -336,7 +339,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       style={{ marginBottom: 0 }}
                       name={"gpu"}
                       label={t("session.launcher.AIAccelerator")}
-                      // tooltip={t("session.launcher.DescAIAccelerator")}
+                      tooltip={
+                        <Trans i18nKey={"session.launcher.DescAIAccelerator"} />
+                      }
                       max={30}
                       step={0.1}
                       inputNumberProps={{
