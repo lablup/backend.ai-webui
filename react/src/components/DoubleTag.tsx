@@ -29,8 +29,6 @@ const DoubleTag: React.FC<{
     objectValues = values as ObjectValue[];
   }
 
-  console.log(values, objectValues);
-
   return (
     <Flex direction="row">
       {_.map(objectValues, (objValue, idx) => {

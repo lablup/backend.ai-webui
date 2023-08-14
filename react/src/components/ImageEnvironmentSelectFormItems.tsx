@@ -385,7 +385,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         metadata?.tagReplace || {}
                       )) {
                         const pattern = new RegExp(key);
-                        if (pattern.test(tag || "")) {
+                        if (pattern.test(tag)) {
                           tagAlias = tag?.replace(pattern, replaceString);
                         }
                       }
@@ -394,6 +394,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       }
                     }
 
+                    console.log(requirements);
                     return (
                       <Select.Option
                         key={image?.digest}
@@ -447,7 +448,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                                         >
                                           {str}
                                         </TextHighlighter>
-                                      )) || []
+                                      )) || requirements
                                   }
                                 />
                               ))}
