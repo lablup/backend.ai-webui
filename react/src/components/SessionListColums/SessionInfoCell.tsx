@@ -129,7 +129,7 @@ const SessionInfoCell: React.FC<{
               {editable && (
                 <Button
                   loading={isPendingRename}
-                  type="ghost"
+                  type="text"
                   icon={<EditOutlined />}
                   style={{ color: token.colorLink }}
                   onClick={() => {
