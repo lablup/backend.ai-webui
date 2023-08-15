@@ -24,6 +24,7 @@ const UserProfileSettingModal : React.FC = () => {
       content: errorMessage
     });
   };
+
   const baiClient = useSuspendedBackendaiClient();
   let email = baiClient.email;
   let full_name = baiClient.full_name;
@@ -36,14 +37,16 @@ const UserProfileSettingModal : React.FC = () => {
       access_key: "",
       secret_key: ""
     }]
-  }
+  };
+
   const _showTotpRule = async() => {
     totpSupported = baiClient.supports('2FA') && await baiClient.isManagerSupportingTOTP();
     if (totpSupported) {
       const userInfo = await baiClient.user.get( baiClient.email, ['totp_activated']);
       totpActivated = userInfo.user.totp_activated;
-    }
-  }
+    };
+  };
+
   const _showKeypairInfo = async(email: string) => {
     keyPairInfo = await baiClient.keypair.list(email, ["access_key", "secret_key"], true);
     if (keyPairInfo.keypairs) {
@@ -57,10 +60,11 @@ const UserProfileSettingModal : React.FC = () => {
             secret_key: selectOptions[i].value
           })
           break;
-        }
-      }
-    }
-  }
+        };
+      };
+    };
+  };
+
   _showTotpRule();
   _showKeypairInfo(email);
 
@@ -84,7 +88,8 @@ const UserProfileSettingModal : React.FC = () => {
     }) => {
       return baiClient.update_full_name(values.email, values.full_name);
       }
-    });
+  });
+
   const mutationToUpdateUserPassword = useTanMutation({
     mutationFn: (values: {
       old_password: string;
