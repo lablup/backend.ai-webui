@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Modal, Input, Form, Select, Divider, message, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { passwordPattern } from "./ResetPasswordRequired";
 import { useSuspendedBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 
 const UserProfileSettingModal : React.FC = () => {
@@ -25,88 +24,75 @@ const UserProfileSettingModal : React.FC = () => {
       content: errorMessage
     });
   };
+  const baiClient = useSuspendedBackendaiClient();
+  let email = baiClient.email;
+  let full_name = baiClient.full_name;
+  let loggedAcount = baiClient._config.accessKey;
+  let totpSupported = false;
+  let totpActivated = false;
+  let selectOptions: any[] = [];
+  let keyPairInfo = {
+    keypairs: [{
+      access_key: "",
+      secret_key: ""
+    }]
+  }
+  const _showTotpRule = async() => {
+    totpSupported = baiClient.supports('2FA') && await baiClient.isManagerSupportingTOTP();
+    if (totpSupported) {
+      const userInfo = await baiClient.user.get( baiClient.email, ['totp_activated']);
+      totpActivated = userInfo.user.totp_activated;
+    }
+  }
+  const _showKeypairInfo = async(email: string) => {
+    keyPairInfo = await baiClient.keypair.list(email, ["access_key", "secret_key"], true);
+    if (keyPairInfo.keypairs) {
+      for (let i=0; i < keyPairInfo.keypairs.length; i++) {
+        selectOptions.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
+      };
+      for(let i=0; i<selectOptions.length; i++) {
+        if (loggedAcount === selectOptions[i].label) {
+          form.setFieldsValue({
+            access_key: selectOptions[i].label,
+            secret_key: selectOptions[i].value
+          })
+          break;
+        }
+      }
+    }
+  }
+  _showTotpRule();
+  _showKeypairInfo(email);
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     isOpen: boolean;
-    full_name: string;
-    userId: string;
-    totpSupported: boolean;
-    totpActivated: boolean;
-    loggedAccount: {
-      access_key: string;
-    };
-    keyPairInfo: {
-      keypairs: [{
-        access_key: string;
-        secret_key: string;
-      }];
-    };
   };
   try {
     parsedValue = JSON.parse(value || "");
   } catch (error) {
     parsedValue = {
       isOpen: false,
-      full_name: "",
-      userId: "",
-      totpSupported: false,
-      totpActivated: false,
-      loggedAccount: {access_key: ""},
-      keyPairInfo: {keypairs:[{access_key: "", secret_key: ""}]}
     };
   };
-  const { isOpen, full_name, userId, totpSupported, totpActivated, loggedAccount, keyPairInfo } = parsedValue;
+  const { isOpen } = parsedValue;
 
-  let selectOptions: any[] = [];
-  if (keyPairInfo.keypairs) {
-    for (let i=0; i < keyPairInfo.keypairs.length; i++) {
-      selectOptions.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
-    };
-  };
-
-  const baiClient = useSuspendedBackendaiClient();
   const mutationToUpdateUserFullName = useTanMutation({
-    mutationFn: (body: {
+    mutationFn: (values: {
+      email: string;
       full_name: string;
-      email: string
     }) => {
-      return baiSignedRequestWithPromise({
-        method: "POST",
-        url: `/auth/update-full-name`,
-        body,
-        client: baiClient,
-      });
-    }
-  });
+      return baiClient.update_full_name(values.email, values.full_name);
+      }
+    });
   const mutationToUpdateUserPassword = useTanMutation({
-    mutationFn: (body: {
+    mutationFn: (values: {
       old_password: string;
       new_password: string;
       new_password2: string;
     }) => {
-      return baiSignedRequestWithPromise({
-        method: "POST",
-        url: `/auth/update-password`,
-        body,
-        client: baiClient,
-      });
+      return baiClient.update_password(values.old_password, values.new_password, values.new_password2);
     }
-  });
-  
-  useEffect(()=> {
-    for(let i=0; i<selectOptions.length; i++) {
-      if (loggedAccount.access_key === selectOptions[i].label) {
-        form.setFieldsValue({
-          access_key: selectOptions[i].label,
-          secret_key: selectOptions[i].value
-        })
-        break;
-      }
-    }
-    form.setFieldsValue({
-      full_name: full_name
-    });
   });
 
   const _onSelectAccessKey = (value: string) => {
@@ -125,7 +111,7 @@ const UserProfileSettingModal : React.FC = () => {
       mutationToUpdateUserFullName.mutate(
         {
           full_name: newFullName,
-          email: userId,
+          email: email,
         }, {
         onSuccess: () => {
           _showSuccessMessage(t("webui.menu.FullnameUpdated"));
@@ -133,11 +119,6 @@ const UserProfileSettingModal : React.FC = () => {
         },
         onError: (error: any) => {
           _showErrorMessage(error.message);
-        },
-        onSettled: () => {
-          form.setFieldsValue({
-            full_name: full_name
-          })
         }
       });
     };
@@ -211,6 +192,7 @@ const UserProfileSettingModal : React.FC = () => {
           <Form.Item
             name='full_name'
             label={t('webui.menu.FullName')}
+            initialValue={full_name}
             rules={[
               () => ({
                 validator(_, value) {

@@ -236,16 +236,6 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.totpSetupDialog?.hide();
   }
 
-  async _showSecretKey(e) {
-    const secret_key = this.shadowRoot?.querySelector<TextField>('#secretkey')!;
-    for (let i = 0; i < this.keyPairInfo.keypairs.length; i++) {
-      if (e.target.selected.value == this.keyPairInfo.keypairs[i].access_key) {
-        secret_key.value = this.keyPairInfo.keypairs[i].secret_key;
-        break;
-      }
-    }
-  }
-
   _showSplash() {
     const event = new CustomEvent('backend-ai-show-splash');
     document.dispatchEvent(event);
@@ -413,19 +403,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       </div>
     </backend-ai-dialog>
     <backend-ai-react-user-profile-dialog
-      value="${JSON.stringify({
-        isOpen: this.isOpen,
-        full_name: this._getUsername(),
-        userId: this._getUserId(),
-        totpSupported: this.totpSupported,
-        totpActivated: this.totpActivated,
-        loggedAccount: 
-          Object.keys(this.loggedAccount).length === 0 ? {access_key: ""} : this.loggedAccount,
-        keyPairInfo: 
-          Object.keys(this.keyPairInfo).length === 0 ? {keypairs: [{access_key: "", secret_key: ""}]} : this.keyPairInfo
-      })}"
-      @cancel="${(e)=> this._hideUserPrefDialog()}"
-      @refresh="${(e)=> this._refreshUserInfoPanel()}"
+      value="${JSON.stringify({isOpen: this.isOpen})}"
+      @cancel="${()=> this._hideUserPrefDialog()}"
+      @refresh="${()=> this._refreshUserInfoPanel()}"
       @updateFullName="${(e)=> this._updateUserFullName(e.detail.newFullName)}"
       @confirmRemovingTotp="${(e)=> this._confirmRemovingTotp(e)}"
       @startActivatingTotp="${(e)=> this._startActivatingTotp(e)}"
