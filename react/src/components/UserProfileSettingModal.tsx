@@ -5,6 +5,7 @@ import { useWebComponentInfo } from "./DefaultProviders";
 import { passwordPattern } from "./ResetPasswordRequired";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useTanMutation } from "../hooks/reactQueryAlias";
+import _ from "lodash";
 
 const UserProfileSettingModal : React.FC = () => {
   const { t } = useTranslation();
@@ -28,7 +29,7 @@ const UserProfileSettingModal : React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
   let email = baiClient.email;
   let full_name = baiClient.full_name;
-  let loggedAcount = baiClient._config.accessKey;
+  let loggedAccount = baiClient._config.accessKey;
   let totpSupported = false;
   let totpActivated = false;
   let selectOptions: any[] = [];
@@ -51,20 +52,16 @@ const UserProfileSettingModal : React.FC = () => {
     keyPairInfo = await baiClient.keypair.list(email, ["access_key", "secret_key"], true);
     if (keyPairInfo.keypairs) {
       for (let i=0; i < keyPairInfo.keypairs.length; i++) {
-        selectOptions.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
+        selectOptions?.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
       };
-      for(let i=0; i<selectOptions.length; i++) {
-        if (loggedAcount === selectOptions[i].label) {
-          form.setFieldsValue({
-            access_key: selectOptions[i].label,
-            secret_key: selectOptions[i].value
-          })
-          break;
-        };
-      };
+      let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["access_key", loggedAccount]);
+      form.setFieldsValue({
+        access_key: matchLoggedAccount?.access_key,
+        secret_key: matchLoggedAccount?.secret_key
+      });
     };
   };
-
+  
   _showTotpRule();
   _showKeypairInfo(email);
 
@@ -101,14 +98,10 @@ const UserProfileSettingModal : React.FC = () => {
   });
 
   const _onSelectAccessKey = (value: string) => {
-    for (let i=0; i< keyPairInfo.keypairs.length; i++) {
-      if (keyPairInfo.keypairs[i].access_key === value) {
-        form.setFieldsValue({
-          secret_key: keyPairInfo.keypairs[i].secret_key
-        });
-        break;
-      };
-    };
+    let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["access_key", value]);
+    form.setFieldsValue({
+      secret_key: matchLoggedAccount?.secret_key
+    });
   };
 
   const _updateFullName = (newFullName: string) => {
