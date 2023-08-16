@@ -1,7 +1,7 @@
 import { Card, Form, Input, Modal, ModalProps, theme, Switch } from "antd";
 import React, { Suspense } from "react";
 import { Trans, useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
+import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelectFormItems, {
   Image,
@@ -11,9 +11,9 @@ import FlexActivityIndicator from "./FlexActivityIndicator";
 import _ from "lodash";
 import ResourceGroupSelect from "./ResourceGroupSelect";
 import VFolderSelect from "./VFolderSelect";
-import { useTanMutation } from "../hooks/reactQueryAlias";
+import { useTanMutation, useTanQuery } from "../hooks/reactQueryAlias";
 import { useCurrentDomainValue } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
+import { baiSignedRequestWithPromise, useBaiSignedRequestWithPromise } from "../helper";
 
 type ClusterMode = "single-node" | "multi-node";
 
@@ -80,6 +80,23 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
+  const [key, checkUpdate] = useUpdatableState("first");
+  const baiRequestWithPromise = useBaiSignedRequestWithPromise();
+
+  const { data: resourceSlots } = useTanQuery({
+    queryKey: ["ResourceSlotQuery", key],
+    queryFn: () => {
+      return baiRequestWithPromise({
+        method: "GET",
+        url: `/config/resource-slots`,
+      }) as Promise<any>;
+    },
+    staleTime: 0,
+  });
+  React.useEffect(() => {
+    if (resourceSlots)
+    console.log(resourceSlots)
+  }, [resourceSlots])
 
   const mutationToCreateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormInput) => {
@@ -102,10 +119,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           resources: {
             cpu: values.cpu,
             mem: values.mem + "G",
-            "cuda.shares": values.gpu,
           },
         },
       };
+      if (resourceSlots.cuda === "shares") {
+        body["config"].resources["cuda.shares"] = values.gpu
+      }
+      if (resourceSlots.cuda === "device") {
+        body["config"].resources["cuda.device"] = values.gpu
+      }
       if (values.shmem && values.shmem > 0) {
         body["config"].resource_opts = {
           shmem: values.shmem,
@@ -335,7 +357,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
+                    {
+                      resourceSlots.cuda !== undefined ? <SliderInputItem
                       style={{ marginBottom: 0 }}
                       name={"gpu"}
                       label={t("session.launcher.AIAccelerator")}
@@ -354,7 +377,8 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                           required: true,
                         },
                       ]}
-                    />
+                    /> : <></>
+                    }
                   </>
                 );
               }}

@@ -108,6 +108,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               resource_slots
               url
               open_to_public
+              status
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -326,10 +327,10 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   render: (text, row) => (
                     <Tag
                       color={applyStatusColor(
-                        row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
+                        row.status || 'unknown'
                       )}
                     >
-                      {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
+                      {row.status}
                     </Tag>
                   ),
                 },
@@ -358,7 +359,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   // dataIndex: "active_route_count",
                   render: (text, row) => {
                     return (
-                      _.filter(row.routings, (r) => r?.status === "healthy")
+                      _.filter(row.routings, (r) => r?.status === "HEALTHY")
                         .length +
                       " / " +
                       row.routings?.length

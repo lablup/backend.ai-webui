@@ -12,6 +12,7 @@ import {
   CheckOutlined,
   CloseOutlined,
   ReloadOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
 import React, { useTransition } from "react";
 import Flex from "../components/Flex";
@@ -26,6 +27,9 @@ import {
 } from "./__generated__/RoutingListPageQuery.graphql";
 import CopyableCodeText from "../components/CopyableCodeText";
 import ImageMetaIcon from "../components/ImageMetaIcon";
+import ServingRouteErrorModal from "../components/ServingRouteErrorModal";
+import { useTanMutation } from "../hooks/reactQueryAlias";
+import { baiSignedRequestWithPromise, useBaiSignedRequestWithPromise } from "../helper";
 
 interface RoutingInfo {
   route_id: string;
@@ -60,18 +64,29 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [isPendingClearError, startClearErrorTransition] = useTransition();
+  const [showErrorJSONModal, setShowErrorJSONModal] = React.useState(false);
+  const [errorJSONModalSessionID, setErrorJSONModalSessionID] = React.useState("");
+  const [errorJSONModalError, setErrorJSONModalError] = React.useState("{}");
 
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
       query RoutingListPageQuery($endpointId: UUID!) {
         endpoint(endpoint_id: $endpointId) {
-          id
           name
           endpoint_id
           image
           desired_session_count
           url
           open_to_public
+          errors {
+            session_id
+            errors {
+              name
+              repr
+            }
+          }
+          retries
           routings {
             routing_id
             session
@@ -91,6 +106,25 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       fetchKey,
     }
   );
+  const mutationToClearError = useTanMutation(() => {
+    if (!endpoint) return
+    console.log(endpoint)
+    return baiSignedRequestWithPromise({
+      method: "POST",
+      url: `/services/${endpoint.endpoint_id}/errors/clear`,
+      client: baiClient,
+    });
+  })
+  const onTagClick = React.useCallback((session: string) => {
+    if (endpoint === null) return
+    const { errors } = endpoint
+    const targetSession = errors.filter(({ session_id }) => session === session_id)
+    if (targetSession.length > 0) {
+      setErrorJSONModalSessionID(session)
+      setErrorJSONModalError(targetSession[0].errors[0].repr)
+      setShowErrorJSONModal(true)
+    }
+  }, [endpoint?.errors])
   // const { t } = useTranslation();
 
   // return color of tag by status
@@ -135,17 +169,34 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ""}
         </Typography.Title>
-        <Tooltip title={t("button.Refresh")}>
-          <Button
-            loading={isPendingRefetch}
-            icon={<ReloadOutlined />}
-            onClick={() => {
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
-            }}
-          />
-        </Tooltip>
+        <div>
+          {(endpoint?.retries || 0) > 0 ? <Tooltip title={t("ClearErrors")}>
+            <Button
+              loading={isPendingClearError}
+              icon={<WarningOutlined />}
+              onClick={() => {
+                startClearErrorTransition(() => {
+                  mutationToClearError.mutate(undefined, {
+                    onSuccess: () => startRefetchTransition(() => {
+                      updateFetchKey();
+                    })
+                  })
+                });
+              }}
+            />
+          </Tooltip> : <></>}
+          <Tooltip title={t("button.Refresh")}>
+            <Button
+              loading={isPendingRefetch}
+              icon={<ReloadOutlined />}
+              onClick={() => {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
+        </div>
       </Flex>
       <Typography.Title level={4} style={{ margin: 0 }}>
         {t("modelService.ServiceInfo")}
@@ -203,9 +254,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           },
           {
             title: t("modelService.Status"),
-            render: (_, { status }) =>
+            render: (_, { session, status }) =>
               status && (
-                <Tag color={applyStatusColor(status)} key={status}>
+                <Tag color={applyStatusColor(status)} key={status} onClick={
+                  (status === "FAILED_TO_START" ? () => onTagClick(session) : undefined)
+                }>
                   {status.toUpperCase()}
                 </Tag>
               ),
@@ -218,6 +271,16 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         pagination={false}
         dataSource={endpoint?.routings as Routing[]}
       />
+      {
+        showErrorJSONModal ? 
+          <ServingRouteErrorModal
+            open
+            close={() => setShowErrorJSONModal(false)}
+            sessionId={errorJSONModalSessionID}
+            error={errorJSONModalError}
+          /> :
+          <></>
+      }
     </Flex>
   );
 };
