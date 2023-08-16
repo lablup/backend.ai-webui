@@ -36,7 +36,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
         };
     }
     const { open, servicePorts } = parsedValue;
-    const onFinish = (values: any) => { console.log('Saved settings. ', values) };
+    const onFinish = (values: any) => { console.log('Saved settings. ', values)};
 
     return (
         <Modal
@@ -52,12 +52,12 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                     icon={<UndoOutlined />}
                     danger
                 >
-                    {t('button.Reset')}
+                {t('button.Reset')}
                 </Button>,
                 <Button
                     icon={<CheckOutlined />}
                 >
-                    {t('button.Finish')}
+                {t('button.Finish')}
                 </Button>
             ]}
         >
@@ -75,10 +75,11 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                 <Form.List name="apps">
                     {(fields, { add, remove }) => (
                         <>
-                            {fields.map((field, index) => (
-                                <Space.Compact block key={index}>
+                            {fields.map((field) => (
+                                <Space.Compact block key={field.key}>
                                     <Form.Item
                                         {...field}
+                                        name={[field.name, 'app']}
                                         rules={[
                                             {
                                                 required: true,
@@ -90,11 +91,13 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                                     </Form.Item>
                                     <Form.Item
                                         {...field}
+                                        name={[field.name, 'protocol']}
                                     >
                                         <Input />
                                     </Form.Item>
                                     <Form.Item
                                         {...field}
+                                        name={[field.name, 'port']}
                                     >
                                         <Input />
                                     </Form.Item>
