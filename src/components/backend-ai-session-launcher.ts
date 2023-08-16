@@ -1758,7 +1758,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const res = this._getVersionInfo(version, architecture);
     const resultArray: string[] = [];
     res.forEach((item) => {
-      resultArray.push(item.tag);
+      if (item.tag !== '' && item.tag !== null){
+        resultArray.push(item.tag);
+      }
     });
     // TODO remove protected field access
     (this.version_selector as any).selectedText = resultArray.join(' / ');
@@ -3626,28 +3628,31 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             <mwc-select id="version" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
-              <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-                  role="separator" disabled="true" class="horizontal layout">
-                  <div style="width:60px;">${_t('session.launcher.Version')}</div>
-                  <div style="width:110px;">${_t('session.launcher.Base')}</div>
-                  <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-                <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
-              </h5>
-              ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
-                    <span style="display:none">${version}</span>
-                    <div class="horizontal layout end-justified">
-                    ${this._getVersionInfo(version || '', architecture).map((item) => html`
-                      <lablup-shields style="width:${item.size}!important;"
-                                      color="${item.color}"
-                                      app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                      description="${item.tag}"
-                                      class="horizontal layout center center-justified">
-                      </lablup-shields>
-                    `)}
-                  </div>
-                </mwc-list-item>
-              `)}
+              ${this.versions[0] === 'Not Selected' && this.versions.length === 1 ? 
+              html`` : html`
+                <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                    role="separator" disabled="true" class="horizontal layout">
+                    <div style="width:60px;">${_t('session.launcher.Version')}</div>
+                    <div style="width:110px;">${_t('session.launcher.Base')}</div>
+                    <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
+                  <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
+                </h5>
+                ${this.versions.map(({version, architecture}) => html`
+                  <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
+                      <span style="display:none">${version}</span>
+                      <div class="horizontal layout end-justified">
+                      ${this._getVersionInfo(version || '', architecture).map((item) => html`
+                        <lablup-shields style="width:${item.size}!important;"
+                                        color="${item.color}"
+                                        app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                        description="${item.tag}"
+                                        class="horizontal layout center center-justified">
+                        </lablup-shields>
+                      `)}
+                    </div>
+                  </mwc-list-item>
+                `)}
+              `}
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
               <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
