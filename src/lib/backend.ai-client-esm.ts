@@ -749,8 +749,11 @@ class Client {
    * Login into webserver with auth cookie token. This requires additional webserver package.
    *
    */
-  async token_login() : Promise<any> {
-    const body = {};
+  async token_login(token: string, extraParams: object = {}) : Promise<any> {
+    const body = token ? {'sToken': token} : {};
+    if (extraParams) {
+      Object.assign(body, extraParams);
+    }
     const rqst = this.newSignedRequest('POST', `/server/token-login`, body, null);
     try {
       const result = await this._wrapWithPromise(rqst);
@@ -1096,7 +1099,7 @@ class Client {
 
   /**
    * Get the IP or URL that use to access publicly
-   * 
+   *
    * @param {string} sessionId - the sessionId given when created
    */
   async get_direct_access_info(sessionId) : Promise<any> {
@@ -4233,7 +4236,7 @@ class Enterprise {
           if (e.statusCode == 404) {
             // The open-source project version does not have a certificate.
             return Promise.resolve(null);
-          } 
+          }
         })
         if (cert) {
           this.certificate = cert.certificate;
