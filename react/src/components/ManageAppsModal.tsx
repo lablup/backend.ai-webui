@@ -11,6 +11,8 @@ import {
 import { 
     DeleteOutlined,
     PlusOutlined,
+    UndoOutlined,
+    CheckOutlined,
 } from "@ant-design/icons"
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
@@ -44,8 +46,20 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
             }}
             centered
             title={t('environment.ManageApps')}
-            cancelButtonProps={{style:{display: 'none'}}}
             {...modalProps}
+            footer={[
+                <Button
+                    icon={<UndoOutlined />}
+                    danger
+                >
+                {t('button.Reset')}
+                </Button>,
+                <Button
+                    icon={<CheckOutlined />}
+                >
+                {t('button.Finish')}
+                </Button>
+            ]}
         >
             <Form
                 initialValues={{ apps: servicePorts.map((item: { app: any; protocol: any; port: any; }) => ({
@@ -97,7 +111,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                                     <Button onClick={() => remove(field.name)} style={{ width: '10%' }} icon={<DeleteOutlined />}/>
                                 </Space.Compact>
                             ))}
-                            <Button onClick={(() => add())} block icon={<PlusOutlined />}>{t('general.Add')}</Button>
+                            <Button onClick={(() => add())} block icon={<PlusOutlined />}>{t('button.Add')}</Button>
                         </>
                     )}
                     
