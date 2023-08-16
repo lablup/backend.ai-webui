@@ -32,6 +32,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import _ from "lodash";
+import EndpointStatusTag from "../components/EndpointStatusTag";
 
 // FIXME: need to apply filtering type of service later
 type TabKey = "services"; //  "running" | "finished" | "others";
@@ -108,7 +109,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               resource_slots
               url
               open_to_public
-              status
               desired_session_count @required(action: NONE)
               routings {
                 routing_id
@@ -118,6 +118,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointStatusTagFragment
             }
           }
         }
@@ -323,15 +324,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 },
                 {
                   title: t("modelService.Status"),
-                  dataIndex: "status",
                   render: (text, row) => (
-                    <Tag
-                      color={applyStatusColor(
-                        row.status || 'unknown'
-                      )}
-                    >
-                      {row.status}
-                    </Tag>
+                    <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
                 {
@@ -459,19 +453,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       />
     </>
   );
-};
-
-const applyStatusColor = (status = "") => {
-  let color = "default";
-  switch (status.toUpperCase()) {
-    case "RUNNING":
-      color = "success";
-      break;
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-  return color;
 };
 
 export default ServingListPage;

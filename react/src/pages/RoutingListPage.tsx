@@ -33,6 +33,7 @@ import ServingRouteErrorModal from "../components/ServingRouteErrorModal";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import { baiSignedRequestWithPromise } from "../helper";
 import { ServingRouteErrorModalFragment$key } from "../components/__generated__/ServingRouteErrorModalFragment.graphql";
+import EndpointStatusTag from "../components/EndpointStatusTag";
 
 interface RoutingInfo {
   route_id: string;
@@ -93,6 +94,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             endpoint
             status
           }
+          ...EndpointStatusTagFragment
         }
       }
     `,
@@ -211,6 +213,9 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       >
         <Descriptions.Item label={t("modelService.EndpointName")}>
           <Typography.Text copyable>{endpoint?.name}</Typography.Text>
+        </Descriptions.Item>
+        <Descriptions.Item label={t("modelService.Status")}>
+          <EndpointStatusTag endpointFrgmt={endpoint} />
         </Descriptions.Item>
         <Descriptions.Item label={t("modelService.EndpointId")}>
           {endpoint?.endpoint_id}
