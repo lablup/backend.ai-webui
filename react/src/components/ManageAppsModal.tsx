@@ -36,7 +36,7 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
         };
     }
     const { open, servicePorts } = parsedValue;
-    const onFinish = (values: any) => { console.log('Saved settings. ', values)};
+    const onFinish = (values: any) => { console.log('Saved settings. ', values) };
 
     return (
         <Modal
@@ -52,21 +52,17 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                     icon={<UndoOutlined />}
                     danger
                 >
-                {t('button.Reset')}
+                    {t('button.Reset')}
                 </Button>,
                 <Button
                     icon={<CheckOutlined />}
                 >
-                {t('button.Finish')}
+                    {t('button.Finish')}
                 </Button>
             ]}
         >
             <Form
-                initialValues={{ apps: servicePorts.map((item: { app: any; protocol: any; port: any; }) => ({
-                    app: item.app,
-                    protocol: item.protocol,
-                    port: item.port
-                }))}}
+                initialValues={{ apps: servicePorts }}
                 onFinish={onFinish}
                 autoComplete="off"
             >
@@ -80,11 +76,9 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                     {(fields, { add, remove }) => (
                         <>
                             {fields.map((field, index) => (
-                                <Space.Compact block key={field.key}>
+                                <Space.Compact block key={index}>
                                     <Form.Item
                                         {...field}
-                                        name={[field.name, 'app']}
-                                        initialValue={servicePorts[index]?.app}
                                         rules={[
                                             {
                                                 required: true,
@@ -96,15 +90,11 @@ const ManageAppsModal: React.FC<Props> = ({...modalProps}) => {
                                     </Form.Item>
                                     <Form.Item
                                         {...field}
-                                        name={[field.name, 'protocol']}
-                                        initialValue={servicePorts[index]?.protocol}
                                     >
                                         <Input />
                                     </Form.Item>
                                     <Form.Item
                                         {...field}
-                                        name={[field.name, 'port']}
-                                        initialValue={servicePorts[index]?.port}
                                     >
                                         <Input />
                                     </Form.Item>
