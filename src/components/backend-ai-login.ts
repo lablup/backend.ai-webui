@@ -196,6 +196,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
           color: var(--paper-blue-600);
+          background-color : #fafafa;
           --mdc-icon-size: 24px;
         }
 
@@ -1619,6 +1620,12 @@ export default class BackendAILogin extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1631,7 +1638,7 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;">
             <div>${this.connection_mode === 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
@@ -1662,11 +1669,17 @@ export default class BackendAILogin extends BackendAIPage {
                       @keyup="${this._submitIfEnter}"
                       >
                   </mwc-textfield>
-                  <mwc-textfield type="password" id="id_password" autocomplete="current-password"
-                      label="${_t('login.Password')}" icon="vpn_key"
-                      value="${this.password}"
-                      @keyup="${this._submitIfEnter}">
-                  </mwc-textfield>
+                  <div class="horizontal flex layout">
+                    <mwc-textfield type="password" id="id_password" autocomplete="current-password"
+                        label="${_t('login.Password')}" icon="vpn_key"
+                        value="${this.password}"
+                        @keyup="${this._submitIfEnter}">
+                    </mwc-textfield>
+                    <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                        style="position: absolute; right: 0;"
+                        @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                    </mwc-icon-button-toggle>
+                  </div>
                   <mwc-textfield type="number" id="otp"
                         style="display: ${this.otpRequired ? 'block' : 'none'};"
                         label="${_t('totp.OTP')}" icon="pin"
@@ -1712,7 +1725,7 @@ export default class BackendAILogin extends BackendAIPage {
                       </mwc-list-item>
                     `)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" style="background-color: #fafafa;"
                       maxLength="2048" label="${_t('login.Endpoint')}"
                       pattern="^https?:\/\/(.*)" auto-validate validationMessage="${_text('login.EndpointStartWith')}"
                       value="${this.api_endpoint}"
@@ -1724,7 +1737,7 @@ export default class BackendAILogin extends BackendAIPage {
                     maxLength="2048" style="display:none;"
                     label="${_t('login.Endpoint')}" icon="cloud" value="">
                 </mwc-textfield>
-                <mwc-button unelevated fullwidth id="login-button" icon="check"
+                <mwc-button unelevated fullwidth id="login-button" icon="check" style="padding-top: 10px;"
                     label="${_t('login.Login')}"
                     @click="${() => this._login()}">
                 </mwc-button>
