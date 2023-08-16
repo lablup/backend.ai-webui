@@ -9,15 +9,43 @@ import {
 } from "antd";
 import { useTranslation } from "react-i18next";
 import _ from "lodash";
+import { useFragment } from "react-relay";
+import graphql from "babel-plugin-relay/macro";
+import { ServingRouteErrorModalFragment$key } from "./__generated__/ServingRouteErrorModalFragment.graphql";
+import CopyableCodeText from "./CopyableCodeText";
 
-interface Props extends ModalProps {
-  sessionId: string
-  error: string
-  close: () => void
+interface Props extends Omit<ModalProps, "onOk" | "onClose"> {
+  inferenceSessionErrorFrgmt: ServingRouteErrorModalFragment$key | null;
+  onRequestClose: () => void;
 }
 
-const ServingRouteErrorModal: React.FC<Props> = ({ open, sessionId, close, error, ...modalProps }) => {
+const ServingRouteErrorModal: React.FC<Props> = ({
+  onRequestClose,
+  onCancel,
+  inferenceSessionErrorFrgmt,
+  ...modalProps
+}) => {
   const { t } = useTranslation();
+
+  const iSessionError = useFragment(
+    graphql`
+      fragment ServingRouteErrorModalFragment on InferenceSessionError {
+        session_id
+        errors {
+          repr
+        }
+      }
+    `,
+    inferenceSessionErrorFrgmt
+  );
+
+  // const { errors } = endpoint
+  // const targetSession = errors.filter(({ session_id }) => session === session_id)
+  // if (targetSession.length > 0) {
+  //   // setErrorJSONModalSessionID(session)
+  //   // setErrorJSONModalError(targetSession[0].errors[0].repr)
+  //   // setShowErrorJSONModal(true)
+  // }
 
   const columnSetting: DescriptionsProps["column"] = {
     xxl: 1,
@@ -30,17 +58,18 @@ const ServingRouteErrorModal: React.FC<Props> = ({ open, sessionId, close, error
 
   return (
     <Modal
-      open={open}
-      onCancel={close}
       centered
       title={t("ServingRouteErrorModalTitle")}
+      onCancel={() => {
+        onRequestClose();
+      }}
       footer={[
         <Button
-          key="ok"
-          type="primary"
-          onClick={close}
+          onClick={() => {
+            onRequestClose();
+          }}
         >
-          {t("button.OK")}
+          {t("button.Close")}
         </Button>,
       ]}
       {...modalProps}
@@ -52,10 +81,10 @@ const ServingRouteErrorModal: React.FC<Props> = ({ open, sessionId, close, error
         column={columnSetting}
       >
         <Descriptions.Item label={t("SessionID")}>
-          {sessionId}
+          <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
         </Descriptions.Item>
         <Descriptions.Item label={t("Error")}>
-          {error}
+          {iSessionError?.errors[0].repr}
         </Descriptions.Item>
       </Descriptions>
     </Modal>

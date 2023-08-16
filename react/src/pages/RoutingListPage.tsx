@@ -2,6 +2,7 @@ import {
   Breadcrumb,
   Button,
   Descriptions,
+  Popover,
   Table,
   Tag,
   Tooltip,
@@ -11,10 +12,11 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import Flex from "../components/Flex";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,7 +31,8 @@ import CopyableCodeText from "../components/CopyableCodeText";
 import ImageMetaIcon from "../components/ImageMetaIcon";
 import ServingRouteErrorModal from "../components/ServingRouteErrorModal";
 import { useTanMutation } from "../hooks/reactQueryAlias";
-import { baiSignedRequestWithPromise, useBaiSignedRequestWithPromise } from "../helper";
+import { baiSignedRequestWithPromise } from "../helper";
+import { ServingRouteErrorModalFragment$key } from "../components/__generated__/ServingRouteErrorModalFragment.graphql";
 
 interface RoutingInfo {
   route_id: string;
@@ -65,9 +68,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
-  const [showErrorJSONModal, setShowErrorJSONModal] = React.useState(false);
-  const [errorJSONModalSessionID, setErrorJSONModalSessionID] = React.useState("");
-  const [errorJSONModalError, setErrorJSONModalError] = React.useState("{}");
+  const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
+    useState<ServingRouteErrorModalFragment$key | null>(null);
 
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
@@ -81,10 +83,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           open_to_public
           errors {
             session_id
-            errors {
-              name
-              repr
-            }
+            ...ServingRouteErrorModalFragment
           }
           retries
           routings {
@@ -107,24 +106,21 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     }
   );
   const mutationToClearError = useTanMutation(() => {
-    if (!endpoint) return
-    console.log(endpoint)
+    if (!endpoint) return;
     return baiSignedRequestWithPromise({
       method: "POST",
       url: `/services/${endpoint.endpoint_id}/errors/clear`,
       client: baiClient,
     });
-  })
-  const onTagClick = React.useCallback((session: string) => {
-    if (endpoint === null) return
-    const { errors } = endpoint
-    const targetSession = errors.filter(({ session_id }) => session === session_id)
-    if (targetSession.length > 0) {
-      setErrorJSONModalSessionID(session)
-      setErrorJSONModalError(targetSession[0].errors[0].repr)
-      setShowErrorJSONModal(true)
-    }
-  }, [endpoint?.errors])
+  });
+  const openSessionErrorModal = (session: string) => {
+    if (endpoint === null) return;
+    const { errors } = endpoint;
+    const firstMatchedSessionError = errors.find(
+      ({ session_id }) => session === session_id
+    );
+    setSelectedSessionErrorForModal(firstMatchedSessionError || null);
+  };
   // const { t } = useTranslation();
 
   // return color of tag by status
@@ -169,22 +165,27 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ""}
         </Typography.Title>
-        <div>
-          {(endpoint?.retries || 0) > 0 ? <Tooltip title={t("ClearErrors")}>
-            <Button
-              loading={isPendingClearError}
-              icon={<WarningOutlined />}
-              onClick={() => {
-                startClearErrorTransition(() => {
-                  mutationToClearError.mutate(undefined, {
-                    onSuccess: () => startRefetchTransition(() => {
-                      updateFetchKey();
-                    })
-                  })
-                });
-              }}
-            />
-          </Tooltip> : <></>}
+        <Flex gap={"xxs"}>
+          {(endpoint?.retries || 0) > 0 ? (
+            <Tooltip title={t("ClearErrors")}>
+              <Button
+                loading={isPendingClearError}
+                icon={<WarningOutlined />}
+                onClick={() => {
+                  startClearErrorTransition(() => {
+                    mutationToClearError.mutate(undefined, {
+                      onSuccess: () =>
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        }),
+                    });
+                  });
+                }}
+              />
+            </Tooltip>
+          ) : (
+            <></>
+          )}
           <Tooltip title={t("button.Refresh")}>
             <Button
               loading={isPendingRefetch}
@@ -196,7 +197,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               }}
             />
           </Tooltip>
-        </div>
+        </Flex>
       </Flex>
       <Typography.Title level={4} style={{ margin: 0 }}>
         {t("modelService.ServiceInfo")}
@@ -256,11 +257,26 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             title: t("modelService.Status"),
             render: (_, { session, status }) =>
               status && (
-                <Tag color={applyStatusColor(status)} key={status} onClick={
-                  (status === "FAILED_TO_START" ? () => onTagClick(session) : undefined)
-                }>
-                  {status.toUpperCase()}
-                </Tag>
+                <>
+                  <Tag
+                    color={applyStatusColor(status)}
+                    key={status}
+                    style={{ marginRight: 0 }}
+                  >
+                    {status.toUpperCase()}
+                  </Tag>
+                  {status === "FAILED_TO_START" && (
+                    <Popover>
+                      <Button
+                        size="small"
+                        type="ghost"
+                        icon={<QuestionCircleOutlined />}
+                        style={{ color: token.colorTextSecondary }}
+                        onClick={() => openSessionErrorModal(session)}
+                      />
+                    </Popover>
+                  )}
+                </>
               ),
           },
           {
@@ -271,16 +287,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         pagination={false}
         dataSource={endpoint?.routings as Routing[]}
       />
-      {
-        showErrorJSONModal ? 
-          <ServingRouteErrorModal
-            open
-            close={() => setShowErrorJSONModal(false)}
-            sessionId={errorJSONModalSessionID}
-            error={errorJSONModalError}
-          /> :
-          <></>
-      }
+      <ServingRouteErrorModal
+        open={!!selectedSessionErrorForModal}
+        inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
+        onRequestClose={() => setSelectedSessionErrorForModal(null)}
+      />
     </Flex>
   );
 };
