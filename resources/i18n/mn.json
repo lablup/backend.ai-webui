@@ -1491,5 +1491,7 @@
     "Active/Total": "__NOT_TRANSLATED__",
     "Public": "__NOT_TRANSLATED__",
     "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
-  }
+  },
+  "NoExistingConnectionExample": "Хуулбарлах холболтын жишээ байхгүй.",
+  "SSHConnectionExampleClipboardCopy": "SSH холболтын жишээг санах ой руу хуулсан."
 }

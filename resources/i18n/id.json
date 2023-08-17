@@ -1491,5 +1491,7 @@
     "Active/Total": "__NOT_TRANSLATED__",
     "Public": "__NOT_TRANSLATED__",
     "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
-  }
+  },
+  "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
+  "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
 }

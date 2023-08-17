@@ -1509,5 +1509,7 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
-  }
+  },
+  "NoExistingConnectionExample": "No Connection Example to be copied.",
+  "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
 }

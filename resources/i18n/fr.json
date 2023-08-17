@@ -1491,5 +1491,7 @@
     "Active/Total": "__NOT_TRANSLATED__",
     "Public": "__NOT_TRANSLATED__",
     "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
-  }
+  },
+  "NoExistingConnectionExample": "Aucun exemple de connexion à copier.",
+  "SSHConnectionExampleClipboardCopy": "L'exemple de connexion SSH a été copié dans le presse-papiers."
 }
