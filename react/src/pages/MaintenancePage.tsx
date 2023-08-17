@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Card, Row, Col } from 'antd';
+import { Button, Card, Row, Col, Typography } from 'antd';
 import { RedoOutlined } from '@ant-design/icons';
 import { useTranslation, Trans } from "react-i18next";
 import { useWebComponentInfo } from '../components/DefaultProviders';
@@ -25,42 +25,23 @@ const MaintenancePage : React.FC = () => {
 	return(
 		<Row gutter={14}>
 			<Col>
-				<Card
-					title={t("maintenance.Fix")}
-					bodyStyle={{ paddingTop: "10px" }}
-				>
-					<p
+				<Card title={t("maintenance.Fix")}>
+					<Typography.Title
+						level={5}
 						style={{
-							fontSize: "14px",
-							fontWeight: "bold"
+							margin: 0,
+							paddingBottom: "12px"
 						}}
 					>
 						{t("maintenance.MatchDatabase")}
-					</p>
-					<p
-						style={{
-							fontSize: "13px",
-							marginTop: "5px",
-							marginRight: "5px"
-						}}
-					>
-						<Trans>
-							{t("maintenance.DescMatchDatabase")}
-						</Trans>
-					</p>
+					</Typography.Title>
+					<Trans>
+						{t("maintenance.DescMatchDatabase")}
+					</Trans>
 					<Button
 						block
 						disabled={recalculating}
 						icon={<RedoOutlined />}
-						style={{
-							color: "#38bd73",
-							borderWidth: "2px",
-							borderColor: "#e0e0e0",
-							fontWeight: 400,
-							padding: "15px",
-							justifyContent: "center",
-							display: "flex"
-						}}
 						onClick={()=> dispatchEvent("recalculate", null)}
 					>
 						{recalculating ? t("maintenance.Recalculating") : t("maintenance.RecalculateUsage")}
@@ -68,42 +49,23 @@ const MaintenancePage : React.FC = () => {
 				</Card>
 			</Col>
 			<Col>
-				<Card
-					title={t('maintenance.ImagesEnvironment')}
-					bodyStyle={{ paddingTop: "10px" }}
-				>
-					<p
+				<Card title={t('maintenance.ImagesEnvironment')}>
+					<Typography.Title
+						level={5}
 						style={{
-							fontSize: "14px",
-							fontWeight: "bold"
+							margin: 0, 
+							paddingBottom: "12px"
 						}}
 					>
 						{t("maintenance.RescanImageList")}
-					</p>
-					<p
-						style={{
-							fontSize: "13px",
-							marginTop: "5px",
-							marginRight: "5px"
-						}}
-					>
-						<Trans>
-							{t("maintenance.DescRescanImageList")}
-						</Trans>
-					</p>
+					</Typography.Title>
+					<Trans>
+						{t("maintenance.DescRescanImageList")}
+					</Trans>
 					<Button
 						block
 						disabled={scanning}
 						icon={<RedoOutlined />}
-						style={{
-							color: "#38bd73",
-							borderWidth: "2px",
-							borderColor: "#e0e0e0",
-							fontWeight: 400,
-							padding: "15px",
-							justifyContent: "center",
-							display: "flex"
-						}}
 						onClick={()=> dispatchEvent("rescan", null)}
 					>
 						{scanning ? t("maintenance.RescanImageScanning") : t("maintenance.RescanImages")}
