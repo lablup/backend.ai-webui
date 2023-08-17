@@ -1,10 +1,11 @@
 import React from "react";
-import { Modal, Input, Form, Select, Divider, message, Switch } from "antd";
+import { Modal, Input, Form, Select, SelectProps, Divider, message, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { passwordPattern } from "./ResetPasswordRequired";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useTanMutation } from "../hooks/reactQueryAlias";
+import { useQuery } from "react-query";
 import _ from "lodash";
 
 const UserProfileSettingModal : React.FC = () => {
@@ -31,39 +32,53 @@ const UserProfileSettingModal : React.FC = () => {
   let full_name = baiClient.full_name;
   let loggedAccount = baiClient._config.accessKey;
   let totpSupported = false;
-  let totpActivated = false;
-  let selectOptions: any[] = [];
-  let keyPairInfo = {
-    keypairs: [{
-      access_key: "",
-      secret_key: ""
-    }]
-  };
+  let {
+    data: isManagerSupportingTOTP,
+  } = useQuery(
+    "isManagerSupportingTOTP",
+    () => {
+      return baiClient.isManagerSupportingTOTP();
+    },
+    {
+      suspense: false
+    }
+  );
+  totpSupported = baiClient.supports("2FA") && isManagerSupportingTOTP;
+  let {
+    data: userInfo
+  } = useQuery(
+    "totpActivated",
+    () => {
+      return baiClient.user.get(baiClient.email, ["totp_activated"]);
+    },
+    {
+      suspense: false
+    }
+  );
+  let totpActivated = userInfo?.user.totp_activated;
 
-  const _showTotpRule = async() => {
-    totpSupported = baiClient.supports('2FA') && await baiClient.isManagerSupportingTOTP();
-    if (totpSupported) {
-      const userInfo = await baiClient.user.get( baiClient.email, ['totp_activated']);
-      totpActivated = userInfo.user.totp_activated;
+  let {
+    data: keyPairInfo
+  } = useQuery(
+    "keyPairInfo",
+    () => {
+      return baiClient.keypair.list(email, ["access_key", "secret_key"], true);
+    },
+    {
+      suspense: false
+    }
+  );
+  let selectOptions: SelectProps["options"] = [];
+  if (keyPairInfo) {
+    for (let i=0; i < keyPairInfo.keypairs.length; i++) {
+      selectOptions.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
     };
+    let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["access_key", loggedAccount]);
+    form.setFieldsValue({
+      access_key: matchLoggedAccount?.access_key,
+      secret_key: matchLoggedAccount?.secret_key
+    });
   };
-
-  const _showKeypairInfo = async(email: string) => {
-    keyPairInfo = await baiClient.keypair.list(email, ["access_key", "secret_key"], true);
-    if (keyPairInfo.keypairs) {
-      for (let i=0; i < keyPairInfo.keypairs.length; i++) {
-        selectOptions?.push({value: keyPairInfo.keypairs[i].secret_key, label: keyPairInfo.keypairs[i].access_key})
-      };
-      let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["access_key", loggedAccount]);
-      form.setFieldsValue({
-        access_key: matchLoggedAccount?.access_key,
-        secret_key: matchLoggedAccount?.secret_key
-      });
-    };
-  };
-  
-  _showTotpRule();
-  _showKeypairInfo(email);
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -98,9 +113,9 @@ const UserProfileSettingModal : React.FC = () => {
   });
 
   const _onSelectAccessKey = (value: string) => {
-    let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["access_key", value]);
+    let matchLoggedAccount = _.find(keyPairInfo.keypairs, ["secret_key", value]);
     form.setFieldsValue({
-      secret_key: matchLoggedAccount?.secret_key
+      secret_key: matchLoggedAccount.secret_key
     });
   };
 
