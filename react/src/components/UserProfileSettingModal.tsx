@@ -180,6 +180,7 @@ const UserProfileSettingModal : React.FC = () => {
         cancelText={t('webui.menu.Cancel')}
         onCancel={()=> dispatchEvent("cancel", null)}
         onOk={()=>_onSubmit()}
+        centered
       >
         <h2>{t('webui.menu.MyAccountInformation')}</h2>
         <Divider/>
