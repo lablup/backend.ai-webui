@@ -26,12 +26,10 @@ const MaintenancePage : React.FC = () => {
 		<Row gutter={14}>
 			<Col>
 				<Card
-					className="matchDatabase"
 					title={t("maintenance.Fix")}
 					bodyStyle={{ paddingTop: "10px" }}
 				>
 					<p
-						className="title"
 						style={{
 							fontSize: "14px",
 							fontWeight: "bold"
@@ -40,7 +38,6 @@ const MaintenancePage : React.FC = () => {
 						{t("maintenance.MatchDatabase")}
 					</p>
 					<p
-						className="description"
 						style={{
 							fontSize: "13px",
 							marginTop: "5px",
@@ -72,12 +69,10 @@ const MaintenancePage : React.FC = () => {
 			</Col>
 			<Col>
 				<Card
-					className="ImageEnvironment"
 					title={t('maintenance.ImagesEnvironment')}
 					bodyStyle={{ paddingTop: "10px" }}
 				>
 					<p
-						className="title"
 						style={{
 							fontSize: "14px",
 							fontWeight: "bold"
@@ -86,7 +81,6 @@ const MaintenancePage : React.FC = () => {
 						{t("maintenance.RescanImageList")}
 					</p>
 					<p
-						className="description"
 						style={{
 							fontSize: "13px",
 							marginTop: "5px",
