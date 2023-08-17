@@ -30,6 +30,7 @@ import { ExclamationCircleFilled } from "@ant-design/icons";
 
 type User = UserSettingModalQuery$data["user"];
 
+
 type UserStatus = {
   [key: string]: string;
 };
@@ -180,8 +181,8 @@ const UserSettingModal: React.FC<Props> = ({
     form.validateFields().then(async (values) => {
       let input = { ...values };
       delete input.email;
+      input = _.omit(input, ["password_confirm"])
       input = _.omitBy(input, (item) => item === undefined || item === "");
-
       // TOTP setting
       if (!totpSupported) {
         delete input?.totp_activated;
