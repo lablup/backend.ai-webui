@@ -206,7 +206,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       </Typography.Title>
       <Descriptions
         bordered
-        column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
+        column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
         style={{
           backgroundColor: token.colorBgBase,
         }}
@@ -249,10 +249,12 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         {t("modelService.RoutesInfo")}
       </Typography.Title>
       <Table
+        scroll={{ x: "max-content" }}
         columns={[
           {
             title: t("modelService.RouteId"),
             dataIndex: "routing_id",
+            fixed: "left",
           },
           {
             title: t("modelService.SessionId"),
