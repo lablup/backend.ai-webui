@@ -8,7 +8,6 @@ import {
   Button,
 } from "antd";
 import { useTranslation } from "react-i18next";
-import _ from "lodash";
 import { useFragment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { ServingRouteErrorModalFragment$key } from "./__generated__/ServingRouteErrorModalFragment.graphql";

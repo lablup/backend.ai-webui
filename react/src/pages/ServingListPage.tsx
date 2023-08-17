@@ -1,4 +1,4 @@
-import { Button, Modal, Table, Tabs, Tag, Typography, theme } from "antd";
+import { Button, Modal, Table, Tabs, Typography, theme } from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
