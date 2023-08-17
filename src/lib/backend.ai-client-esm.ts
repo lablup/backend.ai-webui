@@ -749,8 +749,11 @@ class Client {
    * Login into webserver with auth cookie token. This requires additional webserver package.
    *
    */
-  async token_login() : Promise<any> {
-    const body = {};
+  async token_login(token: string, extraParams: object = {}) : Promise<any> {
+    const body = token ? {'sToken': token} : {};
+    if (extraParams) {
+      Object.assign(body, extraParams);
+    }
     const rqst = this.newSignedRequest('POST', `/server/token-login`, body, null);
     try {
       const result = await this._wrapWithPromise(rqst);
@@ -966,6 +969,9 @@ class Client {
       if (resources['env']) {
         params['config'].environ = resources['env'];
       }
+      if (resources['preopen_ports']) {
+        params['config'].preopen_ports = resources['preopen_ports'];
+      }
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
@@ -1093,7 +1099,7 @@ class Client {
 
   /**
    * Get the IP or URL that use to access publicly
-   * 
+   *
    * @param {string} sessionId - the sessionId given when created
    */
   async get_direct_access_info(sessionId) : Promise<any> {
@@ -4226,13 +4232,20 @@ class Enterprise {
     if (this.client.is_superadmin === true) {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
-        let cert = await this.client._wrapWithPromise(rqst);
-        this.certificate = cert.certificate;
-        this.certificate['valid'] = cert.status === 'valid';
+        let cert = await this.client._wrapWithPromise(rqst).catch((e: any) => {
+          if (e.statusCode == 404) {
+            // The open-source project version does not have a certificate.
+            return Promise.resolve(null);
+          }
+        })
+        if (cert) {
+          this.certificate = cert.certificate;
+          this.certificate['valid'] = cert.status === 'valid';
+        }
         return Promise.resolve(this.certificate);
       }
     } else {
-      return Promise.resolve(false);
+      return Promise.resolve(undefined);
     }
   }
 }

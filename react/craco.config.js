@@ -12,17 +12,6 @@ const {
 
 module.exports = {
   devServer: {
-    proxy: {
-      context: [
-        "/src",
-        "/config.toml",
-        "/manifest",
-        "/dist",
-        "/resources",
-        "/node_modules",
-      ],
-      target: "http://localhost:3081",
-    },
     watchFiles: [
       "../index.html",
       "../config.toml",

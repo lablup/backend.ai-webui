@@ -70,7 +70,7 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
     import('./components/backend-ai-experiment-view.js');
     break; */
   case 'serving':
-    import ('./components/backend-ai-serving-list.js');
+    import('./components/backend-ai-serving-list.js');
     break;
   case 'agent-summary':
     import('./components/backend-ai-agent-summary-view.js');
@@ -118,6 +118,7 @@ const loadPage = (page, params: Record<string, unknown> = {}) => (dispatch) => {
   case 'import':
     import('./components/backend-ai-import-view.js');
     break;
+  case 'applauncher':
   case 'edu-applauncher':
     import('./components/backend-ai-edu-applauncher.js');
     break;

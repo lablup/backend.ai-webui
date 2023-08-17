@@ -1,21 +1,30 @@
 import { Tag } from "antd";
 import Flex from "./Flex";
 import _ from "lodash";
+import React from "react";
 
 type ObjectValue = {
-  label: string;
+  label: ValueType;
   color?: string;
 };
+
+type ValueType = string | React.ReactNode;
 const DoubleTag: React.FC<{
-  values?: string[] | ObjectValue[];
+  values?: ValueType[] | ObjectValue[];
 }> = ({ values = [] }) => {
   if (values.length === 0) return null;
   let objectValues: ObjectValue[];
-  if (_.isString(values[0])) {
-    objectValues = values.map((value) => ({
-      label: value as string,
-      color: "blue",
-    }));
+  if (
+    values[0] &&
+    (typeof values[0] === "string" || React.isValidElement(values[0]))
+  ) {
+    objectValues = values.map(
+      (value) =>
+        ({
+          label: value,
+          color: "blue",
+        } as ObjectValue)
+    );
   } else {
     objectValues = values as ObjectValue[];
   }

@@ -782,6 +782,7 @@ export default class BackendAISessionList extends BackendAIPage {
             }
           }
           const service_info = JSON.parse(sessions[objectKey].service_ports);
+          sessions[objectKey].service_ports = service_info;
           if (Array.isArray(service_info) === true) {
             sessions[objectKey].app_services = service_info.map((a) => a.name);
             sessions[objectKey].app_services_option = {};
@@ -2177,7 +2178,8 @@ export default class BackendAISessionList extends BackendAIPage {
              .access-key="${rowData.item.access_key}"
              .kernel-image="${rowData.item.kernel_image}"
              .app-services="${rowData.item.app_services}"
-             .app-services-option="${rowData.item.app_services_option}">
+             .app-services-option="${rowData.item.app_services_option}"
+             .service-ports="${rowData.item.service_ports}">
           ${(rowData.item.appSupport && this.condition !== 'system') ? html`
             <mwc-icon-button class="fg controls-running green"
                                id="${rowData.index+'-apps'}"
@@ -2694,7 +2696,7 @@ export default class BackendAISessionList extends BackendAIPage {
     if ((this._isRunning && !this._isPreparing(rowData.item.status)) || this._APIMajorVersion > 4) {
       render(
         html`
-            <mwc-checkbox class="list-check" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
+            <mwc-checkbox class="list-check" style="display:contents;" ?checked="${rowData.item.checked === true}" @click="${() => this._toggleCheckbox(rowData.item)}"></mwc-checkbox>
         `, root
       );
     } else {
@@ -2867,7 +2869,7 @@ export default class BackendAISessionList extends BackendAIPage {
         <vaadin-grid id="list-grid" theme="row-stripes column-borders compact" aria-label="Session list"
           .items="${this.compute_sessions}" height-by-rows>
           ${this._isRunning ? html`
-            <vaadin-grid-column frozen width="50px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
+            <vaadin-grid-column frozen width="60px" flex-grow="0" text-align="center" .renderer="${this._boundCheckboxRenderer}">
             </vaadin-grid-column>
           ` : html``}
           <vaadin-grid-column frozen width="40px" flex-grow="0" header="#" .renderer="${this._indexRenderer}"></vaadin-grid-column>
