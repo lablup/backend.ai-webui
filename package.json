@@ -132,7 +132,7 @@
     "rollup": "^3.26.3",
     "rollup-plugin-workbox": "^8.0.1",
     "serve": "^14.2.0",
-    "testcafe": "^3.0.1",
+    "testcafe": "^3.1.0",
     "tinyify": "^4.0.0",
     "tslib": "^2.6.0",
     "typescript": "^5.1.6",
