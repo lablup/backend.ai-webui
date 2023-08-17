@@ -1290,7 +1290,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       const textToCopy = divElement.textContent;
 
       if (textToCopy.length === 0) {
-        this.notification.text = _text('emptyDivMessage');
+        this.notification.text = _text('NoExistingConnectionExample');
         this.notification.show();
       } else {
         if (navigator.clipboard !== undefined) { // for Chrome, Safari
