@@ -43,6 +43,7 @@ const MaintenancePage : React.FC = () => {
 						disabled={recalculating}
 						icon={<RedoOutlined />}
 						onClick={()=> dispatchEvent("recalculate", null)}
+						style={{ marginTop: "12px" }}
 					>
 						{recalculating ? t("maintenance.Recalculating") : t("maintenance.RecalculateUsage")}
 					</Button>
@@ -67,6 +68,7 @@ const MaintenancePage : React.FC = () => {
 						disabled={scanning}
 						icon={<RedoOutlined />}
 						onClick={()=> dispatchEvent("rescan", null)}
+						style={{ marginTop: "12px" }}
 					>
 						{scanning ? t("maintenance.RescanImageScanning") : t("maintenance.RescanImages")}
 					</Button>
