@@ -20,7 +20,7 @@ const MaintenancePage : React.FC = () => {
 			scanning: false
 		};
 	};
-	const { recalculating, scanning } = parsedValue
+	const { recalculating, scanning } = parsedValue;
 
 	return(
 		<Row gutter={14}>
