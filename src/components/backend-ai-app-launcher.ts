@@ -254,6 +254,17 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           margin-right: 10px;
         }
 
+        .ssh-connection-example {
+          display: flex;
+        }
+
+        #current-ssh-connection-example {
+          color: #ffffff;
+          background-color: #242424;
+          padding: 15px;
+          margin: 0 5px 0 0;
+        }
+
         @media screen and (max-width: 810px) {
           #terminal-guide {
             --component-width: calc(100% - 50px);
@@ -1418,14 +1429,14 @@ export default class BackendAiAppLauncher extends BackendAIPage {
             </div>
             <div><span>Port:</span> ${this.sshPort}</div>
             <h4>${_t('session.ConnectionExample')}</h4>
-            <div class="monospace" style="display:flex;">
-              <div style="color:#ffffff; background-color:#242424; padding:15px; margin:0 5px 0 0" id="current-ssh-connection-example">
+            <div class="monospace ssh-connection-example">
+              <div id="current-ssh-connection-example">
                 sftp -i ./id_container -P ${this.sshPort} work@${this.sshHost}<br/>
                 scp -i ./id_container -P ${this.sshPort} -rp /path/to/source work@${this.sshHost}:~/<vfolder-name><br/>
                 rsync -av -e "ssh -i ./id_container" /path/to/source/ work@${this.sshHost}:~/<vfolder-name>/<br/>
               </div>
               <mwc-icon-button
-                id="copy-current-ssh-connection-example-button"
+                id="current-ssh-connection-example-copy-button"
                 icon="content_copy"
                 @click="${() => this._copySSHConnectionExample('#current-ssh-connection-example')}">
               </mwc-icon-button>
