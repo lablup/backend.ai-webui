@@ -244,8 +244,7 @@ const UserSettingModal: React.FC<Props> = ({
           label={t("general.NewPassword")}
           rules={[
             {
-              pattern:
-                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\^\-_])[A-Za-z\d^\-_]{8,}$/,
+              pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
               message: t("webui.menu.InvalidPasswordMessage"),
             },
           ]}
