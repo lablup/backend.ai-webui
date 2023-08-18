@@ -292,7 +292,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                     <Popover>
                       <Button
                         size="small"
-                        type="ghost"
+                        type="text"
                         icon={<QuestionCircleOutlined />}
                         style={{ color: token.colorTextSecondary }}
                         onClick={() => openSessionErrorModal(session)}

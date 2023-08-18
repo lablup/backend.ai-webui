@@ -231,7 +231,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 ),
               }}
             />
-            {/* <Button type="ghost" icon={<MoreOutlined />} /> */}
+            {/* <Button type="text" icon={<MoreOutlined />} /> */}
           </Flex>
           {/* <Button type="primary" icon={<PoweroffOutlined />}>
           시작

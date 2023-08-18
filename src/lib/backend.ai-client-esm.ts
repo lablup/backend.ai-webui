@@ -4237,6 +4237,8 @@ class Enterprise {
             // The open-source project version does not have a certificate.
             return Promise.resolve(null);
           }
+          // Unknown error
+          return Promise.resolve(undefined);
         })
         if (cert) {
           this.certificate = cert.certificate;
