@@ -430,7 +430,8 @@
     "TrafficRatio": "Traffic Ratio",
     "YouAreAboutToTerminate": "You are about to terminate ",
     "ClearErrors": "Clear error and retry",
-    "ServingRouteErrorModalTitle": "Serving Route Error"
+    "ServingRouteErrorModalTitle": "Serving Route Error",
+    "FailedToStartService": "Failed to create service."
   },
   "button": {
     "Cancel": "Cancel",

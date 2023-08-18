@@ -1490,6 +1490,9 @@
     "RoutingsCount": "__NOT_TRANSLATED__",
     "Active/Total": "__NOT_TRANSLATED__",
     "Public": "__NOT_TRANSLATED__",
-    "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
+    "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
+    "FailedToStartService": "__NOT_TRANSLATED__",
+    "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
+    "ClearErrors": "__NOT_TRANSLATED__"
   }
 }
