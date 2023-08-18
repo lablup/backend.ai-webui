@@ -153,7 +153,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   right: (
                     <Flex direction="row" gap={"sm"}>
                       {/* <Tooltip title={t("session.exportCSV")}>
-                        <Button icon={<DownloadOutlined />} type="ghost" />
+                        <Button icon={<DownloadOutlined />} type="text" />
                       </Tooltip> */}
                       {/* @ts-ignore */}
                       <backend-ai-session-launcher
@@ -165,7 +165,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 }}
               />
-              {/* <Button type="ghost" icon={<MoreOutlined />} /> */}
+              {/* <Button type="text" icon={<MoreOutlined />} /> */}
             </Flex>
             {/* <Button type="primary" icon={<PoweroffOutlined />}>
             시작
