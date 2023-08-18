@@ -1,4 +1,13 @@
-import { Card, Form, Input, Modal, ModalProps, theme, Switch } from "antd";
+import {
+  Card,
+  Form,
+  Input,
+  Modal,
+  ModalProps,
+  theme,
+  Switch,
+  message,
+} from "antd";
 import React, { Suspense } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
@@ -146,12 +155,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     form.validateFields().then((values) => {
       mutationToCreateService.mutate(values, {
         onSuccess: () => {
-          console.log("service created");
           onRequestClose(true);
         },
         onError: (error) => {
-          console.log(error);
-          // TODO: show error message
+          message.error(t("modelService.FailedToStartService"));
         },
       });
       new Promise((resolve, reject) => {}).then(() => {
