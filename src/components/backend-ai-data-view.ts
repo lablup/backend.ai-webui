@@ -19,17 +19,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import {TextField} from '@material/mwc-textfield';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/divider';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/tab';
-import 'weightless/title';
-import 'weightless/tab-group';
-import 'weightless/textfield';
-
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
@@ -44,7 +33,15 @@ import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/i
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
-
+interface GroupData {
+  id: string,
+  name: string,
+  description: string,
+  is_active: boolean,
+  created_at: string,
+  modified_at: string,
+  domain_name: string
+}
 /**
  Backend.AI Data View
 
@@ -72,7 +69,7 @@ export default class BackendAIData extends BackendAIPage {
   @property({type: Array}) vhosts = [];
   @property({type: Array}) usageModes = ['General'];
   @property({type: Array}) permissions = ['Read-Write', 'Read-Only', 'Delete'];
-  @property({type: Array}) allowedGroups = [];
+  @property({type: Array}) allowedGroups: GroupData[] = [];
   @property({type: Array}) allowed_folder_type:string[] = [];
   @property({type: Object}) notification = Object();
   @property({type: Object}) folderLists = Object();
@@ -116,28 +113,6 @@ export default class BackendAIData extends BackendAIPage {
           font-size: 10px;
         }
 
-        .folder-action-buttons wl-button {
-          margin-right: 10px;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-button.button {
-          width: 350px;
-        }
-
-        wl-card.item {
-          height: calc(100vh - 145px) !important;
-        }
-
         .tab-content {
           border: 0;
           font-size: 14px;
@@ -166,55 +141,13 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-orange-500);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-orange-50);
-          --tab-bg-filled: var(--paper-orange-50);
-          --tab-bg-active-hover: var(--paper-orange-100);
-        }
-
-        wl-button {
-          --button-bg: var(--paper-orange-50);
-          --button-bg-hover: var(--paper-orange-100);
-          --button-bg-active: var(--paper-orange-600);
-          color: var(--paper-orange-900);
-        }
-
         #add-folder-dialog,
         #clone-folder-dialog {
           --component-width: 375px;
         }
 
-        backend-ai-dialog wl-textfield,
-        backend-ai-dialog wl-select {
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         #help-description {
           --component-width: 350px;
-        }
-
-        #textfields wl-textfield,
-        wl-label {
-          margin-bottom: 20px;
-        }
-
-        wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: black;
         }
 
         mwc-select {
@@ -337,7 +270,7 @@ export default class BackendAIData extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
-        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
+        <backend-ai-react-storage-status-panel .value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">
@@ -431,7 +364,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
               <mwc-select class="fixed-position" id="add-folder-group" ?disabled=${this.folderType==='user'} label="${_t('data.Project')}" FixedMenuPosition>
-                ${(this.allowedGroups as any).map((item, idx) => html`
+                ${this.allowedGroups.map((item, idx) => html`
                   <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                 `)}
               </mwc-select>
@@ -506,7 +439,7 @@ export default class BackendAIData extends BackendAIPage {
             </mwc-select>
             ${this.is_admin && this.allowed_folder_type.includes('group') ? html`
                 <mwc-select class="fixed-position" id="clone-folder-group" label="${_t('data.Project')}" FixedMenuPosition>
-                  ${(this.allowedGroups as any).map((item, idx) => html`
+                  ${this.allowedGroups.map((item, idx) => html`
                     <mwc-list-item value="${item.name}" ?selected="${idx === 0}">${item.name}</mwc-list-item>
                   `)}
                 </mwc-select>
@@ -699,13 +632,13 @@ export default class BackendAIData extends BackendAIPage {
       _init();
     }
   }
-
+/*
   private async _getCurrentKeypairResourcePolicy() {
     const accessKey = globalThis.backendaiclient._config.accessKey;
     const res = await globalThis.backendaiclient.keypair.info(accessKey, ['resource_policy']);
     return res.keypair.resource_policy;
   }
-
+*/
   _toggleFolderTypeInput() {
     this.folderType = (this.shadowRoot?.querySelector('#add-folder-type') as Select).value;
   }
@@ -807,7 +740,7 @@ export default class BackendAIData extends BackendAIPage {
     let group;
     const usageModeEl = this.shadowRoot?.querySelector('#add-folder-usage-mode') as Select;
     const permissionEl = this.shadowRoot?.querySelector('#add-folder-permission') as Select;
-    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as any;
+    const cloneableEl = this.shadowRoot?.querySelector('#add-folder-cloneable') as Switch;
     let usageMode = '';
     let permission = '';
     let cloneable = false;
@@ -840,12 +773,12 @@ export default class BackendAIData extends BackendAIPage {
       }
     }
     if (cloneableEl) {
-      cloneable = cloneableEl.checked;
+      cloneable = cloneableEl.selected;
     }
     this.addFolderNameInput.reportValidity();
     if (this.addFolderNameInput.checkValidity()) {
       const job = globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission, cloneable);
-      job.then((value) => {
+      job.then(() => {
         this.notification.text = _text('data.folders.FolderCreated');
         this.notification.show();
         this._refreshFolderList();

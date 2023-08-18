@@ -1,5 +1,22 @@
 # Changelog
 
+## v23.03.3 (17/07/2023)
+## What's Changed
+* feature: update to electron 25 by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1291
+* feat: merge running and others tab in the session list by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1768
+* feat: Remove resource policy panel on Quota setting and bugfix by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1769
+* feat: add loading indicator on UserSelector by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1770
+* feat: remove per-vfolder usage stats in Web UI by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1771
+* update: spring clean - node.js packages by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1766
+* update: reactjs components (2023. 7) by @inureyes in https://github.com/lablup/backend.ai-webui/pull/1775
+* refactor: refactoring storage status and add quota per storage volume by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1778
+* fix: `newPublicRequest` -> `newSignedRequest` when getting resource-slots by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1776
+* feat: add setup GUI for `is_public` to resource group by @Sujin-Kim1 in https://github.com/lablup/backend.ai-webui/pull/1718
+
+
+**Full Changelog**: https://github.com/lablup/backend.ai-webui/compare/v23.03.2...v23.03.3
+
+
 ## v23.03.2 (05/07/2023)
 ## What's Changed
 * hotfix: enable sftp-scaling-group feature from manager v22.03.3 by @yomybaby in https://github.com/lablup/backend.ai-webui/pull/1732

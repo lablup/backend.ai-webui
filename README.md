@@ -131,9 +131,11 @@ You can debug the app.
 
 Backend.AI Web UI is built with
  * `lit-element` as webcomponent framework
+ * `react` as library for web UI
  * `npm` as package manager
  * `rollup` as bundler
  * `electron` as app shell
+ * `watchman` as file change watcher for development
 
 ### Code of conduct
 
@@ -157,7 +159,7 @@ You must perform first-time compilation for testing. Some additional mandatory p
 $ make compile_wsproxy
 ```
 
-Some necessary libraries will be copied to `src/lib`. Now you are ready to test.
+To run `relay-compiler` with the watch option(`npm run relay -- --watch`) on a React project, you need to install `watchman`. If you use Homebrew on Linux, it's a great way to get a recent Watchman build. Please refer to [the official installation guide](https://facebook.github.io/watchman/docs/install).
 
 ### Developing / testing without bundling
 
@@ -173,6 +175,13 @@ On yet another terminal:
 ```console
 $ npm run wsproxy  # To run websocket proxy
 ```
+
+If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
+
+```
+PORT=YOURPORT
+```
+Defaultly, `PORT` is `9081`
 
 ### Lint Checking
 ```console

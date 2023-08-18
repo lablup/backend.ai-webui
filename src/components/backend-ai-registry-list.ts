@@ -21,14 +21,10 @@ import '@material/mwc-button/mwc-button';
 import {Select} from '@material/mwc-select/mwc-select';
 import '@material/mwc-list/mwc-list-item';
 import '@material/mwc-switch/mwc-switch';
-
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
-
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/icon';
-import {Label as WlLabel} from 'weightless/label';
-import {Textfield as WlTextfield} from 'weightless/textfield';
+import {TextField} from '@material/mwc-textfield';
 
 /**
  Backend AI Registry List
@@ -57,15 +53,12 @@ class BackendAIRegistryList extends BackendAIPage {
   private _boundPasswordRenderer = this._passwordRenderer.bind(this);
 
   @query('#list-status') private _listStatus!: BackendAIListStatus;
-  @query('#configure-registry-hostname') private _hostnameInput!: WlTextfield;
-  @query('#configure-registry-password') private _passwordInput!: WlTextfield;
-  @query('#configure-project-name') private _projectNameInput!: WlTextfield;
+  @query('#configure-registry-hostname') private _hostnameInput!: TextField;
+  @query('#configure-registry-password') private _passwordInput!: TextField;
+  @query('#configure-project-name') private _projectNameInput!: TextField;
   @query('#select-registry-type') private _selectedRegistryTypeInput!: Select;
-  @query('#configure-registry-url') private _urlInput!: WlTextfield;
-  @query('#configure-registry-username') private _usernameInput!: WlTextfield;
-  @query('#registry-url-validation') private _registryUrlValidationMsg!: WlLabel;
-  @query('#registry-hostname-validation') private _registryHostnameValidationMsg!: WlLabel;
-  @query('#project-name-validation') private _projectNameValidationMsg!: WlLabel;
+  @query('#configure-registry-url') private _urlInput!: TextField;
+  @query('#configure-registry-username') private _usernameInput!: TextField;
 
   constructor() {
     super();
@@ -95,40 +88,14 @@ class BackendAIRegistryList extends BackendAIPage {
           padding: 5px 15px 5px 20px;
         }
 
-        wl-button {
-          --button-bg: var(--paper-yellow-50);
-          --button-bg-hover: var(--paper-yellow-100);
-          --button-bg-active: var(--paper-yellow-600);
-        }
-
-        wl-button.delete {
-          --button-bg: var(--paper-red-50);
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-600);
-        }
-
-        backend-ai-dialog wl-textfield {
-          --input-font-family: var(--general-font-family);
-          --input-state-color-invalid: #b00020;
-          margin-bottom: 20px;
-        }
-
         backend-ai-dialog {
           --component-min-width: 350px;
         }
-
-        wl-textfield.helper-text {
-          margin-bottom: 0px;
+        mwc-textfield.hostname {
+          width: 100%;
         }
-
-        wl-textfield#configure-project-name {
-          --input-label-space: 20px;
-        }
-
-        wl-label.helper-text {
-          --label-color: #b00020;
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-font-size: 11px;
+        mwc-textfield.helper-text {
+          margin-bottom: 0;
         }
 
         mwc-select#select-registry-type {
@@ -166,6 +133,9 @@ class BackendAIRegistryList extends BackendAIPage {
   protected override firstUpdated() {
     this.notification = globalThis.lablupNotification;
     this._indicator = globalThis.lablupIndicator as BackendAIIndicatorPool;
+    this._projectNameInput.validityTransform = (value, nativeValidity) => {
+      return this._checkValidationMsgOnProjectNameInput(value, nativeValidity);
+    };
   }
 
   /**
@@ -247,17 +217,11 @@ class BackendAIRegistryList extends BackendAIPage {
     const registryType = this._selectedRegistryTypeInput.value;
     const projectName = this._projectNameInput.value.replace(/\s/g, '');
 
-    if (!this._hostnameInput.valid) {
-      if (this._registryHostnameValidationMsg) {
-        this._registryHostnameValidationMsg.style.display = 'block';
-      }
+    if (!this._hostnameInput.validity.valid) {
       return;
     }
 
-    if (!this._urlInput.valid) {
-      if (this._registryUrlValidationMsg) {
-        this._registryUrlValidationMsg.style.display = 'block';
-      }
+    if (!this._urlInput.validity.valid) {
       return;
     }
 
@@ -311,7 +275,7 @@ class BackendAIRegistryList extends BackendAIPage {
    * Delete registry from allowed registry list corresponding to the current domain by user input on delete registry dialog
    * */
   private _deleteRegistry() {
-    const deleteRegistryInputField: WlTextfield = (this.shadowRoot?.querySelector('#delete-registry') as WlTextfield);
+    const deleteRegistryInputField: TextField = (this.shadowRoot?.querySelector('#delete-registry') as TextField);
     const registryNameToDelete: string = deleteRegistryInputField.value;
     if (this._registryList[this._selectedIndex].hostname === registryNameToDelete) {
       globalThis.backendaiclient.registry.delete(deleteRegistryInputField.value)
@@ -418,18 +382,6 @@ class BackendAIRegistryList extends BackendAIPage {
   }
 
   /**
-   * Reset validation message in registry configuation dialog
-   */
-  private _resetValidationMessage() {
-    /**
-     * FIXME: need to change repetitive value manipulation in future.
-     */
-    this._registryHostnameValidationMsg.style.display = 'none';
-    this._registryUrlValidationMsg.style.display = 'none';
-    this._projectNameValidationMsg.style.display = 'none';
-  }
-
-  /**
    * Open registry configuration dialog by hostname
    *
    * @param {string} hostname
@@ -450,43 +402,43 @@ class BackendAIRegistryList extends BackendAIPage {
     this._registryList[this._selectedIndex] = registryInfo;
     this._registryType = this._registryList[this._selectedIndex]?.type as string;
     this.requestUpdate(); // call for explicit update
-    this._resetValidationMessage();
     this._launchDialogById('#configure-registry-dialog');
   }
 
   /**
-   * Hide/Show validation msg on url input field in registry configuration dialog
+   * Hide/Show validation msg on registry URL input in registry URL dialog
+   * Hide when the registry URL is a valid URL format and the protocol is either "http" or "https"
+   * Show and validate when registry URL is a invalid URL format or protocol is neither "http" nor "https"
    */
-  private _toggleValidationMsgOnUrlInput() {
-    this._registryUrlValidationMsg.style.display = this._urlInput.valid ? 'none' : 'block';
-  }
-
-  /**
-   * Hide/Show validation msg on hostname input in registry configuration dialog
-   */
-  private _toggleValidationMsgOnHostnameInput() {
-    const hostname = this._hostnameInput.value;
-    this._registryHostnameValidationMsg.style.display = (hostname && hostname !== '') ? 'none' : 'block';
+  private _checkValidationMsgOnRegistryUrlInput(ev) {
+    try {
+      const registryUrl = new URL(this._urlInput.value)
+        if(registryUrl.protocol === 'http:' || registryUrl.protocol === 'https:'){
+          ev.target.setCustomValidity('')
+        } else {
+          ev.target.setCustomValidity(_t('registry.DescURLStartString'))
+        }
+    } catch (err) {
+      ev.target.setCustomValidity(_t('import.WrongURLType'))
+    }
   }
 
   /**
    * Hide/Show validation msg on project name input in registry configuration dialog
    * Hide when registry is "docker", Show and validate when registry is "harbor" or "harbor2"
    */
-  private _toggleValidationMsgOnProjectNameInput() {
+  private _checkValidationMsgOnProjectNameInput(value, nativeValidity) {
     this._projectNameInput.value = this._projectNameInput.value.replace(/\s/g, '');
-    this._projectNameValidationMsg.style.display = 'block';
     if (['harbor', 'harbor2'].includes(this._registryType)) {
       if (!this._projectNameInput.value) {
-        this._projectNameValidationMsg.textContent = _text('registry.ProjectNameIsRequired');
-      } else {
-        this._projectNameValidationMsg.style.display = 'none';
+        this._projectNameInput.validationMessage = _text('registry.ProjectNameIsRequired');
       }
       this._projectNameInput.disabled = false;
     } else {
-      this._projectNameValidationMsg.textContent = _text('registry.ForHarborOnly');
+      this._projectNameInput.validationMessage = _text('registry.ForHarborOnly');
       this._projectNameInput.disabled = true;
     }
+    return {};
   }
 
   /**
@@ -508,7 +460,8 @@ class BackendAIRegistryList extends BackendAIPage {
    */
   private _toggleProjectNameInput() {
     this._registryType = this._selectedRegistryTypeInput.value;
-    this._toggleValidationMsgOnProjectNameInput();
+    this._checkValidationMsgOnProjectNameInput(true, true); // Toss mock values to re-render the project name textfield.
+    // this._toggleValidationMsgOnProjectNameInput();
   }
 
   /**
@@ -652,39 +605,28 @@ class BackendAIRegistryList extends BackendAIPage {
    * @param {object} rowData - the object with the properties related with the rendered item
    * */
   private _controlsRenderer(root: HTMLElement, column: HTMLElement, rowData) {
-    render(
-      html`
-        <div icon="settings" id="controls" class="layout horizontal flex center">
-          <wl-button fab flat inverted
-            class="fg blue"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._openEditRegistryDialog(rowData.item.hostname);
-            }}>
-            <wl-icon>settings</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            icon="delete"
-            class="fg red"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._launchDialogById('#delete-registry-dialog');
-            }}>
-            <wl-icon>delete</wl-icon>
-          </wl-button>
-          <wl-button fab flat inverted
-            icon="refresh"
-            class="fg green"
-            @click=${() => {
-              this._selectedIndex = rowData.index;
-              this._rescanImage();
-            }}>
-            <wl-icon>refresh</wl-icon>
-          </wl-button>
-        </div>
-      `,
-      root
-    );
+    render(html`
+      <div icon="settings" id="controls" class="layout horizontal flex center">
+        <mwc-icon-button class="fg blue"
+                         icon="settings"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._openEditRegistryDialog(rowData.item.hostname);
+  }}></mwc-icon-button>
+        <mwc-icon-button class="fg red"
+                         icon="delete"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._launchDialogById('#delete-registry-dialog');
+  }}></mwc-icon-button>
+        <mwc-icon-button class="fg green"
+                         icon="refresh"
+                         @click=${() => {
+    this._selectedIndex = rowData.index;
+    this._rescanImage();
+  }}></mwc-icon-button>
+      </div>
+    `, root);
   }
 
   /**
@@ -728,62 +670,64 @@ class BackendAIRegistryList extends BackendAIPage {
       <backend-ai-dialog id="configure-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${this._editMode ? _t('registry.ModifyRegistry') : _t('registry.AddRegistry')}</span>
         <div slot="content" class="login-panel intro centered">
-          <wl-textfield
-            id="configure-registry-hostname"
-            class="helper-text"
-            type="text"
-            label="${_t('registry.RegistryHostname')}"
+          <div class="horizontal center-justified layout flex">
+            <mwc-textfield
+              id="configure-registry-hostname"
+              type="text"
+              class="hostname"
+              label="${_t('registry.RegistryHostname')}"
+              required
+              ?disabled="${this._editMode}"
+              pattern="^.+$"
+              value="${this._registryList[this._selectedIndex]?.hostname || ''}"
+              validationMessage="${_t('registry.DescHostnameIsEmpty')}"
+            ></mwc-textfield>
+          </div>
+          <div class="horizontal layout flex">
+            <mwc-textfield
+              id="configure-registry-url"
+              type="url"
+              class="hostname"
+              label="${_t('registry.RegistryURL')}"
+              required
+              value="${this._registryList[this._selectedIndex]?.[''] || ''}"
+              @change=${this._checkValidationMsgOnRegistryUrlInput}
+              @click=${this._checkValidationMsgOnRegistryUrlInput}
+            ></mwc-textfield>
+          </div>
+          <div class="horizontal layout flex">
+            <mwc-textfield
+              id="configure-registry-username"
+              type="text"
+              label="${_t('registry.UsernameOptional')}"
+              style="padding-right:10px;"
+              value="${this._registryList[this._selectedIndex]?.username || ''}"
+            ></mwc-textfield>
+            <mwc-textfield
+              id="configure-registry-password"
+              type="password"
+              label="${_t('registry.PasswordOptional')}"
+              style="padding-left:10px;"
+              value="${this._registryList[this._selectedIndex]?.password || ''}"
+            ></mwc-textfield>
+          </div>
+          <mwc-select
+            id="select-registry-type"
+            label="${_t('registry.RegistryType')}"
+            @change=${this._toggleProjectNameInput}
             required
-            ?disabled="${this._editMode}"
-            value="${this._registryList[this._selectedIndex]?.hostname || ''}"
-            @click=${()=>this._toggleValidationMsgOnHostnameInput()}
-            @change=${()=>this._toggleValidationMsgOnHostnameInput()}
-          ></wl-textfield>
-          <wl-label class="helper-text" id="registry-hostname-validation" style="display:none;">${_t('registry.DescHostnameIsEmpty')}</wl-label>
-          <wl-textfield
-            id="configure-registry-url"
-            class="helper-text"
-            label="${_t('registry.RegistryURL')}"
-            required
-            pattern="^(https?):\/\/(([a-zA-Z\d\.]{2,})\.([a-zA-Z]{2,})|(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3})(:((6553[0-5])|(655[0-2])|(65[0-4][0-9]{2})|(6[0-4][0-9]{3})|([1-5][0-9]{4})|([0-5]{0,5})|([0-9]{1,4})))?$"
-            value="${this._registryList[this._selectedIndex]?.[''] || ''}"
-            @click=${()=>this._toggleValidationMsgOnUrlInput()}
-            @change=${()=>this._toggleValidationMsgOnUrlInput()}
-          ></wl-textfield>
-          <wl-label class="helper-text" id="registry-url-validation" style="display:none;">${_t('registry.DescURLStartString')}</wl-label>
-         <div class="horizontal layout flex">
-          <wl-textfield
-            id="configure-registry-username"
-            type="text"
-            label="${_t('registry.UsernameOptional')}"
-            style="padding-right:10px;"
-            value="${this._registryList[this._selectedIndex]?.username || ''}"
-          ></wl-textfield>
-          <wl-textfield
-            id="configure-registry-password"
-            type="password"
-            label="${_t('registry.PasswordOptional')}"
-            style="padding-left:10px;"
-            value="${this._registryList[this._selectedIndex]?.password || ''}"
-          ></wl-textfield>
-        </div>
-        <mwc-select
-          id="select-registry-type"
-          label="${_t('registry.RegistryType')}"
-          @change=${this._toggleProjectNameInput}
-          required
-          validationMessage="${_t('registry.PleaseSelectOption')}"
-          value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
-          ${BackendAIRegistryList._registryTypes.map((item) => html`
-            <mwc-list-item
-              value="${item}"
-              ?selected="${this._editMode ? item === this._registryList[this._selectedIndex]?.type : item === 'docker'}">
-              ${item}
-            </mwc-list-item>
-          `)}
-        </mwc-select>
+            validationMessage="${_t('registry.PleaseSelectOption')}"
+            value="${this._registryList[this._selectedIndex]?.type || this._registryType}">
+            ${BackendAIRegistryList._registryTypes.map((item) => html`
+              <mwc-list-item
+                value="${item}"
+                ?selected="${this._editMode ? item === this._registryList[this._selectedIndex]?.type : item === 'docker'}">
+                ${item}
+              </mwc-list-item>
+            `)}
+          </mwc-select>
         <div class="vertical layout end-justified">
-          <wl-textfield
+          <mwc-textfield
             id="configure-project-name"
             class="helper-text"
             type="text"
@@ -791,11 +735,7 @@ class BackendAIRegistryList extends BackendAIPage {
             required
             value="${this._registryList[this._selectedIndex]?.project || ''}"
             ?disabled="${this._registryType === 'docker'}"
-            @change=${this._toggleValidationMsgOnProjectNameInput}
-          ></wl-textfield>
-          <wl-label class="helper-text" id="project-name-validation">
-            ${this._editMode ? html`` : _t('registry.ForHarborOnly')}
-          </wl-label>
+          ></mwc-textfield>
          </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
@@ -807,11 +747,11 @@ class BackendAIRegistryList extends BackendAIPage {
       <backend-ai-dialog id="delete-registry-dialog" fixed backdrop blockscrolling>
         <span slot="title">${_t('dialog.warning.CannotBeUndone')}</span>
         <div slot="content">
-          <wl-textfield
+          <mwc-textfield
             id="delete-registry"
             type="text"
             label="${_t('registry.TypeRegistryNameToDelete')}"
-          ></wl-textfield>
+          ></mwc-textfield>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button unelevated fullwidth icon="delete" label="${_t('button.Delete')}"

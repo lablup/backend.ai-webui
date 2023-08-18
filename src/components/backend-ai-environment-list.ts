@@ -26,13 +26,9 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/grid/vaadin-grid-filter-column';
 import '@vaadin/grid/vaadin-grid-sort-column';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/select';
-import 'weightless/textfield';
-import 'weightless/label';
-
 import {Button} from '@material/mwc-button/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
 import '@material/mwc-slider';
 import '@material/mwc-select';
 import '@material/mwc-list/mwc-list-item';
@@ -48,7 +44,7 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 /**
   Backend.AI Environment List
- @group Backend.AI Web UI
+  @group Backend.AI Web UI
   @element backend-ai-environment-list
   */
 
@@ -142,34 +138,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           margin: 0px;
           padding: 5px 15px 5px 20px;
         }
-         wl-button > wl-icon {
-           --icon-size: 24px;
+         mwc-icon.indicator {
+           --mdc-icon-size: 16px;
            padding: 0;
-         }
-         wl-icon {
-           --icon-size: 16px;
-           padding: 0;
-         }
-         wl-label {
-           --label-font-size: 13px;
-           --label-font-family: 'Ubuntu', Roboto;
-           -webkit-border-radius: 3px;
-           -moz-border-radius: 3px;
-           border-radius: 3px;
-           -moz-background-clip: padding;
-           -webkit-background-clip: padding-box;
-           background-clip: padding-box;
-           border: 1px solid #ccc;
-           background-color: #f9f9f9;
-           padding: 0 3px;
-           display: inline-block;
-           margin: 0;
-         }
-         wl-label.installed {
-           --label-color: #52595d;
-         }
-         wl-label.installing {
-           --label-color: var(--paper-orange-700);
          }
          img.indicator-icon {
            width: 16px;
@@ -186,29 +157,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            text-align: left;
            width: 70px;
          }
-         wl-button {
-           --button-bg: var(--paper-orange-50);
-           --button-bg-hover: var(--paper-orange-100);
-           --button-bg-active: var(--paper-orange-600);
-           --button-color: #242424;
-           color: var(--paper-orange-900);
-         }
-         wl-button.operation {
-           margin: auto 10px;
-           padding: auto 10px;
-         }
          backend-ai-dialog {
            --component-min-width: 350px;
-         }
-         backend-ai-dialog#modify-image-dialog wl-select,
-         backend-ai-dialog#modify-image-dialog wl-textfield {
-           margin-bottom: 20px;
-         }
-         wl-select, wl-textfield {
-           --input-font-family: var(--general-font-family);
-         }
-         backend-ai-dialog wl-textfield {
-           --input-font-size: 14px;
          }
          #modify-app-dialog {
            --component-max-height: 550px;
@@ -265,9 +215,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            --mdc-typography-font-family: var(--general-font-family);
          }
          mwc-slider {
-           width: 100%;
+           width: 150px;
            margin: auto 10px;
-           --mdc-theme-secondary: var(--general-slider-color);
+           --mdc-theme-primary: var(--general-slider-color);
            --mdc-theme-text-primary-on-dark: #ffffff;
          }
        `];
@@ -332,24 +282,19 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const div = document.createElement('div');
     div.setAttribute('class', 'row extra');
 
-    const app = document.createElement('wl-textfield');
+    const app = document.createElement('mwc-textfield');
     app.setAttribute('type', 'text');
 
-    const protocol = document.createElement('wl-textfield');
+    const protocol = document.createElement('mwc-textfield');
     app.setAttribute('type', 'text');
 
-    const port = document.createElement('wl-textfield');
+    const port = document.createElement('mwc-textfield');
     app.setAttribute('type', 'number');
 
-    const button = document.createElement('wl-button');
+    const button = document.createElement('mwc-icon-button');
     button.setAttribute('class', 'fg pink');
-    button.setAttribute('fab', '');
-    button.setAttribute('flat', '');
+    button.setAttribute('icon', 'remove');
     button.addEventListener('click', (e) => this._checkDeleteAppInfo(e));
-
-    const icon = document.createElement('wl-icon');
-    icon.innerHTML = 'remove';
-    button.appendChild(icon);
 
     div.appendChild(port);
     div.appendChild(protocol);
@@ -369,7 +314,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     this.deleteAppRow = e.target.parentNode;
     const childRow = this.deleteAppRow.children;
     const textfieldsArray = [...childRow];
-    const appInfo = textfieldsArray.filter((item) => item.tagName === 'WL-TEXTFIELD').map((item) => item.value);
+    const appInfo = textfieldsArray.filter((item) => item.tagName === 'MWC-TEXTFIELD').map((item) => item.value);
     // if every value of the row is empty
     if (appInfo.filter((item) => item === '')?.length === appInfo.length) {
       this._removeRow();
@@ -386,7 +331,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const rows = this.modifyAppContainer.querySelectorAll('.row');
     const lastRow = rows[rows.length - 1];
 
-    lastRow.querySelectorAll('wl-textfield').forEach((tf) => {
+    lastRow.querySelectorAll('mwc-textfield').forEach((tf) => {
       tf.value = '';
     });
     this.modifyAppContainer.querySelectorAll('.row.extra').forEach((e) => {
@@ -615,7 +560,8 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       return index === el.value;
     });
     (this.shadowRoot?.querySelector('#modify-image-'+el.id) as Button).label = currentVal[0];
-    // TODO button does not have value property
+    // TODO: button does not have value property
+    // TODO: Replace slides to lablup-slider
     (this.shadowRoot?.querySelector('#modify-image-'+el.id) as any).value = currentVal[0];
   }
 
@@ -990,7 +936,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const rows = container.querySelectorAll('.row:not(.header)');
     const ports = new Set();
     for (const row of Array.from(rows)) {
-      const textFields = row.querySelectorAll('wl-textfield');
+      const textFields = row.querySelectorAll('mwc-textfield');
       if (Array.prototype.every.call(textFields, (field) => field.value === '')) {
         continue;
       }
@@ -1030,9 +976,9 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     const container = this.shadowRoot?.querySelector('#modify-app-container') as HTMLDivElement;
     const rows = container.querySelectorAll('.row:not(.header)');
     const nonempty = (row) => Array.prototype.filter.call(
-      row.querySelectorAll('wl-textfield'), (tf, idx) => tf.value === ''
+      row.querySelectorAll('mwc-textfield'), (tf, idx) => tf.value === ''
     ).length === 0;
-    const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('wl-textfield'), (tf) => tf.value).join(':');
+    const encodeRow = (row) => Array.prototype.map.call(row.querySelectorAll('mwc-textfield'), (tf) => tf.value).join(':');
 
     return Array.prototype.filter.call(rows, (row) => nonempty(row)).map((row) => encodeRow(row)).join(',');
   }
@@ -1074,7 +1020,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
              <div class="layout horizontal center flex">
                <div class="layout horizontal configuration">
-                 <wl-icon class="fg green">developer_board</wl-icon>
+                 <mwc-icon class="fg green indicator">developer_board</mwc-icon>
                  <span>${rowData.item.cpu_limit_min}</span> ~
                  <span>${this._markIfUnlimited(rowData.item.cpu_limit_max)}</span>
                  <span class="indicator">${_t('general.cores')}</span>
@@ -1082,7 +1028,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
              </div>
              <div class="layout horizontal center flex">
                <div class="layout horizontal configuration">
-                 <wl-icon class="fg green">memory</wl-icon>
+                 <mwc-icon class="fg green indicator">memory</mwc-icon>
                  <span>${rowData.item.mem_limit_min}</span> ~
                  <span>${this._markIfUnlimited(rowData.item.mem_limit_max)}</span>
                </div>
@@ -1100,7 +1046,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.cuda_shares_limit_min ? html`
                <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.cuda_shares_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.cuda_shares_limit_max)}</span>
                    <span class="indicator">CUDA FGPU</span>
@@ -1120,7 +1066,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.tpu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.tpu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.tpu_device_limit_max)}</span>
                    <span class="indicator">TPU</span>
@@ -1130,7 +1076,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            ${rowData.item.ipu_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.ipu_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.ipu_device_limit_max)}</span>
                    <span class="indicator">IPU</span>
@@ -1140,7 +1086,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ${rowData.item.atom_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.atom_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.atom_device_limit_max)}</span>
                    <span class="indicator">ATOM</span>
@@ -1150,7 +1096,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
               ${rowData.item.warboy_device_limit_min ? html`
               <div class="layout horizontal center flex">
                  <div class="layout horizontal configuration">
-                   <wl-icon class="fg green">apps</wl-icon>
+                   <mwc-icon class="fg green indicator">apps</mwc-icon>
                    <span>${rowData.item.warboy_device_limit_min}</span> ~
                    <span>${this._markIfUnlimited(rowData.item.warboy_device_limit_max)}</span>
                    <span class="indicator">Warboy</span>
@@ -1172,18 +1118,17 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
     render(
       html`
          <div id="controls" class="layout horizontal flex center">
-           <wl-button fab flat inverted
-             class="fg blue controls-running"
+           <mwc-icon-button class="fg controls-running blue"
+                            icon="settings"
              @click=${() => {
                 this.selectedIndex = rowData.index;
                 this._setPulldownDefaults(this.images[this.selectedIndex].resource_limits);
                 this._launchDialogById('#modify-image-dialog');
                 this.requestUpdate();
               }}>
-             <wl-icon>settings</wl-icon>
-           </wl-button>
-           <wl-button fab flat inverted
-             class="fg pink controls-running"
+           </mwc-icon-button>
+           <mwc-icon-button class="fg controls-running pink"
+                            icon="apps"
              @click=${() => {
                 if (this.selectedIndex !== rowData.index) {
                   this._clearRows();
@@ -1193,8 +1138,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
                 this._launchDialogById('#modify-app-dialog');
                 this.requestUpdate();
               }}>
-             <wl-icon>apps</wl-icon>
-           </wl-button>
+           </mwc-icon-button>
          </div>
        `,
       root
@@ -1214,20 +1158,16 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       html`
          <div class="layout horizontal center center-justified">
            ${rowData.item.installed ? html`
-           <wl-label class="installed"
-               id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                     rowData.item.name.replace('/', '-') + '-' +
-                     rowData.item.tag.replace(/\./gi, '-')}">
-             ${_t('environment.Installed')}
-           </wl-label>
+             <lablup-shields class="installed" description="${_t('environment.Installed')}" color="darkgreen"
+                             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                             rowData.item.name.replace('/', '-') + '-' +
+                             rowData.item.tag.replace(/\./gi, '-')}"></lablup-shields>
            ` : html`
-           <wl-label class="installing"
-             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
-                   rowData.item.name.replace('/', '-') + '-' +
-                   rowData.item.tag.replace(/\./gi, '-')}"
-             style="display:none">
-             ${_t('environment.Installing')}
-             </wl-label>
+             <lablup-shields class="installing" description="${_t('environment.Installing')}" color="green"
+                             id="${rowData.item.registry.replace(/\./gi, '-') + '-' +
+                             rowData.item.name.replace('/', '-') + '-' +
+                             rowData.item.tag.replace(/\./gi, '-')}"
+             style="display:none"></lablup-shields>
            `}
          </div>
        `
@@ -1301,7 +1241,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
       </h4>
       <div class="list-wrapper">
         <vaadin-grid theme="row-stripes column-borders compact" aria-label="Environments" id="testgrid" .items="${this.images}">
-          <vaadin-grid-selection-column flex-grow="0" text-align="center" auto-select>
+          <vaadin-grid-selection-column frozen flex-grow="0" text-align="center" auto-select>
           </vaadin-grid-selection-column>
           <vaadin-grid-sort-column path="installed" flex-grow="0" header="${_t('environment.Status')}" .renderer="${this._boundInstallRenderer}">
           </vaadin-grid-sort-column>
@@ -1323,7 +1263,7 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
           </lablup-grid-sort-filter-column>
           <vaadin-grid-column width="150px" flex-grow="0" resizable header="${_t('environment.ResourceLimit')}" .renderer="${this._boundRequirementsRenderer}">
           </vaadin-grid-column>
-          <vaadin-grid-column resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
+          <vaadin-grid-column frozen-to-end width="110px" resizable header="${_t('general.Control')}" .renderer=${this._boundControlsRenderer}>
           </vaadin-grid-column>
         </vaadin-grid>
         <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('environment.NoImageToDisplay')}"></backend-ai-list-status>
@@ -1451,38 +1391,32 @@ export default class BackendAIEnvironmentList extends BackendAIPage {
            </div>
            ${this.servicePorts.map((item, index) => html`
            <div class="row">
-             <wl-textfield
+             <mwc-textfield
                type="text"
                value=${item.app}
-             ></wl-textfield>
-             <wl-textfield
+             ></mwc-textfield>
+             <mwc-textfield
                type="text"
                value=${item.protocol}
-             ></wl-textfield>
-             <wl-textfield
+             ></mwc-textfield>
+             <mwc-textfield
                type="number"
                value=${item.port}
-             ></wl-textfield>
-             <wl-button
-               fab flat
-               class="fg pink"
-               @click=${(e) => this._checkDeleteAppInfo(e)}
-             >
-               <wl-icon>remove</wl-icon>
-             </wl-button>
+             ></mwc-textfield>
+             <mwc-icon-button class="fg pink"
+                              icon="remove"
+                              @click=${(e) => this._checkDeleteAppInfo(e)}>
+             </mwc-icon-button>
            </div>
            `)}
            <div class="row">
-             <wl-textfield type="text"></wl-textfield>
-             <wl-textfield type="text"></wl-textfield>
-             <wl-textfield type="number"></wl-textfield>
-             <wl-button
-               fab flat
-               class="fg pink"
-               @click=${this._addRow}
-             >
-               <wl-icon>add</wl-icon>
-             </wl-button>
+             <mwc-textfield type="text"></mwc-textfield>
+             <mwc-textfield type="text"></mwc-textfield>
+             <mwc-textfield type="number"></mwc-textfield>
+             <mwc-icon-button class="fg pink"
+                              icon="add"
+                              @click=${() => this._addRow()}>
+             </mwc-icon-button>
            </div>
            <span style="color:red;">${this.servicePortsMsg}</span>
          </div>

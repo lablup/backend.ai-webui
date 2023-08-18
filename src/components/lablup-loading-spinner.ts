@@ -6,7 +6,7 @@
 import {css, CSSResultGroup, html, LitElement} from 'lit';
 import {customElement, property} from 'lit/decorators.js';
 
-import 'weightless/progress-spinner';
+import '@material/mwc-circular-progress';
 
 /**
  Lablup Loading Spinner
@@ -17,7 +17,7 @@ import 'weightless/progress-spinner';
 
  <lablup-loading-spinner></lablup-loading-spinner>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element lablup-loading-spinner
  */
 
@@ -30,14 +30,12 @@ export default class LablupLoadingSpinner extends LitElement {
     return [
       // language=CSS
       css`
-        wl-progress-spinner {
-          --progress-spinner-size: 48px;
-          --progress-spinner-stroke-width: 12px;
+        mwc-circular-progress {
           width: 48px;
           height: 48px;
           position: fixed;
-          bottom: 60px;
-          right: 60px;
+          --mdc-theme-primary: #e91e63;
+          top: calc(50vh - 24px);
         }
       `];
   }
@@ -46,7 +44,7 @@ export default class LablupLoadingSpinner extends LitElement {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <wl-progress-spinner id="spinner"></wl-progress-spinner>
+      <mwc-circular-progress id="spinner" indeterminate></mwc-circular-progress>
     `;
   }
 

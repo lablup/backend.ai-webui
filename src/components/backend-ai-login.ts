@@ -130,6 +130,7 @@ export default class BackendAILogin extends BackendAIPage {
   @property({type: String}) otp;
   @property({type: Boolean}) needToResetPassword = false;
   @property({type: Boolean}) directoryBasedUsage = false;
+  @property({type: Number}) maxCountForPreopenPorts = 10;
   private _enableContainerCommit = false;
   private _enablePipeline = false;
   @query('#login-panel') loginPanel!: HTMLElementTagNameMap['backend-ai-dialog'];
@@ -195,6 +196,7 @@ export default class BackendAILogin extends BackendAIPage {
         mwc-icon-button {
           /*color: rgba(0, 0, 0, 0.54); Matched color with above icons*/
           color: var(--paper-blue-600);
+          background-color : #fafafa;
           --mdc-icon-size: 24px;
         }
 
@@ -780,6 +782,14 @@ export default class BackendAILogin extends BackendAIPage {
         defaultValue: false,
         value: (generalConfig?.directoryBasedUsage),
       } as ConfigValueObject) as boolean;
+
+    // Maximum allowed number of the preopend port
+    this.maxCountForPreopenPorts = this._getConfigValueByExists(generalConfig,
+        {
+          valueType: 'number',
+          defaultValue: this.maxCountForPreopenPorts, // default value has been already assigned in property declaration
+          value: parseInt(generalConfig?.maxCountForPreopenPorts),
+        } as ConfigValueObject) as number;
   }
 
   /**
@@ -1149,7 +1159,7 @@ export default class BackendAILogin extends BackendAIPage {
     // If token is delivered as a querystring, just save it as cookie.
     document.cookie = `sToken=${sToken}; expires=Session; path=/`;
     try {
-      const loginSuccess = await this.client?.token_login();
+      const loginSuccess = await this.client?.token_login(sToken);
       if (!loginSuccess) {
         this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
         this.notification.show(true);
@@ -1304,6 +1314,7 @@ export default class BackendAILogin extends BackendAIPage {
         });
         this.open();
         this._enableUserInput();
+        return Promise.resolve(true);
       } else { // Login already succeeded.
         this.is_connected = true;
         return this._connectGQL();
@@ -1501,9 +1512,10 @@ export default class BackendAILogin extends BackendAIPage {
       globalThis.backendaiclient._config.enable2FA = this.enable2FA;
       globalThis.backendaiclient._config.force2FA = this.force2FA;
       globalThis.backendaiclient._config.directoryBasedUsage = this.directoryBasedUsage;
+      globalThis.backendaiclient._config.maxCountForPreopenPorts = this.maxCountForPreopenPorts;
       globalThis.backendaiclient.ready = true;
-      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as any) === -1) {
-        this.endpoints.push(globalThis.backendaiclient._config.endpoint as any);
+      if (this.endpoints.indexOf(globalThis.backendaiclient._config.endpoint as string) === -1) {
+        this.endpoints.push(globalThis.backendaiclient._config.endpoint as string);
         if (this.endpoints.length > 5) { // Keep latest
           this.endpoints = this.endpoints.slice(1, 6);
         }
@@ -1608,6 +1620,12 @@ export default class BackendAILogin extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  _togglePasswordVisibility(element) {
+    const isVisible = element.__on;
+    const password = element.closest('div').querySelector('mwc-textfield');
+    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+  }
+
   protected render() {
     // language=HTML
     return html`
@@ -1620,7 +1638,7 @@ export default class BackendAILogin extends BackendAIPage {
           </div>
         </div>
         <div slot="content" class="login-panel intro centered">
-          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px;">
+          <h3 class="horizontal center layout" style="margin: 0 25px;font-weight:700;min-height:40px; padding-bottom:10px;">
             <div>${this.connection_mode === 'SESSION' ? _t('login.LoginWithE-mail') : _t('login.LoginWithIAM')}</div>
             <div class="flex"></div>
             ${this.change_signin_support ? html`
@@ -1651,11 +1669,17 @@ export default class BackendAILogin extends BackendAIPage {
                       @keyup="${this._submitIfEnter}"
                       >
                   </mwc-textfield>
-                  <mwc-textfield type="password" id="id_password" autocomplete="current-password"
-                      label="${_t('login.Password')}" icon="vpn_key"
-                      value="${this.password}"
-                      @keyup="${this._submitIfEnter}">
-                  </mwc-textfield>
+                  <div class="horizontal flex layout">
+                    <mwc-textfield type="password" id="id_password" autocomplete="current-password"
+                        label="${_t('login.Password')}" icon="vpn_key"
+                        value="${this.password}"
+                        @keyup="${this._submitIfEnter}">
+                    </mwc-textfield>
+                    <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
+                        style="position: absolute; right: 0;"
+                        @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                    </mwc-icon-button-toggle>
+                  </div>
                   <mwc-textfield type="number" id="otp"
                         style="display: ${this.otpRequired ? 'block' : 'none'};"
                         label="${_t('totp.OTP')}" icon="pin"
@@ -1701,7 +1725,7 @@ export default class BackendAILogin extends BackendAIPage {
                       </mwc-list-item>
                     `)}
                   </mwc-menu>
-                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint"
+                  <mwc-textfield class="endpoint-text" type="text" id="id_api_endpoint" style="background-color: #fafafa;"
                       maxLength="2048" label="${_t('login.Endpoint')}"
                       pattern="^https?:\/\/(.*)" auto-validate validationMessage="${_text('login.EndpointStartWith')}"
                       value="${this.api_endpoint}"
@@ -1713,7 +1737,7 @@ export default class BackendAILogin extends BackendAIPage {
                     maxLength="2048" style="display:none;"
                     label="${_t('login.Endpoint')}" icon="cloud" value="">
                 </mwc-textfield>
-                <mwc-button unelevated fullwidth id="login-button" icon="check"
+                <mwc-button unelevated fullwidth id="login-button" icon="check" style="padding-top: 10px;"
                     label="${_t('login.Login')}"
                     @click="${() => this._login()}">
                 </mwc-button>
@@ -1749,18 +1773,18 @@ export default class BackendAILogin extends BackendAIPage {
               </fieldset>
             </form>
           </div>
-          <backend-ai-react-reset-password-required-modal 
+          <backend-ai-react-reset-password-required-modal
             value="${JSON.stringify({
               open: this.needToResetPassword,
               username: this.user_id,
               currentPassword: this.password,
               api_endpoint: this.api_endpoint,
-            })}" 
-            @cancel="${(e)=> this.needToResetPassword = false}" 
+            })}"
+            @cancel="${(e)=> this.needToResetPassword = false}"
             @ok="${(e)=> {
               this.needToResetPassword = false;
               this.passwordInput.value = '';
-              
+
               this.notification.text = _text('login.PasswordChanged');
               this.notification.show();
             }}"

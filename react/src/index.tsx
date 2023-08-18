@@ -1,6 +1,7 @@
 import reactToWebComponent from "./helper/react-to-webcomponent";
 import React, { Suspense } from "react";
 import { loadCustomThemeConfig } from "./helper/customThemeConfig";
+import { Route, Routes } from "react-router-dom";
 
 // Load custom theme config once in react/index.tsx
 loadCustomThemeConfig();
@@ -9,6 +10,9 @@ const DefaultProviders = React.lazy(
   () => import("./components/DefaultProviders")
 );
 const Information = React.lazy(() => import("./components/Information"));
+const SessionList = React.lazy(() => import("./pages/SessionListPage"));
+const ServingList = React.lazy(() => import("./pages/ServingListPage"));
+const RoutingList = React.lazy(() => import("./pages/RoutingListPage"));
 const ResetPasswordRequired = React.lazy(
   () => import("./components/ResetPasswordRequired")
 );
@@ -23,6 +27,14 @@ const StorageStatusPanelFallback = React.lazy(() =>
     default: m.StorageStatusPanelFallback,
   }))
 );
+const CopyableCodeText = React.lazy(
+  () => import("./components/CopyableCodeText")
+);
+const UserInfoModal = React.lazy(() => import("./components/UserInfoModal"));
+const UserSettingsModal = React.lazy(
+  () => import("./components/UserSettingModal")
+);
+const ManageAppsModal = React.lazy(() => import("./components/ManageAppsModal"));
 
 customElements.define(
   "backend-ai-react-information",
@@ -30,6 +42,31 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <Information />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-session-list",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <SessionList>{props.children}</SessionList>
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-serving-list",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <Routes>
+          <Route path="/serving" element={<ServingList />} />
+          <Route path="/serving/:serviceId" element={<RoutingList />} />
+        </Routes>
       </DefaultProviders>
     );
   })
@@ -70,3 +107,47 @@ customElements.define(
     );
   })
 );
+
+customElements.define(
+  "backend-ai-react-copyable-code-text",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <CopyableCodeText text={props.value || ""} />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-user-info-dialog",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserInfoModal />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-user-setting-dialog",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserSettingsModal />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-manage-app-dialog",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ManageAppsModal />
+      </DefaultProviders>
+    )
+  })
+)

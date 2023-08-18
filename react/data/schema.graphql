@@ -20,6 +20,7 @@ type Agent implements Item {
   version: String
   compute_plugins: JSONString
   hardware_metadata: JSONString
+  auto_terminate_abusing_kernel: Boolean
   local_config: JSONString
   mem_slots: Int
   cpu_slots: Float
@@ -101,6 +102,7 @@ type ComputeContainer implements Item {
   created_at: DateTime
   terminated_at: DateTime
   starts_at: DateTime
+  scheduled_at: DateTime
   abusing_report: JSONString
   agent: String
   agent_addr: String
@@ -123,6 +125,7 @@ type ComputeSession implements Item {
   tag: String
   name: String
   type: String
+  main_kernel_role: String
   image: String
   architecture: String
   registry: String
@@ -146,11 +149,14 @@ type ComputeSession implements Item {
   created_at: DateTime
   terminated_at: DateTime
   starts_at: DateTime
+  scheduled_at: DateTime
   startup_command: String
   result: String
   commit_status: String
   abusing_reports: [JSONString]
   idle_checks: JSONString
+  agent_ids: [String]
+  agents: [String]
   resource_opts: JSONString
   scaling_group: String
   service_ports: JSONString
@@ -205,6 +211,16 @@ input CreateKeyPairResourcePolicyInput {
   allowed_vfolder_hosts: JSONString
 }
 
+type CreateProjectResourcePolicy {
+  ok: Boolean
+  msg: String
+  resource_policy: ProjectResourcePolicy
+}
+
+input CreateProjectResourcePolicyInput {
+  max_vfolder_size: BigInt!
+}
+
 type CreateResourcePreset {
   ok: Boolean
   msg: String
@@ -227,6 +243,7 @@ input CreateScalingGroupInput {
   is_active: Boolean
   is_public: Boolean
   wsproxy_addr: String
+  wsproxy_api_token: String
   driver: String!
   driver_opts: JSONString
   scheduler: String!
@@ -238,6 +255,16 @@ type CreateUser {
   ok: Boolean
   msg: String
   user: User
+}
+
+type CreateUserResourcePolicy {
+  ok: Boolean
+  msg: String
+  resource_policy: UserResourcePolicy
+}
+
+input CreateUserResourcePolicyInput {
+  max_vfolder_size: BigInt!
 }
 
 scalar DateTime
@@ -267,6 +294,11 @@ type DeleteKeyPairResourcePolicy {
   msg: String
 }
 
+type DeleteProjectResourcePolicy {
+  ok: Boolean
+  msg: String
+}
+
 type DeleteResourcePreset {
   ok: Boolean
   msg: String
@@ -278,6 +310,11 @@ type DeleteScalingGroup {
 }
 
 type DeleteUser {
+  ok: Boolean
+  msg: String
+}
+
+type DeleteUserResourcePolicy {
   ok: Boolean
   msg: String
 }
@@ -333,13 +370,30 @@ type Endpoint implements Item {
   id: ID
   endpoint_id: UUID
   image: String
-  model: UUID
   domain: String
-  project: UUID
+  project: String
   resource_group: String
   resource_slots: JSONString
   url: String
+  model: UUID
+  model_mount_destiation: String
+  created_user: UUID
+  session_owner: UUID
+  tag: String
+  startup_command: String
+  bootstrap_script: String
+  callback_url: String
+  environ: JSONString
+  name: String
+  resource_opts: JSONString
+  desired_session_count: Int
+  cluster_mode: String
+  cluster_size: Int
+  open_to_public: Boolean
   routings: [Routing]
+  retries: Int
+  status: String
+  errors: [InferenceSessionError!]!
 }
 
 type EndpointList implements PaginatedList {
@@ -363,8 +417,8 @@ type Group {
   total_resource_slots: JSONString
   allowed_vfolder_hosts: JSONString
   integration_id: String
-  scaling_groups: [String]
   resource_policy: String
+  scaling_groups: [String]
 }
 
 input GroupInput {
@@ -394,6 +448,17 @@ type Image {
   installed: Boolean
   installed_agents: [String]
   hash: String
+}
+
+type InferenceSessionError {
+  session_id: UUID!
+  errors: [InferenceSessionErrorInfo!]!
+}
+
+type InferenceSessionErrorInfo {
+  src: String!
+  name: String!
+  repr: String!
 }
 
 interface Item {
@@ -426,6 +491,7 @@ type KeyPair implements Item {
   rate_limit: Int
   num_queries: Int
   user: UUID
+  projects: [String]
   ssh_public_key: String
   vfolders: [VirtualFolder]
   compute_sessions(status: String): [ComputeSession]
@@ -613,6 +679,15 @@ input ModifyKeyPairResourcePolicyInput {
   allowed_vfolder_hosts: JSONString
 }
 
+type ModifyProjectResourcePolicy {
+  ok: Boolean
+  msg: String
+}
+
+input ModifyProjectResourcePolicyInput {
+  max_vfolder_size: BigInt!
+}
+
 type ModifyResourcePreset {
   ok: Boolean
   msg: String
@@ -633,21 +708,12 @@ input ModifyScalingGroupInput {
   is_active: Boolean
   is_public: Boolean
   wsproxy_addr: String
+  wsproxy_api_token: String
   driver: String
   driver_opts: JSONString
   scheduler: String
   scheduler_opts: JSONString
   use_host_network: Boolean
-}
-
-type ModifySession {
-  ok: Boolean
-  msg: String
-  compute_session: ComputeSession
-}
-
-input ModifySessionInput {
-  name: String!
 }
 
 type ModifyUser {
@@ -672,64 +738,13 @@ input ModifyUserInput {
   resource_policy: String
 }
 
-input QuotaScopeInput {
-  hard_limit_bytes: BigInt
-}
-
-type SetQuotaScope {
-  quota_scope: QuotaScope
-}
-
-type UnsetQuotaScope {
-  quota_scope: QuotaScope
-}
-
-input CreateUserResourcePolicyInput {
-  max_vfolder_size: BigInt!
-}
-
-type CreateUserResourcePolicy {
-  ok: Boolean
-  msg: String
-  resource_policy: UserResourcePolicy
-}
-
-input ModifyUserResourcePolicyInput {
-  max_vfolder_size: BigInt!
-}
-
 type ModifyUserResourcePolicy {
   ok: Boolean
   msg: String
 }
 
-type DeleteUserResourcePolicy {
-  ok: Boolean
-  msg: String
-}
-
-input CreateProjectResourcePolicyInput {
+input ModifyUserResourcePolicyInput {
   max_vfolder_size: BigInt!
-}
-
-type CreateProjectResourcePolicy {
-  ok: Boolean
-  msg: String
-  resource_policy: ProjectResourcePolicy
-}
-
-input ModifyProjectResourcePolicyInput {
-  max_vfolder_size: BigInt!
-}
-
-type ModifyProjectResourcePolicy {
-  ok: Boolean
-  msg: String
-}
-
-type DeleteProjectResourcePolicy {
-  ok: Boolean
-  msg: String
 }
 
 type Mutations {
@@ -752,14 +767,20 @@ type Mutations {
   rescan_images(registry: String): RescanImages
   preload_image(references: [String]!, target_agents: [String]!): PreloadImage
   unload_image(references: [String]!, target_agents: [String]!): UnloadImage
-  modify_image(architecture: String = "aarch64", props: ModifyImageInput!, target: String!): ModifyImage
-  forget_image(architecture: String = "aarch64", reference: String!): ForgetImage
-  alias_image(alias: String!, architecture: String = "aarch64", target: String!): AliasImage
+  modify_image(architecture: String = "x86_64", props: ModifyImageInput!, target: String!): ModifyImage
+  forget_image(architecture: String = "x86_64", reference: String!): ForgetImage
+  alias_image(alias: String!, architecture: String = "x86_64", target: String!): AliasImage
   dealias_image(alias: String!): DealiasImage
   clear_images(registry: String): ClearImages
   create_keypair_resource_policy(name: String!, props: CreateKeyPairResourcePolicyInput!): CreateKeyPairResourcePolicy
   modify_keypair_resource_policy(name: String!, props: ModifyKeyPairResourcePolicyInput!): ModifyKeyPairResourcePolicy
   delete_keypair_resource_policy(name: String!): DeleteKeyPairResourcePolicy
+  create_user_resource_policy(name: String!, props: CreateUserResourcePolicyInput!): CreateUserResourcePolicy
+  modify_user_resource_policy(name: String!, props: ModifyUserResourcePolicyInput!): ModifyUserResourcePolicy
+  delete_user_resource_policy(name: String!): DeleteUserResourcePolicy
+  create_project_resource_policy(name: String!, props: CreateProjectResourcePolicyInput!): CreateProjectResourcePolicy
+  modify_project_resource_policy(name: String!, props: ModifyProjectResourcePolicyInput!): ModifyProjectResourcePolicy
+  delete_project_resource_policy(name: String!): DeleteProjectResourcePolicy
   create_resource_preset(name: String!, props: CreateResourcePresetInput!): CreateResourcePreset
   modify_resource_preset(name: String!, props: ModifyResourcePresetInput!): ModifyResourcePreset
   delete_resource_preset(name: String!): DeleteResourcePreset
@@ -774,15 +795,8 @@ type Mutations {
   disassociate_scaling_group_with_keypair(access_key: String!, scaling_group: String!): DisassociateScalingGroupWithKeyPair
   disassociate_all_scaling_groups_with_domain(domain: String!): DisassociateAllScalingGroupsWithDomain
   disassociate_all_scaling_groups_with_group(user_group: UUID!): DisassociateAllScalingGroupsWithGroup
-  modify_compute_session(id: String!, props: ModifySessionInput!): ModifySession
-  set_quota_scope(quota_scope_id: String!, storage_host_name: String!, props: QuotaScopeInput!): SetQuotaScope
+  set_quota_scope(props: QuotaScopeInput!, quota_scope_id: String!, storage_host_name: String!): SetQuotaScope
   unset_quota_scope(quota_scope_id: String!, storage_host_name: String!): UnsetQuotaScope
-  create_user_resource_policy(name: String!, props: CreateUserResourcePolicyInput!): CreateUserResourcePolicy
-  modify_user_resource_policy(name: String!, props: ModifyUserResourcePolicyInput!): ModifyUserResourcePolicy
-  delete_user_resource_policy(name: String!): DeleteUserResourcePolicy
-  create_project_resource_policy(name: String!, props: CreateProjectResourcePolicyInput!): CreateProjectResourcePolicy
-  modify_project_resource_policy(name: String!, props: ModifyProjectResourcePolicyInput!): ModifyProjectResourcePolicy
-  delete_project_resource_policy(name: String!): DeleteProjectResourcePolicy
 }
 
 interface PaginatedList {
@@ -798,6 +812,13 @@ type PreloadImage {
   ok: Boolean
   msg: String
   task_id: String
+}
+
+type ProjectResourcePolicy {
+  id: ID!
+  name: String!
+  created_at: DateTime!
+  max_vfolder_size: BigInt
 }
 
 type PurgeDomain {
@@ -830,7 +851,7 @@ type Queries {
   group(id: UUID!, domain_name: String): Group
   groups_by_name(name: String!, domain_name: String): [Group]
   groups(domain_name: String, is_active: Boolean): [Group]
-  image(reference: String!, architecture: String = "aarch64"): Image
+  image(reference: String!, architecture: String = "x86_64"): Image
   images(is_installed: Boolean, is_operation: Boolean): [Image]
   user(domain_name: String, email: String): User
   user_from_uuid(domain_name: String, user_id: ID): User
@@ -840,7 +861,11 @@ type Queries {
   keypairs(domain_name: String, email: String, is_active: Boolean): [KeyPair]
   keypair_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, email: String, is_active: Boolean): KeyPairList
   keypair_resource_policy(name: String): KeyPairResourcePolicy
+  user_resource_policy(name: String): UserResourcePolicy
+  project_resource_policy(name: String!): ProjectResourcePolicy
   keypair_resource_policies: [KeyPairResourcePolicy]
+  user_resource_policies: [UserResourcePolicy]
+  project_resource_policies: [ProjectResourcePolicy]
   resource_preset(name: String): ResourcePreset
   resource_presets: [ResourcePreset]
   scaling_group(name: String): ScalingGroup
@@ -861,14 +886,27 @@ type Queries {
   legacy_compute_session(sess_id: String!, domain_name: String, access_key: String): LegacyComputeSession
   vfolder_host_permissions: PredefinedAtomicPermission
   endpoint(endpoint_id: UUID!): Endpoint
-  endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, project: UUID): EndpointList
+  endpoint_list(limit: Int!, offset: Int!, filter: String, order: String, domain_name: String, group_id: String, access_key: String, project: UUID): EndpointList
   routing(routing_id: UUID!): Routing
   routing_list(limit: Int!, offset: Int!, filter: String, order: String, endpoint_id: UUID): RoutingList
-  quota_scope(quota_scope_id: String!, storage_host_name: String!): QuotaScope
-  user_resource_policy(name: String): UserResourcePolicy
-  user_resource_policies: [UserResourcePolicy]
-  project_resource_policy(name: String!): ProjectResourcePolicy
-  project_resource_policies: [ProjectResourcePolicy]
+  quota_scope(storage_host_name: String!, quota_scope_id: String!): QuotaScope
+}
+
+type QuotaDetails {
+  usage_bytes: BigInt
+  usage_count: BigInt
+  hard_limit_bytes: BigInt
+}
+
+type QuotaScope implements Item {
+  id: ID!
+  quota_scope_id: String!
+  storage_host_name: String!
+  details: QuotaDetails!
+}
+
+input QuotaScopeInput {
+  hard_limit_bytes: BigInt
 }
 
 type RescanImages {
@@ -900,6 +938,7 @@ type Routing implements Item {
   routing_id: UUID
   endpoint: String
   session: UUID
+  status: String
   traffic_ratio: Float
 }
 
@@ -915,11 +954,16 @@ type ScalingGroup {
   is_public: Boolean
   created_at: DateTime
   wsproxy_addr: String
+  wsproxy_api_token: String
   driver: String
   driver_opts: JSONString
   scheduler: String
   scheduler_opts: JSONString
   use_host_network: Boolean
+}
+
+type SetQuotaScope {
+  quota_scope: QuotaScope
 }
 
 type StorageVolume implements Item {
@@ -946,6 +990,10 @@ type UnloadImage {
   task_id: String
 }
 
+type UnsetQuotaScope {
+  quota_scope: QuotaScope
+}
+
 type User implements Item {
   id: ID
   uuid: UUID
@@ -961,11 +1009,11 @@ type User implements Item {
   modified_at: DateTime
   domain_name: String
   role: String
+  resource_policy: String
   allowed_client_ip: [String]
   totp_activated: Boolean
   totp_activated_at: DateTime
   groups: [UserGroup]
-  resource_policy: String
 }
 
 type UserGroup {
@@ -999,9 +1047,17 @@ type UserList implements PaginatedList {
   total_count: Int!
 }
 
+type UserResourcePolicy {
+  id: ID!
+  name: String!
+  created_at: DateTime!
+  max_vfolder_size: BigInt
+}
+
 type VirtualFolder implements Item {
   id: ID
   host: String
+  quota_scope_id: String
   name: String
   user: UUID
   user_email: String
@@ -1041,29 +1097,3 @@ type VirtualFolderPermissionList implements PaginatedList {
   total_count: Int!
 }
 
-type QuotaDetails {
-  usage_bytes: BigInt
-  usage_count: BigInt
-  hard_limit_bytes: BigInt
-}
-
-type QuotaScope {
-  id: UUID!
-  quota_scope_id: String!
-  storage_host_name: String!
-  details: QuotaDetails!
-}
-
-type UserResourcePolicy {
-  id: UUID!
-  name: String!
-  created_at: DateTime!
-  max_vfolder_size: BigInt
-}
-
-type ProjectResourcePolicy {
-  id: UUID!
-  name: String!
-  created_at: DateTime!
-  max_vfolder_size: BigInt
-}

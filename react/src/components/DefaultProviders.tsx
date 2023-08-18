@@ -1,4 +1,10 @@
-import React, { Suspense, useEffect, useMemo, useState } from "react";
+import React, {
+  Suspense,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import { RelayEnvironmentProvider } from "react-relay";
 import { StyleProvider, createCache } from "@ant-design/cssinjs";
 import { ConfigProvider } from "antd";
@@ -15,7 +21,7 @@ import { useCustomThemeConfig } from "../helper/customThemeConfig";
 
 // @ts-ignore
 import rawFixAntCss from "../fix_antd.css?raw";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, useNavigate } from "react-router-dom";
 
 interface WebComponentContextType {
   value?: ReactWebComponentProps["value"];
@@ -121,9 +127,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                   <ConfigProvider
                     // @ts-ignore
                     getPopupContainer={(triggerNode) => {
-                      if (triggerNode?.parentNode) {
-                        return triggerNode.parentNode;
-                      }
                       return shadowRoot;
                     }}
                     //TODO: apply other supported locales
@@ -132,9 +135,11 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                   >
                     <StyleProvider container={shadowRoot} cache={cache}>
                       <Suspense fallback="">
-                        <BrowserRouter>{children}</BrowserRouter>
+                        <BrowserRouter>
+                          <RoutingEventHandler />
+                          {children}
+                        </BrowserRouter>
                       </Suspense>
-                      {/* {children} */}
                     </StyleProvider>
                   </ConfigProvider>
                 </WebComponentContext.Provider>
@@ -145,6 +150,27 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
       )}
     </>
   );
+};
+
+const RoutingEventHandler = () => {
+  const navigate = useNavigate();
+  useLayoutEffect(() => {
+    const handleNavigate = (e: any) => {
+      const { detail } = e;
+      navigate(detail, {
+        // we don't want to add duplicated one to history.
+        // On lit component side, it adds to history already.
+        replace: true,
+      });
+    };
+    document.addEventListener("react-navigate", handleNavigate);
+
+    return () => {
+      document.removeEventListener("react-navigate", handleNavigate);
+    };
+  }, [navigate]);
+
+  return null;
 };
 
 export default DefaultProviders;

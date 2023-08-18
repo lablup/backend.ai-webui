@@ -13,6 +13,7 @@ import {TextField} from '@material/mwc-textfield';
 import 'macro-carousel';
 
 import BackendAIDialog from './backend-ai-dialog';
+import './lablup-expansion';
 
 import {BackendAiStyles} from './backend-ai-general-styles';
 import {BackendAIPage} from './backend-ai-page';
@@ -36,6 +37,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Object}) jobs = Object();
   @property({type: Object}) controls = Object();
   @property({type: Array}) appSupportList;
+  @property({type: Array}) preOpenedPortList;
   @property({type: Array}) appSupportOption;
   @property({type: Object}) appTemplate = Object();
   @property({type: Object}) imageInfo = Object();
@@ -55,12 +57,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   @property({type: Boolean}) isPathConfigured = false;
   @property({type: Array}) appLaunchBeforeTunneling = ['nniboard', 'mlflow-ui'];
   @property({type: Object}) appController = Object();
-  @property({type: Object}) openPortToPublic = false;
-  @property({type: Object}) allowPreferredPort = false;
+  @property({type: Boolean}) openPortToPublic = false;
+  @property({type: Boolean}) allowPreferredPort = false;
   @property({type: Array}) appOrder;
-  @property({type: Array}) appSupportWithCategory = [];
   @property({type: Object}) appEnvs = Object();
   @property({type: Object}) appArgs = Object();
+  @property({type: String}) vscodeDesktopPassword = '';
   @query('#app-dialog') dialog!: BackendAIDialog;
   @query('#app-port') appPort!: TextField;
   @query('#custom-subdomain') customSubdomain!: TextField;
@@ -79,6 +81,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   constructor() {
     super();
     this.appSupportList = [];
+    this.preOpenedPortList = [];
     this.appSupportOption = [];
   }
 
@@ -186,6 +189,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           overflow-y: hidden;
         }
 
+        #preopen-ports-expansion {
+          --expansion-header-font-size: 1.17em;
+          --expansion-header-padding: 0 0 0 15px;
+          --expansion-right-icon-margin: 0 10px 0 0;
+        }
+
         .slide {
           display: flex;
           align-items: center;
@@ -239,52 +248,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
 
         mwc-checkbox#hide-guide {
           margin-right: 10px;
-        }
-
-        p code {
-          font: 12px Monaco, "Courier New", "DejaVu Sans Mono", "Bitstream Vera Sans Mono", monospace;
-          color: #52595d;
-          -webkit-border-radius: 3px;
-          -moz-border-radius: 3px;
-          border-radius: 3px;
-          -moz-background-clip: padding;
-          -webkit-background-clip: padding-box;
-          background-clip: padding-box;
-          border: 1px solid #cccccc;
-          background-color: #f9f9f9;
-          padding: 0px 3px;
-          display: inline-block;
-        }
-
-        mwc-textfield#vscode-desktop-password {
-          width: 360px;
-          --mdc-text-field-fill-color: transparent;
-          --mdc-theme-primary: var(--general-textfield-selected-color);
-          --mdc-typography-font-family: var(--general-font-family);
-        }
-
-        .vscode-desktop-password {
-          min-height: 80px;
-          overflow-y: scroll;
-          white-space: pre-wrap;
-          word-wrap: break-word;
-          scrollbar-width: none; /* firefox */
-        }
-
-        wl-button.vscode-desktop-password {
-          display: inline-block;
-          margin: 10px;
-        }
-
-        wl-button.copy {
-          --button-font-size: 10px;
-          display: inline-block;
-          max-width: 15px !important;
-          max-height: 15px !important;
-        }
-
-        wl-icon#vscode-desktop-password-icon {
-          color: var(--paper-indigo-700);
         }
 
         @media screen and (max-width: 810px) {
@@ -452,6 +415,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     const appServices = controls['app-services'];
     const mode = controls['mode'];
     const appServicesOption: Record<string, unknown> = ('app-services-option' in controls) ? controls['app-services-option'] : {};
+    const servicePorts = controls['service-ports'];
     if ('runtime' in controls) {
       const param: Record<string, unknown> = {};
       param['mode'] = mode;
@@ -469,8 +433,19 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       return this._runAppWithParameters(param);
     }
+    this.preOpenedPortList = [];
+    const preOpenAppNameList = servicePorts.filter((item) => item.protocol === 'preopen').map((item) => item.name);
+    preOpenAppNameList.forEach((elm) => {
+      this.preOpenedPortList.push({
+        'name': elm,
+        'title': elm,
+        // TODO: change image according to the connected app.
+        'src': '/resources/icons/default_app.svg',
+      });
+    });
+    const filteredAppServices = appServices.filter((item) => !preOpenAppNameList.includes(item));
     this.appSupportList = [];
-    if (!appServices.includes('ttyd')) {
+    if (!filteredAppServices.includes('ttyd')) {
       this.appSupportList.push({ // Force push terminal
         'name': 'ttyd',
         'title': 'Console',
@@ -488,7 +463,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         'src': './resources/icons/filebrowser.svg'
       });
     }*/
-    appServices.forEach((elm) => {
+    filteredAppServices.forEach((elm) => {
       if (!(elm in this.appTemplate)) {
         this.appTemplate[elm] = [];
         this.appTemplate[elm].push({
@@ -500,12 +475,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
         });
       }
     });
-    appServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
+    filteredAppServices.sort((a, b) => (this.appTemplate[a][0].category > this.appTemplate[b][0].category) ? 1 : -1);
     let interText = '';
     if (Object.keys(appServicesOption).length > 0) {
       this.appSupportOption = appServicesOption;
     }
-    appServices.forEach((elm) => {
+    filteredAppServices.forEach((elm) => {
       if (elm in this.appTemplate) {
         if (elm !== 'sshd' || (elm === 'sshd' && globalThis.isElectron)) {
           if (interText !== this.appTemplate[elm][0].category) {
@@ -538,7 +513,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     if (
       globalThis.backendaiclient.supports('local-vscode-remote-connection') &&
       globalThis.isElectron &&
-      !appServices.includes('vscode-desktop')
+      !filteredAppServices.includes('vscode-desktop')
     ) {
       const insertAfterIndex = this.appSupportList.findIndex((item) => item.name === 'vscode');
       this.appSupportList.splice(insertAfterIndex + 1, 0, {
@@ -683,7 +658,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.checkOpenToPublic.checked = false;
     }
 
-
     if (port !== null && port > 1024 && port < 65535) {
       uri += `&port=${port}`;
     }
@@ -729,12 +703,16 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       return false;
     }
     const token = globalThis.backendaiclient._config.accessKey;
-    let uri = await this._getProxyURL(sessionUuid);
-    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri).href;
+    let uri: string | URL = await this._getProxyURL(sessionUuid);
+    uri = new URL(`proxy/${token}/${sessionUuid}/delete?app=${app}`, uri);
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      uri.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      uri = new URL(uri.href);
+    }
     const rqst_proxy = {
       method: 'GET',
       app: app,
-      uri: uri,
+      uri: uri.href,
       credentials: 'include',
       mode: 'cors'
     };
@@ -806,10 +784,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
               delete this.controls.runtime; // Remove runtime option to prevent dangling loop.
               this._showAppLauncher(this.controls);
             } else {
-              await this._connectToProxyWorker(response.url, urlPostfix);
+              const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
               this.indicator.set(100, _text('session.applauncher.Prepared'));
               setTimeout(() => {
-                globalThis.open(response.url + urlPostfix, '_blank');
+                globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
                 // console.log(appName + " proxy loaded: ");
                 // console.log(sessionUuid);
               }, 1000);
@@ -820,23 +798,82 @@ export default class BackendAiAppLauncher extends BackendAIPage {
   }
 
   async _connectToProxyWorker(url, urlPostfix) {
-    const rqst_proxy = {
+    // Try to get permit key since it is not possible to get it with the
+    // redirect request. This is required to reuse the existing port.
+    let rqstUrl = new URL(url + urlPostfix);
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      rqstUrl = new URL(rqstUrl.href);
+    }
+    const rqstGetPermitKey = {
       method: 'GET',
-      uri: url + urlPostfix,
-      mode: 'no-cors',
-      redirect: 'follow', // 'manual'
-      credentials: 'include'
+      uri: rqstUrl.href,
+      headers: {'Accept': 'application/json'},
     };
-    let count = 0;
-    while (count < 5) {
-      const result = await this.sendRequest(rqst_proxy);
-      if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
-        await this._sleep(1000);
-        count = count + 1;
-      } else {
-        count = 6;
+    const resp = await this.sendRequest(rqstGetPermitKey);
+    if (resp && resp.redirect_url) {
+      // Save permit key to local storage if possible.
+      const redirectUrl = new URL(resp.redirect_url);
+      const permitKey = redirectUrl.searchParams.get('permit_key');
+      if (permitKey && permitKey.length > 0) {
+        localStorage.setItem('backendaiwebui.appproxy-permit-key', permitKey);
+      }
+
+      if (!resp.reuse) {
+        // For the new permit, we need to follow the redirect to open the
+        // corresponding port.
+        const redirectRqst = {
+          method: 'GET',
+          uri: redirectUrl.href,
+          mode: 'no-cors',
+          redirect: 'follow',
+          credentials: 'include',
+        };
+        let count = 0;
+        while (count < 5) {
+          const result = await this.sendRequest(redirectRqst);
+          if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
+            await this._sleep(1000);
+            count = count + 1;
+            console.warn(`Retry connect to proxy worker (${count})...`);
+          } else {
+            count = 6;
+          }
+        }
+      }
+    } else {
+      // When there is no redirect_url or encountered an error in fetching the
+      // permit key.
+      rqstUrl = new URL(url + urlPostfix);
+      if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+        rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+        rqstUrl = new URL(rqstUrl.href);
+      }
+      const rqst_proxy = {
+        method: 'GET',
+        uri: rqstUrl.href,
+        mode: 'no-cors',
+        redirect: 'follow', // 'manual'
+        credentials: 'include',
+      };
+      let count = 0;
+      while (count < 5) {
+        const result = await this.sendRequest(rqst_proxy);
+        if (typeof result === 'object' && 'status' in result && [500, 501, 502].includes(result.status)) {
+          await this._sleep(1000);
+          count = count + 1;
+          console.warn(`Retry connect to proxy worker (${count})...`);
+        } else {
+          count = 6;
+        }
       }
     }
+
+    if (localStorage.getItem('backendaiwebui.appproxy-permit-key')) {
+      rqstUrl.searchParams.set('permit_key', localStorage.getItem('backendaiwebui.appproxy-permit-key') || '');
+      rqstUrl = new URL(rqstUrl.href);
+    }
+    return rqstUrl.href;
   }
 
   async _sleep(ms) {
@@ -927,7 +964,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       }
       this._open_wsproxy(sessionUuid, sendAppName, port, envs, args)
         .then(async (response) => {
-          await this._connectToProxyWorker(response.url, urlPostfix);
+          const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
           if (appName === 'sshd') {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             this.sshHost = '127.0.0.1';
@@ -956,7 +993,7 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           } else if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(response.url + urlPostfix, '_blank');
+              globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
               // console.log(appName + " proxy loaded: ");
               // console.log(sessionUuid);
             }, 1000);
@@ -989,11 +1026,10 @@ export default class BackendAiAppLauncher extends BackendAIPage {
    * @param {string} sessionUuid
    */
   async _readTempPasswd(sessionUuid) {
-    const vscodePasswordEl = this.shadowRoot?.querySelector('#vscode-desktop-password') as HTMLInputElement;
     const file = '/home/work/.password';
     const blob = await globalThis.backendaiclient.download_single(sessionUuid, file);
     const rawText = await blob.text();
-    vscodePasswordEl.value = rawText;
+    this.vscodeDesktopPassword = rawText;
   }
 
   /**
@@ -1010,11 +1046,11 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.indicator = await globalThis.lablupIndicator.start();
       this._open_wsproxy(sessionUuid, 'ttyd')
         .then(async (response) => {
-          await this._connectToProxyWorker(response.url, '');
+          const appConnectUrl = await this._connectToProxyWorker(response.url, '');
           if (response.url) {
             this.indicator.set(100, _text('session.applauncher.Prepared'));
             setTimeout(() => {
-              globalThis.open(response.url, '_blank');
+              globalThis.open(appConnectUrl || response.url, '_blank');
               this.indicator.end();
               // console.log("Terminal proxy loaded: ");
               // console.log(sessionUuid);
@@ -1092,12 +1128,12 @@ export default class BackendAiAppLauncher extends BackendAIPage {
       this.tensorboardPath = this.tensorboardPath === '' ? '/home/work/logs' : this.tensorboardPath;
       const path: Record<string, unknown> = {'--logdir': this.tensorboardPath};
       this._open_wsproxy(sessionUuid, appName, port, null, path).then(async (response) => {
-        await this._connectToProxyWorker(response.url, urlPostfix);
+        const appConnectUrl = await this._connectToProxyWorker(response.url, urlPostfix);
         this._hideAppLauncher();
         this._hideTensorboardDialog();
         button.removeAttribute('disabled');
         setTimeout(() => {
-          globalThis.open(response.url + urlPostfix, '_blank');
+          globalThis.open(appConnectUrl || response.url + urlPostfix, '_blank');
           // console.log(appName + ' proxy loaded: ');
           // console.log(sessionUuid);
         }, 1000);
@@ -1230,40 +1266,6 @@ export default class BackendAiAppLauncher extends BackendAIPage {
     btn.textContent = isFolded ? _text('session.Readless') : _text('session.Readmore');
   }
 
-  /**
-   * Copy Remote VS Code password to clipboard
-   *
-   * @param {string} vscodePassword - ssh(remote VS Code) access password
-   * */
-  _copyVSCodePassword(vscodePassword: string) {
-    if (vscodePassword !== '') {
-      const copyText = (this.shadowRoot?.querySelector(vscodePassword) as any).value;
-      if (copyText.length == 0) {
-        this.notification.text = _text('usersettings.NoExistingVSCodePassword');
-        this.notification.show();
-      } else {
-        if (navigator.clipboard !== undefined) { // for Chrome, Safari
-          navigator.clipboard.writeText(copyText).then( () => {
-            this.notification.text = _text('usersettings.VSCodePasswordClipboardCopy');
-            this.notification.show();
-          }, (err) => {
-            console.error('Could not copy text: ', err);
-          });
-        } else { // other browsers
-          const tmpInputElement = document.createElement('input');
-          tmpInputElement.type = 'text';
-          tmpInputElement.value = copyText;
-
-          document.body.appendChild(tmpInputElement);
-          tmpInputElement.select();
-          document.execCommand('copy'); // copy operation
-          document.body.removeChild(tmpInputElement);
-        }
-      }
-    }
-  }
-
-
   render() {
     // language=HTML
     return html`
@@ -1293,6 +1295,24 @@ export default class BackendAiAppLauncher extends BackendAIPage {
                 </div>`}
             `)}
           </div>
+          ${this.preOpenedPortList.length > 0 ? html`
+            <lablup-expansion id="preopen-ports-expansion" open>
+              <span slot="title" class="horizontal layout">
+                ${_t('session.launcher.PreOpenPortTitle')}
+              </span>
+              <div style="padding:15px 0;" class="horizontal layout wrap center start-justified">
+                ${this.preOpenedPortList.map((item) => html`
+                  <div class="vertical layout center center-justified app-icon">
+                    <mwc-icon-button class="fg apps green" .app="${item.name}" .app-name="${item.name}"
+                                     @click="${(e) => this._runThisAppWithConfirmationIfNeeded(e)}">
+                      <img src="${item.src}"/>
+                    </mwc-icon-button>
+                    <span class="label">${item.title}</span>
+                  </div>
+                `)}
+              </div>
+            </lablup-expansion>
+          ` : html``}
           <div style="padding:10px 20px 15px 20px">
             ${globalThis.isElectron || !this.openPortToPublic ? `` : html`
               <div class="horizontal layout center">
@@ -1450,19 +1470,8 @@ export default class BackendAiAppLauncher extends BackendAIPage {
           <div>${_t('session.VSCodeRemoteDescription')}</div>
           <section class="vertical layout wrap start start-justified">
             <h3>${_t('session.ConnectionInformation')}</h4>
-            <div slot="content">
-              <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
-              <mwc-textfield
-                readonly
-                class="vscode-desktop-password"
-                id="vscode-desktop-password"
-              ></mwc-textfield>
-              <mwc-icon-button
-                id="copy-vscode-password-button"
-                icon="content_copy"
-                @click="${() => this._copyVSCodePassword('#vscode-desktop-password')}"
-              ></mwc-icon-button>
-            </div>
+            <span>${_t('session.VSCodeRemotePasswordTitle')}:</span>
+            <backend-ai-react-copyable-code-text value="${this.vscodeDesktopPassword}" style="width:max-content;margin-bottom:10px;"></backend-ai-react-copyable-code-text>
             <div class="horizontal wrap layout note" style="background-color:#FFFBE7;width:100%;padding:10px 0px;">
               <p style="margin:auto 10px;">${_t('session.VSCodeRemoteNoticeSSHConfig')}</p>
               <p style="margin:auto 10px;">
