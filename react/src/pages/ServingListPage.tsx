@@ -1,4 +1,4 @@
-import { Button, Modal, Table, Tabs, Tag, Typography, theme } from "antd";
+import { Button, Modal, Table, Tabs, Typography, theme } from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
@@ -32,6 +32,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import _ from "lodash";
+import EndpointStatusTag from "../components/EndpointStatusTag";
 
 // FIXME: need to apply filtering type of service later
 type TabKey = "services"; //  "running" | "finished" | "others";
@@ -117,6 +118,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointStatusTagFragment
             }
           }
         }
@@ -259,6 +261,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             /> */}
             <Table
               loading={isRefetchPending}
+              scroll={{ x: "max-content" }}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
@@ -322,15 +325,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 },
                 {
                   title: t("modelService.Status"),
-                  dataIndex: "status",
                   render: (text, row) => (
-                    <Tag
-                      color={applyStatusColor(
-                        row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
-                      )}
-                    >
-                      {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
-                    </Tag>
+                    <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
                 {
@@ -358,7 +354,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   // dataIndex: "active_route_count",
                   render: (text, row) => {
                     return (
-                      _.filter(row.routings, (r) => r?.status === "healthy")
+                      _.filter(row.routings, (r) => r?.status === "HEALTHY")
                         .length +
                       " / " +
                       row.routings?.length
@@ -458,19 +454,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       />
     </>
   );
-};
-
-const applyStatusColor = (status = "") => {
-  let color = "default";
-  switch (status.toUpperCase()) {
-    case "RUNNING":
-      color = "success";
-      break;
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-  return color;
 };
 
 export default ServingListPage;

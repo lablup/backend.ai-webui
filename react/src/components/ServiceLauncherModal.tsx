@@ -14,6 +14,7 @@ import VFolderSelect from "./VFolderSelect";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import { useCurrentDomainValue } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
+import { useResourceSlots } from "../hooks/backendai";
 
 type ClusterMode = "single-node" | "multi-node";
 
@@ -80,6 +81,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
+  const [resourceSlots] = useResourceSlots();
 
   const mutationToCreateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormInput) => {
@@ -102,10 +104,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           resources: {
             cpu: values.cpu,
             mem: values.mem + "G",
-            "cuda.shares": values.gpu,
           },
         },
       };
+      if (resourceSlots?.cuda === "shares") {
+        body["config"].resources["cuda.shares"] = values.gpu;
+      }
+      if (resourceSlots?.cuda === "device") {
+        body["config"].resources["cuda.device"] = values.gpu;
+      }
       if (values.shmem && values.shmem > 0) {
         body["config"].resource_opts = {
           shmem: values.shmem,
@@ -335,26 +342,32 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
-                      style={{ marginBottom: 0 }}
-                      name={"gpu"}
-                      label={t("session.launcher.AIAccelerator")}
-                      tooltip={
-                        <Trans i18nKey={"session.launcher.DescAIAccelerator"} />
-                      }
-                      max={30}
-                      step={0.1}
-                      inputNumberProps={{
-                        //TODO: change unit based on resource limit
-                        addonAfter: "GPU",
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
+                    {resourceSlots.cuda !== undefined ? (
+                      <SliderInputItem
+                        style={{ marginBottom: 0 }}
+                        name={"gpu"}
+                        label={t("session.launcher.AIAccelerator")}
+                        tooltip={
+                          <Trans
+                            i18nKey={"session.launcher.DescAIAccelerator"}
+                          />
+                        }
+                        max={30}
+                        step={0.1}
+                        inputNumberProps={{
+                          //TODO: change unit based on resource limit
+                          addonAfter: "GPU",
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </>
                 );
               }}

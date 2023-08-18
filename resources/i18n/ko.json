@@ -417,7 +417,9 @@
     "RouteId": "라우트 ID",
     "SessionId": "세션 ID",
     "TrafficRatio": "트래픽 비율",
-    "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: "
+    "YouAreAboutToTerminate": "아래의 서비스를 삭제하려고 합니다: ",
+    "ClearErrors": "오류 지우고 재시도",
+    "ServingRouteErrorModalTitle": "서빙 라우트 에러"
   },
   "button": {
     "Cancel": "취소",
