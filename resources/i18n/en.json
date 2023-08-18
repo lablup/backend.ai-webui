@@ -428,7 +428,9 @@
     "RouteId": "Route ID",
     "SessionId": "Session ID",
     "TrafficRatio": "Traffic Ratio",
-    "YouAreAboutToTerminate": "You are about to terminate "
+    "YouAreAboutToTerminate": "You are about to terminate ",
+    "ClearErrors": "Clear error and retry",
+    "ServingRouteErrorModalTitle": "Serving Route Error"
   },
   "button": {
     "Cancel": "Cancel",
