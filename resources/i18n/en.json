@@ -827,7 +827,9 @@
     "Used": "Used",
     "Limit": "Limit",
     "HostDetails": "Displays quota information for the selected storage host.",
-    "ProjectFolder": "Project Folder"
+    "ProjectFolder": "Project Folder",
+    "Pipeline": "Pipeline Folders",
+    "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack."
   },
   "dialog": {
     "warning": {
