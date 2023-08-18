@@ -1,6 +1,7 @@
 import {
   Breadcrumb,
   Button,
+  Card,
   Descriptions,
   Popover,
   Table,
@@ -14,6 +15,7 @@ import {
   CloseOutlined,
   QuestionCircleOutlined,
   ReloadOutlined,
+  SettingOutlined,
   WarningOutlined,
 } from "@ant-design/icons";
 import React, { useState, useTransition } from "react";
@@ -34,6 +36,7 @@ import { useTanMutation } from "../hooks/reactQueryAlias";
 import { baiSignedRequestWithPromise } from "../helper";
 import { ServingRouteErrorModalFragment$key } from "../components/__generated__/ServingRouteErrorModalFragment.graphql";
 import EndpointStatusTag from "../components/EndpointStatusTag";
+import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 
 interface RoutingInfo {
   route_id: string;
@@ -71,6 +74,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
     useState<ServingRouteErrorModalFragment$key | null>(null);
+  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
+    useState(false);
 
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
@@ -95,6 +100,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             status
           }
           ...EndpointStatusTagFragment
+          ...ModelServiceSettingModal_endpoint
         }
       }
     `,
@@ -146,7 +152,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     <Flex
       direction="column"
       align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
+      style={{ margin: token.marginSM }}
+      gap="sm"
     >
       <Breadcrumb
         items={[
@@ -162,14 +169,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             title: t("modelService.RoutingInfo"),
           },
         ]}
-      ></Breadcrumb>
+      />
       <Flex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ""}
         </Typography.Title>
         <Flex gap={"xxs"}>
           {(endpoint?.retries || 0) > 0 ? (
-            <Tooltip title={t("ClearErrors")}>
+            <Tooltip title={t("modelService.ClearErrors")}>
               <Button
                 loading={isPendingClearError}
                 icon={<WarningOutlined />}
@@ -199,52 +206,61 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               }}
             />
           </Tooltip>
+          <Button
+            type="primary"
+            icon={<SettingOutlined />}
+            disabled={(endpoint?.desired_session_count || 0) < 0}
+            onClick={() => {
+              setIsOpenModelServiceSettingModal(true);
+            }}
+          >
+            {t("button.Edit")}
+          </Button>
         </Flex>
       </Flex>
-      <Typography.Title level={4} style={{ margin: 0 }}>
-        {t("modelService.ServiceInfo")}
-      </Typography.Title>
-      <Descriptions
-        bordered
-        column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
-        style={{
-          backgroundColor: token.colorBgBase,
-        }}
-      >
-        <Descriptions.Item label={t("modelService.EndpointName")}>
-          <Typography.Text copyable>{endpoint?.name}</Typography.Text>
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.Status")}>
-          <EndpointStatusTag endpointFrgmt={endpoint} />
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.EndpointId")}>
-          {endpoint?.endpoint_id}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.SessionOwner")}>
-          {baiClient.email || ""}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
-          {endpoint?.desired_session_count}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
-          {endpoint?.url ? (
-            endpoint?.url
-          ) : (
-            <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
-          )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.OpenToPublic")}>
-          {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
-        </Descriptions.Item>
-        <Descriptions.Item label="Image">
-          {endpoint?.image && (
-            <Flex direction="row" gap={"xs"}>
-              <ImageMetaIcon image={endpoint.image} />
-              <CopyableCodeText>{endpoint.image}</CopyableCodeText>
-            </Flex>
-          )}
-        </Descriptions.Item>
-      </Descriptions>
+      <Card title={t("modelService.ServiceInfo")}>
+        <Descriptions
+          bordered
+          column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
+          style={{
+            backgroundColor: token.colorBgBase,
+          }}
+        >
+          <Descriptions.Item label={t("modelService.EndpointName")}>
+            <Typography.Text copyable>{endpoint?.name}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.Status")}>
+            <EndpointStatusTag endpointFrgmt={endpoint} />
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.EndpointId")}>
+            {endpoint?.endpoint_id}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.SessionOwner")}>
+            {baiClient.email || ""}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
+            {endpoint?.desired_session_count}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
+            {endpoint?.url ? (
+              endpoint?.url
+            ) : (
+              <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.OpenToPublic")}>
+            {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
+          </Descriptions.Item>
+          <Descriptions.Item label="Image">
+            {endpoint?.image && (
+              <Flex direction="row" gap={"xs"}>
+                <ImageMetaIcon image={endpoint.image} />
+                <CopyableCodeText>{endpoint.image}</CopyableCodeText>
+              </Flex>
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
       <Typography.Title level={4} style={{ margin: 0 }}>
         {t("modelService.RoutesInfo")}
       </Typography.Title>
@@ -298,6 +314,18 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         open={!!selectedSessionErrorForModal}
         inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
         onRequestClose={() => setSelectedSessionErrorForModal(null)}
+      />
+      <ModelServiceSettingModal
+        open={isOpenModelServiceSettingModal}
+        onRequestClose={(success) => {
+          setIsOpenModelServiceSettingModal(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+        endpointFrgmt={endpoint}
       />
     </Flex>
   );

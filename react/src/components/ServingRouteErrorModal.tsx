@@ -58,7 +58,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   return (
     <Modal
       centered
-      title={t("ServingRouteErrorModalTitle")}
+      title={t("modelService.ServingRouteErrorModalTitle")}
       onCancel={() => {
         onRequestClose();
       }}
@@ -73,16 +73,15 @@ const ServingRouteErrorModal: React.FC<Props> = ({
       ]}
       {...modalProps}
     >
-      <br />
       <Descriptions
-        title={t("credential.Information")}
         bordered
         column={columnSetting}
+        labelStyle={{ minWidth: 100 }}
       >
-        <Descriptions.Item label={t("SessionID")}>
+        <Descriptions.Item label={t("modelService.SessionId")}>
           <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
         </Descriptions.Item>
-        <Descriptions.Item label={t("Error")}>
+        <Descriptions.Item label={t("dialog.error.Error")}>
           {iSessionError?.errors[0].repr}
         </Descriptions.Item>
       </Descriptions>
