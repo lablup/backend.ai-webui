@@ -300,7 +300,9 @@
       "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
       "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
       "Prepared": "Siap",
-      "App": "__NOT_TRANSLATED__"
+      "App": "__NOT_TRANSLATED__",
+      "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
+      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
