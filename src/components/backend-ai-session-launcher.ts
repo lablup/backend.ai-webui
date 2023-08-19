@@ -263,6 +263,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#modify-preopen-ports-container') modifyPreOpenPortContainer!: HTMLDivElement;
   @query('#launch-confirmation-dialog') launchConfirmationDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#command-editor') commandEditor!: LablupCodemirror;
 
   constructor() {
     super();
@@ -1512,8 +1513,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['bootstrap_script'] = this.importScript;
     }
     if (this.sessionType === 'batch') {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
-      config['startupCommand'] = editor.getValue();
+      config['startupCommand'] = this.commandEditor.getValue();
 
       const scheduledTime = this.dateTimePicker.value;
       const useScheduledTime = this.useScheduledTimeSwitch.selected;
@@ -3351,12 +3351,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
+  validateSessionLauncherInput() {
+    if (this.currentIndex === 1) {
+      if (this.sessionType === 'batch' && !this.commandEditor._validateInput()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Move to previous or next progress.
    *
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
   async moveProgress(n) {
+    if (!this.validateSessionLauncherInput()) return;
     const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
     // Exclude for model inference. No folder will be shown in the inference mode.
@@ -3467,9 +3477,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const startUpCommandEditor = this.shadowRoot?.querySelector('#batch-mode-config-section') as HTMLDivElement;
     startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
     if (isBatchmode) {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
-      editor.refresh();
-      editor.focus();
+      this.commandEditor.refresh();
+      this.commandEditor.focus();
     }
   }
 
@@ -3667,9 +3676,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
               <span class="launcher-item-title" style="width:386px;">${_t('session.launcher.BatchModeConfig')}</span>
               <div class="horizontal layout start-justified">
-                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}</div>
+                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}*</div>
               </div>
-              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+              <lablup-codemirror id="command-editor" mode="shell" required helperText="${_t('dialog.warning.Required')}"></lablup-codemirror>
               <div class="horizontal center layout justified" style="margin: 10px auto;">
                 <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
                 <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>

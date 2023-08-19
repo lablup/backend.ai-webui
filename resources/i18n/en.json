@@ -833,7 +833,8 @@
     "warning": {
       "CannotBeUndone": "WARNING: this cannot be undone!",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
-      "WillBeAppliedToNewSessions": "This update will be applied to new sessions."
+      "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
+      "Required": "Required"
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"

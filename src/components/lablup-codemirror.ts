@@ -3,7 +3,7 @@
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import {customElement, property, query} from 'lit/decorators.js';
 
 import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
 
@@ -11,9 +11,11 @@ import '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
 import '@vanillawc/wc-codemirror/mode/yaml/yaml';
+import '@material/mwc-icon';
 import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
 import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
 import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Lablup Codemirror
@@ -28,8 +30,6 @@ import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
  @element lablup-codemirror
  */
 
-declare const window: any;
-
 
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
@@ -42,6 +42,10 @@ export default class LablupCodemirror extends LitElement {
   @property({type: Boolean}) readonly = false;
   @property({type: Boolean}) useLineWrapping = false;
   @property({type: Boolean}) required = false;
+  @property({type: String}) helperText = '';
+  @property({type: String}) helperTextIcon = 'warning';
+  @query('#helper-text') helperTextEl!: HTMLDivElement;
+  @query('#codemirror-editor') editorEl!: WCCodeMirror;
 
   constructor() {
     super();
@@ -68,12 +72,11 @@ export default class LablupCodemirror extends LitElement {
    * Initialize codemirror editor.
    * */
   _initEditor() {
-    const cm = this.shadowRoot?.querySelector('#codemirror-editor') as WCCodeMirror;
-    if (!cm.__initialized) {
+    if (!this.editorEl.__initialized) {
       setTimeout(this._initEditor.bind(this), 100);
       return;
     }
-    this.editor = cm.editor;
+    this.editor = this.editorEl.editor;
     Object.assign(this.editor.options, this.config);
     this.editor.setOption('lineWrapping', this.useLineWrapping); // works only in here
     this.refresh();
@@ -118,14 +121,22 @@ export default class LablupCodemirror extends LitElement {
   }
 
   _validateInput() {
-    if (this.required && this.getValue() === '') {
-      return false;
+    if (this.required) {
+      if (this.getValue() === '') {
+        this.helperTextEl.style.display = 'flex';
+        this.editorEl.style.border = '2px solid red';
+        return false;
+      } else {
+        this.helperTextEl.style.display = 'none';
+        this.editorEl.style.border = 'none';
+      }
     }
     return true;
   }
 
   static get styles(): CSSResultGroup | undefined {
     return [
+      BackendAiStyles,
       IronFlex,
       IronFlexAlignment,
       CodemirrorThemeMonokai,
@@ -136,6 +147,18 @@ export default class LablupCodemirror extends LitElement {
           height: auto !important;
           font-size: 15px;
         }
+
+        #helper-text {
+          font-size: var(--helper-text-font-size, 12px);
+          color: var(--helper-text-color, var(--general-warning-text));
+          width: var(--helper-text-width, 100%);
+          font-weight: var(--helper-text-font-weight, bold);
+        }
+
+        #helper-text mwc-icon {
+          font-size: var(--helper-text-font-size, 12px);
+          margin-right: 2px;
+        }
       `,
     ];
   }
@@ -143,9 +166,15 @@ export default class LablupCodemirror extends LitElement {
   render() {
     // language=HTML
     return html`
-      <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @change=${this._validateInput}>
-        <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
-      </wc-codemirror>
+      <div>
+        <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @input="${() => this._validateInput()}">
+          <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
+        </wc-codemirror>
+        <div id="helper-text" class="horizontal layout center" style="display:none;">
+          <mwc-icon>${this.helperTextIcon}</mwc-icon>
+          <span>${this.helperText}</span>
+        </div>
+      </div>
     `;
   }
 }

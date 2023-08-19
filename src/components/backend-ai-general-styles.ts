@@ -75,6 +75,7 @@ export const BackendAiStyles = [
       --general-progress-bar-using: linear-gradient(to left, #18aa7c, #60bb43),
       linear-gradient(to left, #722cd7, #5c7cfa);
       --lumo-font-family: var(--general-font-family);
+      --general-warning-text: var(--paper-red-400);
     }
 
     body {
