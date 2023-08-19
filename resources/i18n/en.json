@@ -332,7 +332,9 @@
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start",
       "Prepared": "Prepared",
-      "App": "App"
+      "App": "App",
+      "NoExistingConnectionExample": "No Connection Example to be copied.",
+      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
     },
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
@@ -1509,7 +1511,5 @@
   "explorer": {
     "ValueRequired": "ValueRequired",
     "InputTooShort": "InputTooShort"
-  },
-  "NoExistingConnectionExample": "No Connection Example to be copied.",
-  "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
+  }
 }
