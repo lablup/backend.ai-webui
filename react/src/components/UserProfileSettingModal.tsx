@@ -13,8 +13,7 @@ import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { passwordPattern } from "./ResetPasswordRequired";
 import { useSuspendedBackendaiClient } from "../hooks";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import { useQuery } from "react-query";
+import { useTanQuery, useTanMutation } from "../hooks/reactQueryAlias";
 import _ from "lodash";
 
 const UserProfileSettingModal: React.FC = () => {
@@ -41,7 +40,7 @@ const UserProfileSettingModal: React.FC = () => {
   let full_name = baiClient.full_name;
   let loggedAccount = baiClient._config.accessKey;
   let totpSupported = false;
-  let { data: isManagerSupportingTOTP } = useQuery(
+  let { data: isManagerSupportingTOTP } = useTanQuery(
     "isManagerSupportingTOTP",
     () => {
       return baiClient.isManagerSupportingTOTP();
@@ -51,7 +50,7 @@ const UserProfileSettingModal: React.FC = () => {
     }
   );
   totpSupported = baiClient.supports("2FA") && isManagerSupportingTOTP;
-  let { data: userInfo } = useQuery(
+  let { data: userInfo } = useTanQuery(
     "totpActivated",
     () => {
       return baiClient.user.get(baiClient.email, ["totp_activated"]);
@@ -62,7 +61,7 @@ const UserProfileSettingModal: React.FC = () => {
   );
   let totpActivated = userInfo?.user.totp_activated;
 
-  let { data: keyPairInfo } = useQuery(
+  let { data: keyPairInfo } = useTanQuery(
     "keyPairInfo",
     () => {
       return baiClient.keypair.list(email, ["access_key", "secret_key"], true);
