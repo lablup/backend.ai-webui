@@ -16,15 +16,6 @@
     "Tabs": {
       "colorPrimary": "var(--general-sidebar-selected-color, #72EB51)",
       "colorTextHeading": "var(--general-sidebar-color, #949494)"
-    },
-    "Modal": {
-      "titleColor": "rgba(0, 0, 0, 0.6)",
-      "titleFontSize": "20px",
-      "titleLineHeight": "24px",
-      "paddingContentHorizontalLG": "0",
-      "paddingLG": "0",
-      "paddingMD": "0",
-      "paddingXS": "0"
     }
   }
 }

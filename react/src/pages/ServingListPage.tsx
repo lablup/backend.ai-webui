@@ -397,7 +397,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         </Flex>
       </Flex>
       <Modal
-        centered
         open={isOpenModelServiceTerminatingModal}
         title={t("dialog.title.LetsDouble-Check")}
         okButtonProps={{

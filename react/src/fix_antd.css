@@ -38,40 +38,6 @@
   animation: loadingCircle 1s infinite linear;
 }
 
-.ant-tabs {
-  background-color: var(--general-tabbar-background-color, var(--general-sidebar-background-color), #2A2C30);
-}
-
-.ant-card-head > .ant-tabs {
-  background-color: var(--general-sub-tabbar-background-color,  #ffffff);
-}
-
-.ant-modal-body {
-  padding: var(--general-modal-body-padding, 0 24px);
-}
-
-.ant-modal-footer {
-  padding: var(--general-modal-footer-padding, 0 20px 24px 20px);
-}
-
-.ant-modal-header {
-  border-bottom: 1px solid rgb(221, 221, 221);
-  justify-content: space-between;
-  display: flex;
-  align-items: center;
-}
-
-.ant-modal-content .ant-modal-header,
-.ant-modal-content > button.ant-modal-close {
-  padding: var(--general-modal-header-padding, 10px 20px);
-  height: var(--general-modal-header-height, 69px);
-}
-
-.ant-modal-content > button.ant-modal-close {
-  /* center */
-  top: 0;
-}
-
 @-webkit-keyframes loadingCircle {
   100% {
     -webkit-transform: rotate(360deg);

@@ -93,7 +93,6 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         loading: mutationToUpdateService.isLoading,
       }}
       title={t("modelService.EditModelService")}
-      centered
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form

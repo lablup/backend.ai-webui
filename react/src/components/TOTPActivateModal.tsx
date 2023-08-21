@@ -99,7 +99,6 @@ const TOTPActivateModal: React.FC<Props> = ({
         onRequestClose();
       }}
       style={{ zIndex: 1 }}
-      centered
       {...modalProps}
     >
       {initializedTotp.isLoading ? (

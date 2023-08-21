@@ -181,7 +181,6 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
       destroyOnClose={true}
       maskClosable={false}
       confirmLoading={mutationToCreateService.isLoading}
-      centered
       {...modalProps}
     >
       <Suspense fallback={<FlexActivityIndicator />}>
