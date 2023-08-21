@@ -51,6 +51,7 @@ export const BackendAiStyles = [
       --general-tabbar-background-color: var(--general-sidebar-background-color);
       --general-tabbar-tab-disabled-color: var(--general-sidebar-color);
       --general-tabbar-button-color: rgba(103, 172, 91, 1.00);
+      --general-sub-tabbar-background-color: #ffffff;
       --general-textfield-selected-color: #27824F;
       --general-textfield-idle-color: #27824F;
       --general-dropdown-color: var(--general-sidebar-color);

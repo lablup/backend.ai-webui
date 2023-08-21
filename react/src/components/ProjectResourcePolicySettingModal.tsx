@@ -134,6 +134,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       destroyOnClose
       title={t("storageHost.ResourcePolicySettings")}
       onOk={_onOk}
+      centered
     >
       <Alert
         message={t("storageHost.BeCarefulToSetProjectResourcePolicy")}

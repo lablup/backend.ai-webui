@@ -99,6 +99,7 @@ const QuotaSettingModal: React.FC<Props> = ({
       confirmLoading={isInFlightCommitSetQuotaScope}
       onCancel={onRequestClose}
       title={t("storageHost.quotaSettings.QuotaSettings")}
+      centered
     >
       <Form
         form={form}
