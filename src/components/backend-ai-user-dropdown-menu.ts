@@ -287,7 +287,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     }
   }
 
-  async _startActivatingTotp(e) {
+  async _startActivatingTotp() {
     this._hideUserPrefDialog();
     this._openTotpSetupDialog();
   }
@@ -318,7 +318,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     }
   }
 
-  _confirmRemovingTotp(e) {
+  _confirmRemovingTotp() {
     this._hideUserPrefDialog();
     this.totpRemovalConfirmDialog?.show();
   }
@@ -407,8 +407,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       @cancel="${()=> this._hideUserPrefDialog()}"
       @refresh="${()=> this._refreshUserInfoPanel()}"
       @updateFullName="${(e)=> this._updateUserFullName(e.detail.newFullName)}"
-      @confirmRemovingTotp="${(e)=> this._confirmRemovingTotp(e)}"
-      @startActivatingTotp="${(e)=> this._startActivatingTotp(e)}"
+      @confirmRemovingTotp="${()=> this._confirmRemovingTotp()}"
+      @startActivatingTotp="${()=> this._startActivatingTotp()}"
     >
     </backend-ai-react-user-profile-dialog>
     `;

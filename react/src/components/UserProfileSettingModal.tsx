@@ -219,9 +219,8 @@ const UserProfileSettingModal: React.FC = () => {
         onCancel={() => dispatchEvent("cancel", null)}
         onOk={() => _onSubmit()}
         centered
+        title={t("webui.menu.MyAccountInformation")}
       >
-        <h2>{t("webui.menu.MyAccountInformation")}</h2>
-        <Divider />
         <Form layout="vertical" form={form}>
           <Form.Item
             name="full_name"
