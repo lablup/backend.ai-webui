@@ -127,9 +127,6 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                   <ConfigProvider
                     // @ts-ignore
                     getPopupContainer={(triggerNode) => {
-                      if (triggerNode?.parentNode) {
-                        return triggerNode.parentNode;
-                      }
                       return shadowRoot;
                     }}
                     //TODO: apply other supported locales

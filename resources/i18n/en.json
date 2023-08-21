@@ -158,7 +158,8 @@
       "SessionStartTime": "Session Starts: ",
       "ResetStartTime": "Please reset the start time.",
       "InfiniteTime": "Infinite",
-      "SetEnvironmentVariable": "Set Environment Variable (optional)",
+      "SetEnvironmentVariable": "Environment Variable (optional)",
+      "SetPreopenPorts": "Preopen Ports (optional)",
       "Config": "Config",
       "ChooseEnvironment": "Choose Environment",
       "Version": "Version",
@@ -212,6 +213,7 @@
       "NoFolderMounted": "No storage folder is mounted",
       "NoAvailableFolderToMount": "There's no available folder to mount.",
       "NoEnvConfigured": "No additional environment variable is configured",
+      "NoPreOpenPortsConfigured": "No additional preopen ports configured",
       "HomeDirectoryDeletionDialog": "The home directory in the session is automatically deleted when the session ends.",
       "LaunchConfirmationDialog": "To keep your code and data, or share it with other collaborators, simply create a storage folder in the data & storage sidebar, then mount that folder when you start the resource and keep it there.",
       "Launch": "Launch",
@@ -267,7 +269,15 @@
       "InferenceMode": "Inference",
       "ImageDoesNotProvideModelPath": "Container image does not provide model path. It should be modified.",
       "AIAccelerator": "AI Accelerator",
-      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>"
+      "DescAIAccelerator": "<p>AI accelerators (GPUs or NPUs) are well-suited for the matrix/vector computations involved in machine learning. AI accelerators speed up training / inference algorithms by orders of magnitude, reducing running times from weeks to days.</p>",
+      "PreOpenPortTitle": "Preopen Ports",
+      "NotePreOpenPort": "These ports are the container internal ports.",
+      "DescSetPreOpenPort": "'Preopen Ports' refers to a specific <span style='color:var(--paper-red-400);'>internal container port</span> that allows incoming connections from external devices or computers on a network device or computer.",
+      "PortsTitleWithRange": "Port value (between 1024 ~ 65535)",
+      "PrePortConfigWillDisappear": "Any unsaved preopen ports will be disappeared.",
+      "PreOpenPortConfigurationDone": "Preopen ports configured successfully.",
+      "PreOpenPortPanelTitle": "Preopen ports to set (optional)",
+      "PreOpenPortRange": "Preopen ports are only available from 1024 to 65535."
     },
     "Preparing": "Preparing...",
     "PreparingSession": "Preparing session...",
@@ -323,7 +333,9 @@
       "AppMustBeRunDialog": "This app can only be accessed and used if it is already running through the terminal. If not, you will be directed to an error page that occurs when the app is not running.",
       "ConfirmAndRun": "I checked and I'll start",
       "Prepared": "Prepared",
-      "App": "App"
+      "App": "App",
+      "NoExistingConnectionExample": "No Connection Example to be copied.",
+      "SSHConnectionExampleClipboardCopy": "SSH Connection Example has been copied to the clipboard."
     },
     "TensorboardPath": "Log directory for TensorBoard",
     "InputTensorboardPath": "Please input log directory that TensorBoard will refer to. Note that the log directory will not be automatically created..",
@@ -418,7 +430,10 @@
     "RouteId": "Route ID",
     "SessionId": "Session ID",
     "TrafficRatio": "Traffic Ratio",
-    "YouAreAboutToTerminate": "You are about to terminate "
+    "YouAreAboutToTerminate": "You are about to terminate ",
+    "ClearErrors": "Clear error and retry",
+    "ServingRouteErrorModalTitle": "Serving Route Error",
+    "FailedToStartService": "Failed to create service."
   },
   "button": {
     "Cancel": "Cancel",

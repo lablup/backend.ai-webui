@@ -8,8 +8,6 @@ import {
   MockPayloadGenerator,
 } from "relay-test-utils";
 import { RelayEnvironmentProvider } from "react-relay";
-import ReactTestRenderer from "react-test-renderer";
-// import App from "./App";
 
 jest.mock("react-i18next", () => ({
   // this mock makes sure any components using the translate hook can use it without a warning being shown

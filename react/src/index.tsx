@@ -34,6 +34,7 @@ const UserInfoModal = React.lazy(() => import("./components/UserInfoModal"));
 const UserSettingsModal = React.lazy(
   () => import("./components/UserSettingModal")
 );
+const ManageAppsModal = React.lazy(() => import("./components/ManageAppsModal"));
 
 customElements.define(
   "backend-ai-react-information",
@@ -139,3 +140,14 @@ customElements.define(
     );
   })
 );
+
+customElements.define(
+  "backend-ai-react-manage-app-dialog",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <ManageAppsModal />
+      </DefaultProviders>
+    )
+  })
+)

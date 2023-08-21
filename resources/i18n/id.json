@@ -254,7 +254,16 @@
       "ModelStorageToMount": "__NOT_TRANSLATED__",
       "AIAccelerator": "__NOT_TRANSLATED__",
       "DescAIAccelerator": "__NOT_TRANSLATED__",
-      "SessionAlreadyExists": "__NOT_TRANSLATED__"
+      "SessionAlreadyExists": "__NOT_TRANSLATED__",
+      "PreOpenPortTitle": "__NOT_TRANSLATED__",
+      "DescSetPreOpenPort": "__NOT_TRANSLATED__",
+      "SetPreopenPorts": "__NOT_TRANSLATED__",
+      "PreOpenPortConfigurationDone": "__NOT_TRANSLATED__",
+      "NoPreOpenPortsConfigured": "__NOT_TRANSLATED__",
+      "PortsTitleWithRange": "__NOT_TRANSLATED__",
+      "PrePortConfigWillDisappear": "__NOT_TRANSLATED__",
+      "PreOpenPortPanelTitle": "__NOT_TRANSLATED__",
+      "PreOpenPortRange": "__NOT_TRANSLATED__"
     },
     "Preparing": "Mempersiapkan...",
     "PreparingSession": "Mempersiapkan sesi...",
@@ -291,7 +300,9 @@
       "AppMustBeRunDialog": "Aplikasi ini hanya dapat diakses dan digunakan jika sudah berjalan melalui terminal. Jika tidak, Anda akan diarahkan ke halaman galat yang terjadi saat aplikasi tidak berjalan.",
       "ConfirmAndRun": "Saya sudah memeriksa dan saya akan mulai",
       "Prepared": "Siap",
-      "App": "__NOT_TRANSLATED__"
+      "App": "__NOT_TRANSLATED__",
+      "NoExistingConnectionExample": "Tidak Ada Koneksi Contoh untuk disalin.",
+      "SSHConnectionExampleClipboardCopy": "Contoh Koneksi SSH telah disalin ke clipboard."
     },
     "TensorboardPath": "Direktori log untuk TensorBoard",
     "InputTensorboardPath": "Harap masukkan direktori log yang akan dirujuk oleh TensorBoard. Perhatikan bahwa direktori log tidak akan dibuat secara otomatis..",
@@ -1481,6 +1492,9 @@
     "RoutingsCount": "__NOT_TRANSLATED__",
     "Active/Total": "__NOT_TRANSLATED__",
     "Public": "__NOT_TRANSLATED__",
-    "YouAreAboutToTerminate": "__NOT_TRANSLATED__"
+    "YouAreAboutToTerminate": "__NOT_TRANSLATED__",
+    "FailedToStartService": "__NOT_TRANSLATED__",
+    "ServingRouteErrorModalTitle": "__NOT_TRANSLATED__",
+    "ClearErrors": "__NOT_TRANSLATED__"
   }
 }

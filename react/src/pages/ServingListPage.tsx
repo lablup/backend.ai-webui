@@ -1,13 +1,4 @@
-import {
-  Button,
-  ConfigProvider,
-  Modal,
-  Table,
-  Tabs,
-  Tag,
-  Typography,
-  theme,
-} from "antd";
+import { Button, Modal, Table, Tabs, Typography, theme } from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
@@ -41,6 +32,7 @@ import {
 } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import _ from "lodash";
+import EndpointStatusTag from "../components/EndpointStatusTag";
 
 // FIXME: need to apply filtering type of service later
 type TabKey = "services"; //  "running" | "finished" | "others";
@@ -126,6 +118,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 status
               }
               ...ModelServiceSettingModal_endpoint
+              ...EndpointStatusTagFragment
             }
           }
         }
@@ -197,60 +190,48 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
         {/* <Card bodyStyle={{ paddingTop: 0 }}> */}
         <Flex direction="column" align="stretch">
           <Flex style={{ flex: 1 }}>
-            <ConfigProvider
-              theme={{
-                algorithm: theme.darkAlgorithm,
-                components: {
-                  Tabs: {
-                    colorPrimary: "#92E868",
-                  },
-                },
+            <Tabs
+              // type="card"
+              activeKey={selectedTab}
+              onChange={(key) => setSelectedTab(key as TabKey)}
+              tabBarStyle={{ marginBottom: 0 }}
+              style={{
+                width: "100%",
+                paddingLeft: token.paddingMD,
+                paddingRight: token.paddingMD,
+                borderTopLeftRadius: token.borderRadius,
+                borderTopRightRadius: token.borderRadius,
               }}
-            >
-              <Tabs
-                // type="card"
-                activeKey={selectedTab}
-                onChange={(key) => setSelectedTab(key as TabKey)}
-                tabBarStyle={{ marginBottom: 0 }}
-                style={{
-                  width: "100%",
-                  backgroundColor: "#2A2C30",
-                  paddingLeft: token.paddingMD,
-                  paddingRight: token.paddingMD,
-                  borderTopLeftRadius: token.borderRadius,
-                  borderTopRightRadius: token.borderRadius,
-                }}
-                items={[
-                  { key: "services", label: t("modelService.Services") },
-                  // FIXME: need to apply filtering type of service later
-                  // {
-                  //   key: "running",
-                  //   label: t("session.Running"),
-                  // },
-                  // {
-                  //   key: "finished",
-                  //   label: t("session.Finished"),
-                  // },
-                  // {
-                  //   key: "others",
-                  //   label: t("session.Others"),
-                  // },
-                ]}
-                tabBarExtraContent={{
-                  right: (
-                    <Button
-                      type="primary"
-                      onClick={() => {
-                        setIsOpenServiceLauncher(true);
-                      }}
-                    >
-                      {t("modelService.StartService")}
-                    </Button>
-                  ),
-                }}
-              />
-            </ConfigProvider>
-            {/* <Button type="ghost" icon={<MoreOutlined />} /> */}
+              items={[
+                { key: "services", label: t("modelService.Services") },
+                // FIXME: need to apply filtering type of service later
+                // {
+                //   key: "running",
+                //   label: t("session.Running"),
+                // },
+                // {
+                //   key: "finished",
+                //   label: t("session.Finished"),
+                // },
+                // {
+                //   key: "others",
+                //   label: t("session.Others"),
+                // },
+              ]}
+              tabBarExtraContent={{
+                right: (
+                  <Button
+                    type="primary"
+                    onClick={() => {
+                      setIsOpenServiceLauncher(true);
+                    }}
+                  >
+                    {t("modelService.StartService")}
+                  </Button>
+                ),
+              }}
+            />
+            {/* <Button type="text" icon={<MoreOutlined />} /> */}
           </Flex>
           {/* <Button type="primary" icon={<PoweroffOutlined />}>
           시작
@@ -280,6 +261,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             /> */}
             <Table
               loading={isRefetchPending}
+              scroll={{ x: "max-content" }}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
@@ -343,15 +325,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 },
                 {
                   title: t("modelService.Status"),
-                  dataIndex: "status",
                   render: (text, row) => (
-                    <Tag
-                      color={applyStatusColor(
-                        row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"
-                      )}
-                    >
-                      {row.desired_session_count > 0 ? "RUNNING" : "TERMINATED"}
-                    </Tag>
+                    <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
                 {
@@ -379,7 +354,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   // dataIndex: "active_route_count",
                   render: (text, row) => {
                     return (
-                      _.filter(row.routings, (r) => r?.status === "healthy")
+                      _.filter(row.routings, (r) => r?.status === "HEALTHY")
                         .length +
                       " / " +
                       row.routings?.length
@@ -479,19 +454,6 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       />
     </>
   );
-};
-
-const applyStatusColor = (status = "") => {
-  let color = "default";
-  switch (status.toUpperCase()) {
-    case "RUNNING":
-      color = "success";
-      break;
-    // case 'TERMINATED':
-    //   color = 'default';
-    //   break;
-  }
-  return color;
 };
 
 export default ServingListPage;
