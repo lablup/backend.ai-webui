@@ -1,6 +1,15 @@
-import { Card, Form, Input, Modal, ModalProps, theme, Switch } from "antd";
+import {
+  Card,
+  Form,
+  Input,
+  Modal,
+  ModalProps,
+  theme,
+  Switch,
+  message,
+} from "antd";
 import React, { Suspense } from "react";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import SliderInputItem from "./SliderInputFormItem";
 import ImageEnvironmentSelectFormItems, {
@@ -14,6 +23,7 @@ import VFolderSelect from "./VFolderSelect";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import { useCurrentDomainValue } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
+import { useResourceSlots } from "../hooks/backendai";
 
 type ClusterMode = "single-node" | "multi-node";
 
@@ -80,6 +90,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   // const [modalText, setModalText] = useState("Content of the modal");
   const currentDomain = useCurrentDomainValue();
   const [form] = Form.useForm<ServiceLauncherFormInput>();
+  const [resourceSlots] = useResourceSlots();
 
   const mutationToCreateService = useTanMutation({
     mutationFn: (values: ServiceLauncherFormInput) => {
@@ -102,10 +113,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           resources: {
             cpu: values.cpu,
             mem: values.mem + "G",
-            "cuda.shares": values.gpu,
           },
         },
       };
+      if (resourceSlots?.cuda === "shares") {
+        body["config"].resources["cuda.shares"] = values.gpu;
+      }
+      if (resourceSlots?.cuda === "device") {
+        body["config"].resources["cuda.device"] = values.gpu;
+      }
       if (values.shmem && values.shmem > 0) {
         body["config"].resource_opts = {
           shmem: values.shmem,
@@ -139,12 +155,10 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
     form.validateFields().then((values) => {
       mutationToCreateService.mutate(values, {
         onSuccess: () => {
-          console.log("service created");
           onRequestClose(true);
         },
         onError: (error) => {
-          console.log(error);
-          // TODO: show error message
+          message.error(t("modelService.FailedToStartService"));
         },
       });
       new Promise((resolve, reject) => {}).then(() => {
@@ -276,8 +290,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"cpu"}
                       label={t("session.launcher.CPU")}
-                      // tooltip={t("session.launcher.DescCPU")}
-
+                      tooltip={<Trans i18nKey={"session.launcher.DescCPU"} />}
                       min={parseInt(
                         _.find(
                           currentImage?.resource_limits,
@@ -303,7 +316,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"mem"}
                       label={t("session.launcher.Memory")}
-                      // tooltip={t("session.launcher.DescMemory")}
+                      tooltip={
+                        <Trans i18nKey={"session.launcher.DescMemory"} />
+                      }
                       max={30}
                       inputNumberProps={{
                         addonAfter: "GB",
@@ -319,7 +334,9 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     <SliderInputItem
                       name={"shmem"}
                       label={t("session.launcher.SharedMemory")}
-                      // tooltip={t("session.launcher.DescSharedMemory")}
+                      tooltip={
+                        <Trans i18nKey={"session.launcher.DescSharedMemory"} />
+                      }
                       max={30}
                       step={0.1}
                       inputNumberProps={{
@@ -332,24 +349,32 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                         },
                       ]}
                     />
-                    <SliderInputItem
-                      style={{ marginBottom: 0 }}
-                      name={"gpu"}
-                      label={t("session.launcher.AIAccelerator")}
-                      // tooltip={t("session.launcher.DescAIAccelerator")}
-                      max={30}
-                      step={0.1}
-                      inputNumberProps={{
-                        //TODO: change unit based on resource limit
-                        addonAfter: "GPU",
-                      }}
-                      required
-                      rules={[
-                        {
-                          required: true,
-                        },
-                      ]}
-                    />
+                    {resourceSlots.cuda !== undefined ? (
+                      <SliderInputItem
+                        style={{ marginBottom: 0 }}
+                        name={"gpu"}
+                        label={t("session.launcher.AIAccelerator")}
+                        tooltip={
+                          <Trans
+                            i18nKey={"session.launcher.DescAIAccelerator"}
+                          />
+                        }
+                        max={30}
+                        step={0.1}
+                        inputNumberProps={{
+                          //TODO: change unit based on resource limit
+                          addonAfter: "GPU",
+                        }}
+                        required
+                        rules={[
+                          {
+                            required: true,
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <></>
+                    )}
                   </>
                 );
               }}

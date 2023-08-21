@@ -67,20 +67,12 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
   }
 
-  async launch(apiEndpoint: string) {
-    await this._initClient(apiEndpoint);
-    const loginSuccess = await this._token_login();
-    if (loginSuccess) {
-      await this._createEduSession();
-    }
-  }
-
   detectIE() {
     try {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const isIE = /* @cc_on!@*/false || !!document.documentMode;
-      if (! isIE) {
+      if (!isIE) {
         // Fallback to UserAgent detection for IE
         if (
           navigator.userAgent.indexOf('MSIE') > 0 ||
@@ -97,6 +89,48 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       const error = e.toString();
       console.log(error);
       return false;
+    }
+  }
+
+  async prepareProjectInformation() {
+    const fields = ['email', 'groups {name, id}'];
+    const query = `query { user{ ${fields.join(' ')} } }`;
+    const response = await globalThis.backendaiclient.query(query, {});
+
+    globalThis.backendaiclient.groups = response.user.groups.map((item) => item.name).sort();
+    globalThis.backendaiclient.groupIds = response.user.groups.reduce((acc, group) => {
+      acc[group.name] = group.id;
+      return acc;
+    }, {});
+    const currentProject = globalThis.backendaiutils._readRecentProjectGroup();
+    globalThis.backendaiclient.current_group = currentProject ? currentProject : globalThis.backendaiclient.groups[0];
+    globalThis.backendaiclient.current_group_id = () => {
+      return globalThis.backendaiclient.groupIds[globalThis.backendaiclient.current_group];
+    };
+
+    console.log('current project:', currentProject);
+  }
+
+  async launch(apiEndpoint: string) {
+    await this._initClient(apiEndpoint);
+    const loginSuccess = await this._token_login();
+    if (loginSuccess) {
+      // Launching app requires to get the AppProxy mode, which requires to fill
+      // the project information.
+      // TODO: Better way to handle this?
+      await this.prepareProjectInformation();
+
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      const sessionId = urlParams.get('session_id') || null;
+      if (sessionId) {
+        // Launch app with the sepcified session ID.
+        const requestedApp = urlParams.get('app') || 'jupyter';
+        this._openServiceApp(sessionId, requestedApp);
+      } else {
+        // Try to create a new session and launch app.
+        await this._createEduSession();
+      }
     }
   }
 
@@ -132,16 +166,22 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
     // If token is delivered as a querystring, just save it as cookie.
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
-    const sToken = urlParams.get('sToken') || null;
+    const sToken = urlParams.get('sToken') || urlParams.get('stoken') || null;
     if (sToken !== null) {
       document.cookie = `sToken=${sToken}; expires=Session; path=/`;
+    }
+    const extraParams = {};
+    for (const [key, value] of urlParams.entries()) {
+      if (key !== 'sToken' && key !== 'stoken') {
+        extraParams[key] = value;
+      }
     }
 
     try {
       const alreadyLoggedIn = await globalThis.backendaiclient.check_login();
       if (!alreadyLoggedIn) {
         console.log('logging with (cookie) token...');
-        const loginSuccess = await globalThis.backendaiclient.token_login();
+        const loginSuccess = await globalThis.backendaiclient.token_login(sToken, extraParams);
         if (!loginSuccess) {
           this.notification.text = _text('eduapi.CannotAuthorizeSessionByToken');
           this.notification.show(true);

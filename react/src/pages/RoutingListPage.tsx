@@ -1,7 +1,9 @@
 import {
   Breadcrumb,
   Button,
+  Card,
   Descriptions,
+  Popover,
   Table,
   Tag,
   Tooltip,
@@ -11,9 +13,12 @@ import {
 import {
   CheckOutlined,
   CloseOutlined,
+  QuestionCircleOutlined,
   ReloadOutlined,
+  SettingOutlined,
+  WarningOutlined,
 } from "@ant-design/icons";
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import Flex from "../components/Flex";
 import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
 import { useNavigate, useParams } from "react-router-dom";
@@ -26,6 +31,12 @@ import {
 } from "./__generated__/RoutingListPageQuery.graphql";
 import CopyableCodeText from "../components/CopyableCodeText";
 import ImageMetaIcon from "../components/ImageMetaIcon";
+import ServingRouteErrorModal from "../components/ServingRouteErrorModal";
+import { useTanMutation } from "../hooks/reactQueryAlias";
+import { baiSignedRequestWithPromise } from "../helper";
+import { ServingRouteErrorModalFragment$key } from "../components/__generated__/ServingRouteErrorModalFragment.graphql";
+import EndpointStatusTag from "../components/EndpointStatusTag";
+import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
 
 interface RoutingInfo {
   route_id: string;
@@ -60,18 +71,27 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
 
   const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
   const [isPendingRefetch, startRefetchTransition] = useTransition();
+  const [isPendingClearError, startClearErrorTransition] = useTransition();
+  const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
+    useState<ServingRouteErrorModalFragment$key | null>(null);
+  const [isOpenModelServiceSettingModal, setIsOpenModelServiceSettingModal] =
+    useState(false);
 
   const { endpoint } = useLazyLoadQuery<RoutingListPageQuery>(
     graphql`
       query RoutingListPageQuery($endpointId: UUID!) {
         endpoint(endpoint_id: $endpointId) {
-          id
           name
           endpoint_id
           image
           desired_session_count
           url
           open_to_public
+          errors {
+            session_id
+            ...ServingRouteErrorModalFragment
+          }
+          retries
           routings {
             routing_id
             session
@@ -79,6 +99,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             endpoint
             status
           }
+          ...EndpointStatusTagFragment
+          ...ModelServiceSettingModal_endpoint
         }
       }
     `,
@@ -91,6 +113,22 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       fetchKey,
     }
   );
+  const mutationToClearError = useTanMutation(() => {
+    if (!endpoint) return;
+    return baiSignedRequestWithPromise({
+      method: "POST",
+      url: `/services/${endpoint.endpoint_id}/errors/clear`,
+      client: baiClient,
+    });
+  });
+  const openSessionErrorModal = (session: string) => {
+    if (endpoint === null) return;
+    const { errors } = endpoint;
+    const firstMatchedSessionError = errors.find(
+      ({ session_id }) => session === session_id
+    );
+    setSelectedSessionErrorForModal(firstMatchedSessionError || null);
+  };
   // const { t } = useTranslation();
 
   // return color of tag by status
@@ -114,7 +152,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     <Flex
       direction="column"
       align="stretch"
-      style={{ margin: token.marginSM, gap: token.margin }}
+      style={{ margin: token.marginSM }}
+      gap="sm"
     >
       <Breadcrumb
         items={[
@@ -130,72 +169,108 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             title: t("modelService.RoutingInfo"),
           },
         ]}
-      ></Breadcrumb>
+      />
       <Flex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
           {endpoint?.name || ""}
         </Typography.Title>
-        <Tooltip title={t("button.Refresh")}>
-          <Button
-            loading={isPendingRefetch}
-            icon={<ReloadOutlined />}
-            onClick={() => {
-              startRefetchTransition(() => {
-                updateFetchKey();
-              });
-            }}
-          />
-        </Tooltip>
-      </Flex>
-      <Typography.Title level={4} style={{ margin: 0 }}>
-        {t("modelService.ServiceInfo")}
-      </Typography.Title>
-      <Descriptions
-        bordered
-        column={{ xxl: 4, xl: 3, lg: 3, md: 3, sm: 2, xs: 1 }}
-        style={{
-          backgroundColor: token.colorBgBase,
-        }}
-      >
-        <Descriptions.Item label={t("modelService.EndpointName")}>
-          <Typography.Text copyable>{endpoint?.name}</Typography.Text>
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.EndpointId")}>
-          {endpoint?.endpoint_id}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.SessionOwner")}>
-          {baiClient.email || ""}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
-          {endpoint?.desired_session_count}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
-          {endpoint?.url ? (
-            endpoint?.url
+        <Flex gap={"xxs"}>
+          {(endpoint?.retries || 0) > 0 ? (
+            <Tooltip title={t("modelService.ClearErrors")}>
+              <Button
+                loading={isPendingClearError}
+                icon={<WarningOutlined />}
+                onClick={() => {
+                  startClearErrorTransition(() => {
+                    mutationToClearError.mutate(undefined, {
+                      onSuccess: () =>
+                        startRefetchTransition(() => {
+                          updateFetchKey();
+                        }),
+                    });
+                  });
+                }}
+              />
+            </Tooltip>
           ) : (
-            <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
+            <></>
           )}
-        </Descriptions.Item>
-        <Descriptions.Item label={t("modelService.OpenToPublic")}>
-          {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
-        </Descriptions.Item>
-        <Descriptions.Item label="Image">
-          {endpoint?.image && (
-            <Flex direction="row" gap={"xs"}>
-              <ImageMetaIcon image={endpoint.image} />
-              <CopyableCodeText>{endpoint.image}</CopyableCodeText>
-            </Flex>
-          )}
-        </Descriptions.Item>
-      </Descriptions>
+          <Tooltip title={t("button.Refresh")}>
+            <Button
+              loading={isPendingRefetch}
+              icon={<ReloadOutlined />}
+              onClick={() => {
+                startRefetchTransition(() => {
+                  updateFetchKey();
+                });
+              }}
+            />
+          </Tooltip>
+          <Button
+            type="primary"
+            icon={<SettingOutlined />}
+            disabled={(endpoint?.desired_session_count || 0) < 0}
+            onClick={() => {
+              setIsOpenModelServiceSettingModal(true);
+            }}
+          >
+            {t("button.Edit")}
+          </Button>
+        </Flex>
+      </Flex>
+      <Card title={t("modelService.ServiceInfo")}>
+        <Descriptions
+          bordered
+          column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
+          style={{
+            backgroundColor: token.colorBgBase,
+          }}
+        >
+          <Descriptions.Item label={t("modelService.EndpointName")}>
+            <Typography.Text copyable>{endpoint?.name}</Typography.Text>
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.Status")}>
+            <EndpointStatusTag endpointFrgmt={endpoint} />
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.EndpointId")}>
+            {endpoint?.endpoint_id}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.SessionOwner")}>
+            {baiClient.email || ""}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
+            {endpoint?.desired_session_count}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
+            {endpoint?.url ? (
+              endpoint?.url
+            ) : (
+              <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
+            )}
+          </Descriptions.Item>
+          <Descriptions.Item label={t("modelService.OpenToPublic")}>
+            {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
+          </Descriptions.Item>
+          <Descriptions.Item label="Image">
+            {endpoint?.image && (
+              <Flex direction="row" gap={"xs"}>
+                <ImageMetaIcon image={endpoint.image} />
+                <CopyableCodeText>{endpoint.image}</CopyableCodeText>
+              </Flex>
+            )}
+          </Descriptions.Item>
+        </Descriptions>
+      </Card>
       <Typography.Title level={4} style={{ margin: 0 }}>
         {t("modelService.RoutesInfo")}
       </Typography.Title>
       <Table
+        scroll={{ x: "max-content" }}
         columns={[
           {
             title: t("modelService.RouteId"),
             dataIndex: "routing_id",
+            fixed: "left",
           },
           {
             title: t("modelService.SessionId"),
@@ -203,11 +278,28 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           },
           {
             title: t("modelService.Status"),
-            render: (_, { status }) =>
+            render: (_, { session, status }) =>
               status && (
-                <Tag color={applyStatusColor(status)} key={status}>
-                  {status.toUpperCase()}
-                </Tag>
+                <>
+                  <Tag
+                    color={applyStatusColor(status)}
+                    key={status}
+                    style={{ marginRight: 0 }}
+                  >
+                    {status.toUpperCase()}
+                  </Tag>
+                  {status === "FAILED_TO_START" && (
+                    <Popover>
+                      <Button
+                        size="small"
+                        type="text"
+                        icon={<QuestionCircleOutlined />}
+                        style={{ color: token.colorTextSecondary }}
+                        onClick={() => openSessionErrorModal(session)}
+                      />
+                    </Popover>
+                  )}
+                </>
               ),
           },
           {
@@ -217,6 +309,23 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         ]}
         pagination={false}
         dataSource={endpoint?.routings as Routing[]}
+      />
+      <ServingRouteErrorModal
+        open={!!selectedSessionErrorForModal}
+        inferenceSessionErrorFrgmt={selectedSessionErrorForModal}
+        onRequestClose={() => setSelectedSessionErrorForModal(null)}
+      />
+      <ModelServiceSettingModal
+        open={isOpenModelServiceSettingModal}
+        onRequestClose={(success) => {
+          setIsOpenModelServiceSettingModal(false);
+          if (success) {
+            startRefetchTransition(() => {
+              updateFetchKey();
+            });
+          }
+        }}
+        endpointFrgmt={endpoint}
       />
     </Flex>
   );
