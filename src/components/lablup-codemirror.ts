@@ -42,9 +42,9 @@ export default class LablupCodemirror extends LitElement {
   @property({type: Boolean}) readonly = false;
   @property({type: Boolean}) useLineWrapping = false;
   @property({type: Boolean}) required = false;
-  @property({type: String}) helperText = '';
-  @property({type: String}) helperTextIcon = 'warning';
-  @query('#helper-text') helperTextEl!: HTMLDivElement;
+  @property({type: String}) validationMessage = '';
+  @property({type: String}) validationMessageIcon = 'warning';
+  @query('#validation-message') validationMessageEl!: HTMLDivElement;
   @query('#codemirror-editor') editorEl!: WCCodeMirror;
 
   constructor() {
@@ -123,15 +123,23 @@ export default class LablupCodemirror extends LitElement {
   _validateInput() {
     if (this.required) {
       if (this.getValue() === '') {
-        this.helperTextEl.style.display = 'flex';
+        this.showValidationMessage();
         this.editorEl.style.border = '2px solid red';
         return false;
       } else {
-        this.helperTextEl.style.display = 'none';
+        this.hideValidationMessage();
         this.editorEl.style.border = 'none';
       }
     }
     return true;
+  }
+
+  showValidationMessage() {
+    this.validationMessageEl.style.display = 'flex';
+  }
+
+  hideValidationMessage() {
+    this.validationMessageEl.style.display = 'none';
   }
 
   static get styles(): CSSResultGroup | undefined {
@@ -148,15 +156,15 @@ export default class LablupCodemirror extends LitElement {
           font-size: 15px;
         }
 
-        #helper-text {
-          font-size: var(--helper-text-font-size, 12px);
-          color: var(--helper-text-color, var(--general-warning-text));
-          width: var(--helper-text-width, 100%);
-          font-weight: var(--helper-text-font-weight, bold);
+        #validation-message {
+          font-size: var(--validation-message-font-size, 12px);
+          color: var(--validation-message-color, var(--general-warning-text));
+          width: var(--validation-message-width, 100%);
+          font-weight: var(--validation-message-font-weight, bold);
         }
 
-        #helper-text mwc-icon {
-          font-size: var(--helper-text-font-size, 12px);
+        #validation-message mwc-icon {
+          font-size: var(--validation-message-font-size, 12px);
           margin-right: 2px;
         }
       `,
@@ -170,9 +178,9 @@ export default class LablupCodemirror extends LitElement {
         <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @input="${() => this._validateInput()}">
           <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
         </wc-codemirror>
-        <div id="helper-text" class="horizontal layout center" style="display:none;">
-          <mwc-icon>${this.helperTextIcon}</mwc-icon>
-          <span>${this.helperText}</span>
+        <div id="validation-message" class="horizontal layout center" style="display:none;">
+          <mwc-icon>${this.validationMessageIcon}</mwc-icon>
+          <span>${this.validationMessage}</span>
         </div>
       </div>
     `;

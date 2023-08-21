@@ -3678,7 +3678,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               <div class="horizontal layout start-justified">
                 <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}*</div>
               </div>
-              <lablup-codemirror id="command-editor" mode="shell" required helperText="${_t('dialog.warning.Required')}"></lablup-codemirror>
+              <lablup-codemirror id="command-editor" mode="shell" required validationMessage="${_t('dialog.warning.Required')}"></lablup-codemirror>
               <div class="horizontal center layout justified" style="margin: 10px auto;">
                 <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
                 <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>
