@@ -1,14 +1,5 @@
 import React from "react";
-import {
-  Modal,
-  Input,
-  Form,
-  Select,
-  SelectProps,
-  Divider,
-  message,
-  Switch,
-} from "antd";
+import { Modal, Input, Form, Select, SelectProps, message, Switch } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { passwordPattern } from "./ResetPasswordRequired";
@@ -99,6 +90,7 @@ const UserProfileSettingModal: React.FC = () => {
       isOpen: false,
     };
   }
+
   const { isOpen } = parsedValue;
 
   const mutationToUpdateUserFullName = useTanMutation({
@@ -205,7 +197,6 @@ const UserProfileSettingModal: React.FC = () => {
         values.newPassword,
         values.newPasswordConfirm
       );
-      dispatchEvent("refresh", null);
     });
   };
 
@@ -296,8 +287,8 @@ const UserProfileSettingModal: React.FC = () => {
                 defaultChecked={totpActivated}
                 onChange={(e) =>
                   totpActivated
-                    ? dispatchEvent("confirmRemovingTotp", e)
-                    : dispatchEvent("startActivatingTotp", e)
+                    ? dispatchEvent("confirmRemovingTotp", null)
+                    : dispatchEvent("startActivatingTotp", null)
                 }
               />
             </Form.Item>

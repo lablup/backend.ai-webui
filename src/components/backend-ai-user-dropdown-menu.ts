@@ -405,7 +405,6 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     <backend-ai-react-user-profile-dialog
       value="${JSON.stringify({isOpen: this.isOpen})}"
       @cancel="${()=> this._hideUserPrefDialog()}"
-      @refresh="${()=> this._refreshUserInfoPanel()}"
       @updateFullName="${(e)=> this._updateUserFullName(e.detail.newFullName)}"
       @confirmRemovingTotp="${()=> this._confirmRemovingTotp()}"
       @startActivatingTotp="${()=> this._startActivatingTotp()}"
