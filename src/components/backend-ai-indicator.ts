@@ -3,17 +3,15 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import 'weightless/dialog';
-import 'weightless/banner';
-import 'weightless/progress-bar';
-import 'weightless/title';
+import {customElement, property, query} from 'lit/decorators.js';
+import '@material/mwc-linear-progress';
+import './backend-ai-dialog';
+import {BackendAiStyles} from './backend-ai-general-styles';
 
 /**
  Backend.AI Indicator
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-indicator
  */
 
@@ -23,26 +21,36 @@ export default class BackendAIIndicator extends LitElement {
   @property({type: Number}) delay = 1000;
   @property({type: String}) text = '';
   @property({type: String}) mode = 'determinate';
-  @property({type: Object}) dialog;
-
+  @query('#app-progress-dialog') dialog;
   static get styles(): CSSResultGroup {
     return [
+      BackendAiStyles,
       // language=CSS
       css`
-        wl-dialog {
+        #app-progress-dialog {
           position: fixed;
-          right: 20px;
+          right: 20px!important;
           bottom: 20px;
           z-index: 9000;
-          --dialog-height: auto;
-          --dialog-width: 250px;
-          --dialog-content-padding: 15px;
+          height: auto;
+          width: 250px;
+          padding: 15px;
+          display: none;
+          background-color: #ffffff;
+          border-radius: 3px;
+          box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+        }
+        #app-progress-dialog h3 {
+          font-size: 14px;
+        }
+        mwc-linear-progress {
+          --mdc-theme-primary: var(--general-select-color, #333);
         }
       `];
   }
 
   firstUpdated() {
-    this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
+    //this.dialog = this.shadowRoot?.querySelector('#app-progress-dialog');
   }
 
   connectedCallback() {
@@ -53,7 +61,7 @@ export default class BackendAIIndicator extends LitElement {
     this.value = 0;
     this.mode = mode;
     await this.updateComplete;
-    this.dialog.show();
+    this.dialog.style.display = 'block';
   }
 
   set(value, text = '') {
@@ -69,19 +77,17 @@ export default class BackendAIIndicator extends LitElement {
       this.delay = delay;
     }
     setTimeout(() => {
-      this.dialog.hide();
+      this.dialog.style.display = 'none';
     }, delay);
   }
 
   render() {
     // language=HTML
     return html`
-      <wl-dialog id="app-progress-dialog" blockscrolling>
-        <wl-title level="5" id="app-progress-text" slot="header" style="word-break: keep-all;">${this.text}</wl-title>
-        <div slot="content">
-        <wl-progress-bar .mode="${this.mode}" id="app-progress" .value="${this.value}"></wl-progress-bar>
-        </div>
-      </wl-dialog>
+      <div id="app-progress-dialog">
+        <h3>${this.text}</h3>
+        <mwc-linear-progress ?indeterminate="${this.mode != 'determinate'}" id="app-progress" .progress="${this.value}"></mwc-linear-progress>
+      </div>
     `;
   }
 }

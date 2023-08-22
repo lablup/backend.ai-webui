@@ -9,9 +9,6 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 import {BackendAIPage} from './backend-ai-page';
 
-import 'weightless/icon';
-import 'weightless/progress-bar';
-
 import '@material/mwc-linear-progress/mwc-linear-progress';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
@@ -153,10 +150,6 @@ export default class BackendAIResourcePanel extends BackendAIPage {
           border-bottom-left-radius: 3px;
           border-bottom-right-radius: 3px;
           --mdc-theme-primary: #98be5a;
-        }
-
-        wl-icon {
-          --icon-size: 24px;
         }
 
         mwc-icon-button.update-button {

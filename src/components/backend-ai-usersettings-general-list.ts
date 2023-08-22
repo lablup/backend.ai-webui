@@ -16,12 +16,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/switch';
-import 'weightless/select';
-import 'weightless/icon';
-import 'weightless/button';
-import 'weightless/label';
-
 import {Button} from '@material/mwc-button';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-switch';

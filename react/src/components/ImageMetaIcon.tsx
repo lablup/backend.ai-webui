@@ -10,17 +10,15 @@ const ImageMetaIcon: React.FC<{
   const [, { getImageIcon }] = useBackendaiImageMetaData();
 
   return (
-    <div>
-      <img
-        src={getImageIcon(image)}
-        style={{
-          width: "1.5em",
-          height: "1.5em",
-          ...style,
-        }}
-        alt={alt}
-      />
-    </div>
+    <img
+      src={getImageIcon(image)}
+      style={{
+        width: "1.5em",
+        height: "1.5em",
+        ...style,
+      }}
+      alt={alt}
+    />
   );
 };
 

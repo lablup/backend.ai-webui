@@ -19,17 +19,6 @@ import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import {TextField} from '@material/mwc-textfield';
 
-import 'weightless/button';
-import 'weightless/card';
-import 'weightless/divider';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/select';
-import 'weightless/tab';
-import 'weightless/title';
-import 'weightless/tab-group';
-import 'weightless/textfield';
-
 import '../plastics/lablup-shields/lablup-shields';
 import './backend-ai-dialog';
 import './backend-ai-storage-list';
@@ -124,28 +113,6 @@ export default class BackendAIData extends BackendAIPage {
           font-size: 10px;
         }
 
-        .folder-action-buttons wl-button {
-          margin-right: 10px;
-        }
-
-        wl-button > wl-icon {
-          --icon-size: 24px;
-          padding: 0;
-        }
-
-        wl-icon {
-          --icon-size: 16px;
-          padding: 0;
-        }
-
-        wl-button.button {
-          width: 350px;
-        }
-
-        wl-card.item {
-          height: calc(100vh - 145px) !important;
-        }
-
         .tab-content {
           border: 0;
           font-size: 14px;
@@ -174,55 +141,13 @@ export default class BackendAIData extends BackendAIPage {
           --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
         }
 
-        wl-tab-group {
-          --tab-group-indicator-bg: var(--paper-orange-500);
-        }
-
-        wl-tab {
-          --tab-color: #666666;
-          --tab-color-hover: #222222;
-          --tab-color-hover-filled: #222222;
-          --tab-color-active: #222222;
-          --tab-color-active-hover: #222222;
-          --tab-color-active-filled: #cccccc;
-          --tab-bg-active: var(--paper-orange-50);
-          --tab-bg-filled: var(--paper-orange-50);
-          --tab-bg-active-hover: var(--paper-orange-100);
-        }
-
-        wl-button {
-          --button-bg: var(--paper-orange-50);
-          --button-bg-hover: var(--paper-orange-100);
-          --button-bg-active: var(--paper-orange-600);
-          color: var(--paper-orange-900);
-        }
-
         #add-folder-dialog,
         #clone-folder-dialog {
           --component-width: 375px;
         }
 
-        backend-ai-dialog wl-textfield,
-        backend-ai-dialog wl-select {
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222222;
-          --input-label-color-disabled: #222222;
-          --input-label-font-size: 12px;
-          --input-border-style-disabled: 1px solid #cccccc;
-        }
-
         #help-description {
           --component-width: 350px;
-        }
-
-        #textfields wl-textfield,
-        wl-label {
-          margin-bottom: 20px;
-        }
-
-        wl-label {
-          --label-font-family: 'Ubuntu', Roboto;
-          --label-color: black;
         }
 
         mwc-select {
@@ -345,7 +270,7 @@ export default class BackendAIData extends BackendAIPage {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="vertical layout">
-        <backend-ai-react-storage-status-panel value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
+        <backend-ai-react-storage-status-panel .value="${this.folderListFetchKey}"></backend-ai-react-storage-status-panel>
         <lablup-activity-panel elevation="1" noheader narrow autowidth>
           <div slot="message">
             <h3 class="horizontal center flex layout tab">

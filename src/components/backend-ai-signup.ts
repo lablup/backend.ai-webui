@@ -6,8 +6,6 @@ import {get as _text, translate as _t} from 'lit-translate';
 import {css, CSSResultGroup, html} from 'lit';
 import {customElement, property, query} from 'lit/decorators.js';
 
-import 'weightless/icon';
-import 'weightless/card';
 import '@material/mwc-checkbox';
 import {Button} from '@material/mwc-button';
 import {TextField} from '@material/mwc-textfield';

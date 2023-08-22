@@ -3,10 +3,10 @@ import { useWebComponentInfo } from "./DefaultProviders";
 import Flex from "./Flex";
 import { useTranslation } from "react-i18next";
 import { WarningTwoTone } from "@ant-design/icons";
-import { useMutation as useTanMutation } from "react-query";
 import { useAnonymousBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useEffect } from "react";
+import { useTanMutation } from "../hooks/reactQueryAlias";
 
 // src/components/backend-ai-common-utils.ts
 export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;

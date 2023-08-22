@@ -176,6 +176,13 @@ On yet another terminal:
 $ npm run wsproxy  # To run websocket proxy
 ```
 
+If you want to change port for your development environment, Add your configuration to `/react/.env.development` file in the project:
+
+```
+PORT=YOURPORT
+```
+Defaultly, `PORT` is `9081`
+
 ### Lint Checking
 ```console
 $ npm run lint  # To check lints

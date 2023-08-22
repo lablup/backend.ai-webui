@@ -43,7 +43,7 @@ class ClientConfig {
    * @param {string} endpoint  - endpoint of Backend.AI manager
    * @param {string} connectionMode - connection mode. 'API', 'SESSION' is supported. `SESSION` mode requires webserver.
    */
-  constructor(accessKey: string, secretKey: string, endpoint: string, connectionMode: string = 'API') {
+  constructor(accessKey?: string, secretKey?: string, endpoint?: string, connectionMode: string = 'API') {
     // default configs.
     this._apiVersionMajor = '4';
     this._apiVersion = 'v4.20190615'; // For compatibility with 19.03 / 1.4. WILL BE DEPRECATED AND UPGRADED TO v6 FROM 23.03.
@@ -136,9 +136,9 @@ class ClientConfig {
    */
   static createFromEnv() {
     return new this(
-      process.env.BACKEND_ACCESS_KEY ?? '',
-      process.env.BACKEND_SECRET_KEY ?? '',
-      process.env.BACKEND_ENDPOINT ?? ''
+      process.env.BACKEND_ACCESS_KEY,
+      process.env.BACKEND_SECRET_KEY,
+      process.env.BACKEND_ENDPOINT
     );
   }
 }
@@ -166,6 +166,7 @@ class Client {
   public utils: utils;
   public computeSession: ComputeSession;
   public sessionTemplate: SessionTemplate;
+  public modelService: ModelService;
   public resourcePolicy: ResourcePolicy;
   public user: User;
   public group: Group;
@@ -228,6 +229,7 @@ class Client {
     this.utils = new utils(this);
     this.computeSession = new ComputeSession(this);
     this.sessionTemplate = new SessionTemplate(this);
+    this.modelService = new ModelService(this);
     this.resourcePolicy = new ResourcePolicy(this);
     this.user = new User(this);
     this.group = new Group(this);
@@ -607,6 +609,9 @@ class Client {
     if(this.isManagerVersionCompatibleWith('23.03.7')) {
       this._features['quota-scope'] = true;
     }
+    if (this.isManagerVersionCompatibleWith('23.03.11')) {
+      this._features['model-serving'] = true;
+    }
   }
 
   /**
@@ -744,8 +749,11 @@ class Client {
    * Login into webserver with auth cookie token. This requires additional webserver package.
    *
    */
-  async token_login() : Promise<any> {
-    const body = {};
+  async token_login(token: string, extraParams: object = {}) : Promise<any> {
+    const body = token ? {'sToken': token} : {};
+    if (extraParams) {
+      Object.assign(body, extraParams);
+    }
     const rqst = this.newSignedRequest('POST', `/server/token-login`, body, null);
     try {
       const result = await this._wrapWithPromise(rqst);
@@ -961,6 +969,9 @@ class Client {
       if (resources['env']) {
         params['config'].environ = resources['env'];
       }
+      if (resources['preopen_ports']) {
+        params['config'].preopen_ports = resources['preopen_ports'];
+      }
     }
     let rqst;
     if (this._apiVersionMajor < 5) { // For V3/V4 API compatibility
@@ -1088,7 +1099,7 @@ class Client {
 
   /**
    * Get the IP or URL that use to access publicly
-   * 
+   *
    * @param {string} sessionId - the sessionId given when created
    */
   async get_direct_access_info(sessionId) : Promise<any> {
@@ -3167,6 +3178,55 @@ class SessionTemplate {
   }
 }
 
+class ModelService {
+  public client: any;
+
+  /**
+   * The Container image API wrapper.
+   *
+   * @param {Client} client - the Client API wrapper object to bind
+   */
+  constructor(client) {
+    this.client = client;
+  }
+
+  listService() {
+    // TODO: request list service by project(group) id
+  }
+
+  createService() {
+    // TODO: request service creation by params
+  }
+
+  getServiceInfo() {
+    // TODO: request service info detail by its id
+  }
+
+  termiateService() {
+    // TODO: request service termination by its id
+ }
+
+ scaleRoutes() {
+    // TODO: request routing count by its id and desired count
+ }
+
+ syncRoutings() {
+    // TODO: request checking routings whether are successfully added or not by service id
+ }
+
+ updateRoute() {
+   // TODO: request to update routing details (for now traffic ratio) by service id and routing id
+ }
+
+ deleteRoute() {
+  // TODO: request to update desired routing count to -1 to delete routing of the service by service id and route_id
+ }
+
+ generateServiceToken() {
+  // TODO: request generate token for accessing to service app by service id
+ }
+}
+
 class Resources {
   public client: any;
   public resources: any;
@@ -4172,13 +4232,22 @@ class Enterprise {
     if (this.client.is_superadmin === true) {
       if (typeof this.certificate === 'undefined') {
         const rqst = this.client.newSignedRequest('GET', '/license');
-        let cert = await this.client._wrapWithPromise(rqst);
-        this.certificate = cert.certificate;
-        this.certificate['valid'] = cert.status === 'valid';
+        let cert = await this.client._wrapWithPromise(rqst).catch((e: any) => {
+          if (e.statusCode == 404) {
+            // The open-source project version does not have a certificate.
+            return Promise.resolve(null);
+          }
+          // Unknown error
+          return Promise.resolve(undefined);
+        })
+        if (cert) {
+          this.certificate = cert.certificate;
+          this.certificate['valid'] = cert.status === 'valid';
+        }
         return Promise.resolve(this.certificate);
       }
     } else {
-      return Promise.resolve(false);
+      return Promise.resolve(undefined);
     }
   }
 }

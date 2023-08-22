@@ -10,6 +10,7 @@ import {unsafeHTML} from 'lit/directives/unsafe-html.js';
 import {BackendAIPage} from './backend-ai-page';
 
 import {Button} from '@material/mwc-button';
+import '@material/mwc-button';
 import {Checkbox} from '@material/mwc-checkbox/mwc-checkbox';
 import {IconButton} from '@material/mwc-icon-button';
 import '@material/mwc-linear-progress';
@@ -27,16 +28,12 @@ import '@vaadin/grid/vaadin-grid-selection-column';
 import '@vaadin/text-field/vaadin-text-field';
 import '@vaadin/date-time-picker/vaadin-date-time-picker';
 
-import 'weightless/checkbox';
-import 'weightless/expansion';
-import 'weightless/icon';
-import 'weightless/label';
-import 'weightless/textfield';
-
 import './lablup-codemirror';
+import './lablup-expansion';
 import './lablup-progress-bar';
 import './lablup-slider';
 import './backend-ai-dialog';
+import LablupExpansion from './lablup-expansion';
 
 import {default as PainKiller} from './backend-ai-painkiller';
 
@@ -48,12 +45,10 @@ import {
   IronFlexFactors,
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
-import {Expansion} from 'weightless/expansion';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
-type WlExpansion = HTMLElementTagNameMap['wl-expansion'];
 type VaadinTextField = HTMLElementTagNameMap['vaadin-text-field'];
 type VaadinDateTimePicker = HTMLElementTagNameMap['vaadin-date-time-picker'];
 type LablupSlider = HTMLElementTagNameMap['lablup-slider'];
@@ -77,6 +72,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Boolean}) enableLaunchButton = false;
   @property({type: Boolean}) hideLaunchButton = false;
   @property({type: Boolean}) hideEnvDialog = false;
+  @property({type: Boolean}) hidePreOpenPortDialog = false;
   @property({type: Boolean}) enableInferenceWorkload = false;
   @property({type: String}) location = '';
   @property({type: String}) mode = 'normal';
@@ -216,6 +212,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @property({type: Object}) deleteEnvInfo = Object();
   @property({type: Object}) deleteEnvRow = Object();
   @property({type: Array}) environ;
+  @property({type: Array}) preOpenPorts;
   @property({type: Object}) environ_values = Object();
   @property({type: Object}) vfolder_select_expansion = Object();
   @property({type: Number}) currentIndex = 1;
@@ -233,6 +230,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     'version': ['']
   };
   @property({type: String}) launchButtonMessageTextContent = _text('session.launcher.Launch');
+  @property({type: Boolean}) isExceedMaxCountForPreopenPorts = false;
+  @property({type: Number}) maxCountForPreopenPorts = 10;
 
   @query('#image-name') manualImageName;
   @query('#version') version_selector!: Select;
@@ -243,7 +242,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('#owner-scaling-group') ownerScalingGroupSelect!: Select;
   @query('#owner-accesskey') ownerAccesskeySelect!: Select;
   @query('#owner-email') ownerEmailInput!: TextField;
-  @query('#vfolder-mount-preview') vfolderMountPreview!: WlExpansion;
+  @query('#vfolder-mount-preview') vfolderMountPreview!: LablupExpansion;
   @query('#use-scheduled-time') useScheduledTimeSwitch!: Switch;
   @query('#launch-button') launchButton!: Button;
   @query('#prev-button') prevButton!: IconButton;
@@ -259,8 +258,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   @query('vaadin-date-time-picker') dateTimePicker!: VaadinDateTimePicker;
   @query('#new-session-dialog') newSessionDialog!: BackendAIDialog;
   @query('#modify-env-dialog') modifyEnvDialog!: BackendAIDialog;
+  @query('#modify-env-container') modifyEnvContainer!: HTMLDivElement;
+  @query('#modify-preopen-ports-dialog') modifyPreOpenPortDialog!: BackendAIDialog;
+  @query('#modify-preopen-ports-container') modifyPreOpenPortContainer!: HTMLDivElement;
   @query('#launch-confirmation-dialog') launchConfirmationDialog!: BackendAIDialog;
   @query('#help-description') helpDescriptionDialog!: BackendAIDialog;
+  @query('#command-editor') commandEditor!: LablupCodemirror;
 
   constructor() {
     super();
@@ -271,6 +274,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.resourceBroker = globalThis.resourceBroker;
     this.notification = globalThis.lablupNotification;
     this.environ = [];
+    this.preOpenPorts = [];
     this.init_resource();
   }
 
@@ -370,8 +374,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         div.vfolder-list,
         div.vfolder-mounted-list,
         #mounted-folders-container,
-        .environment-variables-container
-         {
+        .environment-variables-container,
+        .preopen-ports-container {
           background-color: rgba(244,244,244,1);
           overflow-y: scroll;
         }
@@ -381,12 +385,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           max-height: 335px;
         }
 
-        .environment-variables-container {
+        .environment-variables-container, .preopen-ports-container {
           font-size: 0.8rem;
           padding: 10px;
         }
 
-        .environment-variables-container wl-textfield input {
+        .environment-variables-container mwc-textfield input,
+        .preopen-ports-container mwc-textfield input {
           overflow: hidden;
           text-overflow: ellipsis;
         }
@@ -526,49 +531,29 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           height: var(--component-height, 36px);
         }
 
-        #launch-session[disabled] {
-          background-image: var(--general-sidebar-color);
-          --mdc-theme-on-primary: var(--general-button-color);
-        }
-
         #launch-session-form {
           height: calc(var(--component-height, auto) - 157px);
         }
 
-        wl-button > span {
-          margin-left: 5px;
-          font-weight: normal;
-        }
-
-        wl-icon {
-          --icon-size: 20px;
-        }
-
-        wl-expansion {
-          --font-family-serif: var(--general-font-family);
+        lablup-expansion {
           --expansion-elevation: 0;
           --expansion-elevation-open: 0;
           --expansion-elevation-hover: 0;
           --expansion-header-padding: 16px;
           --expansion-margin-open: 0;
+          --expansion-header-font-weight: normal;
+          --expansion-header-font-size: 14px;
+          --expansion-header-font-color: rgb(64, 64, 64);
         }
 
-        wl-expansion span[slot="title"] {
-          font-size: 12px;
-          color: rgb(64, 64, 64);
-          font-weight: normal;
-        }
-
-        wl-expansion.vfolder,
-        wl-expansion.editor {
+        lablup-expansion.vfolder,
+        lablup-expansion.editor {
           --expansion-content-padding: 0;
           border-bottom: 1px;
         }
 
-        wl-expansion span {
-          font-size: 20px;
-          font-weight: 200;
-          display: block;
+        lablup-expansion[name='resource-group'] {
+          --expansion-content-padding: 0 16px;
         }
 
         .resources .monitor {
@@ -689,11 +674,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           font-weight: 500;
         }
 
-        wl-label {
-          margin-right: 10px;
-          outline: none;
-        }
-
         #help-description {
           --component-width: 350px;
         }
@@ -702,7 +682,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           padding: 5px !important;
         }
 
-        #launch-confirmation-dialog, #env-config-confirmation {
+        #launch-confirmation-dialog,
+        #env-config-confirmation,
+        #preopen-ports-config-confirmation {
           --component-width: 400px;
           --component-font-size: 14px;
         }
@@ -715,6 +697,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-icon-size: 13px;
           margin-right: 2px;
           vertical-align: middle;
+        }
+
+        #error-icon {
+          width: 24px;
+          --mdc-icon-size: 24px;
+          margin-right: 10px;
         }
 
         ul {
@@ -733,10 +721,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           text-overflow: ellipsis;
           white-space: nowrap;
           overflow: hidden;
-        }
-
-        mwc-button > mwc-icon {
-          display: none;
         }
 
         p.title {
@@ -774,12 +758,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           border: 1px solid #ccc;
         }
 
-        #modify-env-dialog {
+        #modify-env-dialog, #modify-preopen-ports-dialog {
           --component-max-height: 550px;
           --component-width: 400px;
         }
 
-        #modify-env-dialog div.container {
+        #modify-env-dialog div.container,
+        #modify-preopen-ports-dialog div.container {
           display: flex;
           flex-direction: column;
           padding: 0px 30px;
@@ -790,13 +775,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           grid-template-columns: 4fr 4fr 1fr;
         }
 
-        #modify-env-dialog div[slot="footer"] {
+        #modify-env-dialog div[slot="footer"],
+        #modify-preopen-ports-dialog div[slot="footer"] {
           display: flex;
           margin-left: auto;
           gap: 15px;
         }
 
-        #modify-env-container mwc-textfield {
+        #modify-env-container mwc-textfield,
+        #modify-preopen-ports-dialog mwc-textfield {
           width: 90%;
           margin: auto 5px;
           --mdc-theme-primary: var(--general-textfield-selected-color);
@@ -804,11 +791,11 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           --mdc-text-field-idle-line-color: var(--general-textfield-idle-color);
         }
 
-        #env-add-btn {
+        #env-add-btn, #preopen-ports-add-btn {
           margin: 20px auto 10px auto;
         }
 
-        #delete-all-button {
+        .delete-all-button {
           --mdc-theme-primary: var(--paper-red-600);
         }
 
@@ -817,13 +804,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
           color: #27824F;
         }
 
-        .environment-variables-container h4 {
+        .environment-variables-container h4,
+        .preopen-ports-container h4 {
           margin: 0;
         }
 
-        .environment-variables-container wl-textfield {
-          --input-font-family: var(--general-font-family);
-          --input-color-disabled: #222;
+        .environment-variables-container mwc-textfield,
+        .preopen-ports-container mwc-textfield {
+          --mdc-typography-subtitle1-font-family: var(--general-font-family);
+          --mdc-text-field-disabled-ink-color: #222;
+        }
+
+        .optional-buttons {
+          margin: auto 12px;
+        }
+
+        .optional-buttons mwc-button {
+          width: 50%;
+          --mdc-typography-button-font-size: 0.5vw;
         }
 
         [name='resource-group'] mwc-list-item {
@@ -916,7 +914,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this.updateResourceAllocationPane();
     });
 
-    this.shadowRoot?.querySelectorAll('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll('lablup-expansion').forEach((element) => {
       element.addEventListener('keydown', (event) => {
         event.stopPropagation();
       }, true);
@@ -955,6 +953,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         if (globalThis.backendaiclient.supports('multi-container')) {
           this.cluster_support = true;
         }
+        this.maxCountForPreopenPorts = globalThis.backendaiclient._config.maxCountForPreopenPorts;
         this.is_connected = true;
         this._debug = globalThis.backendaiwebui.debug;
         this._enableLaunchButton();
@@ -980,14 +979,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       if (globalThis.backendaiclient.supports('multi-container')) {
         this.cluster_support = true;
       }
+      this.maxCountForPreopenPorts = globalThis.backendaiclient._config.maxCountForPreopenPorts;
       this.is_connected = true;
       this._debug = globalThis.backendaiwebui.debug;
       this._enableLaunchButton();
     }
     this.modifyEnvDialog.addEventListener('dialog-closing-confirm', (e) => {
       const currentEnv = {};
-      const container = this.shadowRoot?.querySelector('#modify-env-container');
-      const rows = container?.querySelectorAll('.row');
+      const rows = this.modifyEnvContainer?.querySelectorAll('.row');
 
       // allow any input in variable or value
       const nonempty = (row) => Array.prototype.filter.call(
@@ -1027,6 +1026,26 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       } else {
         this.modifyEnvDialog.closeWithConfirmation = false;
         this.closeDialog('modify-env-dialog');
+      }
+    });
+    this.modifyPreOpenPortDialog.addEventListener('dialog-closing-confirm', () => {
+      const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+      const currentPorts = Array.from(rows).filter((row) => row.value !== '').map((row) => row.value);
+
+      // check if there's any changes occurred
+      const isEquivalent = (a, b): boolean => {
+        if (a.length !== b.length) {
+          return false;
+        }
+        return a.every((elem, index) => elem === b[index]);
+      };
+
+      if (!isEquivalent(currentPorts, this.preOpenPorts)) {
+        this.hidePreOpenPortDialog = true;
+        this.openDialog('preopen-ports-config-confirmation');
+      } else {
+        this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+        this.closeDialog('modify-preopen-ports-dialog');
       }
     });
     this.currentIndex = 1;
@@ -1287,7 +1306,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       this._resetProgress();
       await this.selectDefaultLanguage();
       // Set display property of ownership panel.
-      const ownershipPanel = this.shadowRoot?.querySelector('wl-expansion[name="ownership"]') as WlExpansion;
+      const ownershipPanel = this.shadowRoot?.querySelector('lablup-expansion[name="ownership"]') as LablupExpansion;
       if (globalThis.backendaiclient.is_admin) {
         ownershipPanel.style.display = 'block';
       } else {
@@ -1494,8 +1513,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
       config['bootstrap_script'] = this.importScript;
     }
     if (this.sessionType === 'batch') {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
-      config['startupCommand'] = editor.getValue();
+      config['startupCommand'] = this.commandEditor.getValue();
 
       const scheduledTime = this.dateTimePicker.value;
       const useScheduledTime = this.useScheduledTimeSwitch.selected;
@@ -1512,6 +1530,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
     if (this.environ_values && Object.keys(this.environ_values).length !== 0) {
       config['env'] = this.environ_values;
+    }
+    if (this.preOpenPorts.length > 0) {
+      config['preopen_ports'] = [...new Set(this.preOpenPorts.map((port) => Number(port)))];
     }
     if (this.openMPSwitch.selected === false) {
       const openMPCoreValue = (this.shadowRoot?.querySelector('#OpenMPCore') as TextField).value;
@@ -1737,7 +1758,9 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const res = this._getVersionInfo(version, architecture);
     const resultArray: string[] = [];
     res.forEach((item) => {
-      resultArray.push(item.tag);
+      if (item.tag !== '' && item.tag !== null){
+        resultArray.push(item.tag);
+      }
     });
     // TODO remove protected field access
     (this.version_selector as any).selectedText = resultArray.join(' / ');
@@ -2778,6 +2801,14 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.helpDescriptionDialog.show();
   }
 
+  _showPreOpenPortConfigDescription(e) {
+    e.stopPropagation();
+    this._helpDescriptionTitle = _text('session.launcher.PreOpenPortTitle');
+    this._helpDescription = _text('session.launcher.DescSetPreOpenPort');
+    this._helpDescriptionIcon = '';
+    this.helpDescriptionDialog.show();
+  }
+
   _resourceTemplateToCustom() {
     // TODO remove protected property assignment
     (this.resourceTemplatesSelect as any).selectedText = _text('session.launcher.CustomResourceApplied');
@@ -2960,7 +2991,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   _disableEnterKey() {
-    this.shadowRoot?.querySelectorAll<Expansion>('wl-expansion').forEach((element) => {
+    this.shadowRoot?.querySelectorAll<LablupExpansion>('lablup-expansion').forEach((element) => {
       // remove protected property assignment
       element.onkeydown = (e) => {
         if (e.key === 'Enter') {
@@ -2990,11 +3021,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * @param {string} value - environment variable value
    */
   _appendEnvRow(name = '', value = '') {
-    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
-    const lastChild = container?.children[container.children.length - 1];
+    const lastChild = this.modifyEnvContainer?.children[this.modifyEnvContainer.children.length - 1];
     const div = this._createEnvRow(name, value);
-    container?.insertBefore(div, lastChild as ChildNode);
+    this.modifyEnvContainer?.insertBefore(div, lastChild as ChildNode);
   }
+
+  /**
+   * Append a row to the environment variable list.
+   *
+   * @param {number} port - pre open port
+   */
+  _appendPreOpenPortRow(port=null) {
+    const lastChild = this.modifyPreOpenPortContainer?.children[this.modifyPreOpenPortContainer.children.length - 1];
+    const div = this._createPreOpenPortRow(port);
+    this.modifyPreOpenPortContainer?.insertBefore(div, lastChild as ChildNode);
+    this._updateisExceedMaxCountForPreopenPorts();
+  }
+
   /**
    * Create a row in the environment variable list.
    *
@@ -3024,6 +3067,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     return div;
   }
 
+  _createPreOpenPortRow(port) {
+    const div = document.createElement('div');
+    div.setAttribute('class', 'horizontal layout center row');
+
+    const row = document.createElement('mwc-textfield');
+    if (port) {
+      row.setAttribute('value', port);
+    }
+    row.setAttribute('type', 'number');
+    row.setAttribute('min', '1024');
+    row.setAttribute('max', '65535');
+
+    const removeButton = document.createElement('mwc-icon-button');
+    removeButton.setAttribute('icon', 'remove');
+    removeButton.setAttribute('class', 'green minus-btn');
+    removeButton.addEventListener('click', (e) => this._removePreOpenPortItem(e));
+
+    div.append(row);
+    div.append(removeButton);
+    return div;
+  }
+
   /**
    * Check whether delete operation will proceed or not.
    *
@@ -3031,16 +3096,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    */
   _removeEnvItem(e) {
     // htmlCollection should be converted to Array.
-    this.deleteEnvRow = e.target.parentNode;
-    this.deleteEnvRow.remove();
+    const parentNode = e.target.parentNode;
+    parentNode.remove();
+  }
+
+  /**
+   * Check whether delete operation will proceed or not.
+   * And update `isExceedMaxCountForPreopenPorts`.
+   *
+   * @param {Event} e - Dispatches from the native input event each time the input changes.
+   */
+  _removePreOpenPortItem(e) {
+    // htmlCollection should be converted to Array.
+    const parentNode = e.target.parentNode;
+    parentNode.remove();
+    this._updateisExceedMaxCountForPreopenPorts();
   }
 
   /**
    * Remove empty env input fields
    */
   _removeEmptyEnv() {
-    const container = this.shadowRoot?.querySelector('#modify-env-container') as HTMLDivElement;
-    const rows = container?.querySelectorAll('.row') as NodeListOf<HTMLDivElement>;
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row') as NodeListOf<HTMLDivElement>;
     const empty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('mwc-textfield'), (tf) => tf.value === ''
     ).length === 2;
@@ -3049,6 +3126,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         row.parentNode.removeChild(row);
       }
     });
+  }
+
+  _removeEmptyPreOpenPorts() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header)') as NodeListOf<HTMLDivElement>;
+    const empty = (row) => Array.prototype.filter.call(
+      row.querySelectorAll('mwc-textfield'), (tf) => tf.value === ''
+    ).length === 1;
+    Array.prototype.filter.call(rows, (row) => empty(row)).map((row, idx) => {
+      if (idx !== 0 || this.preOpenPorts.length > 0) {
+        row.parentNode.removeChild(row);
+      }
+    });
+    this._updateisExceedMaxCountForPreopenPorts();
   }
 
   /**
@@ -3064,11 +3154,38 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Modify pre open ports for current session.
+   */
+  modifyPreOpenPorts() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+    const isPreOpenPortsValid = Array.from(rows).filter((row) => !row.checkValidity()).length === 0;
+    if (!isPreOpenPortsValid) {
+      this.notification.text = _text('session.launcher.PreOpenPortRange');
+      this.notification.show();
+      return;
+    }
+    this._parseAndSavePreOpenPortList();
+    this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+    this.modifyPreOpenPortDialog.hide();
+    this.notification.text = _text('session.launcher.PreOpenPortConfigurationDone');
+    this.notification.show();
+  }
+
+  /**
    * load environment variables for current session
    */
   _loadEnv() {
     this.environ.forEach((item: any) => {
       this._appendEnvRow(item.name, item.value);
+    });
+  }
+
+  /**
+   * load pre open ports for current session
+   */
+  _loadPreOpenPorts() {
+    this.preOpenPorts.forEach((item) => {
+      this._appendPreOpenPortRow(item);
     });
   }
 
@@ -3082,10 +3199,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Show preopen ports popup.
+   */
+  _showPreOpenPortDialog() {
+    this._removeEmptyPreOpenPorts();
+    this.modifyPreOpenPortDialog.closeWithConfirmation = true;
+    this.modifyPreOpenPortDialog.show();
+  }
+
+  /**
    * Close confirmation dialog and environment variable dialog and reset the environment variable and value
    */
   _closeAndResetEnvInput() {
-    this._clearRows(true);
+    this._clearEnvRows(true);
     this.closeDialog('env-config-confirmation');
     if (this.hideEnvDialog) {
       this._loadEnv();
@@ -3095,12 +3221,24 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   }
 
   /**
+   * Close confirmation dialog and environment variable dialog and reset the environment variable and value
+   */
+  _closeAndResetPreOpenPortInput() {
+    this._clearPreOpenPortRows(true);
+    this.closeDialog('preopen-ports-config-confirmation');
+    if (this.hidePreOpenPortDialog) {
+      this._loadPreOpenPorts();
+      this.modifyPreOpenPortDialog.closeWithConfirmation = false;
+      this.modifyPreOpenPortDialog.hide();
+    }
+  }
+
+  /**
    * Parse environment variables on UI.
    */
   _parseEnvVariableList() {
     this.environ_values = {};
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row:not(.header)') as NodeListOf<Element>;
     const nonempty = (row) => Array.prototype.filter.call(
       row.querySelectorAll('mwc-textfield'), (tf) => tf.value.length === 0
     ).length === 0;
@@ -3119,11 +3257,23 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     this.environ = Object.entries(this.environ_values).map(([name, value]) => ({name, value}));
   }
 
+  _parseAndSavePreOpenPortList() {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row:not(.header) mwc-textfield') as NodeListOf<TextField>;
+    this.preOpenPorts = Array.from(rows).filter((row) => row.value !== '').map((row) => row.value);
+  }
+
   _resetEnvironmentVariables() {
     this.environ = [];
     this.environ_values = {};
     if (this.modifyEnvDialog !== null) {
-      this._clearRows(true);
+      this._clearEnvRows(true);
+    }
+  }
+
+  _resetPreOpenPorts() {
+    this.preOpenPorts = [];
+    if (this.modifyPreOpenPortDialog !== null) {
+      this._clearPreOpenPortRows(true);
     }
   }
 
@@ -3131,9 +3281,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
    * Clear rows from the environment variable.
    * @param {Boolean} force - Whether removing all rows except first row or not.
    */
-  _clearRows(force = false) {
-    const container = this.shadowRoot?.querySelector('#modify-env-container');
-    const rows = container?.querySelectorAll('.row') as NodeListOf<Element>;
+  _clearEnvRows(force = false) {
+    const rows = this.modifyEnvContainer?.querySelectorAll('.row') as NodeListOf<Element>;
     const firstRow = rows[0];
 
     // show confirm dialog if not empty.
@@ -3161,6 +3310,39 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     });
   }
 
+  /**
+   * Clear rows from the pre open port.
+   * @param {Boolean} force - Whether removing all rows except first row or not.
+   */
+  _clearPreOpenPortRows(force = false) {
+    const rows = this.modifyPreOpenPortContainer?.querySelectorAll('.row') as NodeListOf<Element>;
+    const firstRow = rows[0];
+
+    // show confirm dialog if not empty.
+    if (!force) {
+      const nonempty = (row) => Array.prototype.filter.call(
+        row.querySelectorAll('mwc-textfield'), (item) => item.value.length > 0
+      ).length > 0;
+      if (Array.prototype.filter.call(rows, (row) => nonempty(row)).length > 0) {
+        this.hidePreOpenPortDialog = false;
+        this.openDialog('preopen-ports-config-confirmation');
+        return;
+      }
+    }
+
+    // remain first row element and clear values
+    firstRow?.querySelectorAll('mwc-textfield').forEach((tf) => {
+      tf.value = '';
+    });
+
+    // delete extra rows
+    rows.forEach((e, idx) => {
+      if (idx !== 0) {
+        e.remove();
+      }
+    });
+  }
+
   openDialog(id) {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).show();
   }
@@ -3169,12 +3351,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     (this.shadowRoot?.querySelector('#' + id) as BackendAIDialog).hide();
   }
 
+  validateSessionLauncherInput() {
+    if (this.currentIndex === 1) {
+      if (this.sessionType === 'batch' && !this.commandEditor._validateInput()) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /**
    * Move to previous or next progress.
    *
    * @param {Number} n -1 : previous progress / 1 : next progress
    */
   async moveProgress(n) {
+    if (!this.validateSessionLauncherInput()) return;
     const currentProgressEl = this.shadowRoot?.querySelector('#progress-0' + this.currentIndex) as HTMLDivElement;
     this.currentIndex += n;
     // Exclude for model inference. No folder will be shown in the inference mode.
@@ -3218,6 +3410,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
   _resetProgress() {
     this.moveProgress(-this.currentIndex + 1);
     this._resetEnvironmentVariables();
+    this._resetPreOpenPorts();
     this._unselectAllSelectedFolder();
   }
 
@@ -3284,9 +3477,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     const startUpCommandEditor = this.shadowRoot?.querySelector('#batch-mode-config-section') as HTMLDivElement;
     startUpCommandEditor.style.display = isBatchmode ? 'inline-flex' : 'none';
     if (isBatchmode) {
-      const editor = this.shadowRoot?.querySelector('#command-editor') as LablupCodemirror;
-      editor.refresh();
-      editor.focus();
+      this.commandEditor.refresh();
+      this.commandEditor.focus();
     }
   }
 
@@ -3381,16 +3573,19 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
     }
   }
 
+  _updateisExceedMaxCountForPreopenPorts() {
+    const currentRowCount = this.modifyPreOpenPortContainer?.querySelectorAll('mwc-textfield')?.length ?? 0;
+    this.isExceedMaxCountForPreopenPorts = currentRowCount >= this.maxCountForPreopenPorts;
+  }
+
   render() {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/fonts/font-awesome-all.min.css">
       <link rel="stylesheet" href="resources/custom.css">
-      <wl-button raised class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
-                 @click="${() => this._launchSessionDialog()}">
-        <wl-icon>power_settings_new</wl-icon>
-        <span>${_t('session.launcher.Start')}</span>
-      </wl-button>
+      <mwc-button class="primary-action" id="launch-session" ?disabled="${!this.enableLaunchButton}"
+                  icon="power_settings_new"
+                  @click="${() => this._launchSessionDialog()}">${_t('session.launcher.Start')}</mwc-button>
       <backend-ai-dialog id="new-session-dialog" narrowLayout fixed backdrop persistent @dialog-closed="${() => this._toggleScheduleTime(true)}">
         <span slot="title">${this.newSessionDialogTitle ? this.newSessionDialogTitle : _t('session.launcher.StartNewSession')}</span>
         <form slot="content" id="launch-session-form" class="centered" style="position:relative;">
@@ -3442,28 +3637,31 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             </mwc-select>
             <mwc-select id="version" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
               <mwc-list-item selected style="display:none!important"></mwc-list-item>
-              <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-                  role="separator" disabled="true" class="horizontal layout">
-                  <div style="width:60px;">${_t('session.launcher.Version')}</div>
-                  <div style="width:110px;">${_t('session.launcher.Base')}</div>
-                  <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-                <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
-              </h5>
-              ${this.versions.map(({version, architecture}) => html`
-                <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
-                    <span style="display:none">${version}</span>
-                    <div class="horizontal layout end-justified">
-                    ${this._getVersionInfo(version || '', architecture).map((item) => html`
-                      <lablup-shields style="width:${item.size}!important;"
-                                      color="${item.color}"
-                                      app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                                      description="${item.tag}"
-                                      class="horizontal layout center center-justified">
-                      </lablup-shields>
-                    `)}
-                  </div>
-                </mwc-list-item>
-              `)}
+              ${this.versions[0] === 'Not Selected' && this.versions.length === 1 ? 
+              html`` : html`
+                <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+                    role="separator" disabled="true" class="horizontal layout">
+                    <div style="width:60px;">${_t('session.launcher.Version')}</div>
+                    <div style="width:110px;">${_t('session.launcher.Base')}</div>
+                    <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
+                  <div style="width:110px;">${_t('session.launcher.Requirements')}</div>
+                </h5>
+                ${this.versions.map(({version, architecture}) => html`
+                  <mwc-list-item id="${version}" architecture="${architecture}" value="${version}" style="min-height:35px;height:auto;">
+                      <span style="display:none">${version}</span>
+                      <div class="horizontal layout end-justified">
+                      ${this._getVersionInfo(version || '', architecture).map((item) => html`
+                        <lablup-shields style="width:${item.size}!important;"
+                                        color="${item.color}"
+                                        app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
+                                        description="${item.tag}"
+                                        class="horizontal layout center center-justified">
+                        </lablup-shields>
+                      `)}
+                    </div>
+                  </mwc-list-item>
+                `)}
+              `}
             </mwc-select>
             ${this._debug || this.allow_manual_image_name_for_session ? html`
               <mwc-textfield id="image-name" type="text" class="flex" value="" icon="assignment_turned_in"
@@ -3472,15 +3670,15 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
             `:html``}
             <mwc-textfield id="session-name" placeholder="${_text('session.launcher.SessionNameOptional')}"
                            pattern="[a-zA-Z0-9_-]{4,}" maxLength="64" icon="label"
-                           helper="${_text('maxLength.64chars')}"
+                           helper="${_text('inputLimit.4to64chars')}"
                            validationMessage="${_text('session.launcher.SessionNameAllowCondition')}">
             </mwc-textfield>
             <div class="vertical layout center flex" id="batch-mode-config-section" style="display:none;">
               <span class="launcher-item-title" style="width:386px;">${_t('session.launcher.BatchModeConfig')}</span>
               <div class="horizontal layout start-justified">
-                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}</div>
+                <div style="width:370px;font-size:12px;">${_t('session.launcher.StartUpCommand')}*</div>
               </div>
-              <lablup-codemirror id="command-editor" mode="shell"></lablup-codemirror>
+              <lablup-codemirror id="command-editor" mode="shell" required validationMessage="${_t('dialog.warning.Required')}"></lablup-codemirror>
               <div class="horizontal center layout justified" style="margin: 10px auto;">
                 <div style="width:330px;font-size:12px;">${_t('session.launcher.ScheduleTime')}</div>
                 <mwc-switch id="use-scheduled-time" @click="${() => this._toggleScheduleTimeDisplay()}"></mwc-switch>
@@ -3492,38 +3690,54 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                        @change="${this._getSchedulableTime}"
                                        style="display:none;"></vaadin-date-time-picker>
             </div>
-            <div class="horizontal layout center justified">
-              <span class="launcher-item-title">${_t('session.launcher.SetEnvironmentVariable')}</span>
-              <mwc-button
-                unelevated
-                icon="rule"
-                label="${_text('session.launcher.Config')}"
-                style="width:auto;margin-right:15px;"
-                @click="${() => this._showEnvDialog()}"></mwc-button>
-            </div>
-            <div class="environment-variables-container" style="margin-top:18px;">
-              ${this.environ.length > 0 ? html`
-                <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
-                  <div role="listbox">
-                    <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
-                    ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
-                    `)}
+            <lablup-expansion leftIconName="expand_more"
+                              rightIconName="settings"
+                              .rightCustomFunction="${() => this._showEnvDialog()}">
+              <span slot="title">${_t('session.launcher.SetEnvironmentVariable')}</span>
+              <div class="environment-variables-container">
+                ${this.environ.length > 0 ? html`
+                  <div class="horizontal flex center center-justified layout" style="overflow-x:hidden;">
+                    <div role="listbox">
+                      <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.name}"></mwc-textfield>
+                      `)}
+                    </div>
+                    <div role="listbox" style="margin-left:15px;">
+                      <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
+                      ${this.environ.map((item) => html`
+                        <mwc-textfield disabled value="${item.value}"></mwc-textfield>
+                      `)}
+                    </div>
                   </div>
-                  <div role="listbox" style="margin-left:15px;">
-                    <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
-                    ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
-                    `)}
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoEnvConfigured')}</span>
                   </div>
+                `}
+              </div>
+            </lablup-expansion>
+            ${this.maxCountForPreopenPorts > 0 ? html`
+              <lablup-expansion leftIconName="expand_more"
+                                rightIconName="settings"
+                                .rightCustomFunction="${() => this._showPreOpenPortDialog()}">
+                <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
+                <div class="preopen-ports-container">
+                  ${this.preOpenPorts.length > 0 ? html`
+                    <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                      ${this.preOpenPorts.map((port) => html`
+                        <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                      `)}
+                    </div>
+                  ` : html`
+                    <div class="vertical layout center flex blank-box">
+                      <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                    </div>
+                  `}
                 </div>
-              ` : html`
-                <div class="vertical layout center flex blank-box">
-                  <span>${_t('session.launcher.NoEnvConfigured')}</span>
-                </div>
-              `}
-            </div>
-            <wl-expansion name="ownership" style="--expansion-content-padding:15px 0;">
+              </lablup-expansion>
+            ` : html``}
+            <lablup-expansion name="ownership" style="--expansion-content-padding:15px 0;">
               <span slot="title">${_t('session.launcher.SetSessionOwner')}</span>
               <div class="vertical layout">
                 <div class="horizontal center layout">
@@ -3569,10 +3783,10 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 <p style="color: rgba(0,0,0,0.6);">${_t('session.launcher.LaunchSessionWithAccessKey')}</p>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-02" class="progress center layout fade" style="padding-top:0;">
-          <wl-expansion class="vfolder" name="vfolder" open>
+          <lablup-expansion class="vfolder" name="vfolder" open>
             <span slot="title">${_t('session.launcher.FolderToMount')}</span>
             <div class="vfolder-list">
               <vaadin-grid
@@ -3600,8 +3814,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
-            </wl-expansion>
-            <wl-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
+            </lablup-expansion>
+            <lablup-expansion class="vfolder" name="vfolder" style="display:${this.enableInferenceWorkload ? 'block' : 'none'};">
               <span slot="title">${_t('session.launcher.ModelStorageToMount')}</span>
               <div class="vfolder-list">
                 <vaadin-grid
@@ -3624,8 +3838,8 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                                       .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
                 </vaadin-grid>
               </div>
-            </wl-expansion>
-            <wl-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
+            </lablup-expansion>
+            <lablup-expansion id="vfolder-mount-preview" class="vfolder" name="vfolder">
               <span slot="title">${_t('session.launcher.MountedFolders')}</span>
               <div class="vfolder-mounted-list">
               ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
@@ -3648,7 +3862,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-03" class="progress center layout fade">
             <div class="horizontal center layout">
@@ -3725,7 +3939,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               ` : html``}
               </mwc-select>
             </div>
-            <wl-expansion name="resource-group">
+            <lablup-expansion name="resource-group">
               <span slot="title">${_t('session.launcher.CustomAllocation')}</span>
               <div class="vertical layout">
                 <div>
@@ -3808,7 +4022,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
             ${this.cluster_support ? html`
               <mwc-select id="cluster-mode" label="${_text('session.launcher.ClusterMode')}" required
                           icon="account_tree" fixedMenuPosition
@@ -3847,7 +4061,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               </div>
             ` : html``}
-            <wl-expansion name="hpc-option-group">
+            <lablup-expansion name="hpc-option-group">
               <span slot="title">${_t('session.launcher.HPCOptimization')}</span>
               <div class="vertical center layout">
                 <div class="horizontal center center-justified flex layout">
@@ -3875,7 +4089,7 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   </div>
                 </div>
               </div>
-            </wl-expansion>
+            </lablup-expansion>
           </div>
           <div id="progress-04" class="progress center layout fade">
             <p class="title">${_t('session.SessionInfo')}</p>
@@ -4033,13 +4247,13 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                   <div role="listbox">
                     <h4>${_text('session.launcher.EnvironmentVariable')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.name}"></wl-textfield>
+                      <mwc-textfield disabled value="${item.name}"></mwc-textfield>
                     `)}
                   </div>
                   <div role="listbox" style="margin-left:15px;">
                     <h4>${_text('session.launcher.EnvironmentVariableValue')}</h4>
                     ${this.environ.map((item) => html`
-                      <wl-textfield disabled value="${item.value}"></wl-textfield>
+                      <nwc-textfield disabled value="${item.value}"></nwc-textfield>
                     `)}
                   </div>
                 </div>
@@ -4049,6 +4263,22 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
                 </div>
               `}
             </div>
+            ${this.maxCountForPreopenPorts > 0 ? html`
+              <p class="title">${_t('session.launcher.PreOpenPortPanelTitle')}</p>
+              <div class="preopen-ports-container">
+                ${this.preOpenPorts.length > 0 ? html`
+                  <div class="horizontal flex center layout" style="overflow-x:hidden;margin:auto 5px;">
+                    ${this.preOpenPorts.map((port) => html`
+                      <lablup-shields color="lightgrey" description="${port}" style="padding:4px;"></lablup-shields>
+                    `)}
+                  </div>
+                ` : html`
+                  <div class="vertical layout center flex blank-box">
+                    <span>${_t('session.launcher.NoPreOpenPortsConfigured')}</span>
+                  </div>
+                `}
+              </div>
+            ` : html``}
           </div>
         </form>
         <div slot="footer" class="vertical flex layout">
@@ -4106,12 +4336,12 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal layout">
           <mwc-button
-              id="delete-all-button"
+              class="delete-all-button"
               slot="footer"
               icon="delete"
               style="width:100px"
               label="${_text('button.Reset')}"
-              @click="${()=>this._clearRows()}"></mwc-button>
+              @click="${()=>this._clearEnvRows()}"></mwc-button>
           <mwc-button
               unelevated
               slot="footer"
@@ -4119,6 +4349,50 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               style="width:100px"
               label="${_text('button.Save')}"
               @click="${()=>this.modifyEnv()}"></mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="modify-preopen-ports-dialog" fixed backdrop persistent closeWithConfirmation>
+        <span slot="title">${_t('session.launcher.SetPreopenPorts')}</span>
+        <span slot="action">
+          <mwc-icon-button icon="info" @click="${(e) => this._showPreOpenPortConfigDescription(e)}" style="pointer-events: auto;"></mwc-icon-button>
+        </span>
+        <div slot="content" id="modify-preopen-ports-container">
+          <div class="horizontal layout center flex justified header">
+            <div> ${_t('session.launcher.PortsTitleWithRange')} </div>
+          </div>
+          <div class="layout center">
+            ${this.preOpenPorts.forEach((item: number) => html`
+              <div class="horizontal layout center row">
+                <mwc-textfield value="${item}" type="number" min="1024" max="65535"></mwc-textfield>
+                <mwc-icon-button class="green minus-btn" icon="remove"
+                  @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
+              </div>
+            `)}
+            <div class="horizontal layout center row">
+              <mwc-textfield type="number" min="1024" max="65535"></mwc-textfield>
+              <mwc-icon-button class="green minus-btn" icon="remove"
+                @click="${(e) => this._removePreOpenPortItem(e)}"></mwc-icon-button>
+            </div>
+          </div>
+          <mwc-button id="preopen-ports-add-btn" outlined icon="add" class="horizontal flex layout center"
+            ?disabled="${this.isExceedMaxCountForPreopenPorts}"
+            @click="${() => this._appendPreOpenPortRow()}">Add</mwc-button>
+        </div>
+        <div slot="footer" class="horizontal layout">
+          <mwc-button
+            class="delete-all-button"
+            slot="footer"
+            icon="delete"
+            style="width:100px"
+            label="${_text('button.Reset')}"
+            @click="${()=>this._clearPreOpenPortRows()}"></mwc-button>
+          <mwc-button
+            unelevated
+            slot="footer"
+            icon="check"
+            style="width:100px"
+            label="${_text('button.Save')}"
+            @click="${()=>this.modifyPreOpenPorts()}"></mwc-button>
         </div>
       </backend-ai-dialog>
       <backend-ai-dialog id="help-description" fixed backdrop>
@@ -4167,6 +4441,28 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
               id="env-config-reset-button"
               label="${_text('button.DismissAndProceed')}"
               @click="${() => this._closeAndResetEnvInput()}"
+              style="width:auto;">
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="preopen-ports-config-confirmation" warning fixed>
+        <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
+        <div slot="content">
+          <p>${_t('session.launcher.PrePortConfigWillDisappear')}</p>
+          <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button
+              id="preopen-ports-remain-button"
+              label="${_text('button.Cancel')}"
+              @click="${() => this.closeDialog('preopen-ports-config-confirmation')}"
+              style="width:auto;margin-right:10px;">
+          </mwc-button>
+          <mwc-button
+              unelevated
+              id="preopen-ports-config-reset-button"
+              label="${_text('button.DismissAndProceed')}"
+              @click="${() => this._closeAndResetPreOpenPortInput()}"
               style="width:auto;">
           </mwc-button>
         </div>

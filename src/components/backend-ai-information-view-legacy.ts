@@ -16,10 +16,6 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import 'weightless/button';
-import 'weightless/icon';
-import 'weightless/card';
-
 import '@material/mwc-icon/mwc-icon';
 
 import './lablup-activity-panel';
@@ -33,7 +29,7 @@ import './lablup-activity-panel';
  ... content ...
  </backend-ai-information-view-legacy>
 
-@group Backend.AI Web UI
+ @group Backend.AI Web UI
  @element backend-ai-information-view-legacy
  */
 
@@ -115,20 +111,6 @@ export default class BackendAiInformationViewLegacy extends BackendAIPage {
 
         .setting-label {
           width: 30%;
-        }
-
-        wl-card > div {
-          padding: 15px;
-        }
-
-        wl-button {
-          --button-bg: transparent;
-          --button-bg-hover: var(--paper-red-100);
-          --button-bg-active: var(--paper-red-100);
-          --button-bg-disabled: #ccc;
-          --button-color: var(--paper-red-100);
-          --button-color-hover: var(--paper-red-100);
-          --button-color-disabled: #ccc;
         }
 
         lablup-activity-panel {
