@@ -40,6 +40,9 @@ const UserProfileSettingModal = React.lazy(
 const ManageAppsModal = React.lazy(
   () => import("./components/ManageAppsModal")
 );
+const UserDropdownMenu = React.lazy(
+  () => import("./components/UserDropdownMenu")
+);
 
 customElements.define(
   "backend-ai-react-information",
@@ -163,6 +166,17 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <ManageAppsModal />
+      </DefaultProviders>
+    );
+  })
+);
+
+customElements.define(
+  "backend-ai-react-user-dropdown-menu",
+  reactToWebComponent((props) => {
+    return (
+      <DefaultProviders {...props}>
+        <UserDropdownMenu />
       </DefaultProviders>
     );
   })
