@@ -9,14 +9,14 @@ import {
 import { UserSettingModalMutation } from "./__generated__/UserSettingModalMutation.graphql";
 
 import {
-  Modal,
-  ModalProps,
   Form,
   Input,
   Select,
   Switch,
   message,
   Typography,
+  Modal,
+  theme,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
@@ -27,6 +27,7 @@ import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
 import { useQuery } from "react-query";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
 type User = UserSettingModalQuery$data["user"];
 
@@ -38,15 +39,16 @@ type UserRole = {
   [key: string]: string[];
 };
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   extraFetchKey?: string;
 }
 
 const UserSettingModal: React.FC<Props> = ({
   extraFetchKey = "",
-  ...modalProps
+  ...props
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
@@ -61,6 +63,8 @@ const UserSettingModal: React.FC<Props> = ({
     };
   }
   const { open, userEmail } = parsedValue;
+
+  const [modal, contextHolder] = Modal.useModal();
 
   const [form] = Form.useForm<User>();
 
@@ -209,7 +213,7 @@ const UserSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       open={open}
       onCancel={() => {
         dispatchEvent("cancel", null);
@@ -219,7 +223,7 @@ const UserSettingModal: React.FC<Props> = ({
       destroyOnClose={true}
       onOk={_onOk}
       confirmLoading={isInFlightCommitModifyUserSetting}
-      {...modalProps}
+      {...props}
     >
       <Form
         preserve={false}
@@ -339,13 +343,15 @@ const UserSettingModal: React.FC<Props> = ({
                 } else {
                   if (user?.totp_activated) {
                     form.setFieldValue("totp_activated", true);
-                    Modal.confirm({
+                    // TODO: CONFIG THEME
+                    modal.confirm({
                       title: t("totp.TurnOffTotp"),
                       icon: <ExclamationCircleFilled />,
                       content: t("totp.ConfirmTotpRemovalBody"),
                       okText: t("button.Yes"),
                       okType: "danger",
                       cancelText: t("button.No"),
+                      bodyStyle: { padding: token.paddingMD },
                       onOk() {
                         mutationToRemoveTotp.mutate(user?.email || "", {
                           onSuccess: () => {
@@ -383,7 +389,8 @@ const UserSettingModal: React.FC<Props> = ({
           }}
         />
       )}
-    </Modal>
+      {contextHolder}
+    </BAIModal>
   );
 };
 

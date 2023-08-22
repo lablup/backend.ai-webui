@@ -4,27 +4,18 @@ import { useQuery } from "react-query";
 import { useFragment } from "react-relay";
 import { TOTPActivateModalFragment$key } from "./__generated__/TOTPActivateModalFragment.graphql";
 
-import {
-  Modal,
-  ModalProps,
-  QRCode,
-  Typography,
-  Input,
-  theme,
-  Form,
-  message,
-  Spin,
-} from "antd";
+import { QRCode, Typography, Input, theme, Form, message, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useTanMutation } from "../hooks/reactQueryAlias";
 import Flex from "./Flex";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
 type TOTPActivateFormInput = {
   otp: number;
 };
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   userFrgmt?: TOTPActivateModalFragment$key | null;
   onRequestClose: (success?: boolean) => void;
 }
@@ -32,7 +23,7 @@ interface Props extends ModalProps {
 const TOTPActivateModal: React.FC<Props> = ({
   userFrgmt = null,
   onRequestClose,
-  ...modalProps
+  ...props
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -53,11 +44,11 @@ const TOTPActivateModal: React.FC<Props> = ({
     totp_key: string;
     totp_uri: string;
   }>({
-    queryKey: ["initialize_totp", baiClient?.email, modalProps.open],
+    queryKey: ["initialize_totp", baiClient?.email, props.open],
     queryFn: () => {
       return user?.email === baiClient?.email &&
         !user?.totp_activated &&
-        modalProps.open
+        props.open
         ? baiClient.initialize_totp()
         : null;
     },
@@ -90,7 +81,7 @@ const TOTPActivateModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       title={t("webui.menu.SetupTotp")}
       maskClosable={false}
       confirmLoading={mutationToActivateTotp.isLoading}
@@ -99,7 +90,7 @@ const TOTPActivateModal: React.FC<Props> = ({
         onRequestClose();
       }}
       style={{ zIndex: 1 }}
-      {...modalProps}
+      {...props}
     >
       {initializedTotp.isLoading ? (
         <Flex justify="center" direction="row">
@@ -147,7 +138,7 @@ const TOTPActivateModal: React.FC<Props> = ({
           </Flex>
         </Form>
       )}
-    </Modal>
+    </BAIModal>
   );
 };
 

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { Form, InputNumber, Modal, ModalProps, theme } from "antd";
+import { Form, InputNumber, theme } from "antd";
 import { useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
@@ -9,8 +9,9 @@ import Flex from "./Flex";
 import { useFragment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { ModelServiceSettingModal_endpoint$key } from "./__generated__/ModelServiceSettingModal_endpoint.graphql";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
   onRequestClose: (success?: boolean) => void;
 }
@@ -81,7 +82,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       {...props}
       style={{
         zIndex: 10000,
@@ -118,7 +119,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
           </Form.Item>
         </Form>
       </Flex>
-    </Modal>
+    </BAIModal>
   );
 };
 

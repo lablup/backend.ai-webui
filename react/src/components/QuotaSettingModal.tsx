@@ -4,11 +4,12 @@ import { useFragment, useMutation } from "react-relay";
 import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
 import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
 
-import { Modal, ModalProps, Form, Input, message } from "antd";
+import { Form, Input, message } from "antd";
 import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -89,7 +90,7 @@ const QuotaSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       {...props}
       style={{
         zIndex: 10000,
@@ -129,7 +130,7 @@ const QuotaSettingModal: React.FC<Props> = ({
           />
         </Form.Item>
       </Form>
-    </Modal>
+    </BAIModal>
   );
 };
 
