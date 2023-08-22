@@ -744,7 +744,8 @@
     "warning": {
       "CannotBeUndone": "ВНИМАНИЕ: это нельзя отменить!",
       "LogDeletion": "Вы уверены, что хотите удалить все сообщения журнала?",
-      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам."
+      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам.",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?"

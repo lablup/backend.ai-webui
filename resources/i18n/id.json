@@ -744,7 +744,8 @@
     "warning": {
       "CannotBeUndone": "PERINGATAN: ini tidak dapat dibatalkan!",
       "LogDeletion": "Anda yakin ingin menghapus semua pesan log?",
-      "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru."
+      "WillBeAppliedToNewSessions": "Pembaruan ini akan diterapkan ke sesi baru.",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "Apakah Anda ingin lanjut?"

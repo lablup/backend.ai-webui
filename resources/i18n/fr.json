@@ -744,7 +744,8 @@
     "warning": {
       "CannotBeUndone": "ATTENTION : cela ne peut pas être annulé !",
       "LogDeletion": "Voulez-vous vraiment supprimer tous les messages du journal ?",
-      "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions."
+      "WillBeAppliedToNewSessions": "Cette mise à jour sera appliquée aux nouvelles sessions.",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "Voulez-vous poursuivre?"
