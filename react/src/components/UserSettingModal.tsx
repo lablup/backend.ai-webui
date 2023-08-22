@@ -180,8 +180,8 @@ const UserSettingModal: React.FC<Props> = ({
     form.validateFields().then(async (values) => {
       let input = { ...values };
       delete input.email;
+      input = _.omit(input, ["password_confirm"]);
       input = _.omitBy(input, (item) => item === undefined || item === "");
-
       // TOTP setting
       if (!totpSupported) {
         delete input?.totp_activated;
@@ -244,8 +244,7 @@ const UserSettingModal: React.FC<Props> = ({
           label={t("general.NewPassword")}
           rules={[
             {
-              pattern:
-                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\^\-_])[A-Za-z\d^\-_]{8,}$/,
+              pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
               message: t("webui.menu.InvalidPasswordMessage"),
             },
           ]}
