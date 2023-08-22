@@ -23,7 +23,7 @@ interface ServiceSettingFormInput {
 const ModelServiceSettingModal: React.FC<Props> = ({
   onRequestClose,
   endpointFrgmt,
-  ...props
+  ...baiModalProps
 }) => {
   const { token } = theme.useToken();
   const baiClient = useSuspendedBackendaiClient();
@@ -83,7 +83,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      {...props}
+      {...baiModalProps}
       style={{
         zIndex: 10000,
       }}

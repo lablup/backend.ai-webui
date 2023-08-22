@@ -17,7 +17,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   onRequestClose,
   onCancel,
   inferenceSessionErrorFrgmt,
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -66,7 +66,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
           {t("button.Close")}
         </Button>,
       ]}
-      {...props}
+      {...baiModalProps}
     >
       <Descriptions
         bordered

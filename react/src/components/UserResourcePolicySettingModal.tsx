@@ -19,7 +19,7 @@ interface Props extends BAIModalProps {
 const UserResourcePolicySettingModal: React.FC<Props> = ({
   userResourcePolicyFrgmt: resourcePolicyFrgmt,
   onRequestClose,
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -126,7 +126,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      {...props}
+      {...baiModalProps}
       style={{
         zIndex: 10000,
       }}

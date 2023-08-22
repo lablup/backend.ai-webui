@@ -23,7 +23,7 @@ interface Props extends BAIModalProps {
 const TOTPActivateModal: React.FC<Props> = ({
   userFrgmt = null,
   onRequestClose,
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -44,11 +44,11 @@ const TOTPActivateModal: React.FC<Props> = ({
     totp_key: string;
     totp_uri: string;
   }>({
-    queryKey: ["initialize_totp", baiClient?.email, props.open],
+    queryKey: ["initialize_totp", baiClient?.email, baiModalProps.open],
     queryFn: () => {
       return user?.email === baiClient?.email &&
         !user?.totp_activated &&
-        props.open
+        baiModalProps.open
         ? baiClient.initialize_totp()
         : null;
     },
@@ -90,7 +90,7 @@ const TOTPActivateModal: React.FC<Props> = ({
         onRequestClose();
       }}
       style={{ zIndex: 1 }}
-      {...props}
+      {...baiModalProps}
     >
       {initializedTotp.isLoading ? (
         <Flex justify="center" direction="row">

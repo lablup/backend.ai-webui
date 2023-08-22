@@ -8,7 +8,7 @@ import BAIModal, { BAIModalProps } from "./BAIModal";
 
 interface Props extends BAIModalProps {}
 const { Text } = Typography;
-const ManageAppsModal: React.FC<Props> = ({ ...props }) => {
+const ManageAppsModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -36,7 +36,7 @@ const ManageAppsModal: React.FC<Props> = ({ ...props }) => {
       }}
       centered
       title={t("environment.ManageApps")}
-      {...props}
+      {...baiModalProps}
       footer={[
         <Flex direction="row" justify="between">
           <Button type="text" danger>

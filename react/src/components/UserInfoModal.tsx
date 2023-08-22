@@ -13,7 +13,7 @@ import BAIModal, { BAIModalProps } from "./BAIModal";
 
 interface Props extends BAIModalProps {}
 
-const UserInfoModal: React.FC<Props> = ({ ...props }) => {
+const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
 
   const { value, dispatchEvent } = useWebComponentInfo();
@@ -102,7 +102,7 @@ const UserInfoModal: React.FC<Props> = ({ ...props }) => {
           {t("button.OK")}
         </Button>,
       ]}
-      {...props}
+      {...baiModalProps}
     >
       <br />
       <Descriptions

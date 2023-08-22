@@ -45,7 +45,7 @@ interface Props extends BAIModalProps {
 
 const UserSettingModal: React.FC<Props> = ({
   extraFetchKey = "",
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
   const { token } = theme.useToken();
@@ -223,7 +223,7 @@ const UserSettingModal: React.FC<Props> = ({
       destroyOnClose={true}
       onOk={_onOk}
       confirmLoading={isInFlightCommitModifyUserSetting}
-      {...props}
+      {...baiModalProps}
     >
       <Form
         preserve={false}

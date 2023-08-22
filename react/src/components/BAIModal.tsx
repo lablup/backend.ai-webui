@@ -26,9 +26,7 @@ const BAIModal: React.FC<BAIModalProps> = ({ ...modalProps }) => {
         centered={modalProps.centered ?? true}
         className="bai-modal"
         {...modalProps}
-      >
-        {modalProps.children}
-      </Modal>
+      />
     </ConfigProvider>
   );
 };

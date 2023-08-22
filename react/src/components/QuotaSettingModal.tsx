@@ -17,7 +17,7 @@ interface Props extends BAIModalProps {
 const QuotaSettingModal: React.FC<Props> = ({
   quotaScopeFrgmt = null,
   onRequestClose,
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -91,7 +91,7 @@ const QuotaSettingModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      {...props}
+      {...baiModalProps}
       style={{
         zIndex: 10000,
       }}
