@@ -103,7 +103,7 @@ const UserProfileSettingModal: React.FC = () => {
     },
   });
 
-  const _onSelectAccessKey = (value: string) => {
+  const onSelectAccessKey = (value: string) => {
     let matchLoggedAccount = _.find(keyPairInfo.keypairs, [
       "secret_key",
       value,
@@ -113,7 +113,7 @@ const UserProfileSettingModal: React.FC = () => {
     });
   };
 
-  const _updateFullName = (newFullName: string) => {
+  const updateFullName = (newFullName: string) => {
     if (baiClient.full_name !== newFullName) {
       mutationToUpdateUserFullName.mutate(
         {
@@ -139,7 +139,7 @@ const UserProfileSettingModal: React.FC = () => {
     }
   };
 
-  const _updatePassword = (
+  const updatePassword = (
     oldPassword: string,
     newPassword: string,
     newPassword2: string
@@ -200,10 +200,10 @@ const UserProfileSettingModal: React.FC = () => {
     );
   };
 
-  const _onSubmit = () => {
+  const onSubmit = () => {
     form.validateFields().then((values) => {
-      _updateFullName(values.full_name);
-      _updatePassword(
+      updateFullName(values.full_name);
+      updatePassword(
         values.originalPassword,
         values.newPassword,
         values.newPasswordConfirm
@@ -219,7 +219,7 @@ const UserProfileSettingModal: React.FC = () => {
         okText={t("webui.menu.Update")}
         cancelText={t("webui.menu.Cancel")}
         onCancel={() => dispatchEvent("cancel", null)}
-        onOk={() => _onSubmit()}
+        onOk={() => onSubmit()}
         centered
         title={t("webui.menu.MyAccountInformation")}
       >
@@ -250,7 +250,7 @@ const UserProfileSettingModal: React.FC = () => {
           >
             <Select
               options={selectOptions}
-              onSelect={_onSelectAccessKey}
+              onSelect={onSelectAccessKey}
             ></Select>
           </Form.Item>
           <Form.Item name="secret_key" label={t("general.SecretKey")}>
