@@ -343,7 +343,6 @@ const UserSettingModal: React.FC<Props> = ({
                 } else {
                   if (user?.totp_activated) {
                     form.setFieldValue("totp_activated", true);
-                    // TODO: CONFIG THEME
                     modal.confirm({
                       title: t("totp.TurnOffTotp"),
                       icon: <ExclamationCircleFilled />,
@@ -351,7 +350,6 @@ const UserSettingModal: React.FC<Props> = ({
                       okText: t("button.Yes"),
                       okType: "danger",
                       cancelText: t("button.No"),
-                      bodyStyle: { padding: token.paddingMD },
                       onOk() {
                         mutationToRemoveTotp.mutate(user?.email || "", {
                           onSuccess: () => {

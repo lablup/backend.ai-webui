@@ -1,3 +1,6 @@
+.ant-modal.bai-modal .ant-modal-content {
+  padding: var(--general-modal-content-padding, 0);
+}
 .ant-modal.bai-modal .ant-modal-body {
   padding: var(--general-modal-body-padding, 0 24px);
 }
