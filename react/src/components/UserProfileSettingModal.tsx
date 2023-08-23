@@ -27,11 +27,8 @@ const UserProfileSettingModal: React.FC = () => {
   };
 
   const baiClient = useSuspendedBackendaiClient();
-  let email = baiClient.email;
-  let full_name = baiClient.full_name;
-  let loggedAccount = baiClient._config.accessKey;
-  let totpSupported = false;
-  let { data: isManagerSupportingTOTP } = useTanQuery(
+
+  const { data: isManagerSupportingTOTP } = useTanQuery(
     "isManagerSupportingTOTP",
     () => {
       return baiClient.isManagerSupportingTOTP();
@@ -40,8 +37,9 @@ const UserProfileSettingModal: React.FC = () => {
       suspense: false,
     }
   );
-  totpSupported = baiClient.supports("2FA") && isManagerSupportingTOTP;
-  let { data: userInfo } = useTanQuery(
+  const totpSupported = baiClient.supports("2FA") && isManagerSupportingTOTP;
+
+  const { data: userInfo } = useTanQuery(
     "totpActivated",
     () => {
       return baiClient.user.get(baiClient.email, ["totp_activated"]);
@@ -50,12 +48,16 @@ const UserProfileSettingModal: React.FC = () => {
       suspense: false,
     }
   );
-  let totpActivated = userInfo?.user.totp_activated;
+  const totpActivated = userInfo?.user.totp_activated;
 
-  let { data: keyPairInfo } = useTanQuery(
+  const { data: keyPairInfo } = useTanQuery(
     "keyPairInfo",
     () => {
-      return baiClient.keypair.list(email, ["access_key", "secret_key"], true);
+      return baiClient.keypair.list(
+        baiClient.email,
+        ["access_key", "secret_key"],
+        true
+      );
     },
     {
       suspense: false,
@@ -69,9 +71,9 @@ const UserProfileSettingModal: React.FC = () => {
         label: keyPairInfo.keypairs[i].access_key,
       });
     }
-    let matchLoggedAccount = _.find(keyPairInfo.keypairs, [
+    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
       "access_key",
-      loggedAccount,
+      baiClient._config.accessKey,
     ]);
     form.setFieldsValue({
       access_key: matchLoggedAccount?.access_key,
@@ -124,11 +126,11 @@ const UserProfileSettingModal: React.FC = () => {
   };
 
   const _updateFullName = (newFullName: string) => {
-    if (full_name !== newFullName) {
+    if (baiClient.full_name !== newFullName) {
       mutationToUpdateUserFullName.mutate(
         {
           full_name: newFullName,
-          email: email,
+          email: baiClient.email,
         },
         {
           onSuccess: () => {
@@ -216,7 +218,7 @@ const UserProfileSettingModal: React.FC = () => {
           <Form.Item
             name="full_name"
             label={t("webui.menu.FullName")}
-            initialValue={full_name}
+            initialValue={baiClient.full_name}
             rules={[
               () => ({
                 validator(_, value) {
