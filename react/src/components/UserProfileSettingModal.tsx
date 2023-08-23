@@ -81,17 +81,17 @@ const UserProfileSettingModal: React.FC = () => {
 
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
-    isOpen: boolean;
+    isOpenUserPrefDialog: boolean;
   };
   try {
     parsedValue = JSON.parse(value || "");
   } catch (error) {
     parsedValue = {
-      isOpen: false,
+      isOpenUserPrefDialog: false,
     };
   }
 
-  const { isOpen } = parsedValue;
+  const { isOpenUserPrefDialog } = parsedValue;
 
   const mutationToUpdateUserFullName = useTanMutation({
     mutationFn: (values: { email: string; full_name: string }) => {
@@ -204,7 +204,7 @@ const UserProfileSettingModal: React.FC = () => {
     <>
       {contextHolder}
       <Modal
-        open={isOpen}
+        open={isOpenUserPrefDialog}
         okText={t("webui.menu.Update")}
         cancelText={t("webui.menu.Cancel")}
         onCancel={() => dispatchEvent("cancel", null)}

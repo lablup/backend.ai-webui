@@ -51,7 +51,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: Boolean}) totpSupported = false;
   @property({type: Boolean}) totpActivated = false;
   @property({type: Boolean}) forceTotp = false;
-  @property({type: Boolean}) isOpen = false;
+  @property({type: Boolean}) isOpenUserPrefDialog = false;
   @property({type: String}) totpKey = '';
   @property({type: String}) totpUri = '';
 
@@ -192,10 +192,6 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.keyPairInfo.keypairs.reverse();
   }
 
-  async _setIsOpen(openState: boolean) {
-    this.isOpen = openState;
-  }
-
   async _updateUserFullName(newFullName: string) {
     this.fullName = globalThis.backendaiclient.full_name = newFullName;
   }
@@ -204,14 +200,14 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    */
   async _openUserPrefDialog() {
     this._showKeypairInfo();
-    this._setIsOpen(true);
+    this.isOpenUserPrefDialog = true;
   }
 
   /**
    * Hide the user preference dialog.
    */
   _hideUserPrefDialog() {
-    this._setIsOpen(false);
+    this.isOpenUserPrefDialog = false;
   }
 
   /**
@@ -403,7 +399,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       </div>
     </backend-ai-dialog>
     <backend-ai-react-user-profile-dialog
-      value="${JSON.stringify({isOpen: this.isOpen})}"
+      value="${JSON.stringify({isOpenUserPrefDialog: this.isOpenUserPrefDialog})}"
       @cancel="${()=> this._hideUserPrefDialog()}"
       @updateFullName="${(e)=> this._updateUserFullName(e.detail.newFullName)}"
       @confirmRemovingTotp="${()=> this._confirmRemovingTotp()}"
