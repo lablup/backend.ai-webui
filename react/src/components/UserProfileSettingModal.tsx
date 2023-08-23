@@ -51,7 +51,7 @@ const UserProfileSettingModal: React.FC = () => {
       suspense: false,
     }
   );
-  let selectOptions: SelectProps["options"] = [];
+  const selectOptions: SelectProps["options"] = [];
   if (keyPairInfo) {
     for (let i = 0; i < keyPairInfo.keypairs.length; i++) {
       selectOptions.push({
@@ -104,7 +104,7 @@ const UserProfileSettingModal: React.FC = () => {
   });
 
   const onSelectAccessKey = (value: string) => {
-    let matchLoggedAccount = _.find(keyPairInfo.keypairs, [
+    const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
       "secret_key",
       value,
     ]);
