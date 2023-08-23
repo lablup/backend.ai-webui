@@ -13,15 +13,15 @@ import {
 import { useSuspendedBackendaiClient } from "../hooks";
 import { useTanQuery } from "../hooks/reactQueryAlias";
 import { useTranslation } from "react-i18next";
+import { useWebComponentInfo } from "./DefaultProviders";
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
 
-  const baiClient = useSuspendedBackendaiClient();
-  console.log(baiClient);
+  const { dispatchEvent } = useWebComponentInfo();
 
-  const email = baiClient.email;
-  const full_name = baiClient.full_name;
+  const baiClient = useSuspendedBackendaiClient();
+
   const { data: userInfo } = useTanQuery(
     "getUserRole",
     () => {
@@ -35,74 +35,67 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps["items"] = [
     {
-      label: (
-        <Button type="text">
-          <UserOutlined /> {full_name}
-        </Button>
-      ),
-      key: "0",
+      label: baiClient.full_name,
+      key: "userFullName",
+      icon: <UserOutlined />,
     },
     {
-      label: (
-        <Button type="text">
-          <MailOutlined /> {email}
-        </Button>
-      ),
-      key: "1",
+      label: baiClient.email,
+      key: "userEmail",
+      icon: <MailOutlined />,
     },
     {
       type: "divider",
     },
     {
-      label: (
-        <Button type="text">
-          <SecurityScanOutlined /> {userRole}
-        </Button>
-      ),
-      key: "2",
+      label: userRole,
+      key: "userRole",
+      icon: <SecurityScanOutlined />,
     },
     {
       type: "divider",
     },
     {
-      label: (
-        <Button type="text">
-          <ExclamationCircleOutlined /> {t("webui.menu.AboutBackendAI")}
-        </Button>
-      ),
-      key: "3",
+      label: t("webui.menu.AboutBackendAI"),
+      key: "description",
+      icon: <ExclamationCircleOutlined />,
+      onClick: () => {
+        const event: CustomEvent = new CustomEvent("backend-ai-show-splash");
+        document.dispatchEvent(event);
+      },
     },
     {
-      label: (
-        <Button type="text">
-          <LockOutlined /> {t("webui.menu.MyAccount")}
-        </Button>
-      ),
-      key: "4",
+      label: t("webui.menu.MyAccount"),
+      key: "userProfileSetting",
+      icon: <LockOutlined />,
+      onClick: () => {
+        dispatchEvent("open", null);
+      },
     },
     {
-      label: (
-        <Button type="text">
-          <HolderOutlined /> {t("webui.menu.Preferences")}
-        </Button>
-      ),
-      key: "5",
+      label: t("webui.menu.Preferences"),
+      key: "preferences",
+      icon: <HolderOutlined />,
+      onClick: () => {
+        dispatchEvent("moveToUserSettingPage", null);
+      },
     },
     {
-      label: (
-        <Button type="text">
-          <FileTextOutlined /> {t("webui.menu.LogsErrors")}
-        </Button>
-      ),
-      key: "6",
+      label: t("webui.menu.LogsErrors"),
+      key: "logs",
+      icon: <FileTextOutlined />,
+      onClick: () => {
+        dispatchEvent("moveToLogPage", null);
+      },
     },
     {
-      label: (
-        <Button type="text">
-          <LogoutOutlined /> {t("webui.menu.LogOut")}
-        </Button>
-      ),
-      key: "7",
+      label: t("webui.menu.LogOut"),
+      key: "logout",
+      icon: <LogoutOutlined />,
+      onClick: () => {
+        const event: CustomEvent = new CustomEvent("backend-ai-logout");
+        document.dispatchEvent(event);
+      },
     },
   ];
 
