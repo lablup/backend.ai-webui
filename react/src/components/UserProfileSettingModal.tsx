@@ -13,18 +13,6 @@ const UserProfileSettingModal: React.FC = () => {
   const [form] = Form.useForm();
 
   const [messageApi, contextHolder] = message.useMessage();
-  const _showSuccessMessage = (successMessage: string) => {
-    messageApi.open({
-      type: "success",
-      content: successMessage,
-    });
-  };
-  const _showErrorMessage = (errorMessage: string) => {
-    messageApi.open({
-      type: "error",
-      content: errorMessage,
-    });
-  };
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -134,11 +122,17 @@ const UserProfileSettingModal: React.FC = () => {
         },
         {
           onSuccess: () => {
-            _showSuccessMessage(t("webui.menu.FullnameUpdated"));
+            messageApi.open({
+              type: "success",
+              content: t("webui.menu.FullnameUpdated"),
+            });
             dispatchEvent("updateFullName", { newFullName });
           },
           onError: (error: any) => {
-            _showErrorMessage(error.message);
+            messageApi.open({
+              type: "error",
+              content: error.message,
+            });
           },
         }
       );
@@ -155,15 +149,24 @@ const UserProfileSettingModal: React.FC = () => {
       return;
     }
     if (!oldPassword) {
-      _showErrorMessage(t("webui.menu.InputOriginalPassword"));
+      messageApi.open({
+        type: "error",
+        content: t("webui.menu.InputOriginalPassword"),
+      });
       return;
     }
     if (!newPassword) {
-      _showErrorMessage(t("webui.menu.InputNewPassword"));
+      messageApi.open({
+        type: "error",
+        content: t("webui.menu.InputNewPassword"),
+      });
       return;
     }
     if (newPassword !== newPassword2) {
-      _showErrorMessage(t("webui.menu.NewPasswordMismatch"));
+      messageApi.open({
+        type: "error",
+        content: t("webui.menu.NewPasswordMismatch"),
+      });
       return;
     }
     mutationToUpdateUserPassword.mutate(
@@ -174,11 +177,17 @@ const UserProfileSettingModal: React.FC = () => {
       },
       {
         onSuccess: () => {
-          _showSuccessMessage(t("webui.menu.PasswordUpdated"));
+          messageApi.open({
+            type: "success",
+            content: t("webui.menu.PasswordUpdated"),
+          });
           dispatchEvent("cancel", null);
         },
         onError: (error: any) => {
-          _showErrorMessage(error.message);
+          messageApi.open({
+            type: "error",
+            content: error.message,
+          });
         },
         onSettled: () => {
           form.setFieldsValue({
