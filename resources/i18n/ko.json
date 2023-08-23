@@ -1449,7 +1449,8 @@
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
-    "sessionStatusIs": "세션 상태는 "
+    "sessionStatusIs": "세션 상태는 ",
+    "EmptyProject": "사용자가 소속된 프로젝트가 없습니다."
   },
   "error": {
     "UpdateError": "업데이트 에러",

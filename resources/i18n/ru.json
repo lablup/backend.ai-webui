@@ -1366,7 +1366,8 @@
     "CreatingComputeSession": "Создание вычислительного сеанса ...",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время",
     "ComputeSessionPrepared": "Вычислительная сессия подготовлена",
-    "sessionStatusIs": "Статус сеанса"
+    "sessionStatusIs": "Статус сеанса",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Ошибка обновления",

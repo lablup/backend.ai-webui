@@ -1366,7 +1366,8 @@
     "CreatingComputeSession": "Création d'une session de calcul...",
     "SessionStillPreparing": "La séance est encore en préparation. Actualiser la page après un certain temps",
     "ComputeSessionPrepared": "Séance de calcul préparée",
-    "sessionStatusIs": "L'état de la session est"
+    "sessionStatusIs": "L'état de la session est",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Erreur de mise à jour",

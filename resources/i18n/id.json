@@ -1366,7 +1366,8 @@
     "CreatingComputeSession": "Membuat sesi komputasi...",
     "SessionStillPreparing": "Sesi masih dalam persiapan. Harap muat ulang setelah beberapa saat",
     "ComputeSessionPrepared": "Sesi komputasi tersiapkan",
-    "sessionStatusIs": "Status sesi adalah"
+    "sessionStatusIs": "Status sesi adalah",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Galat pembaruan",
