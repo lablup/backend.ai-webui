@@ -341,9 +341,9 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
         const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
         const projects = await globalThis.backendaiclient.eduApp.get_user_projects();
         if (!projects) {
-          this.notification.text = _text('eduapi.EmptyProject')
+          this.notification.text = _text('eduapi.EmptyProject');
           this.notification.show();
-          return
+          return;
         }
         const resources = mounts ? {mounts, ...this.resources, 'group_name': projects[0]['name']} : {...this.resources, 'group_name': projects[0]['name']};
         let response;
