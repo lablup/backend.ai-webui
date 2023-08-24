@@ -101,15 +101,57 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     // language=HTML
     return html`
       <link rel="stylesheet" href="resources/custom.css">
-      <backend-ai-react-maintenance-view
-        value="${JSON.stringify({
-          recalculating: this.recalculating,
-          scanning: this.scanning
-        })}"
-        @recalculate="${(e)=> this.recalculate_usage()}"
-        @rescan="${(e)=> this.rescan_images()}"
-      >
-      </backend-ai-react-maintenance-view>
+      <div class="horizontal wrap layout">
+        <lablup-activity-panel title="${_t('maintenance.Fix')}">
+          <div slot="message" class="vertical flex layout wrap setting-item">
+            <div class="vertical center-justified layout setting-desc">
+              <div class="title">${_t('maintenance.MatchDatabase')}</div>
+              <div class="description">${_tr('maintenance.DescMatchDatabase')}
+              </div>
+            </div>
+            <mwc-button
+                  outlined
+                  id="recalculate_usage-button-desc"
+                  ?disabled="${this.recalculating}"
+                  label="${_t('maintenance.RecalculateUsage')}"
+                  icon="refresh"
+                  @click="${() => this.recalculate_usage()}">
+            </mwc-button>
+          </div>
+        </lablup-activity-panel>
+        <lablup-activity-panel title="${_t('maintenance.ImagesEnvironment')}">
+          <div slot="message">
+            <div class="horizontal flex layout wrap setting-item">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t('maintenance.RescanImageList')}</div>
+                <div class="description">${_tr('maintenance.DescRescanImageList')}
+                </div>
+              </div>
+              <mwc-button
+                  outlined
+                  id="rescan-image-button-desc"
+                  ?disabled="${this.scanning}"
+                  label="${_t('maintenance.RescanImages')}"
+                  icon="refresh"
+                  @click="${() => this.rescan_images()}">
+              </mwc-button>
+            </div>
+            <div class="horizontal flex layout wrap setting-item temporarily-hide">
+              <div class="vertical center-justified layout setting-desc">
+                <div class="title">${_t('maintenance.CleanupOldImages')}</div>
+                <div class="description">${_t('maintenance.DescCleanupOldImages')}
+                </div>
+              </div>
+              <mwc-button
+                  outlined
+                  disabled
+                  label="${_t('maintenance.CleanupImages')}"
+                  icon="delete">
+              </mwc-button>
+            </div>
+          </div>
+        </lablup-activity-panel>
+      </div>
     `;
   }
 
@@ -136,6 +178,7 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
    * rescan the image
    */
   async rescan_images() {
+    this.rescanImageButton.label = _text('maintenance.RescanImageScanning');
     this.scanning = true;
     // this.notification.text = 'Rescan image started.';
     // this.notification.show();
@@ -165,9 +208,11 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
           sse.close();
           throw new Error('Background Image scanning task has been cancelled');
         });
+        this.rescanImageButton.label = _text('maintenance.RescanImages');
         this.scanning = false;
       }).catch((err) => {
         this.scanning = false;
+        this.rescanImageButton.label = _text('maintenance.RescanImages');
         console.log(err);
         indicator.set(50, _text('maintenance.RescanFailed'));
         indicator.end(1000);
@@ -183,16 +228,19 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
    * recalculate the usage
    */
   async recalculate_usage() {
+    this.recalculateUsageButton.label = _text('maintenance.Recalculating');
     this.recalculating = true;
     const indicator = await this.indicator.start('indeterminate');
     indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
       globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
+        this.recalculateUsageButton.label = _text('maintenance.RecalculateUsage');
         this.recalculating = false;
         indicator.set(100, _text('maintenance.RecalculationFinished'));
       }).catch((err) => {
         this.recalculating = false;
+        this.recalculateUsageButton.label = _text('maintenance.RecalculateUsage');
         console.log(err);
         indicator.set(50, _text('maintenance.RecalculationFailed'));
         indicator.end(1000);
