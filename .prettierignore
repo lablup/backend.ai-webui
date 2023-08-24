@@ -1,2 +1,4 @@
 /*
+!/src
 !/react
+**/__generated__/*.graphql.ts
