@@ -1652,6 +1652,8 @@ export default class BackendAiStorageList extends BackendAIPage {
           return item;
         } else if (this.storageType === 'general' && !item.name.startsWith('.') && item.usage_mode == 'general') {
           return item;
+        } else if (this.storageType === 'data' && !item.name.startsWith('.') && item.usage_mode == 'data') {
+          return item;
         } else if (this.storageType === 'automount' && item.name.startsWith('.')) {
           return item;
         } else if (this.storageType === 'model' && !item.name.startsWith('.') && item.usage_mode == 'model') {

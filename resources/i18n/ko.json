@@ -821,7 +821,9 @@
     "Used": "사용됨",
     "Limit": "제한",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
-    "ProjectFolder": "프로젝트 폴더"
+    "ProjectFolder": "프로젝트 폴더",
+    "Pipeline": "파이프라인 폴더",
+    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더."
   },
   "dialog": {
     "warning": {

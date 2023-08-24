@@ -192,13 +192,15 @@ export default class BackendAIData extends BackendAIPage {
         }
 
         #automount-folder-lists > div,
+        #data-folder-lists > div,
         #model-folder-lists > div {
           background-color: white;
           color: var(--general-textfield-selected-color);
           border-bottom:0.5px solid var(--general-textfield-selected-color);
         }
 
-        #automount-folder-lists > div > p ,
+        #automount-folder-lists > div > p,
+        #data-folder-lists > div > p,
         #model-folder-lists > div > p {
           color: var(--general-sidebar-color);
           margin-left: 10px;
@@ -278,6 +280,9 @@ export default class BackendAIData extends BackendAIPage {
                 <mwc-tab title="general" label="${_t('data.Folders')}"
                     @click="${(e) => this._showTab(e.target)}">
                 </mwc-tab>
+                <mwc-tab title="data" label="${_t('data.Pipeline')}"
+                    @click="${(e) => this._showTab(e.target)}">
+                </mwc-tab>
                 <mwc-tab title="automount" label="${_t('data.AutomountFolders')}" @click="${(e) => this._showTab(e.target)}"></mwc-tab>
                 ${this.enableInferenceWorkload ? html`
                 <mwc-tab title="model" label="${_t('data.Models')}"
@@ -291,6 +296,12 @@ export default class BackendAIData extends BackendAIPage {
             </h3>
             <div id="general-folder-lists" class="tab-content">
               <backend-ai-storage-list id="general-folder-storage" storageType="general" ?active="${this.active === true && this._activeTab === 'general'}"></backend-ai-storage-list>
+            </div>
+            <div id="data-folder-lists" class="tab-content" style="display:none;">
+              <div class="horizontal layout">
+                <p>${_t('data.DialogDataFolder')}</p>
+              </div>
+              <backend-ai-storage-list id="data-folder-storage" storageType="data" ?active="${this.active === true && this._activeTab === 'data'}"></backend-ai-storage-list>
             </div>
             <div id="automount-folder-lists" class="tab-content" style="display:none;">
               <div class="horizontal layout">
