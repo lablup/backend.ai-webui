@@ -1,21 +1,14 @@
 import React from "react";
-import {
-  Modal,
-  ModalProps,
-  Input,
-  Typography,
-  Space,
-  Button,
-  Form,
-} from "antd";
+import { Input, Typography, Space, Button, Form } from "antd";
 import { DeleteOutlined, PlusOutlined, CheckOutlined } from "@ant-design/icons";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import Flex from "./Flex";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends ModalProps {}
+interface Props extends BAIModalProps {}
 const { Text } = Typography;
-const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
+const ManageAppsModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -36,14 +29,14 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
   };
 
   return (
-    <Modal
+    <BAIModal
       open={open}
       onCancel={() => {
         dispatchEvent("cancel", null);
       }}
       centered
       title={t("environment.ManageApps")}
-      {...modalProps}
+      {...baiModalProps}
       footer={[
         <Flex direction="row" justify="between">
           <Button type="text" danger>
@@ -139,7 +132,7 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
                 })}
                 <Button block icon={<PlusOutlined />}>{t('general.Add')}</Button>
             </Space> */}
-    </Modal>
+    </BAIModal>
   );
 };
 

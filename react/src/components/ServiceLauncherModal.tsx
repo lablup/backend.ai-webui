@@ -1,13 +1,4 @@
-import {
-  Card,
-  Form,
-  Input,
-  Modal,
-  ModalProps,
-  theme,
-  Switch,
-  message,
-} from "antd";
+import { Card, Form, Input, theme, Switch, message } from "antd";
 import React, { Suspense } from "react";
 import { Trans, useTranslation } from "react-i18next";
 import { useSuspendedBackendaiClient } from "../hooks";
@@ -24,6 +15,7 @@ import { useTanMutation } from "../hooks/reactQueryAlias";
 import { useCurrentDomainValue } from "../hooks";
 import { baiSignedRequestWithPromise } from "../helper";
 import { useResourceSlots } from "../hooks/backendai";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
 type ClusterMode = "single-node" | "multi-node";
 
@@ -63,7 +55,8 @@ interface ServiceCreateType {
   config: ServiceCreateConfigType;
 }
 
-interface ServiceLauncherProps extends Omit<ModalProps, "onOK" | "onCancel"> {
+interface ServiceLauncherProps
+  extends Omit<BAIModalProps, "onOK" | "onCancel"> {
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
@@ -174,7 +167,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       title={t("modelService.StartNewServing")}
       onOk={handleOk}
       onCancel={handleCancel}
@@ -382,7 +375,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Card>
         </Form>
       </Suspense>
-    </Modal>
+    </BAIModal>
   );
 };
 

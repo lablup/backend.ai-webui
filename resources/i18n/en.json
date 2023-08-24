@@ -833,13 +833,16 @@
     "Used": "Used",
     "Limit": "Limit",
     "HostDetails": "Displays quota information for the selected storage host.",
-    "ProjectFolder": "Project Folder"
+    "ProjectFolder": "Project Folder",
+    "Pipeline": "Pipeline Folders",
+    "DialogDataFolder": "Pipeline dedicated folders that are automatically created when creating pipelines in FastTrack."
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "WARNING: this cannot be undone!",
       "LogDeletion": "Are you sure you want to delete all of the log messages?",
-      "WillBeAppliedToNewSessions": "This update will be applied to new sessions."
+      "WillBeAppliedToNewSessions": "This update will be applied to new sessions.",
+      "Required": "Required"
     },
     "ask": {
       "DoYouWantToProceed": "Do you want to proceed?"
@@ -1461,7 +1464,8 @@
     "CreatingComputeSession": "Creating compute session ...",
     "SessionStillPreparing": "Session is still in preparing. Reload after a while",
     "ComputeSessionPrepared": "Compute session prepared",
-    "sessionStatusIs": "Session status is"
+    "sessionStatusIs": "Session status is",
+    "EmptyProject": "EmptyProject"
   },
   "error": {
     "UpdateError": "Update error",

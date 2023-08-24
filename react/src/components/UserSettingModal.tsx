@@ -9,14 +9,14 @@ import {
 import { UserSettingModalMutation } from "./__generated__/UserSettingModalMutation.graphql";
 
 import {
-  Modal,
-  ModalProps,
   Form,
   Input,
   Select,
   Switch,
   message,
   Typography,
+  Modal,
+  theme,
 } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
@@ -27,6 +27,7 @@ import TOTPActivateModal from "./TOTPActivateModal";
 import _ from "lodash";
 import { useQuery } from "react-query";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
 type User = UserSettingModalQuery$data["user"];
 
@@ -38,15 +39,16 @@ type UserRole = {
   [key: string]: string[];
 };
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   extraFetchKey?: string;
 }
 
 const UserSettingModal: React.FC<Props> = ({
   extraFetchKey = "",
-  ...modalProps
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
+  const { token } = theme.useToken();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
     open: boolean;
@@ -61,6 +63,8 @@ const UserSettingModal: React.FC<Props> = ({
     };
   }
   const { open, userEmail } = parsedValue;
+
+  const [modal, contextHolder] = Modal.useModal();
 
   const [form] = Form.useForm<User>();
 
@@ -180,8 +184,8 @@ const UserSettingModal: React.FC<Props> = ({
     form.validateFields().then(async (values) => {
       let input = { ...values };
       delete input.email;
+      input = _.omit(input, ["password_confirm"]);
       input = _.omitBy(input, (item) => item === undefined || item === "");
-
       // TOTP setting
       if (!totpSupported) {
         delete input?.totp_activated;
@@ -209,7 +213,7 @@ const UserSettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       open={open}
       onCancel={() => {
         dispatchEvent("cancel", null);
@@ -219,7 +223,7 @@ const UserSettingModal: React.FC<Props> = ({
       destroyOnClose={true}
       onOk={_onOk}
       confirmLoading={isInFlightCommitModifyUserSetting}
-      {...modalProps}
+      {...baiModalProps}
     >
       <Form
         preserve={false}
@@ -244,8 +248,7 @@ const UserSettingModal: React.FC<Props> = ({
           label={t("general.NewPassword")}
           rules={[
             {
-              pattern:
-                /^(?=.*[A-Za-z])(?=.*\d)(?=.*[\^\-_])[A-Za-z\d^\-_]{8,}$/,
+              pattern: /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/,
               message: t("webui.menu.InvalidPasswordMessage"),
             },
           ]}
@@ -339,7 +342,7 @@ const UserSettingModal: React.FC<Props> = ({
                 } else {
                   if (user?.totp_activated) {
                     form.setFieldValue("totp_activated", true);
-                    Modal.confirm({
+                    modal.confirm({
                       title: t("totp.TurnOffTotp"),
                       icon: <ExclamationCircleFilled />,
                       content: t("totp.ConfirmTotpRemovalBody"),
@@ -383,7 +386,8 @@ const UserSettingModal: React.FC<Props> = ({
           }}
         />
       )}
-    </Modal>
+      {contextHolder}
+    </BAIModal>
   );
 };
 

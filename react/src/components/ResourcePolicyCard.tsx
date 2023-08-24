@@ -43,6 +43,8 @@ const ResourcePolicyCard: React.FC<Props> = ({
   const { t } = useTranslation();
   const { token } = theme.useToken();
 
+  const [modal, contextHolder] = Modal.useModal();
+
   const [
     visibleProjectResourcePolicySettingModal,
     { toggle: toggleProjectResourcePolicySettingModal },
@@ -106,7 +108,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
   `);
 
   const confirmUnsetResourcePolicy = () => {
-    Modal.confirm({
+    modal.confirm({
       title: t("storageHost.UnsetResourcePolicy"),
       content: t("storageHost.DoYouWantToUseDefaultValue"),
       icon: <ExclamationCircleOutlined />,
@@ -238,6 +240,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
           toggleUserResourcePolicySettingModal();
         }}
       />
+      {contextHolder}
     </>
   );
 };
