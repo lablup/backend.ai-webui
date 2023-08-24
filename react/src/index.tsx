@@ -34,7 +34,10 @@ const UserInfoModal = React.lazy(() => import("./components/UserInfoModal"));
 const UserSettingsModal = React.lazy(
   () => import("./components/UserSettingModal")
 );
-const MaintenancePage = React.lazy(() => import("./pages/MaintenancePage"));
+// const UserProfileSettingModal = React.lazy(
+//   () => import("./components/UserProfileSettingModal")
+// );
+// const MaintenancePage = React.lazy(() => import("./pages/MaintenancePage"));
 const ManageAppsModal = React.lazy(
   () => import("./components/ManageAppsModal")
 );
@@ -139,17 +142,6 @@ customElements.define(
     return (
       <DefaultProviders {...props}>
         <UserSettingsModal />
-      </DefaultProviders>
-    );
-  })
-);
-
-customElements.define(
-  "backend-ai-react-maintenance-view",
-  reactToWebComponent((props) => {
-    return (
-      <DefaultProviders {...props}>
-        <MaintenancePage />
       </DefaultProviders>
     );
   })
