@@ -1366,7 +1366,8 @@
     "CreatingComputeSession": "Тооцоолох session үүсгэж байна ...",
     "SessionStillPreparing": "Session бэлтгэл ажил үргэлжилж байна. Хэсэг хугацааны дараа дахин ажиллуулна уу",
     "ComputeSessionPrepared": "Тооцоолох хэсгийг бэлтгэсэн",
-    "sessionStatusIs": "Session-ий байдал"
+    "sessionStatusIs": "Session-ий байдал",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Шинэчлэлтийн алдаа",

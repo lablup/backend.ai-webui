@@ -48,6 +48,7 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
   @property({type: Object}) clientConfig = Object();
   @property({type: Object}) client = Object();
   @property({type: Object}) notification = Object();
+  @property({type: String}) resources = Object();
   @query('#app-launcher') appLauncher!: BackendAIAppLauncher;
 
   static get styles(): CSSResultGroup | undefined {
@@ -113,6 +114,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
 
   async launch(apiEndpoint: string) {
     await this._initClient(apiEndpoint);
+    const queryParams = new URLSearchParams(window.location.search);
+    this.resources = {
+      'cpu': queryParams.get('cpu'),
+      'mem': queryParams.get('mem'),
+      'cuda.shares': queryParams.get('cuda-shares'),
+      'cuda.device': queryParams.get('cuda-device'),
+    };
     const loginSuccess = await this._token_login();
     if (loginSuccess) {
       // Launching app requires to get the AppProxy mode, which requires to fill
@@ -331,7 +339,13 @@ export default class BackendAiEduApplauncher extends BackendAIPage {
       const templateId = sessionTemplates[0].id; // NOTE: use the first template. will it be okay?
       try {
         const mounts = await globalThis.backendaiclient.eduApp.get_mount_folders();
-        const resources = mounts ? {mounts} : {};
+        const projects = await globalThis.backendaiclient.eduApp.get_user_projects();
+        if (!projects) {
+          this.notification.text = _text('eduapi.EmptyProject');
+          this.notification.show();
+          return;
+        }
+        const resources = mounts ? {mounts, ...this.resources, 'group_name': projects[0]['name']} : {...this.resources, 'group_name': projects[0]['name']};
         let response;
         try {
           this.appLauncher.indicator.set(60, _text('eduapi.CreatingComputeSession'));

@@ -4262,6 +4262,14 @@ class EduApp {
     const rqst = this.client.newSignedRequest('GET', '/eduapp/mounts');
     return this.client._wrapWithPromise(rqst);
   }
+
+  /**
+   * Get projects of user.
+   */
+  async get_user_projects() {
+    const rqst = this.client.newSignedRequest('GET', '/eduapp/projects');
+    return this.client._wrapWithPromise(rqst);
+  }
 }
 
 class utils {
