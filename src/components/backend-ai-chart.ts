@@ -3,13 +3,16 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '../plastics/chart-js';
 import format from 'date-fns/esm/format';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
 
 const ByteConverter = {
   toB: (bytes) => bytes,
@@ -17,27 +20,32 @@ const ByteConverter = {
   toMB: (bytes) => bytes / (1024 * 1024),
   toGB: (bytes) => bytes / (1024 * 1024 * 1024),
   toTB: (bytes) => bytes / (1024 * 1024 * 1024 * 1024),
-  log1024: (n) => n <= 0 ? 0 : Math.log(n) / Math.log(1024),
+  log1024: (n) => (n <= 0 ? 0 : Math.log(n) / Math.log(1024)),
 
-  readableUnit: function(bytes) {
+  readableUnit: function (bytes) {
     return ['B', 'KB', 'MB', 'GB', 'TB'][Math.floor(this.log1024(bytes))];
   },
 
-  scale: function(data, targetUnit = '') {
+  scale: function (data, targetUnit = '') {
     let minUnit;
     if (targetUnit === '') {
-      minUnit = this.readableUnit(Math.min.apply(null, data.map((d) => d.y)));
+      minUnit = this.readableUnit(
+        Math.min.apply(
+          null,
+          data.map((d) => d.y),
+        ),
+      );
     } else {
       minUnit = 'MB';
     }
     return {
       data: data.map((e) => ({
         ...e,
-        y: this[`to${minUnit}`](e.y)
+        y: this[`to${minUnit}`](e.y),
       })),
-      unit: minUnit
+      unit: minUnit,
     };
-  }
+  },
 };
 
 const capitalize = (s) => {
@@ -54,12 +62,12 @@ const capitalize = (s) => {
 
 @customElement('backend-ai-chart')
 export default class BackendAIChart extends LitElement {
-  @property({type: Number}) idx;
-  @property({type: Object}) collection;
-  @property({type: Object}) chartData;
-  @property({type: Object}) options;
-  @property({type: Object}) chart;
-  @property({type: String}) type;
+  @property({ type: Number }) idx;
+  @property({ type: Object }) collection;
+  @property({ type: Object }) chartData;
+  @property({ type: Object }) options;
+  @property({ type: Object }) chart;
+  @property({ type: String }) type;
 
   /**
    * @param {object} collection              Object containing the fields listed below
@@ -75,43 +83,58 @@ export default class BackendAIChart extends LitElement {
   firstUpdated() {
     this.chart = this.shadowRoot?.querySelector('#chart');
     if (this.collection.axisTitle['y']) {
-      this.type = (this.collection.axisTitle['y'] == 'Sessions' || this.collection.axisTitle['y'] == 'CPU') ? 'bar' : 'line';
+      this.type =
+        this.collection.axisTitle['y'] == 'Sessions' ||
+        this.collection.axisTitle['y'] == 'CPU'
+          ? 'bar'
+          : 'line';
     }
     this._updateChartData();
   }
 
   _updateChartData() {
     if (this.collection.unit_hint === 'bytes') this.scaleData();
-    const temp = this.collection.data[0]
-      .map((e) => (format(e.x, 'MMM dd HH:mm')));
+    const temp = this.collection.data[0].map((e) =>
+      format(e.x, 'MMM dd HH:mm'),
+    );
     const colors = {
-      'Sessions': '#ec407a', 'CPU': '#9ccc65', 'Memory': '#ffa726',
-      'GPU': '#26c6da', 'IO-Read': '#3677eb', 'IO-Write': '#003f5c'
+      Sessions: '#ec407a',
+      CPU: '#9ccc65',
+      Memory: '#ffa726',
+      GPU: '#26c6da',
+      'IO-Read': '#3677eb',
+      'IO-Write': '#003f5c',
     };
-    const maxTicksLimit = (this.collection.period == '1D') ? 8 : 14;
-    const maxRotation = (this.collection.period == '1D') ? 0 : 50;
+    const maxTicksLimit = this.collection.period == '1D' ? 8 : 14;
+    const maxRotation = this.collection.period == '1D' ? 0 : 50;
 
     this.chartData = {
       labels: temp,
-      datasets: [{
-        label: this.collection.axisTitle['y'] + ' (' + this.collection.unit_hint + ')',
-        data: this.collection.data[0],
-        barThickness: 6,
-        borderWidth: 1,
-        borderColor: colors[this.collection.axisTitle['y']],
-        backgroundColor: colors[this.collection.axisTitle['y']],
-        parsing: {
-          xAxisKey: 'x',
-          yAxisKey: 'y'
-        }
-      }],
+      datasets: [
+        {
+          label:
+            this.collection.axisTitle['y'] +
+            ' (' +
+            this.collection.unit_hint +
+            ')',
+          data: this.collection.data[0],
+          barThickness: 6,
+          borderWidth: 1,
+          borderColor: colors[this.collection.axisTitle['y']],
+          backgroundColor: colors[this.collection.axisTitle['y']],
+          parsing: {
+            xAxisKey: 'x',
+            yAxisKey: 'y',
+          },
+        },
+      ],
     };
 
     this.options = {
       responsive: true,
       maintainAspectRatio: false,
       legend: {
-        display: true
+        display: true,
       },
       tooltips: {
         intersect: false,
@@ -121,7 +144,7 @@ export default class BackendAIChart extends LitElement {
           display: true,
           ticks: {
             major: {
-              enabled: true
+              enabled: true,
             },
             source: 'data',
             autoSkip: true,
@@ -131,9 +154,10 @@ export default class BackendAIChart extends LitElement {
             /* callback: function(value) {
               return value.slice(0, -2) + '00';
             },*/
-            font: function(context) {
+            font: function (context) {
               const width = context.chart.width;
-              const size = Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;
+              const size =
+                Math.round(width / 64) < 12 ? Math.round(width / 64) : 12;
               return {
                 size: size,
               };
@@ -142,8 +166,8 @@ export default class BackendAIChart extends LitElement {
           scaleLabel: {
             display: true,
             align: 'end',
-            labelString: this.collection.axisTitle.x
-          }
+            labelString: this.collection.axisTitle.x,
+          },
         },
         y: {
           responsive: true,
@@ -156,9 +180,10 @@ export default class BackendAIChart extends LitElement {
                 return value;
               }
             },
-            font: function(context) {
+            font: function (context) {
               const height = context.chart.height;
-              const size = Math.round(height / 16) < 12 ? Math.round(height / 16) : 12;
+              const size =
+                Math.round(height / 16) < 12 ? Math.round(height / 16) : 12;
               return {
                 size: size,
               };
@@ -166,10 +191,10 @@ export default class BackendAIChart extends LitElement {
           },
           scaleLabel: {
             display: true,
-            labelString: capitalize(this.collection.unit_hint)
-          }
-        }
-      }
+            labelString: capitalize(this.collection.unit_hint),
+          },
+        },
+      },
     };
   }
 
@@ -178,9 +203,19 @@ export default class BackendAIChart extends LitElement {
     return html`
       <div class="layout vertical center">
         <div id="ctn-chartjs${this.idx}">
-        ${this.type == 'bar' ?
-    html`<chart-js id="chart" type="bar" .data="${this.chartData}" .options="${this.options}"></chart-js>` :
-    html`<chart-js id="chart" type="line" .data="${this.chartData}" .options="${this.options}"></chart-js>`}
+          ${this.type == 'bar'
+            ? html`<chart-js
+                id="chart"
+                type="bar"
+                .data="${this.chartData}"
+                .options="${this.options}"
+              ></chart-js>`
+            : html`<chart-js
+                id="chart"
+                type="line"
+                .data="${this.chartData}"
+                .options="${this.options}"
+              ></chart-js>`}
         </div>
       </div>
     `;
@@ -194,8 +229,8 @@ export default class BackendAIChart extends LitElement {
           if (oldval === undefined) return true;
           if (newval.period !== oldval.period) return true;
           return false;
-        }
-      }
+        },
+      },
     };
   }
 
@@ -204,15 +239,14 @@ export default class BackendAIChart extends LitElement {
   }
 
   static get styles(): CSSResultGroup {
-    return [
-      BackendAiStyles,
-      IronFlex,
-      IronFlexAlignment,
-    ];
+    return [BackendAiStyles, IronFlex, IronFlexAlignment];
   }
 
   updated(changedProps) {
-    if (changedProps.has('collection') && changedProps.get('collection') !== undefined) {
+    if (
+      changedProps.has('collection') &&
+      changedProps.get('collection') !== undefined
+    ) {
       this._updateChartData();
     }
   }
@@ -230,9 +264,17 @@ export default class BackendAIChart extends LitElement {
    * To resolve this issue, the code must follow the lowest unit among the arrays.
    */
   scaleData() {
-    const converted = this.collection.data.map((e) => ByteConverter.scale(e, 'MB'));
+    const converted = this.collection.data.map((e) =>
+      ByteConverter.scale(e, 'MB'),
+    );
     this.collection.data = converted.map((e) => e.data);
-    this.collection.unit_hint = {'B': 'Bytes', 'KB': 'KBytes', 'MB': 'MB', 'GB': 'GB', 'TB': 'TB'}[converted[0].unit];
+    this.collection.unit_hint = {
+      B: 'Bytes',
+      KB: 'KBytes',
+      MB: 'MB',
+      GB: 'GB',
+      TB: 'TB',
+    }[converted[0].unit];
   }
 }
 

@@ -3,9 +3,8 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Lablup Loading Dots
@@ -22,7 +21,7 @@ import {customElement, property, query} from 'lit/decorators.js';
 
 @customElement('lablup-loading-dots')
 export default class LablupLoadingdots extends LitElement {
-  @property({type: Boolean, reflect: true}) active = false;
+  @property({ type: Boolean, reflect: true }) active = false;
   @query('#dots') dots!: HTMLDivElement;
 
   static get styles(): CSSResultGroup {
@@ -49,15 +48,15 @@ export default class LablupLoadingdots extends LitElement {
         }
 
         .pulse-bubble-1 {
-          animation: pulse .4s ease 0s infinite alternate;
+          animation: pulse 0.4s ease 0s infinite alternate;
         }
 
         .pulse-bubble-2 {
-          animation: pulse .4s ease .2s infinite alternate;
+          animation: pulse 0.4s ease 0.2s infinite alternate;
         }
 
         .pulse-bubble-3 {
-          animation: pulse .4s ease .4s infinite alternate;
+          animation: pulse 0.4s ease 0.4s infinite alternate;
         }
 
         @keyframes pulse {
@@ -66,11 +65,12 @@ export default class LablupLoadingdots extends LitElement {
             transform: scale(1);
           }
           to {
-            opacity: .25;
-            transform: scale(.75);
+            opacity: 0.25;
+            transform: scale(0.75);
           }
         }
-      `];
+      `,
+    ];
   }
 
   render() {

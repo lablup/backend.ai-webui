@@ -1,14 +1,14 @@
-import React from "react";
-import { useFragment, useMutation } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { UserResourcePolicySettingModalFragment$key } from "./__generated__/UserResourcePolicySettingModalFragment.graphql";
+import React from 'react';
+import { useFragment, useMutation } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { UserResourcePolicySettingModalFragment$key } from './__generated__/UserResourcePolicySettingModalFragment.graphql';
 // import { UserResourcePolicySettingModalCreateMutation } from "./__generated__/UserResourcePolicySettingModalCreateMutation.graphql";
-import { UserResourcePolicySettingModalModifyMutation } from "./__generated__/UserResourcePolicySettingModalModifyMutation.graphql";
+import { UserResourcePolicySettingModalModifyMutation } from './__generated__/UserResourcePolicySettingModalModifyMutation.graphql';
 
-import { Form, Input, message, Alert } from "antd";
-import { useTranslation } from "react-i18next";
-import { GBToBytes, bytesToGB } from "../helper";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { Form, Input, message, Alert } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { GBToBytes, bytesToGB } from '../helper';
+import BAIModal, { BAIModalProps } from './BAIModal';
 
 interface Props extends BAIModalProps {
   // userResourcePolicy: string;
@@ -34,7 +34,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         max_vfolder_size
       }
     `,
-    resourcePolicyFrgmt
+    resourcePolicyFrgmt,
   );
 
   // const [
@@ -83,7 +83,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
           onCompleted(response) {
             if (response.modify_user_resource_policy?.ok) {
               message.success(
-                t("storageHost.ResourcePolicySuccessfullyUpdated")
+                t('storageHost.ResourcePolicySuccessfullyUpdated'),
               );
             } else {
               message.error(response?.modify_user_resource_policy?.msg);
@@ -131,11 +131,11 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         zIndex: 10000,
       }}
       destroyOnClose
-      title={t("storageHost.ResourcePolicySettings")}
+      title={t('storageHost.ResourcePolicySettings')}
       onOk={_onOk}
     >
       <Alert
-        message={t("storageHost.BeCarefulToSetUserResourcePolicy")}
+        message={t('storageHost.BeCarefulToSetUserResourcePolicy')}
         type="warning"
         showIcon
         style={{ marginTop: 20, marginBottom: 25 }}
@@ -145,7 +145,7 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
         preserve={false}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
-        validateTrigger={["onChange", "onBlur"]}
+        validateTrigger={['onChange', 'onBlur']}
         initialValues={{
           id: userResourcePolicyInfo?.id,
           name: userResourcePolicyInfo?.name,
@@ -158,13 +158,13 @@ const UserResourcePolicySettingModal: React.FC<Props> = ({
       >
         <Form.Item
           name="max_vfolder_size"
-          label={t("storageHost.MaxFolderSize")}
+          label={t('storageHost.MaxFolderSize')}
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
               message:
-                t("storageHost.quotaSettings.AllowNumberAndDot") ||
-                "Allows numbers and .(dot) only",
+                t('storageHost.quotaSettings.AllowNumberAndDot') ||
+                'Allows numbers and .(dot) only',
             },
           ]}
         >

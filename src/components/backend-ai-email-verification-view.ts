@@ -2,24 +2,24 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { get as _text, translate as _t } from 'lit-translate';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
-import {TextField} from '@material/mwc-textfield/mwc-textfield';
+import { TextField } from '@material/mwc-textfield/mwc-textfield';
 import '@material/mwc-button/mwc-button';
 
 import './backend-ai-dialog';
-import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 
-import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
+import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 
 /**
  Backend.AI Email Verification View
@@ -36,12 +36,12 @@ import {Client, ClientConfig} from '../lib/backend.ai-client-esm';
 
 @customElement('backend-ai-email-verification-view')
 export default class BackendAIEmailVerificationView extends BackendAIPage {
-  @property({type: Object}) webUIShell = Object();
-  @property({type: Object}) clientConfig = Object();
-  @property({type: Object}) client = Object();
-  @property({type: Object}) notification = Object();
-  @property({type: Object}) successDialog = Object();
-  @property({type: Object}) failDialog = Object();
+  @property({ type: Object }) webUIShell = Object();
+  @property({ type: Object }) clientConfig = Object();
+  @property({ type: Object }) client = Object();
+  @property({ type: Object }) notification = Object();
+  @property({ type: Object }) successDialog = Object();
+  @property({ type: Object }) failDialog = Object();
 
   static get styles(): CSSResultGroup {
     return [
@@ -58,7 +58,7 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-typography-font-family: var(--general-font-family);
         }
-      `
+      `,
     ];
   }
 
@@ -71,14 +71,15 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
     this.webUIShell = document.querySelector('#webui-shell');
     this.webUIShell.appBody.style.visibility = 'visible';
     this.notification = globalThis.lablupNotification;
-    this.successDialog = this.shadowRoot?.querySelector('#verification-success-dialog');
-    this.failDialog = this.shadowRoot?.querySelector('#verification-fail-dialog');
+    this.successDialog = this.shadowRoot?.querySelector(
+      '#verification-success-dialog',
+    );
+    this.failDialog = this.shadowRoot?.querySelector(
+      '#verification-fail-dialog',
+    );
 
     this.clientConfig = new ClientConfig('', '', apiEndpoint, 'SESSION');
-    this.client = new Client(
-      this.clientConfig,
-      'Backend.AI Web UI.',
-    );
+    this.client = new Client(this.clientConfig, 'Backend.AI Web UI.');
     this.successDialog.addEventListener('didHide', () => {
       this._redirectToLoginPage();
     });
@@ -140,8 +141,15 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-      <backend-ai-dialog id="verification-success-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <link rel="stylesheet" href="resources/custom.css" />
+      <backend-ai-dialog
+        id="verification-success-dialog"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+        style="padding:0;"
+      >
         <span slot="title">${_t('signup.EmailVerified')}</span>
 
         <div slot="content">
@@ -151,34 +159,51 @@ export default class BackendAIEmailVerificationView extends BackendAIPage {
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-              unelevated
-              fullwidth
-              label="${_t('login.Login')}"
-              @click="${() => this._redirectToLoginPage()}"></mwc-button>
+            unelevated
+            fullwidth
+            label="${_t('login.Login')}"
+            @click="${() => this._redirectToLoginPage()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
 
-      <backend-ai-dialog id="verification-fail-dialog" fixed backdrop blockscrolling persistent style="padding:0;">
+      <backend-ai-dialog
+        id="verification-fail-dialog"
+        fixed
+        backdrop
+        blockscrolling
+        persistent
+        style="padding:0;"
+      >
         <span slot="title">${_t('signup.EmailVerificationFailed')}</span>
 
         <div slot="content">
           <div class="horizontal layout center">
-            <p style="width:256px;">${_t('signup.EmailVerificationFailedMessage')}</p>
+            <p style="width:256px;">
+              ${_t('signup.EmailVerificationFailedMessage')}
+            </p>
           </div>
           <div style="margin:20px;">
-            <mwc-textfield id="email" label="${_t('data.explorer.EnterEmailAddress')}"
-                autofocus auto-validate validationMessage="${_t('signup.InvalidEmail')}"
-                pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
-                maxLength="64" placeholder="${_t('maxLength.64chars')}"></mwc-textfield>
+            <mwc-textfield
+              id="email"
+              label="${_t('data.explorer.EnterEmailAddress')}"
+              autofocus
+              auto-validate
+              validationMessage="${_t('signup.InvalidEmail')}"
+              pattern="^[A-Z0-9a-z#-_]+@.+\\..+$"
+              maxLength="64"
+              placeholder="${_t('maxLength.64chars')}"
+            ></mwc-textfield>
             <div style="height:1em"></div>
           </div>
         </div>
         <div slot="footer" class="horizontal center-justified flex layout">
           <mwc-button
-              unelevated
-              fullwidth
-              label="${_t('signup.SendEmail')}"
-              @click="${() => this.sendVerificationCode()}"></mwc-button>
+            unelevated
+            fullwidth
+            label="${_t('signup.SendEmail')}"
+            @click="${() => this.sendVerificationCode()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
     `;

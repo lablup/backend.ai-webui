@@ -2,24 +2,31 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html, LitElement, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { get as _text, translate as _t } from 'lit-translate';
+import { css, CSSResultGroup, html, LitElement, render } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 import PipelineUtils from '../lib/pipeline-utils';
-import {BackendAiStyles} from '../../components/backend-ai-general-styles';
-import {BackendAIPipelineStyles} from '../lib/pipeline-styles';
+import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import '../../components/lablup-codemirror';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
-import {PipelineInfo, PipelineInfoExtended, PipelineYAML,
-        PipelineTask, PipelineTaskDetail, PipelineTaskNode,
-        PipelineEnvironment, PipelineResources} from '../lib/pipeline-type';
-import {default as YAML} from 'js-yaml';
+import {
+  PipelineInfo,
+  PipelineInfoExtended,
+  PipelineYAML,
+  PipelineTask,
+  PipelineTaskDetail,
+  PipelineTaskNode,
+  PipelineEnvironment,
+  PipelineResources,
+} from '../lib/pipeline-type';
+import { default as YAML } from 'js-yaml';
 
 import '@material/mwc-tab-bar/mwc-tab-bar';
 import '@material/mwc-tab/mwc-tab';
@@ -57,45 +64,49 @@ type ConfigurationType = 'pipeline' | 'pipeline-task';
 @customElement('pipeline-configuration-form')
 export default class PipelineConfigurationForm extends LitElement {
   public shadowRoot: any; // ShadowRoot
-  @property({type: Object, attribute: 'configuration-type'}) configurationType = 'pipeline' as ConfigurationType;
-  @property({type: Boolean, attribute: 'is-editmode'}) isEditmode = false;
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Object}) userInfo;
-  @property({type: String}) _activeTab = 'general';
-  @property({type: Object}) resourceBroker;
-  @property({type: Array}) pipelineTypes = ['Custom'];
-  @property({type: String}) scalingGroup = '';
-  @property({type: Array}) scalingGroups = ['default'];
-  @property({type: String}) selectedStorageHost;
-  @property({type: Array}) allowedStorageHostList;
-  @property({type: Object}) images = Object();
-  @property({type: Object}) imageInfo = Object();
-  @property({type: Object}) imageNames = Object();
-  @property({type: Object}) imageRequirements = Object();
-  @property({type: String}) defaultLanguage;
-  @property({type: Boolean}) _defaultLanguageUpdated = false;
-  @property({type: String}) kernel = '';
-  @property({type: Array}) languages;
-  @property({type: Array}) versions;
-  @property({type: Object}) tags = Object();
-  @property({type: Object}) aliases = Object();
+  @property({ type: Object, attribute: 'configuration-type' })
+  configurationType = 'pipeline' as ConfigurationType;
+  @property({ type: Boolean, attribute: 'is-editmode' }) isEditmode = false;
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Object }) userInfo;
+  @property({ type: String }) _activeTab = 'general';
+  @property({ type: Object }) resourceBroker;
+  @property({ type: Array }) pipelineTypes = ['Custom'];
+  @property({ type: String }) scalingGroup = '';
+  @property({ type: Array }) scalingGroups = ['default'];
+  @property({ type: String }) selectedStorageHost;
+  @property({ type: Array }) allowedStorageHostList;
+  @property({ type: Object }) images = Object();
+  @property({ type: Object }) imageInfo = Object();
+  @property({ type: Object }) imageNames = Object();
+  @property({ type: Object }) imageRequirements = Object();
+  @property({ type: String }) defaultLanguage;
+  @property({ type: Boolean }) _defaultLanguageUpdated = false;
+  @property({ type: String }) kernel = '';
+  @property({ type: Array }) languages;
+  @property({ type: Array }) versions;
+  @property({ type: Object }) tags = Object();
+  @property({ type: Object }) aliases = Object();
 
-  @property({type: String}) _helpDescription = '';
-  @property({type: String}) _helpDescriptionTitle = '';
-  @property({type: String}) _helpDescriptionIcon = '';
-  @property({type: Array}) vfolders;
-  @property({type: String}) pipelineVfolder; // default pipeline vfolder
-  @property({type: Array}) selectedVfolders;
-  @property({type: Array}) defaultSelectedVfolders;
-  @property({type: Array}) autoMountedVfolders;
-  @property({type: Array}) nonAutoMountedVfolders;
-  @property({type: Object}) folderMapping = Object();
-  @property({type: Boolean}) metricUpdating;
-  @property({type: Object}) notification;
+  @property({ type: String }) _helpDescription = '';
+  @property({ type: String }) _helpDescriptionTitle = '';
+  @property({ type: String }) _helpDescriptionIcon = '';
+  @property({ type: Array }) vfolders;
+  @property({ type: String }) pipelineVfolder; // default pipeline vfolder
+  @property({ type: Array }) selectedVfolders;
+  @property({ type: Array }) defaultSelectedVfolders;
+  @property({ type: Array }) autoMountedVfolders;
+  @property({ type: Array }) nonAutoMountedVfolders;
+  @property({ type: Object }) folderMapping = Object();
+  @property({ type: Boolean }) metricUpdating;
+  @property({ type: Object }) notification;
 
-  @property({type: Object}) _boundFolderToMountListRenderer = this.folderToMountListRenderer.bind(this);
-  @property({type: Object}) _boundFolderMapRenderer = this.folderMapRenderer.bind(this);
-  @property({type: Object}) _boundPathRenderer = this.infoHeaderRenderer.bind(this);
+  @property({ type: Object }) _boundFolderToMountListRenderer =
+    this.folderToMountListRenderer.bind(this);
+  @property({ type: Object }) _boundFolderMapRenderer =
+    this.folderMapRenderer.bind(this);
+  @property({ type: Object }) _boundPathRenderer =
+    this.infoHeaderRenderer.bind(this);
 
   @query('mwc-tab[title="general"]', true) private _generalTab;
   @query('mwc-tab[title="resources"]', true) private _resourcesTab;
@@ -119,14 +130,14 @@ export default class PipelineConfigurationForm extends LitElement {
 
   private _isRequired;
 
-  @property({type: Object}) taskType = {
+  @property({ type: Object }) taskType = {
     github: 'Import from GitHub',
     gitlab: 'Import from GitLab',
-    custom: 'Custom Task'
+    custom: 'Custom Task',
   };
 
-  @property({type: PipelineInfo, attribute: "pipeline-info"}) pipelineInfo;
-  @property({type: PipelineTask, attribute: "pipeline-task"}) pipelineTask;
+  @property({ type: PipelineInfo, attribute: 'pipeline-info' }) pipelineInfo;
+  @property({ type: PipelineTask, attribute: 'pipeline-task' }) pipelineTask;
 
   constructor() {
     super();
@@ -137,12 +148,12 @@ export default class PipelineConfigurationForm extends LitElement {
 
   _initResource() {
     this.aliases = {
-      'TensorFlow': 'python-tensorflow',
+      TensorFlow: 'python-tensorflow',
       'NGC-TensorFlow': 'ngc-tensorflow',
-      'PyTorch': 'python-pytorch',
+      PyTorch: 'python-pytorch',
       'NGC-PyTorch': 'ngc-pytorch',
       'Lablup Research Env.': 'python-ff',
-      'Python': 'python',
+      Python: 'python',
     };
     this.allowedStorageHostList = [];
     this.autoMountedVfolders = [];
@@ -245,12 +256,15 @@ export default class PipelineConfigurationForm extends LitElement {
           white-space: nowrap;
           overflow: hidden;
         }
-    `];
+      `,
+    ];
   }
 
   firstUpdated() {
     this._environment.addEventListener(
-      'selected', this.updateLanguage.bind(this));
+      'selected',
+      this.updateLanguage.bind(this),
+    );
     this._versionSelector.addEventListener('selected', () => {
       this.updateEnvironmentSetting();
     });
@@ -289,7 +303,9 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @param {PipelineInfo} pipeline
    */
-  async _loadCurrentPipelineConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
+  async _loadCurrentPipelineConfiguration(
+    pipeline: PipelineInfo | PipelineInfoExtended,
+  ) {
     this._setDefaultPipelineVfolder(pipeline.storage.name);
     await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._fetchUserInfo();
@@ -304,7 +320,7 @@ export default class PipelineConfigurationForm extends LitElement {
     // storage
     this._autoFillInput(this._storageMountSelect, pipeline.storage.host);
     this._autoFillInput(this._mountFolderNameInput, pipeline.storage.name);
-     // FIXME: disable renaming auto-created vfolder of pipeline
+    // FIXME: disable renaming auto-created vfolder of pipeline
     this._mountFolderNameInput.disabled = true;
 
     // type
@@ -316,11 +332,17 @@ export default class PipelineConfigurationForm extends LitElement {
     this._typeSelect.disabled = true;
 
     // scaling-group
-    this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
+    this._autoFillInput(
+      this._scalingGroupSelect,
+      pipelineYaml.environment['scaling-group'],
+    );
 
     // environment
     const forceUpdateDefaultLanguage = true;
-    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
+    await this._selectDefaultLanguage(
+      forceUpdateDefaultLanguage,
+      pipelineYaml.environment['image'],
+    );
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -328,15 +350,24 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    this._autoFillInput(
+      this._memInput,
+      pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min,
+    );
+    this._autoFillInput(
+      this._shmemInput,
+      pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min,
+    );
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
 
     // virtual folders
     const enableForceInitializeSelectedVFolder = true;
-    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineYaml.mounts);
+    this._loadDefaultMounts(
+      enableForceInitializeSelectedVFolder,
+      pipelineYaml.mounts,
+    );
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -347,7 +378,9 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @param {PipelineInfo | PipelineInfoExtended} pipeline
    */
-  async _initPipelineTaskConfiguration(pipeline: PipelineInfo | PipelineInfoExtended) {
+  async _initPipelineTaskConfiguration(
+    pipeline: PipelineInfo | PipelineInfoExtended,
+  ) {
     this._setDefaultPipelineVfolder(pipeline.storage.name);
     await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._loadSupportedLanguages();
@@ -367,11 +400,17 @@ export default class PipelineConfigurationForm extends LitElement {
     this._autoFillInput(this._typeSelect, this.taskType.custom);
 
     // scaling-group
-    this._autoFillInput(this._scalingGroupSelect, pipelineYaml.environment['scaling-group']);
+    this._autoFillInput(
+      this._scalingGroupSelect,
+      pipelineYaml.environment['scaling-group'],
+    );
 
     // environment
     const forceUpdateDefaultLanguage = true;
-    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineYaml.environment['image']);
+    await this._selectDefaultLanguage(
+      forceUpdateDefaultLanguage,
+      pipelineYaml.environment['image'],
+    );
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineYaml.resources.cpu);
@@ -379,15 +418,24 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._shmemInput, pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    this._autoFillInput(
+      this._memInput,
+      pipelineYaml.resources.mem.split('g')[0] ?? this._memInput.min,
+    );
+    this._autoFillInput(
+      this._shmemInput,
+      pipelineYaml.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min,
+    );
     // FIXME: auto input cuda resources if it's declared
     const cudaResource = pipelineYaml.resources[this.resourceBroker.gpu_mode];
     this._autoFillInput(this._gpuInput, cudaResource ?? 0);
 
     // virtual folders
     const enableForceInitializeSelectedVFolder = true;
-    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineYaml.mounts);
+    this._loadDefaultMounts(
+      enableForceInitializeSelectedVFolder,
+      pipelineYaml.mounts,
+    );
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -399,7 +447,10 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} pipelineFolder
    * @param {PipelineTask} pipelineTask
    */
-  async _loadCurrentPipelineTaskConfiguration(pipelineVfolder: string, pipelineTask: PipelineTask) {
+  async _loadCurrentPipelineTaskConfiguration(
+    pipelineVfolder: string,
+    pipelineTask: PipelineTask,
+  ) {
     this._setDefaultPipelineVfolder(pipelineVfolder);
     await this._updateVirtualFolderList(this.pipelineVfolder);
     await this._loadSupportedLanguages();
@@ -420,12 +471,18 @@ export default class PipelineConfigurationForm extends LitElement {
      * - temporally disable changing scaling-group selection
      */
     // scaling-group
-    this._autoFillInput(this._scalingGroupSelect, pipelineTask.environment['scaling-group']);
+    this._autoFillInput(
+      this._scalingGroupSelect,
+      pipelineTask.environment['scaling-group'],
+    );
     this._scalingGroupSelect.disabled = true;
 
     // environment
     const forceUpdateDefaultLanguage = true;
-    await this._selectDefaultLanguage(forceUpdateDefaultLanguage, pipelineTask.environment['image']);
+    await this._selectDefaultLanguage(
+      forceUpdateDefaultLanguage,
+      pipelineTask.environment['image'],
+    );
 
     // resources
     this._autoFillInput(this._cpuInput, pipelineTask.resources.cpu);
@@ -433,17 +490,29 @@ export default class PipelineConfigurationForm extends LitElement {
     /* FIXME:
      * split "g"(GiB) from memory, gpu, shared memory unit since only supports "g" unit for now.
      */
-    this._autoFillInput(this._memInput, pipelineTask.resources.mem.split('g')[0] ?? this._memInput.min);
-    this._autoFillInput(this._shmemInput, pipelineTask.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min);
+    this._autoFillInput(
+      this._memInput,
+      pipelineTask.resources.mem.split('g')[0] ?? this._memInput.min,
+    );
+    this._autoFillInput(
+      this._shmemInput,
+      pipelineTask.resource_opts.shmem.split('g')[0] ?? this._shmemInput.min,
+    );
     // FIXME: auto input cuda resources if it's declared
-    const cudaResource = [pipelineTask.resources['cuda.device'], pipelineTask.resources['cuda.shares']].filter((resource) => resource !== undefined) as string[];
+    const cudaResource = [
+      pipelineTask.resources['cuda.device'],
+      pipelineTask.resources['cuda.shares'],
+    ].filter((resource) => resource !== undefined) as string[];
     if (cudaResource.length > 0) {
       this._autoFillInput(this._gpuInput, cudaResource[0]);
     }
 
     // virtual folders
     const enableForceInitializeSelectedVFolder = true;
-    this._loadDefaultMounts(enableForceInitializeSelectedVFolder, pipelineTask.mounts);
+    this._loadDefaultMounts(
+      enableForceInitializeSelectedVFolder,
+      pipelineTask.mounts,
+    );
 
     // default active tab is general
     this._setActiveTab(this._generalTab);
@@ -481,7 +550,7 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   _configureRequiredInputField() {
     // default resource configuration is required when creating/modifying pipeline
-    this._isRequired = (this.configurationType === 'pipeline');
+    this._isRequired = this.configurationType === 'pipeline';
   }
 
   /**
@@ -491,7 +560,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} value
    */
   _autoFillInput(inputElement: any, value: string) {
-    if (inputElement.localName === "mwc-select") {
+    if (inputElement.localName === 'mwc-select') {
       const obj = inputElement.items.find((o) => o.value === value);
       const idx = inputElement.items.indexOf(obj);
       // need to request layout to select correct item
@@ -509,7 +578,10 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {boolean} forceInitialize  - whether to initialize selected vfolder or not
    * @param {Array<string>} mountFolderList
    */
-  _loadDefaultMounts(forceInitialize = false, mountFolderList: Array<string> = []) {
+  _loadDefaultMounts(
+    forceInitialize = false,
+    mountFolderList: Array<string> = [],
+  ) {
     this.defaultSelectedVfolders = mountFolderList;
     if (forceInitialize) {
       this._unselectAllSelectedFolder();
@@ -533,7 +605,10 @@ export default class PipelineConfigurationForm extends LitElement {
   _showKernelDescription(e: Event, item) {
     e.stopPropagation();
     const name = item.kernelname;
-    if (name in this.resourceBroker.imageInfo && 'description' in this.resourceBroker.imageInfo[name]) {
+    if (
+      name in this.resourceBroker.imageInfo &&
+      'description' in this.resourceBroker.imageInfo[name]
+    ) {
       const desc = this.shadowRoot.querySelector('#help-description');
       this._helpDescriptionTitle = this.resourceBroker.imageInfo[name].name;
       this._helpDescription = this.resourceBroker.imageInfo[name].description;
@@ -570,15 +645,24 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @return {void}
    */
-   async _updateVirtualFolderList(pipelineFolder = '') {
+  async _updateVirtualFolderList(pipelineFolder = '') {
     return this.resourceBroker.updateVirtualFolderList().then(() => {
       this.vfolders = this.resourceBroker.vfolders;
-      this.allowedStorageHostList = [...new Set(this.vfolders.map((vfolder) => (vfolder.host)))];
+      this.allowedStorageHostList = [
+        ...new Set(this.vfolders.map((vfolder) => vfolder.host)),
+      ];
       // select first element of allowedStorageHostList as a default
-      this.selectedStorageHost = (this.allowedStorageHostList.length > 0) ? this.allowedStorageHostList[0] : '';
-      this.autoMountedVfolders = this.vfolders.filter((item) => (item.name.startsWith('.')));
+      this.selectedStorageHost =
+        this.allowedStorageHostList.length > 0
+          ? this.allowedStorageHostList[0]
+          : '';
+      this.autoMountedVfolders = this.vfolders.filter((item) =>
+        item.name.startsWith('.'),
+      );
       // filter pipeline-folder created by pipeline server during pipeline creation
-      this.nonAutoMountedVfolders = this.vfolders.filter((item) => !(item.name.startsWith('.') || item.name === pipelineFolder));
+      this.nonAutoMountedVfolders = this.vfolders.filter(
+        (item) => !(item.name.startsWith('.') || item.name === pipelineFolder),
+      );
     });
   }
 
@@ -629,32 +713,47 @@ export default class PipelineConfigurationForm extends LitElement {
       if (folder in this.folderMapping) {
         delete this.folderMapping[folder];
       }
-      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      await this.shadowRoot
+        .querySelector('#vfolder-mount-preview')
+        .updateComplete.then(() => this.requestUpdate());
       return Promise.resolve(true);
     }
     if (folder !== alias) {
-      if (this.selectedVfolders.includes(alias)) { // Prevent vfolder name & alias overlapping
-        this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+      if (this.selectedVfolders.includes(alias)) {
+        // Prevent vfolder name & alias overlapping
+        this.notification.text = _text(
+          'session.launcher.FolderAliasOverlapping',
+        );
         this.notification.show();
         delete this.folderMapping[folder];
         this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
-        await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+        await this.shadowRoot
+          .querySelector('#vfolder-mount-preview')
+          .updateComplete.then(() => this.requestUpdate());
         return Promise.resolve(false);
       }
-      for (const f in this.folderMapping) { // Prevent alias overlapping
+      for (const f in this.folderMapping) {
+        // Prevent alias overlapping
         if ({}.hasOwnProperty.call(this.folderMapping, f)) {
           if (this.folderMapping[f] == alias) {
-            this.notification.text = _text('session.launcher.FolderAliasOverlapping');
+            this.notification.text = _text(
+              'session.launcher.FolderAliasOverlapping',
+            );
             this.notification.show();
             delete this.folderMapping[folder];
-            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value = '';
-            await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+            this.shadowRoot.querySelector('#vfolder-alias-' + folder).value =
+              '';
+            await this.shadowRoot
+              .querySelector('#vfolder-mount-preview')
+              .updateComplete.then(() => this.requestUpdate());
             return Promise.resolve(false);
           }
         }
       }
       this.folderMapping[folder] = alias;
-      await this.shadowRoot.querySelector('#vfolder-mount-preview').updateComplete.then(() => this.requestUpdate());
+      await this.shadowRoot
+        .querySelector('#vfolder-mount-preview')
+        .updateComplete.then(() => this.requestUpdate());
       return Promise.resolve(true);
     }
     return Promise.resolve(true);
@@ -663,7 +762,7 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Invoke updating available versions corresponding to installed environment
    */
-   updateLanguage() {
+  updateLanguage() {
     const selectedItem = this._environment.selected;
     if (selectedItem === null) return;
     const kernel = selectedItem.id;
@@ -675,16 +774,18 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @param {string} kernel - environment image name
    */
-   _updateVersions(kernel) {
+  _updateVersions(kernel) {
     if (kernel in this.resourceBroker.supports) {
       this._versionSelector.disabled = true;
-      const versions: {version: string, architecture: string}[] = [];
+      const versions: { version: string; architecture: string }[] = [];
       for (const version of this.resourceBroker.supports[kernel]) {
-        for (const architecture of this.resourceBroker.imageArchitectures[kernel + ':' + version]) {
-          versions.push({version, architecture});
+        for (const architecture of this.resourceBroker.imageArchitectures[
+          kernel + ':' + version
+        ]) {
+          versions.push({ version, architecture });
         }
       }
-      versions.sort((a, b) => a.version > b.version ? 1 : -1);
+      versions.sort((a, b) => (a.version > b.version ? 1 : -1));
       versions.reverse(); // New version comes first.
       this.versions = versions;
       this.kernel = kernel;
@@ -701,7 +802,10 @@ export default class PipelineConfigurationForm extends LitElement {
         this._versionSelector.value = this.versions[0].version;
         this._versionSelector.architecture = this.versions[0].architecture;
         // this._versionSelector.selectedText = this._versionSelector.value;
-        this._updateVersionSelectorText(this._versionSelector.value, this._versionSelector.architecture);
+        this._updateVersionSelectorText(
+          this._versionSelector.value,
+          this._versionSelector.architecture,
+        );
         this._versionSelector.disabled = false;
       });
     }
@@ -725,7 +829,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * Update environment setting
    *
    */
-   async updateEnvironmentSetting() {
+  async updateEnvironmentSetting() {
     if (this.metricUpdating == true) {
       // console.log('update metric blocked');
       return;
@@ -740,28 +844,46 @@ export default class PipelineConfigurationForm extends LitElement {
 
     // set defaultLanguage version
     if (this.defaultLanguage !== undefined) {
-      const obj: string | undefined = this._versionSelector.items.find((o) => o.value === this.defaultLanguage.split(':')[1]);
+      const obj: string | undefined = this._versionSelector.items.find(
+        (o) => o.value === this.defaultLanguage.split(':')[1],
+      );
       let idx = this._versionSelector.items.indexOf(obj);
 
       // workaround as select index to first item if there's no matching version
       if (idx < 0) {
-        idx = (this._versionSelector.items.length > 1) ? 1 : 0;
+        idx = this._versionSelector.items.length > 1 ? 1 : 0;
       }
       this._versionSelector.select(idx);
     }
 
     const selectedVersionValue = selectedVersionItem.value;
-    const selectedVersionArchitecture = selectedVersionItem.getAttribute('architecture');
-    this._updateVersionSelectorText(selectedVersionValue, selectedVersionArchitecture);
+    const selectedVersionArchitecture =
+      selectedVersionItem.getAttribute('architecture');
+    this._updateVersionSelectorText(
+      selectedVersionValue,
+      selectedVersionArchitecture,
+    );
     // Environment is not selected yet.
-    if (typeof selectedItem === 'undefined' || selectedItem === null || selectedItem.getAttribute('disabled')) {
+    if (
+      typeof selectedItem === 'undefined' ||
+      selectedItem === null ||
+      selectedItem.getAttribute('disabled')
+    ) {
       this.metricUpdating = false;
       return;
     }
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        await this.updateEnvironmentSetting();
-      }, true);
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        async () => {
+          await this.updateEnvironmentSetting();
+        },
+        true,
+      );
     }
   }
 
@@ -771,17 +893,21 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {boolean} forceUpdate - only update default language when its value is true
    * @param {string} language - default language
    */
-   async _selectDefaultLanguage(forceUpdate = false, language = '') {
+  async _selectDefaultLanguage(forceUpdate = false, language = '') {
     // this.languages = this.resourceBroker.languages;
     if (this._defaultLanguageUpdated === true && forceUpdate === false) {
       return;
     }
     if (language !== '') {
       this.defaultLanguage = language;
-    } else if (globalThis.backendaiclient._config.default_session_environment !== undefined &&
+    } else if (
+      globalThis.backendaiclient._config.default_session_environment !==
+        undefined &&
       'default_session_environment' in globalThis.backendaiclient._config &&
-      globalThis.backendaiclient._config.default_session_environment !== '') {
-      this.defaultLanguage = globalThis.backendaiclient._config.default_session_environment;
+      globalThis.backendaiclient._config.default_session_environment !== ''
+    ) {
+      this.defaultLanguage =
+        globalThis.backendaiclient._config.default_session_environment;
     } else if (this.languages.length > 1) {
       this.defaultLanguage = this.languages[1].name;
     } else if (this.languages.length !== 0) {
@@ -791,13 +917,20 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // await environment.updateComplete; async way.
-    let obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
+    let obj = this._environment.items.find(
+      (o) => o.value === this.defaultLanguage.split(':')[0],
+    );
 
-    if (typeof obj === 'undefined' &&
-        typeof globalThis.backendaiclient !== 'undefined' &&
-        globalThis.backendaiclient.ready === false) { // Not ready yet.
+    if (
+      typeof obj === 'undefined' &&
+      typeof globalThis.backendaiclient !== 'undefined' &&
+      globalThis.backendaiclient.ready === false
+    ) {
+      // Not ready yet.
       setTimeout(() => {
-        console.log('Environment selector is not ready yet. Trying to set the default language again.');
+        console.log(
+          'Environment selector is not ready yet. Trying to set the default language again.',
+        );
         return this._selectDefaultLanguage(forceUpdate, language);
       }, 500);
       return Promise.resolve(true);
@@ -806,8 +939,13 @@ export default class PipelineConfigurationForm extends LitElement {
     // whene default session environment is not installed to available resource slots(agent),
     // select the first one.
     if (idx < 0) {
-      this.defaultLanguage = (this.languages.length > 1) ? this.languages[1].name : this.languages[0].name;
-      obj = this._environment.items.find((o) => o.value === this.defaultLanguage.split(':')[0]);
+      this.defaultLanguage =
+        this.languages.length > 1
+          ? this.languages[1].name
+          : this.languages[0].name;
+      obj = this._environment.items.find(
+        (o) => o.value === this.defaultLanguage.split(':')[0],
+      );
       idx = this._environment.items.indexOf(obj);
     }
     // await this._environment.layout(true);
@@ -824,8 +962,8 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   static _validityCheckByGroup(inputGroup: Array<any>) {
     return inputGroup.some((elem) => {
-        return !elem.reportValidity();
-      });
+      return !elem.reportValidity();
+    });
   }
 
   /**
@@ -835,26 +973,42 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   _validatePipelineConfigInput() {
     // general tab inputs
-    if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._nameInput, this._typeSelect, this._scalingGroupSelect,
-      this._environment, this._versionSelector, this._descriptionInput])) {
-        this._switchActiveTab(this._generalTab);
-        return false;
+    if (
+      PipelineConfigurationForm._validityCheckByGroup([
+        this._nameInput,
+        this._typeSelect,
+        this._scalingGroupSelect,
+        this._environment,
+        this._versionSelector,
+        this._descriptionInput,
+      ])
+    ) {
+      this._switchActiveTab(this._generalTab);
+      return false;
     }
 
     // resources tab inputs
-    if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._cpuInput, this._memInput, this._shmemInput,
-       this._gpuInput])) {
-        this._switchActiveTab(this._resourcesTab);
-        return false;
+    if (
+      PipelineConfigurationForm._validityCheckByGroup([
+        this._cpuInput,
+        this._memInput,
+        this._shmemInput,
+        this._gpuInput,
+      ])
+    ) {
+      this._switchActiveTab(this._resourcesTab);
+      return false;
     }
 
     // mounts tab inputs
-    if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._storageMountSelect, this._mountFolderNameInput])) {
-        this._switchActiveTab(this._mountsTab);
-        return false;
+    if (
+      PipelineConfigurationForm._validityCheckByGroup([
+        this._storageMountSelect,
+        this._mountFolderNameInput,
+      ])
+    ) {
+      this._switchActiveTab(this._mountsTab);
+      return false;
     }
 
     // all passed validation check
@@ -868,10 +1022,14 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   _validatePipelineTaskConfigInput() {
     // general task tab inputs
-    if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._nameInput, this._typeSelect])) {
-        this._switchActiveTab(this._generalTab);
-        return false;
+    if (
+      PipelineConfigurationForm._validityCheckByGroup([
+        this._nameInput,
+        this._typeSelect,
+      ])
+    ) {
+      this._switchActiveTab(this._generalTab);
+      return false;
     }
     const isCommandValid = this._cmdEditor._validateInput();
     if (!isCommandValid) {
@@ -883,11 +1041,19 @@ export default class PipelineConfigurationForm extends LitElement {
     }
 
     // resources task tab inputs
-    if (PipelineConfigurationForm._validityCheckByGroup(
-      [this._scalingGroupSelect, this._environment, this._versionSelector,
-       this._cpuInput, this._memInput, this._shmemInput, this._gpuInput])) {
-        this._switchActiveTab(this._resourcesTab);
-        return false;
+    if (
+      PipelineConfigurationForm._validityCheckByGroup([
+        this._scalingGroupSelect,
+        this._environment,
+        this._versionSelector,
+        this._cpuInput,
+        this._memInput,
+        this._shmemInput,
+        this._gpuInput,
+      ])
+    ) {
+      this._switchActiveTab(this._resourcesTab);
+      return false;
     }
 
     // all passed validation check
@@ -900,7 +1066,7 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param isPipelineType - check whether return type would be pipelineInfo or not
    * @returns {PipelineInfo | PipelineTaskNode} object
    */
-  inputFieldListAsInstance (isPipelineType = true) {
+  inputFieldListAsInstance(isPipelineType = true) {
     let obj: PipelineInfo | PipelineTaskNode;
     /* raw inputs */
     const name = this._nameInput.value;
@@ -922,10 +1088,10 @@ export default class PipelineConfigurationForm extends LitElement {
     const resources = {
       cpu: cpuRequest,
       mem: memRequest + 'g',
-      [this.resourceBroker.gpu_mode]: gpuRequest
+      [this.resourceBroker.gpu_mode]: gpuRequest,
     } as PipelineResources;
     const resource_opts = {
-      shmem: shmemRequest + 'g'
+      shmem: shmemRequest + 'g',
     };
 
     if (isPipelineType) {
@@ -939,9 +1105,10 @@ export default class PipelineConfigurationForm extends LitElement {
       /* extra structured inputs */
       const storage = {
         host: storageHost,
-        name: storageHostMountFolderName
+        name: storageHostMountFolderName,
       };
-      const yaml = { // used for tasks
+      const yaml = {
+        // used for tasks
         name: name,
         description: description,
         ownership: {
@@ -996,24 +1163,32 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Initialize user info
    */
-   _fetchUserInfo() {
-    const userKeyList: Array<string> = ['full_name', 'username', 'domain_name', 'id'];
-    return globalThis.backendaiclient.user.get(globalThis.backendaiclient.email, userKeyList).then((res) => {
-      const userInfo = res.user;
-      this.userInfo = {
-        // username: userInfo.full_name ? userInfo.full_name : userInfo.username,
-        domain_name: userInfo.domain_name,
-        group_name: globalThis.backendaiclient.current_group,
-        // user_uuid: userInfo.id
-      };
-    }).catch((err) => {
-      // console.log(err);
-      if (err && err.message) {
-        this.notification.text = err.title;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+  _fetchUserInfo() {
+    const userKeyList: Array<string> = [
+      'full_name',
+      'username',
+      'domain_name',
+      'id',
+    ];
+    return globalThis.backendaiclient.user
+      .get(globalThis.backendaiclient.email, userKeyList)
+      .then((res) => {
+        const userInfo = res.user;
+        this.userInfo = {
+          // username: userInfo.full_name ? userInfo.full_name : userInfo.username,
+          domain_name: userInfo.domain_name,
+          group_name: globalThis.backendaiclient.current_group,
+          // user_uuid: userInfo.id
+        };
+      })
+      .catch((err) => {
+        // console.log(err);
+        if (err && err.message) {
+          this.notification.text = err.title;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   /**
@@ -1021,7 +1196,7 @@ export default class PipelineConfigurationForm extends LitElement {
    *
    * @param {HTMLElement} tab - mwc-tab element
    */
-   _switchActiveTab(tab) {
+  _switchActiveTab(tab) {
     const els = this.shadowRoot.querySelectorAll('mwc-tab');
     // deactivate all
     for (const obj of els) {
@@ -1046,33 +1221,39 @@ export default class PipelineConfigurationForm extends LitElement {
     this.shadowRoot.querySelector('#' + tab.title).style.display = 'block';
   }
 
-/**
- * Get version information - Version, Language, Additional information.
- *
- * @param {any} version
- * @return {Record<string, unknown>} Array containing information object
- * */
- _getVersionInfo(version, architecture) {
+  /**
+   * Get version information - Version, Language, Additional information.
+   *
+   * @param {any} version
+   * @return {Record<string, unknown>} Array containing information object
+   * */
+  _getVersionInfo(version, architecture) {
     const info: any = [];
     const fragment = version.split('-');
-    info.push({ // Version
+    info.push({
+      // Version
       tag: PipelineUtils._aliasName(fragment[0]),
       color: 'blue',
-      size: '60px'
+      size: '60px',
     });
     if (fragment.length > 1) {
       // Image requirement overrides language information.
-      if (this.kernel + ':' + version in this.imageRequirements && 'framework' in this.imageRequirements[this.kernel + ':' + version]) {
-        info.push({ // Language
+      if (
+        this.kernel + ':' + version in this.imageRequirements &&
+        'framework' in this.imageRequirements[this.kernel + ':' + version]
+      ) {
+        info.push({
+          // Language
           tag: this.imageRequirements[this.kernel + ':' + version]['framework'],
           color: 'red',
-          size: '110px'
+          size: '110px',
         });
       } else {
-        info.push({ // Language
+        info.push({
+          // Language
           tag: PipelineUtils._aliasName(fragment[1]),
           color: 'red',
-          size: '110px'
+          size: '110px',
         });
       }
     }
@@ -1084,17 +1265,19 @@ export default class PipelineConfigurationForm extends LitElement {
     if (fragment.length > 2) {
       const requirements = PipelineUtils._aliasName(fragment[2]).split(':');
       if (requirements.length > 1) {
-        info.push({ // Additional information
+        info.push({
+          // Additional information
           tag: requirements[1],
           app: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '90px',
         });
       } else {
-        info.push({ // Additional information
+        info.push({
+          // Additional information
           tag: requirements[0],
           color: 'green',
-          size: '90px'
+          size: '90px',
         });
       }
     }
@@ -1104,7 +1287,7 @@ export default class PipelineConfigurationForm extends LitElement {
   /**
    * Give focus on command-editor
    */
-   async _focusCmdEditor() {
+  async _focusCmdEditor() {
     await this._cmdEditor.refresh();
     setTimeout(() => {
       this._focusCmdEditor();
@@ -1136,10 +1319,12 @@ export default class PipelineConfigurationForm extends LitElement {
   folderToMountListRenderer(root, column, rowData) {
     render(
       html`
-          <div style="font-size:14px;text-overflow:ellipsis;overflow:hidden;">${rowData.item.name}</div>
-          <span style="font-size:10px;">${rowData.item.host}</span>
-        `,
-      root
+        <div style="font-size:14px;text-overflow:ellipsis;overflow:hidden;">
+          ${rowData.item.name}
+        </div>
+        <span style="font-size:10px;">${rowData.item.host}</span>
+      `,
+      root,
     );
   }
 
@@ -1153,12 +1338,19 @@ export default class PipelineConfigurationForm extends LitElement {
   folderMapRenderer(root, column?, rowData?) {
     render(
       html`
-          <vaadin-text-field id="vfolder-alias-${rowData.item.name}" clear-button-visible prevent-invalid-input
-                             pattern="^[a-zA-Z0-9\./_-]*$" ?disabled="${!rowData.selected}"
-                             theme="small" placeholder="/home/work/${rowData.item.name}"
-                             @change="${(e) => this._updateFolderMap(rowData.item.name, e.target.value)}"></vaadin-text-field>
-        `,
-      root
+        <vaadin-text-field
+          id="vfolder-alias-${rowData.item.name}"
+          clear-button-visible
+          prevent-invalid-input
+          pattern="^[a-zA-Z0-9./_-]*$"
+          ?disabled="${!rowData.selected}"
+          theme="small"
+          placeholder="/home/work/${rowData.item.name}"
+          @change="${(e) =>
+            this._updateFolderMap(rowData.item.name, e.target.value)}"
+        ></vaadin-text-field>
+      `,
+      root,
     );
   }
 
@@ -1172,12 +1364,18 @@ export default class PipelineConfigurationForm extends LitElement {
   infoHeaderRenderer(root, column?, rowData?) {
     render(
       html`
-          <div class="horizontal layout center">
-            <span id="vfolder-header-title">${_t('session.launcher.FolderAlias')}</span>
-            <mwc-icon-button icon="info" class="fg green info" @click="${(e) => this._showPathDescription(e)}"></mwc-icon-button>
-          </div>
-        `,
-      root
+        <div class="horizontal layout center">
+          <span id="vfolder-header-title"
+            >${_t('session.launcher.FolderAlias')}</span
+          >
+          <mwc-icon-button
+            icon="info"
+            class="fg green info"
+            @click="${(e) => this._showPathDescription(e)}"
+          ></mwc-icon-button>
+        </div>
+      `,
+      root,
     );
   }
 
@@ -1187,10 +1385,16 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} label - name input
    * @returns {string} stringified html
    */
-  renderNameTemplate(label="Pipeline Name") {
+  renderNameTemplate(label = 'Pipeline Name') {
     // language=HTML
     return html`
-      <mwc-textfield id="name-input" label=${label} required autoValidate maxLength="64"></mwc-textfield>
+      <mwc-textfield
+        id="name-input"
+        label=${label}
+        required
+        autoValidate
+        maxLength="64"
+      ></mwc-textfield>
     `;
   }
 
@@ -1200,12 +1404,11 @@ export default class PipelineConfigurationForm extends LitElement {
    * @param {string} label - description input
    * @returns {string} stringified html
    */
-  renderDescriptionTemplate(label="Pipeline Description") {
+  renderDescriptionTemplate(label = 'Pipeline Description') {
     // language=HTML
     return html`
-    <mwc-textarea id="description-input" label=${label}></mwc-textarea>
+      <mwc-textarea id="description-input" label=${label}></mwc-textarea>
     `;
-
   }
 
   /**
@@ -1216,12 +1419,22 @@ export default class PipelineConfigurationForm extends LitElement {
   renderPipelineTypeTemplate() {
     // language=HTML
     return html`
-    <mwc-select class="full-width" id="type-select" label="Pipeline Type" required fixedMenuPosition>
-      <mwc-list-item value="Choose Pipeline Type" disabled>Choose Pipeline Type</mwc-list-item>
-      ${this.pipelineTypes.map((item) => {
-        return html`<mwc-list-item id="${item}" value="${item}">${item}</mwc-list-item>`;
-      })}
-    </mwc-select>
+      <mwc-select
+        class="full-width"
+        id="type-select"
+        label="Pipeline Type"
+        required
+        fixedMenuPosition
+      >
+        <mwc-list-item value="Choose Pipeline Type" disabled
+          >Choose Pipeline Type</mwc-list-item
+        >
+        ${this.pipelineTypes.map((item) => {
+          return html`<mwc-list-item id="${item}" value="${item}"
+            >${item}</mwc-list-item
+          >`;
+        })}
+      </mwc-select>
     `;
   }
 
@@ -1235,13 +1448,22 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     // FIXME: disable other types except 'custom' for now
     return html`
-    <mwc-select class="full-width" id="type-select" label="Task Type" fixedMenuPosition required ?disabled=${isEdit}>
-      ${Object.keys(this.taskType).map((item) => {
-        return html`<mwc-list-item id="${item}" value="${this.taskType[item]}" ?selected="${item === 'custom'}" ?disabled=${item !== 'custom'}">
+      <mwc-select
+        class="full-width"
+        id="type-select"
+        label="Task Type"
+        fixedMenuPosition
+        required
+        ?disabled=${isEdit}
+      >
+        ${Object.keys(this.taskType).map((item) => {
+          return html`<mwc-list-item id="${item}" value="${
+            this.taskType[item]
+          }" ?selected="${item === 'custom'}" ?disabled=${item !== 'custom'}">
                       ${this.taskType[item]}
                     </mwc-list-item>`;
-      })}
-    </mwc-select>
+        })}
+      </mwc-select>
     `;
   }
 
@@ -1252,10 +1474,19 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderScalingGroupTemplate() {
     // language=HTML
-    return html`
-    <mwc-select class="full-width" id="scaling-group-select" label="Scaling Group" fixedMenuPosition>
+    return html` <mwc-select
+      class="full-width"
+      id="scaling-group-select"
+      label="Scaling Group"
+      fixedMenuPosition
+    >
       ${this.scalingGroups.map((item, idx) => {
-        return html`<mwc-list-item id="${item}" value="${item}" ?selected="${idx === 0}">${item}</mwc-list-item>`;
+        return html`<mwc-list-item
+          id="${item}"
+          value="${item}"
+          ?selected="${idx === 0}"
+          >${item}</mwc-list-item
+        >`;
       })}
     </mwc-select>`;
   }
@@ -1267,61 +1498,121 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderEnvironmentTemplate() {
     // language=HTML
-    return html`
-      <mwc-select class="full-width" id="environment-select" icon="code" label="${_text('session.launcher.Environments')}"
-        required fixedMenuPosition>
-      <mwc-list-item selected graphic="icon" style="display:none!important;">
-        ${_t('session.launcher.ChooseEnvironment')}
-      </mwc-list-item>
-      ${this.languages.map((item) => html`
-        ${item.clickable === false ? html`
-          <h5 style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
-              role="separator" disabled="true">${item.basename}</h5>
-          ` : html`
-          <mwc-list-item id="${item.name}" value="${item.name}" graphic="icon">
-          <img slot="graphic" alt="language icon" src="resources/icons/${item.icon}"
-              style="width:24px;height:24px;"/>
-          <div class="horizontal justified center flex layout" style="width:325px;">
-            <div style="padding-right:5px;">${item.basename}</div>
-            <div class="horizontal layout end-justified center flex">
-              ${item.tags ? item.tags.map((item) => html`
-                <lablup-shields style="margin-right:5px;" color="${item.color}"
-                                description="${item.tag}"></lablup-shields>
-              `) : ''}
-              <mwc-icon-button icon="info"
-                              class="fg blue info"
-                              @click="${(e) => this._showKernelDescription(e, item)}">
-              </mwc-icon-button>
-            </div>
-          </div>
+    return html` <mwc-select
+        class="full-width"
+        id="environment-select"
+        icon="code"
+        label="${_text('session.launcher.Environments')}"
+        required
+        fixedMenuPosition
+      >
+        <mwc-list-item selected graphic="icon" style="display:none!important;">
+          ${_t('session.launcher.ChooseEnvironment')}
         </mwc-list-item>
-        `}
-      `)}
-    </mwc-select>
-    <mwc-select class="full-width" id="environment-tag-select" icon="architecture" label="${_text('session.launcher.Version')}" required fixedMenuPosition>
-      <mwc-list-item selected style="display:none!important"></mwc-list-item>
-      <h5 style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
-          role="separator" disabled="true" class="horizontal layout">
+        ${this.languages.map(
+          (item) => html`
+            ${item.clickable === false
+              ? html`
+                  <h5
+                    style="font-size:12px;padding: 0 10px 3px 10px;margin:0; border-bottom:1px solid #ccc;"
+                    role="separator"
+                    disabled="true"
+                  >
+                    ${item.basename}
+                  </h5>
+                `
+              : html`
+                  <mwc-list-item
+                    id="${item.name}"
+                    value="${item.name}"
+                    graphic="icon"
+                  >
+                    <img
+                      slot="graphic"
+                      alt="language icon"
+                      src="resources/icons/${item.icon}"
+                      style="width:24px;height:24px;"
+                    />
+                    <div
+                      class="horizontal justified center flex layout"
+                      style="width:325px;"
+                    >
+                      <div style="padding-right:5px;">${item.basename}</div>
+                      <div class="horizontal layout end-justified center flex">
+                        ${item.tags
+                          ? item.tags.map(
+                              (item) => html`
+                                <lablup-shields
+                                  style="margin-right:5px;"
+                                  color="${item.color}"
+                                  description="${item.tag}"
+                                ></lablup-shields>
+                              `,
+                            )
+                          : ''}
+                        <mwc-icon-button
+                          icon="info"
+                          class="fg blue info"
+                          @click="${(e) =>
+                            this._showKernelDescription(e, item)}"
+                        >
+                        </mwc-icon-button>
+                      </div>
+                    </div>
+                  </mwc-list-item>
+                `}
+          `,
+        )}
+      </mwc-select>
+      <mwc-select
+        class="full-width"
+        id="environment-tag-select"
+        icon="architecture"
+        label="${_text('session.launcher.Version')}"
+        required
+        fixedMenuPosition
+      >
+        <mwc-list-item selected style="display:none!important"></mwc-list-item>
+        <h5
+          style="font-size:12px;padding: 0 10px 3px 15px;margin:0; border-bottom:1px solid #ccc;"
+          role="separator"
+          disabled="true"
+          class="horizontal layout"
+        >
           <div style="width:60px;">${_t('session.launcher.Version')}</div>
           <div style="width:110px;">${_t('session.launcher.Base')}</div>
           <div style="width:90px;">${_t('session.launcher.Architecture')}</div>
-        <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
-      </h5>
-      ${this.versions.map(({version, architecture}) => html`
-        <mwc-list-item id="${version}" architecture="${architecture}" value="${version}">
-            <span style="display:none">${version}</span>
-            <div class="horizontal layout end-justified">
-            ${this._getVersionInfo(version || '', architecture).map((item) => html`
-              <lablup-shields style="width:${item.size}!important;"
-                              color="${item.color}"
-                              app="${typeof item.app != 'undefined' && item.app != '' && item.app != ' ' ? item.app : ''}"
-                              description="${item.tag}">
-              </lablup-shields>
-            `)}
-          </div>
-        </mwc-list-item>
-      `)}
-    </mwc-select>`;
+          <div style="width:90px;">${_t('session.launcher.Requirements')}</div>
+        </h5>
+        ${this.versions.map(
+          ({ version, architecture }) => html`
+            <mwc-list-item
+              id="${version}"
+              architecture="${architecture}"
+              value="${version}"
+            >
+              <span style="display:none">${version}</span>
+              <div class="horizontal layout end-justified">
+                ${this._getVersionInfo(version || '', architecture).map(
+                  (item) => html`
+                    <lablup-shields
+                      style="width:${item.size}!important;"
+                      color="${item.color}"
+                      app="${typeof item.app != 'undefined' &&
+                      item.app != '' &&
+                      item.app != ' '
+                        ? item.app
+                        : ''}"
+                      description="${item.tag}"
+                    >
+                    </lablup-shields>
+                  `,
+                )}
+              </div>
+            </mwc-list-item>
+          `,
+        )}
+      </mwc-select>`;
   }
 
   /**
@@ -1332,11 +1623,18 @@ export default class PipelineConfigurationForm extends LitElement {
   renderCmdEditorTemplate() {
     // language=HTML
     return html`
-    <div class="vertical layout start-justified">
-      <span style="width:370px;padding-left:15px;">Command</span>
-    </div>
-    <lablup-codemirror id="command-editor" mode="shell" useLineWrapping required></lablup-codemirror>
-    <span id="codemirror-validation-message" style="display:none;">This command field is required.</span>
+      <div class="vertical layout start-justified">
+        <span style="width:370px;padding-left:15px;">Command</span>
+      </div>
+      <lablup-codemirror
+        id="command-editor"
+        mode="shell"
+        useLineWrapping
+        required
+      ></lablup-codemirror>
+      <span id="codemirror-validation-message" style="display:none;"
+        >This command field is required.</span
+      >
     `;
   }
 
@@ -1347,14 +1645,14 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderGeneralTabTemplate() {
     // language=HTML
-    return html`
-      <div id="general" class="vertical layout center flex tab-content">
-        ${this.renderNameTemplate()}
-        ${this.renderPipelineTypeTemplate()}
-        ${this.renderScalingGroupTemplate()}
-        ${this.renderEnvironmentTemplate()}
-        ${this.renderDescriptionTemplate()}
-      </div>`;
+    return html` <div
+      id="general"
+      class="vertical layout center flex tab-content"
+    >
+      ${this.renderNameTemplate()} ${this.renderPipelineTypeTemplate()}
+      ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
+      ${this.renderDescriptionTemplate()}
+    </div>`;
   }
 
   /**
@@ -1366,11 +1664,11 @@ export default class PipelineConfigurationForm extends LitElement {
   renderGeneralTaskTabTemplate(isEdit = false) {
     // language=HTML
     return html`
-    <div id="general" class="vertical layout center flex tab-content">
-      ${this.renderNameTemplate("Task Name")}
-      ${this.renderPipelineTaskTypeTemplate(isEdit)}
-      ${this.renderCmdEditorTemplate()}
-    </div>
+      <div id="general" class="vertical layout center flex tab-content">
+        ${this.renderNameTemplate('Task Name')}
+        ${this.renderPipelineTaskTypeTemplate(isEdit)}
+        ${this.renderCmdEditorTemplate()}
+      </div>
     `;
   }
 
@@ -1381,10 +1679,12 @@ export default class PipelineConfigurationForm extends LitElement {
    * @returns {string} stringified html
    */
   renderResourcesTaskTabTemplate(isRequired = false) {
-    return html`
-    <div id="resources" class="vertical layout center flex tab-content" style="display:none;">
-      ${this.renderScalingGroupTemplate()}
-      ${this.renderEnvironmentTemplate()}
+    return html` <div
+      id="resources"
+      class="vertical layout center flex tab-content"
+      style="display:none;"
+    >
+      ${this.renderScalingGroupTemplate()} ${this.renderEnvironmentTemplate()}
       ${this.renderResourceContentTemplate(isRequired)}
     </div>`;
   }
@@ -1397,8 +1697,11 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderResourcesTabTemplate(isRequired = false) {
     // language=HTML
-    return html`
-    <div id="resources" class="vertical layout center flex tab-content" style="display:none;">
+    return html` <div
+      id="resources"
+      class="vertical layout center flex tab-content"
+      style="display:none;"
+    >
       ${this.renderResourceContentTemplate(isRequired)}
     </div>`;
   }
@@ -1412,10 +1715,41 @@ export default class PipelineConfigurationForm extends LitElement {
   renderResourceContentTemplate(isRequired = false) {
     // language=HTML
     return html`
-      <mwc-textfield id="cpu-input" label="CPU" type="number" min="1" suffix="Core" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="mem-input" label="Memory (GiB)" type="number" min="0.1" step="0.05" suffix="GiB" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="shmem-input" label="Shared Memory" type="number" min="0.0125" step="0.0125" suffix="GiB" ?required=${isRequired}></mwc-textfield>
-      <mwc-textfield id="gpu-input" label="GPU" type="number" min="0" step="0.1" suffix="Unit" ?required=${isRequired}></mwc-textfield>
+      <mwc-textfield
+        id="cpu-input"
+        label="CPU"
+        type="number"
+        min="1"
+        suffix="Core"
+        ?required=${isRequired}
+      ></mwc-textfield>
+      <mwc-textfield
+        id="mem-input"
+        label="Memory (GiB)"
+        type="number"
+        min="0.1"
+        step="0.05"
+        suffix="GiB"
+        ?required=${isRequired}
+      ></mwc-textfield>
+      <mwc-textfield
+        id="shmem-input"
+        label="Shared Memory"
+        type="number"
+        min="0.0125"
+        step="0.0125"
+        suffix="GiB"
+        ?required=${isRequired}
+      ></mwc-textfield>
+      <mwc-textfield
+        id="gpu-input"
+        label="GPU"
+        type="number"
+        min="0"
+        step="0.1"
+        suffix="Unit"
+        ?required=${isRequired}
+      ></mwc-textfield>
     `;
   }
 
@@ -1426,22 +1760,41 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderMountsTabTemplate() {
     // language=HTML
-    return html`
-    <div id="mounts" class="vertical layout center flex tab-content" style="display:none;">
-      <mwc-select class="full-width" id="storage-mount-select" icon="storage" label="Storage hosts"
-                  ?required=${this.allowedStorageHostList.length > 0} style="z-index:10">
+    return html` <div
+      id="mounts"
+      class="vertical layout center flex tab-content"
+      style="display:none;"
+    >
+      <mwc-select
+        class="full-width"
+        id="storage-mount-select"
+        icon="storage"
+        label="Storage hosts"
+        ?required=${this.allowedStorageHostList.length > 0}
+        style="z-index:10"
+      >
         ${this.allowedStorageHostList.map((storageHost) => {
           return html`
-            <mwc-list-item ?selected="${storageHost === this.selectedStorageHost}" value="${storageHost}">${storageHost}</mwc-list-item>
-          `}
-        )}
+            <mwc-list-item
+              ?selected="${storageHost === this.selectedStorageHost}"
+              value="${storageHost}"
+              >${storageHost}</mwc-list-item
+            >
+          `;
+        })}
       </mwc-select>
-      <mwc-textfield id="mount-folder-input" label="Pipeline Folder Name (Optional)" type="text"
-                    maxLength="64" placeholder="" helper="${_text('maxLength.64chars')}"></mwc-textfield>
+      <mwc-textfield
+        id="mount-folder-input"
+        label="Pipeline Folder Name (Optional)"
+        type="text"
+        maxLength="64"
+        placeholder=""
+        helper="${_text('maxLength.64chars')}"
+      ></mwc-textfield>
       <lablup-expansion class="vfolder" name="vfolder">
         <span slot="title">Additional mount (Optional)</span>
-          ${this.renderAdditionalVFolderListTemplate()}
-          ${this.renderMountedResultTemplate()}
+        ${this.renderAdditionalVFolderListTemplate()}
+        ${this.renderMountedResultTemplate()}
       </lablup-expansion>
     </div>`;
   }
@@ -1453,8 +1806,11 @@ export default class PipelineConfigurationForm extends LitElement {
    */
   renderMountsTaskTabTemplate() {
     // language=HTML
-    return html`
-    <div id="mounts" class="vertical layout center flex tab-content" style="display:none;">
+    return html` <div
+      id="mounts"
+      class="vertical layout center flex tab-content"
+      style="display:none;"
+    >
       ${this.renderAdditionalVFolderListTemplate()}
       ${this.renderMountedResultTemplate(this.pipelineVfolder)}
     </div>`;
@@ -1470,29 +1826,39 @@ export default class PipelineConfigurationForm extends LitElement {
     return html`
       <div class="vfolder-list">
         <vaadin-grid
-            theme="row-stripes column-borders compact"
-            id="vfolder-grid"
-            aria-label="vfolder list"
-            all-rows-visible
-            .items="${this.nonAutoMountedVfolders}"
-            @selected-items-changed="${() => this._updateSelectedFolder()}">
-          <vaadin-grid-selection-column id="select-column"
-                                        flex-grow="0"
-                                        text-align="center"
-                                        auto-select></vaadin-grid-selection-column>
-          <vaadin-grid-filter-column header="${_t('session.launcher.FolderToMountList')}"
-                                    path="name" resizable
-                                    .renderer="${this._boundFolderToMountListRenderer}"></vaadin-grid-filter-column>
-          <vaadin-grid-column width="135px"
-                              path=" ${_t('session.launcher.FolderAlias')}"
-                              .renderer="${this._boundFolderMapRenderer}"
-                              .headerRenderer="${this._boundPathRenderer}"></vaadin-grid-column>
+          theme="row-stripes column-borders compact"
+          id="vfolder-grid"
+          aria-label="vfolder list"
+          all-rows-visible
+          .items="${this.nonAutoMountedVfolders}"
+          @selected-items-changed="${() => this._updateSelectedFolder()}"
+        >
+          <vaadin-grid-selection-column
+            id="select-column"
+            flex-grow="0"
+            text-align="center"
+            auto-select
+          ></vaadin-grid-selection-column>
+          <vaadin-grid-filter-column
+            header="${_t('session.launcher.FolderToMountList')}"
+            path="name"
+            resizable
+            .renderer="${this._boundFolderToMountListRenderer}"
+          ></vaadin-grid-filter-column>
+          <vaadin-grid-column
+            width="135px"
+            path=" ${_t('session.launcher.FolderAlias')}"
+            .renderer="${this._boundFolderMapRenderer}"
+            .headerRenderer="${this._boundPathRenderer}"
+          ></vaadin-grid-column>
         </vaadin-grid>
-        ${this.vfolders.length > 0 ? html`` : html`
-          <div class="vertical layout center flex blank-box-medium">
-            <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
-          </div>
-        `}
+        ${this.vfolders.length > 0
+          ? html``
+          : html`
+              <div class="vertical layout center flex blank-box-medium">
+                <span>${_t('session.launcher.NoAvailableFolderToMount')}</span>
+              </div>
+            `}
       </div>
     `;
   }
@@ -1500,28 +1866,38 @@ export default class PipelineConfigurationForm extends LitElement {
   renderMountedResultTemplate(pipelineVfolder: string = '') {
     // language=HTML
     return html`
-    <div class="vfolder-mounted-list">
-    ${(this.selectedVfolders.length > 0) || (this.autoMountedVfolders.length > 0) ? html`
-      <ul class="vfolder-list">
-        ${[...this.selectedVfolders, ((pipelineVfolder!== '') ? pipelineVfolder : null)].map((item) => html`
-          <li>
-            <mwc-icon>folder_open</mwc-icon>
-            ${item}
-            ${item in this.folderMapping ?
-              this.folderMapping[item].startsWith('/') ? html` (&#10140; ${this.folderMapping[item]})`:
-                html`(&#10140; /home/work/${this.folderMapping[item]})` :
-                html`(&#10140; /home/work/${item})`}
-          </li>
-        `)}
-        ${this.autoMountedVfolders.map((item) => html`
-          <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
-        `)}
-      </ul>` : html`
-      <div class="vertical layout center flex blank-box-large">
-        <span>${_t('session.launcher.NoFolderMounted')}</span>
+      <div class="vfolder-mounted-list">
+        ${this.selectedVfolders.length > 0 ||
+        this.autoMountedVfolders.length > 0
+          ? html` <ul class="vfolder-list">
+              ${[
+                ...this.selectedVfolders,
+                pipelineVfolder !== '' ? pipelineVfolder : null,
+              ].map(
+                (item) => html`
+                  <li>
+                    <mwc-icon>folder_open</mwc-icon>
+                    ${item}
+                    ${item in this.folderMapping
+                      ? this.folderMapping[item].startsWith('/')
+                        ? html` (&#10140; ${this.folderMapping[item]})`
+                        : html`(&#10140; /home/work/${this.folderMapping[item]})`
+                      : html`(&#10140; /home/work/${item})`}
+                  </li>
+                `,
+              )}
+              ${this.autoMountedVfolders.map(
+                (item) => html`
+                  <li><mwc-icon>folder_special</mwc-icon>${item.name}</li>
+                `,
+              )}
+            </ul>`
+          : html`
+              <div class="vertical layout center flex blank-box-large">
+                <span>${_t('session.launcher.NoFolderMounted')}</span>
+              </div>
+            `}
       </div>
-    `}
-  </div>
     `;
   }
 
@@ -1529,19 +1905,33 @@ export default class PipelineConfigurationForm extends LitElement {
     // language=HTML
     return html`
       <mwc-tab-bar class="modal">
-        <mwc-tab title="general" label="General" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
-        <mwc-tab title="resources" label="Resources" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
-        <mwc-tab title="mounts" label="Mounts" @click="${(e) => this._setActiveTab(e.target)}"></mwc-tab>
+        <mwc-tab
+          title="general"
+          label="General"
+          @click="${(e) => this._setActiveTab(e.target)}"
+        ></mwc-tab>
+        <mwc-tab
+          title="resources"
+          label="Resources"
+          @click="${(e) => this._setActiveTab(e.target)}"
+        ></mwc-tab>
+        <mwc-tab
+          title="mounts"
+          label="Mounts"
+          @click="${(e) => this._setActiveTab(e.target)}"
+        ></mwc-tab>
       </mwc-tab-bar>
-      ${this.configurationType === 'pipeline' ? html`
-        ${this.renderGeneralTabTemplate()}
-        ${this.renderResourcesTabTemplate(this._isRequired)}
-        ${this.renderMountsTabTemplate()}
-      ` : html`
-        ${this.renderGeneralTaskTabTemplate(this.isEditmode)}
-        ${this.renderResourcesTaskTabTemplate(this._isRequired)}
-        ${this.renderMountsTaskTabTemplate()}
-      `}
+      ${this.configurationType === 'pipeline'
+        ? html`
+            ${this.renderGeneralTabTemplate()}
+            ${this.renderResourcesTabTemplate(this._isRequired)}
+            ${this.renderMountsTabTemplate()}
+          `
+        : html`
+            ${this.renderGeneralTaskTabTemplate(this.isEditmode)}
+            ${this.renderResourcesTaskTabTemplate(this._isRequired)}
+            ${this.renderMountsTaskTabTemplate()}
+          `}
     `;
   }
 }

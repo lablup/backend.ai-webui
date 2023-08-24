@@ -3,9 +3,9 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {applyMiddleware, combineReducers, compose, createStore} from 'redux';
+import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import {lazyReducerEnhancer} from 'pwa-helpers/lazy-reducer-enhancer';
+import { lazyReducerEnhancer } from 'pwa-helpers/lazy-reducer-enhancer';
 
 import app from './reducers/app';
 
@@ -26,12 +26,10 @@ const devCompose = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 // https://github.com/Polymer/pwa-starter-kit/wiki/4.-Redux-and-state-management
 export const store: any = createStore(
   (state) => state,
-  devCompose(
-    lazyReducerEnhancer(combineReducers),
-    applyMiddleware(thunk))
+  devCompose(lazyReducerEnhancer(combineReducers), applyMiddleware(thunk)),
 );
 
 // Initially loaded reducers.
 store.addReducers({
-  app
+  app,
 });

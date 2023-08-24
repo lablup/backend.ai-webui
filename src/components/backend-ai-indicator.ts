@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 import '@material/mwc-linear-progress';
 import './backend-ai-dialog';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAiStyles } from './backend-ai-general-styles';
 
 /**
  Backend.AI Indicator
@@ -17,10 +17,10 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('backend-ai-indicator')
 export default class BackendAIIndicator extends LitElement {
-  @property({type: Number}) value = 0;
-  @property({type: Number}) delay = 1000;
-  @property({type: String}) text = '';
-  @property({type: String}) mode = 'determinate';
+  @property({ type: Number }) value = 0;
+  @property({ type: Number }) delay = 1000;
+  @property({ type: String }) text = '';
+  @property({ type: String }) mode = 'determinate';
   @query('#app-progress-dialog') dialog;
   static get styles(): CSSResultGroup {
     return [
@@ -29,7 +29,7 @@ export default class BackendAIIndicator extends LitElement {
       css`
         #app-progress-dialog {
           position: fixed;
-          right: 20px!important;
+          right: 20px !important;
           bottom: 20px;
           z-index: 9000;
           height: auto;
@@ -38,7 +38,9 @@ export default class BackendAIIndicator extends LitElement {
           display: none;
           background-color: #ffffff;
           border-radius: 3px;
-          box-shadow: 0 1px 3px -1px rgba(0,0,0,60%), 0 3px 12px -1px rgb(200,200,200,80%);
+          box-shadow:
+            0 1px 3px -1px rgba(0, 0, 0, 60%),
+            0 3px 12px -1px rgb(200, 200, 200, 80%);
         }
         #app-progress-dialog h3 {
           font-size: 14px;
@@ -46,7 +48,8 @@ export default class BackendAIIndicator extends LitElement {
         mwc-linear-progress {
           --mdc-theme-primary: var(--general-select-color, #333);
         }
-      `];
+      `,
+    ];
   }
 
   firstUpdated() {
@@ -86,7 +89,11 @@ export default class BackendAIIndicator extends LitElement {
     return html`
       <div id="app-progress-dialog">
         <h3>${this.text}</h3>
-        <mwc-linear-progress ?indeterminate="${this.mode != 'determinate'}" id="app-progress" .progress="${this.value}"></mwc-linear-progress>
+        <mwc-linear-progress
+          ?indeterminate="${this.mode != 'determinate'}"
+          id="app-progress"
+          .progress="${this.value}"
+        ></mwc-linear-progress>
       </div>
     `;
   }

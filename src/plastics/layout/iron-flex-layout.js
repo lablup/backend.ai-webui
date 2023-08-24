@@ -71,7 +71,7 @@
  @demo demo/index.html
  */
 
-import {css} from 'lit';
+import { css } from 'lit';
 
 export const IronFlexLayout =
   // language=CSS
@@ -418,5 +418,5 @@ export const IronFlexLayout =
         bottom: 0;
         left: 0;
       };
-
-    }`;
+    }
+  `;

@@ -3,16 +3,16 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {css, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { css, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
-import {translate as _t} from 'lit-translate';
+import { translate as _t } from 'lit-translate';
 
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**
@@ -24,12 +24,12 @@ import {
 
 @customElement('backend-ai-monthly-usage-panel')
 export default class BackendAIMonthlyUsagePanel extends LitElement {
-  @property({type: Number}) num_sessions = 0;
-  @property({type: String}) used_time = '0:00:00.00';
-  @property({type: String}) cpu_used_time = '0:00:00.00';
-  @property({type: String}) gpu_used_time = '0:00:00.00';
-  @property({type: Number}) disk_used = 0;
-  @property({type: Number}) traffic_used = 0;
+  @property({ type: Number }) num_sessions = 0;
+  @property({ type: String }) used_time = '0:00:00.00';
+  @property({ type: String }) cpu_used_time = '0:00:00.00';
+  @property({ type: String }) gpu_used_time = '0:00:00.00';
+  @property({ type: Number }) disk_used = 0;
+  @property({ type: Number }) traffic_used = 0;
 
   constructor() {
     super();
@@ -52,7 +52,7 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
         .desc {
           padding: 0px 15px 20px 15px;
         }
-      `
+      `,
     ];
   }
 
@@ -65,8 +65,8 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
     this.cpu_used_time = this.usedTimeFormatting(this.cpu_used_time);
     this.gpu_used_time = this.usedTimeFormatting(this.gpu_used_time);
 
-    this.disk_used = Math.floor(this.disk_used / (10 ** 9)); // bytes to GB
-    this.traffic_used = Math.floor(this.traffic_used / (2 ** 20)); // bytes to MiB
+    this.disk_used = Math.floor(this.disk_used / 10 ** 9); // bytes to GB
+    this.traffic_used = Math.floor(this.traffic_used / 2 ** 20); // bytes to MiB
   }
 
   /**
@@ -77,8 +77,13 @@ export default class BackendAIMonthlyUsagePanel extends LitElement {
    * */
   usedTimeFormatting(time) {
     const days = parseInt(time.substring(0, time.indexOf(':')));
-    let hours = parseInt(time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')));
-    const minutes = time.substring(time.lastIndexOf(':') + 1, time.indexOf('.'));
+    let hours = parseInt(
+      time.substring(time.indexOf(':') + 1, time.lastIndexOf(':')),
+    );
+    const minutes = time.substring(
+      time.lastIndexOf(':') + 1,
+      time.indexOf('.'),
+    );
     hours = days * 24 + hours;
     return hours + 'h ' + minutes + 'm';
   }

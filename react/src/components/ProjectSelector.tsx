@@ -1,11 +1,11 @@
-import React from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
-import { ProjectSelectorQuery } from "./__generated__/ProjectSelectorQuery.graphql";
+import React from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import { useLazyLoadQuery } from 'react-relay';
+import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
 
-import _ from "lodash";
-import { Select, SelectProps } from "antd";
-import { useTranslation } from "react-i18next";
+import _ from 'lodash';
+import { Select, SelectProps } from 'antd';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends SelectProps {
   onSelectProject?: (project: any) => void;
@@ -34,15 +34,15 @@ const ProjectSelector: React.FC<Props> = ({
       domain_name: domain,
     },
     {
-      fetchPolicy: "store-and-network",
-    }
+      fetchPolicy: 'store-and-network',
+    },
   );
   return (
     <Select
       onChange={(value, option) => {
         onSelectProject?.(option);
       }}
-      placeholder={t("storageHost.quotaSettings.SelectProject")}
+      placeholder={t('storageHost.quotaSettings.SelectProject')}
       {...selectProps}
     >
       {_.map(projects, (project) => {

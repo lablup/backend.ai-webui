@@ -3,8 +3,8 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import '@material/mwc-circular-progress';
 
@@ -23,8 +23,8 @@ import '@material/mwc-circular-progress';
 
 @customElement('lablup-loading-spinner')
 export default class LablupLoadingSpinner extends LitElement {
-  @property({type: Object}) spinner;
-  @property({type: Boolean, reflect: true}) active = false;
+  @property({ type: Object }) spinner;
+  @property({ type: Boolean, reflect: true }) active = false;
 
   static get styles(): CSSResultGroup | undefined {
     return [
@@ -37,13 +37,14 @@ export default class LablupLoadingSpinner extends LitElement {
           --mdc-theme-primary: #e91e63;
           top: calc(50vh - 24px);
         }
-      `];
+      `,
+    ];
   }
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <mwc-circular-progress id="spinner" indeterminate></mwc-circular-progress>
     `;
   }

@@ -1,48 +1,48 @@
-import { Button, Table, Tabs, Typography, theme } from "antd";
+import { Button, Table, Tabs, Typography, theme } from 'antd';
 import React, {
   PropsWithChildren,
   Suspense,
   useState,
   useTransition,
   startTransition as startTransitionWithoutPendingState,
-} from "react";
-import Flex from "../components/Flex";
-import { useTranslation } from "react-i18next";
-import ServiceLauncherModal from "../components/ServiceLauncherModal";
+} from 'react';
+import Flex from '../components/Flex';
+import { useTranslation } from 'react-i18next';
+import ServiceLauncherModal from '../components/ServiceLauncherModal';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
-} from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
-import { useRafInterval } from "ahooks";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
+} from '../hooks';
+import { baiSignedRequestWithPromise } from '../helper';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import { useRafInterval } from 'ahooks';
+import graphql from 'babel-plugin-relay/macro';
+import { useLazyLoadQuery } from 'react-relay';
 import {
   ServingListPageQuery,
   ServingListPageQuery$data,
-} from "./__generated__/ServingListPageQuery.graphql";
+} from './__generated__/ServingListPageQuery.graphql';
 import {
   CheckOutlined,
   CloseOutlined,
   DeleteOutlined,
   SettingOutlined,
-} from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import _ from "lodash";
-import EndpointStatusTag from "../components/EndpointStatusTag";
-import BAIModal from "../components/BAIModal";
+} from '@ant-design/icons';
+import { Link } from 'react-router-dom';
+import _ from 'lodash';
+import EndpointStatusTag from '../components/EndpointStatusTag';
+import BAIModal from '../components/BAIModal';
 
 // FIXME: need to apply filtering type of service later
-type TabKey = "services"; //  "running" | "finished" | "others";
+type TabKey = 'services'; //  "running" | "finished" | "others";
 
 type Endpoint = NonNullable<
   NonNullable<
     NonNullable<
-      NonNullable<ServingListPageQuery$data>["endpoint_list"]
-    >["items"]
+      NonNullable<ServingListPageQuery$data>['endpoint_list']
+    >['items']
   >[0]
 >;
 
@@ -71,9 +71,9 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
     setIsOpenModelServiceTerminatingModal,
   ] = useState(false);
   const [servicesFetchKey, updateServicesFetchKey] =
-    useUpdatableState("initial-fetch");
+    useUpdatableState('initial-fetch');
   // FIXME: need to apply filtering type of service later
-  const [selectedTab, setSelectedTab] = useState<TabKey>("services");
+  const [selectedTab, setSelectedTab] = useState<TabKey>('services');
   // const [selectedGeneration, setSelectedGeneration] = useState<
   //   "current" | "next"
   // >("next");
@@ -131,14 +131,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       },
       {
         fetchPolicy:
-          servicesFetchKey === "initial-fetch"
-            ? "store-and-network"
-            : "network-only",
+          servicesFetchKey === 'initial-fetch'
+            ? 'store-and-network'
+            : 'network-only',
         fetchKey: servicesFetchKey,
-      }
+      },
     );
 
-  const sortedEndpointList = _.sortBy(modelServiceList?.items, "name");
+  const sortedEndpointList = _.sortBy(modelServiceList?.items, 'name');
 
   // FIXME: struggling with sending data when active tab changes!
   // const runningModelServiceList = modelServiceList?.filter(
@@ -152,8 +152,8 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const terminateModelServiceMutation = useTanMutation({
     mutationFn: () => {
       return baiSignedRequestWithPromise({
-        method: "DELETE",
-        url: "/services/" + selectedModelService?.endpoint_id,
+        method: 'DELETE',
+        url: '/services/' + selectedModelService?.endpoint_id,
         client: baiClient,
       });
     },
@@ -197,14 +197,14 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               onChange={(key) => setSelectedTab(key as TabKey)}
               tabBarStyle={{ marginBottom: 0 }}
               style={{
-                width: "100%",
+                width: '100%',
                 paddingLeft: token.paddingMD,
                 paddingRight: token.paddingMD,
                 borderTopLeftRadius: token.borderRadius,
                 borderTopRightRadius: token.borderRadius,
               }}
               items={[
-                { key: "services", label: t("modelService.Services") },
+                { key: 'services', label: t('modelService.Services') },
                 // FIXME: need to apply filtering type of service later
                 // {
                 //   key: "running",
@@ -227,7 +227,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       setIsOpenServiceLauncher(true);
                     }}
                   >
-                    {t("modelService.StartService")}
+                    {t('modelService.StartService')}
                   </Button>
                 ),
               }}
@@ -262,28 +262,28 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
             /> */}
             <Table
               loading={isRefetchPending}
-              scroll={{ x: "max-content" }}
+              scroll={{ x: 'max-content' }}
               dataSource={(sortedEndpointList || []) as Endpoint[]}
               columns={[
                 {
-                  title: t("modelService.EndpointName"),
-                  dataIndex: "endpoint_id",
-                  fixed: "left",
+                  title: t('modelService.EndpointName'),
+                  dataIndex: 'endpoint_id',
+                  fixed: 'left',
                   render: (endpoint_id, row) => (
-                    <Link to={"/serving/" + endpoint_id}>{row.name}</Link>
+                    <Link to={'/serving/' + endpoint_id}>{row.name}</Link>
                   ),
                 },
                 {
-                  title: t("modelService.EndpointId"),
-                  dataIndex: "endpoint_id",
+                  title: t('modelService.EndpointId'),
+                  dataIndex: 'endpoint_id',
                   width: 310,
                   render: (endpoint_id) => (
                     <Typography.Text code>{endpoint_id}</Typography.Text>
                   ),
                 },
                 {
-                  title: t("modelService.Controls"),
-                  dataIndex: "controls",
+                  title: t('modelService.Controls'),
+                  dataIndex: 'controls',
                   render: (text, row) => (
                     <Flex direction="row" align="stretch">
                       <Button
@@ -292,7 +292,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                         style={
                           row.desired_session_count > 0
                             ? {
-                                color: "#29b6f6",
+                                color: '#29b6f6',
                               }
                             : undefined
                         }
@@ -325,46 +325,46 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
                   ),
                 },
                 {
-                  title: t("modelService.Status"),
+                  title: t('modelService.Status'),
                   render: (text, row) => (
                     <EndpointStatusTag endpointFrgmt={row} />
                   ),
                 },
                 {
-                  title: t("modelService.DesiredSessionCount"),
-                  dataIndex: "desired_session_count",
+                  title: t('modelService.DesiredSessionCount'),
+                  dataIndex: 'desired_session_count',
                   render: (desired_session_count) => {
                     return desired_session_count < 0
-                      ? "-"
+                      ? '-'
                       : desired_session_count;
                   },
                 },
                 {
                   title: (
                     <Flex direction="column" align="start">
-                      {t("modelService.RoutingsCount")}
+                      {t('modelService.RoutingsCount')}
                       <br />
                       <Typography.Text
                         type="secondary"
-                        style={{ fontWeight: "normal" }}
+                        style={{ fontWeight: 'normal' }}
                       >
-                        ({t("modelService.Active/Total")})
+                        ({t('modelService.Active/Total')})
                       </Typography.Text>
                     </Flex>
                   ),
                   // dataIndex: "active_route_count",
                   render: (text, row) => {
                     return (
-                      _.filter(row.routings, (r) => r?.status === "HEALTHY")
+                      _.filter(row.routings, (r) => r?.status === 'HEALTHY')
                         .length +
-                      " / " +
+                      ' / ' +
                       row.routings?.length
                     );
                     // [r for r in endpoint.routings if r.status == RouteStatus.HEALTHY]
                   },
                 },
                 {
-                  title: t("modelService.Public"),
+                  title: t('modelService.Public'),
                   render: (text, row) =>
                     row.open_to_public ? (
                       <CheckOutlined style={{ color: token.colorSuccess }} />
@@ -399,7 +399,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       </Flex>
       <BAIModal
         open={isOpenModelServiceTerminatingModal}
-        title={t("dialog.title.LetsDouble-Check")}
+        title={t('dialog.title.LetsDouble-Check')}
         okButtonProps={{
           loading: terminateModelServiceMutation.isLoading,
         }}
@@ -413,7 +413,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
               setIsOpenModelServiceTerminatingModal(false);
             },
             onError: (err) => {
-              console.log("terminateModelServiceMutation Error", err);
+              console.log('terminateModelServiceMutation Error', err);
             },
           });
         }}
@@ -423,11 +423,11 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
       >
         <Flex direction="column" align="stretch" justify="center">
           <p>
-            {t("modelService.YouAreAboutToTerminate") +
-              (selectedModelService?.name || "") +
-              "."}
+            {t('modelService.YouAreAboutToTerminate') +
+              (selectedModelService?.name || '') +
+              '.'}
           </p>
-          <p>{t("dialog.ask.DoYouWantToProceed")}</p>
+          <p>{t('dialog.ask.DoYouWantToProceed')}</p>
         </Flex>
       </BAIModal>
       <ModelServiceSettingModal

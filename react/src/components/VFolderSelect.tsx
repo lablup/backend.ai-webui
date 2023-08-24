@@ -1,9 +1,9 @@
-import { Select, SelectProps } from "antd";
-import React, { startTransition, useEffect } from "react";
-import _ from "lodash";
-import { useCurrentProjectValue, useUpdatableState } from "../hooks";
-import { useBaiSignedRequestWithPromise } from "../helper";
-import { useTanQuery } from "../hooks/reactQueryAlias";
+import { Select, SelectProps } from 'antd';
+import React, { startTransition, useEffect } from 'react';
+import _ from 'lodash';
+import { useCurrentProjectValue, useUpdatableState } from '../hooks';
+import { useBaiSignedRequestWithPromise } from '../helper';
+import { useTanQuery } from '../hooks/reactQueryAlias';
 
 type VFolder = {
   name: string;
@@ -68,13 +68,13 @@ const VFolderSelect: React.FC<VFolderSelectProps> = ({
   //   }
   // );
   // console.log("vfolder_list", vfolder_list);
-  const [key, checkUpdate] = useUpdatableState("first");
+  const [key, checkUpdate] = useUpdatableState('first');
 
   const { data } = useTanQuery({
-    queryKey: ["VFolderSelectQuery", key],
+    queryKey: ['VFolderSelectQuery', key],
     queryFn: () => {
       return baiRequestWithPromise({
-        method: "GET",
+        method: 'GET',
         url: `/folders?group_id=${currentProject.id}`,
       }) as Promise<VFolder[]>;
     },

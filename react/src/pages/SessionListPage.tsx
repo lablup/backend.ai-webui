@@ -1,74 +1,74 @@
-import { Alert, Segmented, Tabs, Typography, theme } from "antd";
-import React, { PropsWithChildren, Suspense, useState } from "react";
-import Flex from "../components/Flex";
-import { useTranslation } from "react-i18next";
-import { ThunderboltTwoTone } from "@ant-design/icons";
-import SessionList from "../components/SessionList";
-import { useCurrentProjectValue, useSuspendedBackendaiClient } from "../hooks";
+import { Alert, Segmented, Tabs, Typography, theme } from 'antd';
+import React, { PropsWithChildren, Suspense, useState } from 'react';
+import Flex from '../components/Flex';
+import { useTranslation } from 'react-i18next';
+import { ThunderboltTwoTone } from '@ant-design/icons';
+import SessionList from '../components/SessionList';
+import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
 
 const RUNNINGS = [
-  "RUNNING",
-  "RESTARTING",
-  "TERMINATING",
-  "PENDING",
-  "SCHEDULED",
-  "PREPARING",
-  "PULLING",
+  'RUNNING',
+  'RESTARTING',
+  'TERMINATING',
+  'PENDING',
+  'SCHEDULED',
+  'PREPARING',
+  'PULLING',
 ];
 const TAB_STATUS_MAP = {
   running: RUNNINGS,
   interactive: RUNNINGS,
   batch: RUNNINGS,
   inference: RUNNINGS,
-  finished: ["TERMINATED", "CANCELLED"],
-  others: ["TERMINATING", "ERROR"],
+  finished: ['TERMINATED', 'CANCELLED'],
+  others: ['TERMINATING', 'ERROR'],
   default: RUNNINGS,
 };
 
 type TabKey =
-  | "running"
-  | "interactive"
-  | "batch"
-  | "inference"
-  | "finished"
-  | "others"
-  | "default";
+  | 'running'
+  | 'interactive'
+  | 'batch'
+  | 'inference'
+  | 'finished'
+  | 'others'
+  | 'default';
 const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
   const { t } = useTranslation();
   const baiClient = useSuspendedBackendaiClient();
   const { token } = theme.useToken();
   const curProject = useCurrentProjectValue();
 
-  const [selectedTab, setSelectedTab] = useState<TabKey>("running");
+  const [selectedTab, setSelectedTab] = useState<TabKey>('running');
   const [selectedGeneration, setSelectedGeneration] = useState<
-    "current" | "next"
-  >("next");
+    'current' | 'next'
+  >('next');
 
   // console.log(compute_session_list?.items[0].);
   return (
     <>
       <Alert
         message={
-          <Flex gap={"md"}>
+          <Flex gap={'md'}>
             <Typography.Text>
-              This is{" "}
-              {selectedGeneration === "current"
-                ? "current version"
-                : "NEXT generation"}{" "}
+              This is{' '}
+              {selectedGeneration === 'current'
+                ? 'current version'
+                : 'NEXT generation'}{' '}
               of session list. you can switch anytime.
             </Typography.Text>
             <Segmented
               options={[
                 {
-                  label: "Current",
-                  value: "current",
+                  label: 'Current',
+                  value: 'current',
                 },
                 {
                   label: (
                     <Typography.Text
                       style={{
                         color:
-                          selectedGeneration === "next"
+                          selectedGeneration === 'next'
                             ? token.colorPrimary
                             : undefined,
                       }}
@@ -76,7 +76,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                       Next
                     </Typography.Text>
                   ),
-                  value: "next",
+                  value: 'next',
                   icon: (
                     // <ThunderboltFilled style={{ color: token.colorPrimary }} />
                     <ThunderboltTwoTone twoToneColor={token.colorWarning} />
@@ -93,7 +93,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
         banner
         style={{ marginTop: -14, marginLeft: -14, marginRight: -14 }}
       />
-      {selectedGeneration === "next" ? (
+      {selectedGeneration === 'next' ? (
         <Flex
           direction="column"
           align="stretch"
@@ -113,7 +113,7 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 onChange={(key) => setSelectedTab(key as TabKey)}
                 tabBarStyle={{ marginBottom: 0 }}
                 style={{
-                  width: "100%",
+                  width: '100%',
                   paddingLeft: token.paddingMD,
                   paddingRight: token.paddingMD,
                   borderTopLeftRadius: token.borderRadius,
@@ -121,37 +121,37 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
                 }}
                 items={[
                   {
-                    key: "running",
-                    label: t("session.Running"),
+                    key: 'running',
+                    label: t('session.Running'),
                   },
                   {
-                    key: "interactive",
-                    label: t("session.Interactive"),
+                    key: 'interactive',
+                    label: t('session.Interactive'),
                   },
                   {
-                    key: "batch",
-                    label: t("session.Batch"),
+                    key: 'batch',
+                    label: t('session.Batch'),
                   },
-                  ...(baiClient.supports("inference-workload")
+                  ...(baiClient.supports('inference-workload')
                     ? [
                         {
-                          key: "inference",
-                          label: t("session.Inference"),
+                          key: 'inference',
+                          label: t('session.Inference'),
                         },
                       ]
                     : []),
                   {
-                    key: "finished",
-                    label: t("session.Finished"),
+                    key: 'finished',
+                    label: t('session.Finished'),
                   },
                   {
-                    key: "others",
-                    label: t("session.Others"),
+                    key: 'others',
+                    label: t('session.Others'),
                   },
                 ]}
                 tabBarExtraContent={{
                   right: (
-                    <Flex direction="row" gap={"sm"}>
+                    <Flex direction="row" gap={'sm'}>
                       {/* <Tooltip title={t("session.exportCSV")}>
                         <Button icon={<DownloadOutlined />} type="text" />
                       </Tooltip> */}
@@ -181,11 +181,11 @@ const SessionListPage: React.FC<PropsWithChildren> = ({ children }) => {
               <SessionList
                 projectId={curProject.id}
                 status={
-                  TAB_STATUS_MAP[selectedTab] || TAB_STATUS_MAP["default"]
+                  TAB_STATUS_MAP[selectedTab] || TAB_STATUS_MAP['default']
                 }
                 filter={(session) => {
                   if (
-                    ["interactive", "batch", "inference"].includes(selectedTab)
+                    ['interactive', 'batch', 'inference'].includes(selectedTab)
                   ) {
                     return session?.type?.toLowerCase() === selectedTab;
                   }

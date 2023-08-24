@@ -1,5 +1,5 @@
-import { ReactNode } from "react";
-import { CheckOutlined, WarningOutlined } from "@ant-design/icons";
+import { ReactNode } from 'react';
+import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
   Typography,
@@ -10,13 +10,13 @@ import {
   Spin,
   Row,
   Col,
-} from "antd";
-import { useTranslation } from "react-i18next";
-import Flex from "./Flex";
-import { useQuery } from "react-query";
-import { newLineToBrElement } from "../helper";
-import { useSuspendedBackendaiClient } from "../hooks";
-import DoubleTag from "./DoubleTag";
+} from 'antd';
+import { useTranslation } from 'react-i18next';
+import Flex from './Flex';
+import { useQuery } from 'react-query';
+import { newLineToBrElement } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import DoubleTag from './DoubleTag';
 
 const DescriptionLabel: React.FC<{
   title: string;
@@ -47,27 +47,27 @@ const Information: React.FC<InformationProps> = () => {
     key: string;
     expiration: string;
   }>(
-    "licenseInfo",
+    'licenseInfo',
     () => {
       return baiClient.enterprise.getLicense();
     },
     {
       // for to render even this fail query failed
       suspense: false,
-    }
+    },
   );
 
   if (!licenseInfo) {
     licenseInfo = {
       valid: false,
-      type: t("information.CannotRead"),
-      licensee: t("information.CannotRead"),
-      key: t("information.CannotRead"),
-      expiration: t("information.CannotRead"),
+      type: t('information.CannotRead'),
+      licensee: t('information.CannotRead'),
+      key: t('information.CannotRead'),
+      expiration: t('information.CannotRead'),
     };
   }
 
-  const columnSetting: DescriptionsProps["column"] = {
+  const columnSetting: DescriptionsProps['column'] = {
     xxl: 4,
     xl: 4,
     lg: 2,
@@ -86,17 +86,17 @@ const Information: React.FC<InformationProps> = () => {
         <Col xs={24} xxl={12}>
           <Card
             style={{
-              height: "100%",
+              height: '100%',
             }}
           >
             <Descriptions
-              title={t("information.Core")}
+              title={t('information.Core')}
               bordered
               column={columnSetting}
             >
               <Descriptions.Item
                 label={
-                  <DescriptionLabel title={t("information.ManagerVersion")} />
+                  <DescriptionLabel title={t('information.ManagerVersion')} />
                 }
               >
                 <Flex
@@ -107,7 +107,7 @@ const Information: React.FC<InformationProps> = () => {
                   Backend.AI {baiClient.managerVersion}
                   <DoubleTag
                     values={[
-                      t("information.Installation"),
+                      t('information.Installation'),
                       baiClient.managerVersion,
                     ]}
                   />
@@ -119,7 +119,7 @@ const Information: React.FC<InformationProps> = () => {
                 </Flex>
               </Descriptions.Item>
               <Descriptions.Item
-                label={<DescriptionLabel title={t("information.APIVersion")} />}
+                label={<DescriptionLabel title={t('information.APIVersion')} />}
               >
                 {baiClient.apiVersion}
               </Descriptions.Item>
@@ -129,16 +129,16 @@ const Information: React.FC<InformationProps> = () => {
         <Col xs={24} xxl={12}>
           <Card>
             <Descriptions
-              title={t("information.Security")}
+              title={t('information.Security')}
               bordered
               column={columnSetting}
             >
               <Descriptions.Item
                 label={
                   <DescriptionLabel
-                    title={t("information.DefaultAdministratorAccountChanged")}
+                    title={t('information.DefaultAdministratorAccountChanged')}
                     subtitle={t(
-                      "information.DescDefaultAdministratorAccountChanged"
+                      'information.DescDefaultAdministratorAccountChanged',
                     )}
                   />
                 }
@@ -147,21 +147,21 @@ const Information: React.FC<InformationProps> = () => {
                 {true ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: "red" }} title="No" />
+                  <WarningOutlined style={{ color: 'red' }} title="No" />
                 )}
               </Descriptions.Item>
               <Descriptions.Item
                 label={
                   <DescriptionLabel
-                    title={t("information.UsesSSL")}
-                    subtitle={t("information.DescUsesSSL")}
+                    title={t('information.UsesSSL')}
+                    subtitle={t('information.DescUsesSSL')}
                   />
                 }
               >
-                {baiClient?._config.endpoint.startsWith("https:") ? (
+                {baiClient?._config.endpoint.startsWith('https:') ? (
                   <CheckOutlined title="Yes" />
                 ) : (
-                  <WarningOutlined style={{ color: "red" }} title="No" />
+                  <WarningOutlined style={{ color: 'red' }} title="No" />
                 )}
               </Descriptions.Item>
             </Descriptions>
@@ -171,56 +171,56 @@ const Information: React.FC<InformationProps> = () => {
 
       <Card>
         <Descriptions
-          title={t("information.Component")}
+          title={t('information.Component')}
           bordered
           column={{ xxl: 4, xl: 2, lg: 2, md: 1, sm: 1, xs: 1 }}
         >
           <Descriptions.Item
             label={
               <DescriptionLabel
-                title={t("information.DockerVersion")}
-                subtitle={t("information.DescDockerVersion")}
+                title={t('information.DockerVersion')}
+                subtitle={t('information.DescDockerVersion')}
               />
             }
           >
-            <Tag>{t("information.Compatible")}</Tag>
+            <Tag>{t('information.Compatible')}</Tag>
           </Descriptions.Item>
           <Descriptions.Item
             label={
               <DescriptionLabel
-                title={t("information.PostgreSQLVersion")}
-                subtitle={t("information.DescPostgreSQLVersion")}
+                title={t('information.PostgreSQLVersion')}
+                subtitle={t('information.DescPostgreSQLVersion')}
               />
             }
           >
-            <Tag>{t("information.Compatible")}</Tag>
+            <Tag>{t('information.Compatible')}</Tag>
           </Descriptions.Item>
           <Descriptions.Item
             label={
               <DescriptionLabel
-                title={t("information.ETCDVersion")}
-                subtitle={t("information.DescETCDVersion")}
+                title={t('information.ETCDVersion')}
+                subtitle={t('information.DescETCDVersion')}
               />
             }
           >
-            <Tag>{t("information.Compatible")}</Tag>
+            <Tag>{t('information.Compatible')}</Tag>
           </Descriptions.Item>
           <Descriptions.Item
             label={
               <DescriptionLabel
-                title={t("information.RedisVersion")}
-                subtitle={newLineToBrElement(t("information.DescRedisVersion"))}
+                title={t('information.RedisVersion')}
+                subtitle={newLineToBrElement(t('information.DescRedisVersion'))}
               />
             }
           >
-            <Tag>{t("information.Compatible")}</Tag>
+            <Tag>{t('information.Compatible')}</Tag>
           </Descriptions.Item>
         </Descriptions>
       </Card>
       <Card>
         <Spin spinning={isLoadingLicenseInfo}>
           <Descriptions
-            title={t("information.License")}
+            title={t('information.License')}
             bordered
             column={{
               xxl: 2,
@@ -234,38 +234,38 @@ const Information: React.FC<InformationProps> = () => {
             <Descriptions.Item
               label={
                 <DescriptionLabel
-                  title={t("information.IsLicenseValid")}
-                  subtitle={t("information.DescIsLicenseValid")}
+                  title={t('information.IsLicenseValid')}
+                  subtitle={t('information.DescIsLicenseValid')}
                 />
               }
             >
               {licenseInfo.valid ? (
                 <CheckOutlined />
               ) : (
-                <WarningOutlined style={{ color: "red" }} />
+                <WarningOutlined style={{ color: 'red' }} />
               )}
             </Descriptions.Item>
             <Descriptions.Item
               label={
                 <DescriptionLabel
-                  title={t("information.LicenseType")}
+                  title={t('information.LicenseType')}
                   subtitle={newLineToBrElement(
-                    t("information.DescLicenseType")
+                    t('information.DescLicenseType'),
                   )}
                 />
               }
             >
               <Tag>
-                {licenseInfo.type === "fixed"
-                  ? t("information.FixedLicense")
-                  : t("information.DynamicLicense")}
+                {licenseInfo.type === 'fixed'
+                  ? t('information.FixedLicense')
+                  : t('information.DynamicLicense')}
               </Tag>
             </Descriptions.Item>
             <Descriptions.Item
               label={
                 <DescriptionLabel
-                  title={t("information.Licensee")}
-                  subtitle={t("information.DescLicensee")}
+                  title={t('information.Licensee')}
+                  subtitle={t('information.DescLicensee')}
                 />
               }
             >
@@ -274,8 +274,8 @@ const Information: React.FC<InformationProps> = () => {
             <Descriptions.Item
               label={
                 <DescriptionLabel
-                  title={t("information.LicenseKey")}
-                  subtitle={t("information.DescLicenseKey")}
+                  title={t('information.LicenseKey')}
+                  subtitle={t('information.DescLicenseKey')}
                 />
               }
             >
@@ -284,8 +284,8 @@ const Information: React.FC<InformationProps> = () => {
             <Descriptions.Item
               label={
                 <DescriptionLabel
-                  title={t("information.Expiration")}
-                  subtitle={t("information.DescExpiration")}
+                  title={t('information.Expiration')}
+                  subtitle={t('information.DescExpiration')}
                 />
               }
             >

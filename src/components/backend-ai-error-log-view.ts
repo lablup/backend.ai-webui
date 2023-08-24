@@ -2,18 +2,18 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
+import { CSSResultGroup, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 import './backend-ai-error-log-list';
 
-import {BackendAIPage} from './backend-ai-page';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 
 /**
@@ -27,7 +27,7 @@ import {
 
 @customElement('backend-ai-error-log-view')
 export default class BackendAIErrorLogView extends BackendAIPage {
-  @property({type: Object}) _lists = Object();
+  @property({ type: Object }) _lists = Object();
 
   static get styles(): CSSResultGroup {
     return [
@@ -35,7 +35,7 @@ export default class BackendAIErrorLogView extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       IronFlexFactors,
-      IronPositioning
+      IronPositioning,
     ];
   }
 
@@ -45,15 +45,15 @@ export default class BackendAIErrorLogView extends BackendAIPage {
 
   render() {
     // language=HTML
-    return html `
-      <link rel="stylesheet" href="resources/custom.css">
+    return html`
+      <link rel="stylesheet" href="resources/custom.css" />
       <backend-ai-error-log-list active="true"></backend-ai-error-log-list>
-      `;
+    `;
   }
 }
 
 declare global {
-    interface HTMLElementTagNameMap {
-        'backend-ai-error-log-view': BackendAIErrorLogView;
-    }
+  interface HTMLElementTagNameMap {
+    'backend-ai-error-log-view': BackendAIErrorLogView;
+  }
 }

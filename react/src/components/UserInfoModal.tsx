@@ -1,15 +1,15 @@
-import React from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useQuery } from "react-query";
-import { useLazyLoadQuery } from "react-relay";
-import { UserInfoModalQuery } from "./__generated__/UserInfoModalQuery.graphql";
+import React from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import { useQuery } from 'react-query';
+import { useLazyLoadQuery } from 'react-relay';
+import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
 
-import { Descriptions, DescriptionsProps, Button, Tag, Spin } from "antd";
-import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from "./DefaultProviders";
-import { useSuspendedBackendaiClient } from "../hooks";
-import _ from "lodash";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { Descriptions, DescriptionsProps, Button, Tag, Spin } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { useWebComponentInfo } from './DefaultProviders';
+import { useSuspendedBackendaiClient } from '../hooks';
+import _ from 'lodash';
+import BAIModal, { BAIModalProps } from './BAIModal';
 
 interface Props extends BAIModalProps {}
 
@@ -22,11 +22,11 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
     userEmail: string;
   };
   try {
-    parsedValue = JSON.parse(value || "");
+    parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
       open: false,
-      userEmail: "",
+      userEmail: '',
     };
   }
   const { open, userEmail } = parsedValue;
@@ -37,16 +37,16 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
     data: isManagerSupportingTOTP,
     isLoading: isLoadingManagerSupportingTOTP,
   } = useQuery(
-    "isManagerSupportingTOTP",
+    'isManagerSupportingTOTP',
     () => {
       return baiClient.isManagerSupportingTOTP();
     },
     {
       // for to render even this fail query failed
       suspense: false,
-    }
+    },
   );
-  totpSupported = baiClient?.supports("2FA") && isManagerSupportingTOTP;
+  totpSupported = baiClient?.supports('2FA') && isManagerSupportingTOTP;
 
   const { user } = useLazyLoadQuery<UserInfoModalQuery>(
     graphql`
@@ -71,10 +71,10 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
     {
       email: userEmail,
       isTOTPSupported: totpSupported ?? false,
-    }
+    },
   );
 
-  const columnSetting: DescriptionsProps["column"] = {
+  const columnSetting: DescriptionsProps['column'] = {
     xxl: 1,
     xl: 1,
     lg: 1,
@@ -87,19 +87,19 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
     <BAIModal
       open={open}
       onCancel={() => {
-        dispatchEvent("cancel", null);
+        dispatchEvent('cancel', null);
       }}
       centered
-      title={t("credential.UserDetail")}
+      title={t('credential.UserDetail')}
       footer={[
         <Button
           key="ok"
           type="primary"
           onClick={() => {
-            dispatchEvent("cancel", null);
+            dispatchEvent('cancel', null);
           }}
         >
-          {t("button.OK")}
+          {t('button.OK')}
         </Button>,
       ]}
       {...baiModalProps}
@@ -108,28 +108,28 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
       <Descriptions
         size="small"
         column={columnSetting}
-        title={t("credential.Information")}
-        labelStyle={{ width: "50%" }}
+        title={t('credential.Information')}
+        labelStyle={{ width: '50%' }}
       >
-        <Descriptions.Item label={t("credential.UserID")}>
+        <Descriptions.Item label={t('credential.UserID')}>
           {user?.email}
         </Descriptions.Item>
-        <Descriptions.Item label={t("credential.UserName")}>
+        <Descriptions.Item label={t('credential.UserName')}>
           {user?.username}
         </Descriptions.Item>
-        <Descriptions.Item label={t("credential.FullName")}>
+        <Descriptions.Item label={t('credential.FullName')}>
           {user?.full_name}
         </Descriptions.Item>
-        <Descriptions.Item label={t("credential.DescActiveUser")}>
-          {user?.status === "active" ? t("button.Yes") : t("button.No")}
+        <Descriptions.Item label={t('credential.DescActiveUser')}>
+          {user?.status === 'active' ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
-        <Descriptions.Item label={t("credential.DescRequirePasswordChange")}>
-          {user?.need_password_change ? t("button.Yes") : t("button.No")}
+        <Descriptions.Item label={t('credential.DescRequirePasswordChange')}>
+          {user?.need_password_change ? t('button.Yes') : t('button.No')}
         </Descriptions.Item>
         {totpSupported && (
-          <Descriptions.Item label={t("webui.menu.TotpActivated")}>
+          <Descriptions.Item label={t('webui.menu.TotpActivated')}>
             <Spin spinning={isLoadingManagerSupportingTOTP}>
-              {user?.totp_activated ? t("button.Yes") : t("button.No")}
+              {user?.totp_activated ? t('button.Yes') : t('button.No')}
             </Spin>
           </Descriptions.Item>
         )}
@@ -138,20 +138,20 @@ const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
       <Descriptions
         size="small"
         column={columnSetting}
-        title={t("credential.Association")}
-        labelStyle={{ width: "50%" }}
+        title={t('credential.Association')}
+        labelStyle={{ width: '50%' }}
       >
-        <Descriptions.Item label={t("credential.Domain")}>
+        <Descriptions.Item label={t('credential.Domain')}>
           {user?.domain_name}
         </Descriptions.Item>
-        <Descriptions.Item label={t("credential.Role")}>
+        <Descriptions.Item label={t('credential.Role')}>
           {user?.role}
         </Descriptions.Item>
       </Descriptions>
       <br />
       <Descriptions
-        title={t("credential.ProjectAndGroup")}
-        labelStyle={{ width: "50%" }}
+        title={t('credential.ProjectAndGroup')}
+        labelStyle={{ width: '50%' }}
       >
         <Descriptions.Item>
           {_.map(user?.groups, (group) => {

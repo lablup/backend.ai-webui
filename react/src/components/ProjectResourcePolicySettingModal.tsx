@@ -1,14 +1,14 @@
-import React from "react";
-import { useFragment, useMutation } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/ProjectResourcePolicySettingModalFragment.graphql";
+import React from 'react';
+import { useFragment, useMutation } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 // import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
-import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
+import { ProjectResourcePolicySettingModalModifyMutation } from './__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql';
 
-import { Form, Input, message, Alert } from "antd";
-import { useTranslation } from "react-i18next";
-import { GBToBytes, bytesToGB } from "../helper";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { Form, Input, message, Alert } from 'antd';
+import { useTranslation } from 'react-i18next';
+import { GBToBytes, bytesToGB } from '../helper';
+import BAIModal, { BAIModalProps } from './BAIModal';
 
 interface Props extends BAIModalProps {
   projectResourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
@@ -33,7 +33,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         max_vfolder_size
       }
     `,
-    resourcePolicyFrgmt
+    resourcePolicyFrgmt,
   );
 
   // const [
@@ -85,7 +85,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           onCompleted(response) {
             if (response?.modify_project_resource_policy?.ok) {
               message.success(
-                t("storageHost.ResourcePolicySuccessfullyUpdated")
+                t('storageHost.ResourcePolicySuccessfullyUpdated'),
               );
             } else {
               message.error(response?.modify_project_resource_policy?.msg);
@@ -133,11 +133,11 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         zIndex: 10000,
       }}
       destroyOnClose
-      title={t("storageHost.ResourcePolicySettings")}
+      title={t('storageHost.ResourcePolicySettings')}
       onOk={_onOk}
     >
       <Alert
-        message={t("storageHost.BeCarefulToSetProjectResourcePolicy")}
+        message={t('storageHost.BeCarefulToSetProjectResourcePolicy')}
         type="warning"
         showIcon
         style={{ marginTop: 20, marginBottom: 25 }}
@@ -147,7 +147,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
         preserve={false}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
-        validateTrigger={["onChange", "onBlur"]}
+        validateTrigger={['onChange', 'onBlur']}
         initialValues={{
           id: projectResourcePolicyInfo?.id,
           name: projectResourcePolicyInfo?.name,
@@ -160,13 +160,13 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
       >
         <Form.Item
           name="max_vfolder_size"
-          label={t("storageHost.MaxFolderSize")}
+          label={t('storageHost.MaxFolderSize')}
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
               message:
-                t("storageHost.quotaSettings.AllowNumberAndDot") ||
-                "Allows numbers and .(dot) only",
+                t('storageHost.quotaSettings.AllowNumberAndDot') ||
+                'Allows numbers and .(dot) only',
             },
           ]}
         >

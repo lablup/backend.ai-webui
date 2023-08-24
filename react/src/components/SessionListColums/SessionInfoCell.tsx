@@ -1,34 +1,34 @@
-import React, { useState } from "react";
-import { useFragment } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { SessionInfoCellFragment$key } from "./__generated__/SessionInfoCellFragment.graphql";
+import React, { useState } from 'react';
+import { useFragment } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
 
-import { Button, Form, Input, Typography, theme } from "antd";
-import { EditOutlined } from "@ant-design/icons";
-import Flex from "../Flex";
-import { useTranslation } from "react-i18next";
+import { Button, Form, Input, Typography, theme } from 'antd';
+import { EditOutlined } from '@ant-design/icons';
+import Flex from '../Flex';
+import { useTranslation } from 'react-i18next';
 import {
   // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
-} from "../../hooks";
-import ImageMetaIcon from "../ImageMetaIcon";
-import SessionKernelTag from "../SessionKernelTag";
-import { useTanMutation } from "../../hooks/reactQueryAlias";
+} from '../../hooks';
+import ImageMetaIcon from '../ImageMetaIcon';
+import SessionKernelTag from '../SessionKernelTag';
+import { useTanMutation } from '../../hooks/reactQueryAlias';
 
-const isRunningStatus = (status: string = "") => {
+const isRunningStatus = (status: string = '') => {
   return [
-    "RUNNING",
-    "RESTARTING",
-    "TERMINATING",
-    "PENDING",
-    "SCHEDULED",
-    "PREPARING",
-    "PULLING",
+    'RUNNING',
+    'RESTARTING',
+    'TERMINATING',
+    'PENDING',
+    'SCHEDULED',
+    'PREPARING',
+    'PULLING',
   ].includes(status);
 };
 
-const isPreparing = (status: string = "") => {
-  return ["RESTARTING", "PREPARING", "PULLING"].includes(status);
+const isPreparing = (status: string = '') => {
+  return ['RESTARTING', 'PREPARING', 'PULLING'].includes(status);
 };
 
 const SessionInfoCell: React.FC<{
@@ -48,7 +48,7 @@ const SessionInfoCell: React.FC<{
         image
       }
     `,
-    sessionFrgmt
+    sessionFrgmt,
   );
 
   // const metadata = useBackendaiImageMetaData();
@@ -97,7 +97,7 @@ const SessionInfoCell: React.FC<{
           {editing ? (
             <Form.Item
               style={{ margin: 0 }}
-              name={"name"}
+              name={'name'}
               rules={[
                 {
                   required: true,
@@ -108,7 +108,7 @@ const SessionInfoCell: React.FC<{
                 {
                   pattern: /^(?:[a-zA-Z0-9][a-zA-Z0-9._-]{2,}[a-zA-Z0-9])?$/,
                   message: t(
-                    "session.Validation.EnterValidSessionName"
+                    'session.Validation.EnterValidSessionName',
                   ).toString(),
                 },
               ]}
@@ -117,7 +117,7 @@ const SessionInfoCell: React.FC<{
                 autoFocus
                 onPressEnter={() => save()}
                 onKeyUp={(e) => {
-                  if (e.key === "Escape") setEditing(false);
+                  if (e.key === 'Escape') setEditing(false);
                 }}
               />
             </Form.Item>

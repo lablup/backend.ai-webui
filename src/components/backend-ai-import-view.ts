@@ -3,11 +3,11 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { get as _text, translate as _t } from 'lit-translate';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
 
 import LablupLoadingSpinner from './lablup-loading-spinner';
 import BackendAiResourceMonitor from './backend-ai-resource-monitor';
@@ -24,15 +24,19 @@ import '@material/mwc-select';
 import './backend-ai-resource-monitor';
 import './backend-ai-session-launcher';
 
-import {TextArea} from '@material/mwc-textarea';
-import {TextField} from '@material/mwc-textfield';
-import {Select} from '@material/mwc-select';
+import { TextArea } from '@material/mwc-textarea';
+import { TextField } from '@material/mwc-textfield';
+import { Select } from '@material/mwc-select';
 
 import './lablup-activity-panel';
 import '../plastics/lablup-shields/lablup-shields';
-import {BackendAiStyles} from './backend-ai-general-styles';
-import {IronFlex, IronFlexAlignment, IronPositioning} from '../plastics/layout/iron-flex-layout-classes';
-import {default as PainKiller} from './backend-ai-painkiller';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronPositioning,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { default as PainKiller } from './backend-ai-painkiller';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -53,30 +57,31 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-import-view')
 export default class BackendAIImport extends BackendAIPage {
-  @property({type: String}) condition = 'running';
-  @property({type: Boolean}) authenticated = false;
-  @property({type: Object}) indicator = Object();
-  @property({type: Object}) notification = Object();
-  @property({type: String}) requestURL = '';
-  @property({type: String}) queryString = '';
-  @property({type: String}) environment = 'python';
-  @property({type: String}) importNotebookMessage = '';
-  @property({type: String}) importGithubMessage = '';
-  @property({type: String}) importGitlabMessage = '';
-  @property({type: Array}) allowedGroups = [];
-  @property({type: Array}) allowed_folder_type = [];
-  @property({type: String}) vhost = '';
-  @property({type: Array}) vhosts = [];
-  @property({type: Object}) storageInfo = Object();
-  @property({type: String}) _helpDescription = '';
-  @property({type: String}) _helpDescriptionTitle = '';
-  @property({type: String}) _helpDescriptionIcon = '';
+  @property({ type: String }) condition = 'running';
+  @property({ type: Boolean }) authenticated = false;
+  @property({ type: Object }) indicator = Object();
+  @property({ type: Object }) notification = Object();
+  @property({ type: String }) requestURL = '';
+  @property({ type: String }) queryString = '';
+  @property({ type: String }) environment = 'python';
+  @property({ type: String }) importNotebookMessage = '';
+  @property({ type: String }) importGithubMessage = '';
+  @property({ type: String }) importGitlabMessage = '';
+  @property({ type: Array }) allowedGroups = [];
+  @property({ type: Array }) allowed_folder_type = [];
+  @property({ type: String }) vhost = '';
+  @property({ type: Array }) vhosts = [];
+  @property({ type: Object }) storageInfo = Object();
+  @property({ type: String }) _helpDescription = '';
+  @property({ type: String }) _helpDescriptionTitle = '';
+  @property({ type: String }) _helpDescriptionIcon = '';
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
   @query('#resource-monitor') resourceMonitor!: BackendAiResourceMonitor;
   @query('#session-launcher') sessionLauncher!: BackendAiSessionLauncher;
   @query('#notebook-url') notebookUrlInput!: TextField;
   @query('#notebook-badge-code') notebookBadgeCodeInput!: TextArea;
-  @query('#notebook-badge-code-markdown') notebookBadgeCodeMarkdownInput!: TextArea;
+  @query('#notebook-badge-code-markdown')
+  notebookBadgeCodeMarkdownInput!: TextArea;
 
   static get styles(): CSSResultGroup {
     return [
@@ -95,7 +100,8 @@ export default class BackendAIImport extends BackendAIPage {
           --component-width: 235px;
         }
 
-        mwc-textfield, mwc-textarea {
+        mwc-textfield,
+        mwc-textarea {
           --mdc-theme-primary: var(--general-textfield-selected-color);
           width: 100%;
           margin: 10px auto;
@@ -129,8 +135,12 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
-          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-select-dropdown-icon-color: var(
+            --general-textfield-selected-color
+          );
+          --mdc-select-hover-line-color: var(
+            --general-textfield-selected-color
+          );
           --mdc-list-vertical-padding: 5px;
         }
         mwc-select.github-select {
@@ -140,8 +150,12 @@ export default class BackendAIImport extends BackendAIPage {
           --mdc-theme-primary: var(--general-textfield-selected-color);
           --mdc-select-fill-color: transparent;
           --mdc-select-label-ink-color: rgba(0, 0, 0, 0.75);
-          --mdc-select-dropdown-icon-color: var(--general-textfield-selected-color);
-          --mdc-select-hover-line-color: var(--general-textfield-selected-color);
+          --mdc-select-dropdown-icon-color: var(
+            --general-textfield-selected-color
+          );
+          --mdc-select-hover-line-color: var(
+            --general-textfield-selected-color
+          );
           --mdc-list-vertical-padding: 5px;
         }
 
@@ -165,7 +179,7 @@ export default class BackendAIImport extends BackendAIPage {
             display: none;
           }
         }
-      `
+      `,
     ];
   }
 
@@ -175,12 +189,12 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   async _initStorageInfo() {
-    this.allowed_folder_type = await globalThis.backendaiclient.vfolder.list_allowed_types();
+    this.allowed_folder_type =
+      await globalThis.backendaiclient.vfolder.list_allowed_types();
     await this._getFolderList();
-    await fetch('resources/storage_metadata.json').then(
-      (response) => response.json()
-    ).then(
-      (json) => {
+    await fetch('resources/storage_metadata.json')
+      .then((response) => response.json())
+      .then((json) => {
         const storageInfo = Object();
         for (const key in json.storageInfo) {
           if ({}.hasOwnProperty.call(json.storageInfo, key)) {
@@ -191,7 +205,9 @@ export default class BackendAIImport extends BackendAIPage {
             if ('description' in json.storageInfo[key]) {
               storageInfo[key].description = json.storageInfo[key].description;
             } else {
-              storageInfo[key].description = _text('data.NoStorageDescriptionFound');
+              storageInfo[key].description = _text(
+                'data.NoStorageDescriptionFound',
+              );
             }
             if ('icon' in json.storageInfo[key]) {
               storageInfo[key].icon = json.storageInfo[key].icon;
@@ -206,8 +222,7 @@ export default class BackendAIImport extends BackendAIPage {
           }
         }
         this.storageInfo = storageInfo;
-      }
-    );
+      });
   }
 
   async _viewStateChanged(active: boolean) {
@@ -217,14 +232,22 @@ export default class BackendAIImport extends BackendAIPage {
       return;
     }
     this.resourceMonitor.setAttribute('active', 'true');
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._initStorageInfo();
-        this.authenticated = true;
-        if (this.activeConnected) {
-          this.requestUpdate();
-        }
-      }, true);
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._initStorageInfo();
+          this.authenticated = true;
+          if (this.activeConnected) {
+            this.requestUpdate();
+          }
+        },
+        true,
+      );
     } else {
       this._initStorageInfo();
       this.authenticated = true;
@@ -260,33 +283,47 @@ export default class BackendAIImport extends BackendAIPage {
 
   fetchNotebookURLResource(downloadURL): void {
     this.notebookUrlInput.value = downloadURL;
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._fetchNotebookURLResource(downloadURL);
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._fetchNotebookURLResource(downloadURL);
+        },
+        true,
+      );
+    } else {
+      // already connected
       this._fetchNotebookURLResource(downloadURL);
     }
   }
 
   _fetchNotebookURLResource(downloadURL) {
-    fetch(downloadURL).then(() => {
-      this.notification.text = _text('import.ReadyToImport');
-      this.importNotebookMessage = this.notification.text;
-      this.notification.show();
-      this.sessionLauncher.selectDefaultLanguage(true, this.environment);
-      this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
-      this.sessionLauncher.importFilename = downloadURL.split('/').pop();
-      this.sessionLauncher._launchSessionDialog();
-    }).catch(() => {
-      this.notification.text = _text('import.NoSuitableResourceFoundOnGivenURL');
-      this.importNotebookMessage = this.notification.text;
-      this.notification.show();
-    });
+    fetch(downloadURL)
+      .then(() => {
+        this.notification.text = _text('import.ReadyToImport');
+        this.importNotebookMessage = this.notification.text;
+        this.notification.show();
+        this.sessionLauncher.selectDefaultLanguage(true, this.environment);
+        this.sessionLauncher.importScript = '#!/bin/sh\ncurl -O ' + downloadURL;
+        this.sessionLauncher.importFilename = downloadURL.split('/').pop();
+        this.sessionLauncher._launchSessionDialog();
+      })
+      .catch(() => {
+        this.notification.text = _text(
+          'import.NoSuitableResourceFoundOnGivenURL',
+        );
+        this.importNotebookMessage = this.notification.text;
+        this.notification.show();
+      });
   }
 
   getGitHubRepoFromURL() {
-    let url = (this.shadowRoot?.querySelector('#github-repo-url') as TextField).value;
+    let url = (this.shadowRoot?.querySelector('#github-repo-url') as TextField)
+      .value;
     let tree = 'master';
     let name = '';
     // if contains .git extension, then remove it.
@@ -294,9 +331,12 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.split('.git')[0];
     }
 
-    if (url.includes('/tree')) { // Branch.
+    if (url.includes('/tree')) {
+      // Branch.
       const version = (/\/tree\/[.a-zA-Z.0-9_-]+/.exec(url) || [''])[0];
-      const nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [''])[0];
+      const nameWithVersion = (/\/[.a-zA-Z0-9_-]+\/tree\//.exec(url) || [
+        '',
+      ])[0];
       url = url.replace(version, '');
       tree = version.replace('/tree/', '');
       name = nameWithVersion.replace('/tree/', '').substring(1);
@@ -323,66 +363,84 @@ export default class BackendAIImport extends BackendAIPage {
             return responseJson.default_branch;
           } else if (response.status === 404) {
             throw 'WrongURLType';
-          } else if (response.status === 403 || response.status === 429) { // forbidden & Too Many Requests
+          } else if (response.status === 403 || response.status === 429) {
+            // forbidden & Too Many Requests
             const limitCnt = response.headers.get('x-ratelimit-limit');
             const limitUsedCnt = response.headers.get('x-ratelimit-used');
-            const limitRemainingCnt = response.headers.get('x-ratelimit-remaining');
-            console.log(`used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`);
+            const limitRemainingCnt = response.headers.get(
+              'x-ratelimit-remaining',
+            );
+            console.log(
+              `used count: ${limitUsedCnt}, remaining count: ${limitRemainingCnt}/total count: ${limitCnt}\nerror body: ${response.text}`,
+            );
             if (limitRemainingCnt === '0') {
-              throw 'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt;
+              throw (
+                'GithubAPILimitError|' + limitUsedCnt + '|' + limitRemainingCnt
+              );
             } else {
               throw 'GithubAPIEtcError';
             }
           } else if (response.status === 500) {
             throw 'GithubInternalError';
           } else {
-            console.log(`error statusCode: ${response.status}, body: ${response.text}`);
+            console.log(
+              `error statusCode: ${response.status}, body: ${response.text}`,
+            );
             throw 'GithubAPIEtcError';
           }
         } catch (error) {
           throw error;
         }
       };
-      return getRepoUrl().then((result) => {
-        tree = result;
-        url = url.replace('https://github.com', 'https://codeload.github.com');
-        url = url + '/zip/' + tree;
-        const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
-        if (['http', 'https'].includes(protocol)) {
-          return this.importRepoFromURL(url, name);
-        } else {
-          this.notification.text = _text('import.WrongURLType');
+      return getRepoUrl()
+        .then((result) => {
+          tree = result;
+          url = url.replace(
+            'https://github.com',
+            'https://codeload.github.com',
+          );
+          url = url + '/zip/' + tree;
+          const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
+          if (['http', 'https'].includes(protocol)) {
+            return this.importRepoFromURL(url, name);
+          } else {
+            this.notification.text = _text('import.WrongURLType');
+            this.importNotebookMessage = this.notification.text;
+            this.notification.show();
+            return false;
+          }
+        })
+        .catch((e) => {
+          // check exception
+          switch (e) {
+            case 'WrongURLType':
+              this.notification.text = _text('import.WrongURLType');
+              break;
+            case 'GithubInternalError':
+              this.notification.text = _text('import.GithubInternalError');
+              break;
+            default:
+              if (e.indexOf('|') !== -1) {
+                this.notification.text = _text('import.GithubAPILimitError');
+              } else {
+                this.notification.text = _text('import.GithubAPIEtcError');
+              }
+              break;
+          }
           this.importNotebookMessage = this.notification.text;
           this.notification.show();
           return false;
-        }
-      }).catch((e) => { // check exception
-        switch (e) {
-        case 'WrongURLType':
-          this.notification.text = _text('import.WrongURLType');
-          break;
-        case 'GithubInternalError':
-          this.notification.text = _text('import.GithubInternalError');
-          break;
-        default:
-          if (e.indexOf('|') !== -1) {
-            this.notification.text = _text('import.GithubAPILimitError');
-          } else {
-            this.notification.text = _text('import.GithubAPIEtcError');
-          }
-          break;
-        }
-        this.importNotebookMessage = this.notification.text;
-        this.notification.show();
-        return false;
-      });
+        });
     }
   }
 
   getGitlabRepoFromURL() {
-    let url = (this.shadowRoot?.querySelector('#gitlab-repo-url') as TextField).value;
+    let url = (this.shadowRoot?.querySelector('#gitlab-repo-url') as TextField)
+      .value;
     let tree = 'master';
-    const getBranchName = (this.shadowRoot?.querySelector('#gitlab-default-branch-name') as TextField).value;
+    const getBranchName = (
+      this.shadowRoot?.querySelector('#gitlab-default-branch-name') as TextField
+    ).value;
     if (getBranchName.length > 0) {
       tree = getBranchName;
     }
@@ -392,11 +450,12 @@ export default class BackendAIImport extends BackendAIPage {
       url = url.split('.git')[0];
     }
 
-    if (url.includes('/tree')) { // Branch.
+    if (url.includes('/tree')) {
+      // Branch.
       const pathname = new URL(url).pathname;
-      const splitPaths = pathname.split( '/' );
+      const splitPaths = pathname.split('/');
       name = splitPaths[2];
-      tree = splitPaths[splitPaths.length -1];
+      tree = splitPaths[splitPaths.length - 1];
       url = url.replace('/tree/', '/archive/');
       url += '/' + name + '-' + tree + '.zip';
       const protocol = (/^https?(?=:\/\/)/.exec(url) || [''])[0];
@@ -436,22 +495,37 @@ export default class BackendAIImport extends BackendAIPage {
     await this._addFolderWithName(folderName, url);
     indicator.set(20, _text('import.FolderCreated'));
     imageResource['mounts'] = [folderName];
-    imageResource['bootstrap_script'] = '#!/bin/sh\ncurl -o repo.zip ' + url + '\ncd /home/work/' + folderName + '\nunzip -u /home/work/repo.zip';
-    return globalThis.backendaiclient.get_resource_slots().then(() => {
-      // let results = response;
-      indicator.set(50, _text('import.Downloading'));
-      return globalThis.backendaiclient.createIfNotExists(globalThis.backendaiclient._config.default_import_environment, null, imageResource, 60000, undefined);
-    }).then(async (response) => {
-      indicator.set(80, _text('import.CleanUpImportTask'));
-      await globalThis.backendaiclient.destroy(response.sessionId);
-      indicator.set(100, _text('import.ImportFinished'));
-      indicator.end(1000);
-    }).catch((err) => {
-      this.notification.text = PainKiller.relieve(err.title);
-      this.notification.detail = err.message;
-      this.notification.show(true, err);
-      indicator.end(1000);
-    });
+    imageResource['bootstrap_script'] =
+      '#!/bin/sh\ncurl -o repo.zip ' +
+      url +
+      '\ncd /home/work/' +
+      folderName +
+      '\nunzip -u /home/work/repo.zip';
+    return globalThis.backendaiclient
+      .get_resource_slots()
+      .then(() => {
+        // let results = response;
+        indicator.set(50, _text('import.Downloading'));
+        return globalThis.backendaiclient.createIfNotExists(
+          globalThis.backendaiclient._config.default_import_environment,
+          null,
+          imageResource,
+          60000,
+          undefined,
+        );
+      })
+      .then(async (response) => {
+        indicator.set(80, _text('import.CleanUpImportTask'));
+        await globalThis.backendaiclient.destroy(response.sessionId);
+        indicator.set(100, _text('import.ImportFinished'));
+        indicator.end(1000);
+      })
+      .catch((err) => {
+        this.notification.text = PainKiller.relieve(err.title);
+        this.notification.detail = err.message;
+        this.notification.show(true, err);
+        indicator.end(1000);
+      });
   }
 
   async _addFolderWithName(name, url) {
@@ -461,30 +535,37 @@ export default class BackendAIImport extends BackendAIPage {
     const vhost_info = await globalThis.backendaiclient.vfolder.list_hosts();
     let host = vhost_info.default;
     if (url.includes('github.com/')) {
-      host = (this.shadowRoot?.querySelector('#github-add-folder-host') as Select).value;
+      host = (
+        this.shadowRoot?.querySelector('#github-add-folder-host') as Select
+      ).value;
     } else {
-      host = (this.shadowRoot?.querySelector('#gitlab-add-folder-host') as Select).value;
+      host = (
+        this.shadowRoot?.querySelector('#gitlab-add-folder-host') as Select
+      ).value;
     }
     name = await this._checkFolderNameAlreadyExists(name, url);
-    return globalThis.backendaiclient.vfolder.create(name, host, group, usageMode, permission).then((value) => {
-      if (url.includes('github.com/')) {
-        this.importNotebookMessage = _text('import.FolderName') + name;
-      } else {
-        this.importGitlabMessage = _text('import.FolderName') + name;
-      }
-    }).catch((err) => {
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+    return globalThis.backendaiclient.vfolder
+      .create(name, host, group, usageMode, permission)
+      .then((value) => {
+        if (url.includes('github.com/')) {
+          this.importNotebookMessage = _text('import.FolderName') + name;
+        } else {
+          this.importGitlabMessage = _text('import.FolderName') + name;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   async _checkFolderNameAlreadyExists(name, url) {
     const vfolderObj = await globalThis.backendaiclient.vfolder.list();
-    const vfolders = vfolderObj.map(function(value) {
+    const vfolders = vfolderObj.map(function (value) {
       return value.name;
     });
     if (vfolders.includes(name)) {
@@ -507,7 +588,11 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   guessEnvironment(url) {
-    if (url.includes('tensorflow') || url.includes('keras') || url.includes('Keras')) {
+    if (
+      url.includes('tensorflow') ||
+      url.includes('keras') ||
+      url.includes('Keras')
+    ) {
       return 'index.docker.io/lablup/python-tensorflow';
     } else if (url.includes('pytorch')) {
       return 'index.docker.io/lablup/python-pytorch';
@@ -519,7 +604,9 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   createNotebookBadge() {
-    const url = (this.shadowRoot?.querySelector('#notebook-badge-url') as TextField).value;
+    const url = (
+      this.shadowRoot?.querySelector('#notebook-badge-url') as TextField
+    ).value;
     const rawURL = this.regularizeGithubURL(url);
     const badgeURL = rawURL.replace('https://raw.githubusercontent.com/', '');
     let baseURL = '';
@@ -539,8 +626,12 @@ export default class BackendAIImport extends BackendAIPage {
         }
         baseURL = baseURL + '/github?';
       }
-      const fullText = `<a href="${baseURL + badgeURL}"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
-      const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${baseURL + badgeURL})`;
+      const fullText = `<a href="${
+        baseURL + badgeURL
+      }"><img src="https://www.backend.ai/assets/badge.svg" /></a>`;
+      const fullTextMarkdown = `[![Run on Backend.AI](https://www.backend.ai/assets/badge.svg)](${
+        baseURL + badgeURL
+      })`;
       this.notebookBadgeCodeInput.value = fullText;
       this.notebookBadgeCodeMarkdownInput.value = fullTextMarkdown;
     }
@@ -562,14 +653,19 @@ export default class BackendAIImport extends BackendAIPage {
         this.notification.text = _text('import.NoNotebookCode');
         this.notification.show();
       } else {
-        if (navigator.clipboard !== undefined) { // for Chrome, Safari
-          navigator.clipboard.writeText(copyText).then( () => {
-            this.notification.text = _text('import.NotebookBadgeCodeCopied');
-            this.notification.show();
-          }, (err) => {
-            console.error(_text('import.CouldNotCopyText'), err);
-          });
-        } else { // other browsers
+        if (navigator.clipboard !== undefined) {
+          // for Chrome, Safari
+          navigator.clipboard.writeText(copyText).then(
+            () => {
+              this.notification.text = _text('import.NotebookBadgeCodeCopied');
+              this.notification.show();
+            },
+            (err) => {
+              console.error(_text('import.CouldNotCopyText'), err);
+            },
+          );
+        } else {
+          // other browsers
           const tmpInputElement = document.createElement('input');
           tmpInputElement.type = 'text';
           tmpInputElement.value = copyText;
@@ -595,14 +691,19 @@ export default class BackendAIImport extends BackendAIPage {
   }
 
   urlTextfieldChanged(e, buttonIdValue, message?) {
-    const button = this.shadowRoot?.querySelector(`#${buttonIdValue}`) as TextField;
+    const button = this.shadowRoot?.querySelector(
+      `#${buttonIdValue}`,
+    ) as TextField;
     if (e.target.value !== '' && e.currentTarget.checkValidity()) {
       button.removeAttribute('disabled');
       this.setAttribute(message, '');
     } else {
       this.notification.text = _text('import.WrongURLType');
       button.setAttribute('disabled', 'true');
-      this.setAttribute(message, e.target.value === '' ? '' : _text('import.WrongURLType'));
+      this.setAttribute(
+        message,
+        e.target.value === '' ? '' : _text('import.WrongURLType'),
+      );
       this.notification.show();
     }
     this.requestUpdate();
@@ -611,68 +712,162 @@ export default class BackendAIImport extends BackendAIPage {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-      <lablup-activity-panel title="${_t('import.ImportNotebook')}" elevation="1" horizontalsize="2x">
+      <link rel="stylesheet" href="resources/custom.css" />
+      <lablup-activity-panel
+        title="${_t('import.ImportNotebook')}"
+        elevation="1"
+        horizontalsize="2x"
+      >
         <div slot="message">
           <div class="horizontal wrap layout center">
-            <mwc-textfield id="notebook-url" label="${_t('import.NotebookURL')}"
-                           autoValidate validationMessage="${_text('import.WrongURLType')}"
-                           pattern="^(https?):\/\/([\\w\.\/\-]{1,})\.ipynb$"
-                           maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
-                           @change="${(e) => this.urlTextfieldChanged(e, 'import-notebook-button', 'importNotebookMessage')}"></mwc-textfield>
-            <mwc-button id="import-notebook-button" disabled icon="cloud_download" @click="${() => this.getNotebookFromURL()}">
+            <mwc-textfield
+              id="notebook-url"
+              label="${_t('import.NotebookURL')}"
+              autoValidate
+              validationMessage="${_text('import.WrongURLType')}"
+              pattern="^(https?)://([\\w./-]{1,}).ipynb$"
+              maxLength="2048"
+              placeholder="${_t('maxLength.2048chars')}"
+              @change="${(e) =>
+                this.urlTextfieldChanged(
+                  e,
+                  'import-notebook-button',
+                  'importNotebookMessage',
+                )}"
+            ></mwc-textfield>
+            <mwc-button
+              id="import-notebook-button"
+              disabled
+              icon="cloud_download"
+              @click="${() => this.getNotebookFromURL()}"
+            >
               <span>${_t('import.GetAndRunNotebook')}</span>
             </mwc-button>
           </div>
           ${this.importNotebookMessage}
         </div>
       </lablup-activity-panel>
-      <backend-ai-session-launcher mode="import" location="import" hideLaunchButton
-      id="session-launcher" ?active="${this.active === true}"
-      .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"></backend-ai-session-launcher>
+      <backend-ai-session-launcher
+        mode="import"
+        location="import"
+        hideLaunchButton
+        id="session-launcher"
+        ?active="${this.active === true}"
+        .newSessionDialogTitle="${_t('session.launcher.StartImportedNotebook')}"
+      ></backend-ai-session-launcher>
       <div class="horizontal wrap layout">
-        <lablup-activity-panel title="${_t('summary.ResourceStatistics')}" elevation="1" width="350" height="490" narrow>
+        <lablup-activity-panel
+          title="${_t('summary.ResourceStatistics')}"
+          elevation="1"
+          width="350"
+          height="490"
+          narrow
+        >
           <div slot="message">
-              <backend-ai-resource-monitor location="summary" id="resource-monitor" ?active="${this.active === true}" direction="vertical"></backend-ai-resource-monitor>
+            <backend-ai-resource-monitor
+              location="summary"
+              id="resource-monitor"
+              ?active="${this.active === true}"
+              direction="vertical"
+            ></backend-ai-resource-monitor>
           </div>
         </lablup-activity-panel>
-        <lablup-activity-panel title="${_t('import.CreateNotebookButton')}" elevation="1" height="490">
+        <lablup-activity-panel
+          title="${_t('import.CreateNotebookButton')}"
+          elevation="1"
+          height="490"
+        >
           <div slot="message">
             <div class="vertical wrap layout center description">
               ${_t('import.YouCanCreateNotebookCode')}
-              <img src="/resources/badge.svg" style="margin-top:5px;margin-bottom:5px;"/>
-              <mwc-textfield id="notebook-badge-url" label="${_t('import.NotebookBadgeURL')}"
-                             autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/([\\w\.\/\-]{1,})\.ipynb$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
-                             @change="${(e) => this.urlTextfieldChanged(e, 'create-notebook-button')}"></mwc-textfield>
-              <mwc-button id="create-notebook-button" disabled fullwidth @click="${() => this.createNotebookBadge()}" icon="code">${_t('import.CreateButtonCode')}</mwc-button>
-              <mwc-textarea id="notebook-badge-code" label="${_t('import.NotebookBadgeCodeHTML')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
-              <mwc-textarea id="notebook-badge-code-markdown" label="${_t('import.NotebookBadgeCodeMarkdown')}" @click="${(e) => this._copyTextArea(e)}"></mwc-textarea>
+              <img
+                src="/resources/badge.svg"
+                style="margin-top:5px;margin-bottom:5px;"
+              />
+              <mwc-textfield
+                id="notebook-badge-url"
+                label="${_t('import.NotebookBadgeURL')}"
+                autoValidate
+                validationMessage="${_text('import.WrongURLType')}"
+                pattern="^(https?)://([\\w./-]{1,}).ipynb$"
+                maxLength="2048"
+                placeholder="${_t('maxLength.2048chars')}"
+                @change="${(e) =>
+                  this.urlTextfieldChanged(e, 'create-notebook-button')}"
+              ></mwc-textfield>
+              <mwc-button
+                id="create-notebook-button"
+                disabled
+                fullwidth
+                @click="${() => this.createNotebookBadge()}"
+                icon="code"
+                >${_t('import.CreateButtonCode')}</mwc-button
+              >
+              <mwc-textarea
+                id="notebook-badge-code"
+                label="${_t('import.NotebookBadgeCodeHTML')}"
+                @click="${(e) => this._copyTextArea(e)}"
+              ></mwc-textarea>
+              <mwc-textarea
+                id="notebook-badge-code-markdown"
+                label="${_t('import.NotebookBadgeCodeMarkdown')}"
+                @click="${(e) => this._copyTextArea(e)}"
+              ></mwc-textarea>
             </div>
           </div>
         </lablup-activity-panel>
       </div>
       <div class="horizontal wrap layout">
-        <lablup-activity-panel title="${_t('import.ImportGithubRepo')}" elevation="1" horizontalsize="2x">
+        <lablup-activity-panel
+          title="${_t('import.ImportGithubRepo')}"
+          elevation="1"
+          horizontalsize="2x"
+        >
           <div slot="message">
             <div class="description">
               <p>${_t('import.RepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="github-repo-url" class="repo-url" label="${_t('import.GitHubURL')}"
-                             autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/github\.com\/([\\w\.\/\-]{1,})$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
-                             @change="${(e) => this.urlTextfieldChanged(e, 'import-github-repo-button', 'importGithubMessage')}"></mwc-textfield>
-              <mwc-select class="github-select" id="github-add-folder-host" label="${_t('data.Host')}">
-                ${this.vhosts.map((item, idx) => html `
-                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
-                    <span>${item}</span>
-                </mwc-list-item>
-                `)}
+              <mwc-textfield
+                id="github-repo-url"
+                class="repo-url"
+                label="${_t('import.GitHubURL')}"
+                autoValidate
+                validationMessage="${_text('import.WrongURLType')}"
+                pattern="^(https?)://github.com/([\\w./-]{1,})$"
+                maxLength="2048"
+                placeholder="${_t('maxLength.2048chars')}"
+                @change="${(e) =>
+                  this.urlTextfieldChanged(
+                    e,
+                    'import-github-repo-button',
+                    'importGithubMessage',
+                  )}"
+              ></mwc-textfield>
+              <mwc-select
+                class="github-select"
+                id="github-add-folder-host"
+                label="${_t('data.Host')}"
+              >
+                ${this.vhosts.map(
+                  (item, idx) => html`
+                    <mwc-list-item
+                      hasMeta
+                      value="${item}"
+                      ?selected="${item === this.vhost}"
+                    >
+                      <span>${item}</span>
+                    </mwc-list-item>
+                  `,
+                )}
               </mwc-select>
-              <mwc-button id="import-github-repo-button" disabled class="left-align" icon="cloud_download" @click="${() => this.getGitHubRepoFromURL()}">
+              <mwc-button
+                id="import-github-repo-button"
+                disabled
+                class="left-align"
+                icon="cloud_download"
+                @click="${() => this.getGitHubRepoFromURL()}"
+              >
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
@@ -681,27 +876,61 @@ export default class BackendAIImport extends BackendAIPage {
         </lablup-activity-panel>
       </div>
       <div class="horizontal wrap layout">
-        <lablup-activity-panel title="${_t('import.ImportGitlabRepo')}" elevation="1" horizontalsize="2x">
+        <lablup-activity-panel
+          title="${_t('import.ImportGitlabRepo')}"
+          elevation="1"
+          horizontalsize="2x"
+        >
           <div slot="message">
             <div class="description">
               <p>${_t('import.GitlabRepoWillBeFolder')}</p>
             </div>
             <div class="horizontal wrap layout center">
-              <mwc-textfield id="gitlab-repo-url" class="repo-url" label="${_t('import.GitlabURL')}"
-                             autoValidate validationMessage="${_text('import.WrongURLType')}"
-                             pattern="^(https?):\/\/gitlab\.com\/([\\w\.\/\-]{1,})$"
-                             maxLength="2048" placeholder="${_t('maxLength.2048chars')}"
-                             @change="${(e) => this.urlTextfieldChanged(e, 'import-gitlab-repo-button', 'importGitlabMessage')}"></mwc-textfield>
-              <mwc-textfield id="gitlab-default-branch-name" label="${_t('import.GitlabDefaultBranch')}"
-                             maxLength="200" placeholder="${_t('maxLength.200chars')}"></mwc-textfield>
-              <mwc-select id="gitlab-add-folder-host" label="${_t('data.Host')}">
-                ${this.vhosts.map((item, idx) => html `
-                <mwc-list-item hasMeta value="${item}" ?selected="${item === this.vhost}">
-                    <span>${item}</span>
-                </mwc-list-item>
-                `)}
+              <mwc-textfield
+                id="gitlab-repo-url"
+                class="repo-url"
+                label="${_t('import.GitlabURL')}"
+                autoValidate
+                validationMessage="${_text('import.WrongURLType')}"
+                pattern="^(https?)://gitlab.com/([\\w./-]{1,})$"
+                maxLength="2048"
+                placeholder="${_t('maxLength.2048chars')}"
+                @change="${(e) =>
+                  this.urlTextfieldChanged(
+                    e,
+                    'import-gitlab-repo-button',
+                    'importGitlabMessage',
+                  )}"
+              ></mwc-textfield>
+              <mwc-textfield
+                id="gitlab-default-branch-name"
+                label="${_t('import.GitlabDefaultBranch')}"
+                maxLength="200"
+                placeholder="${_t('maxLength.200chars')}"
+              ></mwc-textfield>
+              <mwc-select
+                id="gitlab-add-folder-host"
+                label="${_t('data.Host')}"
+              >
+                ${this.vhosts.map(
+                  (item, idx) => html`
+                    <mwc-list-item
+                      hasMeta
+                      value="${item}"
+                      ?selected="${item === this.vhost}"
+                    >
+                      <span>${item}</span>
+                    </mwc-list-item>
+                  `,
+                )}
               </mwc-select>
-              <mwc-button id="import-gitlab-repo-button" disabled class="left-align" icon="cloud_download" @click="${() => this.getGitlabRepoFromURL()}">
+              <mwc-button
+                id="import-gitlab-repo-button"
+                disabled
+                class="left-align"
+                icon="cloud_download"
+                @click="${() => this.getGitlabRepoFromURL()}"
+              >
                 <span>${_t('import.GetToFolder')}</span>
               </mwc-button>
             </div>
@@ -709,7 +938,7 @@ export default class BackendAIImport extends BackendAIPage {
           </div>
         </lablup-activity-panel>
       </div>
-`;
+    `;
   }
 }
 

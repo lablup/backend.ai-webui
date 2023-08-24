@@ -2,11 +2,11 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html, render} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { get as _text, translate as _t } from 'lit-translate';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
 
 import './backend-ai-dialog';
 import './backend-ai-list-status';
@@ -25,17 +25,17 @@ import '@material/mwc-textfield';
 import '@material/mwc-textarea';
 import '@material/mwc-switch';
 import '@material/mwc-icon-button';
-import {Select} from '@material/mwc-select';
+import { Select } from '@material/mwc-select';
 
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus, {StatusCondition} from './backend-ai-list-status';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -64,33 +64,37 @@ type BackendAIDialog = HTMLElementTagNameMap['backend-ai-dialog'];
 
 @customElement('backend-ai-user-list')
 export default class BackendAIUserList extends BackendAIPage {
-  @property({type: Boolean}) isAdmin = false;
-  @property({type: Boolean}) editMode = false;
-  @property({type: Array}) users = [];
-  @property({type: Object}) userInfo = Object();
-  @property({type: Array}) userInfoGroups = [];
-  @property({type: String}) userEmail = '';
-  @property({type: Boolean}) openUserInfoModal = false;
-  @property({type: Boolean}) openUserSettingModal = false;
-  @property({type: String}) condition = '';
-  @property({type: Object}) _boundControlRenderer = this.controlRenderer.bind(this);
-  @property({type: Object}) _userIdRenderer = this.userIdRenderer.bind(this);
-  @property({type: Object}) _userNameRenderer = this.userNameRenderer.bind(this);
-  @property({type: Object}) _userStatusRenderer = this.userStatusRenderer.bind(this);
-  @property({type: Object}) _totpActivatedRenderer = this.totpActivatedRenderer.bind(this);
-  @property({type: Object}) keypairs;
-  @property({type: String}) signoutUserName = '';
-  @property({type: Object}) notification = Object();
-  @property({type: String}) listCondition: StatusCondition = 'loading';
-  @property({type: Number}) _totalUserCount = 0;
-  @property({type: Boolean}) isUserInfoMaskEnabled = false;
-  @property({type: Boolean}) totpSupported = false;
-  @property({type: Boolean}) totpActivated = false;
-  @property({type: Object}) userStatus = {
-    'active': 'Active',
-    'inactive': 'Inactive',
+  @property({ type: Boolean }) isAdmin = false;
+  @property({ type: Boolean }) editMode = false;
+  @property({ type: Array }) users = [];
+  @property({ type: Object }) userInfo = Object();
+  @property({ type: Array }) userInfoGroups = [];
+  @property({ type: String }) userEmail = '';
+  @property({ type: Boolean }) openUserInfoModal = false;
+  @property({ type: Boolean }) openUserSettingModal = false;
+  @property({ type: String }) condition = '';
+  @property({ type: Object }) _boundControlRenderer =
+    this.controlRenderer.bind(this);
+  @property({ type: Object }) _userIdRenderer = this.userIdRenderer.bind(this);
+  @property({ type: Object }) _userNameRenderer =
+    this.userNameRenderer.bind(this);
+  @property({ type: Object }) _userStatusRenderer =
+    this.userStatusRenderer.bind(this);
+  @property({ type: Object }) _totpActivatedRenderer =
+    this.totpActivatedRenderer.bind(this);
+  @property({ type: Object }) keypairs;
+  @property({ type: String }) signoutUserName = '';
+  @property({ type: Object }) notification = Object();
+  @property({ type: String }) listCondition: StatusCondition = 'loading';
+  @property({ type: Number }) _totalUserCount = 0;
+  @property({ type: Boolean }) isUserInfoMaskEnabled = false;
+  @property({ type: Boolean }) totpSupported = false;
+  @property({ type: Boolean }) totpActivated = false;
+  @property({ type: Object }) userStatus = {
+    active: 'Active',
+    inactive: 'Inactive',
     'before-verification': 'Before Verification',
-    'deleted': 'Deleted',
+    deleted: 'Deleted',
   };
   @query('#user-grid') userGrid!: VaadinGrid;
   @query('#loading-spinner') spinner!: LablupLoadingSpinner;
@@ -128,7 +132,7 @@ export default class BackendAIUserList extends BackendAIPage {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #DDD;
+          border-bottom: 1px solid #ddd;
         }
 
         vaadin-item {
@@ -160,7 +164,9 @@ export default class BackendAIUserList extends BackendAIPage {
           font-size: 16px;
         }
 
-        mwc-button, mwc-button[unelevated], mwc-button[outlined] {
+        mwc-button,
+        mwc-button[unelevated],
+        mwc-button[outlined] {
           background-image: none;
           --mdc-theme-primary: var(--general-button-background-color);
           --mdc-theme-on-primary: var(--general-button-color);
@@ -174,7 +180,8 @@ export default class BackendAIUserList extends BackendAIPage {
           --mdc-menu-min-width: 330px;
         }
 
-        mwc-textfield, mwc-textarea {
+        mwc-textfield,
+        mwc-textarea {
           width: 100%;
           --mdc-typography-font-family: var(--general-font-family);
           --mdc-typography-textfield-font-size: 14px;
@@ -193,7 +200,8 @@ export default class BackendAIUserList extends BackendAIPage {
         mwc-icon.totp {
           --mdc-icon-size: 24px;
         }
-      `];
+      `,
+    ];
   }
 
   firstUpdated() {
@@ -214,58 +222,87 @@ export default class BackendAIUserList extends BackendAIPage {
       return;
     }
     // If disconnected
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
-        this._refreshUserData();
-        this.isAdmin = globalThis.backendaiclient.is_admin;
-        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      }, true);
-    } else { // already connected
-      this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        async () => {
+          this.totpSupported =
+            globalThis.backendaiclient?.supports('2FA') &&
+            (await globalThis.backendaiclient?.isManagerSupportingTOTP());
+          this._refreshUserData();
+          this.isAdmin = globalThis.backendaiclient.is_admin;
+          this.isUserInfoMaskEnabled =
+            globalThis.backendaiclient._config.maskUserInfo;
+        },
+        true,
+      );
+    } else {
+      // already connected
+      this.totpSupported =
+        globalThis.backendaiclient?.supports('2FA') &&
+        (await globalThis.backendaiclient?.isManagerSupportingTOTP());
       this._refreshUserData();
       this.isAdmin = globalThis.backendaiclient.is_admin;
-      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+      this.isUserInfoMaskEnabled =
+        globalThis.backendaiclient._config.maskUserInfo;
     }
   }
 
   _refreshUserData() {
     let is_active = true;
     switch (this.condition) {
-    case 'active':
-      is_active = true;
-      break;
-    default:
-      is_active = false;
+      case 'active':
+        is_active = true;
+        break;
+      default:
+        is_active = false;
     }
     this.listCondition = 'loading';
     this._listStatus?.show();
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'is_active', 'domain_name', 'role', 'groups {id name}', 'status'];
+    const fields = [
+      'email',
+      'username',
+      'need_password_change',
+      'full_name',
+      'description',
+      'is_active',
+      'domain_name',
+      'role',
+      'groups {id name}',
+      'status',
+    ];
     if (this.totpSupported) {
       fields.push('totp_activated');
     }
-    return globalThis.backendaiclient.user.list(is_active, fields).then((response) => {
-      const users = response.users;
-      // Object.keys(users).map((objectKey, index) => {
-      // var user = users[objectKey];
-      // Blank for the next impl.
-      // });
-      this.users = users;
-      if (this.users.length == 0) {
-        this.listCondition = 'no-data';
-      } else {
+    return globalThis.backendaiclient.user
+      .list(is_active, fields)
+      .then((response) => {
+        const users = response.users;
+        // Object.keys(users).map((objectKey, index) => {
+        // var user = users[objectKey];
+        // Blank for the next impl.
+        // });
+        this.users = users;
+        if (this.users.length == 0) {
+          this.listCondition = 'no-data';
+        } else {
+          this._listStatus?.hide();
+        }
+        // setTimeout(() => { this._refreshKeyData(status) }, 5000);
+      })
+      .catch((err) => {
         this._listStatus?.hide();
-      }
-      // setTimeout(() => { this._refreshKeyData(status) }, 5000);
-    }).catch((err) => {
-      this._listStatus?.hide();
-      console.log(err);
-      if (err && err.message) {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-      }
-    });
+        console.log(err);
+        if (err && err.message) {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+        }
+      });
   }
 
   async _openUserSettingModal(e) {
@@ -288,25 +325,43 @@ export default class BackendAIUserList extends BackendAIPage {
   }
 
   _signoutUser() {
-    globalThis.backendaiclient.user.delete(this.signoutUserName).then((response) => {
-      this.notification.text = _text('credential.SignoutSeccessfullyFinished');
-      this.notification.show();
-      this._refreshUserData();
-      this.signoutUserDialog.hide();
-    }).catch((err) => { // Signout failed
-      console.log(err);
-      if (typeof err.message !== 'undefined') {
-        this.notification.text = PainKiller.relieve(err.title);
-        this.notification.detail = err.message;
-      } else {
-        this.notification.text = PainKiller.relieve('Signout failed. Check your permission and try again.');
-      }
-      this.notification.show();
-    });
+    globalThis.backendaiclient.user
+      .delete(this.signoutUserName)
+      .then((response) => {
+        this.notification.text = _text(
+          'credential.SignoutSeccessfullyFinished',
+        );
+        this.notification.show();
+        this._refreshUserData();
+        this.signoutUserDialog.hide();
+      })
+      .catch((err) => {
+        // Signout failed
+        console.log(err);
+        if (typeof err.message !== 'undefined') {
+          this.notification.text = PainKiller.relieve(err.title);
+          this.notification.detail = err.message;
+        } else {
+          this.notification.text = PainKiller.relieve(
+            'Signout failed. Check your permission and try again.',
+          );
+        }
+        this.notification.show();
+      });
   }
 
   async _getUserData(user_id) {
-    const fields = ['email', 'username', 'need_password_change', 'full_name', 'description', 'status', 'domain_name', 'role', 'groups {id name}'];
+    const fields = [
+      'email',
+      'username',
+      'need_password_change',
+      'full_name',
+      'description',
+      'status',
+      'domain_name',
+      'role',
+      'groups {id name}',
+    ];
     if (this.totpSupported) {
       fields.push('totp_activated');
     }
@@ -338,7 +393,9 @@ export default class BackendAIUserList extends BackendAIPage {
     } else {
       endDate = new Date();
     }
-    const seconds = Math.floor((endDate.getTime() - startDate.getTime()) / 1000);
+    const seconds = Math.floor(
+      (endDate.getTime() - startDate.getTime()) / 1000,
+    );
     const days = Math.floor(seconds / 86400);
     return days;
   }
@@ -377,7 +434,12 @@ export default class BackendAIUserList extends BackendAIPage {
     if (userId && this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
       const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+      userId = globalThis.backendaiutils._maskString(
+        userId,
+        '*',
+        maskStartIdx,
+        maskLength,
+      );
     }
     return userId;
   }
@@ -386,7 +448,12 @@ export default class BackendAIUserList extends BackendAIPage {
     if (username && this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
       const maskLength = username.length - maskStartIdx;
-      username = globalThis.backendaiutils._maskString(username, '*', maskStartIdx, maskLength);
+      username = globalThis.backendaiutils._maskString(
+        username,
+        '*',
+        maskStartIdx,
+        maskLength,
+      );
     }
     return username;
   }
@@ -394,7 +461,8 @@ export default class BackendAIUserList extends BackendAIPage {
   async _setTotpActivated() {
     if (this.totpSupported) {
       const userInfo = await globalThis.backendaiclient.user.get(
-        globalThis.backendaiclient.email, ['totp_activated']
+        globalThis.backendaiclient.email,
+        ['totp_activated'],
       );
       this.totpActivated = userInfo.user.totp_activated;
     }
@@ -409,12 +477,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * */
   _indexRenderer(root, column, rowData) {
     const idx = rowData.index + 1;
-    render(
-      html`
-        <div>${idx}</div>
-      `,
-      root
-    );
+    render(html` <div>${idx}</div> `, root);
   }
 
   /**
@@ -430,17 +493,30 @@ export default class BackendAIUserList extends BackendAIPage {
         <div
           id="controls"
           class="layout horizontal flex center"
-          .user-id="${rowData.item.email}">
-          <mwc-icon-button class="fg green" icon="assignment"
-                           @click="${(e) => this._openUserInfoModal(e)}"></mwc-icon-button>
-          <mwc-icon-button class="fg blue" icon="settings"
-                           @click="${(e) => this._openUserSettingModal(e)}"></mwc-icon-button>
-          ${globalThis.backendaiclient.is_superadmin && this._isActive() ? html`
-            <mwc-icon-button class="fg red controls-running" icon="delete_forever"
-                             @click="${(e) => this._signoutUserDialog(e)}"></mwc-icon-button>
-          ` : html``}
+          .user-id="${rowData.item.email}"
+        >
+          <mwc-icon-button
+            class="fg green"
+            icon="assignment"
+            @click="${(e) => this._openUserInfoModal(e)}"
+          ></mwc-icon-button>
+          <mwc-icon-button
+            class="fg blue"
+            icon="settings"
+            @click="${(e) => this._openUserSettingModal(e)}"
+          ></mwc-icon-button>
+          ${globalThis.backendaiclient.is_superadmin && this._isActive()
+            ? html`
+                <mwc-icon-button
+                  class="fg red controls-running"
+                  icon="delete_forever"
+                  @click="${(e) => this._signoutUserDialog(e)}"
+                ></mwc-icon-button>
+              `
+            : html``}
         </div>
-      `, root
+      `,
+      root,
     );
   }
 
@@ -452,11 +528,7 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData - the object with the properties related with the rendered item
    */
   userIdRenderer(root, column?, rowData?) {
-    render(
-      html`
-        <span>${this._getUserId(rowData.item.email)}</span>
-      `, root
-    );
+    render(html` <span>${this._getUserId(rowData.item.email)}</span> `, root);
   }
 
   /**
@@ -468,9 +540,8 @@ export default class BackendAIUserList extends BackendAIPage {
    */
   userNameRenderer(root, column?, rowData?) {
     render(
-      html`
-        <span>${this._getUsername(rowData.item.username)}</span>
-      `, root
+      html` <span>${this._getUsername(rowData.item.username)}</span> `,
+      root,
     );
   }
 
@@ -486,11 +557,17 @@ export default class BackendAIUserList extends BackendAIPage {
    * @param {Object} rowData
    */
   userStatusRenderer(root, column?, rowData?) {
-    const color = (rowData.item.status === 'active') ? 'green' : 'lightgrey';
+    const color = rowData.item.status === 'active' ? 'green' : 'lightgrey';
     render(
       html`
-        <lablup-shields app="" color="${color}" description="${rowData.item.status}" ui="flat"></lablup-shields>
-      `, root
+        <lablup-shields
+          app=""
+          color="${color}"
+          description="${rowData.item.status}"
+          ui="flat"
+        ></lablup-shields>
+      `,
+      root,
     );
   }
 
@@ -509,65 +586,113 @@ export default class BackendAIUserList extends BackendAIPage {
     render(
       html`
         <div class="layout horizontal center center-justified wrap">
-          ${rowData.item?.totp_activated ? html`
-            <mwc-icon class="fg green totp">check_circle</mwc-icon>
-          ` : html`
-            <mwc-icon class="fg red totp">block</mwc-icon>
-          `}
+          ${rowData.item?.totp_activated
+            ? html` <mwc-icon class="fg green totp">check_circle</mwc-icon> `
+            : html` <mwc-icon class="fg red totp">block</mwc-icon> `}
         </div>
-      `, root
+      `,
+      root,
     );
   }
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <lablup-loading-spinner id="loading-spinner"></lablup-loading-spinner>
       <div class="list-wrapper">
-        <vaadin-grid theme="row-stripes column-borders compact"
-                    aria-label="User list" id="user-grid" .items="${this.users}">
-          <vaadin-grid-column width="40px" flex-grow="0" header="#" text-align="center"
-                              .renderer="${this._indexRenderer.bind(this)}"></vaadin-grid-column>
-          <lablup-grid-sort-filter-column auto-width path="email" header="${_t('credential.UserID')}" resizable
-                              .renderer="${this._userIdRenderer.bind(this)}"></lablup-grid-sort-filter-column>
-          <lablup-grid-sort-filter-column auto-width path="username" header="${_t('credential.Name')}" resizable
-                              .renderer="${this._userNameRenderer}"></lablup-grid-sort-filter-column>
-          ${this.totpSupported ? html`
-            <vaadin-grid-sort-column auto-width flex-grow="0" path="totp_activated" header="${_t('webui.menu.TotpActivated')}" resizable
-                              .renderer="${this._totpActivatedRenderer.bind(this)}"></vaadin-grid-sort-column>
-          `: html``}
-          ${this.condition !== 'active' ? html`
-            <lablup-grid-sort-filter-column auto-width path="status" header="${_t('credential.Status')}" resizable
-                              .renderer="${this._userStatusRenderer}"></lablup-grid-sort-filter-column>` : html``}
-          <vaadin-grid-column frozen-to-end width="160px" resizable header="${_t('general.Control')}"
-              .renderer="${this._boundControlRenderer}"></vaadin-grid-column>
+        <vaadin-grid
+          theme="row-stripes column-borders compact"
+          aria-label="User list"
+          id="user-grid"
+          .items="${this.users}"
+        >
+          <vaadin-grid-column
+            width="40px"
+            flex-grow="0"
+            header="#"
+            text-align="center"
+            .renderer="${this._indexRenderer.bind(this)}"
+          ></vaadin-grid-column>
+          <lablup-grid-sort-filter-column
+            auto-width
+            path="email"
+            header="${_t('credential.UserID')}"
+            resizable
+            .renderer="${this._userIdRenderer.bind(this)}"
+          ></lablup-grid-sort-filter-column>
+          <lablup-grid-sort-filter-column
+            auto-width
+            path="username"
+            header="${_t('credential.Name')}"
+            resizable
+            .renderer="${this._userNameRenderer}"
+          ></lablup-grid-sort-filter-column>
+          ${this.totpSupported
+            ? html`
+                <vaadin-grid-sort-column
+                  auto-width
+                  flex-grow="0"
+                  path="totp_activated"
+                  header="${_t('webui.menu.TotpActivated')}"
+                  resizable
+                  .renderer="${this._totpActivatedRenderer.bind(this)}"
+                ></vaadin-grid-sort-column>
+              `
+            : html``}
+          ${this.condition !== 'active'
+            ? html` <lablup-grid-sort-filter-column
+                auto-width
+                path="status"
+                header="${_t('credential.Status')}"
+                resizable
+                .renderer="${this._userStatusRenderer}"
+              ></lablup-grid-sort-filter-column>`
+            : html``}
+          <vaadin-grid-column
+            frozen-to-end
+            width="160px"
+            resizable
+            header="${_t('general.Control')}"
+            .renderer="${this._boundControlRenderer}"
+          ></vaadin-grid-column>
         </vaadin-grid>
-        <backend-ai-list-status id="list-status" statusCondition="${this.listCondition}" message="${_text('credential.NoUserToDisplay')}"></backend-ai-list-status>
+        <backend-ai-list-status
+          id="list-status"
+          statusCondition="${this.listCondition}"
+          message="${_text('credential.NoUserToDisplay')}"
+        ></backend-ai-list-status>
       </div>
       <backend-ai-dialog id="signout-user-dialog" fixed backdrop>
         <span slot="title">${_t('dialog.title.LetsDouble-Check')}</span>
         <div slot="content">
-          <p>You are inactivating the user <span style="color:red">${this.signoutUserName}</span>.</p>
+          <p>
+            You are inactivating the user
+            <span style="color:red">${this.signoutUserName}</span>.
+          </p>
           <p>${_t('dialog.ask.DoYouWantToProceed')}</p>
         </div>
         <div slot="footer" class="horizontal end-justified flex layout">
           <mwc-button
-              label="${_t('button.Cancel')}"
-              @click="${(e) => this._hideDialog(e)}"></mwc-button>
+            label="${_t('button.Cancel')}"
+            @click="${(e) => this._hideDialog(e)}"
+          ></mwc-button>
           <mwc-button
-              unelevated
-              label="${_t('button.Okay')}"
-              @click="${() => this._signoutUser()}"></mwc-button>
+            unelevated
+            label="${_t('button.Okay')}"
+            @click="${() => this._signoutUser()}"
+          ></mwc-button>
         </div>
       </backend-ai-dialog>
-      <backend-ai-react-user-info-dialog value="${JSON.stringify({
+      <backend-ai-react-user-info-dialog
+        value="${JSON.stringify({
           open: this.openUserInfoModal,
           userEmail: this.userEmail,
         })}"
-        @cancel="${() => this.openUserInfoModal = false}"
-        ></backend-ai-react-user-info-dialog>
-      <backend-ai-react-user-setting-dialog value="${JSON.stringify({
+        @cancel="${() => (this.openUserInfoModal = false)}"
+      ></backend-ai-react-user-info-dialog>
+      <backend-ai-react-user-setting-dialog
+        value="${JSON.stringify({
           open: this.openUserSettingModal,
           userEmail: this.userEmail,
         })}"
@@ -575,8 +700,8 @@ export default class BackendAIUserList extends BackendAIPage {
           this.openUserSettingModal = false;
           this.refresh();
         }}"
-        @cancel="${() => this.openUserSettingModal = false}"
-        ></backend-ai-react-user-setting-dialog>
+        @cancel="${() => (this.openUserSettingModal = false)}"
+      ></backend-ai-react-user-setting-dialog>
     `;
   }
 }

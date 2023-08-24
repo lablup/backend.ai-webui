@@ -1,6 +1,5 @@
-import {css} from 'lit';
-import {BackendAiStyles} from '../../components/backend-ai-general-styles';
-
+import { css } from 'lit';
+import { BackendAiStyles } from '../../components/backend-ai-general-styles';
 
 export const BackendAIPipelineStyles = [
   // language=CSS
@@ -37,11 +36,13 @@ export const BackendAIPipelineStyles = [
       --mdc-theme-primary: var(--general-sidebar-selected-color);
       --mdc-text-transform: none;
       --mdc-tab-color-default: var(--general-tabbar-background-color);
-      --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+      --mdc-tab-text-label-color-default: var(
+        --general-tabbar-tab-disabled-color
+      );
     }
 
     mwc-tab-bar.modal {
-      --mdc-theme-primary: #37B276;
+      --mdc-theme-primary: #37b276;
     }
 
     /* Set width according to screen width (on mobile, tablet, and desktop) */
@@ -56,5 +57,5 @@ export const BackendAIPipelineStyles = [
         --component-width: 70vw;
       }
     }
-  `
-]
+  `,
+];

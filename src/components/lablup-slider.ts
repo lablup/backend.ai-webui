@@ -3,8 +3,8 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 import '@material/mwc-slider';
 import '@material/mwc-textfield';
@@ -13,9 +13,9 @@ import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAiStyles } from './backend-ai-general-styles';
 
 /**
  Lablup Slider
@@ -32,17 +32,17 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-slider')
 export default class LablupSlider extends LitElement {
-  @property({type: Number}) step;
-  @property({type: Number}) value;
-  @property({type: Number}) max;
-  @property({type: Number}) min;
-  @property({type: String}) prefix;
-  @property({type: String}) suffix;
-  @property({type: Boolean}) editable = false;
-  @property({type: Boolean}) pin = false;
-  @property({type: Boolean}) markers = false;
-  @property({type: Number}) marker_limit = 30;
-  @property({type: Boolean}) disabled = false;
+  @property({ type: Number }) step;
+  @property({ type: Number }) value;
+  @property({ type: Number }) max;
+  @property({ type: Number }) min;
+  @property({ type: String }) prefix;
+  @property({ type: String }) suffix;
+  @property({ type: Boolean }) editable = false;
+  @property({ type: Boolean }) pin = false;
+  @property({ type: Boolean }) markers = false;
+  @property({ type: Number }) marker_limit = 30;
+  @property({ type: Boolean }) disabled = false;
   @query('#slider', true) slider;
   @query('#textfield', true) textfield;
 
@@ -69,7 +69,8 @@ export default class LablupSlider extends LitElement {
           --mdc-theme-secondary: var(--slider-color, '#018786');
           color: var(--paper-grey-700);
         }
-      `];
+      `,
+    ];
   }
 
   render() {
@@ -77,18 +78,27 @@ export default class LablupSlider extends LitElement {
     return html`
       <div class="horizontal center layout">
         <mwc-slider
-          id="slider" class="${this.id}"
-          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
+          id="slider"
+          class="${this.id}"
+          value="${this.value}"
+          min="${this.min}"
+          max="${this.max}"
+          step="${this.step}"
           ?pin="${this.pin}"
           ?disabled="${this.disabled}"
           ?markers="${this.markers}"
           @change="${() => this.syncToText()}"
         ></mwc-slider>
         <mwc-textfield
-          id="textfield" class="${this.id}"
+          id="textfield"
+          class="${this.id}"
           type="number"
-          value="${this.value}" min="${this.min}" max="${this.max}" step="${this.step}"
-          prefix="${this.prefix}" suffix="${this.suffix}"
+          value="${this.value}"
+          min="${this.min}"
+          max="${this.max}"
+          step="${this.step}"
+          prefix="${this.prefix}"
+          suffix="${this.suffix}"
           ?disabled="${this.disabled}"
           @change="${() => this.syncToSlider()}"
         ></mwc-textfield>
@@ -124,7 +134,11 @@ export default class LablupSlider extends LitElement {
   }
 
   update(changedProperties: Map<any, any>) {
-    if (Array.from(changedProperties.keys()).some((item) => ['value', 'min', 'max'].includes(item))) {
+    if (
+      Array.from(changedProperties.keys()).some((item) =>
+        ['value', 'min', 'max'].includes(item),
+      )
+    ) {
       // this.min = (this.min >= this.max) ? 0 : this.min;
       if (this.min == this.max) {
         this.max = this.max + 1;
@@ -160,12 +174,14 @@ export default class LablupSlider extends LitElement {
   syncToSlider() {
     this.textfield.step = this.step;
     const rounded = Math.round(this.textfield.value / this.step) * this.step;
-    this.textfield.value = rounded.toFixed(((decimal_places: number) => {
-      if (Math.floor(decimal_places) === decimal_places) {
-        return 0;
-      }
-      return decimal_places.toString().split('.')[1].length || 0;
-    })(this.step));
+    this.textfield.value = rounded.toFixed(
+      ((decimal_places: number) => {
+        if (Math.floor(decimal_places) === decimal_places) {
+          return 0;
+        }
+        return decimal_places.toString().split('.')[1].length || 0;
+      })(this.step),
+    );
     if (this.textfield.value > this.max) {
       this.textfield.value = this.max;
     }
@@ -175,7 +191,7 @@ export default class LablupSlider extends LitElement {
     this.value = this.textfield.value;
     // NOTE: `mwc-textfield` does not fire the `change` event, so we need to
     //       explicitly fire it for the `lablup-slider`.
-    const event = new CustomEvent('change', {detail: {}});
+    const event = new CustomEvent('change', { detail: {} });
     this.dispatchEvent(event);
   }
 
@@ -184,7 +200,7 @@ export default class LablupSlider extends LitElement {
    * */
   checkMarkerDisplay() {
     if (this.markers) {
-      if (((this.max - this.min) / this.step) > this.marker_limit) {
+      if ((this.max - this.min) / this.step > this.marker_limit) {
         this.slider.removeAttribute('markers');
       }
     }

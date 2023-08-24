@@ -3,8 +3,8 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 import '@material/mwc-ripple';
 
@@ -12,9 +12,9 @@ import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAiStyles } from './backend-ai-general-styles';
 
 /**
  Lablup Expansion
@@ -31,12 +31,12 @@ import {BackendAiStyles} from './backend-ai-general-styles';
 
 @customElement('lablup-expansion')
 export default class LablupExpansion extends LitElement {
-  @property({type: String}) name = '';
-  @property({type: Boolean}) open = false;
-  @property({type: String}) leftIconName = '';
-  @property({type: String}) rightIconName = 'expand_more';
-  @property({type: Function, attribute: false}) leftCustomFunction;
-  @property({type: Function, attribute: false}) rightCustomFunction;
+  @property({ type: String }) name = '';
+  @property({ type: Boolean }) open = false;
+  @property({ type: String }) leftIconName = '';
+  @property({ type: String }) rightIconName = 'expand_more';
+  @property({ type: Function, attribute: false }) leftCustomFunction;
+  @property({ type: Function, attribute: false }) rightCustomFunction;
 
   @query('#accordion') expansionShell;
   @query('#left-icon') leftIcon;
@@ -53,8 +53,8 @@ export default class LablupExpansion extends LitElement {
       // language=CSS
       css`
         div.card {
-          padding:0;
-          margin:0;
+          padding: 0;
+          margin: 0;
         }
 
         #accordion > div.card > h3 {
@@ -63,7 +63,7 @@ export default class LablupExpansion extends LitElement {
           font-size: var(--expansion-header-font-size, 12px);
           font-weight: var(--expansion-header-font-weight, 600);
           font-family: var(--general-font-family);
-          transition: all .35s;
+          transition: all 0.35s;
         }
         #accordion > div.card > h3 > mwc-icon-button {
           --mdc-icon-button-size: 24px;
@@ -77,7 +77,7 @@ export default class LablupExpansion extends LitElement {
 
         #accordion div.content {
           max-height: 0;
-          transition: all .35s;
+          transition: all 0.35s;
           padding: 0;
           margin: 0;
         }
@@ -90,7 +90,7 @@ export default class LablupExpansion extends LitElement {
 
         #accordion #left-icon,
         #accordion #right-icon {
-          transition: all .35s;
+          transition: all 0.35s;
           transform: rotate(0deg);
           margin: var(--expansion-icon-margin, 0 5px 0 0);
         }
@@ -105,7 +105,7 @@ export default class LablupExpansion extends LitElement {
 
         #accordion[open] #left-icon:not(.noRotate),
         #accordion[open] #right-icon:not(.noRotate) {
-          transition: all .35s;
+          transition: all 0.35s;
           transform: rotate(-180deg);
         }
 
@@ -120,9 +120,10 @@ export default class LablupExpansion extends LitElement {
           margin: 0 0 10px 0;
           display: block;
           height: 20px;
-          border-bottom: 1px solid #DDD !important;
+          border-bottom: 1px solid #ddd !important;
         }
-      `];
+      `,
+    ];
   }
   _toggleAccordion() {
     if (this.expansionShell.hasAttribute('open')) {
@@ -134,36 +135,46 @@ export default class LablupExpansion extends LitElement {
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <div .name="${this.name}" id="accordion" ${this.open ? 'open' : ''}>
         <div elevation="1" class="card" style="margin: 0;padding:0;">
-          <h3 class="horizontal justified layout" style="font-weight:bold" @click="${() => this._toggleAccordion()}">
-            ${this.leftIconName && html`
-              <mwc-icon-button id="left-icon"
-                               icon="${this.leftIconName}"
-                               class="${this.leftCustomFunction ? 'noRotate' : ''}"
-                               @click="${(e) => {
-                                if (this.leftCustomFunction) {
-                                  e.stopPropagation();
-                                  this.leftCustomFunction();
-                                }
-                                }}"></mwc-icon-button>
+          <h3
+            class="horizontal justified layout"
+            style="font-weight:bold"
+            @click="${() => this._toggleAccordion()}"
+          >
+            ${this.leftIconName &&
+            html`
+              <mwc-icon-button
+                id="left-icon"
+                icon="${this.leftIconName}"
+                class="${this.leftCustomFunction ? 'noRotate' : ''}"
+                @click="${(e) => {
+                  if (this.leftCustomFunction) {
+                    e.stopPropagation();
+                    this.leftCustomFunction();
+                  }
+                }}"
+              ></mwc-icon-button>
             `}
             <span class="vertical center-justified layout">
               <slot name="title"></slot>
             </span>
             <div class="flex"></div>
             <slot name="action"></slot>
-            ${this.rightIconName && html`
-              <mwc-icon-button id="right-icon"
-                               icon="${this.rightIconName}"
-                               class="${this.rightCustomFunction ? 'noRotate' : ''}"
-                               @click="${(e) => {
-                                if (this.rightCustomFunction) {
-                                  e.stopPropagation();
-                                  this.rightCustomFunction();
-                                }
-                                }}"></mwc-icon-button>
+            ${this.rightIconName &&
+            html`
+              <mwc-icon-button
+                id="right-icon"
+                icon="${this.rightIconName}"
+                class="${this.rightCustomFunction ? 'noRotate' : ''}"
+                @click="${(e) => {
+                  if (this.rightCustomFunction) {
+                    e.stopPropagation();
+                    this.rightCustomFunction();
+                  }
+                }}"
+              ></mwc-icon-button>
             `}
           </h3>
           <div class="content">

@@ -1,21 +1,21 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useLazyLoadQuery } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import _ from "lodash";
-import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from "antd";
-import { useBackendaiImageMetaData } from "../hooks";
-import ImageMetaIcon from "./ImageMetaIcon";
-import Flex from "./Flex";
-import { useTranslation } from "react-i18next";
-import TextHighlighter from "./TextHighlighter";
-import DoubleTag from "./DoubleTag";
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useLazyLoadQuery } from 'react-relay';
+import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
+import { Divider, Form, Input, RefSelectProps, Select, Tag, theme } from 'antd';
+import { useBackendaiImageMetaData } from '../hooks';
+import ImageMetaIcon from './ImageMetaIcon';
+import Flex from './Flex';
+import { useTranslation } from 'react-i18next';
+import TextHighlighter from './TextHighlighter';
+import DoubleTag from './DoubleTag';
 import {
   ImageEnvironmentSelectFormItemsQuery,
   ImageEnvironmentSelectFormItemsQuery$data,
-} from "./__generated__/ImageEnvironmentSelectFormItemsQuery.graphql";
+} from './__generated__/ImageEnvironmentSelectFormItemsQuery.graphql';
 
 export type Image = NonNullable<
-  NonNullable<ImageEnvironmentSelectFormItemsQuery$data>["images"]
+  NonNullable<ImageEnvironmentSelectFormItemsQuery$data>['images']
 >[0];
 
 type ImageGroup = {
@@ -47,8 +47,8 @@ const getImageFullName = (image: Image) => {
 };
 
 function compareVersions(version1: string, version2: string): number {
-  const v1 = version1.split(".").map(Number);
-  const v2 = version2.split(".").map(Number);
+  const v1 = version1.split('.').map(Number);
+  const v2 = version2.split('.').map(Number);
 
   for (let i = 0; i < Math.max(v1.length, v2.length); i++) {
     const num1 = v1[i] || 0;
@@ -67,10 +67,10 @@ const ImageEnvironmentSelectFormItems: React.FC<
   ImageEnvironmentSelectFormItemsProps
 > = ({ filter }) => {
   const form = Form.useFormInstance<ImageEnvironmentFormInput>();
-  const currentEnvironmentsFormData = Form.useWatch("environments", form);
+  const currentEnvironmentsFormData = Form.useWatch('environments', form);
 
-  const [environmentSearch, setEnvironmentSearch] = useState("");
-  const [versionSearch, setVersionSearch] = useState("");
+  const [environmentSearch, setEnvironmentSearch] = useState('');
+  const [versionSearch, setVersionSearch] = useState('');
   const { t } = useTranslation();
   const [metadata, { getImageMeta }] = useBackendaiImageMetaData();
   const { token } = theme.useToken();
@@ -104,8 +104,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
       installed: true,
     },
     {
-      fetchPolicy: "store-and-network",
-    }
+      fetchPolicy: 'store-and-network',
+    },
   );
 
   // If not initial value, select first value
@@ -116,7 +116,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       currentEnvironmentsFormData?.environment ||
       imageGroups[0]?.environmentGroups[0]?.environmentName;
 
-    let nextEnvironmentGroup: ImageGroup["environmentGroups"][0] | undefined;
+    let nextEnvironmentGroup: ImageGroup['environmentGroups'][0] | undefined;
     _.find(imageGroups, (group) => {
       return _.find(group.environmentGroups, (environment) => {
         if (environment.environmentName === nextEnvironmentName) {
@@ -133,7 +133,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
       !_.find(
         nextEnvironmentGroup?.images,
         (image) =>
-          currentEnvironmentsFormData?.version === getImageFullName(image)
+          currentEnvironmentsFormData?.version === getImageFullName(image),
       )
     ) {
       const nextNewImage = nextEnvironmentGroup?.images[0];
@@ -157,8 +157,8 @@ const ImageEnvironmentSelectFormItems: React.FC<
         .groupBy((image) => {
           // group by using `group` property of image info
           return (
-            metadata?.imageInfo[getImageMeta(getImageFullName(image) || "").key]
-              ?.group || "Custom Environments"
+            metadata?.imageInfo[getImageMeta(getImageFullName(image) || '').key]
+              ?.group || 'Custom Environments'
           );
         })
         .map((images, groupName) => {
@@ -177,15 +177,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
               .map((images, environmentName) => ({
                 environmentName,
                 displayName:
-                  metadata?.imageInfo[environmentName.split("/")?.[1]]?.name ||
+                  metadata?.imageInfo[environmentName.split('/')?.[1]]?.name ||
                   environmentName,
-                prefix: environmentName.split("/")?.[0],
+                prefix: environmentName.split('/')?.[0],
                 images: images.sort((a, b) =>
                   compareVersions(
                     // latest version comes first
-                    b?.tag?.split("-")?.[0] ?? "",
-                    a?.tag?.split("-")?.[0] ?? ""
-                  )
+                    b?.tag?.split('-')?.[0] ?? '',
+                    a?.tag?.split('-')?.[0] ?? '',
+                  ),
                 ),
               }))
               .sortBy((item) => item.displayName)
@@ -195,15 +195,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
         .sortBy((item) => item.groupName)
         .value(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [images, metadata, filter]
+    [images, metadata, filter],
   );
 
   return (
     <>
       <Form.Item
-        name={["environments", "environment"]}
-        label={`${t("session.launcher.Environments")} / ${t(
-          "session.launcher.Version"
+        name={['environments', 'environment']}
+        label={`${t('session.launcher.Environments')} / ${t(
+          'session.launcher.Version',
         )}`}
         rules={[{ required: true }]}
         style={{ marginBottom: 10 }}
@@ -228,15 +228,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                   const firstImage = environmentGroup.images[0];
                   const currentMetaImageInfo =
                     metadata?.imageInfo[
-                      environmentGroup.environmentName.split("/")?.[1]
+                      environmentGroup.environmentName.split('/')?.[1]
                     ];
 
                   const extraFilterValues: string[] = [];
                   let environmentPrefixTag = null;
                   if (
                     environmentGroup.prefix &&
-                    !["lablup", "cloud", "stable"].includes(
-                      environmentGroup.prefix
+                    !['lablup', 'cloud', 'stable'].includes(
+                      environmentGroup.prefix,
                     )
                   ) {
                     extraFilterValues.push(environmentGroup.prefix);
@@ -263,7 +263,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         );
                       }
                       return null;
-                    }
+                    },
                   );
                   return (
                     <Select.Option
@@ -271,14 +271,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       value={environmentGroup.environmentName}
                       filterValue={
                         environmentGroup.displayName +
-                        "\t" +
-                        extraFilterValues.join("\t")
+                        '\t' +
+                        extraFilterValues.join('\t')
                       }
                       label={
                         <Flex direction="row">
                           <Flex direction="row" align="center" gap="xs">
                             <ImageMetaIcon
-                              image={getImageFullName(firstImage) || ""}
+                              image={getImageFullName(firstImage) || ''}
                               style={{
                                 width: 15,
                                 height: 15,
@@ -292,7 +292,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                       <Flex direction="row" justify="between">
                         <Flex direction="row" align="center" gap="xs">
                           <ImageMetaIcon
-                            image={getImageFullName(firstImage) || ""}
+                            image={getImageFullName(firstImage) || ''}
                             style={{
                               width: 15,
                               height: 15,
@@ -321,13 +321,13 @@ const ImageEnvironmentSelectFormItems: React.FC<
       >
         {({ getFieldValue }) => {
           let selectedEnvironmentGroup:
-            | ImageGroup["environmentGroups"][0]
+            | ImageGroup['environmentGroups'][0]
             | undefined;
           _.find(imageGroups, (group) => {
             return _.find(group.environmentGroups, (environment) => {
               if (
                 environment.environmentName ===
-                getFieldValue("environments")?.environment
+                getFieldValue('environments')?.environment
               ) {
                 selectedEnvironmentGroup = environment;
                 return true;
@@ -338,7 +338,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
           });
           return (
             <Form.Item
-              name={["environments", "version"]}
+              name={['environments', 'version']}
               rules={[{ required: true }]}
             >
               <Select
@@ -358,31 +358,31 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         paddingLeft: token.paddingSM,
                       }}
                     >
-                      {t("session.launcher.Version")}
+                      {t('session.launcher.Version')}
                       <Divider type="vertical" />
-                      {t("session.launcher.Base")}
+                      {t('session.launcher.Base')}
                       <Divider type="vertical" />
-                      {t("session.launcher.Architecture")}
+                      {t('session.launcher.Architecture')}
                       <Divider type="vertical" />
-                      {t("session.launcher.Requirements")}
+                      {t('session.launcher.Requirements')}
                     </Flex>
-                    <Divider style={{ margin: "8px 0" }} />
+                    <Divider style={{ margin: '8px 0' }} />
                     {menu}
                   </>
                 )}
               >
                 {_.map(
-                  _.uniqBy(selectedEnvironmentGroup?.images, "digest"),
+                  _.uniqBy(selectedEnvironmentGroup?.images, 'digest'),
 
                   (image) => {
                     const [version, tag, ...requirements] = image?.tag?.split(
-                      "-"
-                    ) || ["", "", ""];
+                      '-',
+                    ) || ['', '', ''];
 
                     let tagAlias = metadata?.tagAlias[tag];
                     if (!tagAlias) {
                       for (const [key, replaceString] of Object.entries(
-                        metadata?.tagReplace || {}
+                        metadata?.tagReplace || {},
                       )) {
                         const pattern = new RegExp(key);
                         if (pattern.test(tag)) {
@@ -403,14 +403,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           style={{
                             flex: 1,
                           }}
-                          gap={"xxs"}
+                          gap={'xxs'}
                         >
                           {_.map(requirements, (requirement, idx) => (
                             <DoubleTag
                               key={idx}
                               values={
                                 metadata?.tagAlias[requirement]
-                                  ?.split(":")
+                                  ?.split(':')
                                   .map((str) => {
                                     extraFilterValues.push(str);
                                     return (
@@ -424,7 +424,7 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           ))}
                         </Flex>
                       ) : (
-                        "-"
+                        '-'
                       );
                     return (
                       <Select.Option
@@ -435,15 +435,15 @@ const ImageEnvironmentSelectFormItems: React.FC<
                           tagAlias,
                           image?.architecture,
                           ...extraFilterValues,
-                        ].join("\t")}
+                        ].join('\t')}
                         label={[
                           version,
                           tagAlias,
                           image?.architecture,
                           requirements.length > 0
-                            ? requirements.join(", ")
-                            : "-",
-                        ].join(" | ")}
+                            ? requirements.join(', ')
+                            : '-',
+                        ].join(' | ')}
                       >
                         <Flex direction="row">
                           <TextHighlighter keyword={versionSearch}>
@@ -462,14 +462,14 @@ const ImageEnvironmentSelectFormItems: React.FC<
                         </Flex>
                       </Select.Option>
                     );
-                  }
+                  },
                 )}
               </Select>
             </Form.Item>
           );
         }}
       </Form.Item>
-      <Form.Item noStyle hidden name={["environments", "image"]}>
+      <Form.Item noStyle hidden name={['environments', 'image']}>
         <Input />
       </Form.Item>
     </>

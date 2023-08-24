@@ -3,12 +3,12 @@
 Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
 
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement} from 'lit/decorators.js';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
 
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -35,8 +35,8 @@ export default class BackendAIServingList extends BackendAIPage {
       IronFlex,
       IronFlexAlignment,
       // language=CSS
-      css`
-      `];
+      css``,
+    ];
   }
 
   async _viewStateChanged(active: boolean) {

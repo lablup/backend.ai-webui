@@ -1,23 +1,23 @@
-import { Card, Form, Input, theme, Switch, message } from "antd";
-import React, { Suspense } from "react";
-import { Trans, useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
-import SliderInputItem from "./SliderInputFormItem";
+import { Card, Form, Input, theme, Switch, message } from 'antd';
+import React, { Suspense } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { useSuspendedBackendaiClient } from '../hooks';
+import SliderInputItem from './SliderInputFormItem';
 import ImageEnvironmentSelectFormItems, {
   Image,
   ImageEnvironmentFormInput,
-} from "./ImageEnvironmentSelectFormItems";
-import FlexActivityIndicator from "./FlexActivityIndicator";
-import _ from "lodash";
-import ResourceGroupSelect from "./ResourceGroupSelect";
-import VFolderSelect from "./VFolderSelect";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import { useCurrentDomainValue } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useResourceSlots } from "../hooks/backendai";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+} from './ImageEnvironmentSelectFormItems';
+import FlexActivityIndicator from './FlexActivityIndicator';
+import _ from 'lodash';
+import ResourceGroupSelect from './ResourceGroupSelect';
+import VFolderSelect from './VFolderSelect';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useCurrentDomainValue } from '../hooks';
+import { baiSignedRequestWithPromise } from '../helper';
+import { useResourceSlots } from '../hooks/backendai';
+import BAIModal, { BAIModalProps } from './BAIModal';
 
-type ClusterMode = "single-node" | "multi-node";
+type ClusterMode = 'single-node' | 'multi-node';
 
 interface ServiceCreateConfigResourceOptsType {
   shmem?: number | string;
@@ -25,8 +25,8 @@ interface ServiceCreateConfigResourceOptsType {
 interface ServiceCreateConfigResourceType {
   cpu: number | string;
   mem: string;
-  "cuda.device"?: number | string;
-  "cuda.shares"?: number | string;
+  'cuda.device'?: number | string;
+  'cuda.shares'?: number | string;
 }
 
 interface ServiceCreateConfigType {
@@ -56,7 +56,7 @@ interface ServiceCreateType {
 }
 
 interface ServiceLauncherProps
-  extends Omit<BAIModalProps, "onOK" | "onCancel"> {
+  extends Omit<BAIModalProps, 'onOK' | 'onCancel'> {
   extraP?: boolean;
   onRequestClose: (success?: boolean) => void;
 }
@@ -96,33 +96,33 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
         group: baiClient.current_group, // current Project Group,
         domain: currentDomain, // current Domain Group,
         cluster_size: 1, // FIXME: hardcoded. change it with option later
-        cluster_mode: "single-node", // FIXME: hardcoded. change it with option later
+        cluster_mode: 'single-node', // FIXME: hardcoded. change it with option later
         open_to_public: values.openToPublic,
         config: {
           model: values.vFolderName,
-          model_mount_destination: "/models", // FIXME: hardcoded. change it with option later
+          model_mount_destination: '/models', // FIXME: hardcoded. change it with option later
           environ: {}, // FIXME: hardcoded. change it with option later
           scaling_group: values.resourceGroup,
           resources: {
             cpu: values.cpu,
-            mem: values.mem + "G",
+            mem: values.mem + 'G',
           },
         },
       };
-      if (resourceSlots?.cuda === "shares") {
-        body["config"].resources["cuda.shares"] = values.gpu;
+      if (resourceSlots?.cuda === 'shares') {
+        body['config'].resources['cuda.shares'] = values.gpu;
       }
-      if (resourceSlots?.cuda === "device") {
-        body["config"].resources["cuda.device"] = values.gpu;
+      if (resourceSlots?.cuda === 'device') {
+        body['config'].resources['cuda.device'] = values.gpu;
       }
       if (values.shmem && values.shmem > 0) {
-        body["config"].resource_opts = {
+        body['config'].resource_opts = {
           shmem: values.shmem,
         };
       }
       return baiSignedRequestWithPromise({
-        method: "POST",
-        url: "/services",
+        method: 'POST',
+        url: '/services',
         body,
         client: baiClient,
       });
@@ -151,7 +151,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           onRequestClose(true);
         },
         onError: (error) => {
-          message.error(t("modelService.FailedToStartService"));
+          message.error(t('modelService.FailedToStartService'));
         },
       });
       new Promise((resolve, reject) => {}).then(() => {
@@ -168,7 +168,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
 
   return (
     <BAIModal
-      title={t("modelService.StartNewServing")}
+      title={t('modelService.StartNewServing')}
       onOk={handleOk}
       onCancel={handleCancel}
       destroyOnClose={true}
@@ -194,7 +194,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           }
         >
           <Form.Item
-            label={t("modelService.ServiceName")}
+            label={t('modelService.ServiceName')}
             name="serviceName"
             rules={[
               {
@@ -206,7 +206,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Form.Item>
           <Form.Item
             name="resourceGroup"
-            label={t("session.ResourceGroup")}
+            label={t('session.ResourceGroup')}
             rules={[
               {
                 required: true,
@@ -217,14 +217,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
           </Form.Item>
           <Form.Item
             name="openToPublic"
-            label={t("modelService.OpenToPublic")}
+            label={t('modelService.OpenToPublic')}
             valuePropName="checked"
           >
             <Switch></Switch>
           </Form.Item>
           <Form.Item
-            name={"vFolderName"}
-            label={t("session.launcher.ModelStorageToMount")}
+            name={'vFolderName'}
+            label={t('session.launcher.ModelStorageToMount')}
             rules={[
               {
                 required: true,
@@ -232,12 +232,12 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ]}
           >
             <VFolderSelect
-              filter={(vf) => vf.usage_mode === "model"}
+              filter={(vf) => vf.usage_mode === 'model'}
               autoSelectDefault
             />
           </Form.Item>
           <SliderInputItem
-            label={t("modelService.DesiredRoutingCount")}
+            label={t('modelService.DesiredRoutingCount')}
             name="desiredRoutingCount"
             rules={[
               {
@@ -246,7 +246,7 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
             ]}
             inputNumberProps={{
               //TODO: change unit based on resource limit
-              addonAfter: "#",
+              addonAfter: '#',
             }}
             required
           />
@@ -276,28 +276,28 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
               {({ getFieldValue }) => {
                 // TODO: change min/max based on selected images resource limit and current user limit
                 const currentImage: Image =
-                  getFieldValue("environments")?.image;
+                  getFieldValue('environments')?.image;
 
                 return (
                   <>
                     <SliderInputItem
-                      name={"cpu"}
-                      label={t("session.launcher.CPU")}
-                      tooltip={<Trans i18nKey={"session.launcher.DescCPU"} />}
+                      name={'cpu'}
+                      label={t('session.launcher.CPU')}
+                      tooltip={<Trans i18nKey={'session.launcher.DescCPU'} />}
                       min={parseInt(
                         _.find(
                           currentImage?.resource_limits,
-                          (i) => i?.key === "cpu"
-                        )?.min || "0"
+                          (i) => i?.key === 'cpu',
+                        )?.min || '0',
                       )}
                       max={parseInt(
                         _.find(
                           currentImage?.resource_limits,
-                          (i) => i?.key === "cpu"
-                        )?.max || "100"
+                          (i) => i?.key === 'cpu',
+                        )?.max || '100',
                       )}
                       inputNumberProps={{
-                        addonAfter: t("session.launcher.Core"),
+                        addonAfter: t('session.launcher.Core'),
                       }}
                       required
                       rules={[
@@ -307,14 +307,14 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       ]}
                     />
                     <SliderInputItem
-                      name={"mem"}
-                      label={t("session.launcher.Memory")}
+                      name={'mem'}
+                      label={t('session.launcher.Memory')}
                       tooltip={
-                        <Trans i18nKey={"session.launcher.DescMemory"} />
+                        <Trans i18nKey={'session.launcher.DescMemory'} />
                       }
                       max={30}
                       inputNumberProps={{
-                        addonAfter: "GB",
+                        addonAfter: 'GB',
                       }}
                       step={0.05}
                       required
@@ -325,15 +325,15 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                       ]}
                     />
                     <SliderInputItem
-                      name={"shmem"}
-                      label={t("session.launcher.SharedMemory")}
+                      name={'shmem'}
+                      label={t('session.launcher.SharedMemory')}
                       tooltip={
-                        <Trans i18nKey={"session.launcher.DescSharedMemory"} />
+                        <Trans i18nKey={'session.launcher.DescSharedMemory'} />
                       }
                       max={30}
                       step={0.1}
                       inputNumberProps={{
-                        addonAfter: "GB",
+                        addonAfter: 'GB',
                       }}
                       required
                       rules={[
@@ -345,18 +345,18 @@ const ServiceLauncherModal: React.FC<ServiceLauncherProps> = ({
                     {resourceSlots.cuda !== undefined ? (
                       <SliderInputItem
                         style={{ marginBottom: 0 }}
-                        name={"gpu"}
-                        label={t("session.launcher.AIAccelerator")}
+                        name={'gpu'}
+                        label={t('session.launcher.AIAccelerator')}
                         tooltip={
                           <Trans
-                            i18nKey={"session.launcher.DescAIAccelerator"}
+                            i18nKey={'session.launcher.DescAIAccelerator'}
                           />
                         }
                         max={30}
                         step={0.1}
                         inputNumberProps={{
                           //TODO: change unit based on resource limit
-                          addonAfter: "GPU",
+                          addonAfter: 'GPU',
                         }}
                         required
                         rules={[

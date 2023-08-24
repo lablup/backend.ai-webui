@@ -1,5 +1,5 @@
-import React, { PropsWithChildren } from "react";
-import { Typography } from "antd";
+import React, { PropsWithChildren } from 'react';
+import { Typography } from 'antd';
 
 interface Props extends PropsWithChildren {
   text?: string;

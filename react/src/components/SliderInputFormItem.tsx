@@ -1,17 +1,17 @@
-import React from "react";
+import React from 'react';
 import {
   InputNumber,
   Slider,
   Form,
   SliderSingleProps,
   InputNumberProps,
-} from "antd";
-import Flex from "./Flex";
-import { FormItemProps } from "antd/lib/form/FormItem";
-import { NamePath } from "antd/es/form/interface";
-import { SliderRangeProps } from "antd/es/slider";
+} from 'antd';
+import Flex from './Flex';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import { NamePath } from 'antd/es/form/interface';
+import { SliderRangeProps } from 'antd/es/slider';
 
-interface SliderInputProps extends Omit<FormItemProps, "name"> {
+interface SliderInputProps extends Omit<FormItemProps, 'name'> {
   min?: number;
   max?: number;
   step?: number;
@@ -32,7 +32,7 @@ const SliderInputItem: React.FC<SliderInputProps> = ({
 }) => {
   return (
     <Form.Item required={required} {...formItemProps}>
-      <Flex direction="row" gap={"md"}>
+      <Flex direction="row" gap={'md'}>
         <Flex direction="column" align="stretch" style={{ flex: 3 }}>
           <Form.Item name={name} noStyle rules={rules}>
             <Slider max={max} min={min} step={step} {...sliderProps} />

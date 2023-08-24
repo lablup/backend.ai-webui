@@ -1,15 +1,15 @@
-import React, { Suspense } from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
-import { StorageHostSettingPageQuery } from "./__generated__/StorageHostSettingPageQuery.graphql";
+import React, { Suspense } from 'react';
+import graphql from 'babel-plugin-relay/macro';
+import { useLazyLoadQuery } from 'react-relay';
+import { StorageHostSettingPageQuery } from './__generated__/StorageHostSettingPageQuery.graphql';
 
-import { Breadcrumb, Card, Empty, Typography, theme } from "antd";
-import Flex from "../components/Flex";
-import StorageHostResourcePanel from "../components/StorageHostResourcePanel";
-import StorageHostSettingsPanel from "../components/StorageHostSettingsPanel";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { useWebComponentInfo } from "../components/DefaultProviders";
-import { useTranslation } from "react-i18next";
+import { Breadcrumb, Card, Empty, Typography, theme } from 'antd';
+import Flex from '../components/Flex';
+import StorageHostResourcePanel from '../components/StorageHostResourcePanel';
+import StorageHostSettingsPanel from '../components/StorageHostSettingsPanel';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useWebComponentInfo } from '../components/DefaultProviders';
+import { useTranslation } from 'react-i18next';
 
 interface StorageHostSettingPageProps {
   storageHostId: string;
@@ -33,12 +33,12 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
       }
     `,
     {
-      id: storageHostId || "",
-    }
+      id: storageHostId || '',
+    },
   );
 
   const isQuotaSupportedStorage =
-    storage_volume?.capabilities?.includes("quota") ?? false;
+    storage_volume?.capabilities?.includes('quota') ?? false;
 
   return (
     <Flex
@@ -49,23 +49,23 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
       <Breadcrumb
         items={[
           {
-            title: "Resources",
+            title: 'Resources',
             onClick: (e) => {
               e.preventDefault();
-              moveTo("/agent");
+              moveTo('/agent');
             },
-            href: "/agent",
+            href: '/agent',
           },
           {
-            title: "Storage setting",
+            title: 'Storage setting',
           },
         ]}
       ></Breadcrumb>
       <Typography.Title level={3} style={{ margin: 0 }}>
-        {storageHostId || ""}
+        {storageHostId || ''}
       </Typography.Title>
       <StorageHostResourcePanel storageVolumeFrgmt={storage_volume || null} />
-      {baiClient.supports("quota-scope") && (
+      {baiClient.supports('quota-scope') && (
         <>
           {isQuotaSupportedStorage ? (
             <Suspense fallback={<div>loading...</div>}>
@@ -74,10 +74,10 @@ const StorageHostSettingPage: React.FC<StorageHostSettingPageProps> = ({
               />
             </Suspense>
           ) : (
-            <Card title={t("storageHost.QuotaSettings")}>
+            <Card title={t('storageHost.QuotaSettings')}>
               <Empty
                 image={Empty.PRESENTED_IMAGE_SIMPLE}
-                description={t("storageHost.QuotaDoesNotSupported")}
+                description={t('storageHost.QuotaDoesNotSupported')}
               />
             </Card>
           )}

@@ -3,13 +3,13 @@
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
 
-import {customElement, property} from 'lit/decorators.js';
+import { customElement, property } from 'lit/decorators.js';
 
-import {BackendAIPage} from './backend-ai-page';
+import { BackendAIPage } from './backend-ai-page';
 
 import tus from '../lib/tus';
 
-import {default as PainKiller} from './backend-ai-painkiller';
+import { default as PainKiller } from './backend-ai-painkiller';
 
 /**
  Backend AI Pipeline Common.
@@ -74,8 +74,8 @@ import {default as PainKiller} from './backend-ai-painkiller';
 @customElement('backend-ai-pipeline-common')
 export class BackendAIPipelineCommon extends BackendAIPage {
   // Configs
-  @property({type: String}) pipelineConfigPath = 'config.json';
-  @property({type: String}) pipelineComponentDetailPath = 'components.json';
+  @property({ type: String }) pipelineConfigPath = 'config.json';
+  @property({ type: String }) pipelineComponentDetailPath = 'components.json';
 
   /**
    * Download pipeline config file and return it.
@@ -85,7 +85,11 @@ export class BackendAIPipelineCommon extends BackendAIPage {
   async _downloadPipelineConfig(folderName) {
     try {
       const res = await window.backendaiclient.vfolder.download(
-        this.pipelineConfigPath, folderName, false, true);
+        this.pipelineConfigPath,
+        folderName,
+        false,
+        true,
+      );
       return await res.json();
     } catch (err) {
       console.error(err);
@@ -104,7 +108,8 @@ export class BackendAIPipelineCommon extends BackendAIPage {
    * */
   async _uploadFile(vfpath, blob, folderName) {
     return new Promise((resolve, reject) => {
-      globalThis.backendaiclient.vfolder.create_upload_session(vfpath, blob, folderName)
+      globalThis.backendaiclient.vfolder
+        .create_upload_session(vfpath, blob, folderName)
         .then((uploadUrl) => {
           const uploader = new tus.Upload(blob, {
             endpoint: uploadUrl,
@@ -124,7 +129,7 @@ export class BackendAIPipelineCommon extends BackendAIPage {
             onSuccess: () => {
               console.log(`${vfpath} uploaded`);
               resolve(true);
-            }
+            },
           });
           uploader.start();
         })

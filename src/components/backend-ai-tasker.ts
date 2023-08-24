@@ -3,9 +3,8 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 type AdditionalTaskRequest = 'remove-later' | 'remove-immediately';
 
@@ -18,7 +17,12 @@ class Task {
   created_at: number;
   finished_at: number;
 
-  constructor(title: string, obj: Record<string, unknown>, taskid: string, tasktype: string) {
+  constructor(
+    title: string,
+    obj: Record<string, unknown>,
+    taskid: string,
+    tasktype: string,
+  ) {
     this.tasktitle = title;
     this.taskid = taskid;
     this.taskobj = obj;
@@ -44,12 +48,12 @@ class Task {
  */
 @customElement('backend-ai-tasker')
 export default class BackendAiTasker extends LitElement {
-  @property({type: Object}) indicator;
-  @property({type: Array}) taskstore;
-  @property({type: Array}) finished;
-  @property({type: Object}) pooler;
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Boolean}) isGCworking = false;
+  @property({ type: Object }) indicator;
+  @property({ type: Array }) taskstore;
+  @property({ type: Array }) finished;
+  @property({ type: Object }) pooler;
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Boolean }) isGCworking = false;
 
   /**
    *  Backend.AI Task manager for Console
@@ -68,13 +72,13 @@ export default class BackendAiTasker extends LitElement {
   static get styles(): CSSResultGroup | undefined {
     return [
       // language=CSS
-      css``];
+      css``,
+    ];
   }
 
   render() {
     // language=HTML
-    return html`
-    `;
+    return html``;
   }
 
   shouldUpdate() {
@@ -99,26 +103,40 @@ export default class BackendAiTasker extends LitElement {
    * @param {AdditionalTaskRequest} additionalRequest - Additional task request to remove task conditionally whether it's finished or not
    * @return {boolean | Task} - False if task cannot be added. Else return task object.
    */
-  add(title, task, taskid = '', tasktype = 'general', additionalRequest: AdditionalTaskRequest = 'remove-immediately') {
+  add(
+    title,
+    task,
+    taskid = '',
+    tasktype = 'general',
+    additionalRequest: AdditionalTaskRequest = 'remove-immediately',
+  ) {
     if (taskid === '') {
       taskid = this.generate_UUID();
     }
     const item = new Task(title, task, taskid, tasktype);
-    if (task != null && (typeof task.then === 'function' || task === 'function')) { // For Promise type task
-      task.then().catch((err) => {
-        // NOTICE: this is a stop-gap measure for error handling.
-        // console.log(err);
-      }).finally(() => {
-        // No matter any error occurred or not during the session creating,
-        // Task list have to be updated.
-        if (additionalRequest === 'remove-later') {
-          // do not remove taskid from taskstore until there's an explicit request
-        } else {
-          this.finished.push(taskid);
-          this.gc();
-        }
-      });
-    } else { // For function type task (not supported yet)
+    if (
+      task != null &&
+      (typeof task.then === 'function' || task === 'function')
+    ) {
+      // For Promise type task
+      task
+        .then()
+        .catch((err) => {
+          // NOTICE: this is a stop-gap measure for error handling.
+          // console.log(err);
+        })
+        .finally(() => {
+          // No matter any error occurred or not during the session creating,
+          // Task list have to be updated.
+          if (additionalRequest === 'remove-later') {
+            // do not remove taskid from taskstore until there's an explicit request
+          } else {
+            this.finished.push(taskid);
+            this.gc();
+          }
+        });
+    } else {
+      // For function type task (not supported yet)
       if (additionalRequest !== 'remove-later') {
         return false;
       }
@@ -164,11 +182,14 @@ export default class BackendAiTasker extends LitElement {
 
   generate_UUID() {
     let dt = new Date().getTime();
-    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-      const r = (dt + Math.random() * 16) % 16 | 0;
-      dt = Math.floor(dt / 16);
-      return (c == 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-    });
+    const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(
+      /[xy]/g,
+      (c) => {
+        const r = (dt + Math.random() * 16) % 16 | 0;
+        dt = Math.floor(dt / 16);
+        return (c == 'x' ? r : (r & 0x3) | 0x8).toString(16);
+      },
+    );
     return uuid;
   }
 
@@ -190,7 +211,9 @@ export default class BackendAiTasker extends LitElement {
   }
 
   signal() {
-    const event: CustomEvent = new CustomEvent('backend-ai-task-changed', {'detail': {'tasks': this.taskstore}});
+    const event: CustomEvent = new CustomEvent('backend-ai-task-changed', {
+      detail: { tasks: this.taskstore },
+    });
     document.dispatchEvent(event);
   }
 }
