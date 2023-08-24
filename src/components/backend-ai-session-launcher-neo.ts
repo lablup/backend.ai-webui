@@ -4464,6 +4464,6 @@ export default class BackendAiSessionLauncher extends BackendAIPage {
 
 declare global {
   interface HTMLElementTagNameMap {
-    'backend-ai-session-launcher': BackendAiSessionLauncher;
+    'backend-ai-session-launcher-neo': BackendAiSessionLauncher;
   }
 }
