@@ -369,6 +369,12 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         </span>
         <mwc-icon-button id="dropdown-button" icon="person" @click="${() => this._toggleDropdown()}" style="color:#8c8584;">
         </mwc-icon-button>
+        <backend-ai-react-user-dropdown-menu
+          @open="${() => this._openUserPrefDialog()}"
+          @moveToLogPage="${() => this._moveToLogPage()}"
+          @moveToUserSettingPage="${() => this._moveToUserSettingsPage()}"
+        >
+        </backend-ai-react-user-dropdown-menu>
       </div>
     </div>
     <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
