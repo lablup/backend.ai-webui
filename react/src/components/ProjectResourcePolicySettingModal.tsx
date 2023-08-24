@@ -5,11 +5,12 @@ import { ProjectResourcePolicySettingModalFragment$key } from "./__generated__/P
 // import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
 import { ProjectResourcePolicySettingModalModifyMutation } from "./__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql";
 
-import { Modal, ModalProps, Form, Input, message, Alert } from "antd";
+import { Form, Input, message, Alert } from "antd";
 import { useTranslation } from "react-i18next";
 import { GBToBytes, bytesToGB } from "../helper";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends ModalProps {
+interface Props extends BAIModalProps {
   projectResourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -17,7 +18,7 @@ interface Props extends ModalProps {
 const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   projectResourcePolicyFrgmt: resourcePolicyFrgmt,
   onRequestClose,
-  ...props
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -126,8 +127,8 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
-      {...props}
+    <BAIModal
+      {...baiModalProps}
       style={{
         zIndex: 10000,
       }}
@@ -172,7 +173,7 @@ const ProjectResourcePolicySettingModal: React.FC<Props> = ({
           <Input addonAfter="GB" type="number" step={0.25} />
         </Form.Item>
       </Form>
-    </Modal>
+    </BAIModal>
   );
 };
 

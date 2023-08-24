@@ -1,19 +1,14 @@
 import React from "react";
 
-import {
-  Modal,
-  ModalProps,
-  Descriptions,
-  DescriptionsProps,
-  Button,
-} from "antd";
+import { Descriptions, DescriptionsProps, Button } from "antd";
 import { useTranslation } from "react-i18next";
 import { useFragment } from "react-relay";
 import graphql from "babel-plugin-relay/macro";
 import { ServingRouteErrorModalFragment$key } from "./__generated__/ServingRouteErrorModalFragment.graphql";
 import CopyableCodeText from "./CopyableCodeText";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends Omit<ModalProps, "onOk" | "onClose"> {
+interface Props extends Omit<BAIModalProps, "onOk" | "onClose"> {
   inferenceSessionErrorFrgmt: ServingRouteErrorModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -22,7 +17,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   onRequestClose,
   onCancel,
   inferenceSessionErrorFrgmt,
-  ...modalProps
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -56,7 +51,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       centered
       title={t("modelService.ServingRouteErrorModalTitle")}
       onCancel={() => {
@@ -71,12 +66,13 @@ const ServingRouteErrorModal: React.FC<Props> = ({
           {t("button.Close")}
         </Button>,
       ]}
-      {...modalProps}
+      {...baiModalProps}
     >
       <Descriptions
         bordered
         column={columnSetting}
         labelStyle={{ minWidth: 100 }}
+        style={{ marginTop: 20 }}
       >
         <Descriptions.Item label={t("modelService.SessionId")}>
           <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
@@ -85,7 +81,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
           {iSessionError?.errors[0].repr}
         </Descriptions.Item>
       </Descriptions>
-    </Modal>
+    </BAIModal>
   );
 };
 

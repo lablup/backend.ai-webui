@@ -4,23 +4,16 @@ import { useQuery } from "react-query";
 import { useLazyLoadQuery } from "react-relay";
 import { UserInfoModalQuery } from "./__generated__/UserInfoModalQuery.graphql";
 
-import {
-  Modal,
-  ModalProps,
-  Descriptions,
-  DescriptionsProps,
-  Button,
-  Tag,
-  Spin,
-} from "antd";
+import { Descriptions, DescriptionsProps, Button, Tag, Spin } from "antd";
 import { useTranslation } from "react-i18next";
 import { useWebComponentInfo } from "./DefaultProviders";
 import { useSuspendedBackendaiClient } from "../hooks";
 import _ from "lodash";
+import BAIModal, { BAIModalProps } from "./BAIModal";
 
-interface Props extends ModalProps {}
+interface Props extends BAIModalProps {}
 
-const UserInfoModal: React.FC<Props> = ({ ...modalProps }) => {
+const UserInfoModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
 
   const { value, dispatchEvent } = useWebComponentInfo();
@@ -91,7 +84,7 @@ const UserInfoModal: React.FC<Props> = ({ ...modalProps }) => {
   };
 
   return (
-    <Modal
+    <BAIModal
       open={open}
       onCancel={() => {
         dispatchEvent("cancel", null);
@@ -109,7 +102,7 @@ const UserInfoModal: React.FC<Props> = ({ ...modalProps }) => {
           {t("button.OK")}
         </Button>,
       ]}
-      {...modalProps}
+      {...baiModalProps}
     >
       <br />
       <Descriptions
@@ -166,7 +159,7 @@ const UserInfoModal: React.FC<Props> = ({ ...modalProps }) => {
           })}
         </Descriptions.Item>
       </Descriptions>
-    </Modal>
+    </BAIModal>
   );
 };
 

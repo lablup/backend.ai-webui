@@ -1,4 +1,4 @@
-import { Button, Modal, Table, Tabs, Typography, theme } from "antd";
+import { Button, Table, Tabs, Typography, theme } from "antd";
 import React, {
   PropsWithChildren,
   Suspense,
@@ -33,6 +33,7 @@ import {
 import { Link } from "react-router-dom";
 import _ from "lodash";
 import EndpointStatusTag from "../components/EndpointStatusTag";
+import BAIModal from "../components/BAIModal";
 
 // FIXME: need to apply filtering type of service later
 type TabKey = "services"; //  "running" | "finished" | "others";
@@ -396,7 +397,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </Suspense>
         </Flex>
       </Flex>
-      <Modal
+      <BAIModal
         open={isOpenModelServiceTerminatingModal}
         title={t("dialog.title.LetsDouble-Check")}
         okButtonProps={{
@@ -428,7 +429,7 @@ const ServingListPage: React.FC<PropsWithChildren> = ({ children }) => {
           </p>
           <p>{t("dialog.ask.DoYouWantToProceed")}</p>
         </Flex>
-      </Modal>
+      </BAIModal>
       <ModelServiceSettingModal
         open={isOpenModelServiceSettingModal}
         onRequestClose={(success) => {
