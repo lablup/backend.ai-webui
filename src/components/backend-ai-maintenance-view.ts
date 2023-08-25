@@ -2,25 +2,24 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t, translateUnsafeHTML as _tr} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import {Button} from '@material/mwc-button/mwc-button';
-
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import './lablup-activity-panel';
-import {default as PainKiller} from './backend-ai-painkiller';
+import { Button } from '@material/mwc-button/mwc-button';
+import { css, CSSResultGroup, html } from 'lit';
+import {
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend.AI Maintenance View
@@ -37,11 +36,11 @@ import {default as PainKiller} from './backend-ai-painkiller';
 
 @customElement('backend-ai-maintenance-view')
 export default class BackendAiMaintenanceView extends BackendAIPage {
-  @property({type: Object}) images = Object();
-  @property({type: Boolean}) scanning = false;
-  @property({type: Boolean}) recalculating = false;
-  @property({type: Object}) notification = Object();
-  @property({type: Object}) indicator = Object();
+  @property({ type: Object }) images = Object();
+  @property({ type: Boolean }) scanning = false;
+  @property({ type: Boolean }) recalculating = false;
+  @property({ type: Object }) notification = Object();
+  @property({ type: Object }) indicator = Object();
   @query('#recalculate_usage-button-desc') recalculateUsageButton!: Button;
   @query('#rescan-image-button-desc') rescanImageButton!: Button;
 
@@ -94,29 +93,31 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
         lablup-activity-panel {
           color: #000;
         }
-      `];
+      `,
+    ];
   }
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
+      <link rel="stylesheet" href="resources/custom.css" />
       <div class="horizontal wrap layout">
         <lablup-activity-panel title="${_t('maintenance.Fix')}">
           <div slot="message" class="vertical flex layout wrap setting-item">
             <div class="vertical center-justified layout setting-desc">
               <div class="title">${_t('maintenance.MatchDatabase')}</div>
-              <div class="description">${_tr('maintenance.DescMatchDatabase')}
+              <div class="description">
+                ${_tr('maintenance.DescMatchDatabase')}
               </div>
             </div>
             <mwc-button
-                  outlined
-                  id="recalculate_usage-button-desc"
-                  ?disabled="${this.recalculating}"
-                  label="${_t('maintenance.RecalculateUsage')}"
-                  icon="refresh"
-                  @click="${() => this.recalculate_usage()}">
-            </mwc-button>
+              outlined
+              id="recalculate_usage-button-desc"
+              ?disabled="${this.recalculating}"
+              label="${_t('maintenance.RecalculateUsage')}"
+              icon="refresh"
+              @click="${() => this.recalculate_usage()}"
+            ></mwc-button>
           </div>
         </lablup-activity-panel>
         <lablup-activity-panel title="${_t('maintenance.ImagesEnvironment')}">
@@ -124,30 +125,34 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
             <div class="horizontal flex layout wrap setting-item">
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t('maintenance.RescanImageList')}</div>
-                <div class="description">${_tr('maintenance.DescRescanImageList')}
+                <div class="description">
+                  ${_tr('maintenance.DescRescanImageList')}
                 </div>
               </div>
               <mwc-button
-                  outlined
-                  id="rescan-image-button-desc"
-                  ?disabled="${this.scanning}"
-                  label="${_t('maintenance.RescanImages')}"
-                  icon="refresh"
-                  @click="${() => this.rescan_images()}">
-              </mwc-button>
+                outlined
+                id="rescan-image-button-desc"
+                ?disabled="${this.scanning}"
+                label="${_t('maintenance.RescanImages')}"
+                icon="refresh"
+                @click="${() => this.rescan_images()}"
+              ></mwc-button>
             </div>
-            <div class="horizontal flex layout wrap setting-item temporarily-hide">
+            <div
+              class="horizontal flex layout wrap setting-item temporarily-hide"
+            >
               <div class="vertical center-justified layout setting-desc">
                 <div class="title">${_t('maintenance.CleanupOldImages')}</div>
-                <div class="description">${_t('maintenance.DescCleanupOldImages')}
+                <div class="description">
+                  ${_t('maintenance.DescCleanupOldImages')}
                 </div>
               </div>
               <mwc-button
-                  outlined
-                  disabled
-                  label="${_t('maintenance.CleanupImages')}"
-                  icon="delete">
-              </mwc-button>
+                outlined
+                disabled
+                label="${_t('maintenance.CleanupImages')}"
+                icon="delete"
+              ></mwc-button>
             </div>
           </div>
         </lablup-activity-panel>
@@ -159,18 +164,25 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     this.notification = globalThis.lablupNotification;
     this.indicator = globalThis.lablupIndicator;
 
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null) {
-      document.addEventListener('backend-ai-connected', () => {
-        return true;
-      }, true);
-    } else { // already connected
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          return true;
+        },
+        true,
+      );
+    } else {
+      // already connected
     }
   }
 
   async _viewStateChanged(active: boolean) {
     await this.updateComplete;
     if (active === false) {
-
     }
   }
 
@@ -186,42 +198,53 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     indicator.set(0, _text('maintenance.Scanning'));
     globalThis.tasker.add(
       _text('maintenance.RescanImages'),
-      globalThis.backendaiclient.maintenance.rescan_images().then(({rescan_images}) => {
-        const sse: EventSource = globalThis.backendaiclient.maintenance.attach_background_task(rescan_images.task_id);
-        sse.addEventListener('bgtask_updated', (e) => {
-          const data = JSON.parse(e['data']);
-          const ratio = data.current_progress/data.total_progress;
-          indicator.set(100 * ratio, _text('maintenance.Scanning'));
-        });
-        sse.addEventListener('bgtask_done', (e) => {
-          const event = new CustomEvent('image-rescanned');
-          document.dispatchEvent(event);
-          indicator.set(100, _text('maintenance.RescanImageFinished'));
-          sse.close();
-        });
-        sse.addEventListener('bgtask_failed', (e) => {
-          console.log('task_failed', e['data']);
-          sse.close();
-          throw new Error('Background Image scanning task has failed');
-        });
-        sse.addEventListener('bgtask_cancelled', (e) => {
-          sse.close();
-          throw new Error('Background Image scanning task has been cancelled');
-        });
-        this.rescanImageButton.label = _text('maintenance.RescanImages');
-        this.scanning = false;
-      }).catch((err) => {
-        this.scanning = false;
-        this.rescanImageButton.label = _text('maintenance.RescanImages');
-        console.log(err);
-        indicator.set(50, _text('maintenance.RescanFailed'));
-        indicator.end(1000);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      }), '', 'image');
+      globalThis.backendaiclient.maintenance
+        .rescan_images()
+        .then(({ rescan_images }) => {
+          const sse: EventSource =
+            globalThis.backendaiclient.maintenance.attach_background_task(
+              rescan_images.task_id,
+            );
+          sse.addEventListener('bgtask_updated', (e) => {
+            const data = JSON.parse(e['data']);
+            const ratio = data.current_progress / data.total_progress;
+            indicator.set(100 * ratio, _text('maintenance.Scanning'));
+          });
+          sse.addEventListener('bgtask_done', (e) => {
+            const event = new CustomEvent('image-rescanned');
+            document.dispatchEvent(event);
+            indicator.set(100, _text('maintenance.RescanImageFinished'));
+            sse.close();
+          });
+          sse.addEventListener('bgtask_failed', (e) => {
+            console.log('task_failed', e['data']);
+            sse.close();
+            throw new Error('Background Image scanning task has failed');
+          });
+          sse.addEventListener('bgtask_cancelled', (e) => {
+            sse.close();
+            throw new Error(
+              'Background Image scanning task has been cancelled',
+            );
+          });
+          this.rescanImageButton.label = _text('maintenance.RescanImages');
+          this.scanning = false;
+        })
+        .catch((err) => {
+          this.scanning = false;
+          this.rescanImageButton.label = _text('maintenance.RescanImages');
+          console.log(err);
+          indicator.set(50, _text('maintenance.RescanFailed'));
+          indicator.end(1000);
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        }),
+      '',
+      'image',
+    );
   }
 
   /**
@@ -234,22 +257,32 @@ export default class BackendAiMaintenanceView extends BackendAIPage {
     indicator.set(10, _text('maintenance.Recalculating'));
     this.tasker.add(
       _text('maintenance.RecalculateUsage'),
-      globalThis.backendaiclient.maintenance.recalculate_usage().then((response) => {
-        this.recalculateUsageButton.label = _text('maintenance.RecalculateUsage');
-        this.recalculating = false;
-        indicator.set(100, _text('maintenance.RecalculationFinished'));
-      }).catch((err) => {
-        this.recalculating = false;
-        this.recalculateUsageButton.label = _text('maintenance.RecalculateUsage');
-        console.log(err);
-        indicator.set(50, _text('maintenance.RecalculationFailed'));
-        indicator.end(1000);
-        if (err && err.message) {
-          this.notification.text = PainKiller.relieve(err.title);
-          this.notification.detail = err.message;
-          this.notification.show(true, err);
-        }
-      }), '', 'database');
+      globalThis.backendaiclient.maintenance
+        .recalculate_usage()
+        .then((response) => {
+          this.recalculateUsageButton.label = _text(
+            'maintenance.RecalculateUsage',
+          );
+          this.recalculating = false;
+          indicator.set(100, _text('maintenance.RecalculationFinished'));
+        })
+        .catch((err) => {
+          this.recalculating = false;
+          this.recalculateUsageButton.label = _text(
+            'maintenance.RecalculateUsage',
+          );
+          console.log(err);
+          indicator.set(50, _text('maintenance.RecalculationFailed'));
+          indicator.end(1000);
+          if (err && err.message) {
+            this.notification.text = PainKiller.relieve(err.title);
+            this.notification.detail = err.message;
+            this.notification.show(true, err);
+          }
+        }),
+      '',
+      'database',
+    );
   }
 }
 

@@ -2,23 +2,21 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-icon';
-import '@material/mwc-list';
-import '@material/mwc-list/mwc-list-item';
-
-import {BackendAIPage} from './backend-ai-page';
-import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/mwc/mwc-drawer';
+import { BackendAIPage } from './backend-ai-page';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-icon';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Sidepanel notification viewer for Console
@@ -31,8 +29,8 @@ import {
  */
 @customElement('backend-ai-sidepanel-notification')
 export default class BackendAiSidepanelNotification extends BackendAIPage {
-  @property({type: Boolean, reflect: true}) active = false;
-  @property({type: Array}) notifications = [];
+  @property({ type: Boolean, reflect: true }) active = false;
+  @property({ type: Array }) notifications = [];
 
   /**
    *  Backend.AI Task manager for Console
@@ -65,7 +63,7 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
           padding: 0;
           margin: 0;
         }
-      `
+      `,
     ];
   }
 
@@ -82,18 +80,22 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
       <div id="container">
         <h3>${_t('sidepanel.Notification')}</h3>
         <mwc-list>
-        ${this.notifications.map((item: any) =>
-    html`
-          <mwc-list-item twoline>
-            <span>${item.outerText}</span>
-            <span slot="secondary">${item.getAttribute('created')}</span>
-          </mwc-list-item>
-          <li divider role="separator"></li>`)}
-          ${this.notifications.length === 0 ? html`
-            <div style="padding:15px 0;width:100%;text-align:center;">
-              ${_t('sidepanel.NoNotification')}
-            </div>
-        ` : html``}
+          ${this.notifications.map(
+            (item: any) => html`
+              <mwc-list-item twoline>
+                <span>${item.outerText}</span>
+                <span slot="secondary">${item.getAttribute('created')}</span>
+              </mwc-list-item>
+              <li divider role="separator"></li>
+            `,
+          )}
+          ${this.notifications.length === 0
+            ? html`
+                <div style="padding:15px 0;width:100%;text-align:center;">
+                  ${_t('sidepanel.NoNotification')}
+                </div>
+              `
+            : html``}
         </mwc-list>
       </div>
     `;
@@ -105,7 +107,9 @@ export default class BackendAiSidepanelNotification extends BackendAIPage {
 
   firstUpdated() {
     this.notifications = globalThis.lablupNotification.notifications;
-    document.addEventListener('backend-ai-notification-changed', () => this.refresh());
+    document.addEventListener('backend-ai-notification-changed', () =>
+      this.refresh(),
+    );
   }
 
   refresh() {

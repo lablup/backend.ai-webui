@@ -1,22 +1,22 @@
-import { theme } from "antd";
-import React, { PropsWithChildren } from "react";
+import { theme } from 'antd';
+import React, { PropsWithChildren } from 'react';
 
 export interface FlexProps
-  extends Omit<React.HTMLAttributes<HTMLDivElement>, "dir">,
+  extends Omit<React.HTMLAttributes<HTMLDivElement>, 'dir'>,
     PropsWithChildren {
-  direction?: "row" | "row-reverse" | "column" | "column-reverse";
-  wrap?: "nowrap" | "wrap" | "wrap-reverse";
-  justify?: "start" | "end" | "center" | "between" | "around";
+  direction?: 'row' | 'row-reverse' | 'column' | 'column-reverse';
+  wrap?: 'nowrap' | 'wrap' | 'wrap-reverse';
+  justify?: 'start' | 'end' | 'center' | 'between' | 'around';
   // | "evenly";
-  align?: "start" | "end" | "center" | "baseline" | "stretch";
-  gap?: number | "xxs" | "xs" | "sm" | "md" | "lg" | "xl" | "xxl";
+  align?: 'start' | 'end' | 'center' | 'baseline' | 'stretch';
+  gap?: number | 'xxs' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'xxl';
 }
 
 const Flex: React.FC<FlexProps> = ({
-  direction = "row",
-  wrap = "nowrap",
-  justify = "flex-start",
-  align = "center",
+  direction = 'row',
+  wrap = 'nowrap',
+  justify = 'flex-start',
+  align = 'center',
   gap = 0,
   style,
   children,
@@ -28,17 +28,17 @@ const Flex: React.FC<FlexProps> = ({
   const transferConstStyle = transferConst?.map((el) => {
     let tempTxt;
     switch (el) {
-      case "start":
-        tempTxt = "flex-start";
+      case 'start':
+        tempTxt = 'flex-start';
         break;
-      case "end":
-        tempTxt = "flex-end";
+      case 'end':
+        tempTxt = 'flex-end';
         break;
-      case "between":
-        tempTxt = "space-between";
+      case 'between':
+        tempTxt = 'space-between';
         break;
-      case "around":
-        tempTxt = "space-around";
+      case 'around':
+        tempTxt = 'space-around';
         break;
       default:
         tempTxt = el;
@@ -48,7 +48,7 @@ const Flex: React.FC<FlexProps> = ({
     return tempTxt;
   });
   const flexStyle: React.CSSProperties = {
-    display: "flex",
+    display: 'flex',
     flexDirection: direction,
     flexWrap: wrap,
     justifyContent: transferConstStyle[0],
@@ -59,24 +59,24 @@ const Flex: React.FC<FlexProps> = ({
   return (
     <div
       style={{
-        alignItems: "stretch",
-        backgroundColor: "transparent",
-        border: "0 solid black",
-        boxSizing: "border-box",
-        display: "flex",
-        flexBasis: "auto",
-        flexDirection: "column",
+        alignItems: 'stretch',
+        backgroundColor: 'transparent',
+        border: '0 solid black',
+        boxSizing: 'border-box',
+        display: 'flex',
+        flexBasis: 'auto',
+        flexDirection: 'column',
         flexShrink: 0,
-        listStyle: "none",
+        listStyle: 'none',
         margin: 0,
         minHeight: 0,
         minWidth: 0,
         padding: 0,
-        position: "relative",
-        textDecoration: "none",
+        position: 'relative',
+        textDecoration: 'none',
         gap:
           // @ts-ignore
-          typeof gap === "string" ? token["padding" + gap.toUpperCase()] : gap,
+          typeof gap === 'string' ? token['padding' + gap.toUpperCase()] : gap,
         ...flexStyle,
       }}
       {...restProps}

@@ -1,14 +1,14 @@
-import { ThemeConfig } from "antd";
-import { useEffect, useState } from "react";
+import { ThemeConfig } from 'antd';
+import { useEffect, useState } from 'react';
 
 let _customTheme: ThemeConfig;
 
 export const loadCustomThemeConfig = () => {
-  fetch("resources/theme.json")
+  fetch('resources/theme.json')
     .then((response) => response.json())
     .then((theme) => {
       _customTheme = theme;
-      document.dispatchEvent(new CustomEvent("custom-theme-loaded"));
+      document.dispatchEvent(new CustomEvent('custom-theme-loaded'));
     });
 };
 
@@ -19,10 +19,10 @@ export const useCustomThemeConfig = () => {
       const handler = () => {
         setCustomThemeConfig(_customTheme);
       };
-      document.addEventListener("custom-theme-loaded", handler);
+      document.addEventListener('custom-theme-loaded', handler);
 
       return () => {
-        document.removeEventListener("custom-theme-loaded", handler);
+        document.removeEventListener('custom-theme-loaded', handler);
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

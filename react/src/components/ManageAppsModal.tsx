@@ -1,21 +1,14 @@
-import React from "react";
-import {
-  Modal,
-  ModalProps,
-  Input,
-  Typography,
-  Space,
-  Button,
-  Form,
-} from "antd";
-import { DeleteOutlined, PlusOutlined, CheckOutlined } from "@ant-design/icons";
-import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from "./DefaultProviders";
-import Flex from "./Flex";
+import BAIModal, { BAIModalProps } from './BAIModal';
+import { useWebComponentInfo } from './DefaultProviders';
+import Flex from './Flex';
+import { DeleteOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
+import { Input, Typography, Space, Button, Form } from 'antd';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
-interface Props extends ModalProps {}
+interface Props extends BAIModalProps {}
 const { Text } = Typography;
-const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
+const ManageAppsModal: React.FC<Props> = ({ ...baiModalProps }) => {
   const { t } = useTranslation();
   const { value, dispatchEvent } = useWebComponentInfo();
   let parsedValue: {
@@ -23,7 +16,7 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
     servicePorts: any;
   };
   try {
-    parsedValue = JSON.parse(value || "");
+    parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
       open: false,
@@ -32,25 +25,25 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
   }
   const { open, servicePorts } = parsedValue;
   const onFinish = (values: any) => {
-    console.log("Saved settings. ", values);
+    console.log('Saved settings. ', values);
   };
 
   return (
-    <Modal
+    <BAIModal
       open={open}
       onCancel={() => {
-        dispatchEvent("cancel", null);
+        dispatchEvent('cancel', null);
       }}
       centered
-      title={t("environment.ManageApps")}
-      {...modalProps}
+      title={t('environment.ManageApps')}
+      {...baiModalProps}
       footer={[
         <Flex direction="row" justify="between">
           <Button type="text" danger>
-            {t("button.Reset")}
+            {t('button.Reset')}
           </Button>
           <Button type="primary" icon={<CheckOutlined />}>
-            {t("button.Save")}
+            {t('button.Save')}
           </Button>
         </Flex>,
       ]}
@@ -60,12 +53,12 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
         onFinish={onFinish}
         autoComplete="off"
       >
-        <Flex direction="column" gap={"xs"}>
+        <Flex direction="column" gap={'xs'}>
           <Space.Compact block>
-            <Text style={{ width: "30%" }}>{t("environment.AppName")}</Text>
-            <Text style={{ width: "30%" }}>{t("environment.Protocol")}</Text>
-            <Text style={{ width: "30%" }}>{t("environment.Port")}</Text>
-            <Text style={{ width: "10%", textAlign: "center" }}>
+            <Text style={{ width: '30%' }}>{t('environment.AppName')}</Text>
+            <Text style={{ width: '30%' }}>{t('environment.Protocol')}</Text>
+            <Text style={{ width: '30%' }}>{t('environment.Port')}</Text>
+            <Text style={{ width: '10%', textAlign: 'center' }}>
               {/* {t("environment.Action")} */}
             </Text>
           </Space.Compact>
@@ -73,15 +66,15 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
             {(fields, { add, remove }) => (
               <Flex direction="column" gap="sm">
                 {fields.map((field) => (
-                  <Flex direction="row" gap={"xs"}>
+                  <Flex direction="row" gap={'xs'}>
                     <Space.Compact block key={field.key}>
                       <Form.Item
                         {...field}
-                        name={[field.name, "app"]}
+                        name={[field.name, 'app']}
                         rules={[
                           {
                             required: true,
-                            message: t("environment.AppNameMustNotBeEmpty"),
+                            message: t('environment.AppNameMustNotBeEmpty'),
                           },
                         ]}
                         noStyle
@@ -90,19 +83,19 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
                       </Form.Item>
                       <Form.Item
                         {...field}
-                        name={[field.name, "protocol"]}
+                        name={[field.name, 'protocol']}
                         noStyle
                       >
                         <Input />
                       </Form.Item>
-                      <Form.Item {...field} name={[field.name, "port"]} noStyle>
+                      <Form.Item {...field} name={[field.name, 'port']} noStyle>
                         <Input />
                       </Form.Item>
                     </Space.Compact>
                     <Button
                       type="text"
                       onClick={() => remove(field.name)}
-                      style={{ width: "10%" }}
+                      style={{ width: '10%' }}
                       icon={<DeleteOutlined />}
                     />
                   </Flex>
@@ -113,7 +106,7 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
                   block
                   icon={<PlusOutlined />}
                 >
-                  {t("button.Add")}
+                  {t('button.Add')}
                 </Button>
               </Flex>
             )}
@@ -139,7 +132,7 @@ const ManageAppsModal: React.FC<Props> = ({ ...modalProps }) => {
                 })}
                 <Button block icon={<PlusOutlined />}>{t('general.Add')}</Button>
             </Space> */}
-    </Modal>
+    </BAIModal>
   );
 };
 

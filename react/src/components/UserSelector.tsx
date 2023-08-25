@@ -1,11 +1,10 @@
-import React, { useDeferredValue, useState } from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
-import { UserSelectorQuery } from "./__generated__/UserSelectorQuery.graphql";
-
-import { Select, SelectProps } from "antd";
-import { useTranslation } from "react-i18next";
-import _ from "lodash";
+import { UserSelectorQuery } from './__generated__/UserSelectorQuery.graphql';
+import { Select, SelectProps } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
   onSelectUser: (user: any) => void;
@@ -13,7 +12,7 @@ interface Props extends SelectProps {
 
 const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
   const { t } = useTranslation();
-  const [search, setSearch] = useState<string>("");
+  const [search, setSearch] = useState<string>('');
   const deferredSearch = useDeferredValue(search);
   const { user_list } = useLazyLoadQuery<UserSelectorQuery>(
     graphql`
@@ -42,8 +41,8 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
           : 'email ilike "%' + deferredSearch + '%"',
     },
     {
-      fetchPolicy: "store-and-network",
-    }
+      fetchPolicy: 'store-and-network',
+    },
   );
   return (
     <Select
@@ -57,11 +56,11 @@ const UserSelector: React.FC<Props> = ({ onSelectUser, ...selectProps }) => {
         onSelectUser(
           _.find(user_list?.items, (user) => {
             return user?.email === value;
-          })
+          }),
         );
       }}
       showSearch
-      placeholder={t("storageHost.quotaSettings.SelectUser")}
+      placeholder={t('storageHost.quotaSettings.SelectUser')}
       options={_.map(user_list?.items, (user) => {
         return {
           value: user?.email,

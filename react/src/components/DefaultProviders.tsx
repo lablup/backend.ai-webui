@@ -1,31 +1,29 @@
+import { RelayEnvironment } from '../RelayEnvironment';
+// @ts-ignore
+import rawFixAntCss from '../fix_antd.css?raw';
+import { useCustomThemeConfig } from '../helper/customThemeConfig';
+import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import { StyleProvider, createCache } from '@ant-design/cssinjs';
+import { ConfigProvider } from 'antd';
+import en_US from 'antd/locale/en_US';
+import ko_KR from 'antd/locale/ko_KR';
+import i18n from 'i18next';
+import Backend from 'i18next-http-backend';
 import React, {
   Suspense,
   useEffect,
   useLayoutEffect,
   useMemo,
   useState,
-} from "react";
-import { RelayEnvironmentProvider } from "react-relay";
-import { StyleProvider, createCache } from "@ant-design/cssinjs";
-import { ConfigProvider } from "antd";
-import { QueryClient, QueryClientProvider } from "react-query";
-import { ReactWebComponentProps } from "../helper/react-to-webcomponent";
-import i18n from "i18next";
-import { useTranslation, initReactI18next } from "react-i18next";
-import Backend from "i18next-http-backend";
-
-import en_US from "antd/locale/en_US";
-import ko_KR from "antd/locale/ko_KR";
-import { RelayEnvironment } from "../RelayEnvironment";
-import { useCustomThemeConfig } from "../helper/customThemeConfig";
-
-// @ts-ignore
-import rawFixAntCss from "../fix_antd.css?raw";
-import { BrowserRouter, useNavigate } from "react-router-dom";
+} from 'react';
+import { useTranslation, initReactI18next } from 'react-i18next';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { RelayEnvironmentProvider } from 'react-relay';
+import { BrowserRouter, useNavigate } from 'react-router-dom';
 
 interface WebComponentContextType {
-  value?: ReactWebComponentProps["value"];
-  dispatchEvent: ReactWebComponentProps["dispatchEvent"];
+  value?: ReactWebComponentProps['value'];
+  dispatchEvent: ReactWebComponentProps['dispatchEvent'];
   moveTo: (path: string) => void;
 }
 
@@ -54,11 +52,11 @@ i18n
   .use(Backend)
   .init({
     backend: {
-      loadPath: "/resources/i18n/{{lng}}.json",
+      loadPath: '/resources/i18n/{{lng}}.json',
     },
     //@ts-ignore
-    lng: globalThis?.backendaioptions?.get("current_language") || "en",
-    fallbackLng: "en",
+    lng: globalThis?.backendaioptions?.get('current_language') || 'en',
+    fallbackLng: 'en',
     interpolation: {
       escapeValue: false, // react already safes from xss => https://www.i18next.com/translation-function/interpolation#unescape
     },
@@ -67,7 +65,7 @@ i18n
 const useCurrentLanguage = () => {
   const [lang, _setLang] = useState(
     //@ts-ignore
-    globalThis?.backendaioptions?.get("current_language")
+    globalThis?.backendaioptions?.get('current_language'),
   );
   const { i18n } = useTranslation();
 
@@ -82,11 +80,11 @@ const useCurrentLanguage = () => {
       //@ts-ignore
       _setLang(e?.detail?.lang);
       //@ts-ignore
-      const lang: string = e?.detail?.lang || "en";
+      const lang: string = e?.detail?.lang || 'en';
       i18n?.changeLanguage(lang);
     };
-    window.addEventListener("langChanged", handler);
-    return () => window.removeEventListener("langChanged", handler);
+    window.addEventListener('langChanged', handler);
+    return () => window.removeEventListener('langChanged', handler);
   }, [i18n]);
 
   return [lang] as const;
@@ -108,7 +106,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
       value,
       dispatchEvent,
       moveTo: (path: string) => {
-        dispatchEvent("moveTo", { path });
+        dispatchEvent('moveTo', { path });
       },
     };
   }, [value, dispatchEvent]);
@@ -130,7 +128,7 @@ const DefaultProviders: React.FC<DefaultProvidersProps> = ({
                       return shadowRoot;
                     }}
                     //TODO: apply other supported locales
-                    locale={"ko" === lang ? ko_KR : en_US}
+                    locale={'ko' === lang ? ko_KR : en_US}
                     theme={themeConfig}
                   >
                     <StyleProvider container={shadowRoot} cache={cache}>
@@ -163,10 +161,10 @@ const RoutingEventHandler = () => {
         replace: true,
       });
     };
-    document.addEventListener("react-navigate", handleNavigate);
+    document.addEventListener('react-navigate', handleNavigate);
 
     return () => {
-      document.removeEventListener("react-navigate", handleNavigate);
+      document.removeEventListener('react-navigate', handleNavigate);
     };
   }, [navigate]);
 

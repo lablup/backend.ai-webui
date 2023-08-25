@@ -1,11 +1,11 @@
-import React from "react";
-import { Modal, Input, Form, Select, SelectProps, message, Switch } from "antd";
-import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from "./DefaultProviders";
-import { passwordPattern } from "./ResetPasswordRequired";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { useTanQuery, useTanMutation } from "../hooks/reactQueryAlias";
-import _ from "lodash";
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useWebComponentInfo } from './DefaultProviders';
+import { passwordPattern } from './ResetPasswordRequired';
+import { Modal, Input, Form, Select, SelectProps, message, Switch } from 'antd';
+import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const UserProfileSettingModal: React.FC = () => {
   const { t } = useTranslation();
@@ -17,41 +17,41 @@ const UserProfileSettingModal: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: isManagerSupportingTOTP } = useTanQuery(
-    "isManagerSupportingTOTP",
+    'isManagerSupportingTOTP',
     () => {
       return baiClient.isManagerSupportingTOTP();
     },
     {
       suspense: false,
-    }
+    },
   );
-  const totpSupported = baiClient.supports("2FA") && isManagerSupportingTOTP;
+  const totpSupported = baiClient.supports('2FA') && isManagerSupportingTOTP;
 
   const { data: userInfo } = useTanQuery(
-    "totpActivated",
+    'totpActivated',
     () => {
-      return baiClient.user.get(baiClient.email, ["totp_activated"]);
+      return baiClient.user.get(baiClient.email, ['totp_activated']);
     },
     {
       suspense: false,
-    }
+    },
   );
   const totpActivated = userInfo?.user.totp_activated;
 
   const { data: keyPairInfo } = useTanQuery(
-    "keyPairInfo",
+    'keyPairInfo',
     () => {
       return baiClient.keypair.list(
         baiClient.email,
-        ["access_key", "secret_key"],
-        true
+        ['access_key', 'secret_key'],
+        true,
       );
     },
     {
       suspense: false,
-    }
+    },
   );
-  const selectOptions: SelectProps["options"] = [];
+  const selectOptions: SelectProps['options'] = [];
   if (keyPairInfo) {
     for (let i = 0; i < keyPairInfo.keypairs.length; i++) {
       selectOptions.push({
@@ -60,7 +60,7 @@ const UserProfileSettingModal: React.FC = () => {
       });
     }
     const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      "access_key",
+      'access_key',
       baiClient._config.accessKey,
     ]);
     form.setFieldsValue({
@@ -74,7 +74,7 @@ const UserProfileSettingModal: React.FC = () => {
     isOpenUserPrefDialog: boolean;
   };
   try {
-    parsedValue = JSON.parse(value || "");
+    parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
       isOpenUserPrefDialog: false,
@@ -98,14 +98,14 @@ const UserProfileSettingModal: React.FC = () => {
       return baiClient.update_password(
         values.old_password,
         values.new_password,
-        values.new_password2
+        values.new_password2,
       );
     },
   });
 
   const onSelectAccessKey = (value: string) => {
     const matchLoggedAccount = _.find(keyPairInfo.keypairs, [
-      "secret_key",
+      'secret_key',
       value,
     ]);
     form.setFieldsValue({
@@ -123,18 +123,18 @@ const UserProfileSettingModal: React.FC = () => {
         {
           onSuccess: () => {
             messageApi.open({
-              type: "success",
-              content: t("webui.menu.FullnameUpdated"),
+              type: 'success',
+              content: t('webui.menu.FullnameUpdated'),
             });
-            dispatchEvent("updateFullName", { newFullName });
+            dispatchEvent('updateFullName', { newFullName });
           },
           onError: (error: any) => {
             messageApi.open({
-              type: "error",
+              type: 'error',
               content: error.message,
             });
           },
-        }
+        },
       );
     }
   };
@@ -142,30 +142,30 @@ const UserProfileSettingModal: React.FC = () => {
   const updatePassword = (
     oldPassword: string,
     newPassword: string,
-    newPassword2: string
+    newPassword2: string,
   ) => {
     if (!oldPassword && !newPassword && !newPassword2) {
-      dispatchEvent("cancel", null);
+      dispatchEvent('cancel', null);
       return;
     }
     if (!oldPassword) {
       messageApi.open({
-        type: "error",
-        content: t("webui.menu.InputOriginalPassword"),
+        type: 'error',
+        content: t('webui.menu.InputOriginalPassword'),
       });
       return;
     }
     if (!newPassword) {
       messageApi.open({
-        type: "error",
-        content: t("webui.menu.InputNewPassword"),
+        type: 'error',
+        content: t('webui.menu.InputNewPassword'),
       });
       return;
     }
     if (newPassword !== newPassword2) {
       messageApi.open({
-        type: "error",
-        content: t("webui.menu.NewPasswordMismatch"),
+        type: 'error',
+        content: t('webui.menu.NewPasswordMismatch'),
       });
       return;
     }
@@ -178,25 +178,25 @@ const UserProfileSettingModal: React.FC = () => {
       {
         onSuccess: () => {
           messageApi.open({
-            type: "success",
-            content: t("webui.menu.PasswordUpdated"),
+            type: 'success',
+            content: t('webui.menu.PasswordUpdated'),
           });
-          dispatchEvent("cancel", null);
+          dispatchEvent('cancel', null);
         },
         onError: (error: any) => {
           messageApi.open({
-            type: "error",
+            type: 'error',
             content: error.message,
           });
         },
         onSettled: () => {
           form.setFieldsValue({
-            originalPassword: "",
-            newPassword: "",
-            newPasswordConfirm: "",
+            originalPassword: '',
+            newPassword: '',
+            newPasswordConfirm: '',
           });
         },
-      }
+      },
     );
   };
 
@@ -206,7 +206,7 @@ const UserProfileSettingModal: React.FC = () => {
       updatePassword(
         values.originalPassword,
         values.newPassword,
-        values.newPasswordConfirm
+        values.newPasswordConfirm,
       );
     });
   };
@@ -216,17 +216,17 @@ const UserProfileSettingModal: React.FC = () => {
       {contextHolder}
       <Modal
         open={isOpenUserPrefDialog}
-        okText={t("webui.menu.Update")}
-        cancelText={t("webui.menu.Cancel")}
-        onCancel={() => dispatchEvent("cancel", null)}
+        okText={t('webui.menu.Update')}
+        cancelText={t('webui.menu.Cancel')}
+        onCancel={() => dispatchEvent('cancel', null)}
         onOk={() => onSubmit()}
         centered
-        title={t("webui.menu.MyAccountInformation")}
+        title={t('webui.menu.MyAccountInformation')}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
             name="full_name"
-            label={t("webui.menu.FullName")}
+            label={t('webui.menu.FullName')}
             initialValue={baiClient.full_name}
             rules={[
               () => ({
@@ -235,7 +235,7 @@ const UserProfileSettingModal: React.FC = () => {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error(t("webui.menu.FullNameInvalid"))
+                    new Error(t('webui.menu.FullNameInvalid')),
                   );
                 },
               }),
@@ -245,7 +245,7 @@ const UserProfileSettingModal: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="access_key"
-            label={t("general.AccessKey")}
+            label={t('general.AccessKey')}
             rules={[{ required: true }]}
           >
             <Select
@@ -253,22 +253,22 @@ const UserProfileSettingModal: React.FC = () => {
               onSelect={onSelectAccessKey}
             ></Select>
           </Form.Item>
-          <Form.Item name="secret_key" label={t("general.SecretKey")}>
+          <Form.Item name="secret_key" label={t('general.SecretKey')}>
             <Input disabled />
           </Form.Item>
           <Form.Item
             name="originalPassword"
-            label={t("webui.menu.OriginalPassword")}
+            label={t('webui.menu.OriginalPassword')}
           >
             <Input.Password />
           </Form.Item>
           <Form.Item
             name="newPassword"
-            label={t("webui.menu.NewPassword")}
+            label={t('webui.menu.NewPassword')}
             rules={[
               {
                 pattern: passwordPattern,
-                message: t("webui.menu.InvalidPasswordMessage"),
+                message: t('webui.menu.InvalidPasswordMessage'),
               },
             ]}
           >
@@ -276,15 +276,15 @@ const UserProfileSettingModal: React.FC = () => {
           </Form.Item>
           <Form.Item
             name="newPasswordConfirm"
-            label={t("webui.menu.NewPasswordAgain")}
+            label={t('webui.menu.NewPasswordAgain')}
             rules={[
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
+                  if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve();
                   }
                   return Promise.reject(
-                    new Error(t("environment.PasswordsDoNotMatch"))
+                    new Error(t('environment.PasswordsDoNotMatch')),
                   );
                 },
               }),
@@ -293,18 +293,18 @@ const UserProfileSettingModal: React.FC = () => {
             <Input.Password />
           </Form.Item>
           {totpSupported ? (
-            <Form.Item label={t("webui.menu.TotpActivated")}>
+            <Form.Item label={t('webui.menu.TotpActivated')}>
               <Switch
                 defaultChecked={totpActivated}
                 onChange={(e) =>
                   totpActivated
-                    ? dispatchEvent("confirmRemovingTotp", null)
-                    : dispatchEvent("startActivatingTotp", null)
+                    ? dispatchEvent('confirmRemovingTotp', null)
+                    : dispatchEvent('startActivatingTotp', null)
                 }
               />
             </Form.Item>
           ) : (
-            ""
+            ''
           )}
         </Form>
       </Modal>

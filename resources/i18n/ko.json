@@ -822,13 +822,16 @@
     "Used": "사용됨",
     "Limit": "제한",
     "HostDetails": "선택한 스토리지 호스트의 가용량 정보를 보여줍니다.",
-    "ProjectFolder": "프로젝트 폴더"
+    "ProjectFolder": "프로젝트 폴더",
+    "Pipeline": "파이프라인 폴더",
+    "DialogDataFolder": "FastTrack에서 파이프라인 생성 시 자동으로 생성되는 파이프라인 전용 폴더."
   },
   "dialog": {
     "warning": {
       "CannotBeUndone": "주의: 이 동작은 취소할 수 없습니다!",
       "LogDeletion": "정말로 모든 로그를 삭제하시겠습니까?",
-      "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다."
+      "WillBeAppliedToNewSessions": "이 변경사항은 새 세션부터 적용됩니다.",
+      "Required": "필수 입력입니다."
     },
     "ask": {
       "DoYouWantToProceed": "계속 진행하시겠습니까?"
@@ -1449,7 +1452,8 @@
     "CreatingComputeSession": "연산 세션 생성 중 ...",
     "SessionStillPreparing": "연산 세션이 계속 준비중입니다. 잠시 후 리로드 하십시오.",
     "ComputeSessionPrepared": "연산 세션이 준비되었습니다",
-    "sessionStatusIs": "세션 상태는 "
+    "sessionStatusIs": "세션 상태는 ",
+    "EmptyProject": "사용자가 소속된 프로젝트가 없습니다."
   },
   "error": {
     "UpdateError": "업데이트 에러",

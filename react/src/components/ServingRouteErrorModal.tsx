@@ -1,19 +1,13 @@
-import React from "react";
+import BAIModal, { BAIModalProps } from './BAIModal';
+import CopyableCodeText from './CopyableCodeText';
+import { ServingRouteErrorModalFragment$key } from './__generated__/ServingRouteErrorModalFragment.graphql';
+import { Descriptions, DescriptionsProps, Button } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
-import {
-  Modal,
-  ModalProps,
-  Descriptions,
-  DescriptionsProps,
-  Button,
-} from "antd";
-import { useTranslation } from "react-i18next";
-import { useFragment } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { ServingRouteErrorModalFragment$key } from "./__generated__/ServingRouteErrorModalFragment.graphql";
-import CopyableCodeText from "./CopyableCodeText";
-
-interface Props extends Omit<ModalProps, "onOk" | "onClose"> {
+interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
   inferenceSessionErrorFrgmt: ServingRouteErrorModalFragment$key | null;
   onRequestClose: () => void;
 }
@@ -22,7 +16,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   onRequestClose,
   onCancel,
   inferenceSessionErrorFrgmt,
-  ...modalProps
+  ...baiModalProps
 }) => {
   const { t } = useTranslation();
 
@@ -35,7 +29,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
         }
       }
     `,
-    inferenceSessionErrorFrgmt
+    inferenceSessionErrorFrgmt,
   );
 
   // const { errors } = endpoint
@@ -46,7 +40,7 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   //   // setShowErrorJSONModal(true)
   // }
 
-  const columnSetting: DescriptionsProps["column"] = {
+  const columnSetting: DescriptionsProps['column'] = {
     xxl: 1,
     xl: 1,
     lg: 1,
@@ -56,9 +50,9 @@ const ServingRouteErrorModal: React.FC<Props> = ({
   };
 
   return (
-    <Modal
+    <BAIModal
       centered
-      title={t("modelService.ServingRouteErrorModalTitle")}
+      title={t('modelService.ServingRouteErrorModalTitle')}
       onCancel={() => {
         onRequestClose();
       }}
@@ -68,24 +62,25 @@ const ServingRouteErrorModal: React.FC<Props> = ({
             onRequestClose();
           }}
         >
-          {t("button.Close")}
+          {t('button.Close')}
         </Button>,
       ]}
-      {...modalProps}
+      {...baiModalProps}
     >
       <Descriptions
         bordered
         column={columnSetting}
         labelStyle={{ minWidth: 100 }}
+        style={{ marginTop: 20 }}
       >
-        <Descriptions.Item label={t("modelService.SessionId")}>
+        <Descriptions.Item label={t('modelService.SessionId')}>
           <CopyableCodeText>{iSessionError?.session_id}</CopyableCodeText>
         </Descriptions.Item>
-        <Descriptions.Item label={t("dialog.error.Error")}>
+        <Descriptions.Item label={t('dialog.error.Error')}>
           {iSessionError?.errors[0].repr}
         </Descriptions.Item>
       </Descriptions>
-    </Modal>
+    </BAIModal>
   );
 };
 

@@ -1,10 +1,10 @@
-import { Select, SelectProps } from "antd";
-import React, { startTransition, useEffect } from "react";
-import _ from "lodash";
+import { useBaiSignedRequestWithPromise } from '../helper';
 // import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
-import { useCurrentProjectValue, useUpdatableState } from "../hooks";
-import { useBaiSignedRequestWithPromise } from "../helper";
-import { useTanQuery } from "../hooks/reactQueryAlias";
+import { useCurrentProjectValue, useUpdatableState } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
+import { Select, SelectProps } from 'antd';
+import _ from 'lodash';
+import React, { startTransition, useEffect } from 'react';
 
 interface ResourceGroupSelectorProps extends SelectProps {
   projectId?: string;
@@ -34,13 +34,13 @@ const ResourceGroupSelector: React.FC<ResourceGroupSelectorProps> = ({
   //   }
   // );
 
-  const [key, checkUpdate] = useUpdatableState("first");
+  const [key, checkUpdate] = useUpdatableState('first');
 
   const { data } = useTanQuery({
-    queryKey: ["ResourceGroupSelectorQuery", key],
+    queryKey: ['ResourceGroupSelectorQuery', key],
     queryFn: () => {
       return baiRequestWithPromise({
-        method: "GET",
+        method: 'GET',
         url: `/scaling-groups?group=${currentProject.name}`,
       }) as Promise<{ scaling_groups: { name: string }[] }>;
     },

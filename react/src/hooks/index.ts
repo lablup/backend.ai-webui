@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from "react";
-import { useQuery } from "react-query";
+import { useEffect, useMemo, useState } from 'react';
+import { useQuery } from 'react-query';
 
 export const useBackendAIConnectedState = () => {
   const [time, setTime] = useState<string>();
@@ -8,9 +8,9 @@ export const useBackendAIConnectedState = () => {
     const listener = () => {
       setTime(new Date().toISOString());
     };
-    document.addEventListener("backend-ai-connected", listener);
+    document.addEventListener('backend-ai-connected', listener);
     return () => {
-      document.removeEventListener("backend-ai-connected", listener);
+      document.removeEventListener('backend-ai-connected', listener);
     };
   }, []);
 
@@ -53,9 +53,9 @@ export const useCurrentProjectValue = () => {
         id: baiClient.groupIds[newProjectName],
       });
     };
-    document.addEventListener("backend-ai-group-changed", listener);
+    document.addEventListener('backend-ai-group-changed', listener);
     return () => {
-      document.removeEventListener("backend-ai-group-changed", listener);
+      document.removeEventListener('backend-ai-group-changed', listener);
     };
   });
 
@@ -70,13 +70,13 @@ export const useAnonymousBackendaiClient = ({
   const client = useMemo(() => {
     //@ts-ignore
     const clientConfig = new globalThis.BackendAIClientConfig(
-      "",
-      "",
+      '',
+      '',
       api_endpoint,
-      "SESSION"
+      'SESSION',
     );
     //@ts-ignore
-    return new globalThis.BackendAIClient(clientConfig, "Backend.AI Console.");
+    return new globalThis.BackendAIClient(clientConfig, 'Backend.AI Console.');
   }, [api_endpoint]);
 
   return client;
@@ -84,12 +84,12 @@ export const useAnonymousBackendaiClient = ({
 
 export const useSuspendedBackendaiClient = () => {
   const { data: client } = useQuery<any>({
-    queryKey: "backendai-client-for-suspense",
+    queryKey: 'backendai-client-for-suspense',
     queryFn: () =>
       new Promise((resolve) => {
         if (
           //@ts-ignore
-          typeof globalThis.backendaiclient === "undefined" ||
+          typeof globalThis.backendaiclient === 'undefined' ||
           //@ts-ignore
           globalThis.backendaiclient === null ||
           //@ts-ignore
@@ -98,9 +98,9 @@ export const useSuspendedBackendaiClient = () => {
           const listener = () => {
             // @ts-ignore
             resolve(globalThis.backendaiclient);
-            document.removeEventListener("backend-ai-connected", listener);
+            document.removeEventListener('backend-ai-connected', listener);
           };
-          document.addEventListener("backend-ai-connected", listener);
+          document.addEventListener('backend-ai-connected', listener);
         } else {
           //@ts-ignore
           return resolve(globalThis.backendaiclient);
@@ -129,9 +129,9 @@ interface ImageMetadata {
 
 export const useBackendaiImageMetaData = () => {
   const { data: metadata } = useQuery({
-    queryKey: "backendai-metadata-for-suspense",
+    queryKey: 'backendai-metadata-for-suspense',
     queryFn: () => {
-      return fetch("resources/image_metadata.json")
+      return fetch('resources/image_metadata.json')
         .then((response) => response.json())
         .then(
           (json: {
@@ -146,7 +146,7 @@ export const useBackendaiImageMetaData = () => {
             };
           }) => {
             return json;
-          }
+          },
         );
     },
     suspense: true,
@@ -158,14 +158,14 @@ export const useBackendaiImageMetaData = () => {
     // key = python, tags = [3.9, ubuntu20.04]
     if (!imageName) {
       return {
-        key: "",
+        key: '',
         tags: [],
       };
     }
-    const specs = imageName.split("/");
+    const specs = imageName.split('/');
 
-    const [key, tag] = (specs[2] || specs[1]).split(":");
-    const tags = tag.split("-");
+    const [key, tag] = (specs[2] || specs[1]).split(':');
+    const tags = tag.split('-');
 
     return { key, tags };
   };
@@ -177,14 +177,14 @@ export const useBackendaiImageMetaData = () => {
         const { key } = getImageMeta(imageName);
         return metadata?.imageInfo[key].name || key;
       },
-      getImageIcon: (imageName?: string | null, path = "resources/icons/") => {
-        if (!imageName) return "default.png";
+      getImageIcon: (imageName?: string | null, path = 'resources/icons/') => {
+        if (!imageName) return 'default.png';
         const { key } = getImageMeta(imageName);
         return (
           path +
           (metadata?.imageInfo[key]?.icon !== undefined
             ? metadata?.imageInfo[key]?.icon
-            : "default.png")
+            : 'default.png')
         );
       },
       getImageTags: (imageName: string) => {

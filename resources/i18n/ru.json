@@ -745,7 +745,8 @@
     "warning": {
       "CannotBeUndone": "ВНИМАНИЕ: это нельзя отменить!",
       "LogDeletion": "Вы уверены, что хотите удалить все сообщения журнала?",
-      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам."
+      "WillBeAppliedToNewSessions": "Это обновление будет применено к новым сеансам.",
+      "Required": "__NOT_TRANSLATED__"
     },
     "ask": {
       "DoYouWantToProceed": "Вы хотите продолжить?"
@@ -1366,7 +1367,8 @@
     "CreatingComputeSession": "Создание вычислительного сеанса ...",
     "SessionStillPreparing": "Сессия все еще находится в стадии подготовки. Перезагрузите через некоторое время",
     "ComputeSessionPrepared": "Вычислительная сессия подготовлена",
-    "sessionStatusIs": "Статус сеанса"
+    "sessionStatusIs": "Статус сеанса",
+    "EmptyProject": "__NOT_TRANSLATED__"
   },
   "error": {
     "UpdateError": "Ошибка обновления",

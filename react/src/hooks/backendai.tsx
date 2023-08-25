@@ -1,6 +1,6 @@
-import { useUpdatableState } from ".";
-import { useBaiSignedRequestWithPromise } from "../helper";
-import { useTanQuery } from "./reactQueryAlias";
+import { useUpdatableState } from '.';
+import { useBaiSignedRequestWithPromise } from '../helper';
+import { useTanQuery } from './reactQueryAlias';
 
 export interface QuotaScope {
   id: string;
@@ -14,13 +14,13 @@ export interface QuotaScope {
 }
 
 export const useResourceSlots = () => {
-  const [key, checkUpdate] = useUpdatableState("first");
+  const [key, checkUpdate] = useUpdatableState('first');
   const baiRequestWithPromise = useBaiSignedRequestWithPromise();
   const { data: resourceSlots } = useTanQuery({
-    queryKey: ["useResourceSlots", key],
+    queryKey: ['useResourceSlots', key],
     queryFn: () => {
       return baiRequestWithPromise({
-        method: "GET",
+        method: 'GET',
         url: `/config/resource-slots`,
       }) as Promise<any>;
     },
