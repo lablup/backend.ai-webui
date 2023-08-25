@@ -2,23 +2,20 @@
 @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
+import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-app-launcher';
-
-import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

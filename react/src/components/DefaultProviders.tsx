@@ -1,3 +1,14 @@
+import { RelayEnvironment } from '../RelayEnvironment';
+// @ts-ignore
+import rawFixAntCss from '../fix_antd.css?raw';
+import { useCustomThemeConfig } from '../helper/customThemeConfig';
+import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
+import { StyleProvider, createCache } from '@ant-design/cssinjs';
+import { ConfigProvider } from 'antd';
+import en_US from 'antd/locale/en_US';
+import ko_KR from 'antd/locale/ko_KR';
+import i18n from 'i18next';
+import Backend from 'i18next-http-backend';
 import React, {
   Suspense,
   useEffect,
@@ -5,22 +16,9 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { RelayEnvironmentProvider } from 'react-relay';
-import { StyleProvider, createCache } from '@ant-design/cssinjs';
-import { ConfigProvider } from 'antd';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactWebComponentProps } from '../helper/react-to-webcomponent';
-import i18n from 'i18next';
 import { useTranslation, initReactI18next } from 'react-i18next';
-import Backend from 'i18next-http-backend';
-
-import en_US from 'antd/locale/en_US';
-import ko_KR from 'antd/locale/ko_KR';
-import { RelayEnvironment } from '../RelayEnvironment';
-import { useCustomThemeConfig } from '../helper/customThemeConfig';
-
-// @ts-ignore
-import rawFixAntCss from '../fix_antd.css?raw';
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { RelayEnvironmentProvider } from 'react-relay';
 import { BrowserRouter, useNavigate } from 'react-router-dom';
 
 interface WebComponentContextType {

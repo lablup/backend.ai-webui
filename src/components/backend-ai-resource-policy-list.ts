@@ -2,35 +2,29 @@
  @license
 Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
-
-import { TextField } from '@material/mwc-textfield';
-import '@material/mwc-button';
-import '@material/mwc-select';
-import '@material/mwc-list';
-import '@material/mwc-icon';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/icons/vaadin-icons';
-import '@vaadin/item/vaadin-item';
-
-import './backend-ai-dialog';
-import './backend-ai-multi-select';
 import '../plastics/lablup-shields/lablup-shields';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import './backend-ai-multi-select';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import '@material/mwc-button';
+import '@material/mwc-icon';
+import '@material/mwc-list';
+import '@material/mwc-select';
+import { TextField } from '@material/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/item/vaadin-item';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

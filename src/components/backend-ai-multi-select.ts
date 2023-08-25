@@ -2,11 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-import { get as _text } from 'lit-translate';
-
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexReverse,
@@ -15,12 +11,12 @@ import {
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { BackendAiStyles } from './backend-ai-general-styles';
-
-import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-icon-button/mwc-icon-button';
+import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-list/mwc-list';
-
-import '../plastics/lablup-shields/lablup-shields';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /**
  Backend.AI Multi Select

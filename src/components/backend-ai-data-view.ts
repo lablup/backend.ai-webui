@@ -2,36 +2,30 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-list/mwc-list-item';
-import { Select } from '@material/mwc-select';
-import { Switch } from '@material/mwc-switch';
-import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import { TextField } from '@material/mwc-textfield';
-
 import '../plastics/lablup-shields/lablup-shields';
-import './backend-ai-dialog';
-import './backend-ai-storage-list';
-import './lablup-activity-panel';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-storage-list';
+import './lablup-activity-panel';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import { Select } from '@material/mwc-select';
+import { Switch } from '@material/mwc-switch';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

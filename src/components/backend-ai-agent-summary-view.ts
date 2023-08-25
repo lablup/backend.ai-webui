@@ -2,20 +2,16 @@
  @license
 Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
 */
-
-import { translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-
-import './lablup-activity-panel';
-import './backend-ai-list-status';
 import './backend-ai-agent-summary-list';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import './lablup-activity-panel';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -2,36 +2,32 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query, queryAll } from 'lit/decorators.js';
-
-import './backend-ai-resource-monitor';
-import './backend-ai-session-list';
-
-import '@material/mwc-button';
-import '@material/mwc-checkbox';
-import '@material/mwc-formfield';
-import '@material/mwc-icon-button';
-import '@material/mwc-list';
-import { Menu } from '@material/mwc-menu';
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-import '@material/mwc-textfield';
-import { TextField } from '@material/mwc-textfield';
-
-import './lablup-activity-panel';
-import './backend-ai-session-launcher';
 import JsonToCsv from '../lib/json_to_csv';
-import { BackendAIPage } from './backend-ai-page';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-resource-monitor';
+import './backend-ai-session-launcher';
+import './backend-ai-session-list';
+import './lablup-activity-panel';
+import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import '@material/mwc-textfield';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, queryAll } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -2,12 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { get as _text } from 'lit-translate';
-
 import './backend-ai-indicator';
+import { CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Indicator pool for Console

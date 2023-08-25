@@ -1,15 +1,14 @@
-import React from 'react';
+import { useSuspendedBackendaiClient } from '../hooks';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import { useWebComponentInfo } from './DefaultProviders';
+import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
+import { Descriptions, DescriptionsProps, Button, Tag, Spin } from 'antd';
 import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
 import { useLazyLoadQuery } from 'react-relay';
-import { UserInfoModalQuery } from './__generated__/UserInfoModalQuery.graphql';
-
-import { Descriptions, DescriptionsProps, Button, Tag, Spin } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { useWebComponentInfo } from './DefaultProviders';
-import { useSuspendedBackendaiClient } from '../hooks';
-import _ from 'lodash';
-import BAIModal, { BAIModalProps } from './BAIModal';
 
 interface Props extends BAIModalProps {}
 

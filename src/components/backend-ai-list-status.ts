@@ -2,19 +2,15 @@
  @license
  Copyright (c) 2015-2021 Lablup Inc. All rights reserved.
  */
-
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './lablup-loading-dots';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend AI List Status

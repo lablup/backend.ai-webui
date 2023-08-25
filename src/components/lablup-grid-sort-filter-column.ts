@@ -4,9 +4,9 @@
     "ClassDeclaration": true,
   }
 }]*/
+import { GridColumn } from '@vaadin/grid/vaadin-grid-column';
 import '@vaadin/grid/vaadin-grid-filter';
 import '@vaadin/grid/vaadin-grid-sorter';
-import { GridColumn } from '@vaadin/grid/vaadin-grid-column';
 
 /**
  * Codemirror component.

@@ -14,10 +14,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import { css } from 'lit';
-import { customElement } from 'lit/decorators.js';
 import { SelectBase } from '@material/mwc-select/mwc-select-base';
 import { styles } from '@material/mwc-select/mwc-select.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {

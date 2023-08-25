@@ -2,22 +2,20 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import '@material/mwc-select';
-import { Select } from '@material/mwc-select';
-
-import './backend-ai-dialog';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import { default as PainKiller } from './backend-ai-painkiller';
+import '@material/mwc-select';
+import { Select } from '@material/mwc-select';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Lablup Terms of Service dialog

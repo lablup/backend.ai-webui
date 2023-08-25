@@ -2,37 +2,32 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query, queryAll } from 'lit/decorators.js';
-
+import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import { BackendAIPage } from '../../components/backend-ai-page';
+import '../../components/lablup-codemirror';
+import '../../plastics/chart-js';
+import '../../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
-
-import { default as YAML } from 'js-yaml';
-
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
+import { PipelineJob } from '../lib/pipeline-type';
+import PipelineUtils from '../lib/pipeline-utils';
+import '@material/mwc-icon-button/mwc-icon-button';
 import '@material/mwc-icon/mwc-icon';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button/mwc-icon-button';
-
-import PipelineUtils from '../lib/pipeline-utils';
-import { PipelineJob } from '../lib/pipeline-type';
-import '../../plastics/chart-js';
-import '../../plastics/lablup-shields/lablup-shields';
-import '../../components/lablup-codemirror';
-import '../../components/backend-ai-dialog';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import { default as YAML } from 'js-yaml';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, queryAll } from 'lit/decorators.js';
 
 /**
  Pipeline Job List

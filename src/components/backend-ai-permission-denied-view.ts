@@ -2,22 +2,19 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { translate as _t, translateUnsafeHTML as _tr } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-button';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import { navigate } from '../backend-ai-app';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { store } from '../store';
-import { navigate } from '../backend-ai-app';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import '@material/mwc-button';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t, translateUnsafeHTML as _tr } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  `<backend-ai-permission-denied-view>` is a blank panel of backend.ai web UI.

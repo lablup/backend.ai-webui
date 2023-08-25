@@ -1,11 +1,16 @@
-import React, { useDeferredValue, useState } from 'react';
-import { useQuery } from 'react-query';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
-import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
+import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
+import {
+  useCurrentDomainValue,
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import Flex from './Flex';
+import FlexActivityIndicator from './FlexActivityIndicator';
+import StorageSelector, { VolumeInfo } from './StorageSelector';
+import UsageProgress from './UsageProgress';
 import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
-
-import { useTranslation } from 'react-i18next';
+import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Progress,
   Card,
@@ -19,17 +24,11 @@ import {
   Tooltip,
   Button,
 } from 'antd';
-import { InfoCircleOutlined } from '@ant-design/icons';
-import Flex from './Flex';
-import {
-  useCurrentDomainValue,
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-} from '../hooks';
-import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
-import UsageProgress from './UsageProgress';
-import StorageSelector, { VolumeInfo } from './StorageSelector';
-import FlexActivityIndicator from './FlexActivityIndicator';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { useLazyLoadQuery } from 'react-relay';
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;

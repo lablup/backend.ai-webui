@@ -2,9 +2,8 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text } from 'lit-translate';
 import { CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
 import { customElement, property } from 'lit/decorators.js';
 
 /**

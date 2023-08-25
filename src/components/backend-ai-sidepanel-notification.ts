@@ -2,23 +2,21 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import '../plastics/mwc/mwc-drawer';
-import '@material/mwc-icon';
-import '@material/mwc-list';
-import '@material/mwc-list/mwc-list-item';
-
-import { BackendAIPage } from './backend-ai-page';
-import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import '../plastics/mwc/mwc-drawer';
+import { BackendAIPage } from './backend-ai-page';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-icon';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Sidepanel notification viewer for Console

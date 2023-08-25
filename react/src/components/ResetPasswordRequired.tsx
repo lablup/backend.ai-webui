@@ -1,12 +1,12 @@
-import { Button, Form, Modal, Typography, Input, theme } from 'antd';
+import { baiSignedRequestWithPromise } from '../helper';
+import { useAnonymousBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import { useTranslation } from 'react-i18next';
 import { WarningTwoTone } from '@ant-design/icons';
-import { useAnonymousBackendaiClient } from '../hooks';
-import { baiSignedRequestWithPromise } from '../helper';
+import { Button, Form, Modal, Typography, Input, theme } from 'antd';
 import { useEffect } from 'react';
-import { useTanMutation } from '../hooks/reactQueryAlias';
+import { useTranslation } from 'react-i18next';
 
 // src/components/backend-ai-common-utils.ts
 export const passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])(?=.*[_\W]).{8,}$/;

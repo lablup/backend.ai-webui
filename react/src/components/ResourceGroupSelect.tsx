@@ -1,10 +1,10 @@
-import { Select, SelectProps } from 'antd';
-import React, { startTransition, useEffect } from 'react';
-import _ from 'lodash';
+import { useBaiSignedRequestWithPromise } from '../helper';
 // import { ResourceGroupSelectorQuery } from "./__generated__/ResourceGroupSelectorQuery.graphql";
 import { useCurrentProjectValue, useUpdatableState } from '../hooks';
-import { useBaiSignedRequestWithPromise } from '../helper';
 import { useTanQuery } from '../hooks/reactQueryAlias';
+import { Select, SelectProps } from 'antd';
+import _ from 'lodash';
+import React, { startTransition, useEffect } from 'react';
 
 interface ResourceGroupSelectorProps extends SelectProps {
   projectId?: string;

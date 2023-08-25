@@ -2,12 +2,10 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
+import app from './reducers/app';
+import { lazyReducerEnhancer } from 'pwa-helpers/lazy-reducer-enhancer';
 import { applyMiddleware, combineReducers, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
-import { lazyReducerEnhancer } from 'pwa-helpers/lazy-reducer-enhancer';
-
-import app from './reducers/app';
 
 declare global {
   interface Window {

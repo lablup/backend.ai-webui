@@ -2,16 +2,14 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import '@material/mwc-icon-button';
-import { IconButton } from '@material/mwc-icon-button';
-
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import '@material/mwc-icon-button';
+import { IconButton } from '@material/mwc-icon-button';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Lablup Activitiy Panel

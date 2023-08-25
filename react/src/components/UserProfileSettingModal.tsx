@@ -1,11 +1,11 @@
-import React from 'react';
-import { Modal, Input, Form, Select, SelectProps, message, Switch } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { useWebComponentInfo } from './DefaultProviders';
-import { passwordPattern } from './ResetPasswordRequired';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
+import { useWebComponentInfo } from './DefaultProviders';
+import { passwordPattern } from './ResetPasswordRequired';
+import { Modal, Input, Form, Select, SelectProps, message, Switch } from 'antd';
 import _ from 'lodash';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const UserProfileSettingModal: React.FC = () => {
   const { t } = useTranslation();

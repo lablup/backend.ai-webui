@@ -2,41 +2,37 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-import '@material/mwc-button';
-import '@material/mwc-icon';
-import '@material/mwc-textfield';
-import { IconButton } from '@material/mwc-icon-button';
-import '@material/mwc-list/mwc-list-item';
-import { Menu } from '@material/mwc-menu';
-import '@material/mwc-select';
-import { TextField } from '@material/mwc-textfield';
-
-import '../plastics/lablup-shields/lablup-shields';
-import './backend-ai-dialog';
-import './backend-ai-signup';
-import { default as PainKiller } from './backend-ai-painkiller';
-
 // import * as aiSDK from '../lib/backend.ai-client-es6';
 import * as ai from '../lib/backend.ai-client-esm';
-//@ts-ignore for react-based component
-globalThis.BackendAIClient = ai.backend.Client;
-//@ts-ignore for react-based component
-globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
-
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
 import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-signup';
+import '@material/mwc-button';
+import '@material/mwc-icon';
+import { IconButton } from '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-select';
+import '@material/mwc-textfield';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+
+//@ts-ignore for react-based component
+globalThis.BackendAIClient = ai.backend.Client;
+//@ts-ignore for react-based component
+globalThis.BackendAIClientConfig = ai.backend.ClientConfig;
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -1,25 +1,15 @@
-import { Button, Table, Tabs, Typography, theme } from 'antd';
-import React, {
-  PropsWithChildren,
-  Suspense,
-  useState,
-  useTransition,
-  startTransition as startTransitionWithoutPendingState,
-} from 'react';
+import BAIModal from '../components/BAIModal';
+import EndpointStatusTag from '../components/EndpointStatusTag';
 import Flex from '../components/Flex';
-import { useTranslation } from 'react-i18next';
+import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
 import ServiceLauncherModal from '../components/ServiceLauncherModal';
+import { baiSignedRequestWithPromise } from '../helper';
 import {
   useCurrentProjectValue,
   useSuspendedBackendaiClient,
   useUpdatableState,
 } from '../hooks';
-import { baiSignedRequestWithPromise } from '../helper';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
-import { useRafInterval } from 'ahooks';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
 import {
   ServingListPageQuery,
   ServingListPageQuery$data,
@@ -30,10 +20,20 @@ import {
   DeleteOutlined,
   SettingOutlined,
 } from '@ant-design/icons';
-import { Link } from 'react-router-dom';
+import { useRafInterval } from 'ahooks';
+import { Button, Table, Tabs, Typography, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
-import EndpointStatusTag from '../components/EndpointStatusTag';
-import BAIModal from '../components/BAIModal';
+import React, {
+  PropsWithChildren,
+  Suspense,
+  useState,
+  useTransition,
+  startTransition as startTransitionWithoutPendingState,
+} from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
+import { Link } from 'react-router-dom';
 
 // FIXME: need to apply filtering type of service later
 type TabKey = 'services'; //  "running" | "finished" | "others";

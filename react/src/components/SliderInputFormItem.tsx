@@ -1,4 +1,4 @@
-import React from 'react';
+import Flex from './Flex';
 import {
   InputNumber,
   Slider,
@@ -6,10 +6,10 @@ import {
   SliderSingleProps,
   InputNumberProps,
 } from 'antd';
-import Flex from './Flex';
-import { FormItemProps } from 'antd/lib/form/FormItem';
 import { NamePath } from 'antd/es/form/interface';
 import { SliderRangeProps } from 'antd/es/slider';
+import { FormItemProps } from 'antd/lib/form/FormItem';
+import React from 'react';
 
 interface SliderInputProps extends Omit<FormItemProps, 'name'> {
   min?: number;

@@ -2,20 +2,7 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import '@material/mwc-checkbox';
-import { Button } from '@material/mwc-button';
-import { TextField } from '@material/mwc-textfield';
-import '@material/mwc-icon-button-toggle';
-import './lablup-terms-of-service';
-import './backend-ai-dialog';
-
-import { default as PainKiller } from './backend-ai-painkiller';
 import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
@@ -23,7 +10,18 @@ import {
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import BackendAiCommonUtils from './backend-ai-common-utils';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-terms-of-service';
+import { Button } from '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-icon-button-toggle';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

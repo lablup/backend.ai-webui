@@ -2,27 +2,24 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-selection-column';
-import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/icons/vaadin-icons';
-
-import './backend-ai-indicator';
 import '../plastics/lablup-shields/lablup-shields';
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
-import { BackendAIPage } from './backend-ai-page';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-indicator';
 import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/icons/vaadin-icons';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

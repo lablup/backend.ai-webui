@@ -2,27 +2,19 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import PipelineUtils from '../lib/pipeline-utils';
-import PipelineConfigurationForm from '../lib/pipeline-configuration-form';
-import { BackendAIPage } from '../../components/backend-ai-page';
 import '../../components/backend-ai-dialog';
-import '../../components/lablup-activity-panel';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
+import { BackendAIPage } from '../../components/backend-ai-page';
+import '../../components/lablup-activity-panel';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
+import PipelineConfigurationForm from '../lib/pipeline-configuration-form';
 import '../lib/pipeline-flow';
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import {
   PipelineInfo,
   PipelineInfoExtended,
@@ -30,7 +22,14 @@ import {
   PipelineTask,
   PipelineTaskDetail,
 } from '../lib/pipeline-type';
+import PipelineUtils from '../lib/pipeline-utils';
 import './pipeline-list';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import { css, CSSResultGroup, html } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Pipeline View

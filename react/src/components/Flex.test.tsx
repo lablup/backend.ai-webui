@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react';
 import Flex from './Flex';
+import { render, screen } from '@testing-library/react';
 
 describe('Flex', () => {
   test('default render', async () => {

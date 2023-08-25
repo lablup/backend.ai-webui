@@ -2,26 +2,26 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-import '@material/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-icon-button-toggle';
-import 'drawflow';
-import { style } from 'drawflow/dist/drawflow.style';
-import { DrawflowBaseStyle } from './drawflow-base-style.css';
-import 'drawflow/dist/drawflow.min';
-// FIXME:
-// cannot import module sinc drawflow.min.js does not provide
-// an export named 'default'
-// import Drawflow from 'drawflow';
-import { DrawflowNode } from 'drawflow';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
+import { DrawflowBaseStyle } from './drawflow-base-style.css';
+import '@material/mwc-button';
+import '@material/mwc-icon-button';
+import '@material/mwc-icon-button-toggle';
+import 'drawflow';
+// FIXME:
+// cannot import module sinc drawflow.min.js does not provide
+// an export named 'default'
+// import Drawflow from 'drawflow';
+import { DrawflowNode } from 'drawflow';
+import 'drawflow/dist/drawflow.min';
+import { style } from 'drawflow/dist/drawflow.style';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Pipeline Flow

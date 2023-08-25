@@ -1,12 +1,11 @@
-import React from 'react';
-
+import BAIModal, { BAIModalProps } from './BAIModal';
+import CopyableCodeText from './CopyableCodeText';
+import { ServingRouteErrorModalFragment$key } from './__generated__/ServingRouteErrorModalFragment.graphql';
 import { Descriptions, DescriptionsProps, Button } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFragment } from 'react-relay';
-import graphql from 'babel-plugin-relay/macro';
-import { ServingRouteErrorModalFragment$key } from './__generated__/ServingRouteErrorModalFragment.graphql';
-import CopyableCodeText from './CopyableCodeText';
-import BAIModal, { BAIModalProps } from './BAIModal';
 
 interface Props extends Omit<BAIModalProps, 'onOk' | 'onClose'> {
   inferenceSessionErrorFrgmt: ServingRouteErrorModalFragment$key | null;

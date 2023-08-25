@@ -1,4 +1,7 @@
-import { ReactNode } from 'react';
+import { newLineToBrElement } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import DoubleTag from './DoubleTag';
+import Flex from './Flex';
 import { CheckOutlined, WarningOutlined } from '@ant-design/icons';
 import {
   Descriptions,
@@ -11,12 +14,9 @@ import {
   Row,
   Col,
 } from 'antd';
+import { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
-import Flex from './Flex';
 import { useQuery } from 'react-query';
-import { newLineToBrElement } from '../helper';
-import { useSuspendedBackendaiClient } from '../hooks';
-import DoubleTag from './DoubleTag';
 
 const DescriptionLabel: React.FC<{
   title: string;

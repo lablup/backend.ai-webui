@@ -1,41 +1,37 @@
 /**
  * Backend.AI-credential-view
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-
-import '@material/mwc-checkbox';
-import '@material/mwc-formfield';
-import { TextField } from '@material/mwc-textfield';
-import '@material/mwc-list';
-import '@material/mwc-icon-button';
-import { Menu } from '@material/mwc-menu';
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-import '@material/mwc-button';
-import { Select } from '@material/mwc-select';
-
-import './lablup-activity-panel';
-import './lablup-expansion';
-import './backend-ai-credential-list';
-import './backend-ai-dialog';
-import './backend-ai-multi-select';
-import './backend-ai-resource-policy-list';
-import './backend-ai-user-list';
-import { default as PainKiller } from './backend-ai-painkiller';
-
 import JsonToCsv from '../lib/json_to_csv';
-import BackendAiCommonUtils from './backend-ai-common-utils';
-import { BackendAIPage } from './backend-ai-page';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import './backend-ai-credential-list';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-multi-select';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-resource-policy-list';
+import './backend-ai-user-list';
+import './lablup-activity-panel';
+import './lablup-expansion';
+import '@material/mwc-button';
+import '@material/mwc-checkbox';
+import '@material/mwc-formfield';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import { Menu } from '@material/mwc-menu';
+import { Select } from '@material/mwc-select';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import { TextField } from '@material/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

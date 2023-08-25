@@ -2,29 +2,23 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@vaadin/select';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
-import './backend-ai-chart';
-import './backend-ai-monthly-usage-panel';
-import './backend-ai-dialog';
-
-import type { Select } from '@vaadin/select';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-chart';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-monthly-usage-panel';
+import { BackendAIPage } from './backend-ai-page';
+import '@vaadin/select';
+import type { Select } from '@vaadin/select';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

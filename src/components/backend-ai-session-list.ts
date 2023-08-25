@@ -2,27 +2,24 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
-import { css, CSSResultGroup, TemplateResult, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-tree-toggle';
-import '@vaadin/grid/vaadin-grid-selection-column';
-import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/grid/vaadin-grid-filter-column';
-import '@vaadin/icons/vaadin-icons';
-import '@vaadin/tooltip';
-
 import { default as AnsiUp } from '../lib/ansiup';
-
+import '../plastics/lablup-shields/lablup-shields';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-expansion';
+import './lablup-grid-sort-filter-column';
+import './lablup-progress-bar';
 import '@material/mwc-button';
 import '@material/mwc-checkbox';
+import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon';
 import '@material/mwc-icon-button';
 import '@material/mwc-icon-button-toggle';
@@ -30,24 +27,22 @@ import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
 import { Menu } from '@material/mwc-menu';
 import '@material/mwc-textfield';
-import { Checkbox } from '@material/mwc-checkbox';
 import { TextField } from '@material/mwc-textfield';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-import './backend-ai-dialog';
-import './backend-ai-list-status';
-import './lablup-expansion';
-import './lablup-grid-sort-filter-column';
-import './lablup-progress-bar';
-import '../plastics/lablup-shields/lablup-shields';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
-import { BackendAIPage } from './backend-ai-page';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/grid/vaadin-grid-tree-toggle';
+import '@vaadin/icons/vaadin-icons';
+import '@vaadin/tooltip';
+import { css, CSSResultGroup, TemplateResult, html, render } from 'lit';
 import {
-  IronFlex,
-  IronFlexAlignment,
-} from '../plastics/layout/iron-flex-layout-classes';
-import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

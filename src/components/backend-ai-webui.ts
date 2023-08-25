@@ -2,26 +2,39 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { LitElement, html, CSSResultGroup } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import {
-  get as _text,
-  registerTranslateConfig,
-  translate as _t,
-  use as setLanguage,
-} from 'lit-translate';
-
-// PWA components
-import { connect } from 'pwa-helpers/connect-mixin';
-import { installOfflineWatcher } from 'pwa-helpers/network';
-import { installRouter } from 'pwa-helpers/router';
-import { store } from '../store';
-
 import { navigate, updateOffline } from '../backend-ai-app';
-
+// import '../lib/backend.ai-client-esm';
+import { default as TabCount } from '../lib/TabCounter';
+import {
+  IronFlex,
+  IronFlexAlignment,
+  IronFlexFactors,
+  IronPositioning,
+} from '../plastics/layout/iron-flex-layout-classes';
 import { Drawer } from '../plastics/mwc/mwc-drawer';
+import '../plastics/mwc/mwc-multi-select';
 import '../plastics/mwc/mwc-top-app-bar-fixed';
+import { store } from '../store';
+import './backend-ai-app-launcher';
+import './backend-ai-common-utils';
+import BackendAICommonUtils from './backend-ai-common-utils';
+import './backend-ai-help-button';
+import './backend-ai-indicator-pool';
+import './backend-ai-login';
+import BackendAIMetadataStore from './backend-ai-metadata-store';
+import './backend-ai-offline-indicator';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-project-switcher';
+import './backend-ai-resource-broker';
+import BackendAISettingsStore from './backend-ai-settings-store';
+import './backend-ai-sidepanel-notification';
+import './backend-ai-sidepanel-task';
+import './backend-ai-splash';
+import BackendAITasker from './backend-ai-tasker';
+import './backend-ai-user-dropdown-menu';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import './lablup-notification';
+import LablupTermsOfService from './lablup-terms-of-service';
 import '@material/mwc-button';
 import '@material/mwc-circular-progress';
 import '@material/mwc-icon';
@@ -33,41 +46,19 @@ import { Menu } from '@material/mwc-menu';
 import '@material/mwc-select';
 import '@material/mwc-textarea';
 import '@vaadin/tooltip';
-
-import toml from 'markty-toml';
-
-import './backend-ai-app-launcher';
-import './backend-ai-common-utils';
-import './backend-ai-help-button';
-import './backend-ai-indicator-pool';
-import './backend-ai-login';
-import './backend-ai-offline-indicator';
-import './backend-ai-resource-broker';
-import './backend-ai-sidepanel-notification';
-import './backend-ai-sidepanel-task';
-import './backend-ai-splash';
-import './backend-ai-project-switcher';
-import './backend-ai-user-dropdown-menu';
-
-import BackendAICommonUtils from './backend-ai-common-utils';
-import BackendAISettingsStore from './backend-ai-settings-store';
-import BackendAIMetadataStore from './backend-ai-metadata-store';
-import BackendAITasker from './backend-ai-tasker';
-import { BackendAIPage } from './backend-ai-page';
-import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
-
-import './lablup-notification';
-import LablupTermsOfService from './lablup-terms-of-service';
-// import '../lib/backend.ai-client-esm';
-import { default as TabCount } from '../lib/TabCounter';
-
+import { LitElement, html, CSSResultGroup } from 'lit';
 import {
-  IronFlex,
-  IronFlexAlignment,
-  IronFlexFactors,
-  IronPositioning,
-} from '../plastics/layout/iron-flex-layout-classes';
-import '../plastics/mwc/mwc-multi-select';
+  get as _text,
+  registerTranslateConfig,
+  translate as _t,
+  use as setLanguage,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import toml from 'markty-toml';
+// PWA components
+import { connect } from 'pwa-helpers/connect-mixin';
+import { installOfflineWatcher } from 'pwa-helpers/network';
+import { installRouter } from 'pwa-helpers/router';
 
 registerTranslateConfig({
   loader: (lang) =>

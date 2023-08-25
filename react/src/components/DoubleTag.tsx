@@ -1,5 +1,5 @@
-import { Tag } from 'antd';
 import Flex from './Flex';
+import { Tag } from 'antd';
 import _ from 'lodash';
 import React from 'react';
 

@@ -2,34 +2,27 @@
  @license
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-
-import './backend-ai-list-status';
-
-import '@vaadin/grid/vaadin-grid';
-
 import '../plastics/lablup-shields/lablup-shields';
-
-import '@material/mwc-button/mwc-button';
-
-import '@material/mwc-list/mwc-list-item';
-import { Switch } from '@material/mwc-switch';
-import { Select } from '@material/mwc-select';
-import { TextArea } from '@material/mwc-textarea';
-import { TextField } from '@material/mwc-textfield';
-
-import './backend-ai-dialog';
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
 import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import { Select } from '@material/mwc-select';
+import { Switch } from '@material/mwc-switch';
+import { TextArea } from '@material/mwc-textarea';
+import { TextField } from '@material/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend AI Scaling Group List

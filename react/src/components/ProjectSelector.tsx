@@ -1,11 +1,10 @@
-import React from 'react';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
 import { ProjectSelectorQuery } from './__generated__/ProjectSelectorQuery.graphql';
-
-import _ from 'lodash';
 import { Select, SelectProps } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import _ from 'lodash';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
   onSelectProject?: (project: any) => void;

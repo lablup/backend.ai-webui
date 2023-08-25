@@ -8,6 +8,7 @@
  part of the polymer project is also subject to an additional IP rights grant
  found at http://polymer.github.io/PATENTS.txt
  */
+
 /**
  The `<iron-flex-layout>` component provides simple ways to use
  [CSS flexible box
@@ -70,7 +71,6 @@
  @pseudoElement iron-flex-layout
  @demo demo/index.html
  */
-
 import { css } from 'lit';
 
 export const IronFlexLayout =

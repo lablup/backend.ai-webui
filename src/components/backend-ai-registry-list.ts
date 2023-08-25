@@ -2,32 +2,29 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-import BackendAIIndicator from './backend-ai-indicator';
-import BackendAIIndicatorPool from './backend-ai-indicator-pool';
-import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
-import './backend-ai-dialog';
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import '../plastics/lablup-shields/lablup-shields';
-
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import BackendAIIndicator from './backend-ai-indicator';
+import BackendAIIndicatorPool from './backend-ai-indicator-pool';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import '@material/mwc-button/mwc-button';
-import { Select } from '@material/mwc-select/mwc-select';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import { Select } from '@material/mwc-select/mwc-select';
+import '@material/mwc-switch/mwc-switch';
 import '@material/mwc-textfield';
-import '@vaadin/grid/vaadin-grid';
 import { TextField } from '@material/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, query } from 'lit/decorators.js';
 
 /**
  Backend AI Registry List

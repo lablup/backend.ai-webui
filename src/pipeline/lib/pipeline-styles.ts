@@ -1,5 +1,5 @@
-import { css } from 'lit';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { css } from 'lit';
 
 export const BackendAIPipelineStyles = [
   // language=CSS

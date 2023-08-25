@@ -1,15 +1,14 @@
-import React from 'react';
-
-import { Form, InputNumber, theme } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { useSuspendedBackendaiClient } from '../hooks';
 import { baiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import Flex from './Flex';
-import { useFragment } from 'react-relay';
-import graphql from 'babel-plugin-relay/macro';
-import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
+import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
+import { Form, InputNumber, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 interface Props extends BAIModalProps {
   endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;

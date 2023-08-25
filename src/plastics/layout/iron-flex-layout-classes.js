@@ -9,6 +9,7 @@
  found at http://polymer.github.io/PATENTS.txt
  */
 import { css } from 'lit';
+
 /*
 A set of layout classes that let you specify layout properties directly in
 markup. You must include this file in every element that needs to use them.

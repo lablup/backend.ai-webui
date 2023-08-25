@@ -1,7 +1,7 @@
-import React from 'react';
-import { Modal, ModalProps } from 'antd';
 // @ts-ignore
 import rawBAIModalCss from './BAIModal.css?raw';
+import { Modal, ModalProps } from 'antd';
+import React from 'react';
 
 export interface BAIModalProps extends ModalProps {}
 const BAIModal: React.FC<BAIModalProps> = ({ ...modalProps }) => {

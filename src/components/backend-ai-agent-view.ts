@@ -2,21 +2,17 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, state } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-tab-bar';
-import '@material/mwc-tab';
-
-import './lablup-activity-panel';
 import './backend-ai-agent-list';
-import './backend-ai-storage-proxy-list';
-import './backend-ai-resource-group-list';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-resource-group-list';
+import './backend-ai-storage-proxy-list';
+import './lablup-activity-panel';
+import '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, state } from 'lit/decorators.js';
 
 type Status = 'active' | 'inactive';
 type Tab =

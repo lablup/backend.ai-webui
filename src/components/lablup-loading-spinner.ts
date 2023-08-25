@@ -2,11 +2,9 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
+import '@material/mwc-circular-progress';
 import { css, CSSResultGroup, html, LitElement } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-import '@material/mwc-circular-progress';
 
 /**
  Lablup Loading Spinner

@@ -1,15 +1,14 @@
-import React from 'react';
-import graphql from 'babel-plugin-relay/macro';
-import { useQuery } from 'react-query';
-import { useFragment } from 'react-relay';
-import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
-
-import { QRCode, Typography, Input, theme, Form, message, Spin } from 'antd';
-import { useTranslation } from 'react-i18next';
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanMutation } from '../hooks/reactQueryAlias';
-import Flex from './Flex';
 import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
+import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
+import { QRCode, Typography, Input, theme, Form, message, Spin } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { useFragment } from 'react-relay';
 
 type TOTPActivateFormInput = {
   otp: number;

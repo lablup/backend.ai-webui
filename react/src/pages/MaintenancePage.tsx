@@ -1,9 +1,9 @@
-import React from 'react';
-import { Button, Card, Row, Col, Typography, theme } from 'antd';
-import { RedoOutlined } from '@ant-design/icons';
-import { useTranslation, Trans } from 'react-i18next';
 import { useWebComponentInfo } from '../components/DefaultProviders';
 import Flex from '../components/Flex';
+import { RedoOutlined } from '@ant-design/icons';
+import { Button, Card, Row, Col, Typography, theme } from 'antd';
+import React from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
 const MaintenancePage: React.FC = () => {
   const { t } = useTranslation();

@@ -2,25 +2,22 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { TextField } from '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-button/mwc-button';
-
-import BackendAiCommonUtils from './backend-ai-common-utils';
-import BackendAIDialog from './backend-ai-dialog';
-import { BackendAIPage } from './backend-ai-page';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import { Client, ClientConfig } from '../lib/backend.ai-client-esm';
+import BackendAiCommonUtils from './backend-ai-common-utils';
+import BackendAIDialog from './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import '@material/mwc-button/mwc-button';
+import { TextField } from '@material/mwc-textfield/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Change Forgot Password View

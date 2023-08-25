@@ -1,13 +1,13 @@
-import { render, screen, act, waitFor } from '@testing-library/react';
-import React, { Suspense } from 'react';
 import DomainSelector from './DomainSelector';
+import { render, screen, act, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React, { Suspense } from 'react';
+import { RelayEnvironmentProvider } from 'react-relay';
 import {
   MockEnvironment,
   createMockEnvironment,
   MockPayloadGenerator,
 } from 'relay-test-utils';
-import { RelayEnvironmentProvider } from 'react-relay';
 
 jest.mock('react-i18next', () => ({
   // this mock makes sure any components using the translate hook can use it without a warning being shown

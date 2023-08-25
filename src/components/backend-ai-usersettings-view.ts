@@ -2,33 +2,28 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-import { store } from '../store';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
-import '@material/mwc-tab-bar';
-import { Tab } from '@material/mwc-tab';
-import '@material/mwc-button';
-
+import { store } from '../store';
 import './backend-ai-dialog';
+import './backend-ai-error-log-list';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-usersettings-general-list';
 import './lablup-activity-panel';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
-import './backend-ai-error-log-list';
-import './backend-ai-usersettings-general-list';
-import './backend-ai-list-status';
+import '@material/mwc-button';
+import { Tab } from '@material/mwc-tab';
+import '@material/mwc-tab-bar';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -2,8 +2,6 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { html, LitElement } from 'lit';
-import { customElement } from 'lit/decorators.js';
 import {
   PipelineEnvironment,
   PipelineInfo,
@@ -14,6 +12,8 @@ import {
   PipelineTaskType,
 } from '../lib/pipeline-type';
 import { default as YAML } from 'js-yaml';
+import { html, LitElement } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 /**
   Pipeline Utils

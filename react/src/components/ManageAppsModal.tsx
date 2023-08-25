@@ -1,10 +1,10 @@
-import React from 'react';
-import { Input, Typography, Space, Button, Form } from 'antd';
-import { DeleteOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
-import { useTranslation } from 'react-i18next';
+import BAIModal, { BAIModalProps } from './BAIModal';
 import { useWebComponentInfo } from './DefaultProviders';
 import Flex from './Flex';
-import BAIModal, { BAIModalProps } from './BAIModal';
+import { DeleteOutlined, PlusOutlined, CheckOutlined } from '@ant-design/icons';
+import { Input, Typography, Space, Button, Form } from 'antd';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends BAIModalProps {}
 const { Text } = Typography;

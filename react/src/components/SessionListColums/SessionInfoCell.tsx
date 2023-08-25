@@ -1,19 +1,18 @@
-import React, { useState } from 'react';
-import { useFragment } from 'react-relay';
-import graphql from 'babel-plugin-relay/macro';
-import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
-
-import { Button, Form, Input, Typography, theme } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
-import Flex from '../Flex';
-import { useTranslation } from 'react-i18next';
 import {
   // useBackendaiImageMetaData,
   useSuspendedBackendaiClient,
 } from '../../hooks';
+import { useTanMutation } from '../../hooks/reactQueryAlias';
+import Flex from '../Flex';
 import ImageMetaIcon from '../ImageMetaIcon';
 import SessionKernelTag from '../SessionKernelTag';
-import { useTanMutation } from '../../hooks/reactQueryAlias';
+import { SessionInfoCellFragment$key } from './__generated__/SessionInfoCellFragment.graphql';
+import { EditOutlined } from '@ant-design/icons';
+import { Button, Form, Input, Typography, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 const isRunningStatus = (status: string = '') => {
   return [

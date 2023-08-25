@@ -2,9 +2,9 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
+import { BackendAIPage } from '../components/backend-ai-page';
 import { html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-import { BackendAIPage } from '../components/backend-ai-page';
 
 /**
  Test plugin for Backend.AI WebUI

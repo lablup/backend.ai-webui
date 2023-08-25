@@ -2,44 +2,39 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query, queryAll } from 'lit/decorators.js';
-
+import '../../components/backend-ai-dialog';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
+import { BackendAIPage } from '../../components/backend-ai-page';
+import '../../components/lablup-activity-panel';
+import '../../components/lablup-codemirror';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
-
-import { default as YAML } from 'js-yaml';
-
-import '@material/mwc-tab/mwc-tab';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-menu/mwc-menu';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-select/mwc-select';
-import '@material/mwc-list/mwc-list-item';
-
-import '@vaadin/vaadin-grid/vaadin-grid';
-import '@vaadin/vaadin-grid/vaadin-grid-column';
-import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
-import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
-
-import PipelineUtils from '../lib/pipeline-utils';
+import '../lib/pipeline-flow';
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import {
   PipelineJob,
   PipelineTaskInstance,
   PipelineYAML,
 } from '../lib/pipeline-type';
-import { BackendAIPage } from '../../components/backend-ai-page';
+import PipelineUtils from '../lib/pipeline-utils';
 import './pipeline-job-list';
-import '../lib/pipeline-flow';
-import '../../components/lablup-activity-panel';
-import '../../components/lablup-codemirror';
-import '../../components/backend-ai-dialog';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import '@vaadin/vaadin-grid/vaadin-grid';
+import '@vaadin/vaadin-grid/vaadin-grid-column';
+import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import '@vaadin/vaadin-grid/vaadin-grid-sort-column';
+import { default as YAML } from 'js-yaml';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { customElement, property, query, queryAll } from 'lit/decorators.js';
 
 /**
  Pipeline Job View

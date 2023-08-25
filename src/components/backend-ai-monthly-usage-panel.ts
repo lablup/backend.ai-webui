@@ -2,18 +2,15 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { translate as _t } from 'lit-translate';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { css, html, LitElement } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Monthly Usage Panel

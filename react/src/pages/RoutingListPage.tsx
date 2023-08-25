@@ -1,3 +1,25 @@
+import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointStatusTag from '../components/EndpointStatusTag';
+import Flex from '../components/Flex';
+import ImageMetaIcon from '../components/ImageMetaIcon';
+import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
+import { baiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import {
+  RoutingListPageQuery,
+  RoutingListPageQuery$data,
+} from './__generated__/RoutingListPageQuery.graphql';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  QuestionCircleOutlined,
+  ReloadOutlined,
+  SettingOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import {
   Breadcrumb,
   Button,
@@ -10,33 +32,11 @@ import {
   Typography,
   theme,
 } from 'antd';
-import {
-  CheckOutlined,
-  CloseOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  WarningOutlined,
-} from '@ant-design/icons';
-import React, { useState, useTransition } from 'react';
-import Flex from '../components/Flex';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useLazyLoadQuery } from 'react-relay';
-import { useTranslation } from 'react-i18next';
 import graphql from 'babel-plugin-relay/macro';
-import {
-  RoutingListPageQuery,
-  RoutingListPageQuery$data,
-} from './__generated__/RoutingListPageQuery.graphql';
-import CopyableCodeText from '../components/CopyableCodeText';
-import ImageMetaIcon from '../components/ImageMetaIcon';
-import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import { baiSignedRequestWithPromise } from '../helper';
-import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
-import EndpointStatusTag from '../components/EndpointStatusTag';
-import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface RoutingInfo {
   route_id: string;

@@ -2,38 +2,35 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import PipelineUtils from '../lib/pipeline-utils';
-import {
-  PipelineInfo,
-  PipelineInfoExtended,
-  PipelineYAML,
-} from '../lib/pipeline-type';
-import PipelineConfigurationForm from '../lib/pipeline-configuration-form';
-import '../lib/pipeline-configuration-form';
 import '../../components/backend-ai-dialog';
+import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { BackendAIPage } from '../../components/backend-ai-page';
 import '../../components/lablup-activity-panel';
 import '../../components/lablup-codemirror';
-import { BackendAIPage } from '../../components/backend-ai-page';
-import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
-import { default as YAML } from 'js-yaml';
-
+import PipelineConfigurationForm from '../lib/pipeline-configuration-form';
+import '../lib/pipeline-configuration-form';
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
+import {
+  PipelineInfo,
+  PipelineInfoExtended,
+  PipelineYAML,
+} from '../lib/pipeline-type';
+import PipelineUtils from '../lib/pipeline-utils';
 import '@material/mwc-button';
 import '@material/mwc-icon/mwc-icon';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
+import { default as YAML } from 'js-yaml';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Pipeline List

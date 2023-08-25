@@ -16,11 +16,10 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
-import { css } from 'lit';
-import { customElement } from 'lit/decorators.js';
-
 import { TopAppBarBase } from '@material/mwc-top-app-bar/mwc-top-app-bar-base';
 import { styles } from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
+import { css } from 'lit';
+import { customElement } from 'lit/decorators.js';
 
 declare global {
   interface HTMLElementTagNameMap {

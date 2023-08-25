@@ -1,22 +1,19 @@
-import React, { useState, useTransition } from 'react';
-import { useTranslation } from 'react-i18next';
 import { QuotaScopeType, addQuotaScopeTypePrefix } from '../helper/index';
-
-import { Card, Form, Spin } from 'antd';
-
+import { useCurrentDomainValue, useUpdatableState } from '../hooks';
+import DomainSelector from './DomainSelector';
 import Flex from './Flex';
 import ProjectSelector from './ProjectSelector';
-import DomainSelector from './DomainSelector';
-import UserSelector from './UserSelector';
 import QuotaScopeCard from './QuotaScopeCard';
-import { useFragment, useLazyLoadQuery } from 'react-relay';
-
-import graphql from 'babel-plugin-relay/macro';
-import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from './__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
-import { StorageHostSettingsPanelQuery } from './__generated__/StorageHostSettingsPanelQuery.graphql';
 import QuotaSettingModal from './QuotaSettingModal';
+import UserSelector from './UserSelector';
+import { StorageHostSettingsPanelQuery } from './__generated__/StorageHostSettingsPanelQuery.graphql';
+import { StorageHostSettingsPanel_storageVolumeFrgmt$key } from './__generated__/StorageHostSettingsPanel_storageVolumeFrgmt.graphql';
 import { useToggle } from 'ahooks';
-import { useCurrentDomainValue, useUpdatableState } from '../hooks';
+import { Card, Form, Spin } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment, useLazyLoadQuery } from 'react-relay';
 
 interface StorageHostSettingsPanelProps {
   extraFetchKey?: string;

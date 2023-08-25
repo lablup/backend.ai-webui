@@ -2,15 +2,14 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../layout/iron-flex-layout-classes';
+import { css, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 type colorType = {
   colorB: string;

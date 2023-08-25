@@ -3,11 +3,10 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 // import {get as _text, registerTranslateConfig, translate as _t, use as setLanguage} from "lit-translate";
+import { BackendAIPage } from './backend-ai-page';
+import '@material/mwc-icon-button';
 import { css, CSSResultGroup, html } from 'lit';
 import { customElement, property } from 'lit/decorators.js';
-
-import '@material/mwc-icon-button';
-import { BackendAIPage } from './backend-ai-page';
 
 /**
  Backend.AI Help page link button

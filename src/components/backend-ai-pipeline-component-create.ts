@@ -2,27 +2,23 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-menu/mwc-menu';
-import '@material/mwc-select/mwc-select';
-import { TextField } from '@material/mwc-textfield';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
 import { default as PainKiller } from './backend-ai-painkiller';
 import { BackendAIPipelineCommon } from './backend-ai-pipeline-common';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-menu/mwc-menu';
+import '@material/mwc-select/mwc-select';
+import { TextField } from '@material/mwc-textfield';
+import { css, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

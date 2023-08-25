@@ -16,12 +16,11 @@
  See the License for the specific language governing permissions and
  limitations under the License.
  */
+import { BackendAiStyles } from '../../components/backend-ai-general-styles';
+import { TopAppBarFixedBase } from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
 import { styles } from '@material/mwc-top-app-bar/mwc-top-app-bar.css';
 import { css } from 'lit';
 import { customElement } from 'lit/decorators.js';
-import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-
-import { TopAppBarFixedBase } from '@material/mwc-top-app-bar-fixed/mwc-top-app-bar-fixed-base';
 
 declare global {
   interface HTMLElementTagNameMap {

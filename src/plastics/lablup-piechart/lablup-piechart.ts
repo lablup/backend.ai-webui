@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { css, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../layout/iron-flex-layout-classes';
+import { css, html, LitElement } from 'lit';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  `<lablup-piechart>` is a convenient svg-format pie chart.

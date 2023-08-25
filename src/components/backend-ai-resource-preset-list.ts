@@ -2,30 +2,27 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/item/vaadin-item';
-
-import '@material/mwc-textfield';
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-icon-button';
-import '@material/mwc-icon';
-
-import './backend-ai-dialog';
-import './backend-ai-list-status';
 import '../plastics/lablup-shields/lablup-shields';
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
 import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/item/vaadin-item';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

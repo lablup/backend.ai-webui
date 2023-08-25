@@ -1,13 +1,15 @@
-import React, { useDeferredValue } from 'react';
-import graphql from 'babel-plugin-relay/macro';
-import { useMutation } from 'react-relay';
-import { useLazyLoadQuery } from 'react-relay';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import { useWebComponentInfo } from './DefaultProviders';
+import TOTPActivateModal from './TOTPActivateModal';
+import { UserSettingModalMutation } from './__generated__/UserSettingModalMutation.graphql';
 import {
   UserSettingModalQuery,
   UserSettingModalQuery$data,
 } from './__generated__/UserSettingModalQuery.graphql';
-import { UserSettingModalMutation } from './__generated__/UserSettingModalMutation.graphql';
-
+import { ExclamationCircleFilled } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Form,
   Input,
@@ -18,16 +20,13 @@ import {
   Modal,
   theme,
 } from 'antd';
-import { useTranslation } from 'react-i18next';
-import { useWebComponentInfo } from './DefaultProviders';
-import { useToggle } from 'ahooks';
-import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import TOTPActivateModal from './TOTPActivateModal';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import React, { useDeferredValue } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useQuery } from 'react-query';
-import { ExclamationCircleFilled } from '@ant-design/icons';
-import BAIModal, { BAIModalProps } from './BAIModal';
+import { useMutation } from 'react-relay';
+import { useLazyLoadQuery } from 'react-relay';
 
 type User = UserSettingModalQuery$data['user'];
 

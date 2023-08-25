@@ -1,6 +1,6 @@
+import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import reactToWebComponent from './helper/react-to-webcomponent';
 import React, { Suspense } from 'react';
-import { loadCustomThemeConfig } from './helper/customThemeConfig';
 import { Route, Routes } from 'react-router-dom';
 
 // Load custom theme config once in react/index.tsx

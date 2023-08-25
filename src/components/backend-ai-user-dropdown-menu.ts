@@ -2,30 +2,28 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { customElement, property, query } from 'lit/decorators.js';
-import { css, LitElement, html, CSSResultGroup } from 'lit';
-import { translate as _t } from 'lit-translate';
-import '@material/mwc-select';
-import '@material/mwc-icon-button';
-
-import BackendAiCommonUtils from './backend-ai-common-utils';
-import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import { navigate } from '../backend-ai-app';
+import QR from '../lib/qr';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { get as _text } from 'lit-translate/util';
-import { Menu } from '@material/mwc-menu';
-import { IconButton } from '@material/mwc-icon-button';
-import { Switch } from '@material/mwc-switch';
 import { store } from '../store';
-import { navigate } from '../backend-ai-app';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-icon-button';
+import { IconButton } from '@material/mwc-icon-button';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-select';
+import { Switch } from '@material/mwc-switch';
 import { TextField } from '@material/mwc-textfield';
-import QR from '../lib/qr';
+import { css, LitElement, html, CSSResultGroup } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { get as _text } from 'lit-translate/util';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend AI User dropdown menu

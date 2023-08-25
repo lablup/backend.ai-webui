@@ -3,28 +3,25 @@
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
 import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import BackendAIDialog from './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import './lablup-expansion';
 import '@material/mwc-button';
 import { Checkbox } from '@material/mwc-checkbox';
 import '@material/mwc-icon-button';
 import { TextField } from '@material/mwc-textfield';
-import 'macro-carousel';
-
-import BackendAIDialog from './backend-ai-dialog';
-import './lablup-expansion';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
-import { BackendAIPage } from './backend-ai-page';
+import { css, CSSResultGroup, html } from 'lit';
 import {
-  IronFlex,
-  IronFlexAlignment,
-} from '../plastics/layout/iron-flex-layout-classes';
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import 'macro-carousel';
 
 /**
  Backend.AI App Launcher

@@ -2,50 +2,46 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-
-import { Button } from '@material/mwc-button';
-import '@material/mwc-formfield';
-import '@material/mwc-icon-button';
-import '@material/mwc-list';
-import '@material/mwc-radio';
-import { Select } from '@material/mwc-select';
-import '@material/mwc-textfield';
-import { Radio } from '@material/mwc-radio';
-import { Switch } from '@material/mwc-switch';
-import { TextField } from '@material/mwc-textfield';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-column-group';
-import '@vaadin/grid/vaadin-grid-sort-column';
-import '@vaadin/grid/vaadin-grid-filter-column';
-import '@vaadin/grid/vaadin-grid-selection-column';
-import '@vaadin/progress-bar/vaadin-progress-bar';
-import '@vaadin/item/vaadin-item';
-import '@vaadin/tooltip';
-
-import './backend-ai-dialog';
-import './backend-ai-list-status';
-import './backend-ai-session-launcher';
-import './lablup-grid-sort-filter-column';
-import './lablup-loading-spinner';
-import BackendAIDialog from './backend-ai-dialog';
-import LablupLoadingSpinner from './lablup-loading-spinner';
-
-import '../plastics/lablup-shields/lablup-shields';
-import { default as PainKiller } from './backend-ai-painkiller';
 import tus from '../lib/tus';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import BackendAIDialog from './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-list-status';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-session-launcher';
+import BackendAiSessionLauncher from './backend-ai-session-launcher';
+import './lablup-grid-sort-filter-column';
+import './lablup-loading-spinner';
+import LablupLoadingSpinner from './lablup-loading-spinner';
+import { Button } from '@material/mwc-button';
+import '@material/mwc-formfield';
+import '@material/mwc-icon-button';
+import '@material/mwc-list';
+import '@material/mwc-radio';
+import { Radio } from '@material/mwc-radio';
+import { Select } from '@material/mwc-select';
+import { Switch } from '@material/mwc-switch';
+import '@material/mwc-textfield';
+import { TextField } from '@material/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column-group';
+import '@vaadin/grid/vaadin-grid-filter-column';
+import '@vaadin/grid/vaadin-grid-selection-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import '@vaadin/item/vaadin-item';
+import '@vaadin/progress-bar/vaadin-progress-bar';
+import '@vaadin/tooltip';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
@@ -72,9 +68,6 @@ interface fileData {
   error: boolean;
   complete: boolean;
 }
-
-import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
-import BackendAiSessionLauncher from './backend-ai-session-launcher';
 
 /**
  Backend AI Storage List

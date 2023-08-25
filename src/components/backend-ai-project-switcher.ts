@@ -2,21 +2,18 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { customElement, property, query } from 'lit/decorators.js';
-import { css, LitElement, html, CSSResultGroup } from 'lit';
-import { translate as _t } from 'lit-translate';
-import '@vaadin/combo-box';
-
-import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@vaadin/combo-box';
 import type { ComboBox } from '@vaadin/combo-box';
+import { css, LitElement, html, CSSResultGroup } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend AI Project Switcher

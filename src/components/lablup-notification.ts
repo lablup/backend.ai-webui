@@ -2,17 +2,14 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text } from 'lit-translate';
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import '@material/mwc-icon-button';
-import '../plastics/mwc/mwc-snackbar';
-
 import { navigate } from '../backend-ai-app';
+import '../plastics/mwc/mwc-snackbar';
 import { store } from '../store';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-icon-button';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Lablup Notification

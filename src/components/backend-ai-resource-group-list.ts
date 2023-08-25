@@ -2,35 +2,30 @@
  @license
  Copyright (c) 2015-2018 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query, state } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-column';
-import '@vaadin/item/vaadin-item';
-
 import '../plastics/lablup-shields/lablup-shields';
-
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-switch/mwc-switch';
-import '@material/mwc-select/mwc-select';
-import '@material/mwc-textarea/mwc-textarea';
-import '@material/mwc-textfield/mwc-textfield';
-
-import './backend-ai-dialog';
-import './lablup-expansion';
-import './backend-ai-multi-select';
-import LablupExpansion from './lablup-expansion';
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import './backend-ai-multi-select';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-expansion';
+import LablupExpansion from './lablup-expansion';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-select/mwc-select';
+import '@material/mwc-switch/mwc-switch';
+import '@material/mwc-textarea/mwc-textarea';
+import '@material/mwc-textfield/mwc-textfield';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/item/vaadin-item';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query, state } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -2,13 +2,12 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text } from 'lit-translate';
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
 import './backend-ai-dialog';
 import BackendAIDialog from './backend-ai-dialog';
 import '@material/mwc-icon-button';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { get as _text } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend.AI Splash component

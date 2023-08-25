@@ -2,12 +2,6 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import '@material/mwc-ripple';
-
 import {
   IronFlex,
   IronFlexAlignment,
@@ -15,6 +9,9 @@ import {
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
 import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-ripple';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Lablup Expansion

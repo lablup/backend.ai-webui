@@ -1,3 +1,5 @@
+// import { createClient } from "graphql-ws";
+import { removeSkipOnClientDirective } from './helper/graphql-transformer';
 import {
   Environment,
   Network,
@@ -7,8 +9,6 @@ import {
   SubscribeFunction,
   RelayFeatureFlags,
 } from 'relay-runtime';
-// import { createClient } from "graphql-ws";
-import { removeSkipOnClientDirective } from './helper/graphql-transformer';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 

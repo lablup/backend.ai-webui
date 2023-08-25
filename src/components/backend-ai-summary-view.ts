@@ -2,35 +2,30 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { unsafeHTML } from 'lit/directives/unsafe-html.js';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-button';
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-import '@material/mwc-select';
-
-import './lablup-activity-panel';
-import './backend-ai-resource-monitor';
-import './backend-ai-resource-panel';
-import './backend-ai-session-launcher';
-import './backend-ai-release-check';
-import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-import { marked } from 'marked';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-release-check';
+import './backend-ai-resource-monitor';
+import './backend-ai-resource-panel';
+import './backend-ai-session-launcher';
+import './lablup-activity-panel';
+import '@material/mwc-button';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-select';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { unsafeHTML } from 'lit/directives/unsafe-html.js';
+import { marked } from 'marked';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

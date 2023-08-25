@@ -1,11 +1,10 @@
-import React, { useDeferredValue, useState } from 'react';
-import graphql from 'babel-plugin-relay/macro';
-import { useLazyLoadQuery } from 'react-relay';
 import { UserSelectorQuery } from './__generated__/UserSelectorQuery.graphql';
-
 import { Select, SelectProps } from 'antd';
-import { useTranslation } from 'react-i18next';
+import graphql from 'babel-plugin-relay/macro';
 import _ from 'lodash';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
 
 interface Props extends SelectProps {
   onSelectUser: (user: any) => void;

@@ -2,20 +2,16 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, LitElement, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import PipelineUtils from '../lib/pipeline-utils';
 import { BackendAiStyles } from '../../components/backend-ai-general-styles';
-import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import '../../components/lablup-codemirror';
+import '../../components/lablup-expansion';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../../plastics/layout/iron-flex-layout-classes';
+import { BackendAIPipelineStyles } from '../lib/pipeline-styles';
 import {
   PipelineInfo,
   PipelineInfoExtended,
@@ -26,23 +22,23 @@ import {
   PipelineEnvironment,
   PipelineResources,
 } from '../lib/pipeline-type';
-import { default as YAML } from 'js-yaml';
-
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
+import PipelineUtils from '../lib/pipeline-utils';
+import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-list/mwc-list';
 import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-list/mwc-check-list-item';
 import '@material/mwc-select';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
 import '@material/mwc-textarea';
 import '@material/mwc-textfield';
-
 import '@vaadin/vaadin-grid/vaadin-grid';
 import '@vaadin/vaadin-grid/vaadin-grid-column';
 import '@vaadin/vaadin-grid/vaadin-grid-filter-column';
 import '@vaadin/vaadin-grid/vaadin-grid-selection-column';
-
-import '../../components/lablup-expansion';
+import { default as YAML } from 'js-yaml';
+import { css, CSSResultGroup, html, LitElement, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 type ConfigurationType = 'pipeline' | 'pipeline-task';
 

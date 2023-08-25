@@ -2,34 +2,30 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html, render } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-import { BackendAIPage } from './backend-ai-page';
-
-import '@vaadin/grid/vaadin-grid';
-import '@vaadin/grid/vaadin-grid-column';
-import '@vaadin/grid/vaadin-grid-sort-column';
 import '../plastics/lablup-shields/lablup-shields';
-
-import '@material/mwc-linear-progress';
-import '@material/mwc-icon-button';
-import { Switch } from '@material/mwc-switch';
-import '@material/mwc-list';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon/mwc-icon';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
 import BackendAIDialog from './backend-ai-dialog';
-import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
 import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import BackendAIListStatus, { StatusCondition } from './backend-ai-list-status';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import './lablup-progress-bar';
+import '@material/mwc-icon-button';
+import '@material/mwc-icon/mwc-icon';
+import '@material/mwc-linear-progress';
+import '@material/mwc-list';
+import '@material/mwc-list/mwc-list-item';
+import { Switch } from '@material/mwc-switch';
+import '@vaadin/grid/vaadin-grid';
+import '@vaadin/grid/vaadin-grid-column';
+import '@vaadin/grid/vaadin-grid-sort-column';
+import { css, CSSResultGroup, html, render } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend.AI Agent List

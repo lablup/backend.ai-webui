@@ -2,33 +2,29 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
 import './backend-ai-pipeline-component-view';
 import './backend-ai-pipeline-create';
 import './backend-ai-pipeline-list';
 import './backend-ai-session-list';
 import './lablup-codemirror';
 import './lablup-loading-spinner';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import { css, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -1,10 +1,10 @@
-import { Alert, Segmented, Tabs, Typography, theme } from 'antd';
-import React, { PropsWithChildren, Suspense, useState } from 'react';
 import Flex from '../components/Flex';
-import { useTranslation } from 'react-i18next';
-import { ThunderboltTwoTone } from '@ant-design/icons';
 import SessionList from '../components/SessionList';
 import { useCurrentProjectValue, useSuspendedBackendaiClient } from '../hooks';
+import { ThunderboltTwoTone } from '@ant-design/icons';
+import { Alert, Segmented, Tabs, Typography, theme } from 'antd';
+import React, { PropsWithChildren, Suspense, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const RUNNINGS = [
   'RUNNING',

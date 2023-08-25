@@ -1,9 +1,17 @@
-import React from 'react';
-import graphql from 'babel-plugin-relay/macro';
-import { useFragment, useMutation } from 'react-relay';
+import { _humanReadableDecimalSize } from '../helper/index';
+import Flex from './Flex';
+import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
+import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
 import { ResourcePolicyCardModifyProjectMutation } from './__generated__/ResourcePolicyCardModifyProjectMutation.graphql';
 import { ResourcePolicyCardModifyUserMutation } from './__generated__/ResourcePolicyCardModifyUserMutation.graphql';
-
+import { ResourcePolicyCard_project_resource_policy$key } from './__generated__/ResourcePolicyCard_project_resource_policy.graphql';
+import { ResourcePolicyCard_user_resource_policy$key } from './__generated__/ResourcePolicyCard_user_resource_policy.graphql';
+import {
+  EditFilled,
+  CloseOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Card,
@@ -13,21 +21,10 @@ import {
   message,
   theme,
 } from 'antd';
-import {
-  EditFilled,
-  CloseOutlined,
-  ExclamationCircleOutlined,
-} from '@ant-design/icons';
-
-import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
-import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
-
-import { _humanReadableDecimalSize } from '../helper/index';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { useToggle } from 'ahooks';
-import { ResourcePolicyCard_project_resource_policy$key } from './__generated__/ResourcePolicyCard_project_resource_policy.graphql';
-import { ResourcePolicyCard_user_resource_policy$key } from './__generated__/ResourcePolicyCard_user_resource_policy.graphql';
-import Flex from './Flex';
+import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends CardProps {
   projectResourcePolicyFrgmt: ResourcePolicyCard_project_resource_policy$key | null;

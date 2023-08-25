@@ -2,35 +2,29 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-activity-panel';
+import '@material/mwc-list/mwc-list-item';
+import { Select } from '@material/mwc-select';
+import '@material/mwc-switch/mwc-switch';
+import { TextField } from '@material/mwc-textfield';
 import '@vaadin/grid/vaadin-grid';
 import '@vaadin/grid/vaadin-grid-sort-column';
-
-import { Select } from '@material/mwc-select';
-import { TextField } from '@material/mwc-textfield';
-import '@material/mwc-switch/mwc-switch';
-import '@material/mwc-list/mwc-list-item';
-
-import './lablup-activity-panel';
-import { default as PainKiller } from './backend-ai-painkiller';
+import { css, CSSResultGroup, html } from 'lit';
+import {
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

@@ -2,23 +2,21 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import { css, CSSResultGroup, html, LitElement } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
+import { CodemirrorBaseStyle } from '../lib/codemirror/base-style.css';
+import { CodemirrorThemeMonokai } from '../lib/codemirror/theme/monokai.css';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-
+import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-icon';
 import '@vanillawc/wc-codemirror/index';
+import { WCCodeMirror } from '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
 import '@vanillawc/wc-codemirror/mode/yaml/yaml';
-import '@material/mwc-icon';
-import { CodemirrorThemeMonokai } from '../lib/codemirror/theme/monokai.css';
-import { CodemirrorBaseStyle } from '../lib/codemirror/base-style.css';
-import { WCCodeMirror } from '@vanillawc/wc-codemirror/index';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Lablup Codemirror

@@ -2,36 +2,31 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {
-  get as _text,
-  translate as _t,
-  translateUnsafeHTML as _tr,
-} from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-linear-progress/mwc-linear-progress';
-import '@material/mwc-icon';
-import '@material/mwc-icon-button';
-
-import './lablup-activity-panel';
-import './lablup-loading-spinner';
-import './lablup-progress-bar';
-import './backend-ai-resource-monitor';
-import './backend-ai-release-check';
-import '../plastics/lablup-shields/lablup-shields';
 import '../plastics/lablup-piechart/lablup-piechart';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-import { BackendAiStyles } from './backend-ai-general-styles';
+import '../plastics/lablup-shields/lablup-shields';
 import {
   IronFlex,
   IronFlexAlignment,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './backend-ai-release-check';
+import './backend-ai-resource-monitor';
+import './lablup-activity-panel';
+import './lablup-loading-spinner';
+import './lablup-progress-bar';
+import '@material/mwc-icon';
+import '@material/mwc-icon-button';
+import '@material/mwc-linear-progress/mwc-linear-progress';
+import { css, CSSResultGroup, html } from 'lit';
+import {
+  get as _text,
+  translate as _t,
+  translateUnsafeHTML as _tr,
+} from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

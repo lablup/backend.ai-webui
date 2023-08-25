@@ -2,34 +2,29 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-import { get as _text, translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property, query } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import '@material/mwc-select';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-icon-button';
-import '@material/mwc-textfield/mwc-textfield';
-import '@material/mwc-linear-progress';
-import '@material/mwc-switch';
-import { Select } from '@material/mwc-select';
-
-import './lablup-progress-bar';
-import './lablup-slider';
-import './backend-ai-dialog';
-
-import { default as PainKiller } from './backend-ai-painkiller';
-
 import '../plastics/lablup-shields/lablup-shields';
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
   IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import './backend-ai-dialog';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import { default as PainKiller } from './backend-ai-painkiller';
+import './lablup-progress-bar';
+import './lablup-slider';
+import '@material/mwc-icon-button';
+import '@material/mwc-linear-progress';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-select';
+import { Select } from '@material/mwc-select';
+import '@material/mwc-switch';
+import '@material/mwc-textfield/mwc-textfield';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.

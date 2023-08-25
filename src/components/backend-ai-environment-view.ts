@@ -2,26 +2,23 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import { translate as _t } from 'lit-translate';
-import { css, CSSResultGroup, html } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
-import { BackendAiStyles } from './backend-ai-general-styles';
 import {
   IronFlex,
   IronFlexAlignment,
 } from '../plastics/layout/iron-flex-layout-classes';
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-button';
-import { Tab } from '@material/mwc-tab';
-import './lablup-activity-panel';
 import './backend-ai-dialog';
 import './backend-ai-environment-list';
-import './backend-ai-resource-preset-list';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
 import './backend-ai-registry-list';
+import './backend-ai-resource-preset-list';
+import './lablup-activity-panel';
+import '@material/mwc-button';
+import { Tab } from '@material/mwc-tab';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend.AI Environment View

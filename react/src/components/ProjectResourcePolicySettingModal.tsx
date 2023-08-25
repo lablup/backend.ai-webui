@@ -1,14 +1,13 @@
-import React from 'react';
-import { useFragment, useMutation } from 'react-relay';
-import graphql from 'babel-plugin-relay/macro';
+import { GBToBytes, bytesToGB } from '../helper';
+import BAIModal, { BAIModalProps } from './BAIModal';
 import { ProjectResourcePolicySettingModalFragment$key } from './__generated__/ProjectResourcePolicySettingModalFragment.graphql';
 // import { ProjectResourcePolicySettingModalCreateMutation } from "./__generated__/ProjectResourcePolicySettingModalCreateMutation.graphql";
 import { ProjectResourcePolicySettingModalModifyMutation } from './__generated__/ProjectResourcePolicySettingModalModifyMutation.graphql';
-
 import { Form, Input, message, Alert } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { GBToBytes, bytesToGB } from '../helper';
-import BAIModal, { BAIModalProps } from './BAIModal';
+import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   projectResourcePolicyFrgmt: ProjectResourcePolicySettingModalFragment$key | null;

@@ -3,12 +3,12 @@
 
 @group Backend.AI Web UI
  */
+import { LitElement } from 'lit';
 import {
   get as _text,
   LanguageIdentifier,
   registerTranslateConfig,
 } from 'lit-translate';
-import { LitElement } from 'lit';
 import { property } from 'lit/decorators.js';
 
 /**

@@ -14,10 +14,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import '@material/mwc-notched-outline';
-import '@material/mwc-menu';
-import '@material/mwc-icon';
-
 import { KEY, normalizeKey } from '@material/dom/keyboard';
 import { MDCFloatingLabelFoundation } from '@material/floating-label/foundation.js';
 import { MDCLineRippleFoundation } from '@material/line-ripple/foundation.js';
@@ -30,9 +26,12 @@ import {
 import { observer } from '@material/mwc-base/observer.js';
 import { isNodeElement } from '@material/mwc-base/utils.js';
 import { floatingLabel, FloatingLabel } from '@material/mwc-floating-label';
+import '@material/mwc-icon';
 import { lineRipple, LineRipple } from '@material/mwc-line-ripple';
 import { ListItemBase } from '@material/mwc-list/mwc-list-item-base';
+import '@material/mwc-menu';
 import { Menu } from '@material/mwc-menu';
+import '@material/mwc-notched-outline';
 import { NotchedOutline } from '@material/mwc-notched-outline';
 import { MDCSelectAdapter } from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation.js';

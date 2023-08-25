@@ -2,14 +2,10 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import { customElement, property } from 'lit/decorators.js';
-
-import { BackendAIPage } from './backend-ai-page';
-
 import tus from '../lib/tus';
-
+import { BackendAIPage } from './backend-ai-page';
 import { default as PainKiller } from './backend-ai-painkiller';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend AI Pipeline Common.

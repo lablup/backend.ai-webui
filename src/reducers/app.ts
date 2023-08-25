@@ -2,7 +2,6 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
 import {
   CLOSE_SNACKBAR,
   OPEN_SNACKBAR,

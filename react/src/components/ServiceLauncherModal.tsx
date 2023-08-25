@@ -1,21 +1,21 @@
-import { Card, Form, Input, theme, Switch, message } from 'antd';
-import React, { Suspense } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { baiSignedRequestWithPromise } from '../helper';
 import { useSuspendedBackendaiClient } from '../hooks';
-import SliderInputItem from './SliderInputFormItem';
+import { useCurrentDomainValue } from '../hooks';
+import { useResourceSlots } from '../hooks/backendai';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import FlexActivityIndicator from './FlexActivityIndicator';
 import ImageEnvironmentSelectFormItems, {
   Image,
   ImageEnvironmentFormInput,
 } from './ImageEnvironmentSelectFormItems';
-import FlexActivityIndicator from './FlexActivityIndicator';
-import _ from 'lodash';
 import ResourceGroupSelect from './ResourceGroupSelect';
+import SliderInputItem from './SliderInputFormItem';
 import VFolderSelect from './VFolderSelect';
-import { useTanMutation } from '../hooks/reactQueryAlias';
-import { useCurrentDomainValue } from '../hooks';
-import { baiSignedRequestWithPromise } from '../helper';
-import { useResourceSlots } from '../hooks/backendai';
-import BAIModal, { BAIModalProps } from './BAIModal';
+import { Card, Form, Input, theme, Switch, message } from 'antd';
+import _ from 'lodash';
+import React, { Suspense } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
 
 type ClusterMode = 'single-node' | 'multi-node';
 
