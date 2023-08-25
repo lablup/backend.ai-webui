@@ -1,6 +1,7 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery } from '../hooks/reactQueryAlias';
 import { useWebComponentInfo } from './DefaultProviders';
+import UserProfileSettingModal from './UserProfileSettingModal';
 import {
   UserOutlined,
   MailOutlined,
@@ -11,26 +12,16 @@ import {
   FileTextOutlined,
   LogoutOutlined,
 } from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import { Button, Dropdown, MenuProps } from 'antd';
-import React from 'react';
+import { update } from 'lodash';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
 
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    fullName: string;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      fullName: '',
-    };
-  }
-
-  const { fullName } = parsedValue;
+  const { dispatchEvent } = useWebComponentInfo();
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -44,6 +35,46 @@ const UserDropdownMenu: React.FC = () => {
     },
   );
   const userRole = userInfo?.user.role;
+
+  const getUsername = () => {
+    let name =
+      baiClient.full_name?.replace(/\s+/g, '').length > 0
+        ? baiClient.full_name
+        : baiClient.email;
+    // mask username only when the configuration is enabled
+    if (baiClient._config.maskUserInfo) {
+      const maskStartIdx = 2;
+      const emailPattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const isEmail: boolean = emailPattern.test(name);
+      const maskLength = isEmail
+        ? name.split('@')[0].length - maskStartIdx
+        : name.length - maskStartIdx;
+      name = maskString(name, '*', maskStartIdx, maskLength);
+    }
+    return name;
+  };
+
+  const maskString = (
+    value = '',
+    maskChar = '*',
+    startFrom = 0,
+    maskLength = 0,
+  ) => {
+    // clamp mask length
+    maskLength =
+      startFrom + maskLength > value.length ? value.length : maskLength;
+    return (
+      value.substring(0, startFrom) +
+      maskChar.repeat(maskLength) +
+      value.substring(startFrom + maskLength, value.length)
+    );
+  };
+
+  const [fullName, updateFullName] = useState(getUsername());
+
+  const [isOpenUserProfileModal, { toggle: toggleUserProfileModal }] =
+    useToggle(false);
 
   const items: MenuProps['items'] = [
     {
@@ -94,7 +125,7 @@ const UserDropdownMenu: React.FC = () => {
       key: 'userProfileSetting',
       icon: <LockOutlined />,
       onClick: () => {
-        dispatchEvent('open', null);
+        toggleUserProfileModal();
       },
     },
     {
@@ -125,11 +156,19 @@ const UserDropdownMenu: React.FC = () => {
   ];
 
   return (
-    <Dropdown menu={{ items }} trigger={['click']}>
-      <Button type="text" shape="circle">
-        <UserOutlined style={{ fontSize: '20px' }} />
-      </Button>
-    </Dropdown>
+    <>
+      {fullName}
+      <Dropdown menu={{ items }} trigger={['click']}>
+        <Button type="text" shape="circle">
+          <UserOutlined style={{ fontSize: '20px' }} />
+        </Button>
+      </Dropdown>
+      <UserProfileSettingModal
+        open={isOpenUserProfileModal}
+        onRequestClose={() => toggleUserProfileModal()}
+        onRequestUpdateFullName={(newFullName) => updateFullName(newFullName)}
+      />
+    </>
   );
 };
 

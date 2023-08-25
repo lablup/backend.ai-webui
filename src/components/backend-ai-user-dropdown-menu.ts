@@ -108,55 +108,6 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this._showTotpActivated();
   }
 
-  /**
-   * Check Fullname exists, and if not then use user_id instead.
-   *
-   * @return {string} Name from full name or user ID
-   */
-  _getUsername() {
-    let name =
-      this.fullName?.replace(/\s+/g, '').length > 0
-        ? this.fullName
-        : this.userId;
-    // mask username only when the configuration is enabled
-    if (this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const emailPattern =
-        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
-      const isEmail: boolean = emailPattern.test(name);
-      const maskLength = isEmail
-        ? name.split('@')[0].length - maskStartIdx
-        : name.length - maskStartIdx;
-      name = globalThis.backendaiutils._maskString(
-        name,
-        '*',
-        maskStartIdx,
-        maskLength,
-      );
-    }
-    return name;
-  }
-
-  /**
-   *  Get user id according to configuration
-   *
-   *  @return {string} userId
-   */
-  _getUserId() {
-    let userId = this.userId;
-    // mask user id(email) only when the configuration is enabled
-    if (this.isUserInfoMaskEnabled) {
-      const maskStartIdx = 2;
-      const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(
-        userId,
-        '*',
-        maskStartIdx,
-        maskLength,
-      );
-    }
-    return userId;
-  }
   _getRole(user_id) {
     const fields = ['role'];
     return globalThis.backendaiclient.user.get(user_id, fields);
@@ -331,65 +282,62 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   render() {
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-      <div class="horizontal flex center layout">
-        <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0 auto 10px;">
-          ${this._getUsername()}
-        </span>
-        <backend-ai-react-user-dropdown-menu
-          value="${JSON.stringify({
-            fullName: this.fullName,
-          })}"
-          @open="${() => this._openUserPrefDialog()}"
-          @moveToLogPage="${() => this._moveToLogPage()}"
-          @moveToUserSettingPage="${() => this._moveToUserSettingsPage()}"
+      <link rel="stylesheet" href="resources/custom.css" />
+      <backend-ai-react-user-dropdown-menu
+        @moveToLogPage="${() => this._moveToLogPage()}"
+        @moveToUserSettingPage="${() => this._moveToUserSettingsPage()}"
+      ></backend-ai-react-user-dropdown-menu>
+      <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
+        <span slot="title">${_t('webui.menu.SetupTotp')}</span>
+        <div
+          slot="content"
+          class="layout vertical"
+          style="width: 300px; align-items: center;"
         >
-        </backend-ai-react-user-dropdown-menu>
-      </div>
-    </div>
-    <backend-ai-dialog id="totp-setup-dialog" fixed backdrop>
-      <span slot="title">${_t('webui.menu.SetupTotp')}</span>
-      <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
-        <p>${_t('totp.ScanQRToEnable')}</p>
-        <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
-        <p>${_t('totp.TypeInAuthKey')}</p>
-        <backend-ai-react-copyable-code-text value="${
-          this.totpKey
-        }"></backend-ai-react-copyable-code-text>
-      </div>
-      <div slot="content" class="layout vertical" style="width: 300px">
-        <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
-        <mwc-textfield id="totp-confirm-otp" type="number" no-label-float placeholder="000000"
-          min="0" max="999999" style="margin-left:1em;width:120px;">
-          </mwc-textfield>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button unelevated @click="${(e) => this._confirmOtpSetup(e)}">${_t(
-          'button.Confirm',
-        )}</mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-dialog id="totp-removal-confirm-dialog" fixed backdrop>
-      <span slot="title">${_t('button.Confirm')}</span>
-      <div slot="content" class="layout vertical" style="width: 300px; align-items: center;">
-        <p>${_t('totp.ConfirmTotpRemovalBody')}</p>
-      </div>
-      <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t(
-          'button.Confirm',
-        )}</mwc-button>
-      </div>
-    </backend-ai-dialog>
-    <backend-ai-react-user-profile-dialog
-      value="${JSON.stringify({
-        isOpenUserPrefDialog: this.isOpenUserPrefDialog,
-      })}"
-      @cancel="${() => this._hideUserPrefDialog()}"
-      @updateFullName="${(e) => this._updateUserFullName(e.detail.newFullName)}"
-      @confirmRemovingTotp="${() => this._confirmRemovingTotp()}"
-      @startActivatingTotp="${() => this._startActivatingTotp()}"
-    >
-    </backend-ai-react-user-profile-dialog>
+          <p>${_t('totp.ScanQRToEnable')}</p>
+          <img
+            id="totp-uri-qrcode"
+            style="width: 150px; height: 150px;"
+            alt="QR"
+          />
+          <p>${_t('totp.TypeInAuthKey')}</p>
+          <backend-ai-react-copyable-code-text
+            value="${this.totpKey}"
+          ></backend-ai-react-copyable-code-text>
+        </div>
+        <div slot="content" class="layout vertical" style="width: 300px">
+          <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
+          <mwc-textfield
+            id="totp-confirm-otp"
+            type="number"
+            no-label-float
+            placeholder="000000"
+            min="0"
+            max="999999"
+            style="margin-left:1em;width:120px;"
+          ></mwc-textfield>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated @click="${(e) => this._confirmOtpSetup(e)}">
+            ${_t('button.Confirm')}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
+      <backend-ai-dialog id="totp-removal-confirm-dialog" fixed backdrop>
+        <span slot="title">${_t('button.Confirm')}</span>
+        <div
+          slot="content"
+          class="layout vertical"
+          style="width: 300px; align-items: center;"
+        >
+          <p>${_t('totp.ConfirmTotpRemovalBody')}</p>
+        </div>
+        <div slot="footer" class="horizontal end-justified flex layout">
+          <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">
+            ${_t('button.Confirm')}
+          </mwc-button>
+        </div>
+      </backend-ai-dialog>
     `;
   }
 }

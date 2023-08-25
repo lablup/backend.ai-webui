@@ -1,13 +1,30 @@
 import { useSuspendedBackendaiClient } from '../hooks';
 import { useTanQuery, useTanMutation } from '../hooks/reactQueryAlias';
-import { useWebComponentInfo } from './DefaultProviders';
 import { passwordPattern } from './ResetPasswordRequired';
-import { Modal, Input, Form, Select, SelectProps, message, Switch } from 'antd';
+import {
+  Modal,
+  ModalProps,
+  Input,
+  Form,
+  Select,
+  SelectProps,
+  message,
+  Switch,
+} from 'antd';
 import _ from 'lodash';
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
-const UserProfileSettingModal: React.FC = () => {
+interface Props extends ModalProps {
+  onRequestClose: () => void;
+  onRequestUpdateFullName: (newFullName: string) => void;
+}
+
+const UserProfileSettingModal: React.FC<Props> = ({
+  onRequestClose,
+  onRequestUpdateFullName,
+  ...ModalProps
+}) => {
   const { t } = useTranslation();
 
   const [form] = Form.useForm();
@@ -69,20 +86,6 @@ const UserProfileSettingModal: React.FC = () => {
     });
   }
 
-  const { value, dispatchEvent } = useWebComponentInfo();
-  let parsedValue: {
-    isOpenUserPrefDialog: boolean;
-  };
-  try {
-    parsedValue = JSON.parse(value || '');
-  } catch (error) {
-    parsedValue = {
-      isOpenUserPrefDialog: false,
-    };
-  }
-
-  const { isOpenUserPrefDialog } = parsedValue;
-
   const mutationToUpdateUserFullName = useTanMutation({
     mutationFn: (values: { email: string; full_name: string }) => {
       return baiClient.update_full_name(values.email, values.full_name);
@@ -126,7 +129,7 @@ const UserProfileSettingModal: React.FC = () => {
               type: 'success',
               content: t('webui.menu.FullnameUpdated'),
             });
-            dispatchEvent('updateFullName', { newFullName });
+            onRequestUpdateFullName(newFullName);
           },
           onError: (error: any) => {
             messageApi.open({
@@ -145,7 +148,7 @@ const UserProfileSettingModal: React.FC = () => {
     newPassword2: string,
   ) => {
     if (!oldPassword && !newPassword && !newPassword2) {
-      dispatchEvent('cancel', null);
+      onRequestClose();
       return;
     }
     if (!oldPassword) {
@@ -181,7 +184,7 @@ const UserProfileSettingModal: React.FC = () => {
             type: 'success',
             content: t('webui.menu.PasswordUpdated'),
           });
-          dispatchEvent('cancel', null);
+          onRequestClose();
         },
         onError: (error: any) => {
           messageApi.open({
@@ -215,13 +218,13 @@ const UserProfileSettingModal: React.FC = () => {
     <>
       {contextHolder}
       <Modal
-        open={isOpenUserPrefDialog}
         okText={t('webui.menu.Update')}
         cancelText={t('webui.menu.Cancel')}
-        onCancel={() => dispatchEvent('cancel', null)}
+        onCancel={() => onRequestClose()}
         onOk={() => onSubmit()}
         centered
         title={t('webui.menu.MyAccountInformation')}
+        {...ModalProps}
       >
         <Form layout="vertical" form={form}>
           <Form.Item
@@ -296,11 +299,7 @@ const UserProfileSettingModal: React.FC = () => {
             <Form.Item label={t('webui.menu.TotpActivated')}>
               <Switch
                 defaultChecked={totpActivated}
-                onChange={(e) =>
-                  totpActivated
-                    ? dispatchEvent('confirmRemovingTotp', null)
-                    : dispatchEvent('startActivatingTotp', null)
-                }
+                onChange={(e) => (totpActivated ? 'testtrue' : 'testfalse')}
               />
             </Form.Item>
           ) : (
