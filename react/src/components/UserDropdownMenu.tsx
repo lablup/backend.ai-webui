@@ -38,11 +38,20 @@ const UserDropdownMenu: React.FC = () => {
       label: baiClient.full_name,
       key: "userFullName",
       icon: <UserOutlined />,
+      disabled: true,
+      style: {
+        color: "#1f1f1f",
+        cursor: "default",
+      },
     },
     {
       label: baiClient.email,
       key: "userEmail",
       icon: <MailOutlined />,
+      disabled: true,
+      style: {
+        cursor: "default",
+      },
     },
     {
       type: "divider",
@@ -51,6 +60,10 @@ const UserDropdownMenu: React.FC = () => {
       label: userRole,
       key: "userRole",
       icon: <SecurityScanOutlined />,
+      disabled: true,
+      style: {
+        cursor: "default",
+      },
     },
     {
       type: "divider",
