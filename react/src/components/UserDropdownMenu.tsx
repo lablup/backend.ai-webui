@@ -1,5 +1,6 @@
-import React from "react";
-import { Button, Dropdown, MenuProps } from "antd";
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanQuery } from '../hooks/reactQueryAlias';
+import { useWebComponentInfo } from './DefaultProviders';
 import {
   UserOutlined,
   MailOutlined,
@@ -9,11 +10,10 @@ import {
   HolderOutlined,
   FileTextOutlined,
   LogoutOutlined,
-} from "@ant-design/icons";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { useTanQuery } from "../hooks/reactQueryAlias";
-import { useTranslation } from "react-i18next";
-import { useWebComponentInfo } from "./DefaultProviders";
+} from '@ant-design/icons';
+import { Button, Dropdown, MenuProps } from 'antd';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
@@ -23,99 +23,99 @@ const UserDropdownMenu: React.FC = () => {
   const baiClient = useSuspendedBackendaiClient();
 
   const { data: userInfo } = useTanQuery(
-    "getUserRole",
+    'getUserRole',
     () => {
-      return baiClient.user.get(baiClient.email, ["role"]);
+      return baiClient.user.get(baiClient.email, ['role']);
     },
     {
       suspense: false,
-    }
+    },
   );
   const userRole = userInfo?.user.role;
 
-  const items: MenuProps["items"] = [
+  const items: MenuProps['items'] = [
     {
       label: baiClient.full_name,
-      key: "userFullName",
+      key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
       style: {
-        color: "#1f1f1f",
-        cursor: "default",
+        color: '#1f1f1f',
+        cursor: 'default',
       },
     },
     {
       label: baiClient.email,
-      key: "userEmail",
+      key: 'userEmail',
       icon: <MailOutlined />,
       disabled: true,
       style: {
-        cursor: "default",
+        cursor: 'default',
       },
     },
     {
-      type: "divider",
+      type: 'divider',
     },
     {
       label: userRole,
-      key: "userRole",
+      key: 'userRole',
       icon: <SecurityScanOutlined />,
       disabled: true,
       style: {
-        cursor: "default",
+        cursor: 'default',
       },
     },
     {
-      type: "divider",
+      type: 'divider',
     },
     {
-      label: t("webui.menu.AboutBackendAI"),
-      key: "description",
+      label: t('webui.menu.AboutBackendAI'),
+      key: 'description',
       icon: <ExclamationCircleOutlined />,
       onClick: () => {
-        const event: CustomEvent = new CustomEvent("backend-ai-show-splash");
+        const event: CustomEvent = new CustomEvent('backend-ai-show-splash');
         document.dispatchEvent(event);
       },
     },
     {
-      label: t("webui.menu.MyAccount"),
-      key: "userProfileSetting",
+      label: t('webui.menu.MyAccount'),
+      key: 'userProfileSetting',
       icon: <LockOutlined />,
       onClick: () => {
-        dispatchEvent("open", null);
+        dispatchEvent('open', null);
       },
     },
     {
-      label: t("webui.menu.Preferences"),
-      key: "preferences",
+      label: t('webui.menu.Preferences'),
+      key: 'preferences',
       icon: <HolderOutlined />,
       onClick: () => {
-        dispatchEvent("moveToUserSettingPage", null);
+        dispatchEvent('moveToUserSettingPage', null);
       },
     },
     {
-      label: t("webui.menu.LogsErrors"),
-      key: "logs",
+      label: t('webui.menu.LogsErrors'),
+      key: 'logs',
       icon: <FileTextOutlined />,
       onClick: () => {
-        dispatchEvent("moveToLogPage", null);
+        dispatchEvent('moveToLogPage', null);
       },
     },
     {
-      label: t("webui.menu.LogOut"),
-      key: "logout",
+      label: t('webui.menu.LogOut'),
+      key: 'logout',
       icon: <LogoutOutlined />,
       onClick: () => {
-        const event: CustomEvent = new CustomEvent("backend-ai-logout");
+        const event: CustomEvent = new CustomEvent('backend-ai-logout');
         document.dispatchEvent(event);
       },
     },
   ];
 
   return (
-    <Dropdown menu={{ items }} trigger={["click"]}>
+    <Dropdown menu={{ items }} trigger={['click']}>
       <Button type="text" shape="circle">
-        <UserOutlined style={{ fontSize: "20px" }} />
+        <UserOutlined style={{ fontSize: '20px' }} />
       </Button>
     </Dropdown>
   );
