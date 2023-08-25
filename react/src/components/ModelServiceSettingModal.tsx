@@ -1,15 +1,14 @@
-import React from "react";
-
-import { Form, InputNumber, theme } from "antd";
-import { useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { baiSignedRequestWithPromise } from "../helper";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import Flex from "./Flex";
-import { useFragment } from "react-relay";
-import graphql from "babel-plugin-relay/macro";
-import { ModelServiceSettingModal_endpoint$key } from "./__generated__/ModelServiceSettingModal_endpoint.graphql";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { baiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
+import { ModelServiceSettingModal_endpoint$key } from './__generated__/ModelServiceSettingModal_endpoint.graphql';
+import { Form, InputNumber, theme } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment } from 'react-relay';
 
 interface Props extends BAIModalProps {
   endpointFrgmt: ModelServiceSettingModal_endpoint$key | null;
@@ -37,7 +36,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         desired_session_count
       }
     `,
-    endpointFrgmt
+    endpointFrgmt,
   );
 
   const mutationToUpdateService = useTanMutation({
@@ -46,7 +45,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         to: values.desired_session_count,
       };
       return baiSignedRequestWithPromise({
-        method: "POST",
+        method: 'POST',
         url: `/services/${endpoint?.endpoint_id}/scale`,
         body,
         client: baiClient,
@@ -61,7 +60,7 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       .then((values) => {
         mutationToUpdateService.mutate(values, {
           onSuccess: () => {
-            console.log("service updated");
+            console.log('service updated');
             onRequestClose(true);
           },
           onError: (error) => {
@@ -93,13 +92,13 @@ const ModelServiceSettingModal: React.FC<Props> = ({
       okButtonProps={{
         loading: mutationToUpdateService.isLoading,
       }}
-      title={t("modelService.EditModelService")}
+      title={t('modelService.EditModelService')}
     >
       <Flex direction="row" align="stretch" justify="around">
         <Form
           form={form}
           preserve={false}
-          validateTrigger={["onChange", "onBlur"]}
+          validateTrigger={['onChange', 'onBlur']}
           initialValues={{
             desired_session_count: endpoint?.desired_session_count,
           }}
@@ -107,11 +106,11 @@ const ModelServiceSettingModal: React.FC<Props> = ({
         >
           <Form.Item
             name="desired_session_count"
-            label={t("modelService.DesiredSessionCount")}
+            label={t('modelService.DesiredSessionCount')}
             rules={[
               {
                 pattern: /^[0-9]+$/,
-                message: t("modelService.OnlyAllowsNonNegativeIntegers"),
+                message: t('modelService.OnlyAllowsNonNegativeIntegers'),
               },
             ]}
           >

@@ -1,5 +1,5 @@
-import {css} from 'lit';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { css } from 'lit';
 
 export const BackendAIWebUIStyles = [
   BackendAiStyles,
@@ -22,9 +22,9 @@ export const BackendAIWebUIStyles = [
     .loading-background-drag-area {
       position: absolute;
       background-color: transparent;
-      top:0;
-      left:0;
-      width:100%;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 80px;
       -webkit-app-region: drag !important;
     }
@@ -105,11 +105,11 @@ export const BackendAIWebUIStyles = [
     }
 
     #sidebar-menu {
-      height:calc(100vh - 280px);
+      height: calc(100vh - 280px);
     }
 
     .mini-ui #sidebar-menu {
-      height:calc(100vh - 226px)!important;
+      height: calc(100vh - 226px) !important;
     }
 
     mwc-list.sidebar {
@@ -120,7 +120,10 @@ export const BackendAIWebUIStyles = [
 
     mwc-list.sidebar mwc-list-item {
       --mdc-theme-primary: var(--general-sidebar-selected-color, #949494);
-      --mdc-theme-text-primary-on-background: var(--general-sidebar-color, #949494);
+      --mdc-theme-text-primary-on-background: var(
+        --general-sidebar-color,
+        #949494
+      );
       --mdc-list-item-graphic-margin: 15px;
       height: 36px;
       margin-top: 10px;
@@ -159,7 +162,10 @@ export const BackendAIWebUIStyles = [
     }
 
     #app-body {
-      --mdc-drawer-background-color: var(--sidebar-background-color, var(--general-sidebar-background-color, #fafafa));
+      --mdc-drawer-background-color: var(
+        --sidebar-background-color,
+        var(--general-sidebar-background-color, #fafafa)
+      );
       --mdc-drawer-border-left: 0;
       --mdc-drawer-border-right: 0;
     }
@@ -243,7 +249,10 @@ export const BackendAIWebUIStyles = [
     #content-body {
       background-color: var(--general-background-color, #ffffff);
       color: var(--general-sidepanel-color, #fafafa);
-      --mdc-drawer-background-color: var(--sidepanel-background-color, var(--general-sidepanel-background-color, #fafafa));
+      --mdc-drawer-background-color: var(
+        --sidepanel-background-color,
+        var(--general-sidepanel-background-color, #fafafa)
+      );
     }
 
     .sidepanel-drawer {
@@ -304,7 +313,8 @@ export const BackendAIWebUIStyles = [
       --mdc-typography-body2-font-family: var(--general-font-family);
     }
 
-    span.full_name, mwc-select {
+    span.full_name,
+    mwc-select {
       font-weight: bold;
     }
 
@@ -317,7 +327,7 @@ export const BackendAIWebUIStyles = [
       --mdc-typography-subtitle1-font-color: white;
       --mdc-typography-subtitle1-font-weight: 400;
       --mdc-typography-subtitle1-line-height: 16px;
-      --mdc-theme-primary: rgba(255, 255, 255, 1.0);
+      --mdc-theme-primary: rgba(255, 255, 255, 1);
       --mdc-select-idle-line-color: transparent;
       --mdc-select-hover-line-color: transparent;
       --mdc-select-outlined-idle-border-color: rgba(255, 255, 255, 0.42);
@@ -325,11 +335,11 @@ export const BackendAIWebUIStyles = [
       --mdc-select-outlined-disabled-border-color: rgba(255, 255, 255, 0.87);
       --mdc-select-fill-color: transparent;
       --mdc-select-disabled-fill-color: transparent;
-      --mdc-select-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-label-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-focused-label-color: rgba(24, 24, 24, 1.0);
-      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1.0);
-      --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1.0);
+      --mdc-select-ink-color: rgba(255, 255, 255, 1);
+      --mdc-select-label-ink-color: rgba(255, 255, 255, 1);
+      --mdc-select-focused-label-color: rgba(24, 24, 24, 1);
+      --mdc-select-disabled-ink-color: rgba(255, 255, 255, 1);
+      --mdc-select-dropdown-icon-color: rgba(255, 255, 255, 1);
       --mdc-select-focused-dropdown-icon-color: rgba(255, 255, 255, 0.42);
       --mdc-select-disabled-dropdown-icon-color: rgba(255, 255, 255, 0.87);
       --mdc-theme-surface: white;
@@ -391,7 +401,6 @@ export const BackendAIWebUIStyles = [
     mwc-menu.user-menu mwc-list-item {
       font-size: 14px;
     }
-
 
     mwc-icon-button.side-menu {
       --mdc-icon-button-size: 44px;
@@ -522,7 +531,9 @@ export const BackendAIWebUIStyles = [
       font-size: 14px;
     }
 
-    @supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+    @supports (
+      (-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))
+    ) {
       #main-toolbar {
         /*-webkit-backdrop-filter: saturate(180%) blur(20px);
         backdrop-filter: saturate(180%) blur(20px);*/
@@ -540,7 +551,10 @@ export const BackendAIWebUIStyles = [
         background-color: var(--general-navbar-footer-background-color);
         color: var(--general-sidebar-navbar-footer-color);
       }
-      div#center-area, span.email, span.full_name, span.log_out {
+      div#center-area,
+      span.email,
+      span.full_name,
+      span.log_out {
         display: none;
       }
       mwc-menu#dropdown-menu {
@@ -553,7 +567,8 @@ export const BackendAIWebUIStyles = [
     }
 
     @media screen and (max-width: 1030px) {
-      span.email, p#project {
+      span.email,
+      p#project {
         display: none;
       }
 

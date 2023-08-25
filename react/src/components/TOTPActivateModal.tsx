@@ -1,15 +1,14 @@
-import React from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useQuery } from "react-query";
-import { useFragment } from "react-relay";
-import { TOTPActivateModalFragment$key } from "./__generated__/TOTPActivateModalFragment.graphql";
-
-import { QRCode, Typography, Input, theme, Form, message, Spin } from "antd";
-import { useTranslation } from "react-i18next";
-import { useSuspendedBackendaiClient } from "../hooks";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import Flex from "./Flex";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { useSuspendedBackendaiClient } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import Flex from './Flex';
+import { TOTPActivateModalFragment$key } from './__generated__/TOTPActivateModalFragment.graphql';
+import { QRCode, Typography, Input, theme, Form, message, Spin } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { useFragment } from 'react-relay';
 
 type TOTPActivateFormInput = {
   otp: number;
@@ -36,7 +35,7 @@ const TOTPActivateModal: React.FC<Props> = ({
         totp_activated @skipOnClient(if: $isNotSupportTotp)
       }
     `,
-    userFrgmt
+    userFrgmt,
   );
 
   const baiClient = useSuspendedBackendaiClient();
@@ -44,7 +43,7 @@ const TOTPActivateModal: React.FC<Props> = ({
     totp_key: string;
     totp_uri: string;
   }>({
-    queryKey: ["initialize_totp", baiClient?.email, baiModalProps.open],
+    queryKey: ['initialize_totp', baiClient?.email, baiModalProps.open],
     queryFn: () => {
       return user?.email === baiClient?.email &&
         !user?.totp_activated &&
@@ -67,11 +66,11 @@ const TOTPActivateModal: React.FC<Props> = ({
     form.validateFields().then((values) => {
       mutationToActivateTotp.mutate(values, {
         onSuccess: () => {
-          message.success(t("totp.TotpSetupCompleted"));
+          message.success(t('totp.TotpSetupCompleted'));
           onRequestClose(true);
         },
         onError: () => {
-          message.error(t("totp.InvalidTotpCode"));
+          message.error(t('totp.InvalidTotpCode'));
         },
       });
       new Promise((resolve, reject) => {}).then(() => {
@@ -82,7 +81,7 @@ const TOTPActivateModal: React.FC<Props> = ({
 
   return (
     <BAIModal
-      title={t("webui.menu.SetupTotp")}
+      title={t('webui.menu.SetupTotp')}
       maskClosable={false}
       confirmLoading={mutationToActivateTotp.isLoading}
       onOk={_onOk}
@@ -98,22 +97,22 @@ const TOTPActivateModal: React.FC<Props> = ({
         </Flex>
       ) : !initializedTotp.data ? (
         <Flex justify="center" direction="row">
-          {t("totp.TotpSetupNotAvailable")}
+          {t('totp.TotpSetupNotAvailable')}
         </Flex>
       ) : (
         <Form
           preserve={false}
           form={form}
-          validateTrigger={["onChange", "onBlur"]}
+          validateTrigger={['onChange', 'onBlur']}
         >
-          {t("totp.TypeInAuthKey")}
+          {t('totp.TypeInAuthKey')}
           <Flex
             justify="center"
             style={{ margin: token.marginSM, gap: token.margin }}
           >
             <QRCode value={initializedTotp.data.totp_uri} />
           </Flex>
-          {t("totp.ScanQRToEnable")}
+          {t('totp.ScanQRToEnable')}
           <Flex
             justify="center"
             style={{ margin: token.marginSM, gap: token.margin }}
@@ -122,7 +121,7 @@ const TOTPActivateModal: React.FC<Props> = ({
               {initializedTotp.data.totp_key}
             </Typography.Text>
           </Flex>
-          {t("totp.TypeInAuthKey")}
+          {t('totp.TypeInAuthKey')}
           <Flex
             justify="center"
             style={{ margin: token.marginSM, gap: token.margin }}

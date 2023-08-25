@@ -1,11 +1,16 @@
-import React, { useDeferredValue, useState } from "react";
-import { useQuery } from "react-query";
-import graphql from "babel-plugin-relay/macro";
-import { useLazyLoadQuery } from "react-relay";
-import { StorageStatusPanelQuery } from "./__generated__/StorageStatusPanelQuery.graphql";
-import { StorageStatusPanelKeypairQuery } from "./__generated__/StorageStatusPanelKeypairQuery.graphql";
-
-import { useTranslation } from "react-i18next";
+import { addQuotaScopeTypePrefix, usageIndicatorColor } from '../helper';
+import {
+  useCurrentDomainValue,
+  useCurrentProjectValue,
+  useSuspendedBackendaiClient,
+} from '../hooks';
+import Flex from './Flex';
+import FlexActivityIndicator from './FlexActivityIndicator';
+import StorageSelector, { VolumeInfo } from './StorageSelector';
+import UsageProgress from './UsageProgress';
+import { StorageStatusPanelKeypairQuery } from './__generated__/StorageStatusPanelKeypairQuery.graphql';
+import { StorageStatusPanelQuery } from './__generated__/StorageStatusPanelQuery.graphql';
+import { InfoCircleOutlined } from '@ant-design/icons';
 import {
   Progress,
   Card,
@@ -18,18 +23,12 @@ import {
   theme,
   Tooltip,
   Button,
-} from "antd";
-import { InfoCircleOutlined } from "@ant-design/icons";
-import Flex from "./Flex";
-import {
-  useCurrentDomainValue,
-  useCurrentProjectValue,
-  useSuspendedBackendaiClient,
-} from "../hooks";
-import { addQuotaScopeTypePrefix, usageIndicatorColor } from "../helper";
-import UsageProgress from "./UsageProgress";
-import StorageSelector, { VolumeInfo } from "./StorageSelector";
-import FlexActivityIndicator from "./FlexActivityIndicator";
+} from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useDeferredValue, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useQuery } from 'react-query';
+import { useLazyLoadQuery } from 'react-relay';
 
 const StorageStatusPanel: React.FC<{
   fetchKey: string;
@@ -43,7 +42,7 @@ const StorageStatusPanel: React.FC<{
   const deferredSelectedVolumeInfo = useDeferredValue(selectedVolumeInfo);
   const deferredFetchKey = useDeferredValue(fetchKey);
 
-  const columnSetting: DescriptionsProps["column"] = {
+  const columnSetting: DescriptionsProps['column'] = {
     xxl: 4,
     xl: 4,
     lg: 2,
@@ -53,19 +52,19 @@ const StorageStatusPanel: React.FC<{
   };
 
   const { data: vfolders } = useQuery(
-    ["vfolders", { deferredFetchKey }],
+    ['vfolders', { deferredFetchKey }],
     () => {
       return baiClient.vfolder.list(currentProject?.id);
-    }
+    },
   );
   const createdCount = vfolders?.filter(
-    (item: any) => item.is_owner && item.ownership_type === "user"
+    (item: any) => item.is_owner && item.ownership_type === 'user',
   ).length;
   const projectFolderCount = vfolders?.filter(
-    (item: any) => item.ownership_type === "group"
+    (item: any) => item.ownership_type === 'group',
   ).length;
   const invitedCount = vfolders?.filter(
-    (item: any) => !item.is_owner && item.ownership_type === "user"
+    (item: any) => !item.is_owner && item.ownership_type === 'user',
   ).length;
 
   // TODO: Add resolver to enable subquery and modify to call useLazyLoadQuery only once.
@@ -88,7 +87,7 @@ const StorageStatusPanel: React.FC<{
       domain_name: useCurrentDomainValue(),
       access_key: baiClient?._config.accessKey,
       email: baiClient?.email,
-    }
+    },
   );
 
   const { keypair_resource_policy, project_quota_scope, user_quota_scope } =
@@ -121,16 +120,16 @@ const StorageStatusPanel: React.FC<{
       {
         keypair_resource_policy_name: keypair?.resource_policy,
         project_quota_scope_id: addQuotaScopeTypePrefix(
-          "project",
-          currentProject?.id
+          'project',
+          currentProject?.id,
         ),
-        user_quota_scope_id: addQuotaScopeTypePrefix("user", user?.id || ""),
-        storage_host_name: deferredSelectedVolumeInfo?.id || "",
+        user_quota_scope_id: addQuotaScopeTypePrefix('user', user?.id || ''),
+        storage_host_name: deferredSelectedVolumeInfo?.id || '',
         skipQuotaScope:
           currentProject?.id === undefined ||
           user?.id === undefined ||
           !deferredSelectedVolumeInfo?.id,
-      }
+      },
     );
 
   const maxVfolderCount = keypair_resource_policy?.max_vfolder_count || 0;
@@ -143,40 +142,40 @@ const StorageStatusPanel: React.FC<{
   return (
     <Card
       size="small"
-      title={t("data.StorageStatus")}
-      style={{ margin: "3px 14px" }}
+      title={t('data.StorageStatus')}
+      style={{ margin: '3px 14px' }}
     >
       <Descriptions bordered column={columnSetting} size="small">
-        <Descriptions.Item label={t("data.NumberOfFolders")}>
+        <Descriptions.Item label={t('data.NumberOfFolders')}>
           <Progress
             size={[200, 15]}
             percent={numberOfFolderPercent}
             strokeColor={usageIndicatorColor(numberOfFolderPercent)}
-            style={{ width: "95%" }}
-            status={numberOfFolderPercent >= 100 ? "exception" : "normal"}
+            style={{ width: '95%' }}
+            status={numberOfFolderPercent >= 100 ? 'exception' : 'normal'}
           ></Progress>
           <Flex direction="row" gap={token.marginXXS} wrap="wrap">
             <Typography.Text type="secondary">
-              {t("data.Created")}:
+              {t('data.Created')}:
             </Typography.Text>
             {createdCount}
-            <Typography.Text type="secondary">{" / "}</Typography.Text>
+            <Typography.Text type="secondary">{' / '}</Typography.Text>
             <Typography.Text type="secondary">
-              {t("data.Limit")}:
+              {t('data.Limit')}:
             </Typography.Text>
             {maxVfolderCount}
           </Flex>
-          <Divider style={{ margin: "12px auto" }} />
+          <Divider style={{ margin: '12px auto' }} />
           <Flex direction="row" wrap="wrap" justify="between">
             <Flex gap={token.marginXXS}>
               <Typography.Text type="secondary">
-                {t("data.ProjectFolder")}:
+                {t('data.ProjectFolder')}:
               </Typography.Text>
               {projectFolderCount}
             </Flex>
             <Flex gap={token.marginXXS} style={{ marginRight: 30 }}>
               <Typography.Text type="secondary">
-                {t("data.Invited")}:
+                {t('data.Invited')}:
               </Typography.Text>
               {invitedCount}
             </Flex>
@@ -185,8 +184,8 @@ const StorageStatusPanel: React.FC<{
         <Descriptions.Item
           label={
             <div>
-              {t("data.QuotaPerStorageVolume")}
-              <Tooltip title={t("data.HostDetails")}>
+              {t('data.QuotaPerStorageVolume')}
+              <Tooltip title={t('data.HostDetails')}>
                 <Button type="link" icon={<InfoCircleOutlined />} />
               </Tooltip>
             </div>
@@ -196,9 +195,9 @@ const StorageStatusPanel: React.FC<{
             wrap="wrap"
             justify="between"
             direction="row"
-            style={{ minWidth: "25vw" }}
+            style={{ minWidth: '25vw' }}
           >
-            <Typography.Text type="secondary">{t("data.Host")}</Typography.Text>
+            <Typography.Text type="secondary">{t('data.Host')}</Typography.Text>
             <StorageSelector
               onChange={(value, info) => {
                 setSelectedVolumeInfo(info);
@@ -209,21 +208,21 @@ const StorageStatusPanel: React.FC<{
           </Flex>
           {selectedVolumeInfo !== deferredSelectedVolumeInfo ? (
             <FlexActivityIndicator style={{ minHeight: 120 }} />
-          ) : selectedVolumeInfo?.capabilities?.includes("quota") ? (
+          ) : selectedVolumeInfo?.capabilities?.includes('quota') ? (
             <>
               <Flex
-                style={{ margin: "15px auto" }}
+                style={{ margin: '15px auto' }}
                 justify="between"
                 wrap="wrap"
               >
                 <Typography.Text
                   type="secondary"
                   style={{
-                    wordBreak: "keep-all",
-                    wordWrap: "break-word",
+                    wordBreak: 'keep-all',
+                    wordWrap: 'break-word',
                   }}
                 >
-                  {t("data.Project")}
+                  {t('data.Project')}
                   <br />({currentProject?.name})
                 </Typography.Text>
                 <UsageProgress
@@ -234,11 +233,11 @@ const StorageStatusPanel: React.FC<{
                 <Typography.Text
                   type="secondary"
                   style={{
-                    wordBreak: "keep-all",
-                    wordWrap: "break-word",
+                    wordBreak: 'keep-all',
+                    wordWrap: 'break-word',
                   }}
                 >
-                  {t("data.User")}
+                  {t('data.User')}
                   <br />({baiClient?.email})
                 </Typography.Text>
                 <UsageProgress usageProgressFrgmt={user_quota_scope || null} />
@@ -247,8 +246,8 @@ const StorageStatusPanel: React.FC<{
           ) : (
             <Empty
               image={Empty.PRESENTED_IMAGE_SIMPLE}
-              description={t("storageHost.QuotaDoesNotSupported")}
-              style={{ margin: "25px auto" }}
+              description={t('storageHost.QuotaDoesNotSupported')}
+              style={{ margin: '25px auto' }}
             />
           )}
         </Descriptions.Item>
@@ -262,8 +261,8 @@ export const StorageStatusPanelFallback = () => {
   return (
     <Card
       size="small"
-      title={t("data.StorageStatus")}
-      style={{ margin: "3px 14px" }}
+      title={t('data.StorageStatus')}
+      style={{ margin: '3px 14px' }}
     >
       <Skeleton active />
     </Card>

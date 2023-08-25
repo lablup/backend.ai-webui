@@ -2,25 +2,20 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-import {translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property} from 'lit/decorators.js';
-
-import {BackendAIPage} from './backend-ai-page';
-
-import '@material/mwc-tab-bar/mwc-tab-bar';
-import '@material/mwc-tab/mwc-tab';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
-import './backend-ai-usage-list.js';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { BackendAIPage } from './backend-ai-page';
+import './backend-ai-usage-list.js';
+import '@material/mwc-tab-bar/mwc-tab-bar';
+import '@material/mwc-tab/mwc-tab';
+import { css, CSSResultGroup, html } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { customElement, property } from 'lit/decorators.js';
 
 /**
  Backend AI Statistics View
@@ -37,7 +32,7 @@ import {
 
 @customElement('backend-ai-statistics-view')
 export default class BackendAIStatisticsView extends BackendAIPage {
-  @property({type: String}) _status = 'inactive';
+  @property({ type: String }) _status = 'inactive';
 
   static get styles(): CSSResultGroup {
     return [
@@ -58,13 +53,15 @@ export default class BackendAIStatisticsView extends BackendAIPage {
           --mdc-theme-primary: var(--general-sidebar-selected-color);
           --mdc-text-transform: none;
           --mdc-tab-color-default: var(--general-tabbar-background-color);
-          --mdc-tab-text-label-color-default: var(--general-tabbar-tab-disabled-color);
+          --mdc-tab-text-label-color-default: var(
+            --general-tabbar-tab-disabled-color
+          );
         }
 
         .tab-content {
           width: 100%;
         }
-      `
+      `,
     ];
   }
 
@@ -80,7 +77,10 @@ export default class BackendAIStatisticsView extends BackendAIPage {
       this._status = 'inactive';
       return;
     }
-    (this.shadowRoot?.querySelector('#usage-list') as HTMLElement).setAttribute('active', 'true');
+    (this.shadowRoot?.querySelector('#usage-list') as HTMLElement).setAttribute(
+      'active',
+      'true',
+    );
     this._status = 'active';
   }
 
@@ -90,39 +90,48 @@ export default class BackendAIStatisticsView extends BackendAIPage {
    * @param {EventTarget} tab - usage tab to want to show
    * */
   _showTab(tab) {
-    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>('.tab-content') as NodeListOf<HTMLDivElement>;
+    const els = this.shadowRoot?.querySelectorAll<HTMLDivElement>(
+      '.tab-content',
+    ) as NodeListOf<HTMLDivElement>;
 
     for (const el of Array.from(els)) {
       el.style.display = 'none';
     }
 
-    (this.shadowRoot?.querySelector('#' + tab.title + '-stat') as HTMLElement).style.display = 'block';
+    (
+      this.shadowRoot?.querySelector('#' + tab.title + '-stat') as HTMLElement
+    ).style.display = 'block';
 
     els.forEach((e) => {
       e.children[0].removeAttribute('active');
     });
-    (this.shadowRoot?.querySelector(`#${tab.title}-list`) as HTMLElement).setAttribute('active', 'true');
+    (
+      this.shadowRoot?.querySelector(`#${tab.title}-list`) as HTMLElement
+    ).setAttribute('active', 'true');
   }
 
   render() {
     // language=HTML
     return html`
-      <link rel="stylesheet" href="resources/custom.css">
-        <lablup-activity-panel elevation="1" noheader narrow autowidth>
-          <div slot="message">
-            <h3 class="tab horizontal center layout">
-              <mwc-tab-bar>
-                <mwc-tab title="usage" label="${_t('statistics.UsageHistory')}"></mwc-tab>
-              </mwc-tab-bar>
-            </h3>
-            <div class="horizontal wrap layout">
-              <div id="usage-stat" class="tab-content">
-                <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
-              </div>
+      <link rel="stylesheet" href="resources/custom.css" />
+      <lablup-activity-panel elevation="1" noheader narrow autowidth>
+        <div slot="message">
+          <h3 class="tab horizontal center layout">
+            <mwc-tab-bar>
+              <mwc-tab
+                title="usage"
+                label="${_t('statistics.UsageHistory')}"
+              ></mwc-tab>
+            </mwc-tab-bar>
+          </h3>
+          <div class="horizontal wrap layout">
+            <div id="usage-stat" class="tab-content">
+              <backend-ai-usage-list id="usage-list"></backend-ai-usage-list>
             </div>
           </div>
-        </lablup-activity-panel>
-      `;
+        </div>
+      </lablup-activity-panel>
+    `;
   }
 }
 

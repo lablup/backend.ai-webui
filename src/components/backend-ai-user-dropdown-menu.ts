@@ -2,31 +2,28 @@
  @license
  Copyright (c) 2015-2023 Lablup Inc. All rights reserved.
  */
-
-
-import {customElement, property, query} from 'lit/decorators.js';
-import {css, LitElement, html, CSSResultGroup} from 'lit';
-import {translate as _t} from 'lit-translate';
-import '@material/mwc-select';
-import '@material/mwc-icon-button';
-
-import BackendAiCommonUtils from './backend-ai-common-utils';
-import {BackendAIWebUIStyles} from './backend-ai-webui-styles';
+import { navigate } from '../backend-ai-app';
+import QR from '../lib/qr';
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {get as _text} from 'lit-translate/util';
-import {Menu} from '@material/mwc-menu';
-import {IconButton} from '@material/mwc-icon-button';
-import {Switch} from '@material/mwc-switch';
-import {store} from '../store';
-import {navigate} from '../backend-ai-app';
+import { store } from '../store';
+import BackendAiCommonUtils from './backend-ai-common-utils';
 import BackendAIDialog from './backend-ai-dialog';
-import {TextField} from '@material/mwc-textfield';
-import QR from '../lib/qr';
+import { BackendAIWebUIStyles } from './backend-ai-webui-styles';
+import '@material/mwc-icon-button';
+import { IconButton } from '@material/mwc-icon-button';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-select';
+import { Switch } from '@material/mwc-switch';
+import { TextField } from '@material/mwc-textfield';
+import { css, LitElement, html, CSSResultGroup } from 'lit';
+import { translate as _t } from 'lit-translate';
+import { get as _text } from 'lit-translate/util';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Backend AI User dropdown menu
@@ -40,26 +37,30 @@ import QR from '../lib/qr';
  */
 @customElement('backend-ai-user-dropdown-menu')
 export default class BackendAiUserDropdownMenu extends LitElement {
-  @property({type: String}) userId = 'DISCONNECTED';
-  @property({type: String}) fullName = 'DISCONNECTED';
-  @property({type: String}) domain = 'CLICK TO CONNECT';
-  @property({type: Object}) loggedAccount = Object();
-  @property({type: Object}) roleInfo = Object();
-  @property({type: Object}) keyPairInfo = Object();
-  @property({type: Array}) groups = [];
-  @property({type: Object}) notification;
-  @property({type: Boolean}) isUserInfoMaskEnabled = true;
-  @property({type: Boolean}) totpSupported = false;
-  @property({type: Boolean}) totpActivated = false;
-  @property({type: Boolean}) forceTotp = false;
-  @property({type: String}) totpKey = '';
-  @property({type: String}) totpUri = '';
+  @property({ type: String }) userId = 'DISCONNECTED';
+  @property({ type: String }) fullName = 'DISCONNECTED';
+  @property({ type: String }) domain = 'CLICK TO CONNECT';
+  @property({ type: Object }) loggedAccount = Object();
+  @property({ type: Object }) roleInfo = Object();
+  @property({ type: Object }) keyPairInfo = Object();
+  @property({ type: Array }) groups = [];
+  @property({ type: Object }) notification;
+  @property({ type: Boolean }) isUserInfoMaskEnabled = true;
+  @property({ type: Boolean }) totpSupported = false;
+  @property({ type: Boolean }) totpActivated = false;
+  @property({ type: Boolean }) forceTotp = false;
+  @property({ type: String }) totpKey = '';
+  @property({ type: String }) totpUri = '';
 
   @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
   @query('#dropdown-menu') dropdownMenu: Menu | undefined;
-  @query('#user-preference-dialog') userPreferenceDialog: BackendAIDialog | undefined;
+  @query('#user-preference-dialog') userPreferenceDialog:
+    | BackendAIDialog
+    | undefined;
   @query('#totp-setup-dialog') totpSetupDialog: BackendAIDialog | undefined;
-  @query('#totp-removal-confirm-dialog') totpRemovalConfirmDialog: BackendAIDialog | undefined;
+  @query('#totp-removal-confirm-dialog') totpRemovalConfirmDialog:
+    | BackendAIDialog
+    | undefined;
   @query('#totp-uri-qrcode') totpUriQrImage: HTMLImageElement | undefined;
   @query('#totp-confirm-otp') confirmOtpTextfield: TextField | undefined;
   @query('#totp-activation') totpActivationSwitch: Switch | undefined;
@@ -94,14 +95,24 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   firstUpdated() {
     this.notification = globalThis.lablupNotification;
-    if (typeof globalThis.backendaiclient === 'undefined' || globalThis.backendaiclient === null || globalThis.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', () => {
-        this._refreshUserInfoPanel();
-        this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
-      }, true);
+    if (
+      typeof globalThis.backendaiclient === 'undefined' ||
+      globalThis.backendaiclient === null ||
+      globalThis.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        () => {
+          this._refreshUserInfoPanel();
+          this.isUserInfoMaskEnabled =
+            globalThis.backendaiclient._config.maskUserInfo;
+        },
+        true,
+      );
     } else {
       this._refreshUserInfoPanel();
-      this.isUserInfoMaskEnabled = globalThis.backendaiclient._config.maskUserInfo;
+      this.isUserInfoMaskEnabled =
+        globalThis.backendaiclient._config.maskUserInfo;
     }
   }
 
@@ -112,7 +123,8 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this.userId = globalThis.backendaiclient.email;
     this.fullName = globalThis.backendaiclient.full_name;
     this.domain = globalThis.backendaiclient._config.domainName;
-    this.loggedAccount.access_key = globalThis.backendaiclient._config.accessKey;
+    this.loggedAccount.access_key =
+      globalThis.backendaiclient._config.accessKey;
     this._showRole();
     this._showTotpActivated();
   }
@@ -123,14 +135,25 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @return {string} Name from full name or user ID
    */
   _getUsername() {
-    let name = (this.fullName?.replace(/\s+/g, '').length > 0) ? this.fullName : this.userId;
+    let name =
+      this.fullName?.replace(/\s+/g, '').length > 0
+        ? this.fullName
+        : this.userId;
     // mask username only when the configuration is enabled
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
-      const emailPattern = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
+      const emailPattern =
+        /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
       const isEmail: boolean = emailPattern.test(name);
-      const maskLength = isEmail ? name.split('@')[0].length - maskStartIdx : name.length - maskStartIdx;
-      name = globalThis.backendaiutils._maskString(name, '*', maskStartIdx, maskLength);
+      const maskLength = isEmail
+        ? name.split('@')[0].length - maskStartIdx
+        : name.length - maskStartIdx;
+      name = globalThis.backendaiutils._maskString(
+        name,
+        '*',
+        maskStartIdx,
+        maskLength,
+      );
     }
     return name;
   }
@@ -146,7 +169,12 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     if (this.isUserInfoMaskEnabled) {
       const maskStartIdx = 2;
       const maskLength = userId.split('@')[0].length - maskStartIdx;
-      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+      userId = globalThis.backendaiutils._maskString(
+        userId,
+        '*',
+        maskStartIdx,
+        maskLength,
+      );
     }
     return userId;
   }
@@ -161,14 +189,25 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   }
 
   async _showTotpActivated() {
-    this.totpSupported = globalThis.backendaiclient?.supports('2FA') && await globalThis.backendaiclient?.isManagerSupportingTOTP();
+    this.totpSupported =
+      globalThis.backendaiclient?.supports('2FA') &&
+      (await globalThis.backendaiclient?.isManagerSupportingTOTP());
     if (this.totpSupported) {
       const userInfo = await globalThis.backendaiclient?.user.get(
-        globalThis.backendaiclient.email, ['totp_activated']
+        globalThis.backendaiclient.email,
+        ['totp_activated'],
       );
       this.totpActivated = userInfo.user.totp_activated;
-      this.forceTotp = globalThis.backendaiclient?.supports('force2FA') && globalThis.backendaiclient?._config.force2FA;
-      const properties = ['open', 'noclosebutton', 'persistent', 'escapeKeyAction', 'scrimClickAction'];
+      this.forceTotp =
+        globalThis.backendaiclient?.supports('force2FA') &&
+        globalThis.backendaiclient?._config.force2FA;
+      const properties = [
+        'open',
+        'noclosebutton',
+        'persistent',
+        'escapeKeyAction',
+        'scrimClickAction',
+      ];
       if (this.forceTotp && !this.totpActivated) {
         properties.forEach((property) => {
           this.totpSetupDialog?.setAttribute(property, '');
@@ -244,7 +283,11 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * @param {string} newFullname - Name to be modified
    */
   async _updateFullname(newFullname = '') {
-    newFullname = newFullname === '' ? (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value : newFullname;
+    newFullname =
+      newFullname === ''
+        ? (this.shadowRoot?.querySelector('#pref-original-name') as TextField)
+            .value
+        : newFullname;
     if (newFullname.length > 64) {
       this.notification.text = _text('webui.menu.FullNameInvalid');
       this.notification.show();
@@ -252,27 +295,34 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     }
     // if user input in full name is not null and not same as the original full name, then it updates.
     if (globalThis.backendaiclient.supports('change-user-name')) {
-      if (newFullname && (newFullname !== this.fullName)) {
-        globalThis.backendaiclient.update_full_name(this.userId, newFullname).then((resp) => {
-          this.notification.text = _text('webui.menu.FullnameUpdated');
-          this.notification.show();
-          this.fullName = globalThis.backendaiclient.full_name = newFullname;
-          (this.shadowRoot?.querySelector('#pref-original-name') as TextField).value = this.fullName;
-          const event = new CustomEvent('current-user-info-changed', {'detail': this.fullName});
-          document.dispatchEvent(event);
-        }).catch((err) => {
-          if (err && err.message) {
-            this.notification.text = err.message;
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-            return;
-          } else if (err && err.title) {
-            this.notification.text = err.title;
-            this.notification.detail = err.message;
-            this.notification.show(true, err);
-            return;
-          }
-        });
+      if (newFullname && newFullname !== this.fullName) {
+        globalThis.backendaiclient
+          .update_full_name(this.userId, newFullname)
+          .then((resp) => {
+            this.notification.text = _text('webui.menu.FullnameUpdated');
+            this.notification.show();
+            this.fullName = globalThis.backendaiclient.full_name = newFullname;
+            (
+              this.shadowRoot?.querySelector('#pref-original-name') as TextField
+            ).value = this.fullName;
+            const event = new CustomEvent('current-user-info-changed', {
+              detail: this.fullName,
+            });
+            document.dispatchEvent(event);
+          })
+          .catch((err) => {
+            if (err && err.message) {
+              this.notification.text = err.message;
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+              return;
+            } else if (err && err.title) {
+              this.notification.text = err.title;
+              this.notification.detail = err.message;
+              this.notification.show(true, err);
+              return;
+            }
+          });
       }
     } else {
       this.notification.text = _text('error.APINotSupported');
@@ -284,9 +334,15 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    */
   async _updateUserPassword() {
     const dialog = this.shadowRoot?.querySelector('#user-preference-dialog');
-    const oldPassword = (dialog?.querySelector('#pref-original-password') as TextField).value;
-    const newPassword1El = dialog?.querySelector('#pref-new-password') as TextField;
-    const newPassword2El = dialog?.querySelector('#pref-new-password2') as TextField;
+    const oldPassword = (
+      dialog?.querySelector('#pref-original-password') as TextField
+    ).value;
+    const newPassword1El = dialog?.querySelector(
+      '#pref-new-password',
+    ) as TextField;
+    const newPassword2El = dialog?.querySelector(
+      '#pref-new-password2',
+    ) as TextField;
 
     // no update in user's password
     if (!oldPassword && !newPassword1El.value && !newPassword2El.value) {
@@ -310,28 +366,41 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       this.notification.show();
       return;
     }
-    const p = globalThis.backendaiclient.update_password(oldPassword, newPassword1El.value, newPassword2El.value);
+    const p = globalThis.backendaiclient.update_password(
+      oldPassword,
+      newPassword1El.value,
+      newPassword2El.value,
+    );
     p.then((resp) => {
       this.notification.text = _text('webui.menu.PasswordUpdated');
       this.notification.show();
       this._hideUserPrefDialog();
-    }).catch((err) => {
-      if (err && err.message) {
-        this.notification.text = err.message;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        return;
-      } else if (err && err.title) {
-        this.notification.text = err.title;
-        this.notification.detail = err.message;
-        this.notification.show(true, err);
-        return;
-      }
-    }).finally(() => { // remove input value again
-      (this.shadowRoot?.querySelector('#pref-original-password') as TextField).value = '';
-      (this.shadowRoot?.querySelector('#pref-new-password') as TextField).value = '';
-      (this.shadowRoot?.querySelector('#pref-new-password2') as TextField).value = '';
-    });
+    })
+      .catch((err) => {
+        if (err && err.message) {
+          this.notification.text = err.message;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+          return;
+        } else if (err && err.title) {
+          this.notification.text = err.title;
+          this.notification.detail = err.message;
+          this.notification.show(true, err);
+          return;
+        }
+      })
+      .finally(() => {
+        // remove input value again
+        (
+          this.shadowRoot?.querySelector('#pref-original-password') as TextField
+        ).value = '';
+        (
+          this.shadowRoot?.querySelector('#pref-new-password') as TextField
+        ).value = '';
+        (
+          this.shadowRoot?.querySelector('#pref-new-password2') as TextField
+        ).value = '';
+      });
   }
 
   _showSplash() {
@@ -345,7 +414,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   _moveToLogPage() {
     const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'logs'}));
+    store.dispatch(
+      navigate(decodeURIComponent('/usersettings'), { tab: 'logs' }),
+    );
     if (currentPage && currentPage === 'usersettings') {
       const event = new CustomEvent('backend-ai-usersettings-logs', {});
       document.dispatchEvent(event);
@@ -358,7 +429,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   _moveToUserSettingsPage() {
     const currentPage = globalThis.location.toString().split(/[/]+/).pop();
     globalThis.history.pushState({}, '', '/usersettings');
-    store.dispatch(navigate(decodeURIComponent('/usersettings'), {tab: 'general'}));
+    store.dispatch(
+      navigate(decodeURIComponent('/usersettings'), { tab: 'general' }),
+    );
     if (currentPage && currentPage === 'usersettings') {
       const event = new CustomEvent('backend-ai-usersettings', {});
       document.dispatchEvent(event);
@@ -387,33 +460,41 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   _togglePasswordVisibility(element) {
     const isVisible = element.__on;
     const password = element.closest('div').querySelector('mwc-textfield');
-    isVisible ? password.setAttribute('type', 'text') : password.setAttribute('type', 'password');
+    isVisible
+      ? password.setAttribute('type', 'text')
+      : password.setAttribute('type', 'password');
   }
 
   _validatePassword1() {
     // TODO define type for custom property
-    const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as TextField;
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as TextField;
+    const passwordInput = this.shadowRoot?.querySelector(
+      '#pref-new-password',
+    ) as TextField;
+    const password2Input = this.shadowRoot?.querySelector(
+      '#pref-new-password2',
+    ) as TextField;
     password2Input.reportValidity();
     passwordInput.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          passwordInput.validationMessage = _text('signup.PasswordInputRequired');
+          passwordInput.validationMessage = _text(
+            'signup.PasswordInputRequired',
+          );
           return {
             valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
+            customError: !nativeValidity.valid,
           };
         } else {
           passwordInput.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
+            customError: !nativeValidity.valid,
           };
         }
       } else {
         return {
           valid: nativeValidity.valid,
-          customError: !nativeValidity.valid
+          customError: !nativeValidity.valid,
         };
       }
     };
@@ -421,32 +502,38 @@ export default class BackendAiUserDropdownMenu extends LitElement {
 
   _validatePassword2() {
     // TODO define type for custom property
-    const password2Input = this.shadowRoot?.querySelector('#pref-new-password2') as TextField;
+    const password2Input = this.shadowRoot?.querySelector(
+      '#pref-new-password2',
+    ) as TextField;
     password2Input.validityTransform = (newValue, nativeValidity) => {
       if (!nativeValidity.valid) {
         if (nativeValidity.valueMissing) {
-          password2Input.validationMessage = _text('signup.PasswordInputRequired');
+          password2Input.validationMessage = _text(
+            'signup.PasswordInputRequired',
+          );
           return {
             valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
+            customError: !nativeValidity.valid,
           };
         } else {
           password2Input.validationMessage = _text('signup.PasswordInvalid');
           return {
             valid: nativeValidity.valid,
-            customError: !nativeValidity.valid
+            customError: !nativeValidity.valid,
           };
         }
       } else {
         // custom validation for password input match
-        const passwordInput = this.shadowRoot?.querySelector('#pref-new-password') as TextField;
-        const isMatched = (passwordInput.value === password2Input.value);
+        const passwordInput = this.shadowRoot?.querySelector(
+          '#pref-new-password',
+        ) as TextField;
+        const isMatched = passwordInput.value === password2Input.value;
         if (!isMatched) {
           password2Input.validationMessage = _text('signup.PasswordNotMatched');
         }
         return {
           valid: isMatched,
-          customError: !isMatched
+          customError: !isMatched,
         };
       }
     };
@@ -513,11 +600,19 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       <div class="horizontal flex center layout">
         <div class="vertical layout center" id="dropdown-area">
           <mwc-menu id="dropdown-menu" class="user-menu">
-            ${this.domain !== 'default' && this.domain !== '' ? html`
-            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
-                ${this.domain}
-            </mwc-list-item>
-            ` : html``}
+            ${
+              this.domain !== 'default' && this.domain !== ''
+                ? html`
+                    <mwc-list-item
+                      class="horizontal layout start center"
+                      disabled
+                      style="border-bottom:1px solid #ccc;pointer-events:none;"
+                    >
+                      ${this.domain}
+                    </mwc-list-item>
+                  `
+                : html``
+            }
             <mwc-list-item class="horizontal layout start center" style="pointer-events:none;">
                 <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
                  <span class="dropdown-menu-name">${this._getUsername()}</span>
@@ -530,32 +625,49 @@ export default class BackendAiUserDropdownMenu extends LitElement {
                 <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
                 <span class="dropdown-menu-name">${this.roleInfo.role}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" @click="${this._showSplash}">
+            <mwc-list-item class="horizontal layout start center" @click="${
+              this._showSplash
+            }">
                 <mwc-icon class="dropdown-menu">info</mwc-icon>
-                <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
+                <span class="dropdown-menu-name">${_t(
+                  'webui.menu.AboutBackendAI',
+                )}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+            <mwc-list-item class="horizontal layout start center" @click="${() =>
+              this._openUserPrefDialog()}">
                 <mwc-icon class="dropdown-menu">lock</mwc-icon>
-                <span class="dropdown-menu-name">${_t('webui.menu.MyAccount')}</span>
+                <span class="dropdown-menu-name">${_t(
+                  'webui.menu.MyAccount',
+                )}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+            <mwc-list-item class="horizontal layout start center" @click="${() =>
+              this._moveToUserSettingsPage()}">
                 <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
-                <span class="dropdown-menu-name">${_t('webui.menu.Preferences')}</span>
+                <span class="dropdown-menu-name">${_t(
+                  'webui.menu.Preferences',
+                )}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+            <mwc-list-item class="horizontal layout start center" @click="${() =>
+              this._moveToLogPage()}">
                 <mwc-icon class="dropdown-menu">assignment</mwc-icon>
-                <span class="dropdown-menu-name">${_t('webui.menu.LogsErrors')}</span>
+                <span class="dropdown-menu-name">${_t(
+                  'webui.menu.LogsErrors',
+                )}</span>
             </mwc-list-item>
-            <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+            <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() =>
+              this.logout()}">
                 <mwc-icon class="dropdown-menu">logout</mwc-icon>
-                <span class="dropdown-menu-name">${_t('webui.menu.LogOut')}</span>
+                <span class="dropdown-menu-name">${_t(
+                  'webui.menu.LogOut',
+                )}</span>
             </mwc-list-item>
           </mwc-menu>
         </div>
         <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0 auto 10px;">
           ${this._getUsername()}
         </span>
-        <mwc-icon-button id="dropdown-button" icon="person" @click="${() => this._toggleDropdown()}" style="color:#8c8584;">
+        <mwc-icon-button id="dropdown-button" icon="person" @click="${() =>
+          this._toggleDropdown()}" style="color:#8c8584;">
         </mwc-icon-button>
       </div>
     </div>
@@ -565,7 +677,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <p>${_t('totp.ScanQRToEnable')}</p>
         <img id="totp-uri-qrcode" style="width: 150px; height: 150px;" alt="QR" />
         <p>${_t('totp.TypeInAuthKey')}</p>
-        <backend-ai-react-copyable-code-text value="${this.totpKey}"></backend-ai-react-copyable-code-text>
+        <backend-ai-react-copyable-code-text value="${
+          this.totpKey
+        }"></backend-ai-react-copyable-code-text>
       </div>
       <div slot="content" class="layout vertical" style="width: 300px">
         <p style="flex-grow: 1;">${_t('totp.EnterConfirmationCode')}</p>
@@ -574,7 +688,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           </mwc-textfield>
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button unelevated @click="${(e) => this._confirmOtpSetup(e)}">${_t('button.Confirm')}</mwc-button>
+        <mwc-button unelevated @click="${(e) => this._confirmOtpSetup(e)}">${_t(
+          'button.Confirm',
+        )}</mwc-button>
       </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="totp-removal-confirm-dialog" fixed backdrop>
@@ -583,7 +699,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <p>${_t('totp.ConfirmTotpRemovalBody')}</p>
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
-        <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t('button.Confirm')}</mwc-button>
+        <mwc-button unelevated @click="${(e) => this._stopUsingTotp(e)}">${_t(
+          'button.Confirm',
+        )}</mwc-button>
       </div>
     </backend-ai-dialog>
     <backend-ai-dialog id="user-preference-dialog" fixed backdrop>
@@ -599,10 +717,16 @@ export default class BackendAiUserDropdownMenu extends LitElement {
         <mwc-select id="access-key-select" class="fixed-position" fixedMenuPosition required
                     label="${_t('general.AccessKey')}"
                     @selected="${(e) => this._showSecretKey(e)}">
-          ${this.keyPairInfo.keypairs?.map((item) => html`
-            <mwc-list-item value="${item.access_key}" ?selected=${this.loggedAccount.access_key === item.access_key}>
-              ${item.access_key}
-            </mwc-list-item>`)}
+          ${this.keyPairInfo.keypairs?.map(
+            (item) => html`
+              <mwc-list-item
+                value="${item.access_key}"
+                ?selected=${this.loggedAccount.access_key === item.access_key}
+              >
+                ${item.access_key}
+              </mwc-list-item>
+            `,
+          )}
         </mwc-select>
         <mwc-textfield id="secretkey" disabled type="text"
             label="${_t('general.SecretKey')}"
@@ -615,35 +739,57 @@ export default class BackendAiUserDropdownMenu extends LitElement {
             style="margin-bottom:20px;">
         </mwc-textfield>
         <div class="horizontal flex layout">
-          <mwc-textfield id="pref-new-password" label="${_t('webui.menu.NewPassword')}"
+          <mwc-textfield id="pref-new-password" label="${_t(
+            'webui.menu.NewPassword',
+          )}"
               type="password" maxLength="64"
-              auto-validate validationMessage="${_t('webui.menu.InvalidPasswordMessage')}"
+              auto-validate validationMessage="${_t(
+                'webui.menu.InvalidPasswordMessage',
+              )}"
               pattern=${BackendAiCommonUtils.passwordRegex}
               @change="${this._validatePassword}">
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                                    @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                                    @click="${(e) =>
+                                      this._togglePasswordVisibility(
+                                        e.target,
+                                      )}">
           </mwc-icon-button-toggle>
         </div>
         <div class="horizontal flex layout">
-          <mwc-textfield id="pref-new-password2" label="${_t('webui.menu.NewPasswordAgain')}"
+          <mwc-textfield id="pref-new-password2" label="${_t(
+            'webui.menu.NewPasswordAgain',
+          )}"
               type="password" maxLength="64"
               @change="${this._validatePassword}">
           </mwc-textfield>
           <mwc-icon-button-toggle off onIcon="visibility" offIcon="visibility_off"
-                                    @click="${(e) => this._togglePasswordVisibility(e.target)}">
+                                    @click="${(e) =>
+                                      this._togglePasswordVisibility(
+                                        e.target,
+                                      )}">
           </mwc-icon-button-toggle>
         </div>
-        ${this.totpSupported ? html`
-          <div class="horizontal flex layout">
-            <p style="flex-grow: 1;margin-left: 15px;">
-              ${_t('webui.menu.TotpActivated')}
-            </p>
-            <mwc-switch id="totp-activation" .selected="${this.totpActivated}" style="margin-right: 10px;"
-                @click="${(e) => this.totpActivated ? this._confirmRemovingTotp(e) : this._startActivatingTotp(e)}">
-            </mwc-switch>
-          </div>
-        `: html``}
+        ${
+          this.totpSupported
+            ? html`
+                <div class="horizontal flex layout">
+                  <p style="flex-grow: 1;margin-left: 15px;">
+                    ${_t('webui.menu.TotpActivated')}
+                  </p>
+                  <mwc-switch
+                    id="totp-activation"
+                    .selected="${this.totpActivated}"
+                    style="margin-right: 10px;"
+                    @click="${(e) =>
+                      this.totpActivated
+                        ? this._confirmRemovingTotp(e)
+                        : this._startActivatingTotp(e)}"
+                  ></mwc-switch>
+                </div>
+              `
+            : html``
+        }
       </div>
       <div slot="footer" class="horizontal end-justified flex layout">
         <div class="flex"></div>

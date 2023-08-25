@@ -1,13 +1,12 @@
-import React from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useFragment, useMutation } from "react-relay";
-import { QuotaSettingModalFragment$key } from "./__generated__/QuotaSettingModalFragment.graphql";
-import { QuotaSettingModalSetMutation } from "./__generated__/QuotaSettingModalSetMutation.graphql";
-
-import { Form, Input, message } from "antd";
-import { useTranslation } from "react-i18next";
-import { GBToBytes, bytesToGB } from "../helper";
-import BAIModal, { BAIModalProps } from "./BAIModal";
+import { GBToBytes, bytesToGB } from '../helper';
+import BAIModal, { BAIModalProps } from './BAIModal';
+import { QuotaSettingModalFragment$key } from './__generated__/QuotaSettingModalFragment.graphql';
+import { QuotaSettingModalSetMutation } from './__generated__/QuotaSettingModalSetMutation.graphql';
+import { Form, Input, message } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends BAIModalProps {
   quotaScopeFrgmt?: QuotaSettingModalFragment$key | null;
@@ -34,7 +33,7 @@ const QuotaSettingModal: React.FC<Props> = ({
         }
       }
     `,
-    quotaScopeFrgmt
+    quotaScopeFrgmt,
   );
 
   const [commitSetQuotaScope, isInFlightCommitSetQuotaScope] =
@@ -65,8 +64,8 @@ const QuotaSettingModal: React.FC<Props> = ({
     form.validateFields().then((values) => {
       commitSetQuotaScope({
         variables: {
-          quota_scope_id: quotaScope?.quota_scope_id || "",
-          storage_host_name: quotaScope?.storage_host_name || "",
+          quota_scope_id: quotaScope?.quota_scope_id || '',
+          storage_host_name: quotaScope?.storage_host_name || '',
           props: {
             hard_limit_bytes: GBToBytes(values?.hard_limit_bytes),
           },
@@ -74,10 +73,10 @@ const QuotaSettingModal: React.FC<Props> = ({
         onCompleted(response) {
           if (response?.set_quota_scope?.quota_scope?.id) {
             message.success(
-              t("storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated")
+              t('storageHost.quotaSettings.QuotaScopeSuccessfullyUpdated'),
             );
           } else {
-            message.error(t("dialog.ErrorOccurred"));
+            message.error(t('dialog.ErrorOccurred'));
           }
           onRequestClose();
         },
@@ -99,26 +98,26 @@ const QuotaSettingModal: React.FC<Props> = ({
       onOk={_onOk}
       confirmLoading={isInFlightCommitSetQuotaScope}
       onCancel={onRequestClose}
-      title={t("storageHost.quotaSettings.QuotaSettings")}
+      title={t('storageHost.quotaSettings.QuotaSettings')}
     >
       <Form
         form={form}
         preserve={false}
         labelCol={{ span: 6 }}
         wrapperCol={{ span: 20 }}
-        validateTrigger={["onChange", "onBlur"]}
+        validateTrigger={['onChange', 'onBlur']}
         style={{ marginBottom: 40, marginTop: 20 }}
       >
         <Form.Item
           name="hard_limit_bytes"
-          label={t("storageHost.HardLimit")}
+          label={t('storageHost.HardLimit')}
           initialValue={bytesToGB(quotaScope?.details?.hard_limit_bytes)}
           rules={[
             {
               pattern: /^\d+(\.\d+)?$/,
               message:
-                t("storageHost.quotaSettings.AllowNumberAndDot") ||
-                "Allows numbers and .(dot) only",
+                t('storageHost.quotaSettings.AllowNumberAndDot') ||
+                'Allows numbers and .(dot) only',
             },
           ]}
         >
@@ -126,7 +125,7 @@ const QuotaSettingModal: React.FC<Props> = ({
             addonAfter="GB"
             type="number"
             step={0.25}
-            style={{ width: "70%" }}
+            style={{ width: '70%' }}
           />
         </Form.Item>
       </Form>

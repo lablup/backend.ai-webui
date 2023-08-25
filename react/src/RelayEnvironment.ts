@@ -1,3 +1,5 @@
+// import { createClient } from "graphql-ws";
+import { removeSkipOnClientDirective } from './helper/graphql-transformer';
 import {
   Environment,
   Network,
@@ -6,22 +8,20 @@ import {
   FetchFunction,
   SubscribeFunction,
   RelayFeatureFlags,
-} from "relay-runtime";
-// import { createClient } from "graphql-ws";
-import { removeSkipOnClientDirective } from "./helper/graphql-transformer";
+} from 'relay-runtime';
 
 RelayFeatureFlags.ENABLE_RELAY_RESOLVERS = true;
 
 const fetchFn: FetchFunction = async (
   request,
-  variables
+  variables,
   // cacheConfig,
   // uploadables
 ) => {
   // @skipOnClient directive modifies GraphQL queries according to the availability of a supported field.
   const transformedData = removeSkipOnClientDirective(
-    request.text || "",
-    variables
+    request.text || '',
+    variables,
   );
 
   const reqBody = {
@@ -31,9 +31,9 @@ const fetchFn: FetchFunction = async (
 
   //@ts-ignore
   const reqInfo = globalThis.backendaiclient?.newSignedRequest(
-    "POST",
-    "/admin/gql",
-    reqBody
+    'POST',
+    '/admin/gql',
+    reqBody,
   );
 
   //@ts-ignore
@@ -42,7 +42,7 @@ const fetchFn: FetchFunction = async (
     false,
     null,
     10000,
-    0
+    0,
   );
 
   return result;

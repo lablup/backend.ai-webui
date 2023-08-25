@@ -2,20 +2,21 @@
  @license
  Copyright (c) 2015-2019 Lablup Inc. All rights reserved.
  */
-import {css, CSSResultGroup, html, LitElement} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import {IronFlex, IronFlexAlignment} from '../plastics/layout/iron-flex-layout-classes';
-
+import { CodemirrorBaseStyle } from '../lib/codemirror/base-style.css';
+import { CodemirrorThemeMonokai } from '../lib/codemirror/theme/monokai.css';
+import {
+  IronFlex,
+  IronFlexAlignment,
+} from '../plastics/layout/iron-flex-layout-classes';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import '@material/mwc-icon';
 import '@vanillawc/wc-codemirror/index';
+import { WCCodeMirror } from '@vanillawc/wc-codemirror/index';
 import '@vanillawc/wc-codemirror/mode/python/python';
 import '@vanillawc/wc-codemirror/mode/shell/shell';
 import '@vanillawc/wc-codemirror/mode/yaml/yaml';
-import '@material/mwc-icon';
-import {CodemirrorThemeMonokai} from '../lib/codemirror/theme/monokai.css';
-import {CodemirrorBaseStyle} from '../lib/codemirror/base-style.css';
-import {WCCodeMirror} from '@vanillawc/wc-codemirror/index';
-import {BackendAiStyles} from './backend-ai-general-styles';
+import { css, CSSResultGroup, html, LitElement } from 'lit';
+import { customElement, property, query } from 'lit/decorators.js';
 
 /**
  Lablup Codemirror
@@ -30,20 +31,19 @@ import {BackendAiStyles} from './backend-ai-general-styles';
  @element lablup-codemirror
  */
 
-
 @customElement('lablup-codemirror')
 export default class LablupCodemirror extends LitElement {
   public editor: any;
 
-  @property({type: Object}) config = Object();
-  @property({type: String}) mode = 'shell';
-  @property({type: String}) theme = 'monokai';
-  @property({type: String}) src = '';
-  @property({type: Boolean}) readonly = false;
-  @property({type: Boolean}) useLineWrapping = false;
-  @property({type: Boolean}) required = false;
-  @property({type: String}) validationMessage = '';
-  @property({type: String}) validationMessageIcon = 'warning';
+  @property({ type: Object }) config = Object();
+  @property({ type: String }) mode = 'shell';
+  @property({ type: String }) theme = 'monokai';
+  @property({ type: String }) src = '';
+  @property({ type: Boolean }) readonly = false;
+  @property({ type: Boolean }) useLineWrapping = false;
+  @property({ type: Boolean }) required = false;
+  @property({ type: String }) validationMessage = '';
+  @property({ type: String }) validationMessageIcon = 'warning';
   @query('#validation-message') validationMessageEl!: HTMLDivElement;
   @query('#codemirror-editor') editorEl!: WCCodeMirror;
 
@@ -175,10 +175,23 @@ export default class LablupCodemirror extends LitElement {
     // language=HTML
     return html`
       <div>
-        <wc-codemirror id="codemirror-editor" mode="${this.mode}" theme="monokai" ?readonly="${this.readonly}" @input="${() => this._validateInput()}">
-          <link rel="stylesheet" href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css">
+        <wc-codemirror
+          id="codemirror-editor"
+          mode="${this.mode}"
+          theme="monokai"
+          ?readonly="${this.readonly}"
+          @input="${() => this._validateInput()}"
+        >
+          <link
+            rel="stylesheet"
+            href="node_modules/@vanillawc/wc-codemirror/theme/monokai.css"
+          />
         </wc-codemirror>
-        <div id="validation-message" class="horizontal layout center" style="display:none;">
+        <div
+          id="validation-message"
+          class="horizontal layout center"
+          style="display:none;"
+        >
           <mwc-icon>${this.validationMessageIcon}</mwc-icon>
           <span>${this.validationMessage}</span>
         </div>

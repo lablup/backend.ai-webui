@@ -1,3 +1,25 @@
+import CopyableCodeText from '../components/CopyableCodeText';
+import EndpointStatusTag from '../components/EndpointStatusTag';
+import Flex from '../components/Flex';
+import ImageMetaIcon from '../components/ImageMetaIcon';
+import ModelServiceSettingModal from '../components/ModelServiceSettingModal';
+import ServingRouteErrorModal from '../components/ServingRouteErrorModal';
+import { ServingRouteErrorModalFragment$key } from '../components/__generated__/ServingRouteErrorModalFragment.graphql';
+import { baiSignedRequestWithPromise } from '../helper';
+import { useSuspendedBackendaiClient, useUpdatableState } from '../hooks';
+import { useTanMutation } from '../hooks/reactQueryAlias';
+import {
+  RoutingListPageQuery,
+  RoutingListPageQuery$data,
+} from './__generated__/RoutingListPageQuery.graphql';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  QuestionCircleOutlined,
+  ReloadOutlined,
+  SettingOutlined,
+  WarningOutlined,
+} from '@ant-design/icons';
 import {
   Breadcrumb,
   Button,
@@ -9,34 +31,12 @@ import {
   Tooltip,
   Typography,
   theme,
-} from "antd";
-import {
-  CheckOutlined,
-  CloseOutlined,
-  QuestionCircleOutlined,
-  ReloadOutlined,
-  SettingOutlined,
-  WarningOutlined,
-} from "@ant-design/icons";
-import React, { useState, useTransition } from "react";
-import Flex from "../components/Flex";
-import { useSuspendedBackendaiClient, useUpdatableState } from "../hooks";
-import { useNavigate, useParams } from "react-router-dom";
-import { useLazyLoadQuery } from "react-relay";
-import { useTranslation } from "react-i18next";
-import graphql from "babel-plugin-relay/macro";
-import {
-  RoutingListPageQuery,
-  RoutingListPageQuery$data,
-} from "./__generated__/RoutingListPageQuery.graphql";
-import CopyableCodeText from "../components/CopyableCodeText";
-import ImageMetaIcon from "../components/ImageMetaIcon";
-import ServingRouteErrorModal from "../components/ServingRouteErrorModal";
-import { useTanMutation } from "../hooks/reactQueryAlias";
-import { baiSignedRequestWithPromise } from "../helper";
-import { ServingRouteErrorModalFragment$key } from "../components/__generated__/ServingRouteErrorModalFragment.graphql";
-import EndpointStatusTag from "../components/EndpointStatusTag";
-import ModelServiceSettingModal from "../components/ModelServiceSettingModal";
+} from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React, { useState, useTransition } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useLazyLoadQuery } from 'react-relay';
+import { useNavigate, useParams } from 'react-router-dom';
 
 interface RoutingInfo {
   route_id: string;
@@ -57,8 +57,8 @@ export interface ModelServiceInfo {
 
 interface RoutingListPageProps {}
 
-type EndPoint = NonNullable<RoutingListPageQuery$data["endpoint"]>;
-type Routing = NonNullable<NonNullable<EndPoint["routings"]>[0]>;
+type EndPoint = NonNullable<RoutingListPageQuery$data['endpoint']>;
+type Routing = NonNullable<NonNullable<EndPoint['routings']>[0]>;
 
 const RoutingListPage: React.FC<RoutingListPageProps> = () => {
   const { t } = useTranslation();
@@ -69,7 +69,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     serviceId: string;
   }>();
 
-  const [fetchKey, updateFetchKey] = useUpdatableState("initial-fetch");
+  const [fetchKey, updateFetchKey] = useUpdatableState('initial-fetch');
   const [isPendingRefetch, startRefetchTransition] = useTransition();
   const [isPendingClearError, startClearErrorTransition] = useTransition();
   const [selectedSessionErrorForModal, setSelectedSessionErrorForModal] =
@@ -109,14 +109,14 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     },
     {
       fetchPolicy:
-        fetchKey === "initial-fetch" ? "store-and-network" : "network-only",
+        fetchKey === 'initial-fetch' ? 'store-and-network' : 'network-only',
       fetchKey,
-    }
+    },
   );
   const mutationToClearError = useTanMutation(() => {
     if (!endpoint) return;
     return baiSignedRequestWithPromise({
-      method: "POST",
+      method: 'POST',
       url: `/services/${endpoint.endpoint_id}/errors/clear`,
       client: baiClient,
     });
@@ -125,24 +125,24 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
     if (endpoint === null) return;
     const { errors } = endpoint;
     const firstMatchedSessionError = errors.find(
-      ({ session_id }) => session === session_id
+      ({ session_id }) => session === session_id,
     );
     setSelectedSessionErrorForModal(firstMatchedSessionError || null);
   };
   // const { t } = useTranslation();
 
   // return color of tag by status
-  const applyStatusColor = (status: string = "") => {
-    let color = "default";
+  const applyStatusColor = (status: string = '') => {
+    let color = 'default';
     switch (status.toUpperCase()) {
-      case "HEALTHY":
-        color = "success";
+      case 'HEALTHY':
+        color = 'success';
         break;
-      case "PROVISIONING":
-        color = "processing";
+      case 'PROVISIONING':
+        color = 'processing';
         break;
-      case "UNHEALTHY":
-        color = "warning";
+      case 'UNHEALTHY':
+        color = 'warning';
         break;
     }
     return color;
@@ -158,25 +158,25 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
       <Breadcrumb
         items={[
           {
-            title: t("modelService.Services"),
+            title: t('modelService.Services'),
             onClick: (e) => {
               e.preventDefault();
-              navigate("/serving");
+              navigate('/serving');
             },
-            href: "/serving",
+            href: '/serving',
           },
           {
-            title: t("modelService.RoutingInfo"),
+            title: t('modelService.RoutingInfo'),
           },
         ]}
       />
       <Flex direction="row" justify="between">
         <Typography.Title level={3} style={{ margin: 0 }}>
-          {endpoint?.name || ""}
+          {endpoint?.name || ''}
         </Typography.Title>
-        <Flex gap={"xxs"}>
+        <Flex gap={'xxs'}>
           {(endpoint?.retries || 0) > 0 ? (
-            <Tooltip title={t("modelService.ClearErrors")}>
+            <Tooltip title={t('modelService.ClearErrors')}>
               <Button
                 loading={isPendingClearError}
                 icon={<WarningOutlined />}
@@ -195,7 +195,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
           ) : (
             <></>
           )}
-          <Tooltip title={t("button.Refresh")}>
+          <Tooltip title={t('button.Refresh')}>
             <Button
               loading={isPendingRefetch}
               icon={<ReloadOutlined />}
@@ -214,11 +214,11 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               setIsOpenModelServiceSettingModal(true);
             }}
           >
-            {t("button.Edit")}
+            {t('button.Edit')}
           </Button>
         </Flex>
       </Flex>
-      <Card title={t("modelService.ServiceInfo")}>
+      <Card title={t('modelService.ServiceInfo')}>
         <Descriptions
           bordered
           column={{ xxl: 3, xl: 3, lg: 2, md: 2, sm: 1, xs: 1 }}
@@ -226,34 +226,34 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
             backgroundColor: token.colorBgBase,
           }}
         >
-          <Descriptions.Item label={t("modelService.EndpointName")}>
+          <Descriptions.Item label={t('modelService.EndpointName')}>
             <Typography.Text copyable>{endpoint?.name}</Typography.Text>
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.Status")}>
+          <Descriptions.Item label={t('modelService.Status')}>
             <EndpointStatusTag endpointFrgmt={endpoint} />
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.EndpointId")}>
+          <Descriptions.Item label={t('modelService.EndpointId')}>
             {endpoint?.endpoint_id}
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.SessionOwner")}>
-            {baiClient.email || ""}
+          <Descriptions.Item label={t('modelService.SessionOwner')}>
+            {baiClient.email || ''}
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.DesiredSessionCount")}>
+          <Descriptions.Item label={t('modelService.DesiredSessionCount')}>
             {endpoint?.desired_session_count}
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.ServiceEndpoint")}>
+          <Descriptions.Item label={t('modelService.ServiceEndpoint')}>
             {endpoint?.url ? (
               endpoint?.url
             ) : (
-              <Tag>{t("modelService.NoServiceEndpoint")}</Tag>
+              <Tag>{t('modelService.NoServiceEndpoint')}</Tag>
             )}
           </Descriptions.Item>
-          <Descriptions.Item label={t("modelService.OpenToPublic")}>
+          <Descriptions.Item label={t('modelService.OpenToPublic')}>
             {endpoint?.open_to_public ? <CheckOutlined /> : <CloseOutlined />}
           </Descriptions.Item>
           <Descriptions.Item label="Image">
             {endpoint?.image && (
-              <Flex direction="row" gap={"xs"}>
+              <Flex direction="row" gap={'xs'}>
                 <ImageMetaIcon image={endpoint.image} />
                 <CopyableCodeText>{endpoint.image}</CopyableCodeText>
               </Flex>
@@ -262,22 +262,22 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
         </Descriptions>
       </Card>
       <Typography.Title level={4} style={{ margin: 0 }}>
-        {t("modelService.RoutesInfo")}
+        {t('modelService.RoutesInfo')}
       </Typography.Title>
       <Table
-        scroll={{ x: "max-content" }}
+        scroll={{ x: 'max-content' }}
         columns={[
           {
-            title: t("modelService.RouteId"),
-            dataIndex: "routing_id",
-            fixed: "left",
+            title: t('modelService.RouteId'),
+            dataIndex: 'routing_id',
+            fixed: 'left',
           },
           {
-            title: t("modelService.SessionId"),
-            dataIndex: "session",
+            title: t('modelService.SessionId'),
+            dataIndex: 'session',
           },
           {
-            title: t("modelService.Status"),
+            title: t('modelService.Status'),
             render: (_, { session, status }) =>
               status && (
                 <>
@@ -288,7 +288,7 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
                   >
                     {status.toUpperCase()}
                   </Tag>
-                  {status === "FAILED_TO_START" && (
+                  {status === 'FAILED_TO_START' && (
                     <Popover>
                       <Button
                         size="small"
@@ -303,8 +303,8 @@ const RoutingListPage: React.FC<RoutingListPageProps> = () => {
               ),
           },
           {
-            title: t("modelService.TrafficRatio"),
-            dataIndex: "traffic_ratio",
+            title: t('modelService.TrafficRatio'),
+            dataIndex: 'traffic_ratio',
           },
         ]}
         pagination={false}

@@ -14,29 +14,31 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import '@material/mwc-notched-outline';
-import '@material/mwc-menu';
-import '@material/mwc-icon';
-
-import {KEY, normalizeKey} from '@material/dom/keyboard';
-import {MDCFloatingLabelFoundation} from '@material/floating-label/foundation.js';
-import {MDCLineRippleFoundation} from '@material/line-ripple/foundation.js';
+import { KEY, normalizeKey } from '@material/dom/keyboard';
+import { MDCFloatingLabelFoundation } from '@material/floating-label/foundation.js';
+import { MDCLineRippleFoundation } from '@material/line-ripple/foundation.js';
 import * as typeahead from '@material/list/typeahead.js';
-import {MDCListTextAndIndex} from '@material/list/types';
-import {addHasRemoveClass, FormElement} from '@material/mwc-base/form-element.js';
-import {observer} from '@material/mwc-base/observer.js';
-import {isNodeElement} from '@material/mwc-base/utils.js';
-import {floatingLabel, FloatingLabel} from '@material/mwc-floating-label';
-import {lineRipple, LineRipple} from '@material/mwc-line-ripple';
-import {ListItemBase} from '@material/mwc-list/mwc-list-item-base';
-import {Menu} from '@material/mwc-menu';
-import {NotchedOutline} from '@material/mwc-notched-outline';
-import {MDCSelectAdapter} from '@material/select/adapter';
+import { MDCListTextAndIndex } from '@material/list/types';
+import {
+  addHasRemoveClass,
+  FormElement,
+} from '@material/mwc-base/form-element.js';
+import { observer } from '@material/mwc-base/observer.js';
+import { isNodeElement } from '@material/mwc-base/utils.js';
+import { floatingLabel, FloatingLabel } from '@material/mwc-floating-label';
+import '@material/mwc-icon';
+import { lineRipple, LineRipple } from '@material/mwc-line-ripple';
+import { ListItemBase } from '@material/mwc-list/mwc-list-item-base';
+import '@material/mwc-menu';
+import { Menu } from '@material/mwc-menu';
+import '@material/mwc-notched-outline';
+import { NotchedOutline } from '@material/mwc-notched-outline';
+import { MDCSelectAdapter } from '@material/select/adapter';
 import MDCSelectFoundation from '@material/select/foundation.js';
-import {eventOptions, html, property, query} from 'lit-element';
-import {nothing} from 'lit-html';
-import {classMap} from 'lit-html/directives/class-map.js';
-import {ifDefined} from 'lit-html/directives/if-defined.js';
+import { eventOptions, html, property, query } from 'lit-element';
+import { nothing } from 'lit-html';
+import { classMap } from 'lit-html/directives/class-map.js';
+import { ifDefined } from 'lit-html/directives/if-defined.js';
 
 // must be done to get past lit-analyzer checks
 declare global {
@@ -47,48 +49,49 @@ declare global {
 }
 
 type CustomValidityState = {
-  -readonly[P in keyof ValidityState]: ValidityState[P]
+  -readonly [P in keyof ValidityState]: ValidityState[P];
 };
 
-const createValidityObj =
-    (customValidity: Partial<ValidityState> = {}): ValidityState => {
-      /*
-       * We need to make ValidityState an object because it is readonly and
-       * we cannot use the spread operator. Also, we don't export
-       * `CustomValidityState` because it is a leaky implementation and the user
-       * already has access to `ValidityState` in lib.dom.ts. Also an interface
-       * {a: Type} can be casted to {readonly a: Type} so passing any object
-       * should be fine.
-       */
-      const objectifiedCustomValidity: Partial<CustomValidityState> = {};
+const createValidityObj = (
+  customValidity: Partial<ValidityState> = {},
+): ValidityState => {
+  /*
+   * We need to make ValidityState an object because it is readonly and
+   * we cannot use the spread operator. Also, we don't export
+   * `CustomValidityState` because it is a leaky implementation and the user
+   * already has access to `ValidityState` in lib.dom.ts. Also an interface
+   * {a: Type} can be casted to {readonly a: Type} so passing any object
+   * should be fine.
+   */
+  const objectifiedCustomValidity: Partial<CustomValidityState> = {};
 
-      // eslint-disable-next-line guard-for-in
-      for (const propName in customValidity) {
-        /*
-         * Casting is needed because ValidityState's props are all readonly and
-         * thus cannot be set on `onjectifiedCustomValidity`. In the end, the
-         * interface is the same as ValidityState (but not readonly), but the
-         * function signature casts the output to ValidityState (thus readonly).
-         */
-        objectifiedCustomValidity[propName as keyof CustomValidityState] =
-            customValidity[propName as keyof ValidityState];
-      }
+  // eslint-disable-next-line guard-for-in
+  for (const propName in customValidity) {
+    /*
+     * Casting is needed because ValidityState's props are all readonly and
+     * thus cannot be set on `onjectifiedCustomValidity`. In the end, the
+     * interface is the same as ValidityState (but not readonly), but the
+     * function signature casts the output to ValidityState (thus readonly).
+     */
+    objectifiedCustomValidity[propName as keyof CustomValidityState] =
+      customValidity[propName as keyof ValidityState];
+  }
 
-      return {
-        badInput: false,
-        customError: false,
-        patternMismatch: false,
-        rangeOverflow: false,
-        rangeUnderflow: false,
-        stepMismatch: false,
-        tooLong: false,
-        tooShort: false,
-        typeMismatch: false,
-        valid: true,
-        valueMissing: false,
-        ...objectifiedCustomValidity
-      };
-    };
+  return {
+    badInput: false,
+    customError: false,
+    patternMismatch: false,
+    rangeOverflow: false,
+    rangeUnderflow: false,
+    stepMismatch: false,
+    tooLong: false,
+    tooShort: false,
+    typeMismatch: false,
+    valid: true,
+    valueMissing: false,
+    ...objectifiedCustomValidity,
+  };
+};
 
 /**
  * @fires selected {SelectedDetail}
@@ -107,52 +110,53 @@ export abstract class SelectBase extends FormElement {
 
   @query('.formElement') protected formElement!: HTMLInputElement;
 
-  @query('slot') protected slotElement!: HTMLSlotElement|null;
+  @query('slot') protected slotElement!: HTMLSlotElement | null;
 
-  @query('select') protected nativeSelectElement!: HTMLSelectElement|null;
+  @query('select') protected nativeSelectElement!: HTMLSelectElement | null;
 
-  @query('input') protected nativeInputElement!: HTMLInputElement|null;
+  @query('input') protected nativeInputElement!: HTMLInputElement | null;
 
-  @query('.mdc-line-ripple') protected lineRippleElement!: LineRipple|null;
+  @query('.mdc-line-ripple') protected lineRippleElement!: LineRipple | null;
 
-  @query('.mdc-floating-label') protected labelElement!: FloatingLabel|null;
+  @query('.mdc-floating-label') protected labelElement!: FloatingLabel | null;
 
-  @query('mwc-notched-outline') protected outlineElement!: NotchedOutline|null;
+  @query('mwc-notched-outline')
+  protected outlineElement!: NotchedOutline | null;
 
-  @query('.mdc-menu') protected menuElement!: Menu|null;
+  @query('.mdc-menu') protected menuElement!: Menu | null;
 
-  @query('.mdc-select__anchor') protected anchorElement!: HTMLDivElement|null;
+  @query('.mdc-select__anchor') protected anchorElement!: HTMLDivElement | null;
 
-  @property({type: Boolean, attribute: 'disabled', reflect: true})
-  @observer(function(this: SelectBase, value: boolean) {
+  @property({ type: Boolean, attribute: 'disabled', reflect: true })
+  @observer(function (this: SelectBase, value: boolean) {
     if (this.renderReady) {
       this.mdcFoundation.setDisabled(value);
     }
   })
   disabled = false;
 
-  @property({type: Boolean})
-  @observer(function(this: SelectBase, _newVal: boolean, oldVal: boolean) {
+  @property({ type: Boolean })
+  @observer(function (this: SelectBase, _newVal: boolean, oldVal: boolean) {
     if (oldVal !== undefined && this.outlined !== oldVal) {
       this.layout(false);
     }
   })
   outlined = false;
 
-  @property({type: String})
-  @observer(function(this: SelectBase, _newVal: string, oldVal: string) {
+  @property({ type: String })
+  @observer(function (this: SelectBase, _newVal: string, oldVal: string) {
     if (oldVal !== undefined && this.label !== oldVal) {
       this.layout(false);
     }
   })
   label = '';
 
-  @property({type: Boolean}) protected outlineOpen = false;
+  @property({ type: Boolean }) protected outlineOpen = false;
 
-  @property({type: Number}) protected outlineWidth = 0;
+  @property({ type: Number }) protected outlineWidth = 0;
 
-  @property({type: String})
-  @observer(function(this: SelectBase, value: string) {
+  @property({ type: String })
+  @observer(function (this: SelectBase, value: string) {
     if (this.mdcFoundation) {
       const initialization = this.selected === null && !!value;
       const valueSetByUser = this.selected && this.selected.value !== value;
@@ -165,31 +169,31 @@ export abstract class SelectBase extends FormElement {
   })
   value = '';
 
-  @property({type: String}) protected selectedText = '';
+  @property({ type: String }) protected selectedText = '';
 
-  @property({type: String}) icon = '';
+  @property({ type: String }) icon = '';
 
-  @property({type: Boolean}) protected menuOpen = false;
+  @property({ type: Boolean }) protected menuOpen = false;
 
-  @property({type: String}) helper = '';
+  @property({ type: String }) helper = '';
 
-  @property({type: Boolean}) validateOnInitialRender = false;
+  @property({ type: Boolean }) validateOnInitialRender = false;
 
-  @property({type: String}) validationMessage = '';
+  @property({ type: String }) validationMessage = '';
 
-  @property({type: Boolean}) required = false;
+  @property({ type: Boolean }) required = false;
 
-  @property({type: Boolean}) naturalMenuWidth = false;
+  @property({ type: Boolean }) naturalMenuWidth = false;
 
-  @property({type: Boolean}) multi = false;
+  @property({ type: Boolean }) multi = false;
 
-  @property({type: Boolean}) protected isUiValid = true;
+  @property({ type: Boolean }) protected isUiValid = true;
 
   // Transiently holds current typeahead prefix from user.
   protected typeaheadState = typeahead.initState();
   protected sortedIndexByFirstChar = new Map<string, MDCListTextAndIndex[]>();
 
-  protected menuElement_: Menu|null = null;
+  protected menuElement_: Menu | null = null;
 
   get items(): ListItemBase[] {
     // memoize menuElement to prevent unnecessary querySelector calls.
@@ -204,7 +208,7 @@ export abstract class SelectBase extends FormElement {
     return [];
   }
 
-  get selected(): ListItemBase|null {
+  get selected(): ListItemBase | null {
     const menuElement = this.menuElement;
     if (menuElement) {
       return menuElement.selected as ListItemBase | null;
@@ -222,13 +226,13 @@ export abstract class SelectBase extends FormElement {
     return -1;
   }
 
-  protected listeners: ({
+  protected listeners: {
     target: Element;
     name: string;
     cb: EventListenerOrEventListenerObject;
-  })[] = [];
+  }[] = [];
   protected onBodyClickBound: (evt: MouseEvent) => void = () => undefined;
-  protected _menuUpdateComplete: null|Promise<unknown> = null;
+  protected _menuUpdateComplete: null | Promise<unknown> = null;
   protected get shouldRenderHelperText(): boolean {
     return !!this.helper || !!this.validationMessage;
   }
@@ -237,8 +241,8 @@ export abstract class SelectBase extends FormElement {
   private valueSetDirectly = false;
 
   validityTransform:
-      ((value: string,
-        nativeValidity: ValidityState) => Partial<ValidityState>)|null = null;
+    | ((value: string, nativeValidity: ValidityState) => Partial<ValidityState>)
+    | null = null;
 
   protected _validity: ValidityState = createValidityObj();
 
@@ -266,70 +270,73 @@ export abstract class SelectBase extends FormElement {
     const describedby = this.shouldRenderHelperText ? 'helper-text' : undefined;
 
     return html`
-      <div
-          class="mdc-select ${classMap(classes)}">
+      <div class="mdc-select ${classMap(classes)}">
         <input
-            class="formElement"
-            .value=${this.value}
-            hidden
-            ?required=${this.required}>
+          class="formElement"
+          .value=${this.value}
+          hidden
+          ?required=${this.required}
+        />
         <!-- @ts-ignore -->
-        <div class="mdc-select__anchor"
-            aria-autocomplete="none"
-            role="combobox"
-            aria-expanded=${this.menuOpen}
-            aria-invalid=${!this.isUiValid}
-            aria-haspopup="listbox"
-            aria-labelledby="label"
-            aria-required=${this.required}
-            aria-describedby=${ifDefined(describedby)}
-            @click=${this.onClick}
-            @focus=${this.onFocus}
-            @blur=${this.onBlur}
-            @keydown=${this.onKeydown}>
+        <div
+          class="mdc-select__anchor"
+          aria-autocomplete="none"
+          role="combobox"
+          aria-expanded=${this.menuOpen}
+          aria-invalid=${!this.isUiValid}
+          aria-haspopup="listbox"
+          aria-labelledby="label"
+          aria-required=${this.required}
+          aria-describedby=${ifDefined(describedby)}
+          @click=${this.onClick}
+          @focus=${this.onFocus}
+          @blur=${this.onBlur}
+          @keydown=${this.onKeydown}
+        >
           ${this.renderRipple()}
           ${this.outlined ? this.renderOutline() : this.renderLabel()}
           ${this.renderLeadingIcon()}
           <span class="mdc-select__selected-text">${this.selectedText}</span>
           <span class="mdc-select__dropdown-icon">
-            <svg
-                class="mdc-select__dropdown-icon-graphic"
-                viewBox="7 10 10 5">
+            <svg class="mdc-select__dropdown-icon-graphic" viewBox="7 10 10 5">
               <polygon
-                  class="mdc-select__dropdown-icon-inactive"
-                  stroke="none"
-                  fill-rule="evenodd"
-                  points="7 10 12 15 17 10">
-              </polygon>
+                class="mdc-select__dropdown-icon-inactive"
+                stroke="none"
+                fill-rule="evenodd"
+                points="7 10 12 15 17 10"
+              ></polygon>
               <polygon
-                  class="mdc-select__dropdown-icon-active"
-                  stroke="none"
-                  fill-rule="evenodd"
-                  points="7 15 12 10 17 15">
-              </polygon>
+                class="mdc-select__dropdown-icon-active"
+                stroke="none"
+                fill-rule="evenodd"
+                points="7 15 12 10 17 15"
+              ></polygon>
             </svg>
           </span>
           ${this.renderLineRipple()}
         </div>
         <mwc-menu
-            innerRole="listbox"
-            wrapFocus
-            class="mdc-select__menu mdc-menu mdc-menu-surface ${
-        classMap(menuClasses)}"
-            activatable
-            .multi=${this.multi}
-            .fullwidth=${!this.naturalMenuWidth}
-            .open=${this.menuOpen}
-            .anchor=${this.anchorElement}
-            @selected=${this.onSelected}
-            @opened=${this.onOpened}
-            @closed=${this.onClosed}
-            @items-updated=${this.onItemsUpdated}
-            @keydown=${this.handleTypeahead}>
+          innerRole="listbox"
+          wrapFocus
+          class="mdc-select__menu mdc-menu mdc-menu-surface ${classMap(
+            menuClasses,
+          )}"
+          activatable
+          .multi=${this.multi}
+          .fullwidth=${!this.naturalMenuWidth}
+          .open=${this.menuOpen}
+          .anchor=${this.anchorElement}
+          @selected=${this.onSelected}
+          @opened=${this.onOpened}
+          @closed=${this.onClosed}
+          @items-updated=${this.onItemsUpdated}
+          @keydown=${this.handleTypeahead}
+        >
           <slot></slot>
         </mwc-menu>
       </div>
-      ${this.renderHelperText()}`;
+      ${this.renderHelperText()}
+    `;
   }
 
   protected renderRipple() {
@@ -349,11 +356,13 @@ export abstract class SelectBase extends FormElement {
 
     return html`
       <mwc-notched-outline
-          .width=${this.outlineWidth}
-          .open=${this.outlineOpen}
-          class="mdc-notched-outline">
+        .width=${this.outlineWidth}
+        .open=${this.outlineOpen}
+        class="mdc-notched-outline"
+      >
         ${this.renderLabel()}
-      </mwc-notched-outline>`;
+      </mwc-notched-outline>
+    `;
   }
 
   protected renderLabel() {
@@ -362,9 +371,9 @@ export abstract class SelectBase extends FormElement {
     }
 
     return html`
-      <span
-          .floatingLabelFoundation=${floatingLabel(this.label)}
-          id="label">${this.label}</span>
+      <span .floatingLabelFoundation=${floatingLabel(this.label)} id="label">
+        ${this.label}
+      </span>
     `;
   }
 
@@ -373,8 +382,9 @@ export abstract class SelectBase extends FormElement {
       return nothing;
     }
 
-    return html`<mwc-icon class="mdc-select__icon"><div>${
-        this.icon}</div></mwc-icon>`;
+    return html`
+      <mwc-icon class="mdc-select__icon"><div>${this.icon}</div></mwc-icon>
+    `;
   }
 
   protected renderLineRipple() {
@@ -398,10 +408,10 @@ export abstract class SelectBase extends FormElement {
     };
 
     return html`
-        <p
-          class="mdc-select-helper-text ${classMap(classes)}"
-          id="helper-text">${
-        showValidationMessage ? this.validationMessage : this.helper}</p>`;
+      <p class="mdc-select-helper-text ${classMap(classes)}" id="helper-text">
+        ${showValidationMessage ? this.validationMessage : this.helper}
+      </p>
+    `;
   }
 
   protected createAdapter(): MDCSelectAdapter {
@@ -459,7 +469,7 @@ export abstract class SelectBase extends FormElement {
       notifyChange: async (value) => {
         if (!this.valueSetDirectly && this.multi && this.menuElement !== null) {
           let values: string[] = [];
-          (this.menuElement.selected as any).forEach(item => {
+          (this.menuElement.selected as any).forEach((item) => {
             values.push(item.value);
           });
           this.selectedText = values.join(',');
@@ -471,10 +481,10 @@ export abstract class SelectBase extends FormElement {
         this.valueSetDirectly = false;
         this.value = value;
         await this.updateComplete;
-        const ev = new Event('change', {bubbles: true});
+        const ev = new Event('change', { bubbles: true });
         this.dispatchEvent(ev);
       },
-      setSelectedText: (value) => this.selectedText = value,
+      setSelectedText: (value) => (this.selectedText = value),
       isSelectAnchorFocused: () => {
         const selectAnchorElement = this.anchorElement;
 
@@ -482,8 +492,9 @@ export abstract class SelectBase extends FormElement {
           return false;
         }
 
-        const rootNode =
-            selectAnchorElement.getRootNode() as ShadowRoot | Document;
+        const rootNode = selectAnchorElement.getRootNode() as
+          | ShadowRoot
+          | Document;
 
         return rootNode.activeElement === selectAnchorElement;
       },
@@ -589,7 +600,7 @@ export abstract class SelectBase extends FormElement {
       getSelectedIndex: () => this.index,
       setSelectedIndex: () => undefined,
       isTypeaheadInProgress: () =>
-          typeahead.isTypingInProgress(this.typeaheadState),
+        typeahead.isTypingInProgress(this.typeaheadState),
       typeaheadMatchItem: (nextChar, startingIndex) => {
         if (!this.menuElement) {
           return -1;
@@ -599,9 +610,9 @@ export abstract class SelectBase extends FormElement {
           focusItemAtIndex: (index) => {
             this.menuElement!.focusItemAtIndex(index);
           },
-          focusedItemIndex: startingIndex ?
-              startingIndex :
-              this.menuElement.getFocusedItemIndex(),
+          focusedItemIndex: startingIndex
+            ? startingIndex
+            : this.menuElement.getFocusedItemIndex(),
           nextChar,
           sortedIndexByFirstChar: this.sortedIndexByFirstChar,
           skipFocus: false,
@@ -623,8 +634,10 @@ export abstract class SelectBase extends FormElement {
     const isValid = this._checkValidity(this.value);
 
     if (!isValid) {
-      const invalidEvent =
-          new Event('invalid', {bubbles: false, cancelable: true});
+      const invalidEvent = new Event('invalid', {
+        bubbles: false,
+        cancelable: true,
+      });
       this.dispatchEvent(invalidEvent);
     }
 
@@ -646,7 +659,7 @@ export abstract class SelectBase extends FormElement {
 
     if (this.validityTransform) {
       const customValidity = this.validityTransform(value, validity);
-      validity = {...validity, ...customValidity};
+      validity = { ...validity, ...customValidity };
     }
 
     this._validity = validity;
@@ -684,15 +697,18 @@ export abstract class SelectBase extends FormElement {
 
     // Select an option based on init value
     if (!this.selected) {
-      if (!this.items.length && this.slotElement &&
-          this.slotElement.assignedNodes({flatten: true}).length) {
+      if (
+        !this.items.length &&
+        this.slotElement &&
+        this.slotElement.assignedNodes({ flatten: true }).length
+      ) {
         // Shady DOM initial render fix
         await new Promise((res) => requestAnimationFrame(res));
         await this.layout();
       }
 
       const hasEmptyFirstOption =
-          this.items.length && this.items[0].value === '';
+        this.items.length && this.items[0].value === '';
       if (!this.value && hasEmptyFirstOption) {
         this.select(0);
         return;
@@ -702,13 +718,17 @@ export abstract class SelectBase extends FormElement {
     }
 
     this.sortedIndexByFirstChar = typeahead.initSortedIndex(
-        this.items.length, (index) => this.items[index].text);
+      this.items.length,
+      (index) => this.items[index].text,
+    );
     this.renderReady = true;
   }
 
   protected onItemsUpdated() {
     this.sortedIndexByFirstChar = typeahead.initSortedIndex(
-        this.items.length, (index) => this.items[index].text);
+      this.items.length,
+      (index) => this.items[index].text,
+    );
   }
 
   select(index: number) {
@@ -782,7 +802,7 @@ export abstract class SelectBase extends FormElement {
     }
   }
 
-  protected onClick(evt: MouseEvent|TouchEvent) {
+  protected onClick(evt: MouseEvent | TouchEvent) {
     if (this.mdcFoundation) {
       this.focus();
       const targetClientRect = (evt.target as Element).getBoundingClientRect();
@@ -806,7 +826,7 @@ export abstract class SelectBase extends FormElement {
     if (arrowDown || arrowUp) {
       const shouldSelectNextItem = arrowUp && this.index > 0;
       const shouldSelectPrevItem =
-          arrowDown && this.index < this.items.length - 1;
+        arrowDown && this.index < this.items.length - 1;
 
       if (shouldSelectNextItem) {
         this.select(this.index - 1);
@@ -823,18 +843,19 @@ export abstract class SelectBase extends FormElement {
   }
 
   // must capture to run before list foundation captures event
-  @eventOptions({capture: true})
+  @eventOptions({ capture: true })
   protected handleTypeahead(event: KeyboardEvent) {
     if (!this.menuElement) {
       return;
     }
 
     const focusedItemIndex = this.menuElement.getFocusedItemIndex();
-    const target = isNodeElement(event.target as Node) ?
-        event.target as HTMLElement :
-        null;
-    const isTargetListItem =
-        target ? target.hasAttribute('mwc-list-item') : false;
+    const target = isNodeElement(event.target as Node)
+      ? (event.target as HTMLElement)
+      : null;
+    const isTargetListItem = target
+      ? target.hasAttribute('mwc-list-item')
+      : false;
 
     const opts: typeahead.HandleKeydownOpts = {
       event,
@@ -850,7 +871,7 @@ export abstract class SelectBase extends FormElement {
     typeahead.handleKeydown(opts, this.typeaheadState);
   }
 
-  protected async onSelected(event: CustomEvent<{index: number}>) {
+  protected async onSelected(event: CustomEvent<{ index: number }>) {
     if (!this.mdcFoundation) {
       await this.updateComplete;
     }
@@ -861,7 +882,7 @@ export abstract class SelectBase extends FormElement {
       if (this.selected === null) {
         this.value = '';
       } else {
-        this.value = (this.selected as any).map(a => a.value);
+        this.value = (this.selected as any).map((a) => a.value);
         this.selectedText = this.value.toString();
       }
     } else {

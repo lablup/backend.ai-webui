@@ -1,9 +1,9 @@
-import React from "react";
-import { Button, Card, Row, Col, Typography, theme } from "antd";
-import { RedoOutlined } from "@ant-design/icons";
-import { useTranslation, Trans } from "react-i18next";
-import { useWebComponentInfo } from "../components/DefaultProviders";
-import Flex from "../components/Flex";
+import { useWebComponentInfo } from '../components/DefaultProviders';
+import Flex from '../components/Flex';
+import { RedoOutlined } from '@ant-design/icons';
+import { Button, Card, Row, Col, Typography, theme } from 'antd';
+import React from 'react';
+import { useTranslation, Trans } from 'react-i18next';
 
 const MaintenancePage: React.FC = () => {
   const { t } = useTranslation();
@@ -14,7 +14,7 @@ const MaintenancePage: React.FC = () => {
     scanning: boolean;
   };
   try {
-    parsedValue = JSON.parse(value || "");
+    parsedValue = JSON.parse(value || '');
   } catch (error) {
     parsedValue = {
       recalculating: false,
@@ -33,52 +33,52 @@ const MaintenancePage: React.FC = () => {
     >
       <Row gutter={[14, token.margin]}>
         <Col>
-          <Card title={t("maintenance.Fix")}>
+          <Card title={t('maintenance.Fix')}>
             <Typography.Title
               level={5}
               style={{
                 margin: 0,
-                paddingBottom: "12px",
+                paddingBottom: '12px',
               }}
             >
-              {t("maintenance.MatchDatabase")}
+              {t('maintenance.MatchDatabase')}
             </Typography.Title>
-            <Trans>{t("maintenance.DescMatchDatabase")}</Trans>
+            <Trans>{t('maintenance.DescMatchDatabase')}</Trans>
             <Button
               block
               disabled={recalculating}
               icon={<RedoOutlined />}
-              onClick={() => dispatchEvent("recalculate", null)}
-              style={{ marginTop: "12px" }}
+              onClick={() => dispatchEvent('recalculate', null)}
+              style={{ marginTop: '12px' }}
             >
               {recalculating
-                ? t("maintenance.Recalculating")
-                : t("maintenance.RecalculateUsage")}
+                ? t('maintenance.Recalculating')
+                : t('maintenance.RecalculateUsage')}
             </Button>
           </Card>
         </Col>
         <Col>
-          <Card title={t("maintenance.ImagesEnvironment")}>
+          <Card title={t('maintenance.ImagesEnvironment')}>
             <Typography.Title
               level={5}
               style={{
                 margin: 0,
-                paddingBottom: "12px",
+                paddingBottom: '12px',
               }}
             >
-              {t("maintenance.RescanImageList")}
+              {t('maintenance.RescanImageList')}
             </Typography.Title>
-            <Trans>{t("maintenance.DescRescanImageList")}</Trans>
+            <Trans>{t('maintenance.DescRescanImageList')}</Trans>
             <Button
               block
               disabled={scanning}
               icon={<RedoOutlined />}
-              onClick={() => dispatchEvent("rescan", null)}
-              style={{ marginTop: "12px" }}
+              onClick={() => dispatchEvent('rescan', null)}
+              style={{ marginTop: '12px' }}
             >
               {scanning
-                ? t("maintenance.RescanImageScanning")
-                : t("maintenance.RescanImages")}
+                ? t('maintenance.RescanImageScanning')
+                : t('maintenance.RescanImages')}
             </Button>
           </Card>
         </Col>

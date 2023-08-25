@@ -1,12 +1,12 @@
-import React from "react";
-import { useBackendaiImageMetaData } from "../hooks";
+import { useBackendaiImageMetaData } from '../hooks';
+import React from 'react';
 
 const SessionKernelTag: React.FC<{
   image: string | null;
   style?: React.CSSProperties;
   border?: boolean;
 }> = ({ image, style = {} }, bordered) => {
-  image = image || "";
+  image = image || '';
   const [, { getImageAliasName, getBaseVersion, getBaseImage }] =
     useBackendaiImageMetaData();
 

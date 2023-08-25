@@ -1,9 +1,17 @@
-import React from "react";
-import graphql from "babel-plugin-relay/macro";
-import { useFragment, useMutation } from "react-relay";
-import { ResourcePolicyCardModifyProjectMutation } from "./__generated__/ResourcePolicyCardModifyProjectMutation.graphql";
-import { ResourcePolicyCardModifyUserMutation } from "./__generated__/ResourcePolicyCardModifyUserMutation.graphql";
-
+import { _humanReadableDecimalSize } from '../helper/index';
+import Flex from './Flex';
+import ProjectResourcePolicySettingModal from './ProjectResourcePolicySettingModal';
+import UserResourcePolicySettingModal from './UserResourcePolicySettingModal';
+import { ResourcePolicyCardModifyProjectMutation } from './__generated__/ResourcePolicyCardModifyProjectMutation.graphql';
+import { ResourcePolicyCardModifyUserMutation } from './__generated__/ResourcePolicyCardModifyUserMutation.graphql';
+import { ResourcePolicyCard_project_resource_policy$key } from './__generated__/ResourcePolicyCard_project_resource_policy.graphql';
+import { ResourcePolicyCard_user_resource_policy$key } from './__generated__/ResourcePolicyCard_user_resource_policy.graphql';
+import {
+  EditFilled,
+  CloseOutlined,
+  ExclamationCircleOutlined,
+} from '@ant-design/icons';
+import { useToggle } from 'ahooks';
 import {
   Button,
   Card,
@@ -12,22 +20,11 @@ import {
   Modal,
   message,
   theme,
-} from "antd";
-import {
-  EditFilled,
-  CloseOutlined,
-  ExclamationCircleOutlined,
-} from "@ant-design/icons";
-
-import ProjectResourcePolicySettingModal from "./ProjectResourcePolicySettingModal";
-import UserResourcePolicySettingModal from "./UserResourcePolicySettingModal";
-
-import { _humanReadableDecimalSize } from "../helper/index";
-import { useTranslation } from "react-i18next";
-import { useToggle } from "ahooks";
-import { ResourcePolicyCard_project_resource_policy$key } from "./__generated__/ResourcePolicyCard_project_resource_policy.graphql";
-import { ResourcePolicyCard_user_resource_policy$key } from "./__generated__/ResourcePolicyCard_user_resource_policy.graphql";
-import Flex from "./Flex";
+} from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useTranslation } from 'react-i18next';
+import { useFragment, useMutation } from 'react-relay';
 
 interface Props extends CardProps {
   projectResourcePolicyFrgmt: ResourcePolicyCard_project_resource_policy$key | null;
@@ -63,7 +60,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
         ...ProjectResourcePolicySettingModalFragment
       }
     `,
-    projectResourcePolicyFrgmt
+    projectResourcePolicyFrgmt,
   );
   const user_resource_policy = useFragment(
     graphql`
@@ -74,7 +71,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
         ...UserResourcePolicySettingModalFragment
       }
     `,
-    userResourcePolicyFrgmt
+    userResourcePolicyFrgmt,
   );
 
   const [
@@ -109,10 +106,10 @@ const ResourcePolicyCard: React.FC<Props> = ({
 
   const confirmUnsetResourcePolicy = () => {
     modal.confirm({
-      title: t("storageHost.UnsetResourcePolicy"),
-      content: t("storageHost.DoYouWantToUseDefaultValue"),
+      title: t('storageHost.UnsetResourcePolicy'),
+      content: t('storageHost.DoYouWantToUseDefaultValue'),
       icon: <ExclamationCircleOutlined />,
-      okText: t("button.Confirm"),
+      okText: t('button.Confirm'),
       onOk() {
         if (project_resource_policy) {
           commitModifyProjectResourcePolicy({
@@ -128,7 +125,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               } else {
                 onChangePolicy();
                 message.success(
-                  t("storageHost.ResourcePolicySuccessfullyUpdated")
+                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
                 );
               }
             },
@@ -150,7 +147,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
               } else {
                 onChangePolicy();
                 message.success(
-                  t("storageHost.ResourcePolicySuccessfullyUpdated")
+                  t('storageHost.ResourcePolicySuccessfullyUpdated'),
                 );
               }
             },
@@ -159,7 +156,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
             },
           });
         } else {
-          message.error(t("storageHost.SelectProjectOrUserFirst"));
+          message.error(t('storageHost.SelectProjectOrUserFirst'));
         }
       },
     });
@@ -180,7 +177,7 @@ const ResourcePolicyCard: React.FC<Props> = ({
                     : toggleUserResourcePolicySettingModal();
                 }}
               >
-                {t("button.Edit")}
+                {t('button.Edit')}
               </Button>
               <Button
                 type="text"
@@ -188,32 +185,32 @@ const ResourcePolicyCard: React.FC<Props> = ({
                 danger
                 onClick={() => confirmUnsetResourcePolicy()}
               >
-                {t("button.Unset")}
+                {t('button.Unset')}
               </Button>
             </Flex>
           ) : null
         }
-        title={t("storageHost.ResourcePolicy")}
+        title={t('storageHost.ResourcePolicy')}
         // bordered={false}
-        headStyle={{ borderBottom: "none" }}
+        headStyle={{ borderBottom: 'none' }}
         style={{ marginBottom: 10 }}
       >
         {project_resource_policy || user_resource_policy ? (
           <Descriptions size="small">
-            <Descriptions.Item label={t("storageHost.MaxFolderSize")}>
+            <Descriptions.Item label={t('storageHost.MaxFolderSize')}>
               {project_resource_policy
                 ? project_resource_policy &&
                   project_resource_policy?.max_vfolder_size !== -1
                   ? _humanReadableDecimalSize(
-                      project_resource_policy?.max_vfolder_size
+                      project_resource_policy?.max_vfolder_size,
                     )
-                  : "-"
+                  : '-'
                 : user_resource_policy &&
                   user_resource_policy?.max_vfolder_size !== -1
                 ? _humanReadableDecimalSize(
-                    user_resource_policy?.max_vfolder_size
+                    user_resource_policy?.max_vfolder_size,
                   )
-                : "-"}
+                : '-'}
             </Descriptions.Item>
           </Descriptions>
         ) : null}

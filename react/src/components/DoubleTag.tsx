@@ -1,7 +1,7 @@
-import { Tag } from "antd";
-import Flex from "./Flex";
-import _ from "lodash";
-import React from "react";
+import Flex from './Flex';
+import { Tag } from 'antd';
+import _ from 'lodash';
+import React from 'react';
 
 type ObjectValue = {
   label: ValueType;
@@ -16,14 +16,14 @@ const DoubleTag: React.FC<{
   let objectValues: ObjectValue[];
   if (
     values[0] &&
-    (typeof values[0] === "string" || React.isValidElement(values[0]))
+    (typeof values[0] === 'string' || React.isValidElement(values[0]))
   ) {
     objectValues = values.map(
       (value) =>
         ({
           label: value,
-          color: "blue",
-        } as ObjectValue)
+          color: 'blue',
+        }) as ObjectValue,
     );
   } else {
     objectValues = values as ObjectValue[];

@@ -2,36 +2,33 @@
  @license
  Copyright (c) 2015-2020 Lablup Inc. All rights reserved.
  */
-
-import {get as _text, translate as _t} from 'lit-translate';
-import {css, CSSResultGroup, html} from 'lit';
-import {customElement, property, query} from 'lit/decorators.js';
-
-import '@material/mwc-button/mwc-button';
-import '@material/mwc-list/mwc-list-item';
-import '@material/mwc-select/mwc-select';
-
-import {Network} from 'vis-network/standalone';
-
-import {BackendAiStyles} from './backend-ai-general-styles';
-
 import {
   IronFlex,
   IronFlexAlignment,
   IronFlexFactors,
-  IronPositioning
+  IronPositioning,
 } from '../plastics/layout/iron-flex-layout-classes';
-import {default as PainKiller} from './backend-ai-painkiller';
-import {BackendAIPipelineCommon} from './backend-ai-pipeline-common';
+import { BackendAiStyles } from './backend-ai-general-styles';
+import { default as PainKiller } from './backend-ai-painkiller';
+import { BackendAIPipelineCommon } from './backend-ai-pipeline-common';
 import './backend-ai-pipeline-component-create';
 import './backend-ai-pipeline-runner';
+import '@material/mwc-button/mwc-button';
+import '@material/mwc-list/mwc-list-item';
+import '@material/mwc-select/mwc-select';
+import { css, CSSResultGroup, html } from 'lit';
+import { get as _text, translate as _t } from 'lit-translate';
+import { customElement, property, query } from 'lit/decorators.js';
+import { Network } from 'vis-network/standalone';
 
 /* FIXME:
  * This type definition is a workaround for resolving both Type error and Importing error.
  */
 type LablupLoadingSpinner = HTMLElementTagNameMap['lablup-loading-spinner'];
-type BackendAIPipelineComponentCreate = HTMLElementTagNameMap['backend-ai-pipeline-component-create'];
-type BackendAIPipelineRunner = HTMLElementTagNameMap['backend-ai-pipeline-runner'];
+type BackendAIPipelineComponentCreate =
+  HTMLElementTagNameMap['backend-ai-pipeline-component-create'];
+type BackendAIPipelineRunner =
+  HTMLElementTagNameMap['backend-ai-pipeline-runner'];
 
 /**
  Backend AI Pipeline Component View
@@ -43,19 +40,20 @@ type BackendAIPipelineRunner = HTMLElementTagNameMap['backend-ai-pipeline-runner
  */
 @customElement('backend-ai-pipeline-component-view')
 export default class BackendAIPipelineComponentView extends BackendAIPipelineCommon {
-  @property({type: Object}) notification = Object();
+  @property({ type: Object }) notification = Object();
   // Pipeline components prpoerties
-  @property({type: String}) pipelineSelectedName = '';
-  @property({type: Object}) pipelineSelectedConfig = Object();
-  @property({type: Array}) network = Object();
-  @property({type: Array}) networkOptions = Object();
+  @property({ type: String }) pipelineSelectedName = '';
+  @property({ type: Object }) pipelineSelectedConfig = Object();
+  @property({ type: Array }) network = Object();
+  @property({ type: Array }) networkOptions = Object();
   @query('#component-network') networkContainer!: HTMLDivElement;
-  @property({type: Array}) nodes = [];
-  @property({type: Array}) edges = [];
-  @property({type: Object}) nodeInfo = Object();
-  @property({type: Array}) componentsSelected = [];
+  @property({ type: Array }) nodes = [];
+  @property({ type: Array }) edges = [];
+  @property({ type: Object }) nodeInfo = Object();
+  @property({ type: Array }) componentsSelected = [];
   @query('#loading-spinner', true) spinner!: LablupLoadingSpinner;
-  @query('backend-ai-pipeline-component-create') componentCreate!: BackendAIPipelineComponentCreate;
+  @query('backend-ai-pipeline-component-create')
+  componentCreate!: BackendAIPipelineComponentCreate;
   @query('backend-ai-pipeline-runner') pipelineRunner!: BackendAIPipelineRunner;
 
   constructor() {
@@ -104,7 +102,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       },
       physics: {
         // enabled: false,
-      }
+      },
     };
   }
 
@@ -119,10 +117,18 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     if (active === false) {
       return;
     }
-    if (typeof window.backendaiclient === 'undefined' || window.backendaiclient === null || window.backendaiclient.ready === false) {
-      document.addEventListener('backend-ai-connected', async () => {
-        return;
-      }, true);
+    if (
+      typeof window.backendaiclient === 'undefined' ||
+      window.backendaiclient === null ||
+      window.backendaiclient.ready === false
+    ) {
+      document.addEventListener(
+        'backend-ai-connected',
+        async () => {
+          return;
+        },
+        true,
+      );
     } else {
     }
   }
@@ -132,25 +138,41 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       e.stopPropagation();
       this.nodes = e.detail.nodes.slice();
       this.edges = e.detail.edges.slice();
-      this.network.setData({nodes: this.nodes, edges: this.edges});
+      this.network.setData({ nodes: this.nodes, edges: this.edges });
     };
-    this.componentCreate.addEventListener('backend-ai-pipeline-component-created', (e) => {
-      _updateNetwork(e);
-    });
-    this.componentCreate.addEventListener('backend-ai-pipeline-component-updated', (e) => {
-      _updateNetwork(e);
-    });
-    this.componentCreate.addEventListener('backend-ai-pipeline-component-deleted', (e) => {
-      _updateNetwork(e);
-    });
-    this.componentCreate.addEventListener('backend-ai-pipeline-component-connection-updated', (e) => {
-      _updateNetwork(e);
-    });
+    this.componentCreate.addEventListener(
+      'backend-ai-pipeline-component-created',
+      (e) => {
+        _updateNetwork(e);
+      },
+    );
+    this.componentCreate.addEventListener(
+      'backend-ai-pipeline-component-updated',
+      (e) => {
+        _updateNetwork(e);
+      },
+    );
+    this.componentCreate.addEventListener(
+      'backend-ai-pipeline-component-deleted',
+      (e) => {
+        _updateNetwork(e);
+      },
+    );
+    this.componentCreate.addEventListener(
+      'backend-ai-pipeline-component-connection-updated',
+      (e) => {
+        _updateNetwork(e);
+      },
+    );
   }
 
   _initNetwork() {
-    const data = {nodes: this.nodes, edges: this.edges};
-    this.network = new Network(this.networkContainer, data, this.networkOptions);
+    const data = { nodes: this.nodes, edges: this.edges };
+    this.network = new Network(
+      this.networkContainer,
+      data,
+      this.networkOptions,
+    );
 
     // Event handling
     // ``deselectNode`` event is not triggered when node is deselected.
@@ -177,14 +199,16 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
    * Update network.
    * */
   async pipelineChanged() {
-    const {nodes, edges} = await this._fetchPipelineComponents();
+    const { nodes, edges } = await this._fetchPipelineComponents();
     this.nodes = nodes || [];
     this.edges = edges || [];
-    this.network.setData({nodes, edges});
+    this.network.setData({ nodes, edges });
 
     // Mapping component ID and its information
     const nodeInfo = {};
-    this.nodes.forEach((node: Record<string, number>) => nodeInfo[node.id] = node);
+    this.nodes.forEach(
+      (node: Record<string, number>) => (nodeInfo[node.id] = node),
+    );
     this.nodeInfo = nodeInfo;
   }
 
@@ -193,14 +217,17 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
    *
    * @param {String} folderName - Virtual folder name to fetch pipeline component.
    * */
-  async _fetchPipelineComponents(folderName='') {
+  async _fetchPipelineComponents(folderName = '') {
     if (folderName === '' || !folderName) {
       folderName = this.pipelineSelectedName;
     }
     try {
       this.spinner.show();
       const res = await window.backendaiclient.vfolder.download(
-        this.pipelineComponentDetailPath, folderName, false, true
+        this.pipelineComponentDetailPath,
+        folderName,
+        false,
+        true,
       );
       const config = await res.json();
       return config;
@@ -220,7 +247,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
       selectedNodes = this.componentsSelected;
     }
     this.componentCreate.openComponentAddDialog(
-      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
+      this.pipelineSelectedName,
+      this.nodes.slice(),
+      this.edges.slice(),
+      selectedNodes,
     );
   }
 
@@ -233,7 +263,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     const selectedNode = this.componentsSelected[0];
     const nodeInfo = this.network.body.data.nodes.get(selectedNode);
     this.componentCreate.openComponentUpdateDialog(
-      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), nodeInfo,
+      this.pipelineSelectedName,
+      this.nodes.slice(),
+      this.edges.slice(),
+      nodeInfo,
     );
   }
 
@@ -245,7 +278,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     }
     const selectedNodes = this.componentsSelected.slice();
     this.componentCreate.openComponentDeleteDialog(
-      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
+      this.pipelineSelectedName,
+      this.nodes.slice(),
+      this.edges.slice(),
+      selectedNodes,
     );
   }
 
@@ -257,7 +293,10 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     }
     const selectedNodes = this.componentsSelected.slice();
     this.componentCreate.connectTwoNodes(
-      this.pipelineSelectedName, this.nodes.slice(), this.edges.slice(), selectedNodes,
+      this.pipelineSelectedName,
+      this.nodes.slice(),
+      this.edges.slice(),
+      selectedNodes,
     );
   }
 
@@ -289,7 +328,7 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
         #component-network {
           // min-height: 500px;
         }
-      `
+      `,
     ];
   }
 
@@ -298,31 +337,64 @@ export default class BackendAIPipelineComponentView extends BackendAIPipelineCom
     return html`
       <div class="card" elevation="0">
         <div class="layout horizontal center wrap" style="margin:0.2em">
-          <mwc-button outlined id="add-component-btn" icon="add"
-              label="${_t('button.Add')}" @click="${() => this._openComponentAddDialog()}">
-          </mwc-button>
-          ${this.componentsSelected.length === 1 ? html`
-            <mwc-button dense outlined id="update-component-btn" icon="edit"
-                label="${_t('button.Edit')}" @click="${() => this._openComponentUpdateDialog()}">
-            </mwc-button>
-          ` : html``}
-          ${this.componentsSelected.length > 0 ? html`
-            <mwc-button dense outlined id="delete-component-btn" icon="delete"
-                label="${_t('button.Delete')}" @click="${() => this._openComponentDeleteDialog()}">
-            </mwc-button>
-          ` : html``}
-          ${this.componentsSelected.length === 2 ? html`
-            <mwc-button dense outlined id="connect-component-btn" icon="trending_up"
-                label="${_t('pipeline.Component.Connect')}" @click="${() => this._connectTwoComponents()}">
-            </mwc-button>
-          ` : html``}
+          <mwc-button
+            outlined
+            id="add-component-btn"
+            icon="add"
+            label="${_t('button.Add')}"
+            @click="${() => this._openComponentAddDialog()}"
+          ></mwc-button>
+          ${this.componentsSelected.length === 1
+            ? html`
+                <mwc-button
+                  dense
+                  outlined
+                  id="update-component-btn"
+                  icon="edit"
+                  label="${_t('button.Edit')}"
+                  @click="${() => this._openComponentUpdateDialog()}"
+                ></mwc-button>
+              `
+            : html``}
+          ${this.componentsSelected.length > 0
+            ? html`
+                <mwc-button
+                  dense
+                  outlined
+                  id="delete-component-btn"
+                  icon="delete"
+                  label="${_t('button.Delete')}"
+                  @click="${() => this._openComponentDeleteDialog()}"
+                ></mwc-button>
+              `
+            : html``}
+          ${this.componentsSelected.length === 2
+            ? html`
+                <mwc-button
+                  dense
+                  outlined
+                  id="connect-component-btn"
+                  icon="trending_up"
+                  label="${_t('pipeline.Component.Connect')}"
+                  @click="${() => this._connectTwoComponents()}"
+                ></mwc-button>
+              `
+            : html``}
           <span class="flex"></span>
-          <mwc-button raised id="run-pipeline-btn" icon="play_arrow"
-              label="${_t('pipeline.RunPipeline')}" @click="${() => this._runPipeline()}">
-          </mwc-button>
+          <mwc-button
+            raised
+            id="run-pipeline-btn"
+            icon="play_arrow"
+            label="${_t('pipeline.RunPipeline')}"
+            @click="${() => this._runPipeline()}"
+          ></mwc-button>
         </div>
-        <backend-ai-pipeline-component-create ?active="${this.active}"></backend-ai-pipeline-component-create>
-        <backend-ai-pipeline-runner ?active="${this.active}"></backend-ai-pipeline-runner>
+        <backend-ai-pipeline-component-create
+          ?active="${this.active}"
+        ></backend-ai-pipeline-component-create>
+        <backend-ai-pipeline-runner
+          ?active="${this.active}"
+        ></backend-ai-pipeline-runner>
         <div id="component-network"></div>
       </div>
 

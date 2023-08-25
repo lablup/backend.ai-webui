@@ -1,8 +1,8 @@
-import { Tag } from "antd";
-import React from "react";
-import { useFragment } from "react-relay";
-import { EndpointStatusTagFragment$key } from "./__generated__/EndpointStatusTagFragment.graphql";
-import graphql from "babel-plugin-relay/macro";
+import { EndpointStatusTagFragment$key } from './__generated__/EndpointStatusTagFragment.graphql';
+import { Tag } from 'antd';
+import graphql from 'babel-plugin-relay/macro';
+import React from 'react';
+import { useFragment } from 'react-relay';
 
 interface EndpointStatusTagProps {
   endpointFrgmt: EndpointStatusTagFragment$key | null;
@@ -17,12 +17,12 @@ const EndpointStatusTag: React.FC<EndpointStatusTagProps> = ({
         status
       }
     `,
-    endpointFrgmt
+    endpointFrgmt,
   );
-  let color = "default";
+  let color = 'default';
   switch (endpoint?.status?.toUpperCase()) {
-    case "RUNNING":
-      color = "success";
+    case 'RUNNING':
+      color = 'success';
       break;
     // case 'TERMINATED':
     //   color = 'default';
