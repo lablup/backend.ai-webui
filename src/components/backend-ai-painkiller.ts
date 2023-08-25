@@ -1,32 +1,14 @@
-/**
- Backend AI Painkiller
-
- `backend-ai-painkiller` informs error messages.
-
-@group Backend.AI Web UI
- @element backend-ai-painkiller
- */
 'use strict';
 
+/**
+ Backend AI Painkiller
+
+ `backend-ai-painkiller` informs error messages.
+
+@group Backend.AI Web UI
+ @element backend-ai-painkiller
+ */
 import { get as _text } from 'lit-translate';
-
-/**
- Backend AI Painkiller
-
- `backend-ai-painkiller` informs error messages.
-
-@group Backend.AI Web UI
- @element backend-ai-painkiller
- */
-
-/**
- Backend AI Painkiller
-
- `backend-ai-painkiller` informs error messages.
-
-@group Backend.AI Web UI
- @element backend-ai-painkiller
- */
 
 declare global {
   interface Window {
