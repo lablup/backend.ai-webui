@@ -337,6 +337,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
           ${this._getUsername()}
         </span>
         <backend-ai-react-user-dropdown-menu
+          value="${JSON.stringify({
+            fullName: this.fullName,
+          })}"
           @open="${() => this._openUserPrefDialog()}"
           @moveToLogPage="${() => this._moveToLogPage()}"
           @moveToUserSettingPage="${() => this._moveToUserSettingsPage()}"

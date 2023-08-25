@@ -18,7 +18,19 @@ import { useTranslation } from 'react-i18next';
 const UserDropdownMenu: React.FC = () => {
   const { t } = useTranslation();
 
-  const { dispatchEvent } = useWebComponentInfo();
+  const { value, dispatchEvent } = useWebComponentInfo();
+  let parsedValue: {
+    fullName: string;
+  };
+  try {
+    parsedValue = JSON.parse(value || '');
+  } catch (error) {
+    parsedValue = {
+      fullName: '',
+    };
+  }
+
+  const { fullName } = parsedValue;
 
   const baiClient = useSuspendedBackendaiClient();
 
@@ -35,7 +47,7 @@ const UserDropdownMenu: React.FC = () => {
 
   const items: MenuProps['items'] = [
     {
-      label: baiClient.full_name,
+      label: fullName,
       key: 'userFullName',
       icon: <UserOutlined />,
       disabled: true,
