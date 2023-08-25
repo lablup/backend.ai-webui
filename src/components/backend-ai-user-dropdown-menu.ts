@@ -5,7 +5,7 @@
 
 
 import {customElement, property, query} from 'lit/decorators.js';
-import {LitElement, html, CSSResultGroup} from 'lit';
+import {css, LitElement, html, CSSResultGroup} from 'lit';
 import {translate as _t} from 'lit-translate';
 import '@material/mwc-select';
 import '@material/mwc-icon-button';
@@ -18,6 +18,8 @@ import {
   IronPositioning
 } from '../plastics/layout/iron-flex-layout-classes';
 import {get as _text} from 'lit-translate/util';
+import {Menu} from '@material/mwc-menu';
+import {IconButton} from '@material/mwc-icon-button';
 import {Switch} from '@material/mwc-switch';
 import {store} from '../store';
 import {navigate} from '../backend-ai-app';
@@ -53,6 +55,9 @@ export default class BackendAiUserDropdownMenu extends LitElement {
   @property({type: String}) totpKey = '';
   @property({type: String}) totpUri = '';
 
+  @query('#dropdown-button') _dropdownMenuIcon!: IconButton;
+  @query('#dropdown-menu') dropdownMenu: Menu | undefined;
+  @query('#user-preference-dialog') userPreferenceDialog: BackendAIDialog | undefined;
   @query('#totp-setup-dialog') totpSetupDialog: BackendAIDialog | undefined;
   @query('#totp-removal-confirm-dialog') totpRemovalConfirmDialog: BackendAIDialog | undefined;
   @query('#totp-uri-qrcode') totpUriQrImage: HTMLImageElement | undefined;
@@ -70,6 +75,20 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       IronFlexAlignment,
       IronFlexFactors,
       IronPositioning,
+      css`
+        span.dropdown-menu-name {
+          display: inline-block;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          white-space: nowrap;
+          max-width: 135px;
+        }
+
+        #dropdown-area {
+          position: relative;
+          right: 50px;
+        }
+      `,
     ];
   }
 
@@ -114,6 +133,22 @@ export default class BackendAiUserDropdownMenu extends LitElement {
       name = globalThis.backendaiutils._maskString(name, '*', maskStartIdx, maskLength);
     }
     return name;
+  }
+
+  /**
+   *  Get user id according to configuration
+   *
+   *  @return {string} userId
+   */
+  _getUserId() {
+    let userId = this.userId;
+    // mask user id(email) only when the configuration is enabled
+    if (this.isUserInfoMaskEnabled) {
+      const maskStartIdx = 2;
+      const maskLength = userId.split('@')[0].length - maskStartIdx;
+      userId = globalThis.backendaiutils._maskString(userId, '*', maskStartIdx, maskLength);
+    }
+    return userId;
   }
   _getRole(user_id) {
     const fields = ['role'];
@@ -164,6 +199,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    * Open the user preference dialog.
    */
   async _openUserPrefDialog() {
+    this._showKeypairInfo();
     this.isOpenUserPrefDialog = true;
   }
 
@@ -231,9 +267,20 @@ export default class BackendAiUserDropdownMenu extends LitElement {
    *
    * @param {Boolean} performClose
    */
-  async logout() {
+  async logout(performClose = false) {
     const event = new CustomEvent('backend-ai-logout');
     document.dispatchEvent(event);
+  }
+
+  /**
+   * Control the dropdown menu.
+   */
+  _toggleDropdown() {
+    const menu_icon = this._dropdownMenuIcon;
+    if (this.dropdownMenu) {
+      this.dropdownMenu.anchor = menu_icon;
+      this.dropdownMenu.open = !this.dropdownMenu.open;
+    }
   }
 
   async _startActivatingTotp() {
@@ -241,7 +288,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this._openTotpSetupDialog();
   }
 
-  async _stopUsingTotp() {
+  async _stopUsingTotp(e) {
     await globalThis.backendaiclient.remove_totp();
     this.notification.text = _text('totp.TotpRemoved');
     this.notification.show();
@@ -250,7 +297,7 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     this._openUserPrefDialog();
   }
 
-  async _confirmOtpSetup() {
+  async _confirmOtpSetup(e) {
     const validationCode = this.confirmOtpTextfield?.value;
     try {
       await globalThis.backendaiclient.activate_totp(validationCode);
@@ -276,9 +323,52 @@ export default class BackendAiUserDropdownMenu extends LitElement {
     return html`
       <link rel="stylesheet" href="resources/custom.css">
       <div class="horizontal flex center layout">
+        <div class="vertical layout center" id="dropdown-area">
+          <mwc-menu id="dropdown-menu" class="user-menu">
+            ${this.domain !== 'default' && this.domain !== '' ? html`
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
+                ${this.domain}
+            </mwc-list-item>
+            ` : html``}
+            <mwc-list-item class="horizontal layout start center" style="pointer-events:none;">
+                <mwc-icon class="dropdown-menu">perm_identity</mwc-icon>
+                 <span class="dropdown-menu-name">${this._getUsername()}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
+                <mwc-icon class="dropdown-menu">email</mwc-icon>
+                <span class="dropdown-menu-name">${this._getUserId()}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" disabled style="border-bottom:1px solid #ccc;pointer-events:none;">
+                <mwc-icon class="dropdown-menu">admin_panel_settings</mwc-icon>
+                <span class="dropdown-menu-name">${this.roleInfo.role}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" @click="${this._showSplash}">
+                <mwc-icon class="dropdown-menu">info</mwc-icon>
+                <span class="dropdown-menu-name">${_t('webui.menu.AboutBackendAI')}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" @click="${() => this._openUserPrefDialog()}">
+                <mwc-icon class="dropdown-menu">lock</mwc-icon>
+                <span class="dropdown-menu-name">${_t('webui.menu.MyAccount')}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToUserSettingsPage()}">
+                <mwc-icon class="dropdown-menu">drag_indicator</mwc-icon>
+                <span class="dropdown-menu-name">${_t('webui.menu.Preferences')}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" @click="${() => this._moveToLogPage()}">
+                <mwc-icon class="dropdown-menu">assignment</mwc-icon>
+                <span class="dropdown-menu-name">${_t('webui.menu.LogsErrors')}</span>
+            </mwc-list-item>
+            <mwc-list-item class="horizontal layout start center" id="sign-button" @click="${() => this.logout()}">
+                <mwc-icon class="dropdown-menu">logout</mwc-icon>
+                <span class="dropdown-menu-name">${_t('webui.menu.LogOut')}</span>
+            </mwc-list-item>
+          </mwc-menu>
+        </div>
         <span class="full_name user-name" style="font-size:14px;text-align:right;-webkit-font-smoothing:antialiased;margin:auto 0 auto 10px;">
           ${this._getUsername()}
         </span>
+        <mwc-icon-button id="dropdown-button" icon="person" @click="${() => this._toggleDropdown()}" style="color:#8c8584;">
+        </mwc-icon-button>
         <backend-ai-react-user-dropdown-menu
           @open="${() => this._openUserPrefDialog()}"
           @moveToLogPage="${() => this._moveToLogPage()}"
